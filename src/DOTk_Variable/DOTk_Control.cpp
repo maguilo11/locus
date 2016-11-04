@@ -1,0 +1,48 @@
+/*
+ * DOTk_Control.cpp
+ *
+ *  Created on: Feb 18, 2015
+ *      Author: Miguel A. Aguilo Valentin
+ */
+
+#include "DOTk_Types.hpp"
+#include "DOTk_Control.hpp"
+
+namespace dotk
+{
+
+DOTk_Control::DOTk_Control() :
+        dotk::DOTk_Variable::DOTk_Variable(dotk::types::CONTROL),
+        m_ControlBasisSize(0)
+{
+}
+
+DOTk_Control::DOTk_Control(const dotk::vector<Real> & data_) :
+        dotk::DOTk_Variable::DOTk_Variable(dotk::types::CONTROL, data_),
+        m_ControlBasisSize(0)
+{
+}
+
+DOTk_Control::DOTk_Control(const dotk::vector<Real> & data_,
+                           const dotk::vector<Real> & lower_bound_,
+                           const dotk::vector<Real> & upper_bound_) :
+        dotk::DOTk_Variable::DOTk_Variable(dotk::types::CONTROL, data_, lower_bound_, upper_bound_),
+        m_ControlBasisSize(0)
+{
+}
+
+DOTk_Control::~DOTk_Control()
+{
+}
+
+size_t DOTk_Control::getControlBasisSize() const
+{
+    return (m_ControlBasisSize);
+}
+
+void DOTk_Control::setControlBasisSize(size_t size_)
+{
+    m_ControlBasisSize = size_;
+}
+
+}
