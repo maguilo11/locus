@@ -1,5 +1,5 @@
 # Set DOTk install directory
-DOTK_INSTALL_DIR=/Users/miguelaguilo/dotk/
+DOTK_INSTALL_DIR=/Users/miguelaguilo/locus/
 
 # Set MEX compiler (MEX) and corresponding flags (MEX_FLAG)
 CXX=/usr/local/bin/mpicxx
@@ -22,8 +22,8 @@ MEX_EXECUTABLE_DIR=exe/
 MEX_INCLUDE_DIR=include/
 
 # Set DOTk source and include directories
-DOTk_SOURCE_DIR=/Users/miguelaguilo/dotk/src/
-DOTk_INCLUDE_DIR=/Users/miguelaguilo/dotk/include/
+DOTk_SOURCE_DIR=/Users/miguelaguilo/locus/src/
+DOTk_INCLUDE_DIR=/Users/miguelaguilo/locus/include/
 
 # Set DOTk include directories
 DOTk_EIGEN=$(DOTk_INCLUDE_DIR)DOTk_Eigen/
@@ -1562,7 +1562,7 @@ ALL_INCLUDE_DIR=-I$(MEX_HEADERS) -I$(MEX_INCLUDE_DIR) -I$(DOTk_INCLUDE_DIR) -I$(
 .cpp.o:
 	$(MEX) -I$(ALL_INCLUDE_DIR) -largeArrays CXX=$(CXX) CXXFLAGS=$(CXXFLAGS) CXXOPTIMFLAGS=$(CXXOPTIMFLAGS) -outdir $(MEX_OBJECT_DIR) -c $@ $<
 
-dotk: $(DOTK_OBJS)
+locus: $(DOTK_OBJS)
 	$(MEX) $^
 
 MEX:
@@ -1589,7 +1589,7 @@ all:
 	make clean
 	mkdir obj 
 	mkdir exe
-	make -f Makefile dotk
+	make -f Makefile locus
 	make -f Makefile m
 	
 clean:

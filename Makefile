@@ -1,12 +1,12 @@
 # Set DOTk PATH
-DOTk_INSTALL_DIR = /Users/miguelaguilo/dotk/
+DOTk_INSTALL_DIR = /Users/miguelaguilo/locus/
 
 # Google test directory 
 GTEST_INCLUDE_DIR = /Users/miguelaguilo/Software/gtest/include/
 GTEST_SRC = /Users/miguelaguilo/Software/gtest_mybuild_clang++/CMakeFiles/gtest.dir/src/
 
 # Unit tests directory
-UNITDIR = /Users/miguelaguilo/dotk/unittest/
+UNITDIR = /Users/miguelaguilo/locus/utests/
 
 # Set compiler options
 #CXX = /usr/bin/clang++
@@ -413,11 +413,11 @@ UNIT = $(GTEST_SRC)gtest-all.cc.o \
 	-I$(DOTk_LINEAR_OPERATOR) -I$(DOTk_DIRECT_SOLVERS) -I$(DOTk_LEFT_PREC) -I$(DOTk_RIGHT_PREC) -I$(DOTk_SQP_ALG) \
 	-I$(DOTk_ORTHO_PROJ) -I$(DOTk_KRYLOV_SOLVER_MNG) -I$(DOTk_KRYLOV_SOLVER) -I$(DOTk_INEXACT_NEWTON_ALG) -I$(DOTk_OC) \
 	-I$(DOTk_TRUST_REGION_ALG_DATA_MNG) -I$(DOTk_DIAGNOSTICS_TOOLS) -I$(DOTk_KRYLOV_SOLVER_TOLERANCE_CRITERION) \
-	-I$(DOTk_EQ_CONSTRAINT_OP) -I$(DOTk_OPERATORS_ROUTINES_MNG) -I$(DOTk_OBJECTIVE_FUNC_OP) -Iunittest/include \
+	-I$(DOTk_EQ_CONSTRAINT_OP) -I$(DOTk_OPERATORS_ROUTINES_MNG) -I$(DOTk_OBJECTIVE_FUNC_OP) -Iutests/include \
 	-I$(DOTk_EIGEN) -I$(DOTk_CCSA) -I$(DOTk_STEIHAUG_TOINT) -c -o $@ $<
 
-dotk: $(OBJS) $(DOTk_SOURCE_DIR)line_search_inexact_newton_main.o
-	$(CXX) $(CXXFLAGS) -o dotk $^ 	
+locus: $(OBJS) $(DOTk_SOURCE_DIR)line_search_inexact_newton_main.o
+	$(CXX) $(CXXFLAGS) -o locus $^ 	
 
 unit: $(OBJS) $(UNIT)
 	$(CXX) $(CXXFLAGS) -o unit $^
@@ -427,4 +427,4 @@ matrix:  $(OBJS) $(MATRIX)
 
 clean:
 	find . -name "*.o" -exec rm {} \;
-	rm -f dotk unit matrix
+	rm -f locus unit matrix
