@@ -8,6 +8,7 @@
 #ifndef DOTK_LEFTPRECGCR_HPP_
 #define DOTK_LEFTPRECGCR_HPP_
 
+#include <vector>
 #include "DOTk_KrylovSolver.hpp"
 
 namespace dotk
@@ -19,7 +20,7 @@ class DOTk_KrylovSolverDataMng;
 class DOTk_OptimizationDataMng;
 class DOTk_KrylovSolverStoppingCriterion;
 
-template<class Type>
+template<typename Type>
 class vector;
 
 class DOTk_LeftPrecGCR : public dotk::DOTk_KrylovSolver

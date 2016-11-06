@@ -7,15 +7,14 @@
 
 #include "gtest/gtest.h"
 
-#include "DOTk_RoutinesTypeLP.hpp"
-#include "DOTk_RoutinesTypeNP.hpp"
 #include "matrix.hpp"
 #include "DOTk_Primal.hpp"
 #include "DOTk_SerialArray.hpp"
-#include "DOTk_SerialArray.cpp"
 #include "DOTk_DataMngCCSA.hpp"
 #include "DOTk_AlgorithmCCSA.hpp"
 #include "DOTk_SubProblemMMA.hpp"
+#include "DOTk_RoutinesTypeNP.hpp"
+#include "DOTk_RoutinesTypeLP.hpp"
 #include "DOTk_DualSolverNLCG.hpp"
 #include "DOTk_SubProblemGCMMA.hpp"
 #include "DOTk_BoundConstraints.hpp"
@@ -46,9 +45,9 @@ TEST(Bounds, setAndGetFunctions)
 TEST(Bounds, isDirectionFeasible)
 {
     size_t nvars = 10;
-    dotk::serial::array<Real> x(nvars, 3);
-    dotk::serial::array<Real> lower_bound(nvars, 1.);
-    dotk::serial::array<Real> upper_bound(nvars, 5.);
+    dotk::StdArray<Real> x(nvars, 3);
+    dotk::StdArray<Real> lower_bound(nvars, 1.);
+    dotk::StdArray<Real> upper_bound(nvars, 5.);
 
     // CASE 1: Feasible
     dotk::DOTk_BoundConstraints bounds;
@@ -62,25 +61,25 @@ TEST(Bounds, isDirectionFeasible)
 TEST(Bounds, computeFeasibleDirection)
 {
     size_t nvars = 10;
-    dotk::serial::array<Real> x(nvars, 3);
+    dotk::StdArray<Real> x(nvars, 3);
     x[0] = -1;
     x[4] = 6;
     x[8] = 7;
     x[9] = -2;
-    dotk::serial::array<Real> trial_step(nvars, -2.);
+    dotk::StdArray<Real> trial_step(nvars, -2.);
     trial_step[0] = 10;
     trial_step[4] = -10;
     trial_step[8] = -10;
     trial_step[9] = 10;
-    dotk::serial::array<Real> trial_variable(nvars);
-    dotk::serial::array<Real> feasible_direction(nvars);
-    dotk::serial::array<Real> lower_bound(nvars, 1.);
-    dotk::serial::array<Real> upper_bound(nvars, 5.);
+    dotk::StdArray<Real> trial_variable(nvars);
+    dotk::StdArray<Real> feasible_direction(nvars);
+    dotk::StdArray<Real> lower_bound(nvars, 1.);
+    dotk::StdArray<Real> upper_bound(nvars, 5.);
 
     dotk::DOTk_BoundConstraints bounds;
     bounds.computeFeasibleDirection(lower_bound, upper_bound, x, trial_step, trial_variable, feasible_direction);
 
-    dotk::serial::array<Real> gold(nvars, 2);
+    dotk::StdArray<Real> gold(nvars, 2);
     gold[0] = 4;
     gold[4] = 1;
     gold[9] = 3;
@@ -96,25 +95,25 @@ TEST(Bounds, computeFeasibleDirection)
 TEST(Bounds, computeFeasibleDirectionWithProjectionActive)
 {
     size_t nvars = 10;
-    dotk::serial::array<Real> x(nvars, 3);
+    dotk::StdArray<Real> x(nvars, 3);
     x[0] = -1;
     x[4] = 6;
     x[8] = 7;
     x[9] = -2;
-    dotk::serial::array<Real> trial_step(nvars, -5.);
+    dotk::StdArray<Real> trial_step(nvars, -5.);
     trial_step[0] = 10;
     trial_step[4] = -10;
     trial_step[8] = -10;
     trial_step[9] = 10;
-    dotk::serial::array<Real> trial_variable(nvars);
-    dotk::serial::array<Real> feasible_direction(nvars);
-    dotk::serial::array<Real> lower_bound(nvars, 1.);
-    dotk::serial::array<Real> upper_bound(nvars, 5.);
+    dotk::StdArray<Real> trial_variable(nvars);
+    dotk::StdArray<Real> feasible_direction(nvars);
+    dotk::StdArray<Real> lower_bound(nvars, 1.);
+    dotk::StdArray<Real> upper_bound(nvars, 5.);
 
     dotk::DOTk_BoundConstraints bounds;
     bounds.computeFeasibleDirection(lower_bound, upper_bound, x, trial_step, trial_variable, feasible_direction);
 
-    dotk::serial::array<Real> gold(nvars, 2.9951171875);
+    dotk::StdArray<Real> gold(nvars, 2.9951171875);
     gold[0] = 1;
     gold[4] = 5;
     gold[8] = 5;
@@ -131,19 +130,19 @@ TEST(Bounds, computeFeasibleDirectionWithProjectionActive)
 TEST(Bounds, project)
 {
     size_t nvars = 10;
-    dotk::serial::array<Real> x(nvars, 3);
+    dotk::StdArray<Real> x(nvars, 3);
     x[0] = -1;
     x[4] = 6;
     x[8] = 7;
     x[9] = -2;
-    dotk::serial::array<Real> lower_bound(nvars, 1.);
-    dotk::serial::array<Real> upper_bound(nvars, 5.);
+    dotk::StdArray<Real> lower_bound(nvars, 1.);
+    dotk::StdArray<Real> upper_bound(nvars, 5.);
 
     dotk::DOTk_BoundConstraints bounds;
     EXPECT_TRUE(bounds.active());
     bounds.project(lower_bound, upper_bound, x);
 
-    dotk::serial::array<Real> gold(nvars, 3);
+    dotk::StdArray<Real> gold(nvars, 3);
     gold[0] = 1;
     gold[4] = 5;
     gold[8] = 5;
@@ -154,8 +153,8 @@ TEST(Bounds, project)
 TEST(Bounds, pruneActive)
 {
     size_t nvars = 10;
-    dotk::serial::array<Real> gradient(nvars, 3);
-    dotk::serial::array<Real> active_set(nvars, 0.);
+    dotk::StdArray<Real> gradient(nvars, 3);
+    dotk::StdArray<Real> active_set(nvars, 0.);
     active_set[0] = 1;
     active_set[4] = 1;
     active_set[8] = 1;
@@ -164,7 +163,7 @@ TEST(Bounds, pruneActive)
     dotk::DOTk_BoundConstraints bounds;
     bounds.pruneActive(active_set, gradient);
 
-    dotk::serial::array<Real> gold(nvars, 3);
+    dotk::StdArray<Real> gold(nvars, 3);
     gold[0] = 0;
     gold[4] = 0;
     gold[8] = 0;
@@ -175,33 +174,33 @@ TEST(Bounds, pruneActive)
 TEST(Bounds, computeProjectedStep)
 {
     size_t nvars = 10;
-    dotk::serial::array<Real> trial_x(nvars, 3);
-    dotk::serial::array<Real> current_x(nvars, 1.);
-    dotk::serial::array<Real> projected_step(nvars);
+    dotk::StdArray<Real> trial_x(nvars, 3);
+    dotk::StdArray<Real> current_x(nvars, 1.);
+    dotk::StdArray<Real> projected_step(nvars);
 
     dotk::DOTk_BoundConstraints bounds;
     bounds.computeProjectedStep(trial_x, current_x, projected_step);
 
-    dotk::serial::array<Real> gold(nvars, 2);
+    dotk::StdArray<Real> gold(nvars, 2);
     dotk::gtest::checkResults(projected_step, gold);
 }
 
 TEST(Bounds, computeProjectedGradient)
 {
     size_t nvars = 10;
-    dotk::serial::array<Real> x(nvars, 3);
+    dotk::StdArray<Real> x(nvars, 3);
     x[0] = -1;
     x[4] = 6;
     x[8] = 7;
     x[9] = -2;
-    dotk::serial::array<Real> lower_bound(nvars, 1.);
-    dotk::serial::array<Real> upper_bound(nvars, 5.);
-    dotk::serial::array<Real> projected_gradient(nvars, -2.);
+    dotk::StdArray<Real> lower_bound(nvars, 1.);
+    dotk::StdArray<Real> upper_bound(nvars, 5.);
+    dotk::StdArray<Real> projected_gradient(nvars, -2.);
 
     dotk::DOTk_BoundConstraints bounds;
     bounds.computeProjectedGradient(x, lower_bound, upper_bound, projected_gradient);
 
-    dotk::serial::array<Real> gold(nvars, -2);
+    dotk::StdArray<Real> gold(nvars, -2);
     gold[0] = 0;
     gold[4] = 0;
     gold[8] = 0;
@@ -212,11 +211,11 @@ TEST(Bounds, computeProjectedGradient)
 TEST(Bounds, computeActiveAndInactiveSets)
 {
     size_t nvars = 10;
-    dotk::serial::array<Real> input(nvars, 3);
-    dotk::serial::array<Real> active(nvars, 0);
-    dotk::serial::array<Real> inactive(nvars, 0);
-    dotk::serial::array<Real> lower_bound(nvars, 1.);
-    dotk::serial::array<Real> upper_bound(nvars, 5.);
+    dotk::StdArray<Real> input(nvars, 3);
+    dotk::StdArray<Real> active(nvars, 0);
+    dotk::StdArray<Real> inactive(nvars, 0);
+    dotk::StdArray<Real> lower_bound(nvars, 1.);
+    dotk::StdArray<Real> upper_bound(nvars, 5.);
 
     input[0] = -1;
     input[3] = -1;
@@ -226,7 +225,7 @@ TEST(Bounds, computeActiveAndInactiveSets)
     bounds.computeActiveAndInactiveSets(input, lower_bound, upper_bound, active, inactive);
 
     // TEST 1: inactive set
-    dotk::serial::array<Real> gold(nvars, 1);
+    dotk::StdArray<Real> gold(nvars, 1);
     gold[0] = 0;
     gold[3] = 0;
     gold[7] = 0;
@@ -244,19 +243,19 @@ TEST(Bounds, computeActiveAndInactiveSets)
 TEST(Bounds, projectActive)
 {
     size_t nvars = 10;
-    dotk::serial::array<Real> x(nvars, 3);
+    dotk::StdArray<Real> x(nvars, 3);
     x[0] = -1;
     x[4] = 6;
     x[8] = 7;
     x[9] = -2;
-    dotk::serial::array<Real> active_set(nvars);
-    dotk::serial::array<Real> lower_bound(nvars, 1.);
-    dotk::serial::array<Real> upper_bound(nvars, 5.);
+    dotk::StdArray<Real> active_set(nvars);
+    dotk::StdArray<Real> lower_bound(nvars, 1.);
+    dotk::StdArray<Real> upper_bound(nvars, 5.);
 
     dotk::DOTk_BoundConstraints bounds;
     bounds.projectActive(lower_bound, upper_bound, x, active_set);
 
-    dotk::serial::array<Real> gold(nvars, 3);
+    dotk::StdArray<Real> gold(nvars, 3);
     gold[0] = 1;
     gold[4] = 5;
     gold[8] = 5;
@@ -274,8 +273,8 @@ TEST(Bounds, projectActive)
 TEST(DOTk_NLCG, fletcherReeves)
 {
     size_t nvars = 10;
-    dotk::serial::array<Real> new_steepest_descent(nvars, 1.);
-    dotk::serial::array<Real> old_steepest_descent(nvars, 5.);
+    dotk::StdArray<Real> new_steepest_descent(nvars, 1.);
+    dotk::StdArray<Real> old_steepest_descent(nvars, 5.);
 
     Real tolerance = 1e-8;
     Real gold = dotk::nlcg::fletcherReeves(new_steepest_descent, old_steepest_descent);
@@ -285,8 +284,8 @@ TEST(DOTk_NLCG, fletcherReeves)
 TEST(DOTk_NLCG, polakRibiere)
 {
     size_t nvars = 10;
-    dotk::serial::array<Real> new_steepest_descent(nvars, 1.);
-    dotk::serial::array<Real> old_steepest_descent(nvars, 5.);
+    dotk::StdArray<Real> new_steepest_descent(nvars, 1.);
+    dotk::StdArray<Real> old_steepest_descent(nvars, 5.);
 
     Real tolerance = 1e-8;
     Real gold = dotk::nlcg::polakRibiere(new_steepest_descent, old_steepest_descent);
@@ -296,9 +295,9 @@ TEST(DOTk_NLCG, polakRibiere)
 TEST(DOTk_NLCG, hestenesStiefel)
 {
     size_t nvars = 10;
-    dotk::serial::array<Real> old_trial_step(nvars, 3.);
-    dotk::serial::array<Real> new_steepest_descent(nvars, 1.);
-    dotk::serial::array<Real> old_steepest_descent(nvars, 5.);
+    dotk::StdArray<Real> old_trial_step(nvars, 3.);
+    dotk::StdArray<Real> new_steepest_descent(nvars, 1.);
+    dotk::StdArray<Real> old_steepest_descent(nvars, 5.);
 
     Real tolerance = 1e-8;
     Real gold = dotk::nlcg::hestenesStiefel(new_steepest_descent, old_steepest_descent, old_trial_step);
@@ -308,9 +307,9 @@ TEST(DOTk_NLCG, hestenesStiefel)
 TEST(DOTk_NLCG, daiYuan)
 {
     size_t nvars = 10;
-    dotk::serial::array<Real> old_trial_step(nvars, 3.);
-    dotk::serial::array<Real> new_steepest_descent(nvars, 1.);
-    dotk::serial::array<Real> old_steepest_descent(nvars, 5.);
+    dotk::StdArray<Real> old_trial_step(nvars, 3.);
+    dotk::StdArray<Real> new_steepest_descent(nvars, 1.);
+    dotk::StdArray<Real> old_steepest_descent(nvars, 5.);
 
     Real tolerance = 1e-8;
     Real gold = dotk::nlcg::daiYuan(new_steepest_descent, old_steepest_descent, old_trial_step);
@@ -320,9 +319,9 @@ TEST(DOTk_NLCG, daiYuan)
 TEST(DOTk_NLCG, liuStorey)
 {
     size_t nvars = 10;
-    dotk::serial::array<Real> old_trial_step(nvars, 3.);
-    dotk::serial::array<Real> new_steepest_descent(nvars, 1.);
-    dotk::serial::array<Real> old_steepest_descent(nvars, 5.);
+    dotk::StdArray<Real> old_trial_step(nvars, 3.);
+    dotk::StdArray<Real> new_steepest_descent(nvars, 1.);
+    dotk::StdArray<Real> old_steepest_descent(nvars, 5.);
 
     Real tolerance = 1e-8;
     Real gold = dotk::nlcg::liuStorey(new_steepest_descent, old_steepest_descent, old_trial_step);
@@ -332,9 +331,9 @@ TEST(DOTk_NLCG, liuStorey)
 TEST(DOTk_NLCG, conjugateDescent)
 {
     size_t nvars = 10;
-    dotk::serial::array<Real> old_trial_step(nvars, 3.);
-    dotk::serial::array<Real> new_steepest_descent(nvars, 1.);
-    dotk::serial::array<Real> old_steepest_descent(nvars, 5.);
+    dotk::StdArray<Real> old_trial_step(nvars, 3.);
+    dotk::StdArray<Real> new_steepest_descent(nvars, 1.);
+    dotk::StdArray<Real> old_steepest_descent(nvars, 5.);
 
     Real tolerance = 1e-8;
     Real gold = dotk::nlcg::conjugateDescent(new_steepest_descent, old_steepest_descent, old_trial_step);
@@ -348,14 +347,14 @@ TEST(DOTk_GcmmaTestOperators, inequality)
 
     size_t nvars = 5;
     Real tolerance = 1e-8;
-    dotk::serial::array<Real> control(nvars, 1.);
+    dotk::StdArray<Real> control(nvars, 1.);
     EXPECT_NEAR(125, operators.value(control), tolerance);
     EXPECT_NEAR(124, operators.residual(control), tolerance);
 
-    dotk::serial::array<Real> gradient(nvars);
+    dotk::StdArray<Real> gradient(nvars);
     operators.gradient(control, gradient);
 
-    dotk::serial::array<Real> gold(nvars);
+    dotk::StdArray<Real> gold(nvars);
     gold[0] = -183;
     gold[1] = -111;
     gold[2] = -57;
@@ -368,14 +367,14 @@ TEST(DOTk_GcmmaTestOperators, objective)
 {
     size_t nvars = 5;
     Real tolerance = 1e-8;
-    dotk::serial::array<Real> control(nvars, 1.);
+    dotk::StdArray<Real> control(nvars, 1.);
     dotk::DOTk_GcmmaTestObjectiveFunction operators;
     EXPECT_NEAR(0.312, operators.value(control), tolerance);
 
-    dotk::serial::array<Real> gradient(nvars);
+    dotk::StdArray<Real> gradient(nvars);
     operators.gradient(control, gradient);
 
-    dotk::serial::array<Real> gold(nvars);
+    dotk::StdArray<Real> gold(nvars);
     gold[0] = 0.0624;
     gold[1] = 0.0624;
     gold[2] = 0.0624;

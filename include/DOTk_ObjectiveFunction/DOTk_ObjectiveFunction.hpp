@@ -8,12 +8,15 @@
 #ifndef DOTK_OBJECTIVEFUNCTION_HPP_
 #define DOTK_OBJECTIVEFUNCTION_HPP_
 
+#include <vector>
+
 #include "vector.hpp"
+#include "DOTk_Types.hpp"
 
 namespace dotk
 {
 
-template<class Type>
+template<typename Type>
 class DOTk_ObjectiveFunction
 {
 public:

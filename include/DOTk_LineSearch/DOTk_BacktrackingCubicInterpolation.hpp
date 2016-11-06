@@ -8,6 +8,7 @@
 #ifndef DOTK_BACKTRACKINGCUBICINTERPOLATION_HPP_
 #define DOTK_BACKTRACKINGCUBICINTERPOLATION_HPP_
 
+#include <vector>
 #include "DOTk_LineSearch.hpp"
 
 namespace dotk

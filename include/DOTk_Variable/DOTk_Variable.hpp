@@ -8,13 +8,14 @@
 #ifndef DOTK_VARIABLE_HPP_
 #define DOTK_VARIABLE_HPP_
 
-#include <mpi.h>
+#include <tr1/memory>
+
 #include "DOTk_Types.hpp"
 
 namespace dotk
 {
 
-template<class T>
+template<typename Type>
 class vector;
 
 class DOTk_Variable
@@ -40,15 +41,9 @@ public:
     void setUpperBound(const dotk::vector<Real> & upper_bound_);
     const std::tr1::shared_ptr<dotk::vector<Real> > & upperBound() const;
 
+    void allocate(const dotk::vector<Real> & input_);
     void allocateSerialArray(size_t size_, Real value_);
-    void allocateMpiArray(MPI_Comm comm_, size_t size_, Real value_);
-    void allocateOmpArray(size_t size_, size_t num_threads_, Real value_);
-    void allocateMpixArray(MPI_Comm comm_, size_t num_threads_, size_t size_, Real value_);
-
     void allocateSerialVector(size_t size_, Real value_);
-    void allocateMpiVector(MPI_Comm comm_, size_t size_, Real value_);
-    void allocateOmpVector(size_t size_, size_t num_threads_, Real value_);
-    void allocateMpixVector(MPI_Comm comm_, size_t num_threads_, size_t size_, Real value_);
 
 private:
     void checkData();

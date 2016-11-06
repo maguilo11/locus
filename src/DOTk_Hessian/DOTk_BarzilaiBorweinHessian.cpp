@@ -5,6 +5,7 @@
  *      Author: Miguel A. Aguilo Valentin
  */
 
+#include <limits>
 #include "vector.hpp"
 #include "DOTk_OptimizationDataMng.hpp"
 #include "DOTk_BarzilaiBorweinHessian.hpp"

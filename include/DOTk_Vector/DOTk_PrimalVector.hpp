@@ -15,7 +15,7 @@ namespace dotk
 
 class DOTk_Primal;
 
-template<class Type>
+template<typename Type>
 class DOTk_PrimalVector: public dotk::vector<Type>
 {
 public:
@@ -60,15 +60,8 @@ public:
     virtual Type & operator [](size_t index_);
     // Operator overloads the const square bracket operator
     virtual const Type & operator [](size_t index_) const;
-    // Returns the dotk vector type
-    virtual dotk::types::container_t type() const;
 
 private:
-    // Returns the rank of the calling process in the communicator
-    virtual size_t rank() const;
-    // Returns shared pointer to dual vector
-    virtual const std::tr1::shared_ptr<dotk::vector<Type> > & dual() const;
-
     void initialize(const dotk::DOTk_Primal & primal_);
     void initialize(const dotk::vector<Type> & control_, const dotk::vector<Type> & state_);
 

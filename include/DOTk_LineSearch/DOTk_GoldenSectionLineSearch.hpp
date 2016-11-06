@@ -8,13 +8,14 @@
 #ifndef DOTK_GOLDENSECTIONLINESEARCH_HPP_
 #define DOTK_GOLDENSECTIONLINESEARCH_HPP_
 
+#include <vector>
 #include "DOTk_LineSearch.hpp"
 
 namespace dotk
 {
 
 class DOTk_OptimizationDataMng;
-template<class Type>
+template<typename Type>
 class vector;
 
 class DOTk_GoldenSectionLineSearch : public dotk::DOTk_LineSearch

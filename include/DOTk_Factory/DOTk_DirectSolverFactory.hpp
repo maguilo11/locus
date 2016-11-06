@@ -8,6 +8,9 @@
 #ifndef DOTK_DIRECTSOLVERFACTORY_HPP_
 #define DOTK_DIRECTSOLVERFACTORY_HPP_
 
+#include <string>
+#include <tr1/memory>
+
 namespace dotk
 {
 

@@ -5,8 +5,10 @@
  *      Author: Miguel A. Aguilo Valentin
  */
 
+#include <string>
 #include <fstream>
 #include <sstream>
+#include <iostream>
 
 #include "vector.hpp"
 #include "DOTk_VariablesUtils.hpp"

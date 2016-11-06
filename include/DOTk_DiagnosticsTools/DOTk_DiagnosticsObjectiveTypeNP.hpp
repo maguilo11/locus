@@ -18,7 +18,7 @@ namespace dotk
 class DOTk_State;
 class DOTk_Control;
 
-template<class Type>
+template<typename Type>
 class vector;
 
 class DOTk_DiagnosticsObjectiveTypeNP : public dotk::DOTk_DerivativeDiagnosticsTool

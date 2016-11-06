@@ -9,7 +9,6 @@
 
 #include "DOTk_Primal.hpp"
 #include "DOTk_SerialVector.hpp"
-#include "DOTk_SerialVector.cpp"
 #include "DOTk_LineSearchMngTypeULP.hpp"
 
 #include "DOTk_AssemblyManager.hpp"
@@ -28,7 +27,7 @@ TEST(LineSearchMngTypeULP, getTrialStep)
 
     EXPECT_EQ(ncontrols, mng.getTrialStep()->size());
     EXPECT_EQ(1, mng.getTrialStep().use_count());
-    dotk::serial::vector<Real> gold(ncontrols, 0.);
+    dotk::StdVector<Real> gold(ncontrols, 0.);
     dotk::gtest::checkResults(*(mng.getTrialStep()), gold);
     dotk::gtest::checkResults(*(mng.getTrialStep()), gold);
 }
@@ -41,7 +40,7 @@ TEST(LineSearchMngTypeULP, setTrialStep)
     dotk::DOTk_LineSearchMngTypeULP mng(primal);
 
     mng.setTrialStep(*primal->control());
-    dotk::serial::vector<Real> gold(ncontrols, 2.);
+    dotk::StdVector<Real> gold(ncontrols, 2.);
     dotk::gtest::checkResults(*(mng.getTrialStep()), gold);
 }
 
@@ -54,7 +53,7 @@ TEST(LineSearchMngTypeULP, getHessTimesVec)
 
     EXPECT_EQ(ncontrols, mng.getMatrixTimesVector()->size());
     EXPECT_EQ(1, mng.getMatrixTimesVector().use_count());
-    dotk::serial::vector<Real> gold(ncontrols, 0.);
+    dotk::StdVector<Real> gold(ncontrols, 0.);
     dotk::gtest::checkResults(*(mng.getMatrixTimesVector()), gold);
 }
 
@@ -84,7 +83,7 @@ TEST(LineSearchMngTypeULP, getPrimal)
     EXPECT_EQ(ncontrols, mng.getNewPrimal()->size());
     EXPECT_EQ(1, mng.getOldPrimal().use_count());
     EXPECT_EQ(1, mng.getNewPrimal().use_count());
-    dotk::serial::vector<Real> gold(ncontrols, 0.);
+    dotk::StdVector<Real> gold(ncontrols, 0.);
     dotk::gtest::checkResults(*mng.getOldPrimal(), gold);
     dotk::gtest::checkResults(*mng.getOldPrimal(), gold);
     gold.fill(2.);
@@ -103,7 +102,7 @@ TEST(LineSearchMngTypeULP, setPrimal)
     map->fill(2);
     mng.setOldPrimal(*map);
 
-    dotk::serial::vector<Real> gold(ncontrols, 2.);
+    dotk::StdVector<Real> gold(ncontrols, 2.);
     dotk::gtest::checkResults(*(mng.getOldPrimal()), gold);
 
     mng.setNewPrimal(gold);
@@ -121,7 +120,7 @@ TEST(LineSearchMngTypeULP, getGradient)
     EXPECT_EQ(ncontrols, mng.getNewGradient()->size());
     EXPECT_EQ(1, mng.getOldGradient().use_count());
     EXPECT_EQ(1, mng.getNewGradient().use_count());
-    dotk::serial::vector<Real> gold(ncontrols, 0.);
+    dotk::StdVector<Real> gold(ncontrols, 0.);
     dotk::gtest::checkResults(*mng.getOldGradient(), gold);
     dotk::gtest::checkResults(*mng.getOldGradient(), gold);
     dotk::gtest::checkResults(*mng.getNewGradient(), gold);
@@ -139,7 +138,7 @@ TEST(LineSearchMngTypeULP, setGradient)
     map->fill(2);
     mng.setOldGradient(*map);
 
-    dotk::serial::vector<Real> gold(ncontrols, 2.);
+    dotk::StdVector<Real> gold(ncontrols, 2.);
     dotk::gtest::checkResults(*(mng.getOldGradient()), gold);
 
     mng.setNewGradient(gold);
@@ -174,7 +173,7 @@ TEST(LineSearchMngTypeULP, Fval_P)
     control[0]->copy(*primal->control());
     control[1]->copy(*primal->control());
     size_t numvars = 2;
-    dotk::serial::vector<Real> gold(numvars, 401.);
+    dotk::StdVector<Real> gold(numvars, 401.);
     mng.getRoutinesMng()->objective(control, fval);
 
     dotk::gtest::checkResults(*fval, gold);
@@ -193,7 +192,7 @@ TEST(LineSearchMngTypeULP, Grad)
     vector->fill(2);
     mng.getRoutinesMng()->gradient(vector, grad);
 
-    dotk::serial::vector<Real> gold(ncontrols, 0.);
+    dotk::StdVector<Real> gold(ncontrols, 0.);
     gold[0] = 1602.;
     gold[1] = -400.;
     dotk::gtest::checkResults(*grad, gold);
@@ -215,7 +214,7 @@ TEST(LineSearchMngTypeULP, Hess)
     trial_step->fill(1);
     mng.getRoutinesMng()->hessian(vector, trial_step, hess);
 
-    dotk::serial::vector<Real> gold(ncontrols, 0.);
+    dotk::StdVector<Real> gold(ncontrols, 0.);
     gold[0] = 3202.;
     gold[1] = -600.;
     dotk::gtest::checkResults(*hess, gold);

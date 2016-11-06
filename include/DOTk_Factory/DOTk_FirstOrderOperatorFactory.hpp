@@ -8,6 +8,9 @@
 #ifndef DOTK_FIRSTORDEROPERATORFACTORY_HPP_
 #define DOTK_FIRSTORDEROPERATORFACTORY_HPP_
 
+#include <tr1/memory>
+#include <DOTk_Types.hpp>
+
 namespace dotk
 {
 

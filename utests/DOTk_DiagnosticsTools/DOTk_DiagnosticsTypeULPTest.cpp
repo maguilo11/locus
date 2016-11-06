@@ -7,16 +7,14 @@
 
 #include "gtest/gtest.h"
 
-#include "DOTk_Rosenbrock.hpp"
 #include "DOTk_Control.hpp"
+#include "DOTk_Rosenbrock.hpp"
 #include "DOTk_SerialVector.hpp"
-#include "DOTk_SerialVector.cpp"
-#include "DOTk_OptimizationDataMng.hpp"
-
 #include "DOTk_EqualityTypeLP.hpp"
 #include "DOTk_ObjectiveTypeLP.hpp"
 #include "DOTk_InequalityTypeLP.hpp"
 #include "DOTk_DiagnosticsTypeLP.hpp"
+#include "DOTk_OptimizationDataMng.hpp"
 
 namespace DOTkDiagnosticsTypeULPTest
 {
@@ -27,7 +25,7 @@ TEST(DOTk_DerivativeDiagnosticsTool, checkCodomainDimensions)
 
     std::ostringstream msg;
     size_t num_controls = 0;
-    std::tr1::shared_ptr< dotk::vector<Real> > field(new dotk::serial::vector<Real>(num_controls, 0.));
+    std::tr1::shared_ptr< dotk::vector<Real> > field(new dotk::StdVector<Real>(num_controls, 0.));
     std::string function_name("FUNCTION NAME");
     diagnostic.checkCodomainDimensions(field, function_name, msg);
 
@@ -41,7 +39,7 @@ TEST(DOTk_DerivativeDiagnosticsTool, checkDomainDimensions)
 
     std::ostringstream msg;
     size_t num_controls = 0;
-    std::tr1::shared_ptr< dotk::vector<Real> > field(new dotk::serial::vector<Real>(num_controls, 0.));
+    std::tr1::shared_ptr< dotk::vector<Real> > field(new dotk::StdVector<Real>(num_controls, 0.));
     std::string function_name("FUNCTION NAME");
     diagnostic.checkDomainDimensions(field, function_name, msg);
 
@@ -68,7 +66,7 @@ TEST(DOTk_DiagnosticsTypeLP, checkFirstDerivative)
     // TEST 1: CHECK DERIVATIVE OPERATOR
     std::ostringstream msg;
     size_t num_controls = 2;
-    dotk::serial::vector<Real> data(num_controls, 0.);
+    dotk::StdVector<Real> data(num_controls, 0.);
     dotk::DOTk_Control control(data);
     objective_function.checkObjectiveGradient(control, msg);
     EXPECT_EQ(dotk::types::CONTROL, objective_function.getCodomain());
@@ -78,7 +76,7 @@ TEST(DOTk_DiagnosticsTypeLP, checkFirstDerivative)
     // TEST 2: INVALID CODOMAIN DIMENSIONS
     msg.str("");
     num_controls = 0;
-    dotk::serial::vector<Real> empty_data(num_controls, 2.);
+    dotk::StdVector<Real> empty_data(num_controls, 2.);
     dotk::DOTk_Control empty_control(empty_data);
     objective_function.checkObjectiveGradient(empty_control, msg);
 
@@ -99,7 +97,7 @@ TEST(DOTk_DiagnosticsTypeLP, checkSecondDerivative)
     // TEST 1: CHECK DERIVATIVE OPERATOR
     std::ostringstream msg;
     size_t num_controls = 2;
-    dotk::serial::vector<Real> data(num_controls, 2.);
+    dotk::StdVector<Real> data(num_controls, 2.);
     dotk::DOTk_Control control(data);
     objective_function.checkObjectiveHessian(control, msg);
     EXPECT_EQ(dotk::types::CONTROL, objective_function.getCodomain());
@@ -109,7 +107,7 @@ TEST(DOTk_DiagnosticsTypeLP, checkSecondDerivative)
     // TEST 2: INVALID CODOMAIN DIMENSIONS
     msg.str("");
     num_controls = 0;
-    dotk::serial::vector<Real> empty_data(num_controls, 2.);
+    dotk::StdVector<Real> empty_data(num_controls, 2.);
     dotk::DOTk_Control empty_control(empty_data);
     objective_function.checkObjectiveHessian(empty_control, msg);
 

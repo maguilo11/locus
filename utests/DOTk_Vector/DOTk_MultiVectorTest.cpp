@@ -8,7 +8,6 @@
 #include "gtest/gtest.h"
 
 #include "DOTk_SerialArray.hpp"
-#include "DOTk_SerialArray.cpp"
 #include "DOTk_MultiVector.hpp"
 #include "DOTk_MultiVector.cpp"
 #include "DOTk_GtestDOTkVecTools.hpp"
@@ -20,11 +19,10 @@ TEST(DOTkMultiVariableVector, scale)
 {
     size_t num_duals = 10;
     size_t num_controls = 8;
-    dotk::serial::array<Real> duals(num_duals, 1.);
-    dotk::serial::array<Real> control(num_controls, 2.);
+    dotk::StdArray<Real> duals(num_duals, 1.);
+    dotk::StdArray<Real> control(num_controls, 2.);
     dotk::DOTk_MultiVector<Real> multi_vector(control, duals);
 
-    EXPECT_TRUE(multi_vector.type() == dotk::types::container_t::MULTI_VECTOR);
     size_t dim = num_duals + num_controls;
     EXPECT_TRUE(multi_vector.size() == dim);
     EXPECT_TRUE(multi_vector.dual()->size() == num_duals);
@@ -44,8 +42,8 @@ TEST(DOTkMultiVariableVector, cwiseProd)
 {
     size_t num_duals = 10;
     size_t num_controls = 8;
-    dotk::serial::array<Real> dual(num_duals, 2.);
-    dotk::serial::array<Real> control(num_controls, 3.);
+    dotk::StdArray<Real> dual(num_duals, 2.);
+    dotk::StdArray<Real> control(num_controls, 3.);
     dotk::DOTk_MultiVector<Real> x(control, dual);
     dotk::DOTk_MultiVector<Real> y(control, dual);
     x.cwiseProd(y);
@@ -61,8 +59,8 @@ TEST(DOTkMultiVariableVector, axpy)
 {
     size_t num_duals = 10;
     size_t num_controls = 8;
-    dotk::serial::array<Real> dual(num_duals, 1.);
-    dotk::serial::array<Real> control(num_controls, 2.);
+    dotk::StdArray<Real> dual(num_duals, 1.);
+    dotk::StdArray<Real> control(num_controls, 2.);
     dotk::DOTk_MultiVector<Real> multi_vector(control, dual);
 
     dotk::DOTk_MultiVector<Real> input(control, dual);
@@ -79,8 +77,8 @@ TEST(DOTkMultiVariableVector, max)
 {
     size_t num_duals = 10;
     size_t num_controls = 8;
-    dotk::serial::array<Real> dual(num_duals, 1.);
-    dotk::serial::array<Real> control(num_controls, 2.);
+    dotk::StdArray<Real> dual(num_duals, 1.);
+    dotk::StdArray<Real> control(num_controls, 2.);
     dotk::DOTk_MultiVector<Real> multi_vector(control, dual);
 
     Real value = multi_vector.max();
@@ -93,8 +91,8 @@ TEST(DOTkMultiVariableVector, min)
 {
     size_t num_duals = 10;
     size_t num_controls = 8;
-    dotk::serial::array<Real> dual(num_duals, 1.);
-    dotk::serial::array<Real> control(num_controls, 2.);
+    dotk::StdArray<Real> dual(num_duals, 1.);
+    dotk::StdArray<Real> control(num_controls, 2.);
     dotk::DOTk_MultiVector<Real> multi_vector(control, dual);
 
     Real value = multi_vector.min();
@@ -107,8 +105,8 @@ TEST(DOTkMultiVariableVector, abs)
 {
     size_t num_duals = 10;
     size_t num_controls = 8;
-    dotk::serial::array<Real> dual(num_duals, -1.);
-    dotk::serial::array<Real> control(num_controls, -2.);
+    dotk::StdArray<Real> dual(num_duals, -1.);
+    dotk::StdArray<Real> control(num_controls, -2.);
     dotk::DOTk_MultiVector<Real> multi_vector(control, dual);
 
     multi_vector.abs();
@@ -124,8 +122,8 @@ TEST(DOTkMultiVariableVector, sum)
 {
     size_t num_duals = 10;
     size_t num_controls = 8;
-    dotk::serial::array<Real> dual(num_duals, 1.);
-    dotk::serial::array<Real> control(num_controls, -2.);
+    dotk::StdArray<Real> dual(num_duals, 1.);
+    dotk::StdArray<Real> control(num_controls, -2.);
     dotk::DOTk_MultiVector<Real> multi_vector(control, dual);
 
     Real value = multi_vector.sum();
@@ -138,8 +136,8 @@ TEST(DOTkMultiVariableVector, dot)
 {
     size_t num_duals = 10;
     size_t num_controls = 8;
-    dotk::serial::array<Real> dual(num_duals, 1.);
-    dotk::serial::array<Real> control(num_controls, 2.);
+    dotk::StdArray<Real> dual(num_duals, 1.);
+    dotk::StdArray<Real> control(num_controls, 2.);
     dotk::DOTk_MultiVector<Real> multi_vector(control, dual);
 
     dual.fill(1.);
@@ -156,8 +154,8 @@ TEST(DOTkMultiVariableVector, norm)
 {
     size_t num_duals = 10;
     size_t num_controls = 8;
-    dotk::serial::array<Real> dual(num_duals, 1.);
-    dotk::serial::array<Real> control(num_controls, 2.);
+    dotk::StdArray<Real> dual(num_duals, 1.);
+    dotk::StdArray<Real> control(num_controls, 2.);
     dotk::DOTk_MultiVector<Real> multi_vector(control, dual);
 
     Real value = multi_vector.norm();
@@ -170,8 +168,8 @@ TEST(DOTkMultiVariableVector, fill)
 {
     size_t num_duals = 10;
     size_t num_controls = 8;
-    dotk::serial::array<Real> dual(num_duals, 1.);
-    dotk::serial::array<Real> control(num_controls, 2.);
+    dotk::StdArray<Real> dual(num_duals, 1.);
+    dotk::StdArray<Real> control(num_controls, 2.);
     dotk::DOTk_MultiVector<Real> multi_vector(control, dual);
 
     multi_vector.fill(4);
@@ -187,8 +185,8 @@ TEST(DOTkMultiVariableVector, copy)
 {
     size_t num_duals = 10;
     size_t num_controls = 8;
-    dotk::serial::array<Real> dual(num_duals, 1.);
-    dotk::serial::array<Real> control(num_controls, 2.);
+    dotk::StdArray<Real> dual(num_duals, 1.);
+    dotk::StdArray<Real> control(num_controls, 2.);
     dotk::DOTk_MultiVector<Real> multi_vector(control, dual);
 
     std::tr1::shared_ptr<dotk::vector<Real> > input = multi_vector.clone();
@@ -208,8 +206,8 @@ TEST(DOTkMultiVariableVector, gather)
 {
     size_t num_duals = 10;
     size_t num_controls = 8;
-    dotk::serial::array<Real> dual(num_duals, 1.);
-    dotk::serial::array<Real> control(num_controls, 2.);
+    dotk::StdArray<Real> dual(num_duals, 1.);
+    dotk::StdArray<Real> control(num_controls, 2.);
     dotk::DOTk_MultiVector<Real> multi_vector(control, dual);
     EXPECT_TRUE(multi_vector.size() == 18);
 
@@ -224,8 +222,8 @@ TEST(DOTkMultiVariableVector, operator_braket)
 {
     size_t num_duals = 10;
     size_t num_controls = 8;
-    dotk::serial::array<Real> dual(num_duals, 1.);
-    dotk::serial::array<Real> control(num_controls, 2.);
+    dotk::StdArray<Real> dual(num_duals, 1.);
+    dotk::StdArray<Real> control(num_controls, 2.);
     dotk::DOTk_MultiVector<Real> multi_vector(control, dual);
 
     for(size_t index = 0; index < multi_vector.size(); ++index)
@@ -245,12 +243,11 @@ TEST(DOTkMultiVariableVector, scale2)
     size_t num_duals = 10;
     size_t num_states = 6;
     size_t num_controls = 8;
-    dotk::serial::array<Real> duals(num_duals, 1.);
-    dotk::serial::array<Real> state(num_states, 3.);
-    dotk::serial::array<Real> control(num_controls, 2.);
+    dotk::StdArray<Real> duals(num_duals, 1.);
+    dotk::StdArray<Real> state(num_states, 3.);
+    dotk::StdArray<Real> control(num_controls, 2.);
     dotk::DOTk_MultiVector<Real> multi_vector(control, state, duals);
 
-    EXPECT_TRUE(multi_vector.type() == dotk::types::container_t::MULTI_VECTOR);
     size_t dim = num_duals + num_controls + num_states;
     EXPECT_TRUE(multi_vector.size() == dim);
     EXPECT_TRUE(multi_vector.dual()->size() == num_duals);
@@ -273,9 +270,9 @@ TEST(DOTkMultiVariableVector, cwiseProd2)
     size_t num_duals = 10;
     size_t num_states = 6;
     size_t num_controls = 8;
-    dotk::serial::array<Real> dual(num_duals, 2.);
-    dotk::serial::array<Real> state(num_states, 4.);
-    dotk::serial::array<Real> control(num_controls, 3.);
+    dotk::StdArray<Real> dual(num_duals, 2.);
+    dotk::StdArray<Real> state(num_states, 4.);
+    dotk::StdArray<Real> control(num_controls, 3.);
     dotk::DOTk_MultiVector<Real> x(control, state, dual);
     dotk::DOTk_MultiVector<Real> y(control, state, dual);
     x.cwiseProd(y);
@@ -294,9 +291,9 @@ TEST(DOTkMultiVariableVector, axpy2)
     size_t num_duals = 10;
     size_t num_states = 6;
     size_t num_controls = 8;
-    dotk::serial::array<Real> dual(num_duals, 1.);
-    dotk::serial::array<Real> state(num_states, 3.);
-    dotk::serial::array<Real> control(num_controls, 2.);
+    dotk::StdArray<Real> dual(num_duals, 1.);
+    dotk::StdArray<Real> state(num_states, 3.);
+    dotk::StdArray<Real> control(num_controls, 2.);
     dotk::DOTk_MultiVector<Real> multi_vector(control, state, dual);
 
     dotk::DOTk_MultiVector<Real> input(control, state, dual);
@@ -316,9 +313,9 @@ TEST(DOTkMultiVariableVector, max2)
     size_t num_duals = 10;
     size_t num_states = 6;
     size_t num_controls = 8;
-    dotk::serial::array<Real> dual(num_duals, 1.);
-    dotk::serial::array<Real> state(num_states, 3.);
-    dotk::serial::array<Real> control(num_controls, 2.);
+    dotk::StdArray<Real> dual(num_duals, 1.);
+    dotk::StdArray<Real> state(num_states, 3.);
+    dotk::StdArray<Real> control(num_controls, 2.);
     dotk::DOTk_MultiVector<Real> multi_vector(control, state, dual);
 
     Real value = multi_vector.max();
@@ -332,9 +329,9 @@ TEST(DOTkMultiVariableVector, min2)
     size_t num_duals = 10;
     size_t num_states = 6;
     size_t num_controls = 8;
-    dotk::serial::array<Real> dual(num_duals, 1.);
-    dotk::serial::array<Real> state(num_states, 3.);
-    dotk::serial::array<Real> control(num_controls, 2.);
+    dotk::StdArray<Real> dual(num_duals, 1.);
+    dotk::StdArray<Real> state(num_states, 3.);
+    dotk::StdArray<Real> control(num_controls, 2.);
     dotk::DOTk_MultiVector<Real> multi_vector(control, state, dual);
 
     Real value = multi_vector.min();
@@ -348,9 +345,9 @@ TEST(DOTkMultiVariableVector, abs2)
     size_t num_duals = 10;
     size_t num_states = 6;
     size_t num_controls = 8;
-    dotk::serial::array<Real> dual(num_duals, -1.);
-    dotk::serial::array<Real> state(num_states, -3.);
-    dotk::serial::array<Real> control(num_controls, -2.);
+    dotk::StdArray<Real> dual(num_duals, -1.);
+    dotk::StdArray<Real> state(num_states, -3.);
+    dotk::StdArray<Real> control(num_controls, -2.);
     dotk::DOTk_MultiVector<Real> multi_vector(control, state, dual);
 
     multi_vector.abs();
@@ -369,9 +366,9 @@ TEST(DOTkMultiVariableVector, sum2)
     size_t num_duals = 10;
     size_t num_states = 6;
     size_t num_controls = 8;
-    dotk::serial::array<Real> dual(num_duals, 1.);
-    dotk::serial::array<Real> state(num_states, 3.);
-    dotk::serial::array<Real> control(num_controls, -2.);
+    dotk::StdArray<Real> dual(num_duals, 1.);
+    dotk::StdArray<Real> state(num_states, 3.);
+    dotk::StdArray<Real> control(num_controls, -2.);
     dotk::DOTk_MultiVector<Real> multi_vector(control, state, dual);
 
     Real value = multi_vector.sum();
@@ -385,9 +382,9 @@ TEST(DOTkMultiVariableVector, dot2)
     size_t num_duals = 10;
     size_t num_states = 6;
     size_t num_controls = 8;
-    dotk::serial::array<Real> dual(num_duals, 1.);
-    dotk::serial::array<Real> state(num_states, 3.);
-    dotk::serial::array<Real> control(num_controls, 2.);
+    dotk::StdArray<Real> dual(num_duals, 1.);
+    dotk::StdArray<Real> state(num_states, 3.);
+    dotk::StdArray<Real> control(num_controls, 2.);
     dotk::DOTk_MultiVector<Real> multi_vector(control, state, dual);
 
     dual.fill(1.);
@@ -406,9 +403,9 @@ TEST(DOTkMultiVariableVector, norm2)
     size_t num_duals = 10;
     size_t num_states = 6;
     size_t num_controls = 8;
-    dotk::serial::array<Real> dual(num_duals, 1.);
-    dotk::serial::array<Real> state(num_states, 3.);
-    dotk::serial::array<Real> control(num_controls, 2.);
+    dotk::StdArray<Real> dual(num_duals, 1.);
+    dotk::StdArray<Real> state(num_states, 3.);
+    dotk::StdArray<Real> control(num_controls, 2.);
     dotk::DOTk_MultiVector<Real> multi_vector(control, state, dual);
 
     Real value = multi_vector.norm();
@@ -422,9 +419,9 @@ TEST(DOTkMultiVariableVector, fill2)
     size_t num_duals = 10;
     size_t num_states = 6;
     size_t num_controls = 8;
-    dotk::serial::array<Real> dual(num_duals, 1.);
-    dotk::serial::array<Real> state(num_states, 3.);
-    dotk::serial::array<Real> control(num_controls, 2.);
+    dotk::StdArray<Real> dual(num_duals, 1.);
+    dotk::StdArray<Real> state(num_states, 3.);
+    dotk::StdArray<Real> control(num_controls, 2.);
     dotk::DOTk_MultiVector<Real> multi_vector(control, state, dual);
 
     multi_vector.fill(4);
@@ -443,9 +440,9 @@ TEST(DOTkMultiVariableVector, copy2)
     size_t num_duals = 10;
     size_t num_states = 6;
     size_t num_controls = 8;
-    dotk::serial::array<Real> dual(num_duals, 1.);
-    dotk::serial::array<Real> state(num_states, 3.);
-    dotk::serial::array<Real> control(num_controls, 2.);
+    dotk::StdArray<Real> dual(num_duals, 1.);
+    dotk::StdArray<Real> state(num_states, 3.);
+    dotk::StdArray<Real> control(num_controls, 2.);
     dotk::DOTk_MultiVector<Real> multi_vector(control, state, dual);
 
     std::tr1::shared_ptr<dotk::vector<Real> > input = multi_vector.clone();
@@ -469,9 +466,9 @@ TEST(DOTkMultiVariableVector, gather2)
     size_t num_duals = 10;
     size_t num_states = 6;
     size_t num_controls = 8;
-    dotk::serial::array<Real> dual(num_duals, 1.);
-    dotk::serial::array<Real> state(num_states, 3.);
-    dotk::serial::array<Real> control(num_controls, 2.);
+    dotk::StdArray<Real> dual(num_duals, 1.);
+    dotk::StdArray<Real> state(num_states, 3.);
+    dotk::StdArray<Real> control(num_controls, 2.);
     dotk::DOTk_MultiVector<Real> multi_vector(control, state, dual);
     EXPECT_TRUE(multi_vector.size() == 24);
 
@@ -488,9 +485,9 @@ TEST(DOTkMultiVariableVector, operator_braket2)
     size_t num_duals = 10;
     size_t num_states = 6;
     size_t num_controls = 8;
-    dotk::serial::array<Real> dual(num_duals, 1.);
-    dotk::serial::array<Real> state(num_states, 3.);
-    dotk::serial::array<Real> control(num_controls, 2.);
+    dotk::StdArray<Real> dual(num_duals, 1.);
+    dotk::StdArray<Real> state(num_states, 3.);
+    dotk::StdArray<Real> control(num_controls, 2.);
     dotk::DOTk_MultiVector<Real> multi_vector(control, state, dual);
 
     for(size_t index = 0; index < multi_vector.size(); ++index)

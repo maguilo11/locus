@@ -7,15 +7,14 @@
 
 #include "gtest/gtest.h"
 
-#include "DOTk_AssemblyManager.hpp"
-#include "DOTk_Rosenbrock.hpp"
 #include "DOTk_Primal.hpp"
 #include "DOTk_MathUtils.hpp"
 #include "DOTk_LineSearch.hpp"
+#include "DOTk_Rosenbrock.hpp"
 #include "DOTk_SerialArray.hpp"
-#include "DOTk_SerialArray.cpp"
 #include "DOTk_ColumnMatrix.hpp"
 #include "DOTk_ColumnMatrix.cpp"
+#include "DOTk_AssemblyManager.hpp"
 #include "DOTk_GradBasedIoUtils.hpp"
 #include "DOTk_GtestDOTkVecTools.hpp"
 #include "DOTk_FirstOrderOperator.hpp"

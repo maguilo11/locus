@@ -11,7 +11,6 @@
 #include "DOTk_RowMatrix.hpp"
 #include "DOTk_RowMatrix.cpp"
 #include "DOTk_SerialArray.hpp"
-#include "DOTk_SerialArray.cpp"
 #include "DOTk_GtestDOTkVecTools.hpp"
 
 namespace DOTkRowMatrixTest
@@ -21,7 +20,7 @@ TEST(RowMatrix, Copy)
 {
     size_t ncols = 10;
     size_t nrows = 3;
-    dotk::serial::array<Real> x(ncols);
+    dotk::StdArray<Real> x(ncols);
     dotk::serial::DOTk_RowMatrix<Real> matrix(x, nrows);
 
     EXPECT_TRUE(30u == matrix.size());
@@ -62,7 +61,7 @@ TEST(RowMatrix, RowMajorCopy)
 {
     size_t ncols = 10;
     size_t nrows = 3;
-    dotk::serial::array<Real> x(ncols);
+    dotk::StdArray<Real> x(ncols);
     dotk::serial::DOTk_RowMatrix<Real> matrix(x, nrows);
 
     Real data[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
@@ -70,7 +69,7 @@ TEST(RowMatrix, RowMajorCopy)
                    21, 22, 23, 24, 25, 26, 27, 28, 29, 30};
     matrix.copy(30, data);
 
-    dotk::serial::array<Real> gold(ncols);
+    dotk::StdArray<Real> gold(ncols);
 
     Real start = 0.;
     int my_rank;
@@ -108,10 +107,10 @@ TEST(RowMatrix, ColumnMajorCopy)
 {
     size_t ncols = 10;
     size_t nrows = 3;
-    dotk::serial::array<Real> x(ncols);
+    dotk::StdArray<Real> x(ncols);
     dotk::serial::DOTk_RowMatrix<Real> matrix(x, nrows);
 
-    dotk::serial::array<Real> gold(nrows);
+    dotk::StdArray<Real> gold(nrows);
 
     Real start = 0.;
     int my_rank;
@@ -151,7 +150,7 @@ TEST(RowMatrix, RowMajorDot)
 {
     size_t ncols = 10;
     size_t nrows = 3;
-    dotk::serial::array<Real> x(ncols);
+    dotk::StdArray<Real> x(ncols);
     dotk::serial::DOTk_RowMatrix<Real> matrix(x, nrows);
 
     Real data[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
@@ -160,7 +159,7 @@ TEST(RowMatrix, RowMajorDot)
     matrix.copy(30, data);
 
     std::vector<Real> results(nrows, 0.);
-    dotk::serial::array<Real> input(ncols, 1.);
+    dotk::StdArray<Real> input(ncols, 1.);
 
     Real start = 0.;
     int my_rank;
@@ -195,7 +194,7 @@ TEST(RowMatrix, ColumnMajorDot)
 {
     size_t ncols = 10;
     size_t nrows = 3;
-    dotk::serial::array<Real> x(ncols);
+    dotk::StdArray<Real> x(ncols);
     dotk::serial::DOTk_RowMatrix<Real> matrix(x, nrows);
 
     Real data[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
@@ -204,7 +203,7 @@ TEST(RowMatrix, ColumnMajorDot)
     matrix.copy(30, data);
 
     std::vector<Real> results(ncols, 0.);
-    dotk::serial::array<Real> input(nrows, 1.);
+    dotk::StdArray<Real> input(nrows, 1.);
 
     Real start = 0.;
     int my_rank;
@@ -239,7 +238,7 @@ TEST(RowMatrix, RowMajorNorm)
 {
     size_t ncols = 10;
     size_t nrows = 3;
-    dotk::serial::array<Real> x(ncols);
+    dotk::StdArray<Real> x(ncols);
     dotk::serial::DOTk_RowMatrix<Real> matrix(x, nrows);
 
     Real data[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
@@ -283,7 +282,7 @@ TEST(RowMatrix, ColumnMajorNorm)
 {
     size_t ncols = 10;
     size_t nrows = 3;
-    dotk::serial::array<Real> x(ncols);
+    dotk::StdArray<Real> x(ncols);
     dotk::serial::DOTk_RowMatrix<Real> matrix(x, nrows);
 
     Real data[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
@@ -328,7 +327,7 @@ TEST(RowMatrix, RowMajorScale)
 {
     size_t ncols = 10;
     size_t nrows = 3;
-    dotk::serial::array<Real> x(ncols);
+    dotk::StdArray<Real> x(ncols);
     dotk::serial::DOTk_RowMatrix<Real> matrix(x, nrows);
 
     Real input[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
@@ -371,7 +370,7 @@ TEST(RowMatrix, ColumnMajorScale)
 {
     size_t ncols = 10;
     size_t nrows = 3;
-    dotk::serial::array<Real> x(ncols);
+    dotk::StdArray<Real> x(ncols);
     dotk::serial::DOTk_RowMatrix<Real> matrix(x, nrows);
 
     Real input[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
@@ -414,7 +413,7 @@ TEST(RowMatrix, RowMajorAxpy)
 {
     size_t ncols = 10;
     size_t nrows = 3;
-    dotk::serial::array<Real> x(ncols);
+    dotk::StdArray<Real> x(ncols);
     dotk::serial::DOTk_RowMatrix<Real> matrix(x, nrows);
 
     Real input_data[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
@@ -423,7 +422,7 @@ TEST(RowMatrix, RowMajorAxpy)
     matrix.copy(30, input_data);
 
     Real alpha = 2.;
-    dotk::serial::array<Real> input(ncols, 1.);
+    dotk::StdArray<Real> input(ncols, 1.);
 
     Real start = 0.;
     int my_rank;
@@ -461,7 +460,7 @@ TEST(RowMatrix, ColumnMajorAxpy)
 {
     size_t nrows = 3;
     size_t ncols = 10;
-    dotk::serial::array<Real> x(ncols);
+    dotk::StdArray<Real> x(ncols);
     dotk::serial::DOTk_RowMatrix<Real> matrix(x, nrows);
 
     Real input_data[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
@@ -471,7 +470,7 @@ TEST(RowMatrix, ColumnMajorAxpy)
 
     Real alpha = 2.;
     size_t column_index = 8;
-    dotk::serial::array<Real> input(nrows, 1.);
+    dotk::StdArray<Real> input(nrows, 1.);
 
     Real start = 0.;
     int my_rank;
@@ -506,7 +505,7 @@ TEST(RowMatrix, Scale)
 {
     size_t ncols = 10;
     size_t nrows = 3;
-    dotk::serial::array<Real> x(ncols);
+    dotk::StdArray<Real> x(ncols);
     dotk::serial::DOTk_RowMatrix<Real> matrix(x, nrows);
 
     Real input[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
@@ -548,7 +547,7 @@ TEST(RowMatrix, diag)
 {
     size_t ncols = 10;
     size_t nrows = 3;
-    dotk::serial::array<Real> x(ncols);
+    dotk::StdArray<Real> x(ncols);
     dotk::serial::DOTk_RowMatrix<Real> matrix(x, nrows);
 
     Real input[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
@@ -564,7 +563,7 @@ TEST(RowMatrix, diag)
         start = MPI_Wtime();
     }
 
-    dotk::serial::array<Real> diagonal(nrows);
+    dotk::StdArray<Real> diagonal(nrows);
     matrix.diag(diagonal);
 
     Real finish = 0.;
@@ -586,7 +585,7 @@ TEST(RowMatrix, setDiag)
 {
     size_t ncols = 10;
     size_t nrows = 3;
-    dotk::serial::array<Real> x(ncols);
+    dotk::StdArray<Real> x(ncols);
     dotk::serial::DOTk_RowMatrix<Real> matrix(x, nrows);
 
     Real input[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
@@ -602,7 +601,7 @@ TEST(RowMatrix, setDiag)
         start = MPI_Wtime();
     }
 
-    dotk::serial::array<Real> diagonal(nrows, 88.);
+    dotk::StdArray<Real> diagonal(nrows, 88.);
     matrix.setDiag(diagonal);
 
     Real finish = 0.;
@@ -628,7 +627,7 @@ TEST(RowMatrix, scaleDiag)
 {
     size_t ncols = 10;
     size_t nrows = 3;
-    dotk::serial::array<Real> x(ncols);
+    dotk::StdArray<Real> x(ncols);
     dotk::serial::DOTk_RowMatrix<Real> matrix(x, nrows);
 
     Real input[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
@@ -669,7 +668,7 @@ TEST(RowMatrix, trace)
 {
     size_t ncols = 10;
     size_t nrows = 3;
-    dotk::serial::array<Real> x(ncols);
+    dotk::StdArray<Real> x(ncols);
     dotk::serial::DOTk_RowMatrix<Real> matrix(x, nrows);
 
     Real input[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
@@ -706,7 +705,7 @@ TEST(RowMatrix, Fill)
 {
     size_t ncols = 10;
     size_t nrows = 3;
-    dotk::serial::array<Real> x(ncols);
+    dotk::StdArray<Real> x(ncols);
     dotk::serial::DOTk_RowMatrix<Real> matrix(x, nrows);
 
     Real start = 0.;
@@ -742,7 +741,7 @@ TEST(RowMatrix, Set)
 {
     size_t ncols = 10;
     size_t nrows = 3;
-    dotk::serial::array<Real> x(ncols);
+    dotk::StdArray<Real> x(ncols);
     dotk::serial::DOTk_RowMatrix<Real> matrix(x, nrows);
 
     Real gold = 88;
@@ -763,7 +762,7 @@ TEST(RowMatrix, Basis)
 {
     size_t ncols = 10;
     size_t nrows = 3;
-    dotk::serial::array<Real> x(ncols);
+    dotk::StdArray<Real> x(ncols);
     dotk::serial::DOTk_RowMatrix<Real> matrix(x, nrows);
     EXPECT_EQ(dotk::types::SERIAL_ROW_MATRIX, matrix.type());
 
@@ -795,7 +794,7 @@ TEST(RowMatrix, MatVecTranspose)
 {
     size_t nrows = 3;
     size_t ncols = 10;
-    dotk::serial::array<Real> x(ncols);
+    dotk::StdArray<Real> x(ncols);
     dotk::serial::DOTk_RowMatrix<Real> matrix(x, nrows);
 
     Real data[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
@@ -803,8 +802,8 @@ TEST(RowMatrix, MatVecTranspose)
                    21, 22, 23, 24, 25, 26, 27, 28, 29, 30};
     matrix.copy(30, data);
 
-    dotk::serial::array<Real> input(nrows, 1.);
-    dotk::serial::array<Real> output(ncols, 0.);
+    dotk::StdArray<Real> input(nrows, 1.);
+    dotk::StdArray<Real> output(ncols, 0.);
 
     Real start = 0.;
     int my_rank;
@@ -835,7 +834,7 @@ TEST(RowMatrix, MatVec)
 {
     size_t ncols = 10;
     size_t nrows = 3;
-    dotk::serial::array<Real> x(ncols);
+    dotk::StdArray<Real> x(ncols);
     dotk::serial::DOTk_RowMatrix<Real> matrix(x, nrows);
 
     Real data[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
@@ -843,8 +842,8 @@ TEST(RowMatrix, MatVec)
                    21, 22, 23, 24, 25, 26, 27, 28, 29, 30};
     matrix.copy(30, data);
 
-    dotk::serial::array<Real> input(ncols, 1.);
-    dotk::serial::array<Real> output(nrows, 0.);
+    dotk::StdArray<Real> input(ncols, 1.);
+    dotk::StdArray<Real> output(nrows, 0.);
 
     Real start = 0.;
     int my_rank;
@@ -875,7 +874,7 @@ TEST(RowMatrix, GemvTranspose)
 {
     size_t ncols = 10;
     size_t nrows = 3;
-    dotk::serial::array<Real> x(ncols);
+    dotk::StdArray<Real> x(ncols);
     dotk::serial::DOTk_RowMatrix<Real> matrix(x, nrows);
 
     Real data[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
@@ -885,8 +884,8 @@ TEST(RowMatrix, GemvTranspose)
 
     Real beta = 2;
     Real alpha = 2;
-    dotk::serial::array<Real> output(ncols);
-    dotk::serial::array<Real> input(nrows, 1.);
+    dotk::StdArray<Real> output(ncols);
+    dotk::StdArray<Real> input(nrows, 1.);
     for(size_t index = 0; index < ncols; ++index)
     {
         output[index] = index + 1;
@@ -921,7 +920,7 @@ TEST(RowMatrix, Gemv)
 {
     size_t nrows = 3;
     size_t ncols = 10;
-    dotk::serial::array<Real> x(ncols);
+    dotk::StdArray<Real> x(ncols);
     dotk::serial::DOTk_RowMatrix<Real> matrix(x, nrows);
 
     Real data[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
@@ -931,8 +930,8 @@ TEST(RowMatrix, Gemv)
 
     Real beta = 2;
     Real alpha = 2;
-    dotk::serial::array<Real> output(nrows);
-    dotk::serial::array<Real> input(ncols, 1.);
+    dotk::StdArray<Real> output(nrows);
+    dotk::StdArray<Real> input(ncols, 1.);
     output[0] = 1;
     output[1] = 2;
     output[2] = 3;
@@ -966,7 +965,7 @@ TEST(DOTk_ColumnMatrix, identity)
 {
     size_t nrows = 3;
     size_t ncols = 10;
-    dotk::serial::array<Real> x(ncols);
+    dotk::StdArray<Real> x(ncols);
     dotk::serial::DOTk_RowMatrix<Real> matrix(x, nrows);
 
     Real input[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
@@ -1007,7 +1006,7 @@ TEST(RowMatrix, Gemm1)
 {
     size_t nrows = 2;
     size_t ncols = 2;
-    dotk::serial::array<Real> x(ncols);
+    dotk::StdArray<Real> x(ncols);
     dotk::serial::DOTk_RowMatrix<Real> A(x, nrows);
     A(0, 0) = 1;
     A(0, 1) = 2;
@@ -1072,7 +1071,7 @@ TEST(RowMatrix, Gemm2)
 {
     size_t A_nrows = 3;
     size_t A_ncols = 2;
-    dotk::serial::array<Real> x(A_ncols);
+    dotk::StdArray<Real> x(A_ncols);
     dotk::serial::DOTk_RowMatrix<Real> A(x, A_nrows);
     A(0, 0) = 1;
     A(0, 1) = 2;
@@ -1082,7 +1081,7 @@ TEST(RowMatrix, Gemm2)
     A(2, 1) = 6;
     size_t B_nrows = 2;
     size_t B_ncols = 3;
-    dotk::serial::array<Real> y(B_ncols);
+    dotk::StdArray<Real> y(B_ncols);
     dotk::serial::DOTk_RowMatrix<Real> B(y, B_nrows);
     B(0, 0) = 1;
     B(0, 1) = 2;
@@ -1094,7 +1093,7 @@ TEST(RowMatrix, Gemm2)
     // C = A*B
     size_t C1_nrows = 3;
     size_t C1_ncols = 3;
-    dotk::serial::array<Real> z1(C1_ncols);
+    dotk::StdArray<Real> z1(C1_ncols);
     dotk::serial::DOTk_RowMatrix<Real> C1(z1, C1_nrows);
     A.gemm(false, false, 1., B, 0., C1);
     std::vector<Real> gold(C1.size());
@@ -1130,7 +1129,7 @@ TEST(RowMatrix, Gemm2)
     // C = A'*B
     size_t C2_nrows = 2;
     size_t C2_ncols = 2;
-    dotk::serial::array<Real> z2(C2_ncols);
+    dotk::StdArray<Real> z2(C2_ncols);
     dotk::serial::DOTk_RowMatrix<Real> C2(z2, C2_nrows);
     A.gemm(true, false, 1., A, 0., C2);
     std::vector<Real> gold2(C2.size());
@@ -1158,7 +1157,7 @@ TEST(RowMatrix, Gemm3)
 {
     size_t A_nrows = 3;
     size_t A_ncols = 2;
-    dotk::serial::array<Real> x(A_ncols);
+    dotk::StdArray<Real> x(A_ncols);
     dotk::serial::DOTk_RowMatrix<Real> A(x, A_nrows);
     A(0, 0) = 1;
     A(0, 1) = 2;
@@ -1168,7 +1167,7 @@ TEST(RowMatrix, Gemm3)
     A(2, 1) = 6;
     size_t B_nrows = 2;
     size_t B_ncols = 3;
-    dotk::serial::array<Real> y(B_ncols);
+    dotk::StdArray<Real> y(B_ncols);
     dotk::serial::DOTk_RowMatrix<Real> B(y, B_nrows);
     B(0, 0) = 1;
     B(0, 1) = 2;
@@ -1180,7 +1179,7 @@ TEST(RowMatrix, Gemm3)
     // C = A*B
     size_t C1_nrows = 3;
     size_t C1_ncols = 3;
-    dotk::serial::array<Real> z1(C1_ncols);
+    dotk::StdArray<Real> z1(C1_ncols);
     dotk::serial::DOTk_RowMatrix<Real> C1(z1, C1_nrows);
     C1.fill(1.);
     A.gemm(false, false, 2., B, 1., C1);
@@ -1217,7 +1216,7 @@ TEST(RowMatrix, Gemm3)
     // C = A'*B
     size_t C2_nrows = 2;
     size_t C2_ncols = 2;
-    dotk::serial::array<Real> z2(C2_ncols);
+    dotk::StdArray<Real> z2(C2_ncols);
     dotk::serial::DOTk_RowMatrix<Real> C2(z2, C2_nrows);
     C2.fill(1.);
     A.gemm(true, false, 2., A, 1., C2);

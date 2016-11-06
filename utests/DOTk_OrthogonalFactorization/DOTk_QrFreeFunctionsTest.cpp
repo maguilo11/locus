@@ -11,7 +11,6 @@
 #include "DOTk_RowMatrix.hpp"
 #include "DOTk_RowMatrix.cpp"
 #include "DOTk_SerialArray.hpp"
-#include "DOTk_SerialArray.cpp"
 #include "DOTk_ColumnMatrix.hpp"
 #include "DOTk_ColumnMatrix.cpp"
 #include "DOTk_GtestDOTkVecTools.hpp"
@@ -41,7 +40,7 @@ TEST(OrthoMethod, classicalGramSchmidtE1)
 {
     size_t ncols = 4;
     size_t nrows = 3;
-    dotk::serial::array<Real> x(ncols);
+    dotk::StdArray<Real> x(ncols);
     dotk::serial::DOTk_RowMatrix<Real> Q(x, nrows);
     dotk::serial::DOTk_UpperTriangularMatrix<Real> R(nrows);
     // basis 1
@@ -89,7 +88,7 @@ TEST(OrthoMethod, classicalGramSchmidtE2)
 {
     size_t nrows = 4;
     size_t ncols = 3;
-    dotk::serial::array<Real> x(nrows);
+    dotk::StdArray<Real> x(nrows);
     dotk::serial::DOTk_ColumnMatrix<Real> Q(x, ncols);
     dotk::serial::DOTk_UpperTriangularMatrix<Real> R(ncols);
     // basis 1
@@ -137,7 +136,7 @@ TEST(OrthoMethod, classicalGramSchmidtE3)
 {
     size_t nrows = 4;
     size_t ncols = 3;
-    dotk::serial::array<Real> x(nrows);
+    dotk::StdArray<Real> x(nrows);
     dotk::serial::DOTk_ColumnMatrix<Real> A(x, ncols);
     dotk::serial::DOTk_ColumnMatrix<Real> Q(x, ncols);
     dotk::serial::DOTk_UpperTriangularMatrix<Real> R(ncols);
@@ -205,7 +204,7 @@ TEST(OrthoMethod, modifiedGramSchmidtE1)
 {
     size_t ncols = 4;
     size_t nrows = 3;
-    dotk::serial::array<Real> x(ncols);
+    dotk::StdArray<Real> x(ncols);
     dotk::serial::DOTk_RowMatrix<Real> Q(x, nrows);
     dotk::serial::DOTk_UpperTriangularMatrix<Real> R(nrows);
     // basis 1
@@ -253,7 +252,7 @@ TEST(OrthoMethod, modifiedGramSchmidtE2)
 {
     size_t nrows = 4;
     size_t ncols = 3;
-    dotk::serial::array<Real> x(nrows);
+    dotk::StdArray<Real> x(nrows);
     dotk::serial::DOTk_ColumnMatrix<Real> Q(x, ncols);
     dotk::serial::DOTk_UpperTriangularMatrix<Real> R(ncols);
     // basis 1
@@ -301,7 +300,7 @@ TEST(OrthoMethod, modifiedGramSchmidtE3)
 {
     size_t nrows = 4;
     size_t ncols = 3;
-    dotk::serial::array<Real> x(nrows);
+    dotk::StdArray<Real> x(nrows);
     dotk::serial::DOTk_ColumnMatrix<Real> A(x, ncols);
     dotk::serial::DOTk_ColumnMatrix<Real> Q(x, ncols);
     dotk::serial::DOTk_UpperTriangularMatrix<Real> R(ncols);
@@ -369,8 +368,8 @@ TEST(OrthoMethod, arnoldiModifiedGramSchmidtE1)
 {
     size_t nrows = 4;
     size_t ncols = 4;
-    dotk::serial::array<Real> x(nrows);
-    dotk::serial::array<Real> y(nrows + 1);
+    dotk::StdArray<Real> x(nrows);
+    dotk::StdArray<Real> y(nrows + 1);
     dotk::serial::DOTk_ColumnMatrix<Real> A(x, ncols);
     dotk::serial::DOTk_ColumnMatrix<Real> Q(x, ncols + 1);
     dotk::serial::DOTk_ColumnMatrix<Real> Hessenberg(y, ncols);
@@ -483,7 +482,7 @@ TEST(OrthoMethod, Householder)
 {
     size_t nrows = 4;
     size_t ncols = 4;
-    dotk::serial::array<Real> x(nrows);
+    dotk::StdArray<Real> x(nrows);
     dotk::serial::DOTk_ColumnMatrix<Real> A(x, ncols);
     dotk::serial::DOTk_ColumnMatrix<Real> Q(x, ncols);
     dotk::serial::DOTk_ColumnMatrix<Real> R(x, ncols);

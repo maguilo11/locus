@@ -8,6 +8,8 @@
 #ifndef DOTK_PARALLELBACKWARDDIFFGRAD_HPP_
 #define DOTK_PARALLELBACKWARDDIFFGRAD_HPP_
 
+#include <vector>
+
 #include "DOTk_FirstOrderOperator.hpp"
 
 namespace dotk
@@ -16,7 +18,7 @@ namespace dotk
 class DOTk_OptimizationDataMng;
 class DOTk_AssemblyManager;
 
-template<class Type>
+template<typename Type>
 class vector;
 
 class DOTk_ParallelBackwardDiffGrad: public dotk::DOTk_FirstOrderOperator

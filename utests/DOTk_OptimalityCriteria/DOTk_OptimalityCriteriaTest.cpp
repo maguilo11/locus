@@ -9,7 +9,6 @@
 
 #include "DOTk_Primal.hpp"
 #include "DOTk_SerialArray.hpp"
-#include "DOTk_SerialArray.cpp"
 #include "DOTk_GtestDOTkVecTools.hpp"
 #include "DOTk_ObjectiveFunction.hpp"
 #include "DOTk_EqualityConstraint.hpp"
@@ -95,9 +94,9 @@ TEST(DOTkPrimalTest, ConstructorTwo)
     size_t ndual = 3;
     size_t nstate = 5;
     size_t ncontrol = 8;
-    dotk::serial::array<Real> dual(ndual, 1);
-    dotk::serial::array<Real> state(nstate, 2);
-    dotk::serial::array<Real> control(ncontrol, 3);
+    dotk::StdArray<Real> dual(ndual, 1);
+    dotk::StdArray<Real> state(nstate, 2);
+    dotk::StdArray<Real> control(ncontrol, 3);
     dotk::DOTk_Primal primal;
     primal.allocateUserDefinedDual(dual);
     primal.allocateUserDefinedState(state);

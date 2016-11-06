@@ -19,13 +19,13 @@ namespace dotk
 class DOTk_Dual;
 class DOTk_Variable;
 
-template<class Type>
+template<typename Type>
 class vector;
-template<class Type>
+template<typename Type>
 class DOTk_ObjectiveFunction;
-template<class Type>
+template<typename Type>
 class DOTk_EqualityConstraint;
-template<class Type>
+template<typename Type>
 class DOTk_InequalityConstraint;
 
 class DOTk_DiagnosticsTypeLP : public dotk::DOTk_DerivativeDiagnosticsTool

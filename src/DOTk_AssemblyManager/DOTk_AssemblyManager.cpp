@@ -5,9 +5,12 @@
  *      Author: Miguel A. Aguilo Valentin
  */
 
-#include "DOTk_AssemblyManager.hpp"
+#include <cstdlib>
+#include <ostream>
+#include <iostream>
 
 #include "vector.hpp"
+#include "DOTk_AssemblyManager.hpp"
 
 namespace dotk
 {

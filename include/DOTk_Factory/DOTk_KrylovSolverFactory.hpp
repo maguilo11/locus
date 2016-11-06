@@ -8,6 +8,9 @@
 #ifndef DOTK_KRYLOVSOLVERFACTORY_HPP_
 #define DOTK_KRYLOVSOLVERFACTORY_HPP_
 
+#include <string>
+#include <tr1/memory>
+
 namespace dotk
 {
 

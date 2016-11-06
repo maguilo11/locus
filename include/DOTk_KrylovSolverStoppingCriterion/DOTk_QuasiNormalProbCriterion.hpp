@@ -15,7 +15,7 @@ namespace dotk
 
 class DOTk_KrylovSolver;
 
-template<class Type>
+template<typename Type>
 class vector;
 
 class DOTk_QuasiNormalProbCriterion: public dotk::DOTk_KrylovSolverStoppingCriterion

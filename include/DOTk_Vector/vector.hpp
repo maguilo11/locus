@@ -2,19 +2,20 @@
  * vector.hpp
  *
  *  Created on: Aug 25, 2014
- *      Author: Miguel A. Aguilo Valentin (maguilo@sandia.gov)
+ *      Author: Miguel A. Aguilo Valentin
  */
 
 #ifndef VECTOR_HPP_
 #define VECTOR_HPP_
 
-#include "DOTk_Types.hpp"
-#include "DOTk_VectorTypes.hpp"
+#include <cstdio>
+#include <cstdlib>
+#include <tr1/memory>
 
 namespace dotk
 {
 
-template<class Type>
+template<typename Type>
 class vector
 {
 public:
@@ -56,11 +57,6 @@ public:
     virtual Type & operator [](size_t index_) = 0;
     // Operator overloads the square bracket operator
     virtual const Type & operator [](size_t index_) const = 0;
-    // Returns the container type
-    virtual dotk::types::container_t type() const = 0;
-    // Returns the rank of the calling process in the communicator
-    virtual size_t rank() const = 0;
-
     // Returns shared pointer to dual vector
     virtual const std::tr1::shared_ptr<dotk::vector<Type> > & dual() const
     {
@@ -82,17 +78,7 @@ public:
 
 private:
     vector(const dotk::vector<Type> &);
-    dotk::vector<Type> & operator=(const dotk::vector<Type> & rhs_)
-    {
-        // check for self-assignment by comparing the address of the
-        // implicit object and the parameter
-        if(this == &rhs_)
-        {
-            return (*this);
-        }
-        // return the existing object
-        return (*this);
-    }
+    dotk::vector<Type> & operator=(const dotk::vector<Type> & rhs_);
 };
 
 }

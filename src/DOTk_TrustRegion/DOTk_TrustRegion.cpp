@@ -5,6 +5,9 @@
  *      Author: Miguel A. Aguilo Valentin
  */
 
+#include <cmath>
+#include <limits>
+
 #include "vector.hpp"
 #include "DOTk_TrustRegion.hpp"
 #include "DOTk_OptimizationDataMng.hpp"

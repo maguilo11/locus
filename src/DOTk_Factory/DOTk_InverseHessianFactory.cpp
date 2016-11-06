@@ -5,15 +5,16 @@
  *      Author: Miguel A. Aguilo Valentin
  */
 
-#include "DOTk_Types.hpp"
-#include "DOTk_SecondOrderOperator.hpp"
-#include "DOTk_LBFGSInvHessian.hpp"
+#include <iostream>
+
+#include "DOTk_SR1InvHessian.hpp"
 #include "DOTk_LDFPInvHessian.hpp"
 #include "DOTk_LSR1InvHessian.hpp"
-#include "DOTk_SR1InvHessian.hpp"
 #include "DOTk_BFGSInvHessian.hpp"
-#include "DOTk_BarzilaiBorweinInvHessian.hpp"
+#include "DOTk_LBFGSInvHessian.hpp"
+#include "DOTk_SecondOrderOperator.hpp"
 #include "DOTk_InverseHessianFactory.hpp"
+#include "DOTk_BarzilaiBorweinInvHessian.hpp"
 
 namespace dotk
 {

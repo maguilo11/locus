@@ -5,6 +5,8 @@
  *      Author: Miguel A. Aguilo Valentin
  */
 
+#include <cmath>
+
 #include "vector.hpp"
 #include "DOTk_TrustRegionMngTypeELP.hpp"
 #include "DOTk_SequentialQuadraticProgramming.hpp"

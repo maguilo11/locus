@@ -4,6 +4,10 @@
  *  Created on: Jul 2, 2015
  *      Author: Miguel A. Aguilo Valentin
  */
+
+#include <cmath>
+#include <cassert>
+
 #include "vector.hpp"
 #include "DOTk_UpperTriangularMatrix.hpp"
 

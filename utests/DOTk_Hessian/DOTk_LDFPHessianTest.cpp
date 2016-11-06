@@ -8,12 +8,10 @@
 #include "gtest/gtest.h"
 
 #include "DOTk_Primal.hpp"
-#include "DOTk_LDFPHessian.hpp"
-
-#include "DOTk_AssemblyManager.hpp"
 #include "DOTk_Rosenbrock.hpp"
+#include "DOTk_LDFPHessian.hpp"
 #include "DOTk_SerialVector.hpp"
-#include "DOTk_SerialVector.cpp"
+#include "DOTk_AssemblyManager.hpp"
 #include "DOTk_LineSearchMngTypeULP.hpp"
 
 #include "DOTk_GtestDOTkVecTools.hpp"
@@ -33,7 +31,7 @@ TEST(DOTk_LDFPHessian, apply)
     dotk::DOTk_LDFPHessian hess(mng->getMatrixTimesVector(), secant_storage);
     EXPECT_EQ(dotk::types::LDFP_HESS, hess.getHessianType());
 
-    dotk::serial::vector<Real> control(2, 2.);
+    dotk::StdVector<Real> control(2, 2.);
     mng->setOldPrimal(control);
     control[0] = 1.;
     control[1] = 3.;

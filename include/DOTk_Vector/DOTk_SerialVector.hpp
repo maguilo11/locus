@@ -1,5 +1,5 @@
 /*
- * DOTk_SerialVector.hpp
+ * DOTk_StdVector.hpp
  *
  *  Created on: Aug 25, 2014
  *      Author: Miguel A. Aguilo Valentin
@@ -8,68 +8,170 @@
 #ifndef DOTK_SERIALVECTOR_HPP_
 #define DOTK_SERIALVECTOR_HPP_
 
+#include <cmath>
+#include <vector>
+#include <cassert>
+#include <algorithm>
+
 #include "vector.hpp"
 
 namespace dotk
 {
 
-namespace serial
-{
-
-template<class Type>
-class vector: public dotk::vector<Type>
+template<typename Type>
+class StdVector : public dotk::vector<Type>
 {
 public:
-    explicit vector(std::vector<Type> & data_);
-    vector(int dim_, Type value_ = 0.);
-    virtual ~vector();
-
+    explicit StdVector(std::vector<Type> & data_) :
+            m_Data(data_)
+    {
+    }
+    StdVector(int dim_, Type value_ = 0.) :
+            m_Data(std::vector<Type>(dim_, value_))
+    {
+    }
+    virtual ~StdVector()
+    {
+    }
     // Scales a vector by a real constant.
-    virtual void scale(const Type & alpha_);
+    void scale(const Type & alpha_)
+    {
+        size_t dim = this->size();
+        for(size_t index = 0; index < dim; ++ index)
+        {
+            m_Data[index] = alpha_ * m_Data[index];
+        }
+    }
     // Component wise multiplication of two vectors.
-    virtual void cwiseProd(const dotk::vector<Type> & input_);
+    void cwiseProd(const dotk::vector<Type> & input_)
+    {
+        size_t dim = this->size();
+        assert(dim == input_.size());
+        for(size_t index = 0; index < dim; ++index)
+        {
+            m_Data[index] = m_Data[index] * input_[index];
+        }
+    }
     // Constant times a vector plus a vector.
-    virtual void axpy(const Type & alpha_, const dotk::vector<Type> & input_);
+    void axpy(const Type & alpha_, const dotk::vector<Type> & input_)
+    {
+        size_t dim = this->size();
+        assert(dim == input_.size());
+        for(size_t index = 0; index < dim; ++index)
+        {
+            m_Data[index] = alpha_ * input_[index] + m_Data[index];
+        }
+    }
     // Returns the maximum element in a range.
-    virtual Type max() const;
+    Type max() const
+    {
+        Type output = *std::max_element(m_Data.begin(), m_Data.end());
+        return (output);
+    }
     // Returns the minimum element in a range.
-    virtual Type min() const;
+    Type min() const
+    {
+        Type output = *std::min_element(m_Data.begin(), m_Data.end());
+        return (output);
+    }
     // Computes the absolute value of each element in the container.
-    virtual void abs();
+    void abs()
+    {
+        size_t dim = this->size();
+        for(size_t index = 0; index < dim; ++index)
+        {
+            m_Data[index] = m_Data[index] < static_cast<Type>(0.) ? -(m_Data[index]) : m_Data[index];
+        }
+    }
     // Returns the sum of all the elements in the container.
-    virtual Type sum() const;
+    Type sum() const
+    {
+        Type output = 0.;
+        size_t dim = this->size();
+        for(size_t index = 0; index < dim; ++index)
+        {
+            output += m_Data[index];
+        }
+        return (output);
+    }
     // Returns the inner product of two vectors.
-    virtual Type dot(const dotk::vector<Type> & input_) const;
+    Type dot(const dotk::vector<Type> & input_) const
+    {
+        size_t dim = this->size();
+        assert(dim == input_.size());
+        Type output = 0.;
+        for(size_t index = 0; index < dim; ++index)
+        {
+            output += m_Data[index] * input_[index];
+        }
+        return (output);
+    }
     // Returns the euclidean norm of a vector.
-    virtual Type norm() const;
+    Type norm() const
+    {
+        Type output = this->dot(*this);
+        output = std::sqrt(output);
+        return (output);
+    }
     // Assigns new contents to the vector, replacing its current contents, and not modifying its size.
-    virtual void fill(const Type & value_);
+    void fill(const Type & value_)
+    {
+        size_t dim = this->size();
+        for(size_t index = 0; index < dim; ++index)
+        {
+            m_Data[index] = value_;
+        }
+    }
     // Copies the elements in the range [first,last) into the range beginning at result.
-    virtual void copy(const dotk::vector<Type> & input_);
+    void copy(const dotk::vector<Type> & input_)
+    {
+        size_t dim = this->size();
+        assert(dim == input_.size());
+        for(size_t index = 0; index < dim; ++index)
+        {
+            m_Data[index] = input_[index];
+        }
+    }
     // Gathers data from private member data of a group to one member.
-    virtual void gather(Type* input_) const;
+    void gather(Type* input_) const
+    {
+        size_t dim = this->size();
+        for(size_t index = 0; index < dim; ++index)
+        {
+            input_[index] = m_Data[index];
+        }
+    }
     // Returns the number of elements in the vector.
-    virtual size_t size() const;
+    size_t size() const
+    {
+        size_t dim = m_Data.size();
+        return (dim);
+    }
     // Clones memory for an object of type dotk::vector
-    virtual std::tr1::shared_ptr< dotk::vector<Type> > clone() const;
+    std::tr1::shared_ptr<dotk::vector<Type> > clone() const
+    {
+        size_t dim = this->size();
+        std::tr1::shared_ptr<dotk::StdVector<Type> > output(new dotk::StdVector<Type>(dim, 0.));
+        return (output);
+    }
     // Operator overloads the square bracket operator
-    virtual Type & operator [](size_t index_);
+    Type & operator [](size_t index_)
+    {
+        return (m_Data.operator [](index_));
+    }
     // Operator overloads the const square bracket operator
-    virtual const Type & operator [](size_t index_) const;
-    // Returns the dotk vector type
-    virtual dotk::types::container_t type() const;
-    // Returns the rank of the calling process in the communicator
-    virtual size_t rank() const;
+    const Type & operator [](size_t index_) const
+    {
+        return (m_Data.operator [](index_));
+    }
 
 private:
     std::vector<Type> m_Data;
 
 private:
-    vector(const dotk::serial::vector<Type> &);
-    dotk::serial::vector<Type> & operator=(const dotk::serial::vector<Type> & rhs_);
+    StdVector(const dotk::StdVector<Type> &);
+    dotk::StdVector<Type> & operator=(const dotk::StdVector<Type> & rhs_);
 };
-
-}
 
 }
 

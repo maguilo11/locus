@@ -9,12 +9,11 @@
 
 #include "vector.hpp"
 #include "DOTk_Primal.hpp"
+#include "DOTk_Rosenbrock.hpp"
+#include "DOTk_AssemblyManager.hpp"
+#include "DOTk_GtestDOTkVecTools.hpp"
 #include "DOTk_LineSearchMngTypeULP.hpp"
 #include "DOTk_BarzilaiBorweinHessian.hpp"
-
-#include "DOTk_AssemblyManager.hpp"
-#include "DOTk_Rosenbrock.hpp"
-#include "DOTk_GtestDOTkVecTools.hpp"
 
 namespace DOTkBarzilaiBorweinHessianTest
 {

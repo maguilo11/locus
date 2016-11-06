@@ -19,7 +19,7 @@ class DOTk_KrylovSolverDataMng;
 class DOTk_OptimizationDataMng;
 class DOTk_KrylovSolverStoppingCriterion;
 
-template<class Type>
+template<typename Type>
 class vector;
 
 class DOTk_LeftPrecCGNE : public dotk::DOTk_KrylovSolver

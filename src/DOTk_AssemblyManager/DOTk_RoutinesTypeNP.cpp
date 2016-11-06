@@ -5,13 +5,13 @@
  *      Author: Miguel A. Aguilo Valentin
  */
 
-#include "DOTk_RoutinesTypeNP.hpp"
 
 #include <cstdio>
 #include <cstdlib>
 
 #include "vector.hpp"
 #include "DOTk_Primal.hpp"
+#include "DOTk_RoutinesTypeNP.hpp"
 #include "DOTk_ObjectiveFunction.hpp"
 #include "DOTk_EqualityConstraint.hpp"
 #include "DOTk_InequalityConstraint.hpp"

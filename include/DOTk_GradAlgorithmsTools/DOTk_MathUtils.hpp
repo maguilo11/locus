@@ -8,12 +8,15 @@
 #ifndef DOTK_MATHUTILS_HPP_
 #define DOTK_MATHUTILS_HPP_
 
+#include <vector>
+#include <tr1/memory>
+
 #include "DOTk_Types.hpp"
 
 namespace dotk
 {
 
-template<class Type>
+template<typename Type>
 class vector;
 
 Real norm(const std::tr1::shared_ptr<dotk::vector<Real> > & input_);

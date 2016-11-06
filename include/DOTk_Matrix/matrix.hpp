@@ -8,16 +8,19 @@
 #ifndef MATRIX_HPP_
 #define MATRIX_HPP_
 
-#include "DOTk_Types.hpp"
+#include <limits>
+#include <iostream>
+#include <tr1/memory>
+
 #include "DOTk_MatrixTypes.hpp"
 
 namespace dotk
 {
 
-template<class Type>
+template<typename Type>
 class vector;
 
-template<class Type>
+template<typename Type>
 class matrix
 {
 public:

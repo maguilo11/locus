@@ -5,6 +5,8 @@
  *      Author: Miguel A. Aguilo Valentin
  */
 
+#include <cmath>
+
 #include "vector.hpp"
 #include "DOTk_Primal.hpp"
 #include "DOTk_LeftPrecCG.hpp"

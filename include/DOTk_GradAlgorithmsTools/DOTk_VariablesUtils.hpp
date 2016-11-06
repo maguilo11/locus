@@ -8,10 +8,13 @@
 #ifndef DOTK_VARIABLESUTILS_HPP_
 #define DOTK_VARIABLESUTILS_HPP_
 
+#include <tr1/memory>
+#include "DOTk_Types.hpp"
+
 namespace dotk
 {
 
-template<class Type>
+template<typename Type>
 class vector;
 
 void printDual(const std::tr1::shared_ptr<dotk::vector<Real> > & dual_);

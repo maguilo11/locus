@@ -10,7 +10,6 @@
 #include "DOTk_Primal.hpp"
 #include "DOTk_LineSearch.hpp"
 #include "DOTk_SerialVector.hpp"
-#include "DOTk_SerialVector.cpp"
 #include "DOTk_PrimalVector.hpp"
 #include "DOTk_PrimalVector.cpp"
 #include "DOTk_BoundConstraint.hpp"

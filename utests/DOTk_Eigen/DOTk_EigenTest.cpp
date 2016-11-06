@@ -12,7 +12,6 @@
 #include "DOTk_Householder.hpp"
 #include "DOTk_PowerMethod.hpp"
 #include "DOTk_SerialArray.hpp"
-#include "DOTk_SerialArray.cpp"
 #include "DOTk_DenseMatrix.hpp"
 #include "DOTk_DenseMatrix.cpp"
 #include "DOTk_ColumnMatrix.hpp"
@@ -29,7 +28,7 @@ TEST(Eigen, PowerMethod)
 {
     size_t nrows = 3;
     size_t ncols = 3;
-    dotk::serial::array<Real> x(nrows);
+    dotk::StdArray<Real> x(nrows);
     dotk::serial::DOTk_ColumnMatrix<Real> A(x, ncols);
     // basis 1
     A(0, 0) = 7.;
@@ -64,7 +63,7 @@ TEST(Eigen, RayleighQuotientMethod)
 {
     size_t nrows = 3;
     size_t ncols = 3;
-    dotk::serial::array<Real> x(nrows);
+    dotk::StdArray<Real> x(nrows);
     dotk::serial::DOTk_ColumnMatrix<Real> A(x, ncols);
     // basis 1
     A(0, 0) = 7.;
@@ -99,7 +98,7 @@ TEST(Eigen, QR)
 {
     size_t nrows = 4;
     size_t ncols = 4;
-    std::tr1::shared_ptr<dotk::vector<Real> > eigenvalues(new dotk::serial::array<Real>(ncols));
+    std::tr1::shared_ptr<dotk::vector<Real> > eigenvalues(new dotk::StdArray<Real>(ncols));
     std::tr1::shared_ptr<dotk::matrix<Real> > matrix(new dotk::serial::DOTk_ColumnMatrix<Real>(*eigenvalues, ncols));
     std::tr1::shared_ptr<dotk::matrix<Real> > eigenvectors(new dotk::serial::DOTk_ColumnMatrix<Real>(*eigenvalues, ncols));
     // basis 1
@@ -177,7 +176,7 @@ TEST(Eigen, QR)
 TEST(Eigen, Power)
 {
     size_t nrows = 3;
-    std::tr1::shared_ptr<dotk::vector<Real> > eigenvector(new dotk::serial::array<Real>(nrows));
+    std::tr1::shared_ptr<dotk::vector<Real> > eigenvector(new dotk::StdArray<Real>(nrows));
     std::tr1::shared_ptr<dotk::matrix<Real> > A(new dotk::serial::DOTk_DenseMatrix<Real>(nrows));
     // basis 1
     (*A)(0, 0) = 7.;
@@ -215,7 +214,7 @@ TEST(Eigen, Power)
 TEST(Eigen, RayleighQuotient)
 {
     size_t nrows = 3;
-    std::tr1::shared_ptr<dotk::vector<Real> > eigenvector(new dotk::serial::array<Real>(nrows));
+    std::tr1::shared_ptr<dotk::vector<Real> > eigenvector(new dotk::StdArray<Real>(nrows));
     std::tr1::shared_ptr<dotk::matrix<Real> > A(new dotk::serial::DOTk_DenseMatrix<Real>(nrows));
     // basis 1
     (*A)(0, 0) = 7.;
@@ -254,7 +253,7 @@ TEST(Eigen, RayleighRitz)
 {
     size_t nrows = 4;
     size_t ncols = 4;
-    std::tr1::shared_ptr<dotk::vector<Real> > eigenvalues(new dotk::serial::array<Real>(ncols));
+    std::tr1::shared_ptr<dotk::vector<Real> > eigenvalues(new dotk::StdArray<Real>(ncols));
     std::tr1::shared_ptr<dotk::matrix<Real> > matrix(new dotk::serial::DOTk_ColumnMatrix<Real>(*eigenvalues, ncols));
     std::tr1::shared_ptr<dotk::matrix<Real> > eigenvectors(new dotk::serial::DOTk_ColumnMatrix<Real>(*eigenvalues, ncols));
     // basis 1

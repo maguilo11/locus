@@ -7,13 +7,12 @@
 
 #include <sstream>
 
-#include "DOTk_Types.hpp"
-#include "DOTk_OptimizationDataMng.hpp"
-#include "DOTk_GradBasedIoUtils.hpp"
 #include "DOTk_DirectSolver.hpp"
+#include "DOTk_GradBasedIoUtils.hpp"
+#include "DOTk_OptimizationDataMng.hpp"
+#include "DOTk_DirectSolverFactory.hpp"
 #include "DOTk_LowerTriangularDirectSolver.hpp"
 #include "DOTk_UpperTriangularDirectSolver.hpp"
-#include "DOTk_DirectSolverFactory.hpp"
 
 namespace dotk
 {

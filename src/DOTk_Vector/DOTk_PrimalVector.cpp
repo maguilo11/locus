@@ -5,13 +5,16 @@
  *      Author: Miguel A. Aguilo Valentin
  */
 
+#include <cmath>
+#include <cassert>
+
 #include "DOTk_Primal.hpp"
 #include "DOTk_PrimalVector.hpp"
 
 namespace dotk
 {
 
-template<class Type>
+template<typename Type>
 DOTk_PrimalVector<Type>::DOTk_PrimalVector(const dotk::DOTk_Primal & primal_) :
         m_Size(0),
         m_State(),
@@ -20,7 +23,7 @@ DOTk_PrimalVector<Type>::DOTk_PrimalVector(const dotk::DOTk_Primal & primal_) :
     this->initialize(primal_);
 }
 
-template<class Type>
+template<typename Type>
 DOTk_PrimalVector<Type>::DOTk_PrimalVector(const dotk::vector<Type> & control_) :
         m_Size(control_.size()),
         m_State(),
@@ -29,7 +32,7 @@ DOTk_PrimalVector<Type>::DOTk_PrimalVector(const dotk::vector<Type> & control_) 
     m_Control->copy(control_);
 }
 
-template<class Type>
+template<typename Type>
 DOTk_PrimalVector<Type>::DOTk_PrimalVector(const dotk::vector<Type> & control_, const dotk::vector<Type> & state_) :
         m_Size(control_.size() + state_.size()),
         m_State(state_.clone()),
@@ -38,12 +41,12 @@ DOTk_PrimalVector<Type>::DOTk_PrimalVector(const dotk::vector<Type> & control_, 
     this->initialize(control_, state_);
 }
 
-template<class Type>
+template<typename Type>
 DOTk_PrimalVector<Type>::~DOTk_PrimalVector()
 {
 }
 
-template<class Type>
+template<typename Type>
 void DOTk_PrimalVector<Type>::scale(const Type & alpha_)
 {
     m_Control->scale(alpha_);
@@ -53,7 +56,7 @@ void DOTk_PrimalVector<Type>::scale(const Type & alpha_)
     }
 }
 
-template<class Type>
+template<typename Type>
 void DOTk_PrimalVector<Type>::cwiseProd(const dotk::vector<Type> & input_)
 {
     m_Control->cwiseProd(*input_.control());
@@ -63,7 +66,7 @@ void DOTk_PrimalVector<Type>::cwiseProd(const dotk::vector<Type> & input_)
     }
 }
 
-template<class Type>
+template<typename Type>
 void DOTk_PrimalVector<Type>::axpy(const Type & alpha_, const dotk::vector<Type> & input_)
 {
     m_Control->axpy(alpha_, *input_.control());
@@ -73,7 +76,7 @@ void DOTk_PrimalVector<Type>::axpy(const Type & alpha_, const dotk::vector<Type>
     }
 }
 
-template<class Type>
+template<typename Type>
 Type DOTk_PrimalVector<Type>::max() const
 {
     if(m_State.use_count() > 0)
@@ -90,7 +93,7 @@ Type DOTk_PrimalVector<Type>::max() const
     }
 }
 
-template<class Type>
+template<typename Type>
 Type DOTk_PrimalVector<Type>::min() const
 {
     if(m_State.use_count() > 0)
@@ -107,7 +110,7 @@ Type DOTk_PrimalVector<Type>::min() const
     }
 }
 
-template<class Type>
+template<typename Type>
 void DOTk_PrimalVector<Type>::abs()
 {
     m_Control->abs();
@@ -117,7 +120,7 @@ void DOTk_PrimalVector<Type>::abs()
     }
 }
 
-template<class Type>
+template<typename Type>
 Type DOTk_PrimalVector<Type>::sum() const
 {
     Type result = m_Control->sum();
@@ -128,7 +131,7 @@ Type DOTk_PrimalVector<Type>::sum() const
     return (result);
 }
 
-template<class Type>
+template<typename Type>
 Type DOTk_PrimalVector<Type>::dot(const dotk::vector<Type> & input_) const
 {
     Type result = m_Control->dot(*input_.control());
@@ -139,7 +142,7 @@ Type DOTk_PrimalVector<Type>::dot(const dotk::vector<Type> & input_) const
     return (result);
 }
 
-template<class Type>
+template<typename Type>
 Type DOTk_PrimalVector<Type>::norm() const
 {
     Type result = this->dot(*this);
@@ -147,7 +150,7 @@ Type DOTk_PrimalVector<Type>::norm() const
     return (result);
 }
 
-template<class Type>
+template<typename Type>
 void DOTk_PrimalVector<Type>::fill(const Type & value_)
 {
     m_Control->fill(value_);
@@ -157,7 +160,7 @@ void DOTk_PrimalVector<Type>::fill(const Type & value_)
     }
 }
 
-template<class Type>
+template<typename Type>
 void DOTk_PrimalVector<Type>::copy(const dotk::vector<Type> & input_)
 {
     m_Control->copy(*input_.control());
@@ -167,7 +170,7 @@ void DOTk_PrimalVector<Type>::copy(const dotk::vector<Type> & input_)
     }
 }
 
-template<class Type>
+template<typename Type>
 void DOTk_PrimalVector<Type>::gather(Type* input_) const
 {
     if(m_State.use_count() > 0)
@@ -182,13 +185,13 @@ void DOTk_PrimalVector<Type>::gather(Type* input_) const
     }
 }
 
-template<class Type>
+template<typename Type>
 size_t DOTk_PrimalVector<Type>::size() const
 {
     return (m_Size);
 }
 
-template<class Type>
+template<typename Type>
 std::tr1::shared_ptr<dotk::vector<Type> > DOTk_PrimalVector<Type>::clone() const
 {
     if(m_State.use_count() > 0)
@@ -203,19 +206,19 @@ std::tr1::shared_ptr<dotk::vector<Type> > DOTk_PrimalVector<Type>::clone() const
     }
 }
 
-template<class Type>
+template<typename Type>
 const std::tr1::shared_ptr<dotk::vector<Type> > & DOTk_PrimalVector<Type>::state() const
 {
     return (m_State);
 }
 
-template<class Type>
+template<typename Type>
 const std::tr1::shared_ptr<dotk::vector<Type> > & DOTk_PrimalVector<Type>::control() const
 {
     return (m_Control);
 }
 
-template<class Type>
+template<typename Type>
 Type & DOTk_PrimalVector<Type>::operator [](size_t index_)
 {
     assert(index_ >= 0);
@@ -232,7 +235,7 @@ Type & DOTk_PrimalVector<Type>::operator [](size_t index_)
     }
 }
 
-template<class Type>
+template<typename Type>
 const Type & DOTk_PrimalVector<Type>::operator [](size_t index_) const
 {
     assert(index_ >= 0);
@@ -249,13 +252,7 @@ const Type & DOTk_PrimalVector<Type>::operator [](size_t index_) const
     }
 }
 
-template<class Type>
-dotk::types::container_t DOTk_PrimalVector<Type>::type() const
-{
-    return (dotk::types::container_t::PRIMAL_VECTOR);
-}
-
-template<class Type>
+template<typename Type>
 void DOTk_PrimalVector<Type>::initialize(const dotk::DOTk_Primal & primal_)
 {
     m_Size = primal_.control()->size();
@@ -269,26 +266,11 @@ void DOTk_PrimalVector<Type>::initialize(const dotk::DOTk_Primal & primal_)
     }
 }
 
-template<class Type>
+template<typename Type>
 void DOTk_PrimalVector<Type>::initialize(const dotk::vector<Type> & control_, const dotk::vector<Type> & state_)
 {
     m_State->copy(state_);
     m_Control->copy(control_);
-}
-
-template<class Type>
-size_t DOTk_PrimalVector<Type>::rank() const
-{
-    std::perror("\n**** Unimplemented Function DOTk_PrimalVector::rank. ABORT. ****\n");
-    std::abort();
-    return (0);
-}
-
-template<class Type>
-const std::tr1::shared_ptr<dotk::vector<Type> > &  DOTk_PrimalVector<Type>::dual() const
-{
-    std::perror("\n**** Unimplemented Function DOTk_PrimalVector::dual. ABORT. ****\n");
-    std::abort();
 }
 
 }

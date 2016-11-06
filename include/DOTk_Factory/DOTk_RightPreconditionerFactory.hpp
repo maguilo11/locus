@@ -8,12 +8,16 @@
 #ifndef DOTK_RIGHTPRECONDITIONERFACTORY_HPP_
 #define DOTK_RIGHTPRECONDITIONERFACTORY_HPP_
 
+#include <string>
+#include <tr1/memory>
+#include <DOTk_Types.hpp>
+
 namespace dotk
 {
 
 class DOTk_RightPreconditioner;
 
-template<class T>
+template<typename Type>
 class vector;
 
 class DOTk_RightPreconditionerFactory

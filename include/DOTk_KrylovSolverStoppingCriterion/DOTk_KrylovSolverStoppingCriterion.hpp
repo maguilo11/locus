@@ -8,6 +8,9 @@
 #ifndef DOTK_KRYLOVSOLVERSTOPPINGCRITERION_HPP_
 #define DOTK_KRYLOVSOLVERSTOPPINGCRITERION_HPP_
 
+#include <map>
+#include <tr1/memory>
+
 #include "DOTk_Types.hpp"
 
 namespace dotk
@@ -15,7 +18,7 @@ namespace dotk
 
 class DOTk_KrylovSolver;
 
-template<class Type>
+template<typename Type>
 class vector;
 
 class DOTk_KrylovSolverStoppingCriterion

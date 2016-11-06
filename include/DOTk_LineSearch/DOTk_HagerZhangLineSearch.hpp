@@ -8,12 +8,14 @@
 #ifndef DOTK_HAGERZHANGLINESEARCH_HPP_
 #define DOTK_HAGERZHANGLINESEARCH_HPP_
 
+#include <map>
+
 #include "DOTk_LineSearch.hpp"
 
 namespace dotk
 {
 
-template<class T>
+template<typename Type>
 class vector;
 
 class DOTk_OptimizationDataMng;

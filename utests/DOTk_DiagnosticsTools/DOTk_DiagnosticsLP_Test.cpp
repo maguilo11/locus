@@ -7,18 +7,17 @@
 
 #include "gtest/gtest.h"
 
-#include "DOTk_NocedalAndWrightEquality.hpp"
-#include "DOTk_GcmmaTestObjectiveFunction.hpp"
-#include "DOTk_NocedalAndWrightObjective.hpp"
 #include "DOTk_Dual.hpp"
 #include "DOTk_State.hpp"
 #include "DOTk_Primal.hpp"
 #include "DOTk_Control.hpp"
 #include "DOTk_SerialVector.hpp"
-#include "DOTk_SerialVector.cpp"
 #include "DOTk_DiagnosticsTypeLP.hpp"
 #include "DOTk_GtestDOTkVecTools.hpp"
 #include "DOTk_DescentDirectionTools.hpp"
+#include "DOTk_NocedalAndWrightEquality.hpp"
+#include "DOTk_NocedalAndWrightObjective.hpp"
+#include "DOTk_GcmmaTestObjectiveFunction.hpp"
 
 namespace DOTkDiagnosticsLPTest
 {
@@ -26,12 +25,12 @@ namespace DOTkDiagnosticsLPTest
 TEST(DOTk_DiagnosticsTypeELP, checkObjectiveGradient)
 {
     size_t num_dual = 3;
-    dotk::serial::vector<Real> dual_data(num_dual, 0.);
+    dotk::StdVector<Real> dual_data(num_dual, 0.);
     dotk::DOTk_Dual dual(dual_data);
     dotk::gtools::generateRandomVector(dual.data());
 
     size_t num_state = 5;
-    dotk::serial::vector<Real> state_data(num_state, 1.);
+    dotk::StdVector<Real> state_data(num_state, 1.);
     dotk::DOTk_State state(state_data);
 
     std::tr1::shared_ptr<dotk::DOTk_NocedalAndWrightEquality> equality(new dotk::DOTk_NocedalAndWrightEquality());
@@ -49,12 +48,12 @@ TEST(DOTk_DiagnosticsTypeELP, checkObjectiveGradient)
 TEST(DOTk_DiagnosticsTypeELP, checkObjectiveHessian)
 {
     size_t num_dual = 3;
-    dotk::serial::vector<Real> dual_data(num_dual, 0.);
+    dotk::StdVector<Real> dual_data(num_dual, 0.);
     dotk::DOTk_Dual dual(dual_data);
     dotk::gtools::generateRandomVector(dual.data());
 
     size_t num_state = 5;
-    dotk::serial::vector<Real> state_data(num_state, 1.);
+    dotk::StdVector<Real> state_data(num_state, 1.);
     dotk::DOTk_State state(state_data);
 
     std::tr1::shared_ptr<dotk::DOTk_NocedalAndWrightEquality> equality(new dotk::DOTk_NocedalAndWrightEquality());
@@ -90,12 +89,12 @@ TEST(DOTk_DiagnosticsTypeELP, checkEqualityConstraintJacobian)
 TEST(DOTk_DiagnosticsTypeELP, checkEqualityConstraintAdjointJacobian)
 {
     size_t num_dual = 3;
-    dotk::serial::vector<Real> dual_data(num_dual, 0.);
+    dotk::StdVector<Real> dual_data(num_dual, 0.);
     dotk::DOTk_Dual dual(dual_data);
     dotk::gtools::generateRandomVector(dual.data());
 
     size_t num_state = 5;
-    dotk::serial::vector<Real> state_data(num_state, 1.);
+    dotk::StdVector<Real> state_data(num_state, 1.);
     dotk::DOTk_State state(state_data);
 
     std::tr1::shared_ptr<dotk::DOTk_NocedalAndWrightEquality> equality(new dotk::DOTk_NocedalAndWrightEquality());
@@ -114,12 +113,12 @@ TEST(DOTk_DiagnosticsTypeELP, checkEqualityConstraintAdjointJacobian)
 TEST(DOTk_DiagnosticsTypeELP, checkEqualityConstraintJacobianDerivative)
 {
     size_t num_dual = 3;
-    dotk::serial::vector<Real> dual_data(num_dual, 0.);
+    dotk::StdVector<Real> dual_data(num_dual, 0.);
     dotk::DOTk_Dual dual(dual_data);
     dotk::gtools::generateRandomVector(dual.data());
 
     size_t num_state = 5;
-    dotk::serial::vector<Real> state_data(num_state, 1.);
+    dotk::StdVector<Real> state_data(num_state, 1.);
     dotk::DOTk_State state(state_data);
 
     std::tr1::shared_ptr<dotk::DOTk_NocedalAndWrightEquality> equality(new dotk::DOTk_NocedalAndWrightEquality());

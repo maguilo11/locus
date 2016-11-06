@@ -8,6 +8,7 @@
 #ifndef DOTK_EIGENQR_HPP_
 #define DOTK_EIGENQR_HPP_
 
+#include <tr1/memory>
 #include "DOTk_EigenMethod.hpp"
 
 namespace dotk
@@ -15,9 +16,9 @@ namespace dotk
 
 class DOTk_OrthogonalFactorization;
 
-template<class Type>
+template<typename Type>
 class vector;
-template<class Type>
+template<typename Type>
 class matrix;
 
 class DOTk_EigenQR : public dotk::DOTk_EigenMethod

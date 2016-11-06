@@ -8,6 +8,9 @@
 #ifndef DOTK_DATAMNGCCSA_HPP_
 #define DOTK_DATAMNGCCSA_HPP_
 
+#include <vector>
+#include <tr1/memory>
+
 #include "DOTk_Types.hpp"
 
 namespace dotk
@@ -16,15 +19,15 @@ namespace dotk
 class DOTk_Primal;
 class DOTk_AssemblyManager;
 
-template<class Type>
+template<typename Type>
 class vector;
-template<class Type>
+template<typename Type>
 class matrix;
-template<class Type>
+template<typename Type>
 class DOTk_ObjectiveFunction;
-template<class Type>
+template<typename Type>
 class DOTk_EqualityConstraint;
-template<class Type>
+template<typename Type>
 class DOTk_InequalityConstraint;
 
 class DOTk_DataMngCCSA

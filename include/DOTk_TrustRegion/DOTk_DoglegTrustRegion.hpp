@@ -15,7 +15,7 @@ namespace dotk
 
 class DOTk_OptimizationDataMng;
 
-template<class Type>
+template<typename Type>
 class vector;
 
 class DOTk_DoglegTrustRegion : public dotk::DOTk_TrustRegion

@@ -5,18 +5,19 @@
  *      Author: Miguel A. Aguilo Valentin
  */
 
-#include "DOTk_Types.hpp"
-#include "DOTk_OptimizationDataMng.hpp"
-#include "DOTk_LBFGSHessian.hpp"
-#include "DOTk_LDFPHessian.hpp"
-#include "DOTk_LSR1Hessian.hpp"
+#include <iostream>
+
 #include "DOTk_SR1Hessian.hpp"
 #include "DOTk_DFPHessian.hpp"
-#include "DOTk_UserDefinedHessian.hpp"
-#include "DOTk_BarzilaiBorweinHessian.hpp"
-#include "DOTk_UserDefinedHessianTypeCNP.hpp"
+#include "DOTk_LDFPHessian.hpp"
+#include "DOTk_LSR1Hessian.hpp"
+#include "DOTk_LBFGSHessian.hpp"
 #include "DOTk_HessianFactory.hpp"
 #include "DOTk_AssemblyManager.hpp"
+#include "DOTk_UserDefinedHessian.hpp"
+#include "DOTk_OptimizationDataMng.hpp"
+#include "DOTk_BarzilaiBorweinHessian.hpp"
+#include "DOTk_UserDefinedHessianTypeCNP.hpp"
 
 namespace dotk
 {

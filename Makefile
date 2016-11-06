@@ -78,14 +78,6 @@ OBJS = $(DOTk_SOURCE_DIR)DOTk_LineSearchAlgorithmsDataMng/DOTk_OptimizationDataM
 	$(DOTk_SOURCE_DIR)DOTk_Eigen/DOTk_PowerMethod.o \
 	$(DOTk_SOURCE_DIR)DOTk_Eigen/DOTk_RayleighRitz.o \
 	$(DOTk_SOURCE_DIR)DOTk_Eigen/DOTk_RayleighQuotient.o \
-	$(DOTk_SOURCE_DIR)DOTk_Vector/DOTk_OmpArray.o \
-	$(DOTk_SOURCE_DIR)DOTk_Vector/DOTk_OmpVector.o \
-	$(DOTk_SOURCE_DIR)DOTk_Vector/DOTk_MpiArray.o \
-	$(DOTk_SOURCE_DIR)DOTk_Vector/DOTk_MpiVector.o \
-	$(DOTk_SOURCE_DIR)DOTk_Vector/DOTk_MpiX_Array.o \
-	$(DOTk_SOURCE_DIR)DOTk_Vector/DOTk_MpiX_Vector.o \
-	$(DOTk_SOURCE_DIR)DOTk_Vector/DOTk_SerialArray.o \
-	$(DOTk_SOURCE_DIR)DOTk_Vector/DOTk_SerialVector.o \
 	$(DOTk_SOURCE_DIR)DOTk_Vector/DOTk_ParallelUtils.o \
 	$(DOTk_SOURCE_DIR)DOTk_Vector/DOTk_MultiVector.o \
 	$(DOTk_SOURCE_DIR)DOTk_Vector/DOTk_PrimalVector.o \

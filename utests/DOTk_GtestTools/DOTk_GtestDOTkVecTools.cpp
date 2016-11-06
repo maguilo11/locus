@@ -9,7 +9,6 @@
 
 #include <omp.h>
 #include "DOTk_SerialVector.hpp"
-#include "DOTk_SerialVector.cpp"
 #include "DOTk_GtestDOTkVecTools.hpp"
 
 namespace dotk
@@ -22,13 +21,13 @@ std::tr1::shared_ptr<dotk::vector<Real> > allocateControl()
 {
     size_t num_controls = 2;
     std::vector<Real> data(num_controls, 2.);
-    std::tr1::shared_ptr<dotk::vector<Real> > vector(new dotk::serial::vector<Real>(data));
+    std::tr1::shared_ptr<dotk::vector<Real> > vector(new dotk::StdVector<Real>(data));
     return (vector);
 }
 
 std::tr1::shared_ptr<dotk::vector<Real> > allocateData(size_t dim_, Real value_)
 {
-    std::tr1::shared_ptr<dotk::vector<Real> > vector(new dotk::serial::vector<Real>(dim_, value_));
+    std::tr1::shared_ptr<dotk::vector<Real> > vector(new dotk::StdVector<Real>(dim_, value_));
     return (vector);
 }
 

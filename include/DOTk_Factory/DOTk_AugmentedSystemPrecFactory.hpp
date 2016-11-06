@@ -8,6 +8,8 @@
 #ifndef DOTK_AUGMENTEDSYSTEMPRECFACTORY_HPP_
 #define DOTK_AUGMENTEDSYSTEMPRECFACTORY_HPP_
 
+#include <tr1/memory>
+
 namespace dotk
 {
 

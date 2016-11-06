@@ -13,7 +13,6 @@
 #include "DOTk_RowMatrix.hpp"
 #include "DOTk_RowMatrix.cpp"
 #include "DOTk_SerialVector.hpp"
-#include "DOTk_SerialVector.cpp"
 #include "DOTk_UserDefinedHessian.hpp"
 #include "DOTk_LineSearchMngTypeULP.hpp"
 

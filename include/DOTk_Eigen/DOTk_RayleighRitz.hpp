@@ -8,6 +8,7 @@
 #ifndef DOTK_RAYLEIGHRITZ_HPP_
 #define DOTK_RAYLEIGHRITZ_HPP_
 
+#include <tr1/memory>
 #include "DOTk_EigenMethod.hpp"
 
 namespace dotk
@@ -16,9 +17,9 @@ namespace dotk
 class DOTk_EigenMethod;
 class DOTk_OrthogonalFactorization;
 
-template<class Type>
+template<typename Type>
 class vector;
-template<class Type>
+template<typename Type>
 class matrix;
 
 class DOTk_RayleighRitz : public dotk::DOTk_EigenMethod

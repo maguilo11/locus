@@ -5,6 +5,8 @@
  *      Author: Miguel A. Aguilo Valentin
  */
 
+#include <cmath>
+
 #include "DOTk_NocedalAndWrightObjective.hpp"
 
 namespace dotk

@@ -5,7 +5,8 @@
  *      Author: Miguel A. Aguilo Valentin
  */
 
-#include "DOTk_Types.hpp"
+#include <iostream>
+
 #include "DOTk_Primal.hpp"
 #include "DOTk_NumericalDifferentiatonFactory.hpp"
 #include "DOTk_CentralFiniteDifference.hpp"

@@ -5,6 +5,8 @@
  *      Author: Miguel A. Aguilo Valentin
  */
 
+#include <cassert>
+
 #include "vector.hpp"
 #include "DOTk_QR.hpp"
 #include "DOTk_MathUtils.hpp"

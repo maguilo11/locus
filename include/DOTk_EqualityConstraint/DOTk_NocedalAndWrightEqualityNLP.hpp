@@ -13,7 +13,7 @@
 namespace dotk
 {
 
-template<class Type>
+template<typename Type>
 class vector;
 
 class DOTk_NocedalAndWrightEqualityNLP : public dotk::DOTk_EqualityConstraint<Real>

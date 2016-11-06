@@ -6,25 +6,11 @@
  */
 
 #include <sstream>
+#include <iostream>
 
-#include "DOTk_OmpArray.hpp"
-#include "DOTk_OmpArray.cpp"
-#include "DOTk_OmpVector.hpp"
-#include "DOTk_OmpVector.cpp"
-#include "DOTk_MpiArray.hpp"
-#include "DOTk_MpiArray.cpp"
-#include "DOTk_MpiVector.hpp"
-#include "DOTk_MpiVector.cpp"
-#include "DOTk_MpiX_Array.hpp"
-#include "DOTk_MpiX_Array.cpp"
-#include "DOTk_MpiX_Vector.hpp"
-#include "DOTk_MpiX_Vector.cpp"
-#include "DOTk_SerialArray.hpp"
-#include "DOTk_SerialArray.cpp"
-#include "DOTk_SerialVector.hpp"
-#include "DOTk_SerialVector.cpp"
 #include "DOTk_Variable.hpp"
-
+#include "DOTk_SerialArray.hpp"
+#include "DOTk_SerialVector.hpp"
 
 namespace dotk
 {
@@ -131,44 +117,19 @@ const std::tr1::shared_ptr<dotk::vector<Real> > & DOTk_Variable::upperBound() co
     return (m_UpperBound);
 }
 
+void DOTk_Variable::allocate(const dotk::vector<Real> & input_)
+{
+    m_Data = input_.clone();
+}
+
 void DOTk_Variable::allocateSerialArray(size_t size_, Real value_)
 {
-    m_Data.reset(new dotk::serial::array<Real>(size_, value_));
-}
-
-void DOTk_Variable::allocateMpiArray(MPI_Comm comm_, size_t size_, Real value_)
-{
-    m_Data.reset(new dotk::mpi::array<Real>(comm_, size_, value_));
-}
-
-void DOTk_Variable::allocateOmpArray(size_t size_, size_t num_threads_, Real value_)
-{
-    m_Data.reset(new dotk::omp::array<Real>(size_, num_threads_, value_));
-}
-
-void DOTk_Variable::allocateMpixArray(MPI_Comm comm_, size_t num_threads_, size_t size_, Real value_)
-{
-    m_Data.reset(new dotk::mpix::array<Real>(comm_, size_, num_threads_, value_));
+    m_Data.reset(new dotk::StdArray<Real>(size_, value_));
 }
 
 void DOTk_Variable::allocateSerialVector(size_t size_, Real value_)
 {
-    m_Data.reset(new dotk::serial::vector<Real>(size_, value_));
-}
-
-void DOTk_Variable::allocateMpiVector(MPI_Comm comm_, size_t size_, Real value_)
-{
-    m_Data.reset(new dotk::mpi::vector<Real>(comm_, size_, value_));
-}
-
-void DOTk_Variable::allocateOmpVector(size_t size_, size_t num_threads_, Real value_)
-{
-    m_Data.reset(new dotk::omp::vector<Real>(size_, num_threads_, value_));
-}
-
-void DOTk_Variable::allocateMpixVector(MPI_Comm comm_, size_t num_threads_, size_t size_, Real value_)
-{
-    m_Data.reset(new dotk::mpix::vector<Real>(comm_, size_, num_threads_, value_));
+    m_Data.reset(new dotk::StdVector<Real>(size_, value_));
 }
 
 void DOTk_Variable::checkData()

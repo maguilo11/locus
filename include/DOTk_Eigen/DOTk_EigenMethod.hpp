@@ -13,9 +13,9 @@
 namespace dotk
 {
 
-template<class Type>
+template<typename Type>
 class vector;
-template<class Type>
+template<typename Type>
 class matrix;
 
 class DOTk_EigenMethod

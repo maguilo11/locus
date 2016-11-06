@@ -5,6 +5,10 @@
  *      Author: Miguel A. Aguilo Valentin
  */
 
+#include <cmath>
+#include <limits>
+#include <vector>
+
 #include "vector.hpp"
 #include "DOTk_RowMatrix.hpp"
 #include "DOTk_RowMatrix.cpp"

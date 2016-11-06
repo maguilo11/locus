@@ -8,7 +8,6 @@
 #include "gtest/gtest.h"
 
 #include "DOTk_OmpVector.hpp"
-#include "DOTk_OmpVector.cpp"
 #include "DOTk_GtestDOTkVecTools.hpp"
 
 namespace DOTkOmpVectorTest
@@ -17,11 +16,11 @@ namespace DOTkOmpVectorTest
 TEST(DOTk_OmpVectorTest, size)
 {
     int dim = 1e4;
-    Real value = 1.;
+    double value = 1.;
     int thread_count = 4;
-    dotk::omp::vector<Real> vector(dim, thread_count, value);
+    dotk::OmpVector<double> vector(dim, thread_count, value);
 
-    Real start = 0.;
+    double start = 0.;
     int my_rank = omp_get_thread_num();
     if(my_rank == 0)
     {
@@ -29,15 +28,15 @@ TEST(DOTk_OmpVectorTest, size)
         start = omp_get_wtime();
     }
 
-    Real result = vector.size();
+    double result = vector.size();
 
-    Real finish = 0.;
+    double finish = 0.;
     if(my_rank == 0)
     {
         finish = omp_get_wtime();
     }
 
-    Real time = finish - start;
+    double time = finish - start;
     if(my_rank == 0)
     {
         printf("The max value is %f\n", result);
@@ -48,11 +47,11 @@ TEST(DOTk_OmpVectorTest, size)
 TEST(DOTk_OmpVectorTest, max)
 {
     int dim = 1e4;
-    Real value = 1.;
+    double value = 1.;
     int thread_count = 4;
-    dotk::omp::vector<Real> vector(dim, thread_count, value);
+    dotk::OmpVector<double> vector(dim, thread_count, value);
 
-    Real start = 0.;
+    double start = 0.;
     int my_rank = omp_get_thread_num();
     if(my_rank == 0)
     {
@@ -60,20 +59,20 @@ TEST(DOTk_OmpVectorTest, max)
         start = omp_get_wtime();
     }
 
-    Real result = vector.max();
+    double result = vector.max();
 
-    Real finish = 0.;
+    double finish = 0.;
     if(my_rank == 0)
     {
         finish = omp_get_wtime();
     }
 
-    Real time = finish - start;
+    double time = finish - start;
     if(my_rank == 0)
     {
         printf("The max value is %f\n", result);
         printf("WTime is %f\n", time);
-        Real tolerance = 1e-8;
+        double tolerance = 1e-8;
         EXPECT_NEAR(2., result, tolerance);
     }
 }
@@ -81,11 +80,11 @@ TEST(DOTk_OmpVectorTest, max)
 TEST(DOTk_OmpVectorTest, min)
 {
     int dim = 1e4;
-    Real value = 1.;
+    double value = 1.;
     int thread_count = 4;
-    dotk::omp::vector<Real> vector(dim, thread_count, value);
+    dotk::OmpVector<double> vector(dim, thread_count, value);
 
-    Real start = 0.;
+    double start = 0.;
     int my_rank = omp_get_thread_num();
     if(my_rank == 0)
     {
@@ -93,20 +92,20 @@ TEST(DOTk_OmpVectorTest, min)
         start = omp_get_wtime();
     }
 
-    Real result = vector.min();
+    double result = vector.min();
 
-    Real finish = 0.;
+    double finish = 0.;
     if(my_rank == 0)
     {
         finish = omp_get_wtime();
     }
 
-    Real time = finish - start;
+    double time = finish - start;
     if(my_rank == 0)
     {
         printf("The min value is %f\n", result);
         printf("WTime is %f\n", time);
-        Real tolerance = 1e-8;
+        double tolerance = 1e-8;
         EXPECT_NEAR(-2., result, tolerance);
     }
 }
@@ -114,11 +113,11 @@ TEST(DOTk_OmpVectorTest, min)
 TEST(DOTk_OmpVectorTest, abs)
 {
     int dim = 1e4;
-    Real value = -12.;
+    double value = -12.;
     int thread_count = 4;
-    dotk::omp::vector<Real> x(dim, thread_count, value);
+    dotk::OmpVector<double> x(dim, thread_count, value);
 
-    Real start = 0.;
+    double start = 0.;
     int my_rank = omp_get_thread_num();
     if(my_rank == 0)
     {
@@ -127,19 +126,19 @@ TEST(DOTk_OmpVectorTest, abs)
 
     x.abs();
 
-    Real finish = 0.;
+    double finish = 0.;
     if(my_rank == 0)
     {
         finish = omp_get_wtime();
     }
 
-    Real time = finish - start;
+    double time = finish - start;
     if(my_rank == 0)
     {
         printf("ABS WTime is %f\n", time);
     }
 
-    std::tr1::shared_ptr<dotk::vector<Real> > gold = x.clone();
+    std::tr1::shared_ptr<dotk::vector<double> > gold = x.clone();
     gold->fill(12);
     dotk::gtest::checkResults(*gold, x, thread_count);
 }
@@ -147,11 +146,11 @@ TEST(DOTk_OmpVectorTest, abs)
 TEST(DOTk_OmpVectorTest, scale)
 {
     int dim = 1e4;
-    Real value = 1.;
+    double value = 1.;
     int thread_count = 4;
-    dotk::omp::vector<Real> vector(dim, thread_count, value);
+    dotk::OmpVector<double> vector(dim, thread_count, value);
 
-    Real start = 0.;
+    double start = 0.;
     int my_rank = omp_get_thread_num();
     if(my_rank == 0)
     {
@@ -160,19 +159,19 @@ TEST(DOTk_OmpVectorTest, scale)
 
     vector.scale(3.);
 
-    Real finish = 0.;
+    double finish = 0.;
     if(my_rank == 0)
     {
         finish = omp_get_wtime();
     }
 
-    Real time = finish - start;
+    double time = finish - start;
     if(my_rank == 0)
     {
         printf("WTime is %f\n", time);
     }
 
-    std::tr1::shared_ptr<dotk::vector<Real> > gold = vector.clone();
+    std::tr1::shared_ptr<dotk::vector<double> > gold = vector.clone();
     gold->fill(3.);
     dotk::gtest::checkResults(*gold, vector, thread_count);
 }
@@ -181,10 +180,10 @@ TEST(DOTk_OmpVectorTest, cwiseProd)
 {
     int dim = 1e4;
     int thread_count = 4;
-    dotk::omp::vector<Real> x(dim, thread_count, 2.);
-    dotk::omp::vector<Real> y(dim, thread_count, 2.);
+    dotk::OmpVector<double> x(dim, thread_count, 2.);
+    dotk::OmpVector<double> y(dim, thread_count, 2.);
 
-    Real start = 0.;
+    double start = 0.;
     int my_rank = omp_get_thread_num();
     if(my_rank == 0)
     {
@@ -193,19 +192,19 @@ TEST(DOTk_OmpVectorTest, cwiseProd)
 
     x.cwiseProd(y);
 
-    Real finish = 0.;
+    double finish = 0.;
     if(my_rank == 0)
     {
         finish = omp_get_wtime();
     }
 
-    Real time = finish - start;
+    double time = finish - start;
     if(my_rank == 0)
     {
         printf("WTime is %f\n", time);
     }
 
-    std::tr1::shared_ptr<dotk::vector<Real> > gold = x.clone();
+    std::tr1::shared_ptr<dotk::vector<double> > gold = x.clone();
     gold->fill(4.);
     dotk::gtest::checkResults(*gold, x, thread_count);
 }
@@ -213,12 +212,12 @@ TEST(DOTk_OmpVectorTest, cwiseProd)
 TEST(DOTk_OmpVectorTest, axpy)
 {
     int dim = 1e4;
-    Real value = 1.;
+    double value = 1.;
     int thread_count = 4;
-    dotk::omp::vector<Real> x(dim, thread_count, value);
-    dotk::omp::vector<Real> y(dim, thread_count, value);
+    dotk::OmpVector<double> x(dim, thread_count, value);
+    dotk::OmpVector<double> y(dim, thread_count, value);
 
-    Real start = 0.;
+    double start = 0.;
     int my_rank = omp_get_thread_num();
     if(my_rank == 0)
     {
@@ -227,19 +226,19 @@ TEST(DOTk_OmpVectorTest, axpy)
 
     y.axpy(3., x);
 
-    Real finish = 0.;
+    double finish = 0.;
     if(my_rank == 0)
     {
         finish = omp_get_wtime();
     }
 
-    Real time = finish - start;
+    double time = finish - start;
     if(my_rank == 0)
     {
         printf("WTime is %f\n", time);
     }
 
-    std::tr1::shared_ptr<dotk::vector<Real> > gold = x.clone();
+    std::tr1::shared_ptr<dotk::vector<double> > gold = x.clone();
     gold->fill(4.);
     dotk::gtest::checkResults(*gold, y, thread_count);
 }
@@ -247,31 +246,31 @@ TEST(DOTk_OmpVectorTest, axpy)
 TEST(DOTk_OmpVectorTest, sum)
 {
     int dim = 1e4;
-    Real value = 3.;
+    double value = 3.;
     int thread_count = 4;
-    dotk::omp::vector<Real> x(dim, thread_count, value);
+    dotk::OmpVector<double> x(dim, thread_count, value);
 
-    Real start = 0.;
+    double start = 0.;
     int my_rank = omp_get_thread_num();
     if(my_rank == 0)
     {
         start = omp_get_wtime();
     }
 
-    Real sum = x.sum();
+    double sum = x.sum();
 
-    Real finish = 0.;
+    double finish = 0.;
     if(my_rank == 0)
     {
         finish = omp_get_wtime();
     }
 
-    Real time = finish - start;
+    double time = finish - start;
     if(my_rank == 0)
     {
         printf("GSUM, value is %f\n", sum);
         printf("WTime is %f\n", time);
-        Real tolerance = 1e-8;
+        double tolerance = 1e-8;
         EXPECT_NEAR(3e4, sum, tolerance);
     }
 }
@@ -279,32 +278,32 @@ TEST(DOTk_OmpVectorTest, sum)
 TEST(DOTk_OmpVectorTest, dot)
 {
     int dim = 1e4;
-    Real value = 1.;
+    double value = 1.;
     int thread_count = 4;
-    dotk::omp::vector<Real> x(dim, thread_count, value);
-    dotk::omp::vector<Real> y(dim, thread_count, value);
+    dotk::OmpVector<double> x(dim, thread_count, value);
+    dotk::OmpVector<double> y(dim, thread_count, value);
 
-    Real start = 0.;
+    double start = 0.;
     int my_rank = omp_get_thread_num();
     if(my_rank == 0)
     {
         start = omp_get_wtime();
     }
 
-    Real dot = x.dot(y);
+    double dot = x.dot(y);
 
-    Real finish = 0.;
+    double finish = 0.;
     if(my_rank == 0)
     {
         finish = omp_get_wtime();
     }
 
-    Real time = finish - start;
+    double time = finish - start;
     if(my_rank == 0)
     {
         printf("GDOT, value is %f\n", dot);
         printf("WTime is %f\n", time);
-        Real tolerance = 1e-8;
+        double tolerance = 1e-8;
         EXPECT_NEAR(1e4, dot, tolerance);
     }
 }
@@ -312,31 +311,31 @@ TEST(DOTk_OmpVectorTest, dot)
 TEST(DOTk_OmpVectorTest, norm)
 {
     int dim = 1e4;
-    Real value = 1.;
+    double value = 1.;
     int thread_count = 4;
-    dotk::omp::vector<Real> x(dim, thread_count, value);
+    dotk::OmpVector<double> x(dim, thread_count, value);
 
-    Real start = 0.;
+    double start = 0.;
     int my_rank = omp_get_thread_num();
     if(my_rank == 0)
     {
         start = omp_get_wtime();
     }
 
-    Real norm = x.norm();
+    double norm = x.norm();
 
-    Real finish = 0.;
+    double finish = 0.;
     if(my_rank == 0)
     {
         finish = omp_get_wtime();
     }
 
-    Real time = finish - start;
+    double time = finish - start;
     if(my_rank == 0)
     {
         printf("GNORM, value is %f\n", norm);
         printf("WTime is %f\n", time);
-        Real tolerance = 1e-8;
+        double tolerance = 1e-8;
         EXPECT_NEAR(1e2, norm, tolerance);
     }
 }
@@ -344,12 +343,12 @@ TEST(DOTk_OmpVectorTest, norm)
 TEST(DOTk_OmpVectorTest, copy)
 {
     int dim = 1e4;
-    Real value = 1.;
+    double value = 1.;
     int thread_count = 4;
-    dotk::omp::vector<Real> x(dim, thread_count, 0.);
-    dotk::omp::vector<Real> y(dim, thread_count, value);
+    dotk::OmpVector<double> x(dim, thread_count, 0.);
+    dotk::OmpVector<double> y(dim, thread_count, value);
 
-    Real start = 0.;
+    double start = 0.;
     int my_rank = omp_get_thread_num();
     if(my_rank == 0)
     {
@@ -358,19 +357,19 @@ TEST(DOTk_OmpVectorTest, copy)
 
     x.copy(y);
 
-    Real finish = 0.;
+    double finish = 0.;
     if(my_rank == 0)
     {
         finish = omp_get_wtime();
     }
 
-    Real time = finish - start;
+    double time = finish - start;
     if(my_rank == 0)
     {
         printf("WTime is %f\n", time);
     }
 
-    std::tr1::shared_ptr<dotk::vector<Real> > gold = x.clone();
+    std::tr1::shared_ptr<dotk::vector<double> > gold = x.clone();
     gold->fill(1.);
     dotk::gtest::checkResults(*gold, x, thread_count);
 }
@@ -378,12 +377,12 @@ TEST(DOTk_OmpVectorTest, copy)
 TEST(DOTk_OmpVectorTest, gather)
 {
     int dim = 1e4;
-    Real value = 1.;
+    double value = 1.;
     int thread_count = 4;
-    dotk::omp::vector<Real> x(dim, thread_count, 0.);
-    dotk::omp::vector<Real> y(dim, thread_count, value);
+    dotk::OmpVector<double> x(dim, thread_count, 0.);
+    dotk::OmpVector<double> y(dim, thread_count, value);
 
-    Real start = 0.;
+    double start = 0.;
     int my_rank = omp_get_thread_num();
     if(my_rank == 0)
     {
@@ -392,19 +391,19 @@ TEST(DOTk_OmpVectorTest, gather)
 
     y.gather(&(x[0]));
 
-    Real finish = 0.;
+    double finish = 0.;
     if(my_rank == 0)
     {
         finish = omp_get_wtime();
     }
 
-    Real time = finish - start;
+    double time = finish - start;
     if(my_rank == 0)
     {
         printf("WTime is %f\n", time);
     }
 
-    std::tr1::shared_ptr<dotk::vector<Real> > gold = y.clone();
+    std::tr1::shared_ptr<dotk::vector<double> > gold = y.clone();
     gold->fill(1.);
     dotk::gtest::checkResults(x, *gold, thread_count);
 }

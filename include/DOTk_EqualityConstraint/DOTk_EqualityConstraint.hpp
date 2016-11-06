@@ -9,14 +9,15 @@
 #define DOTK_EQUALITYCONSTRAINT_HPP_
 
 #include "vector.hpp"
+#include "DOTk_Types.hpp"
 
 namespace dotk
 {
 
-template<class Type>
+template<typename Type>
 class vector;
 
-template<class Type>
+template<typename Type>
 class DOTk_EqualityConstraint
 {
 public:

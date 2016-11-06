@@ -8,7 +8,8 @@
 #ifndef DOTK_PRIMAL_HPP_
 #define DOTK_PRIMAL_HPP_
 
-#include <mpi.h>
+#include <tr1/memory>
+
 #include "DOTk_Types.hpp"
 
 namespace dotk
@@ -18,7 +19,7 @@ class DOTk_Dual;
 class DOTk_State;
 class DOTk_Control;
 
-template <class Type>
+template <typename Type>
 class vector;
 
 class DOTk_Primal
@@ -67,33 +68,15 @@ public:
 
     void allocateUserDefinedDual(const dotk::vector<Real> & dual_);
     void allocateSerialDualArray(size_t size_, Real value_ = 0.);
-    void allocateMpiDualArray(MPI_Comm comm_, size_t size_, Real value_ = 0.);
-    void allocateOmpDualArray(size_t size_, size_t num_threads_, Real value_ = 0.);
-    void allocateMpixDualArray(MPI_Comm comm_, size_t num_threads_, size_t size_, Real value_ = 0.);
     void allocateSerialDualVector(size_t size_, Real value_ = 0.);
-    void allocateMpiDualVector(MPI_Comm comm_, size_t size_, Real value_ = 0.);
-    void allocateOmpDualVector(size_t size_, size_t num_threads_, Real value_ = 0.);
-    void allocateMpixDualVector(MPI_Comm comm_, size_t num_threads_, size_t size_, Real value_ = 0.);
 
     void allocateUserDefinedState(const dotk::vector<Real> & state_);
     void allocateSerialStateArray(size_t size_, Real value_ = 0.);
-    void allocateMpiStateArray(MPI_Comm comm_, size_t size_, Real value_ = 0.);
-    void allocateOmpStateArray(size_t size_, size_t num_threads_, Real value_ = 0.);
-    void allocateMpixStateArray(MPI_Comm comm_, size_t num_threads_, size_t size_, Real value_ = 0.);
     void allocateSerialStateVector(size_t size_, Real value_ = 0.);
-    void allocateMpiStateVector(MPI_Comm comm_, size_t size_, Real value_ = 0.);
-    void allocateOmpStateVector(size_t size_, size_t num_threads_, Real value_ = 0.);
-    void allocateMpixStateVector(MPI_Comm comm_, size_t num_threads_, size_t size_, Real value_ = 0.);
 
     void allocateUserDefinedControl(const dotk::vector<Real> & control_);
     void allocateSerialControlArray(size_t size_, Real value_ = 0.);
-    void allocateMpiControlArray(MPI_Comm comm_, size_t size_, Real value_ = 0.);
-    void allocateOmpControlArray(size_t size_, size_t num_threads_, Real value_ = 0.);
-    void allocateMpixControlArray(MPI_Comm comm_, size_t num_threads_, size_t size_, Real value_ = 0.);
     void allocateSerialControlVector(size_t size_, Real value_ = 0.);
-    void allocateMpiControlVector(MPI_Comm comm_, size_t size_, Real value_ = 0.);
-    void allocateOmpControlVector(size_t size_, size_t num_threads_, Real value_ = 0.);
-    void allocateMpixControlVector(MPI_Comm comm_, size_t num_threads_, size_t size_, Real value_ = 0.);
 
 private:
     std::tr1::shared_ptr<dotk::DOTk_Dual> m_Dual;

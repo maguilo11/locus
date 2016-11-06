@@ -8,6 +8,8 @@
 #ifndef DOTK_PARALLELFORWARDDIFFGRAD_HPP_
 #define DOTK_PARALLELFORWARDDIFFGRAD_HPP_
 
+#include <vector>
+
 #include "DOTk_FirstOrderOperator.hpp"
 
 namespace dotk

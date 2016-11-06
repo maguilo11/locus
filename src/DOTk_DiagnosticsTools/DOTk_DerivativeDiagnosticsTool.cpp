@@ -8,6 +8,7 @@
 #include <iomanip>
 #include <sstream>
 
+#include "vector.hpp"
 #include "DOTk_DerivativeDiagnosticsTool.hpp"
 
 namespace dotk

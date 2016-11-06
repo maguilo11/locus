@@ -6,6 +6,7 @@
  */
 
 #include <fstream>
+#include <iostream>
 
 #include "vector.hpp"
 #include "DOTk_VariablesUtils.hpp"

@@ -5,8 +5,11 @@
  *      Author: Miguel A. Aguilo Valentin
  */
 
+#include <cmath>
+
 #include <iomanip>
 #include <sstream>
+#include <iostream>
 
 #include "vector.hpp"
 #include "DOTk_Primal.hpp"

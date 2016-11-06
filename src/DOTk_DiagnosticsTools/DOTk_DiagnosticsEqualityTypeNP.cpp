@@ -5,6 +5,9 @@
  *      Author: Miguel A. Aguilo Valentin
  */
 
+#include <cmath>
+#include <string>
+#include <limits>
 #include <sstream>
 #include <iomanip>
 

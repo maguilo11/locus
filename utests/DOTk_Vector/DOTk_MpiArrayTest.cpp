@@ -8,9 +8,7 @@
 #include "gtest/gtest.h"
 
 #include "DOTk_MpiArray.hpp"
-#include "DOTk_MpiArray.cpp"
 #include "DOTk_SerialArray.hpp"
-#include "DOTk_SerialArray.cpp"
 #include "DOTk_GtestDOTkVecTools.hpp"
 
 namespace DOTkMpiArrayTest
@@ -19,7 +17,7 @@ namespace DOTkMpiArrayTest
 TEST(DOTk_MpiArrayTest, size)
 {
     int dim = 1e4;
-    dotk::mpi::array<Real> array(dim);
+    dotk::MpiArray<Real> array(dim);
 
     Real start = 0.;
     int my_rank;
@@ -40,7 +38,6 @@ TEST(DOTk_MpiArrayTest, size)
     Real time = finish - start;
     if(my_rank == 0)
     {
-        EXPECT_EQ(dotk::types::MPI_ARRAY, array.type());
         printf("WTime is %f\n", time);
     }
 
@@ -52,7 +49,7 @@ TEST(DOTk_MpiArrayTest, max)
 {
     int dim = 1e4;
     Real value = 1.;
-    dotk::mpi::array<Real> array(dim, value);
+    dotk::MpiArray<Real> array(dim, value);
 
     Real start = 0.;
     int my_rank;
@@ -85,7 +82,7 @@ TEST(DOTk_MpiArrayTest, min)
 {
     int dim = 1e4;
     Real value = 1.;
-    dotk::mpi::array<Real> array(MPI_COMM_WORLD, dim, value);
+    dotk::MpiArray<Real> array(MPI_COMM_WORLD, dim, value);
 
     Real start = 0.;
     int my_rank;
@@ -118,7 +115,7 @@ TEST(DOTk_MpiArrayTest, abs)
 {
     int dim = 1e4;
     Real value = -1.;
-    dotk::mpi::array<Real> x(MPI_COMM_WORLD, dim, value);
+    dotk::MpiArray<Real> x(MPI_COMM_WORLD, dim, value);
 
     Real start = 0.;
     int my_rank;
@@ -151,7 +148,7 @@ TEST(DOTk_MpiArrayTest, abs)
 TEST(DOTk_MpiArrayTest, scale)
 {
     int dim = 1e4;
-    dotk::mpi::array<Real> array(MPI_COMM_WORLD, dim);
+    dotk::MpiArray<Real> array(MPI_COMM_WORLD, dim);
     array.fill(1.);
 
     Real start = 0.;
@@ -185,8 +182,8 @@ TEST(DOTk_MpiArrayTest, scale)
 TEST(DOTk_MpiArrayTest, cwiseProd)
 {
     int dim = 1e4;
-    dotk::mpi::array<Real> x(MPI_COMM_WORLD, dim, 2.);
-    dotk::mpi::array<Real> y(MPI_COMM_WORLD, dim, 2.);
+    dotk::MpiArray<Real> x(MPI_COMM_WORLD, dim, 2.);
+    dotk::MpiArray<Real> y(MPI_COMM_WORLD, dim, 2.);
 
     Real start = 0.;
     int my_rank;
@@ -219,8 +216,8 @@ TEST(DOTk_MpiArrayTest, cwiseProd)
 TEST(DOTk_MpiArrayTest, axpy)
 {
     int dim = 1e4;
-    dotk::mpi::array<Real> x(MPI_COMM_WORLD, dim);
-    dotk::mpi::array<Real> y(MPI_COMM_WORLD, dim);
+    dotk::MpiArray<Real> x(MPI_COMM_WORLD, dim);
+    dotk::MpiArray<Real> y(MPI_COMM_WORLD, dim);
 
     x.fill(1.);
     y.fill(1.);
@@ -256,7 +253,7 @@ TEST(DOTk_MpiArrayTest, axpy)
 TEST(DOTk_MpiArrayTest, sum)
 {
     int dim = 1e4;
-    dotk::mpi::array<Real> array(MPI_COMM_WORLD, dim);
+    dotk::MpiArray<Real> array(MPI_COMM_WORLD, dim);
 
     array.fill(3.);
 
@@ -289,8 +286,8 @@ TEST(DOTk_MpiArrayTest, sum)
 TEST(DOTk_MpiArrayTest, dot)
 {
     int dim = 1e4;
-    dotk::mpi::array<Real> x(MPI_COMM_WORLD, dim);
-    dotk::mpi::array<Real> y(MPI_COMM_WORLD, dim);
+    dotk::MpiArray<Real> x(MPI_COMM_WORLD, dim);
+    dotk::MpiArray<Real> y(MPI_COMM_WORLD, dim);
 
     x.fill(1.);
     y.fill(1.);
@@ -324,8 +321,8 @@ TEST(DOTk_MpiArrayTest, dot)
 TEST(DOTk_MpiArrayTest, norm)
 {
     int dim = 1e4;
-    dotk::mpi::array<Real> x(MPI_COMM_WORLD, dim);
-    dotk::mpi::array<Real> y(MPI_COMM_WORLD, dim);
+    dotk::MpiArray<Real> x(MPI_COMM_WORLD, dim);
+    dotk::MpiArray<Real> y(MPI_COMM_WORLD, dim);
 
     x.fill(1.);
 
@@ -359,7 +356,7 @@ TEST(DOTk_MpiArrayTest, copy)
 {
     int dim = 1e4;
     Real value = 1.;
-    dotk::mpi::array<Real> x(MPI_COMM_WORLD, dim, value);
+    dotk::MpiArray<Real> x(MPI_COMM_WORLD, dim, value);
     std::tr1::shared_ptr<dotk::vector<Real> > y = x.clone();
 
     Real start = 0.;
@@ -395,7 +392,7 @@ TEST(DOTk_MpiArrayTest, gather)
 {
     int dim = 1e4;
     Real value = 1.;
-    dotk::mpi::array<Real> x(MPI_COMM_WORLD, dim, value);
+    dotk::MpiArray<Real> x(MPI_COMM_WORLD, dim, value);
     std::vector<Real> y(dim, 0.);
     EXPECT_EQ(dim, y.size());
 
@@ -420,7 +417,7 @@ TEST(DOTk_MpiArrayTest, gather)
     {
         printf("WTime is %f\n", time);
 
-        dotk::serial::array<Real> gold(dim, 1.);
+        dotk::StdArray<Real> gold(dim, 1.);
         int thread_count = 4;
         dotk::gtest::checkResults(y.size(), y.data(), gold, thread_count);
     }

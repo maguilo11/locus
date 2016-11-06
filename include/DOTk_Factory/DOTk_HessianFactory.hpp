@@ -8,11 +8,15 @@
 #ifndef DOTK_HESSIANFACTORY_HPP_
 #define DOTK_HESSIANFACTORY_HPP_
 
+#include <tr1/memory>
+
+#include "DOTk_Types.hpp"
+
 namespace dotk
 {
 
-class DOTk_SecondOrderOperator;
 class DOTk_AssemblyManager;
+class DOTk_SecondOrderOperator;
 class DOTk_OptimizationDataMng;
 
 class DOTk_HessianFactory

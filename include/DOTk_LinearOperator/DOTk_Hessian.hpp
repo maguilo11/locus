@@ -16,7 +16,7 @@ namespace dotk
 class DOTk_SecondOrderOperator;
 class DOTk_OptimizationDataMng;
 
-template<class Type>
+template<typename Type>
 class vector;
 
 class DOTk_Hessian : public dotk::DOTk_LinearOperator

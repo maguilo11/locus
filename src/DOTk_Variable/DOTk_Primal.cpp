@@ -5,6 +5,8 @@
  *      Author: Miguel A. Aguilo Valentin
  */
 
+#include <cassert>
+
 #include "DOTk_Dual.hpp"
 #include "DOTk_State.hpp"
 #include "DOTk_Primal.hpp"
@@ -181,164 +183,56 @@ void DOTk_Primal::setControlUpperBound(const dotk::vector<Real> & upper_bound_)
 
 void DOTk_Primal::allocateUserDefinedDual(const dotk::vector<Real> & dual_)
 {
-    assert(m_Dual.get() != NULL);
+    assert(m_Dual.get() != nullptr);
     m_Dual.reset(new dotk::DOTk_Dual(dual_));
 }
 
 void DOTk_Primal::allocateSerialDualArray(size_t size_, Real value_)
 {
-    assert(m_Dual.get() != NULL);
+    assert(m_Dual.get() != nullptr);
     m_Dual->allocateSerialArray(size_, value_);
-}
-
-void DOTk_Primal::allocateMpiDualArray(MPI_Comm comm_, size_t size_, Real value_)
-{
-    assert(m_Dual.get() != NULL);
-    m_Dual->allocateMpiArray(comm_, size_, value_);
-}
-
-void DOTk_Primal::allocateOmpDualArray(size_t size_, size_t num_threads_, Real value_)
-{
-    assert(m_Dual.get() != NULL);
-    m_Dual->allocateOmpArray(size_, num_threads_, value_);
-}
-
-void DOTk_Primal::allocateMpixDualArray(MPI_Comm comm_, size_t num_threads_, size_t size_, Real value_)
-{
-    assert(m_Dual.get() != NULL);
-    m_Dual->allocateMpixArray(comm_, num_threads_, size_, value_);
 }
 
 void DOTk_Primal::allocateSerialDualVector(size_t size_, Real value_)
 {
-    assert(m_Dual.get() != NULL);
+    assert(m_Dual.get() != nullptr);
     m_Dual->allocateSerialVector(size_, value_);
-}
-
-void DOTk_Primal::allocateMpiDualVector(MPI_Comm comm_, size_t size_, Real value_)
-{
-    assert(m_Dual.get() != NULL);
-    m_Dual->allocateMpiVector(comm_, size_, value_);
-}
-
-void DOTk_Primal::allocateOmpDualVector(size_t size_, size_t num_threads_, Real value_)
-{
-    assert(m_Dual.get() != NULL);
-    m_Dual->allocateOmpVector(size_, num_threads_, value_);
-}
-
-void DOTk_Primal::allocateMpixDualVector(MPI_Comm comm_, size_t num_threads_, size_t size_, Real value_)
-{
-    assert(m_Dual.get() != NULL);
-    m_Dual->allocateMpixVector(comm_, num_threads_, size_, value_);
 }
 
 void DOTk_Primal::allocateUserDefinedState(const dotk::vector<Real> & state_)
 {
-    assert(m_State.get() != NULL);
+    assert(m_State.get() != nullptr);
     m_State.reset(new dotk::DOTk_State(state_));
 }
 
 void DOTk_Primal::allocateSerialStateArray(size_t size_, Real value_)
 {
-    assert(m_State.get() != NULL);
+    assert(m_State.get() != nullptr);
     m_State->allocateSerialArray(size_, value_);
-}
-
-void DOTk_Primal::allocateMpiStateArray(MPI_Comm comm_, size_t size_, Real value_)
-{
-    assert(m_State.get() != NULL);
-    m_State->allocateMpiArray(comm_, size_, value_);
-}
-
-void DOTk_Primal::allocateOmpStateArray(size_t size_, size_t num_threads_, Real value_)
-{
-    assert(m_State.get() != NULL);
-    m_State->allocateOmpArray(size_, num_threads_, value_);
-}
-
-void DOTk_Primal::allocateMpixStateArray(MPI_Comm comm_, size_t num_threads_, size_t size_, Real value_)
-{
-    assert(m_State.get() != NULL);
-    m_State->allocateMpixArray(comm_, num_threads_, size_, value_);
 }
 
 void DOTk_Primal::allocateSerialStateVector(size_t size_, Real value_)
 {
-    assert(m_State.get() != NULL);
+    assert(m_State.get() != nullptr);
     m_State->allocateSerialVector(size_, value_);
-}
-
-void DOTk_Primal::allocateMpiStateVector(MPI_Comm comm_, size_t size_, Real value_)
-{
-    assert(m_State.get() != NULL);
-    m_State->allocateMpiVector(comm_, size_, value_);
-}
-
-void DOTk_Primal::allocateOmpStateVector(size_t size_, size_t num_threads_, Real value_)
-{
-    assert(m_State.get() != NULL);
-    m_State->allocateOmpVector(size_, num_threads_, value_);
-}
-
-void DOTk_Primal::allocateMpixStateVector(MPI_Comm comm_, size_t num_threads_, size_t size_, Real value_)
-{
-    assert(m_State.get() != NULL);
-    m_State->allocateMpixVector(comm_, num_threads_, size_, value_);
 }
 
 void DOTk_Primal::allocateUserDefinedControl(const dotk::vector<Real> & control_)
 {
-    assert(m_Control.get() != NULL);
+    assert(m_Control.get() != nullptr);
     m_Control.reset(new dotk::DOTk_Control(control_));
 }
 
 void DOTk_Primal::allocateSerialControlArray(size_t size_, Real value_)
 {
-    assert(m_Control.get() != NULL);
+    assert(m_Control.get() != nullptr);
     m_Control->allocateSerialArray(size_, value_);
-}
-
-void DOTk_Primal::allocateMpiControlArray(MPI_Comm comm_, size_t size_, Real value_)
-{
-    assert(m_Control.get() != NULL);
-    m_Control->allocateMpiArray(comm_, size_, value_);
-}
-
-void DOTk_Primal::allocateOmpControlArray(size_t size_, size_t num_threads_, Real value_)
-{
-    assert(m_Control.get() != NULL);
-    m_Control->allocateOmpArray(size_, num_threads_, value_);
-}
-
-void DOTk_Primal::allocateMpixControlArray(MPI_Comm comm_, size_t num_threads_, size_t size_, Real value_)
-{
-    assert(m_Control.get() != NULL);
-    m_Control->allocateMpixArray(comm_, num_threads_, size_, value_);
 }
 
 void DOTk_Primal::allocateSerialControlVector(size_t size_, Real value_)
 {
-    assert(m_Control.get() != NULL);
+    assert(m_Control.get() != nullptr);
     m_Control->allocateSerialVector(size_, value_);
-}
-
-void DOTk_Primal::allocateMpiControlVector(MPI_Comm comm_, size_t size_, Real value_)
-{
-    assert(m_Control.get() != NULL);
-    m_Control->allocateMpiVector(comm_, size_, value_);
-}
-
-void DOTk_Primal::allocateOmpControlVector(size_t size_, size_t num_threads_, Real value_)
-{
-    assert(m_Control.get() != NULL);
-    m_Control->allocateOmpVector(size_, num_threads_, value_);
-}
-
-void DOTk_Primal::allocateMpixControlVector(MPI_Comm comm_, size_t num_threads_, size_t size_, Real value_)
-{
-    assert(m_Control.get() != NULL);
-    m_Control->allocateMpixVector(comm_, num_threads_, size_, value_);
 }
 
 }

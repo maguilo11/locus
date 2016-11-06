@@ -12,16 +12,13 @@
 #include "DOTk_Hessian.hpp"
 #include "DOTk_MultiVector.hpp"
 #include "DOTk_MultiVector.cpp"
-#include "DOTk_SerialVector.hpp"
-#include "DOTk_SerialVector.cpp"
 #include "DOTk_AugmentedSystem.hpp"
+#include "DOTk_AssemblyManager.hpp"
 #include "DOTk_GtestDOTkVecTools.hpp"
 #include "DOTk_InexactTrustRegionSQP.hpp"
-
-#include "DOTk_AssemblyManager.hpp"
+#include "DOTk_TrustRegionMngTypeELP.hpp"
 #include "DOTk_NocedalAndWrightEquality.hpp"
 #include "DOTk_NocedalAndWrightObjective.hpp"
-#include "DOTk_TrustRegionMngTypeELP.hpp"
 #include "DOTk_UserDefinedHessianTypeCNP.hpp"
 #include "DOTk_InexactTrustRegionSqpSolverMng.hpp"
 

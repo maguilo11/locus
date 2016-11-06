@@ -8,14 +8,16 @@
 #ifndef DOTK_DUALSOLVERCCSA_HPP_
 #define DOTK_DUALSOLVERCCSA_HPP_
 
+#include <tr1/memory>
+
 #include "DOTk_UtilsCCSA.hpp"
 
 namespace dotk
 {
 
-template<class Type>
+template<typename Type>
 class vector;
-template<class Type>
+template<typename Type>
 class DOTk_ObjectiveFunction;
 
 class DOTk_DualSolverCCSA

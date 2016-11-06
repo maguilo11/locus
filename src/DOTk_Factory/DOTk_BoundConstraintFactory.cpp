@@ -5,6 +5,8 @@
  *      Author: Miguel A. Aguilo Valentin
  */
 
+#include <iostream>
+
 #include "DOTk_Primal.hpp"
 #include "DOTk_FeasibleDirection.hpp"
 #include "DOTk_BoundConstraintFactory.hpp"

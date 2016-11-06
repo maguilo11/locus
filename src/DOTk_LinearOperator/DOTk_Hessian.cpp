@@ -5,6 +5,8 @@
  *      Author: Miguel A. Aguilo Valentin
  */
 
+#include <cassert>
+
 #include "vector.hpp"
 #include "DOTk_Hessian.hpp"
 #include "DOTk_HessianFactory.hpp"

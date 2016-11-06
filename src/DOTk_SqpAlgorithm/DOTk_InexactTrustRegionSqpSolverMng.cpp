@@ -5,6 +5,9 @@
  *      Author: Miguel A. Aguilo Valentin
  */
 
+#include <limits>
+#include <cassert>
+
 #include "vector.hpp"
 #include "DOTk_Primal.hpp"
 #include "DOTk_MathUtils.hpp"

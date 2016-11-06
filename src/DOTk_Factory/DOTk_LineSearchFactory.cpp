@@ -6,6 +6,8 @@
 
  */
 
+#include <iostream>
+
 #include "vector.hpp"
 #include "DOTk_FirstOrderOperator.hpp"
 #include "DOTk_OptimizationDataMng.hpp"

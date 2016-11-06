@@ -13,7 +13,7 @@
 namespace dotk
 {
 
-template<class T>
+template<typename Type>
 class vector;
 
 class DOTk_ZakharovObjective : public dotk::DOTk_ObjectiveFunction<Real>

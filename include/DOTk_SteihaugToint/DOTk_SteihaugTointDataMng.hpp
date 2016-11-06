@@ -17,11 +17,11 @@ class DOTk_Primal;
 class DOTk_FirstOrderOperator;
 class DOTk_AssemblyManager;
 
-template<class Type>
+template<typename Type>
 class vector;
-template<class Type>
+template<typename Type>
 class DOTk_ObjectiveFunction;
-template<class Type>
+template<typename Type>
 class DOTk_EqualityConstraint;
 
 class DOTk_SteihaugTointDataMng : public dotk::DOTk_OptimizationDataMng

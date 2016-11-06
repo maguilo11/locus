@@ -11,7 +11,6 @@
 #include "DOTk_State.hpp"
 #include "DOTk_Control.hpp"
 #include "DOTk_SerialVector.hpp"
-#include "DOTk_SerialVector.cpp"
 #include "DOTk_EqualityTypeNP.hpp"
 #include "DOTk_OptimizationDataMng.hpp"
 #include "DOTk_DescentDirectionTools.hpp"
@@ -27,9 +26,9 @@ TEST(DOTk_DiagnosticsEqualityTypeNP, checkPartialDerivativeState)
 {
     size_t num_states = 5;
     size_t num_controls = 0;
-    dotk::serial::vector<Real> state_data(num_states, 1.);
+    dotk::StdVector<Real> state_data(num_states, 1.);
     dotk::DOTk_State state(state_data);
-    dotk::serial::vector<Real> control_data(num_controls, 0.);
+    dotk::StdVector<Real> control_data(num_controls, 0.);
     dotk::DOTk_Control control(control_data);
 
     srand(0);
@@ -46,7 +45,7 @@ TEST(DOTk_DiagnosticsEqualityTypeNP, checkPartialDerivativeState)
     // TEST 2: INVALID CODOMAIN DIMENSIONS
     msg.str("");
     num_states = 0;
-    dotk::serial::vector<Real> empty_state_data(num_states, 0.);
+    dotk::StdVector<Real> empty_state_data(num_states, 0.);
     dotk::DOTk_State empty_state(empty_state_data);
     operators.checkPartialDerivativeState(empty_state, control, msg);
 
@@ -62,9 +61,9 @@ TEST(DOTk_DiagnosticsEqualityTypeNP, checkPartialDerivativeControl)
 {
     size_t num_states = 5;
     size_t num_controls = 0;
-    dotk::serial::vector<Real> state_data(num_states, 1.);
+    dotk::StdVector<Real> state_data(num_states, 1.);
     dotk::DOTk_State state(state_data);
-    dotk::serial::vector<Real> control_data(num_controls, 0.);
+    dotk::StdVector<Real> control_data(num_controls, 0.);
     dotk::DOTk_Control control(control_data);
 
     std::tr1::shared_ptr<dotk::DOTk_NocedalAndWrightEqualityNLP> equality(new dotk::DOTk_NocedalAndWrightEqualityNLP());
@@ -87,11 +86,11 @@ TEST(DOTk_DiagnosticsEqualityTypeNP, checkAdjointPartialDerivativeState)
     size_t num_duals = 3;
     size_t num_states = 5;
     size_t num_controls = 0;
-    dotk::serial::vector<Real> dual_data(num_duals, 0.);
+    dotk::StdVector<Real> dual_data(num_duals, 0.);
     dotk::DOTk_Dual dual(dual_data);
-    dotk::serial::vector<Real> state_data(num_states, 1.);
+    dotk::StdVector<Real> state_data(num_states, 1.);
     dotk::DOTk_State state(state_data);
-    dotk::serial::vector<Real> control_data(num_controls, 0.);
+    dotk::StdVector<Real> control_data(num_controls, 0.);
     dotk::DOTk_Control control(control_data);
 
     std::tr1::shared_ptr<dotk::DOTk_NocedalAndWrightEqualityNLP> equality(new dotk::DOTk_NocedalAndWrightEqualityNLP());
@@ -116,7 +115,7 @@ TEST(DOTk_DiagnosticsEqualityTypeNP, checkAdjointPartialDerivativeState)
     // TEST 2: INVALID CODOMAIN DIMENSIONS
     msg.str("");
     num_states = 0;
-    dotk::serial::vector<Real> empty_state_data(num_states, 0.);
+    dotk::StdVector<Real> empty_state_data(num_states, 0.);
     dotk::DOTk_State empty_state(empty_state_data);
     absolute_difference = operators.checkAdjointPartialDerivativeState(empty_state, control, dual, msg);
 
@@ -166,11 +165,11 @@ TEST(DOTk_DiagnosticsEqualityTypeNP, checkAdjointPartialDerivativeControlControl
     size_t num_duals = 3;
     size_t num_states = 5;
     size_t num_controls = 0;
-    dotk::serial::vector<Real> dual_data(num_duals, 0.);
+    dotk::StdVector<Real> dual_data(num_duals, 0.);
     dotk::DOTk_Dual dual(dual_data);
-    dotk::serial::vector<Real> state_data(num_states, 1.);
+    dotk::StdVector<Real> state_data(num_states, 1.);
     dotk::DOTk_State state(state_data);
-    dotk::serial::vector<Real> control_data(num_controls, 0.);
+    dotk::StdVector<Real> control_data(num_controls, 0.);
     dotk::DOTk_Control control(control_data);
 
     std::tr1::shared_ptr<dotk::DOTk_NocedalAndWrightEqualityNLP> equality(new dotk::DOTk_NocedalAndWrightEqualityNLP());
@@ -197,11 +196,11 @@ TEST(DOTk_DiagnosticsEqualityTypeNP, checkAdjointPartialDerivativeControlState)
     size_t num_duals = 3;
     size_t num_states = 5;
     size_t num_controls = 0;
-    dotk::serial::vector<Real> dual_data(num_duals, 0.);
+    dotk::StdVector<Real> dual_data(num_duals, 0.);
     dotk::DOTk_Dual dual(dual_data);
-    dotk::serial::vector<Real> state_data(num_states, 1.);
+    dotk::StdVector<Real> state_data(num_states, 1.);
     dotk::DOTk_State state(state_data);
-    dotk::serial::vector<Real> control_data(num_controls, 0.);
+    dotk::StdVector<Real> control_data(num_controls, 0.);
     dotk::DOTk_Control control(control_data);
 
     std::tr1::shared_ptr<dotk::DOTk_NocedalAndWrightEqualityNLP> equality(new dotk::DOTk_NocedalAndWrightEqualityNLP());
@@ -225,11 +224,11 @@ TEST(DOTk_DiagnosticsEqualityTypeNP, checkAdjointPartialDerivativeStateState)
     size_t num_duals = 3;
     size_t num_states = 5;
     size_t num_controls = 0;
-    dotk::serial::vector<Real> dual_data(num_duals, 0.);
+    dotk::StdVector<Real> dual_data(num_duals, 0.);
     dotk::DOTk_Dual dual(dual_data);
-    dotk::serial::vector<Real> state_data(num_states, 1.);
+    dotk::StdVector<Real> state_data(num_states, 1.);
     dotk::DOTk_State state(state_data);
-    dotk::serial::vector<Real> control_data(num_controls, 0.);
+    dotk::StdVector<Real> control_data(num_controls, 0.);
     dotk::DOTk_Control control(control_data);
 
     std::tr1::shared_ptr<dotk::DOTk_NocedalAndWrightEqualityNLP> equality(new dotk::DOTk_NocedalAndWrightEqualityNLP());
@@ -249,7 +248,7 @@ TEST(DOTk_DiagnosticsEqualityTypeNP, checkAdjointPartialDerivativeStateState)
     // TEST 2: INVALID DOMAIN AND CODOMAIN DIMENSIONS
     msg.str("");
     num_states = 0;
-    dotk::serial::vector<Real> empty_state_data(num_states, 0.);
+    dotk::StdVector<Real> empty_state_data(num_states, 0.);
     dotk::DOTk_State empty_state(empty_state_data);
     operators.checkAdjointPartialDerivativeStateState(empty_state, control, dual, msg);
 
@@ -270,11 +269,11 @@ TEST(DOTk_DiagnosticsEqualityTypeNP, checkAdjointPartialDerivativeStateControl)
     size_t num_duals = 3;
     size_t num_states = 5;
     size_t num_controls = 0;
-    dotk::serial::vector<Real> dual_data(num_duals, 0.);
+    dotk::StdVector<Real> dual_data(num_duals, 0.);
     dotk::DOTk_Dual dual(dual_data);
-    dotk::serial::vector<Real> state_data(num_states, 1.);
+    dotk::StdVector<Real> state_data(num_states, 1.);
     dotk::DOTk_State state(state_data);
-    dotk::serial::vector<Real> control_data(num_controls, 0.);
+    dotk::StdVector<Real> control_data(num_controls, 0.);
     dotk::DOTk_Control control(control_data);
 
     std::tr1::shared_ptr<dotk::DOTk_NocedalAndWrightEqualityNLP> equality(new dotk::DOTk_NocedalAndWrightEqualityNLP());

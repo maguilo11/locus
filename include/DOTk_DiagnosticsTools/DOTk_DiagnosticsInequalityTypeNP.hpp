@@ -8,6 +8,8 @@
 #ifndef DOTK_DIAGNOSTICSINEQUALITYTYPENP_HPP_
 #define DOTK_DIAGNOSTICSINEQUALITYTYPENP_HPP_
 
+#include <vector>
+
 #include "DOTk_InequalityConstraint.hpp"
 #include "DOTk_DerivativeDiagnosticsTool.hpp"
 #include "DOTk_NonLinearProgrammingUtils.hpp"
@@ -18,7 +20,7 @@ namespace dotk
 class DOTk_State;
 class DOTk_Control;
 
-template<class Type>
+template<typename Type>
 class vector;
 
 class DOTk_DiagnosticsInequalityTypeNP : public dotk::DOTk_DerivativeDiagnosticsTool

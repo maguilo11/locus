@@ -8,6 +8,10 @@
 #ifndef DOTK_TRUSTREGIONFACTORY_HPP_
 #define DOTK_TRUSTREGIONFACTORY_HPP_
 
+#include <string>
+#include <tr1/memory>
+#include <DOTk_Types.hpp>
+
 namespace dotk
 {
 

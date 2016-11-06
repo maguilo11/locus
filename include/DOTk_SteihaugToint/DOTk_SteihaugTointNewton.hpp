@@ -8,6 +8,8 @@
 #ifndef DOTK_STEIHAUGTOINTNEWTON_HPP_
 #define DOTK_STEIHAUGTOINTNEWTON_HPP_
 
+#include <cstddef>
+
 #include "DOTk_Types.hpp"
 
 namespace dotk

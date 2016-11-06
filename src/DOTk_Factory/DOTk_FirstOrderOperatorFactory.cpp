@@ -5,7 +5,8 @@
  *      Author: Miguel A. Aguilo Valentin
  */
 
-#include "DOTk_Types.hpp"
+#include <iostream>
+
 #include "DOTk_OptimizationDataMng.hpp"
 #include "DOTk_ForwardDifferenceGrad.hpp"
 #include "DOTk_BackwardDifferenceGrad.hpp"

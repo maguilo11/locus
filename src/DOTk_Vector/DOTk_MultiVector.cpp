@@ -5,13 +5,16 @@
  *      Author: Miguel A. Aguilo Valentin
  */
 
+#include <cmath>
+#include <cassert>
+
 #include "DOTk_Primal.hpp"
 #include "DOTk_MultiVector.hpp"
 
 namespace dotk
 {
 
-template<class Type>
+template<typename Type>
 DOTk_MultiVector<Type>::DOTk_MultiVector(const dotk::DOTk_Primal & primal_) :
         m_Size(0),
         m_Dual(primal_.dual()->clone()),
@@ -21,7 +24,7 @@ DOTk_MultiVector<Type>::DOTk_MultiVector(const dotk::DOTk_Primal & primal_) :
     this->initialize(primal_);
 }
 
-template<class Type>
+template<typename Type>
 DOTk_MultiVector<Type>::DOTk_MultiVector(const dotk::vector<Type> & control_, const dotk::vector<Type> & dual_) :
         m_Size(dual_.size() + control_.size()),
         m_Dual(dual_.clone()),
@@ -31,7 +34,7 @@ DOTk_MultiVector<Type>::DOTk_MultiVector(const dotk::vector<Type> & control_, co
     this->initialize(control_, dual_);
 }
 
-template<class Type>
+template<typename Type>
 DOTk_MultiVector<Type>::DOTk_MultiVector(const dotk::vector<Type> & control_,
                                          const dotk::vector<Type> & state_,
                                          const dotk::vector<Type> & dual_) :
@@ -43,12 +46,12 @@ DOTk_MultiVector<Type>::DOTk_MultiVector(const dotk::vector<Type> & control_,
     this->initialize(control_, state_, dual_);
 }
 
-template<class Type>
+template<typename Type>
 DOTk_MultiVector<Type>::~DOTk_MultiVector()
 {
 }
 
-template<class Type>
+template<typename Type>
 void DOTk_MultiVector<Type>::scale(const Type & alpha_)
 {
     m_Dual->scale(alpha_);
@@ -59,7 +62,7 @@ void DOTk_MultiVector<Type>::scale(const Type & alpha_)
     }
 }
 
-template<class Type>
+template<typename Type>
 void DOTk_MultiVector<Type>::cwiseProd(const dotk::vector<Type> & input_)
 {
     assert(input_.size() == this->size());
@@ -72,7 +75,7 @@ void DOTk_MultiVector<Type>::cwiseProd(const dotk::vector<Type> & input_)
     }
 }
 
-template<class Type>
+template<typename Type>
 void DOTk_MultiVector<Type>::axpy(const Type & alpha_, const dotk::vector<Type> & input_)
 {
     assert(input_.size() == this->size());
@@ -85,7 +88,7 @@ void DOTk_MultiVector<Type>::axpy(const Type & alpha_, const dotk::vector<Type> 
     }
 }
 
-template<class Type>
+template<typename Type>
 Type DOTk_MultiVector<Type>::max() const
 {
     Type dual_max = m_Dual->max();
@@ -99,7 +102,7 @@ Type DOTk_MultiVector<Type>::max() const
     return (max_value);
 }
 
-template<class Type>
+template<typename Type>
 Type DOTk_MultiVector<Type>::min() const
 {
     Type dual_min = m_Dual->min();
@@ -113,7 +116,7 @@ Type DOTk_MultiVector<Type>::min() const
     return (min_value);
 }
 
-template<class Type>
+template<typename Type>
 void DOTk_MultiVector<Type>::abs()
 {
     m_Dual->abs();
@@ -124,7 +127,7 @@ void DOTk_MultiVector<Type>::abs()
     }
 }
 
-template<class Type>
+template<typename Type>
 Type DOTk_MultiVector<Type>::sum() const
 {
     Type result = m_Dual->sum() + m_Control->sum();
@@ -135,7 +138,7 @@ Type DOTk_MultiVector<Type>::sum() const
     return (result);
 }
 
-template<class Type>
+template<typename Type>
 Type DOTk_MultiVector<Type>::dot(const dotk::vector<Type> & input_) const
 {
     assert(input_.size() == this->size());
@@ -148,7 +151,7 @@ Type DOTk_MultiVector<Type>::dot(const dotk::vector<Type> & input_) const
     return (result);
 }
 
-template<class Type>
+template<typename Type>
 Type DOTk_MultiVector<Type>::norm() const
 {
     Type result = this->dot(*this);
@@ -156,7 +159,7 @@ Type DOTk_MultiVector<Type>::norm() const
     return (result);
 }
 
-template<class Type>
+template<typename Type>
 void DOTk_MultiVector<Type>::fill(const Type & value_)
 {
     m_Dual->fill(value_);
@@ -167,7 +170,7 @@ void DOTk_MultiVector<Type>::fill(const Type & value_)
     }
 }
 
-template<class Type>
+template<typename Type>
 void DOTk_MultiVector<Type>::copy(const dotk::vector<Type> & input_)
 {
     assert(input_.size() == this->size());
@@ -180,7 +183,7 @@ void DOTk_MultiVector<Type>::copy(const dotk::vector<Type> & input_)
     }
 }
 
-template<class Type>
+template<typename Type>
 void DOTk_MultiVector<Type>::gather(Type* input_) const
 {
     m_Control->gather(input_);
@@ -193,13 +196,13 @@ void DOTk_MultiVector<Type>::gather(Type* input_) const
     m_Dual->gather(input_ + stride);
 }
 
-template<class Type>
+template<typename Type>
 size_t DOTk_MultiVector<Type>::size() const
 {
     return (m_Size);
 }
 
-template<class Type>
+template<typename Type>
 std::tr1::shared_ptr<dotk::vector<Type> > DOTk_MultiVector<Type>::clone() const
 {
     if(m_State.use_count() > 0)
@@ -216,25 +219,25 @@ std::tr1::shared_ptr<dotk::vector<Type> > DOTk_MultiVector<Type>::clone() const
     }
 }
 
-template<class Type>
+template<typename Type>
 const std::tr1::shared_ptr<dotk::vector<Type> > & DOTk_MultiVector<Type>::dual() const
 {
     return (m_Dual);
 }
 
-template<class Type>
+template<typename Type>
 const std::tr1::shared_ptr<dotk::vector<Type> > & DOTk_MultiVector<Type>::state() const
 {
     return (m_State);
 }
 
-template<class Type>
+template<typename Type>
 const std::tr1::shared_ptr<dotk::vector<Type> > & DOTk_MultiVector<Type>::control() const
 {
     return (m_Control);
 }
 
-template<class Type>
+template<typename Type>
 Type & DOTk_MultiVector<Type>::operator [](size_t index_)
 {
     assert(index_ >= 0);
@@ -267,7 +270,7 @@ Type & DOTk_MultiVector<Type>::operator [](size_t index_)
     }
 }
 
-template<class Type>
+template<typename Type>
 const Type & DOTk_MultiVector<Type>::operator [](size_t index_) const
 {
     assert(index_ >= 0);
@@ -300,13 +303,7 @@ const Type & DOTk_MultiVector<Type>::operator [](size_t index_) const
     }
 }
 
-template<class Type>
-dotk::types::container_t DOTk_MultiVector<Type>::type() const
-{
-    return (dotk::types::container_t::MULTI_VECTOR);
-}
-
-template<class Type>
+template<typename Type>
 void DOTk_MultiVector<Type>::initialize(const dotk::DOTk_Primal & primal_)
 {
     m_Dual->copy(*primal_.dual());
@@ -320,14 +317,14 @@ void DOTk_MultiVector<Type>::initialize(const dotk::DOTk_Primal & primal_)
     }
 }
 
-template<class Type>
+template<typename Type>
 void DOTk_MultiVector<Type>::initialize(const dotk::vector<Type> & control_, const dotk::vector<Type> & dual_)
 {
     m_Dual->copy(dual_);
     m_Control->copy(control_);
 }
 
-template<class Type>
+template<typename Type>
 void DOTk_MultiVector<Type>::initialize(const dotk::vector<Type> & control_,
                                         const dotk::vector<Type> & state_,
                                         const dotk::vector<Type> & dual_)
@@ -335,14 +332,6 @@ void DOTk_MultiVector<Type>::initialize(const dotk::vector<Type> & control_,
     m_Dual->copy(dual_);
     m_State->copy(state_);
     m_Control->copy(control_);
-}
-
-template<class Type>
-size_t DOTk_MultiVector<Type>::rank() const
-{
-    std::perror("\n**** Unimplemented Function DOTk_MultiVector::rank. ABORT. ****\n");
-    std::abort();
-    return (0);
 }
 
 }

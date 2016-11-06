@@ -8,6 +8,7 @@
 #ifndef DOTK_ORTHOGONALPROJECTION_HPP_
 #define DOTK_ORTHOGONALPROJECTION_HPP_
 
+#include <tr1/memory>
 #include "DOTk_Types.hpp"
 
 namespace dotk
@@ -15,7 +16,7 @@ namespace dotk
 
 class DOTk_KrylovSolver;
 
-template<class Type>
+template<typename Type>
 class vector;
 
 class DOTk_OrthogonalProjection

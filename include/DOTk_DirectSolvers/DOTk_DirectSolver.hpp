@@ -8,14 +8,17 @@
 #ifndef DOTK_DIRECTSOLVER_HPP_
 #define DOTK_DIRECTSOLVER_HPP_
 
+#include <vector>
+#include <tr1/memory>
+
 #include "DOTk_Types.hpp"
 
 namespace dotk
 {
 
-template<class Type>
+template<typename Type>
 class vector;
-template<class Type>
+template<typename Type>
 class matrix;
 
 class DOTk_DirectSolver

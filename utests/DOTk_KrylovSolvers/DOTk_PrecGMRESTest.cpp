@@ -14,8 +14,6 @@
 #include "DOTk_NocedalAndWrightObjective.hpp"
 #include "DOTk_MultiVector.hpp"
 #include "DOTk_MultiVector.cpp"
-#include "DOTk_SerialVector.hpp"
-#include "DOTk_SerialVector.cpp"
 #include "DOTk_GmresTestMatrix.hpp"
 #include "DOTk_RelativeCriterion.hpp"
 #include "DOTk_GtestDOTkVecTools.hpp"

@@ -8,6 +8,9 @@
 #ifndef DOTK_ORTHOGONALPROJECTIONFACTORY_HPP_
 #define DOTK_ORTHOGONALPROJECTIONFACTORY_HPP_
 
+#include <string>
+#include <tr1/memory>
+
 namespace dotk
 {
 

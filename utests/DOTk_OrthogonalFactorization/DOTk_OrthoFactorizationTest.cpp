@@ -11,7 +11,6 @@
 #include "matrix.hpp"
 #include "DOTk_QR.hpp"
 #include "DOTk_SerialArray.hpp"
-#include "DOTk_SerialArray.cpp"
 #include "DOTk_Householder.hpp"
 #include "DOTk_ColumnMatrix.hpp"
 #include "DOTk_ColumnMatrix.cpp"
@@ -26,7 +25,7 @@ TEST(QR, ClassicalGramSchmidt)
 {
     size_t nrows = 4;
     size_t ncols = 4;
-    dotk::serial::array<Real> x(nrows);
+    dotk::StdArray<Real> x(nrows);
     std::tr1::shared_ptr<dotk::matrix<Real> > A(new dotk::serial::DOTk_ColumnMatrix<Real>(x, ncols));
     std::tr1::shared_ptr<dotk::matrix<Real> > Q(new dotk::serial::DOTk_ColumnMatrix<Real>(x, ncols));
     std::tr1::shared_ptr<dotk::matrix<Real> > R(new dotk::serial::DOTk_ColumnMatrix<Real>(x, ncols));
@@ -59,7 +58,7 @@ TEST(QR, ClassicalGramSchmidt)
     std::tr1::shared_ptr<dotk::matrix<Real> > I(new dotk::serial::DOTk_ColumnMatrix<Real>(x, ncols));
     Q->gemm(true, false, 1., *Q, 0., *I);
     Real eye[] = {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1};
-    dotk::serial::array<Real> data(I->size(), 0.);
+    dotk::StdArray<Real> data(I->size(), 0.);
     I->gather(data.size(), &(data[0]));
     dotk::gtest::checkResults(I->size(), eye, data.size(), &(data[0]));
 
@@ -127,7 +126,7 @@ TEST(QR, ModifiedGramSchmidt)
 {
     size_t nrows = 4;
     size_t ncols = 4;
-    dotk::serial::array<Real> x(nrows);
+    dotk::StdArray<Real> x(nrows);
     std::tr1::shared_ptr<dotk::matrix<Real> > A(new dotk::serial::DOTk_ColumnMatrix<Real>(x, ncols));
     std::tr1::shared_ptr<dotk::matrix<Real> > Q(new dotk::serial::DOTk_ColumnMatrix<Real>(x, ncols));
     std::tr1::shared_ptr<dotk::matrix<Real> > R(new dotk::serial::DOTk_ColumnMatrix<Real>(x, ncols));
@@ -160,7 +159,7 @@ TEST(QR, ModifiedGramSchmidt)
     std::tr1::shared_ptr<dotk::matrix<Real> > I(new dotk::serial::DOTk_ColumnMatrix<Real>(x, ncols));
     Q->gemm(true, false, 1., *Q, 0., *I);
     Real eye[] = {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1};
-    dotk::serial::array<Real> data(I->size(), 0.);
+    dotk::StdArray<Real> data(I->size(), 0.);
     I->gather(data.size(), &(data[0]));
     dotk::gtest::checkResults(I->size(), eye, data.size(), &(data[0]));
 
@@ -228,7 +227,7 @@ TEST(QR, Householder)
 {
     size_t nrows = 4;
     size_t ncols = 4;
-    dotk::serial::array<Real> x(nrows);
+    dotk::StdArray<Real> x(nrows);
     std::tr1::shared_ptr<dotk::matrix<Real> > A(new dotk::serial::DOTk_ColumnMatrix<Real>(x, ncols));
     std::tr1::shared_ptr<dotk::matrix<Real> > Q(new dotk::serial::DOTk_ColumnMatrix<Real>(x, ncols));
     std::tr1::shared_ptr<dotk::matrix<Real> > R(new dotk::serial::DOTk_ColumnMatrix<Real>(x, ncols));
@@ -261,7 +260,7 @@ TEST(QR, Householder)
     std::tr1::shared_ptr<dotk::matrix<Real> > I(new dotk::serial::DOTk_ColumnMatrix<Real>(x, ncols));
     Q->gemm(true, false, 1., *Q, 0., *I);
     Real eye[] = {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1};
-    dotk::serial::array<Real> data(I->size(), 0.);
+    dotk::StdArray<Real> data(I->size(), 0.);
     I->gather(data.size(), &(data[0]));
     dotk::gtest::checkResults(I->size(), eye, data.size(), &(data[0]));
 

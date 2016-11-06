@@ -8,6 +8,10 @@
 #ifndef DOTK_INVERSEHESSIANFACTORY_HPP_
 #define DOTK_INVERSEHESSIANFACTORY_HPP_
 
+#include <tr1/memory>
+
+#include "DOTk_Types.hpp"
+
 namespace dotk
 {
 

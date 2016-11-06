@@ -8,12 +8,15 @@
 #ifndef DOTK_ASSEMBLYMANAGER_HPP_
 #define DOTK_ASSEMBLYMANAGER_HPP_
 
+#include <vector>
+#include <tr1/memory>
+
 #include "DOTk_Types.hpp"
 
 namespace dotk
 {
 
-template<class Type>
+template<typename Type>
 class vector;
 
 class DOTk_AssemblyManager

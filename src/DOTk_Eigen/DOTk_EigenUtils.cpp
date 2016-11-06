@@ -5,6 +5,8 @@
  *      Author: Miguel A. Aguilo Valentin
  */
 
+#include <cmath>
+
 #include "vector.hpp"
 #include "matrix.hpp"
 #include "DOTk_EigenUtils.hpp"

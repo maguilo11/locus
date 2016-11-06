@@ -8,6 +8,7 @@
 #ifndef DOTK_ARNOLDIPROJECTION_HPP_
 #define DOTK_ARNOLDIPROJECTION_HPP_
 
+#include <vector>
 #include "DOTk_OrthogonalProjection.hpp"
 
 namespace dotk
@@ -17,9 +18,9 @@ class DOTk_Primal;
 class DOTk_KrylovSolver;
 class DOTk_DirectSolver;
 
-template<class Type>
+template<typename Type>
 class vector;
-template<class Type>
+template<typename Type>
 class matrix;
 
 class DOTk_ArnoldiProjection: public dotk::DOTk_OrthogonalProjection

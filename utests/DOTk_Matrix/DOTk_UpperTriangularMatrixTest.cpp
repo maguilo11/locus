@@ -9,7 +9,6 @@
 #include "gtest/gtest.h"
 
 #include "DOTk_SerialArray.hpp"
-#include "DOTk_SerialArray.cpp"
 #include "DOTk_GtestDOTkVecTools.hpp"
 #include "DOTk_UpperTriangularMatrix.hpp"
 #include "DOTk_UpperTriangularMatrix.cpp"
@@ -59,7 +58,7 @@ TEST(UpperTriangularMatrix, RowMajorCopy)
     size_t nrows = 6;
     dotk::serial::DOTk_UpperTriangularMatrix<Real> matrix(nrows);
 
-    dotk::serial::array<Real> data(nrows, 0.);
+    dotk::StdArray<Real> data(nrows, 0.);
 
     Real start = 0.;
     int my_rank;
@@ -97,7 +96,7 @@ TEST(UpperTriangularMatrix, ColumnMajorCopy)
     size_t nrows = 6;
     dotk::serial::DOTk_UpperTriangularMatrix<Real> matrix(nrows);
 
-    dotk::serial::array<Real> column(nrows);
+    dotk::StdArray<Real> column(nrows);
 
     Real start = 0.;
     int my_rank;
@@ -293,7 +292,7 @@ TEST(UpperTriangularMatrix, RowMajorAxpy)
     Real data[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21};
     matrix.copy(21, data);
 
-    dotk::serial::array<Real> input(nrows, 1.);
+    dotk::StdArray<Real> input(nrows, 1.);
 
     Real start = 0.;
     int my_rank;
@@ -334,7 +333,7 @@ TEST(UpperTriangularMatrix, ColumnMajorAxpy)
     Real data[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21};
     matrix.copy(21, data);
 
-    dotk::serial::array<Real> input(nrows, 1.);
+    dotk::StdArray<Real> input(nrows, 1.);
 
     Real start = 0.;
     int my_rank;
@@ -375,7 +374,7 @@ TEST(UpperTriangularMatrix, RowMajorDot)
     Real data[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21};
     matrix.copy(21, data);
 
-    dotk::serial::array<Real> results(nrows, 1.);
+    dotk::StdArray<Real> results(nrows, 1.);
 
     Real start = 0.;
     int my_rank;
@@ -414,7 +413,7 @@ TEST(UpperTriangularMatrix, ColumnMajorDot)
     matrix.copy(21, data);
 
     std::vector<Real> results(nrows, 0.);
-    dotk::serial::array<Real> input(nrows, 1.);
+    dotk::StdArray<Real> input(nrows, 1.);
 
     Real start = 0.;
     int my_rank;
@@ -485,8 +484,8 @@ TEST(UpperTriangularMatrix, MatVec)
     Real data[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21};
     matrix.copy(21, data);
 
-    dotk::serial::array<Real> input(nrows, 1.);
-    dotk::serial::array<Real> output(nrows, 0.);
+    dotk::StdArray<Real> input(nrows, 1.);
+    dotk::StdArray<Real> output(nrows, 0.);
 
     Real start = 0.;
     int my_rank;
@@ -521,8 +520,8 @@ TEST(UpperTriangularMatrix, MatVecTranspose)
     Real data[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21};
     matrix.copy(21, data);
 
-    dotk::serial::array<Real> input(nrows, 1.);
-    dotk::serial::array<Real> output(nrows, 0.);
+    dotk::StdArray<Real> input(nrows, 1.);
+    dotk::StdArray<Real> output(nrows, 0.);
 
     Real start = 0.;
     int my_rank;
@@ -559,8 +558,8 @@ TEST(UpperTriangularMatrix, Gemv)
 
     Real beta = 2;
     Real alpha = 2;
-    dotk::serial::array<Real> input(nrows, 1.);
-    dotk::serial::array<Real> output(nrows, 0.);
+    dotk::StdArray<Real> input(nrows, 1.);
+    dotk::StdArray<Real> output(nrows, 0.);
     output[0] = 1.;
     output[1] = 2.;
     output[2] = 3.;
@@ -603,8 +602,8 @@ TEST(UpperTriangularMatrix, GemvTranspose)
 
     Real beta = 2;
     Real alpha = 2;
-    dotk::serial::array<Real> input(nrows, 1.);
-    dotk::serial::array<Real> output(nrows, 0.);
+    dotk::StdArray<Real> input(nrows, 1.);
+    dotk::StdArray<Real> output(nrows, 0.);
     output[0] = 1.;
     output[1] = 2.;
     output[2] = 3.;
@@ -750,7 +749,7 @@ TEST(UpperTriangularMatrix, Diag)
 
     Real data[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21};
     matrix.copy(21, data);
-    dotk::serial::array<Real> diag(nrows);
+    dotk::StdArray<Real> diag(nrows);
 
     Real start = 0.;
     int my_rank;
@@ -805,7 +804,7 @@ TEST(UpperTriangularMatrix, Shift)
     if(my_rank == 0)
     {
         printf("SHIFT WTime is %f\n", time);
-        dotk::serial::array<Real> diag(nrows);
+        dotk::StdArray<Real> diag(nrows);
         matrix.diag(diag);
         Real gold[] = {3, 9, 14, 18, 21, 23};
         dotk::gtest::checkResults(6, gold, diag);

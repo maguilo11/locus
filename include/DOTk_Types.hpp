@@ -8,19 +8,6 @@
 #ifndef DOTK_TYPES_HPP_
 #define DOTK_TYPES_HPP_
 
-#include <map>
-#include <cmath>
-#include <math.h>
-#include <cstdio>
-#include <vector>
-#include <limits>
-#include <string>
-#include <cstdlib>
-#include <utility>
-#include <assert.h>
-#include <iostream>
-#include <tr1/memory>
-
 namespace dotk
 {
 

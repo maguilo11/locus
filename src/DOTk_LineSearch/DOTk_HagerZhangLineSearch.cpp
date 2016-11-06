@@ -5,6 +5,8 @@
  *      Author: Miguel A. Aguilo Valentin
  */
 
+#include <limits>
+
 #include "vector.hpp"
 #include "DOTk_HagerZhangLineSearch.hpp"
 #include "DOTk_OptimizationDataMng.hpp"

@@ -8,6 +8,9 @@
 #ifndef DOTK_ROUTINESTYPENP_HPP_
 #define DOTK_ROUTINESTYPENP_HPP_
 
+#include <vector>
+#include <tr1/memory>
+
 #include "DOTk_AssemblyManager.hpp"
 
 namespace dotk
@@ -15,13 +18,13 @@ namespace dotk
 
 class DOTk_Primal;
 
-template<class Type>
+template<typename Type>
 class vector;
-template<class Type>
+template<typename Type>
 class DOTk_ObjectiveFunction;
-template<class Type>
+template<typename Type>
 class DOTk_EqualityConstraint;
-template<class Type>
+template<typename Type>
 class DOTk_InequalityConstraint;
 
 class DOTk_RoutinesTypeNP : public dotk::DOTk_AssemblyManager

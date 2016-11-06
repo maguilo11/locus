@@ -8,10 +8,16 @@
 #ifndef DOTK_DERIVATIVEDIAGNOSTICSTOOL_HPP_
 #define DOTK_DERIVATIVEDIAGNOSTICSTOOL_HPP_
 
-#include "vector.hpp"
+#include <string>
+#include <sstream>
+#include <tr1/memory>
+#include "DOTk_Types.hpp"
 
 namespace dotk
 {
+
+template<typename Type>
+class vector;
 
 class DOTk_DerivativeDiagnosticsTool
 {

@@ -5,9 +5,9 @@
  *      Author: Miguel A. Aguilo Valentin
  */
 
-#include "DOTk_RoutinesTypeLP.hpp"
 
 #include "vector.hpp"
+#include "DOTk_RoutinesTypeLP.hpp"
 #include "DOTk_ObjectiveFunction.hpp"
 #include "DOTk_InequalityConstraint.hpp"
 

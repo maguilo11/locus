@@ -5,7 +5,9 @@
  *      Author: Miguel A. Aguilo Valentin
  */
 
+#include <cmath>
 #include <cstdlib>
+#include <iostream>
 
 #include "vector.hpp"
 #include "DOTk_OptimizationDataMng.hpp"

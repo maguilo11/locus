@@ -5,6 +5,10 @@
  *      Author: Miguel A. Aguilo Valentin
  */
 
+#include <string>
+#include <ostream>
+#include <iostream>
+
 #include "vector.hpp"
 #include "matrix.hpp"
 #include "DOTk_EigenMethod.hpp"

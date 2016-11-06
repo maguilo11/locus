@@ -8,14 +8,15 @@
 #ifndef DOTK_RAYLEIGHQUOTIENT_HPP_
 #define DOTK_RAYLEIGHQUOTIENT_HPP_
 
+#include <tr1/memory>
 #include "DOTk_EigenMethod.hpp"
 
 namespace dotk
 {
 
-template<class Type>
+template<typename Type>
 class vector;
-template<class Type>
+template<typename Type>
 class matrix;
 
 class DOTk_RayleighQuotient : public dotk::DOTk_EigenMethod

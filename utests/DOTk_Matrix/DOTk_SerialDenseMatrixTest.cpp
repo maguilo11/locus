@@ -9,7 +9,6 @@
 #include "gtest/gtest.h"
 
 #include "DOTk_SerialArray.hpp"
-#include "DOTk_SerialArray.cpp"
 #include "DOTk_DenseMatrix.hpp"
 #include "DOTk_DenseMatrix.cpp"
 #include "DOTk_GtestDOTkVecTools.hpp"
@@ -32,7 +31,7 @@ TEST(SerialDenseMatrix, fill)
     Real gold[] = {3, 3, 3,
                    3, 3, 3,
                    3, 3, 3};
-    dotk::serial::array<Real> data(matrix.size(), 3.);
+    dotk::StdArray<Real> data(matrix.size(), 3.);
     dotk::gtest::checkResults(matrix.size(), gold, data);
 }
 
@@ -47,7 +46,7 @@ TEST(SerialDenseMatrix, scale)
     Real gold[] = {3, 3, 3,
                    3, 3, 3,
                    3, 3, 3};
-    dotk::serial::array<Real> data(matrix.size(), 3.);
+    dotk::StdArray<Real> data(matrix.size(), 3.);
     dotk::gtest::checkResults(matrix.size(), gold, data);
 }
 
@@ -75,7 +74,7 @@ TEST(SerialDenseMatrix, diag)
     matrix(1,0) = 4; matrix(1,1) = 5; matrix(1,2) = 6;
     matrix(2,0) = 7; matrix(2,1) = 8; matrix(2,2) = 9;
 
-    dotk::serial::array<Real> diagonal(nrows);
+    dotk::StdArray<Real> diagonal(nrows);
     matrix.diag(diagonal);
 
     printf("DIAG WTime is %f\n", 0.);
@@ -111,7 +110,7 @@ TEST(SerialDenseMatrix, setDiag)
     matrix(1,0) = 4; matrix(1,1) = 5; matrix(1,2) = 6;
     matrix(2,0) = 7; matrix(2,1) = 8; matrix(2,2) = 9;
 
-    dotk::serial::array<Real> diagonal(nrows, 29.);
+    dotk::StdArray<Real> diagonal(nrows, 29.);
     matrix.setDiag(diagonal);
 
     printf("SETDIAG WTime is %f\n", 0.);
@@ -200,7 +199,7 @@ TEST(SerialDenseMatrix, RowMajorCopy)
     matrix(1,0) = 4; matrix(1,1) = 5; matrix(1,2) = 6;
     matrix(2,0) = 7; matrix(2,1) = 8; matrix(2,2) = 9;
 
-    dotk::serial::array<Real> input(nrows, 0.);
+    dotk::StdArray<Real> input(nrows, 0.);
     for(size_t index = 0; index < nrows; ++index)
     {
         input.fill(index);
@@ -224,7 +223,7 @@ TEST(SerialDenseMatrix, ColumnMajorCopy)
     matrix(1,0) = 4; matrix(1,1) = 5; matrix(1,2) = 6;
     matrix(2,0) = 7; matrix(2,1) = 8; matrix(2,2) = 9;
 
-    dotk::serial::array<Real> input(nrows, 0.);
+    dotk::StdArray<Real> input(nrows, 0.);
     for(size_t index = 0; index < nrows; ++index)
     {
         input.fill(index);
@@ -331,7 +330,7 @@ TEST(SerialDenseMatrix, RowMajorAxpy)
     matrix(2,0) = 7; matrix(2,1) = 8; matrix(2,2) = 9;
 
     Real alpha = 2;
-    dotk::serial::array<Real> input(nrows, 1.);
+    dotk::StdArray<Real> input(nrows, 1.);
     for(size_t index = 0; index < nrows; ++index)
     {
         matrix.axpy(index, alpha, input);
@@ -353,7 +352,7 @@ TEST(SerialDenseMatrix, ColumnMajorAxpy)
     matrix(2,0) = 7; matrix(2,1) = 8; matrix(2,2) = 9;
 
     Real alpha = 2;
-    dotk::serial::array<Real> input(nrows, 1.);
+    dotk::StdArray<Real> input(nrows, 1.);
     for(size_t index = 0; index < nrows; ++index)
     {
         matrix.axpy(index, alpha, input, false);
@@ -375,7 +374,7 @@ TEST(SerialDenseMatrix, RowMajorDot)
     matrix(2,0) = 7; matrix(2,1) = 8; matrix(2,2) = 9;
 
     std::vector<Real> results(nrows, 0.);
-    dotk::serial::array<Real> input(nrows, 1.);
+    dotk::StdArray<Real> input(nrows, 1.);
     for(size_t index = 0; index < results.size(); ++index)
     {
         results[index] = matrix.dot(index, input);
@@ -398,7 +397,7 @@ TEST(SerialDenseMatrix, ColumnMajorDot)
     matrix(2,0) = 7; matrix(2,1) = 8; matrix(2,2) = 9;
 
     std::vector<Real> results(nrows, 0.);
-    dotk::serial::array<Real> input(nrows, 1.);
+    dotk::StdArray<Real> input(nrows, 1.);
     for(size_t index = 0; index < results.size(); ++index)
     {
         results[index] = matrix.dot(index, input, false);
@@ -449,8 +448,8 @@ TEST(SerialDenseMatrix, MatVec)
     matrix(0,0) = 1; matrix(0,1) = 2; matrix(0,2) = 3;
     matrix(1,0) = 4; matrix(1,1) = 5; matrix(1,2) = 6;
     matrix(2,0) = 7; matrix(2,1) = 8; matrix(2,2) = 9;
-    dotk::serial::array<Real> input(nrows, 1.);
-    dotk::serial::array<Real> output(nrows, 0.);
+    dotk::StdArray<Real> input(nrows, 1.);
+    dotk::StdArray<Real> output(nrows, 0.);
 
     matrix.matVec(input, output);
 
@@ -469,8 +468,8 @@ TEST(SerialDenseMatrix, MatVecTranspose)
     matrix(0,0) = 1; matrix(0,1) = 2; matrix(0,2) = 3;
     matrix(1,0) = 4; matrix(1,1) = 5; matrix(1,2) = 6;
     matrix(2,0) = 7; matrix(2,1) = 8; matrix(2,2) = 9;
-    dotk::serial::array<Real> input(nrows, 1.);
-    dotk::serial::array<Real> output(nrows, 0.);
+    dotk::StdArray<Real> input(nrows, 1.);
+    dotk::StdArray<Real> output(nrows, 0.);
 
     matrix.matVec(input, output, true);
 
@@ -489,8 +488,8 @@ TEST(SerialDenseMatrix, Gemv)
     matrix(0,0) = 1; matrix(0,1) = 2; matrix(0,2) = 3;
     matrix(1,0) = 4; matrix(1,1) = 5; matrix(1,2) = 6;
     matrix(2,0) = 7; matrix(2,1) = 8; matrix(2,2) = 9;
-    dotk::serial::array<Real> input(nrows, 1.);
-    dotk::serial::array<Real> output(nrows, 1.);
+    dotk::StdArray<Real> input(nrows, 1.);
+    dotk::StdArray<Real> output(nrows, 1.);
 
     matrix.gemv(2., input, 1., output);
 
@@ -509,8 +508,8 @@ TEST(SerialDenseMatrix, GemvTranspose)
     matrix(0,0) = 1; matrix(0,1) = 2; matrix(0,2) = 3;
     matrix(1,0) = 4; matrix(1,1) = 5; matrix(1,2) = 6;
     matrix(2,0) = 7; matrix(2,1) = 8; matrix(2,2) = 9;
-    dotk::serial::array<Real> input(nrows, 1.);
-    dotk::serial::array<Real> output(nrows, 1.);
+    dotk::StdArray<Real> input(nrows, 1.);
+    dotk::StdArray<Real> output(nrows, 1.);
 
     matrix.gemv(2., input, 1., output, true);
 

@@ -7,14 +7,11 @@
 
 #include "gtest/gtest.h"
 
-#include "vector.hpp"
 #include "DOTk_Primal.hpp"
 #include "DOTk_DFPHessian.hpp"
-
-#include "DOTk_AssemblyManager.hpp"
 #include "DOTk_Rosenbrock.hpp"
 #include "DOTk_SerialVector.hpp"
-#include "DOTk_SerialVector.cpp"
+#include "DOTk_AssemblyManager.hpp"
 #include "DOTk_LineSearchMngTypeULP.hpp"
 
 #include "DOTk_GtestDOTkVecTools.hpp"
@@ -34,7 +31,7 @@ TEST(DOTk_DFPHessian, getHessian)
     EXPECT_EQ(dotk::types::DFP_HESS, hess.getHessianType());
 
     // Primal Information
-    dotk::serial::vector<Real> control(2, 2.);
+    dotk::StdVector<Real> control(2, 2.);
     mng->setOldPrimal(control);
     control[0] = 1.;
     control[1] = 3.;
@@ -74,7 +71,7 @@ TEST(DOTk_DFPHessian, apply)
     EXPECT_EQ(dotk::types::DFP_HESS, hess.getHessianType());
 
     // Primal Information
-    dotk::serial::vector<Real> control(2, 2.);
+    dotk::StdVector<Real> control(2, 2.);
     mng->setOldPrimal(control);
     control[0] = 1.;
     control[1] = 3.;

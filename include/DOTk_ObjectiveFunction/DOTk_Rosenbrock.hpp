@@ -8,12 +8,14 @@
 #ifndef DOTK_ROSENBROCK_HPP_
 #define DOTK_ROSENBROCK_HPP_
 
+#include <tr1/memory>
+
 #include "DOTk_ObjectiveFunction.hpp"
 
 namespace dotk
 {
 
-template<class Type>
+template<typename Type>
 class vector;
 
 class DOTk_Rosenbrock : public dotk::DOTk_ObjectiveFunction<Real>

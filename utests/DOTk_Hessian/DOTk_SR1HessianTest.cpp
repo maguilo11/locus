@@ -9,11 +9,9 @@
 
 #include "DOTk_Primal.hpp"
 #include "DOTk_SR1Hessian.hpp"
-
-#include "DOTk_AssemblyManager.hpp"
 #include "DOTk_Rosenbrock.hpp"
 #include "DOTk_SerialVector.hpp"
-#include "DOTk_SerialVector.cpp"
+#include "DOTk_AssemblyManager.hpp"
 #include "DOTk_LineSearchMngTypeULP.hpp"
 
 #include "DOTk_GtestDOTkVecTools.hpp"
@@ -32,7 +30,7 @@ TEST(SR1Hessian, apply)
     dotk::DOTk_SR1Hessian hess(mng->getMatrixTimesVector());
     EXPECT_EQ(dotk::types::SR1_HESS, hess.getHessianType());
     // vec Information
-    dotk::serial::vector<Real> control(2, 2.);
+    dotk::StdVector<Real> control(2, 2.);
     mng->setOldPrimal(control);
     control[0] = 1.;
     control[1] = 3.;
@@ -67,7 +65,7 @@ TEST(SR1Hessian, getDeltaPrimal)
     std::tr1::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
     dotk::DOTk_LineSearchMngTypeULP mng(primal, objective);
 
-    dotk::serial::vector<Real> control(2, 2.);
+    dotk::StdVector<Real> control(2, 2.);
     mng.setOldPrimal(control);
     control[0] = 1.;
     control[1] = 3.;
@@ -93,7 +91,7 @@ TEST(SR1Hessian, getDeltaGrad)
     dotk::DOTk_LineSearchMngTypeULP mng(primal, objective);
 
     // vec Information
-    dotk::serial::vector<Real> control(2, 2.);
+    dotk::StdVector<Real> control(2, 2.);
     mng.setOldPrimal(control);
     control[0] = 1.;
     control[1] = 3.;
@@ -124,7 +122,7 @@ TEST(SR1Hessian, getHessian)
     std::tr1::shared_ptr<dotk::DOTk_LineSearchMngTypeULP> mng(new dotk::DOTk_LineSearchMngTypeULP(primal, objective));
 
     // vec Information
-    dotk::serial::vector<Real> control(2, 2.);
+    dotk::StdVector<Real> control(2, 2.);
     mng->setOldPrimal(control);
     control[0] = 1.;
     control[1] = 3.;

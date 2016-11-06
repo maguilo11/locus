@@ -8,6 +8,7 @@
 #ifndef DOTK_GRAMSCHMIDT_HPP_
 #define DOTK_GRAMSCHMIDT_HPP_
 
+#include <vector>
 #include "DOTk_OrthogonalProjection.hpp"
 
 namespace dotk
@@ -16,7 +17,7 @@ namespace dotk
 class DOTk_Primal;
 class DOTk_KrylovSolver;
 
-template<class Type>
+template<typename Type>
 class vector;
 
 class DOTk_GramSchmidt: public dotk::DOTk_OrthogonalProjection
