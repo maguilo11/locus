@@ -8,6 +8,8 @@
 #ifndef DOTK_MEXSTEIHAUGTOINTNEWTON_HPP_
 #define DOTK_MEXSTEIHAUGTOINTNEWTON_HPP_
 
+#include <tr1/memory>
+
 #include "DOTk_Types.hpp"
 #include "DOTk_MexArrayPtr.hpp"
 

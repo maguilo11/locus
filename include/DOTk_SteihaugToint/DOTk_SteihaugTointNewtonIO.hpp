@@ -9,6 +9,7 @@
 #define DOTK_STEIHAUGTOINTNEWTONIO_HPP_
 
 #include <fstream>
+#include <tr1/memory>
 #include "DOTk_Types.hpp"
 
 namespace dotk
@@ -18,7 +19,7 @@ class DOTk_TrustRegionStepMng;
 class DOTk_SteihaugTointSolver;
 class DOTk_OptimizationDataMng;
 
-template<class Type>
+template<typename Type>
 class vector;
 
 class DOTk_SteihaugTointNewtonIO

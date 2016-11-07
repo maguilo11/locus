@@ -22,7 +22,7 @@ class DOTk_SteihaugTointSolver;
 class DOTk_SteihaugTointNewtonIO;
 class DOTk_OptimizationDataMng;
 
-template<class Type>
+template<typename Type>
 class vector;
 
 class DOTk_SteihaugTointProjGradStep : public dotk::DOTk_TrustRegionStepMng

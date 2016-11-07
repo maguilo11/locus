@@ -8,6 +8,7 @@
 #ifndef DOTK_INEXACTTRUSTREGIONSQPSOLVERMNG_HPP_
 #define DOTK_INEXACTTRUSTREGIONSQPSOLVERMNG_HPP_
 
+#include <tr1/memory>
 #include "DOTk_Types.hpp"
 
 namespace dotk
@@ -23,7 +24,7 @@ class DOTk_SqpDualProblemCriterion;
 class DOTk_QuasiNormalProbCriterion;
 class DOTk_TangentialProblemCriterion;
 
-template<class Type>
+template<typename Type>
 class vector;
 
 class DOTk_InexactTrustRegionSqpSolverMng

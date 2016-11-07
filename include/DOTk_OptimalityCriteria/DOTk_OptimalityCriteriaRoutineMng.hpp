@@ -8,6 +8,7 @@
 #ifndef DOTK_OPTIMALITYCRITERIAROUTINEMNG_HPP_
 #define DOTK_OPTIMALITYCRITERIAROUTINEMNG_HPP_
 
+#include <tr1/memory>
 #include "DOTk_Types.hpp"
 
 namespace dotk
@@ -15,11 +16,11 @@ namespace dotk
 
 class DOTk_OptimalityCriteriaDataMng;
 
-template <class Type>
+template <typename Type>
 class DOTk_ObjectiveFunction;
-template <class Type>
+template <typename Type>
 class DOTk_EqualityConstraint;
-template <class Type>
+template <typename Type>
 class DOTk_InequalityConstraint;
 
 class DOTk_OptimalityCriteriaRoutineMng

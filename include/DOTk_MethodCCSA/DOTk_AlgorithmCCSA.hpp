@@ -8,6 +8,8 @@
 #ifndef INCLUDE_DOTK_METHODCCSA_DOTK_ALGORITHMCCSA_HPP_
 #define INCLUDE_DOTK_METHODCCSA_DOTK_ALGORITHMCCSA_HPP_
 
+#include <tr1/memory>
+
 #include "DOTk_UtilsCCSA.hpp"
 
 namespace dotk

@@ -18,7 +18,7 @@ class DOTk_Preconditioner;
 class DOTk_LinearOperator;
 class DOTk_OptimizationDataMng;
 
-template<class Type>
+template<typename Type>
 class vector;
 
 class DOTk_SteihaugTointPcg : public dotk::DOTk_SteihaugTointSolver

@@ -15,9 +15,9 @@ namespace dotk
 
 class DOTk_Primal;
 
-template<class Type>
+template<typename Type>
 class vector;
-template<class Type>
+template<typename Type>
 class DOTk_ObjectiveFunction;
 
 class DOTk_TrustRegionMngTypeULP : public dotk::DOTk_TrustRegionAlgorithmsDataMng

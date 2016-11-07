@@ -8,15 +8,17 @@
 #ifndef DOTK_INEQUALITYCONSTRAINT_HPP_
 #define DOTK_INEQUALITYCONSTRAINT_HPP_
 
+#include <iostream>
+
 #include "DOTk_Types.hpp"
 
 namespace dotk
 {
 
-template<class Type>
+template<typename Type>
 class vector;
 
-template<class Type>
+template<typename Type>
 class DOTk_InequalityConstraint
 {
 public:

@@ -8,6 +8,7 @@
 #ifndef DOTK_STEIHAUGTOINTKELLEYSACHS_HPP_
 #define DOTK_STEIHAUGTOINTKELLEYSACHS_HPP_
 
+#include <tr1/memory>
 #include "DOTk_SteihaugTointNewton.hpp"
 
 namespace dotk
@@ -19,7 +20,7 @@ class DOTk_OptimizationDataMng;
 class DOTk_SteihaugTointNewtonIO;
 class DOTk_ProjectedSteihaugTointPcg;
 
-template<class Type>
+template<typename Type>
 class vector;
 
 class DOTk_SteihaugTointKelleySachs : public dotk::DOTk_SteihaugTointNewton

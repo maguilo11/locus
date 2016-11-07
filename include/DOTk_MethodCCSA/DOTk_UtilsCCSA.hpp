@@ -17,7 +17,7 @@ namespace dotk
 
 class DOTk_DataMngCCSA;
 
-template<class Type>
+template<typename Type>
 class vector;
 
 namespace ccsa

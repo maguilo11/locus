@@ -17,7 +17,7 @@ namespace dotk
 
 class DOTk_OptimalityCriteria;
 
-template<class Type>
+template<typename Type>
 class vector;
 
 class DOTk_MexOptimalityCriteria

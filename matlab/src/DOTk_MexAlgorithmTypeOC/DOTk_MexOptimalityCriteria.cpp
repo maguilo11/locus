@@ -8,6 +8,7 @@
 #include <mex.h>
 #include <sstream>
 #include <fstream>
+#include <tr1/memory>
 
 #include "vector.hpp"
 #include "DOTk_Primal.hpp"

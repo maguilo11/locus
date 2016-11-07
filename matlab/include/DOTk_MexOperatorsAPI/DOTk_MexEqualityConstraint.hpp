@@ -17,7 +17,7 @@ namespace dotk
 
 class DOTk_MexArrayPtr;
 
-template<class Type>
+template<typename Type>
 class DOTk_MexEqualityConstraint : public DOTk_EqualityConstraint<Type>
 {
 public:

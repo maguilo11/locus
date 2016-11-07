@@ -16,7 +16,7 @@ namespace dotk
 
 class DOTk_OptimizationDataMng;
 
-template<class Type>
+template<typename Type>
 class vector;
 
 class DOTk_LinearOperator

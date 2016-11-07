@@ -15,12 +15,12 @@
 namespace dotk
 {
 
-template<class Type>
+template<typename Type>
 class vector;
 
 class DOTk_MexArrayPtr;
 
-template<class Type>
+template<typename Type>
 class DOTk_MexInequalityConstraint : public DOTk_InequalityConstraint<Type>
 {
 public:

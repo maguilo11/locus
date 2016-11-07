@@ -6,6 +6,8 @@
  */
 
 #include <mex.h>
+#include <string>
+
 #include "DOTk_MexQuasiNewtonParser.hpp"
 
 namespace dotk

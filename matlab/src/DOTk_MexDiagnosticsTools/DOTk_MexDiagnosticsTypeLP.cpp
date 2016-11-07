@@ -6,6 +6,7 @@
  */
 
 #include <sstream>
+#include <tr1/memory>
 
 #include "vector.hpp"
 #include "DOTk_Dual.hpp"

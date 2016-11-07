@@ -8,6 +8,7 @@
 #ifndef DOTK_STEIHAUGTOINTLINMORE_HPP_
 #define DOTK_STEIHAUGTOINTLINMORE_HPP_
 
+#include <tr1/memory>
 #include "DOTk_SteihaugTointNewton.hpp"
 
 namespace dotk

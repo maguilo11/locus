@@ -9,6 +9,7 @@
 #define DOTK_METHODCCSAIO_HPP_
 
 #include <fstream>
+#include <tr1/memory>
 #include "DOTk_Types.hpp"
 
 namespace dotk

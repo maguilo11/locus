@@ -9,6 +9,8 @@
 #define DOTK_MEXMETHODCCSAPARSER_HPP_
 
 #include <mex.h>
+#include <cstddef>
+
 #include "DOTk_UtilsCCSA.hpp"
 
 namespace dotk

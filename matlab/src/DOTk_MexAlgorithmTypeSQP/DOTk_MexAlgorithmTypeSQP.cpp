@@ -5,6 +5,8 @@
  *      Author: Miguel A. Aguilo Valentin
  */
 
+#include <cstddef>
+
 #include "vector.hpp"
 #include "DOTk_MexAlgorithmParser.hpp"
 #include "DOTk_MexAlgorithmTypeSQP.hpp"

@@ -18,7 +18,7 @@ class DOTk_DualSolverCCSA;
 class DOTk_BoundConstraints;
 class DOTk_DualObjectiveFunctionMMA;
 
-template<class Type>
+template<typename Type>
 class vector;
 
 class DOTk_SubProblemGCMMA : public dotk::DOTk_SubProblemCCSA

@@ -6,6 +6,8 @@
  */
 
 #include <mex.h>
+#include <string>
+
 #include "vector.hpp"
 #include "DOTk_MexArrayPtr.hpp"
 #include "DOTk_MexApiUtilities.hpp"

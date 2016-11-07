@@ -5,6 +5,8 @@
  *      Author: Miguel A. Aguilo Valentin
  */
 
+#include <limits>
+
 #include "vector.hpp"
 #include "DOTk_Primal.hpp"
 #include "DOTk_Hessian.hpp"
@@ -112,9 +114,9 @@ void DOTk_MexTrustRegionKelleySachs::solveTypeLinearProgramming(const mxArray* i
 
     std::tr1::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
     dotk::mex::buildControlContainer(input_[0], *primal);
-    const double DISABLED_LOWER_BOUND = -std::numeric_limits<Real>::max();
+    const double DISABLED_LOWER_BOUND = -std::numeric_limits<double>::max();
     primal->setControlLowerBound(DISABLED_LOWER_BOUND);
-    const double DISABLED_UPPER_BOUND = std::numeric_limits<Real>::max();
+    const double DISABLED_UPPER_BOUND = std::numeric_limits<double>::max();
     primal->setControlUpperBound(DISABLED_UPPER_BOUND);
 
     std::tr1::shared_ptr<dotk::DOTk_SteihaugTointDataMng>
@@ -146,9 +148,9 @@ void DOTk_MexTrustRegionKelleySachs::solveTypeNonlinearProgramming(const mxArray
     std::tr1::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
     dotk::mex::buildDualContainer(input_[0], *primal);
     dotk::mex::buildControlContainer(input_[0], *primal);
-    const double DISABLED_LOWER_BOUND = -std::numeric_limits<Real>::max();
+    const double DISABLED_LOWER_BOUND = -std::numeric_limits<double>::max();
     primal->setControlLowerBound(DISABLED_LOWER_BOUND);
-    const double DISABLED_UPPER_BOUND = std::numeric_limits<Real>::max();
+    const double DISABLED_UPPER_BOUND = std::numeric_limits<double>::max();
     primal->setControlUpperBound(DISABLED_UPPER_BOUND);
 
     std::tr1::shared_ptr<dotk::DOTk_SteihaugTointDataMng>

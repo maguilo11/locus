@@ -9,6 +9,7 @@
 #define DOTK_OPTIMALITYCRITERIA_HPP_
 
 #include <sstream>
+#include <tr1/memory>
 #include "DOTk_Types.hpp"
 
 namespace dotk
@@ -18,13 +19,13 @@ class DOTk_Primal;
 class DOTk_OptimalityCriteriaDataMng;
 class DOTk_OptimalityCriteriaRoutineMng;
 
-template<class Type>
+template<typename Type>
 class vector;
-template<class Type>
+template<typename Type>
 class DOTk_ObjectiveFunction;
-template<class Type>
+template<typename Type>
 class DOTk_EqualityConstraint;
-template<class Type>
+template<typename Type>
 class DOTk_InequalityConstraint;
 
 class DOTk_OptimalityCriteria

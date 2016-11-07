@@ -9,6 +9,8 @@
 #define DOTK_MEXALGORITHMTYPEFO_HPP_
 
 #include <mex.h>
+#include <tr1/memory>
+
 #include "DOTk_Types.hpp"
 
 namespace dotk

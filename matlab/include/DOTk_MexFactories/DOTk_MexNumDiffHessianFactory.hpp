@@ -9,6 +9,7 @@
 #define DOTK_MEXNUMDIFFHESSIANFACTORY_HPP_
 
 #include <mex.h>
+#include <tr1/memory>
 
 namespace dotk
 {

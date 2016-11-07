@@ -8,6 +8,7 @@
 #ifndef DOTK_RIGHTPRECONDITIONER_HPP_
 #define DOTK_RIGHTPRECONDITIONER_HPP_
 
+#include <tr1/memory>
 #include "DOTk_Types.hpp"
 
 namespace dotk
@@ -15,7 +16,7 @@ namespace dotk
 
 class DOTk_OptimizationDataMng;
 
-template<class T>
+template<typename Type>
 class vector;
 
 class DOTk_RightPreconditioner

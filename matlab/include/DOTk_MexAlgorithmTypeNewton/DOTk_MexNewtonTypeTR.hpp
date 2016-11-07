@@ -8,6 +8,8 @@
 #ifndef DOTK_MEXNEWTONTYPETR_HPP_
 #define DOTK_MEXNEWTONTYPETR_HPP_
 
+#include <tr1/memory>
+
 #include "DOTk_MexArrayPtr.hpp"
 #include "DOTk_MexAlgorithmTypeNewton.hpp"
 

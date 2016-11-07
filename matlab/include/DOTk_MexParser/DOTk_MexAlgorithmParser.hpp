@@ -16,7 +16,7 @@
 namespace dotk
 {
 
-template<class Type>
+template<typename Type>
 class vector;
 
 namespace mex

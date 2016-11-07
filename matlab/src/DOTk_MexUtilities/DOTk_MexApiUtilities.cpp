@@ -7,6 +7,7 @@
 
 #include <mex.h>
 #include <sstream>
+
 #include "vector.hpp"
 #include "DOTk_MexArrayPtr.hpp"
 #include "DOTk_MexApiUtilities.hpp"
@@ -174,7 +175,7 @@ dotk::types::problem_t getProblemType(const dotk::DOTk_MexArrayPtr & ptr_)
 
 dotk::types::container_t getContainerType(const dotk::DOTk_MexArrayPtr & ptr_)
 {
-    dotk::types::container_t type = dotk::types::UNDEFINED_DOTK_CONTAINER;
+    dotk::types::container_t type = dotk::types::USER_DEFINED_CONTAINER;
     std::string option(mxArrayToString(ptr_.get()));
 
     if(option.compare("SERIAL_VECTOR") == 0)
@@ -184,30 +185,6 @@ dotk::types::container_t getContainerType(const dotk::DOTk_MexArrayPtr & ptr_)
     else if(option.compare("SERIAL_ARRAY") == 0)
     {
         type = dotk::types::SERIAL_ARRAY;
-    }
-    else if(option.compare("OMP_VECTOR") == 0)
-    {
-        type = dotk::types::OMP_VECTOR;
-    }
-    else if(option.compare("OMP_ARRAY") == 0)
-    {
-        type = dotk::types::OMP_ARRAY;
-    }
-    else if(option.compare("MPI_VECTOR") == 0)
-    {
-        type = dotk::types::MPI_VECTOR;
-    }
-    else if(option.compare("MPI_ARRAY") == 0)
-    {
-        type = dotk::types::MPI_ARRAY;
-    }
-    else if(option.compare("MPIx_VECTOR") == 0)
-    {
-        type = dotk::types::MPIx_VECTOR;
-    }
-    else if(option.compare("MPIx_ARRAY") == 0)
-    {
-        type = dotk::types::MPIx_ARRAY;
     }
     else
     {

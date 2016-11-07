@@ -17,11 +17,11 @@ class DOTk_Primal;
 class DOTk_TrustRegion;
 class DOTk_AssemblyManager;
 
-template<class T>
+template<typename Type>
 class vector;
-template<class T>
+template<typename Type>
 class DOTk_ObjectiveFunction;
-template<class T>
+template<typename Type>
 class DOTk_EqualityConstraint;
 
 class DOTk_TrustRegionMngTypeELP : public dotk::DOTk_OptimizationDataMng

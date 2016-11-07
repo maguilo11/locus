@@ -19,7 +19,7 @@ class DOTk_LineSearchQuasiNewton;
 namespace mex
 {
 
-void buildQuasiNewtonMethod(const mxArray* options_,dotk::DOTk_LineSearchQuasiNewton & algorithm_);
+void buildQuasiNewtonMethod(const mxArray* options_, dotk::DOTk_LineSearchQuasiNewton & algorithm_);
 
 }
 

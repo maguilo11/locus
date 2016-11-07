@@ -9,6 +9,8 @@
 #define DOTK_MEXAPIUTILITIES_HPP_
 
 #include <mex.h>
+#include <string>
+
 #include "DOTk_Types.hpp"
 #include "DOTk_VectorTypes.hpp"
 
@@ -17,7 +19,7 @@ namespace dotk
 
 class DOTk_MexArrayPtr;
 
-template<class Type>
+template<typename Type>
 class vector;
 
 namespace mex

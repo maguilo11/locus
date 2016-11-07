@@ -17,9 +17,9 @@ class DOTk_Primal;
 class DOTk_BoundConstraints;
 class DOTk_DataMngNonlinearCG;
 
-template<class Type>
+template<typename Type>
 class vector;
-template<class Type>
+template<typename Type>
 class DOTk_ObjectiveFunction;
 
 class DOTk_DualSolverNLCG : public dotk::DOTk_DualSolverCCSA

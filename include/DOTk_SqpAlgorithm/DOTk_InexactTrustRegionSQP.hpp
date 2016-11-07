@@ -19,7 +19,7 @@ class DOTk_TrustRegionMngTypeELP;
 class DOTk_InexactTrustRegionSqpIO;
 class DOTk_InexactTrustRegionSqpSolverMng;
 
-template<class Type>
+template<typename Type>
 class vector;
 
 class DOTk_InexactTrustRegionSQP: public dotk::DOTk_SequentialQuadraticProgramming

@@ -8,6 +8,8 @@
 #ifndef DOTK_LINESEARCHSTEP_HPP_
 #define DOTK_LINESEARCHSTEP_HPP_
 
+#include <tr1/memory>
+
 #include "DOTk_LineSearchStepMng.hpp"
 
 namespace dotk

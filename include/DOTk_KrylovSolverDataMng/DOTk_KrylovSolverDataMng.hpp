@@ -8,6 +8,8 @@
 #ifndef DOTK_KRYLOVSOLVERDATAMNG_HPP_
 #define DOTK_KRYLOVSOLVERDATAMNG_HPP_
 
+#include <tr1/memory>
+
 #include "DOTk_Types.hpp"
 
 namespace dotk
@@ -20,7 +22,7 @@ class DOTk_RightPreconditioner;
 class DOTk_OrthogonalProjection;
 class DOTk_OptimizationDataMng;
 
-template<class Type>
+template<typename Type>
 class vector;
 
 class DOTk_KrylovSolverDataMng

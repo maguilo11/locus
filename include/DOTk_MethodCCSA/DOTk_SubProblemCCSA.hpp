@@ -9,6 +9,7 @@
 #ifndef DOTK_SUBPROBLEMCCSA_HPP_
 #define DOTK_SUBPROBLEMCCSA_HPP_
 
+#include <tr1/memory>
 #include "DOTk_UtilsCCSA.hpp"
 
 namespace dotk

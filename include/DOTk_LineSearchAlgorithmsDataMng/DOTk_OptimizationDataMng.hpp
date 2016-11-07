@@ -19,7 +19,7 @@ class DOTk_Primal;
 class DOTk_AssemblyManager;
 class DOTk_SecondOrderOperator;
 
-template<class Type>
+template<typename Type>
 class vector;
 
 class DOTk_OptimizationDataMng

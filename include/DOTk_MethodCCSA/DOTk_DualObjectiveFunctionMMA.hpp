@@ -15,9 +15,9 @@ namespace dotk
 
 class DOTk_DataMngCCSA;
 
-template<class Type>
+template<typename Type>
 class vector;
-template<class Type>
+template<typename Type>
 class matrix;
 
 class DOTk_DualObjectiveFunctionMMA : public dotk::DOTk_ObjectiveFunction<Real>

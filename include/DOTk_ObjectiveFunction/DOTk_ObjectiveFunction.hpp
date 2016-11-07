@@ -9,6 +9,7 @@
 #define DOTK_OBJECTIVEFUNCTION_HPP_
 
 #include <vector>
+#include <tr1/memory>
 
 #include "vector.hpp"
 #include "DOTk_Types.hpp"

@@ -9,6 +9,8 @@
 #define DOTK_MEXQUASINEWTONPARSER_HPP_
 
 #include <mex.h>
+#include <cstddef>
+
 #include "DOTk_Types.hpp"
 #include "DOTk_MexArrayPtr.hpp"
 

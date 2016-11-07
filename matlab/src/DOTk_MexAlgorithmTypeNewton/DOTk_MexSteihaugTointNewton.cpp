@@ -5,6 +5,8 @@
  *      Author: Miguel A. Aguilo Valentin
  */
 
+#include <cmath>
+
 #include "vector.hpp"
 #include "DOTk_MexAlgorithmParser.hpp"
 #include "DOTk_TrustRegionStepMng.hpp"
