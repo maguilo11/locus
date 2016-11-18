@@ -81,7 +81,7 @@ TEST(EpetraVector, abs)
     trrom::EpetraVector x(map);
     x.fill(-42.);
 
-    x.abs();
+    x.modulus();
     double tolerance = 1e-6;
     for(int local_index = 0; local_index < x.size(); ++local_index)
     {
@@ -121,7 +121,7 @@ TEST(EpetraVector, copy)
     x.fill(2.);
     y.fill(0.);
     double tolerance = 1e-6;
-    y.copy(x);
+    y.update(1., x, 0.);
     for(int local_index = 0; local_index < x.size(); ++local_index)
     {
         EXPECT_NEAR(y[local_index], x[local_index], tolerance);
@@ -190,7 +190,7 @@ TEST(EpetraVector, cwiseProd)
     }
 
     double tolerance = 1e-6;
-    x.cwiseProd(y);
+    x.elementWiseMultiplication(y);
     for(int local_index = 0; local_index < x.size(); ++local_index)
     {
         double gold = (2. + static_cast<double>(local_index)) * (4. + static_cast<double>(local_index));

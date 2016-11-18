@@ -32,9 +32,9 @@ namespace SimpleTest
 TEST(Basis, scale)
 {
     int numRows = 10;
-    int numCols = 3;
+    int getNumCols = 3;
     trrom::SerialVector<double> x(numRows);
-    trrom::Basis<double> matrix(x, numCols);
+    trrom::Basis<double> matrix(x, getNumCols);
 
     std::vector<double> data = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24,
                                 25, 26, 27, 28, 29, 30};
@@ -44,7 +44,7 @@ TEST(Basis, scale)
     double alpha = 2.;
     matrix.scale(alpha);
 
-    trrom::Basis<double> gold(x, numCols);
+    trrom::Basis<double> gold(x, getNumCols);
     y.scale(alpha);
     gold.copy(y);
     trrom::test::checkResults(gold, matrix);
@@ -53,13 +53,13 @@ TEST(Basis, scale)
 TEST(Basis, fill)
 {
     int numRows = 10;
-    int numCols = 3;
+    int getNumCols = 3;
     trrom::SerialVector<double> x(numRows);
-    trrom::Basis<double> matrix(x, numCols);
+    trrom::Basis<double> matrix(x, getNumCols);
 
     matrix.fill(1);
 
-    trrom::Basis<double> gold(x, numCols);
+    trrom::Basis<double> gold(x, getNumCols);
     std::vector<double> data =
             {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1};
     trrom::SerialVector<double> y(data);
@@ -70,22 +70,22 @@ TEST(Basis, fill)
 TEST(Basis, insert)
 {
     int numRows = 4;
-    int numCols = 1;
+    int getNumCols = 1;
     trrom::SerialVector<double> x(numRows);
-    trrom::Basis<double> matrix(x, numCols);
-    EXPECT_EQ(4, matrix.numRows());
+    trrom::Basis<double> matrix(x, getNumCols);
+    EXPECT_EQ(4, matrix.getNumRows());
 
     // number of column vectors less than total number of columns
     x.fill(1.);
     matrix.insert(x);
-    EXPECT_EQ(1, matrix.numCols());
+    EXPECT_EQ(1, matrix.getNumCols());
     EXPECT_EQ(1, matrix.snapshots());
     trrom::test::checkResults(x, matrix.vector(0));
 
     // number of column vectors == total number of columns
     x.fill(2.);
     matrix.insert(x);
-    EXPECT_EQ(2, matrix.numCols());
+    EXPECT_EQ(2, matrix.getNumCols());
     EXPECT_EQ(2, matrix.snapshots());
     trrom::test::checkResults(x, matrix.vector(1));
 }
@@ -93,35 +93,35 @@ TEST(Basis, insert)
 TEST(Basis, copy)
 {
     int numRows = 4;
-    int numCols = 8;
+    int getNumCols = 8;
     trrom::SerialVector<double> x(numRows);
-    trrom::Basis<double> matrix1(x, numCols);
-    trrom::Basis<double> matrix2(x, numCols);
+    trrom::Basis<double> matrix1(x, getNumCols);
+    trrom::Basis<double> matrix2(x, getNumCols);
 
     matrix1.fill(1);
-    matrix2.copy(matrix1);
+    matrix2.update(1., matrix1, 0.);
     trrom::test::checkResults(matrix1, matrix2);
 }
 
 TEST(Basis, add)
 {
     int numRows = 4;
-    int numCols = 8;
+    int getNumCols = 8;
     trrom::SerialVector<double> x(numRows);
-    trrom::Basis<double> matrix1(x, numCols);
-    trrom::Basis<double> matrix2(x, numCols);
+    trrom::Basis<double> matrix1(x, getNumCols);
+    trrom::Basis<double> matrix2(x, getNumCols);
 
     std::vector<double> data = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24,
                                 25, 26, 27, 28, 29, 30, 31, 32};
     trrom::SerialVector<double> y(data);
     matrix1.copy(y);
     matrix2.copy(y);
-    matrix1.add(2., matrix2);
+    matrix1.update(2., matrix2, 1.);
 
     std::vector<double> gdata = {3, 6, 9, 12, 15, 18, 21, 24, 27, 30, 33, 36, 39, 42, 45, 48, 51, 54, 57, 60, 63, 66,
                                  69, 72, 75, 78, 81, 84, 87, 90, 93, 96};
     trrom::SerialVector<double> yy(gdata);
-    trrom::Basis<double> gold(x, numCols);
+    trrom::Basis<double> gold(x, getNumCols);
     gold.copy(yy);
     trrom::test::checkResults(gold, matrix1);
 }
@@ -129,9 +129,9 @@ TEST(Basis, add)
 TEST(Basis, gemv)
 {
     int numRows = 10;
-    int numCols = 3;
+    int getNumCols = 3;
     trrom::SerialVector<double> x(numRows);
-    trrom::Basis<double> matrix(x, numCols);
+    trrom::Basis<double> matrix(x, getNumCols);
 
     std::vector<double> data = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24,
                                 25, 26, 27, 28, 29, 30};
@@ -140,7 +140,7 @@ TEST(Basis, gemv)
 
     double beta = 2;
     double alpha = 2;
-    trrom::SerialVector<double> input(numCols, 1.);
+    trrom::SerialVector<double> input(getNumCols, 1.);
     trrom::SerialVector<double> output(numRows);
     for(int index = 0; index < numRows; ++index)
     {
@@ -157,9 +157,9 @@ TEST(Basis, gemv)
 TEST(Basis, gemvT)
 {
     int numRows = 10;
-    int numCols = 3;
+    int getNumCols = 3;
     trrom::SerialVector<double> x(numRows);
-    trrom::Basis<double> matrix(x, numCols);
+    trrom::Basis<double> matrix(x, getNumCols);
 
     std::vector<double> data = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24,
                                 25, 26, 27, 28, 29, 30};
@@ -169,7 +169,7 @@ TEST(Basis, gemvT)
     double beta = 2;
     double alpha = 2;
     trrom::SerialVector<double> input(numRows, 1.);
-    trrom::SerialVector<double> output(numCols);
+    trrom::SerialVector<double> output(getNumCols);
     output[0] = 1;
     output[1] = 2;
     output[2] = 3;
@@ -184,22 +184,22 @@ TEST(Basis, gemvT)
 TEST(Basis, gemm1)
 {
     int numRows = 2;
-    int numCols = 2;
+    int getNumCols = 2;
     trrom::SerialVector<double> x(numRows);
-    trrom::Basis<double> A(x, numCols);
-    A(0, 0) = 1;
-    A(0, 1) = 2;
-    A(1, 0) = 3;
-    A(1, 1) = 4;
-    trrom::Basis<double> B(x, numCols);
-    B(0, 0) = 5;
-    B(0, 1) = 6;
-    B(1, 0) = 7;
-    B(1, 1) = 8;
-    trrom::Basis<double> C(x, numCols);
+    trrom::Basis<double> A(x, getNumCols);
+    A.replaceGlobalValue(0, 0, 1);
+    A.replaceGlobalValue(0, 1, 2);
+    A.replaceGlobalValue(1, 0, 3);
+    A.replaceGlobalValue(1, 1, 4);
+    trrom::Basis<double> B(x, getNumCols);
+    B.replaceGlobalValue(0, 0, 5);
+    B.replaceGlobalValue(0, 1, 6);
+    B.replaceGlobalValue(1, 0, 7);
+    B.replaceGlobalValue(1, 1, 8);
+    trrom::Basis<double> C(x, getNumCols);
 
-    trrom::Basis<double> gold(x, numCols);
-    trrom::SerialVector<double> data(numRows * numCols, 0.);
+    trrom::Basis<double> gold(x, getNumCols);
+    trrom::SerialVector<double> data(numRows * getNumCols, 0.);
     // C = A*B
     A.gemm(false, false, 1., B, 0., C);
     data[0] = 19;
@@ -243,31 +243,31 @@ TEST(Basis, gemm1)
 TEST(Basis, gemm2)
 {
     int numRows = 3;
-    int numCols = 2;
+    int getNumCols = 2;
     trrom::SerialVector<double> x(numRows);
-    trrom::Basis<double> A(x, numCols);
-    A(0, 0) = 1;
-    A(0, 1) = 2;
-    A(1, 0) = 3;
-    A(1, 1) = 4;
-    A(2, 0) = 5;
-    A(2, 1) = 6;
+    trrom::Basis<double> A(x, getNumCols);
+    A.replaceGlobalValue(0, 0, 1.);
+    A.replaceGlobalValue(0, 1, 2.);
+    A.replaceGlobalValue(1, 0, 3.);
+    A.replaceGlobalValue(1, 1, 4.);
+    A.replaceGlobalValue(2, 0, 5.);
+    A.replaceGlobalValue(2, 1, 6.);
 
     numRows = 2;
-    numCols = 3;
+    getNumCols = 3;
     trrom::SerialVector<double> y(numRows);
-    trrom::Basis<double> B(y, numCols);
-    B(0, 0) = 1;
-    B(0, 1) = 2;
-    B(0, 2) = 3;
-    B(1, 0) = 4;
-    B(1, 1) = 5;
-    B(1, 2) = 6;
+    trrom::Basis<double> B(y, getNumCols);
+    B.replaceGlobalValue(0, 0, 1.);
+    B.replaceGlobalValue(0, 1, 2.);
+    B.replaceGlobalValue(0, 2, 3.);
+    B.replaceGlobalValue(1, 0, 4.);
+    B.replaceGlobalValue(1, 1, 5.);
+    B.replaceGlobalValue(1, 2, 6.);
 
     // C = A*B
     std::tr1::shared_ptr<trrom::Matrix<double> > C = B.create(3, 3);
     std::tr1::shared_ptr<trrom::Matrix<double> > gold = B.create(3, 3);
-    trrom::SerialVector<double> data(C->numRows() * C->numCols(), 0.);
+    trrom::SerialVector<double> data(C->getNumRows() * C->getNumCols(), 0.);
     A.gemm(false, false, 1., B, 0., *C);
     data[0] = 9;
     data[1] = 19;
@@ -320,34 +320,34 @@ TEST(Basis, gemm2)
 TEST(Basis, gemm3)
 {
     int numRows = 3;
-    int numCols = 2;
+    int getNumCols = 2;
     trrom::SerialVector<double> x(numRows);
-    trrom::Basis<double> A(x, numCols);
-    A(0, 0) = 1;
-    A(0, 1) = 2;
-    A(1, 0) = 3;
-    A(1, 1) = 4;
-    A(2, 0) = 5;
-    A(2, 1) = 6;
+    trrom::Basis<double> A(x, getNumCols);
+    A.replaceGlobalValue(0, 0, 1.);
+    A.replaceGlobalValue(0, 1, 2.);
+    A.replaceGlobalValue(1, 0, 3.);
+    A.replaceGlobalValue(1, 1, 4.);
+    A.replaceGlobalValue(2, 0, 5.);
+    A.replaceGlobalValue(2, 1, 6.);
     numRows = 2;
-    numCols = 3;
+    getNumCols = 3;
     trrom::SerialVector<double> y(numRows);
-    trrom::Basis<double> B(y, numCols);
-    B(0, 0) = 1;
-    B(0, 1) = 2;
-    B(0, 2) = 3;
-    B(1, 0) = 4;
-    B(1, 1) = 5;
-    B(1, 2) = 6;
+    trrom::Basis<double> B(y, getNumCols);
+    B.replaceGlobalValue(0, 0, 1.);
+    B.replaceGlobalValue(0, 1, 2.);
+    B.replaceGlobalValue(0, 2, 3.);
+    B.replaceGlobalValue(1, 0, 4.);
+    B.replaceGlobalValue(1, 1, 5.);
+    B.replaceGlobalValue(1, 2, 6.);
 
     // C = A*B
     numRows = 3;
-    numCols = 3;
+    getNumCols = 3;
     trrom::SerialVector<double> z(numRows);
-    trrom::Basis<double> C(z, numCols);
+    trrom::Basis<double> C(z, getNumCols);
     C.fill(1.);
     A.gemm(false, false, 2., B, 1., C);
-    trrom::SerialVector<double> data1(numRows * numCols, 0.);
+    trrom::SerialVector<double> data1(numRows * getNumCols, 0.);
     data1[0] = 19;
     data1[1] = 39;
     data1[2] = 59;
@@ -357,7 +357,7 @@ TEST(Basis, gemm3)
     data1[6] = 31;
     data1[7] = 67;
     data1[8] = 103;
-    trrom::Basis<double> gold1(z, numCols);
+    trrom::Basis<double> gold1(z, getNumCols);
     gold1.copy(data1);
     trrom::test::checkResults(gold1, C);
 
@@ -378,17 +378,17 @@ TEST(Basis, gemm3)
 
     // C = A'*B
     numRows = 2;
-    numCols = 2;
+    getNumCols = 2;
     trrom::SerialVector<double> w(numRows);
-    trrom::Basis<double> D(w, numCols);
+    trrom::Basis<double> D(w, getNumCols);
     D.fill(1.);
     A.gemm(true, false, 2., A, 1., D);
-    trrom::SerialVector<double> data2(numRows * numCols, 0.);
+    trrom::SerialVector<double> data2(numRows * getNumCols, 0.);
     data2[0] = 71;
     data2[1] = 89;
     data2[2] = 89;
     data2[3] = 113;
-    trrom::Basis<double> gold2(w, numCols);
+    trrom::Basis<double> gold2(w, getNumCols);
     gold2.copy(data2);
     trrom::test::checkResults(gold2, D);
 
@@ -406,71 +406,71 @@ TEST(Basis, gemm3)
 TEST(ModifiedGramSchmidt, factorize)
 {
     int numRows = 4;
-    int numCols = 4;
+    int getNumCols = 4;
     trrom::SerialVector<double> x(numRows);
-    trrom::Basis<double> A(x, numCols);
-    trrom::Basis<double> Q(x, numCols);
-    trrom::Basis<double> R(x, numCols);
+    trrom::Basis<double> A(x, getNumCols);
+    trrom::Basis<double> Q(x, getNumCols);
+    trrom::Basis<double> R(x, getNumCols);
 
     // basis 1
-    A(0, 0) = 10.;
-    A(1, 0) = -1.;
-    A(2, 0) = 2.;
-    A(3, 0) = 0.;
+    A.replaceGlobalValue(0, 0, 10.);
+    A.replaceGlobalValue(1, 0, -1.);
+    A.replaceGlobalValue(2, 0, 2.);
+    A.replaceGlobalValue(3, 0, 0.);
     // basis 2
-    A(0, 1) = -1.;
-    A(1, 1) = 11.;
-    A(2, 1) = -1.;
-    A(3, 1) = 3.;
+    A.replaceGlobalValue(0, 1, -1.);
+    A.replaceGlobalValue(1, 1, 11.);
+    A.replaceGlobalValue(2, 1, -1.);
+    A.replaceGlobalValue(3, 1, 3.);
     // basis 3
-    A(0, 2) = 2.;
-    A(1, 2) = -1.;
-    A(2, 2) = 10.;
-    A(3, 2) = -1.;
+    A.replaceGlobalValue(0, 2, 2.);
+    A.replaceGlobalValue(1, 2, -1.);
+    A.replaceGlobalValue(2, 2, 10.);
+    A.replaceGlobalValue(3, 2, -1.);
     // basis 4
-    A(0, 3) = 0.;
-    A(1, 3) = 3.;
-    A(2, 3) = -1.;
-    A(3, 3) = 8.;
+    A.replaceGlobalValue(0, 3, 0.);
+    A.replaceGlobalValue(1, 3, 3.);
+    A.replaceGlobalValue(2, 3, -1.);
+    A.replaceGlobalValue(3, 3, 8.);
 
     trrom::ModifiedGramSchmidt method;
     EXPECT_EQ(trrom::types::MODIFIED_GRAM_SCHMIDT_QR, method.type());
     method.factorize(A, Q, R);
 
     // Check Q^t * Q = I
-    trrom::Basis<double> I(x, numCols);
+    trrom::Basis<double> I(x, getNumCols);
     Q.gemm(true, false, 1., Q, 0., I);
-    trrom::Basis<double> mgold(x, numCols);
-    mgold(0, 0) = 1;
-    mgold(1, 1) = 1;
-    mgold(2, 2) = 1;
-    mgold(3, 3) = 1;
+    trrom::Basis<double> mgold(x, getNumCols);
+    mgold.replaceGlobalValue(0, 0, 1.);
+    mgold.replaceGlobalValue(1, 1, 1.);
+    mgold.replaceGlobalValue(2, 2, 1.);
+    mgold.replaceGlobalValue(3, 3, 1.);
     trrom::test::checkResults(mgold, I);
 
     // Check Q * R = A
-    trrom::Basis<double> Ao(x, numCols);
+    trrom::Basis<double> Ao(x, getNumCols);
     Q.gemm(false, false, 1., R, 0., Ao);
     mgold.fill(0);
-    mgold(0, 0) = 10;
-    mgold(1, 0) = -1;
-    mgold(2, 0) = 2;
-    mgold(3, 0) = 0;
-    mgold(0, 1) = -1;
-    mgold(1, 1) = 11;
-    mgold(2, 1) = -1;
-    mgold(3, 1) = 3;
-    mgold(0, 2) = 2;
-    mgold(1, 2) = -1;
-    mgold(2, 2) = 10;
-    mgold(3, 2) = -1;
-    mgold(0, 3) = 0;
-    mgold(1, 3) = 3;
-    mgold(2, 3) = -1;
-    mgold(3, 3) = 8;
+    mgold.replaceGlobalValue(0, 0, 10);
+    mgold.replaceGlobalValue(1, 0, -1);
+    mgold.replaceGlobalValue(2, 0, 2);
+    mgold.replaceGlobalValue(3, 0, 0);
+    mgold.replaceGlobalValue(0, 1, -1);
+    mgold.replaceGlobalValue(1, 1, 11);
+    mgold.replaceGlobalValue(2, 1, -1);
+    mgold.replaceGlobalValue(3, 1, 3);
+    mgold.replaceGlobalValue(0, 2, 2);
+    mgold.replaceGlobalValue(1, 2, -1);
+    mgold.replaceGlobalValue(2, 2, 10);
+    mgold.replaceGlobalValue(3, 2, -1);
+    mgold.replaceGlobalValue(0, 3, 0);
+    mgold.replaceGlobalValue(1, 3, 3);
+    mgold.replaceGlobalValue(2, 3, -1);
+    mgold.replaceGlobalValue(3, 3, 8);
     trrom::test::checkResults(mgold, Ao);
 
     // Q basis 1
-    trrom::SerialVector<double> gold(numCols);
+    trrom::SerialVector<double> gold(getNumCols);
     gold[0] = 0.975900072948533;
     gold[1] = -0.097590007294853;
     gold[2] = 0.195180014589707;
@@ -533,38 +533,38 @@ TEST(ReducedBasis, pod)
     trrom::Basis<double> singular_vec(y, nsnap);
 
     // Set snapshots for unit test
-    snapshots(0, 0) = 0.792207329559554;
-    snapshots(0, 1) = 0.678735154857774;
-    snapshots(0, 2) = 0.706046088019609;
-    snapshots(1, 0) = 0.959492426392903;
-    snapshots(1, 1) = 0.757740130578333;
-    snapshots(1, 2) = 0.031832846377421;
-    snapshots(2, 0) = 0.655740699156587;
-    snapshots(2, 1) = 0.743132468124916;
-    snapshots(2, 2) = 0.276922984960890;
-    snapshots(3, 0) = 0.035711678574190;
-    snapshots(3, 1) = 0.392227019534168;
-    snapshots(3, 2) = 0.046171390631154;
-    snapshots(4, 0) = 0.849129305868777;
-    snapshots(4, 1) = 0.655477890177557;
-    snapshots(4, 2) = 0.097131781235848;
-    snapshots(5, 0) = 0.933993247757551;
-    snapshots(5, 1) = 0.171186687811562;
-    snapshots(5, 2) = 0.823457828327293;
+    snapshots.replaceGlobalValue(0, 0, 0.792207329559554);
+    snapshots.replaceGlobalValue(0, 1, 0.678735154857774);
+    snapshots.replaceGlobalValue(0, 2, 0.706046088019609);
+    snapshots.replaceGlobalValue(1, 0, 0.959492426392903);
+    snapshots.replaceGlobalValue(1, 1, 0.757740130578333);
+    snapshots.replaceGlobalValue(1, 2, 0.031832846377421);
+    snapshots.replaceGlobalValue(2, 0, 0.655740699156587);
+    snapshots.replaceGlobalValue(2, 1, 0.743132468124916);
+    snapshots.replaceGlobalValue(2, 2, 0.276922984960890);
+    snapshots.replaceGlobalValue(3, 0, 0.035711678574190);
+    snapshots.replaceGlobalValue(3, 1, 0.392227019534168);
+    snapshots.replaceGlobalValue(3, 2, 0.046171390631154);
+    snapshots.replaceGlobalValue(4, 0, 0.849129305868777);
+    snapshots.replaceGlobalValue(4, 1, 0.655477890177557);
+    snapshots.replaceGlobalValue(4, 2, 0.097131781235848);
+    snapshots.replaceGlobalValue(5, 0, 0.933993247757551);
+    snapshots.replaceGlobalValue(5, 1, 0.171186687811562);
+    snapshots.replaceGlobalValue(5, 2, 0.823457828327293);
     // Set singular values for unit test
     singular_val[0] = 0.176291651111878;
     singular_val[1] = 0.695058842537319;
     singular_val[2] = 6.167248315069438;
     // Set singular vectors for unit test
-    singular_vec(0, 0) = -0.655755263680298;
-    singular_vec(0, 1) = 0.057661128661978;
-    singular_vec(0, 2) = 0.752768376326350;
-    singular_vec(1, 0) = 0.584312694702689;
-    singular_vec(1, 1) = -0.592633544619941;
-    singular_vec(1, 2) = 0.554404325921513;
-    singular_vec(2, 0) = 0.478083370307800;
-    singular_vec(2, 1) = 0.803405673388377;
-    singular_vec(2, 2) = 0.354930436849960;
+    singular_vec.replaceGlobalValue(0, 0, -0.655755263680298);
+    singular_vec.replaceGlobalValue(0, 1, 0.057661128661978);
+    singular_vec.replaceGlobalValue(0, 2, 0.752768376326350);
+    singular_vec.replaceGlobalValue(1, 0, 0.584312694702689);
+    singular_vec.replaceGlobalValue(1, 1, -0.592633544619941);
+    singular_vec.replaceGlobalValue(1, 2, 0.554404325921513);
+    singular_vec.replaceGlobalValue(2, 0, 0.478083370307800);
+    singular_vec.replaceGlobalValue(2, 1, 0.803405673388377);
+    singular_vec.replaceGlobalValue(2, 2, 0.354930436849960);
 
     double threshold = 0.9999;
     trrom::properOrthogonalDecomposition(threshold, singular_val, singular_vec, snapshots, basis);
@@ -610,35 +610,35 @@ TEST(LowRankSVD, formMatrixK)
     singular_val[1] = 0.695058842537319;
     singular_val[2] = 6.167248315069438;
     // Set upper triangular matrix R
-    R(0, 0) = 10.2469507659596;
-    R(0, 1) = -2.244570167781625;
-    R(0, 2) = 4.001190299088986;
-    R(0, 3) = -0.487950036474267;
-    R(1, 0) = 0.;
-    R(1, 1) = 11.267737339941178;
-    R(1, 2) = -1.510422820979288;
-    R(1, 3) = 5.050238587213904;
-    R(2, 0) = 0.;
-    R(2, 1) = 0.;
-    R(2, 2) = 9.365313614201140;
-    R(2, 3) = -1.219353019506445;
-    R(3, 0) = 0.;
-    R(3, 1) = 0.;
-    R(3, 2) = 0.;
-    R(3, 3) = 6.838872216085120;
+    R.replaceGlobalValue(0, 0, 10.2469507659596);
+    R.replaceGlobalValue(0, 1, -2.244570167781625);
+    R.replaceGlobalValue(0, 2, 4.001190299088986);
+    R.replaceGlobalValue(0, 3, -0.487950036474267);
+    R.replaceGlobalValue(1, 0, 0.);
+    R.replaceGlobalValue(1, 1, 11.267737339941178);
+    R.replaceGlobalValue(1, 2, -1.510422820979288);
+    R.replaceGlobalValue(1, 3, 5.050238587213904);
+    R.replaceGlobalValue(2, 0, 0.);
+    R.replaceGlobalValue(2, 1, 0.);
+    R.replaceGlobalValue(2, 2, 9.365313614201140);
+    R.replaceGlobalValue(2, 3, -1.219353019506445);
+    R.replaceGlobalValue(3, 0, 0.);
+    R.replaceGlobalValue(3, 1, 0.);
+    R.replaceGlobalValue(3, 2, 0.);
+    R.replaceGlobalValue(3, 3, 6.838872216085120);
     // Set matrix M
-    M(0, 0) = 10.2469507659596;
-    M(0, 1) = -2.244570167781625;
-    M(0, 2) = 4.001190299088986;
-    M(0, 3) = -0.487950036474267;
-    M(1, 0) = 0.;
-    M(1, 1) = 11.267737339941178;
-    M(1, 2) = -1.510422820979288;
-    M(1, 3) = 5.050238587213904;
-    M(2, 0) = 0.;
-    M(2, 1) = 0.;
-    M(2, 2) = 9.365313614201140;
-    M(2, 3) = -1.219353019506445;
+    M.replaceGlobalValue(0, 0, 10.2469507659596);
+    M.replaceGlobalValue(0, 1, -2.244570167781625);
+    M.replaceGlobalValue(0, 2, 4.001190299088986);
+    M.replaceGlobalValue(0, 3, -0.487950036474267);
+    M.replaceGlobalValue(1, 0, 0.);
+    M.replaceGlobalValue(1, 1, 11.267737339941178);
+    M.replaceGlobalValue(1, 2, -1.510422820979288);
+    M.replaceGlobalValue(1, 3, 5.050238587213904);
+    M.replaceGlobalValue(2, 0, 0.);
+    M.replaceGlobalValue(2, 1, 0.);
+    M.replaceGlobalValue(2, 2, 9.365313614201140);
+    M.replaceGlobalValue(2, 3, -1.219353019506445);
 
     trrom::LowRankSVD svd;
     svd.formMatrixK(singular_val, M, R, K);
@@ -712,43 +712,43 @@ TEST(LowRankSVD, formMatrixUbar)
     trrom::Basis<double> Ubar(x, rank + nsnap);
 
     // Set singular vectors
-    U(0, 0) = 10.2469507659596;
-    U(0, 1) = -2.244570167781625;
-    U(0, 2) = 4.001190299088986;
-    U(1, 0) = 0.;
-    U(1, 1) = 11.267737339941178;
-    U(1, 2) = -1.510422820979288;
-    U(2, 0) = 0.;
-    U(2, 1) = 0.;
-    U(2, 2) = 9.365313614201140;
-    U(3, 0) = 0.;
-    U(3, 1) = 0.;
-    U(3, 2) = 0.;
+    U.replaceGlobalValue(0, 0, 10.2469507659596);
+    U.replaceGlobalValue(0, 1, -2.244570167781625);
+    U.replaceGlobalValue(0, 2, 4.001190299088986);
+    U.replaceGlobalValue(1, 0, 0.);
+    U.replaceGlobalValue(1, 1, 11.267737339941178);
+    U.replaceGlobalValue(1, 2, -1.510422820979288);
+    U.replaceGlobalValue(2, 0, 0.);
+    U.replaceGlobalValue(2, 1, 0.);
+    U.replaceGlobalValue(2, 2, 9.365313614201140);
+    U.replaceGlobalValue(3, 0, 0.);
+    U.replaceGlobalValue(3, 1, 0.);
+    U.replaceGlobalValue(3, 2, 0.);
     // Set orthonormal matrix Q
-    Q(0, 0) = 0.9759000729;
-    Q(0, 1) = 0.1056535269;
-    Q(0, 2) = -0.1863451111;
-    Q(0, 3) = -0.0416158552;
-    Q(1, 0) = -0.0975900072;
-    Q(1, 1) = 0.9567983398;
-    Q(1, 2) = 0.0892277901;
-    Q(1, 3) = -0.2589430994;
-    Q(2, 0) = 0.1951800145;
-    Q(2, 1) = -0.0498684647;
-    Q(2, 2) = 0.9763394509;
-    Q(2, 3) = 0.0786077266;
-    Q(3, 0) = 0.;
-    Q(3, 1) = 0.2662468878;
-    Q(3, 2) = -0.0638371173;
-    Q(3, 3) = 0.9617886551;
+    Q.replaceGlobalValue(0, 0, 0.9759000729);
+    Q.replaceGlobalValue(0, 1, 0.1056535269);
+    Q.replaceGlobalValue(0, 2, -0.1863451111);
+    Q.replaceGlobalValue(0, 3, -0.0416158552);
+    Q.replaceGlobalValue(1, 0, -0.0975900072);
+    Q.replaceGlobalValue(1, 1, 0.9567983398);
+    Q.replaceGlobalValue(1, 2, 0.0892277901);
+    Q.replaceGlobalValue(1, 3, -0.2589430994);
+    Q.replaceGlobalValue(2, 0, 0.1951800145);
+    Q.replaceGlobalValue(2, 1, -0.0498684647);
+    Q.replaceGlobalValue(2, 2, 0.9763394509);
+    Q.replaceGlobalValue(2, 3, 0.0786077266);
+    Q.replaceGlobalValue(3, 0, 0.);
+    Q.replaceGlobalValue(3, 1, 0.2662468878);
+    Q.replaceGlobalValue(3, 2, -0.0638371173);
+    Q.replaceGlobalValue(3, 3, 0.9617886551);
     // Set matrix C
-    C(0, 0) = 1;
-    C(1, 1) = 1;
-    C(2, 2) = 1;
-    C(3, 3) = 1;
-    C(4, 4) = 1;
-    C(5, 5) = 1;
-    C(6, 6) = 1;
+    C.replaceGlobalValue(0, 0, 1.);
+    C.replaceGlobalValue(1, 1, 1.);
+    C.replaceGlobalValue(2, 2, 1.);
+    C.replaceGlobalValue(3, 3, 1.);
+    C.replaceGlobalValue(4, 4, 1.);
+    C.replaceGlobalValue(5, 5, 1.);
+    C.replaceGlobalValue(6, 6, 1.);
 
     trrom::LowRankSVD svd;
     svd.formMatrixUbar(U, Q, C, Ubar);
@@ -801,32 +801,32 @@ TEST(LowRankSVD, formMatrixVbar)
     trrom::Basis<double> D(z, rank + num_new_snap);
 
     // Set singular vectors
-    V(0, 0) = 10.2469507659596;
-    V(0, 1) = -2.244570167781625;
-    V(0, 2) = 4.001190299088986;
-    V(1, 0) = 0.;
-    V(1, 1) = 11.267737339941178;
-    V(1, 2) = -1.510422820979288;
-    V(2, 0) = 0.;
-    V(2, 1) = 0.;
-    V(2, 2) = 9.365313614201140;
-    V(3, 0) = 0.;
-    V(3, 1) = 0.;
-    V(3, 2) = 0.;
+    V.replaceGlobalValue(0, 0, 10.2469507659596);
+    V.replaceGlobalValue(0, 1, -2.244570167781625);
+    V.replaceGlobalValue(0, 2, 4.001190299088986);
+    V.replaceGlobalValue(1, 0, 0.);
+    V.replaceGlobalValue(1, 1, 11.267737339941178);
+    V.replaceGlobalValue(1, 2, -1.510422820979288);
+    V.replaceGlobalValue(2, 0, 0.);
+    V.replaceGlobalValue(2, 1, 0.);
+    V.replaceGlobalValue(2, 2, 9.365313614201140);
+    V.replaceGlobalValue(3, 0, 0.);
+    V.replaceGlobalValue(3, 1, 0.);
+    V.replaceGlobalValue(3, 2, 0.);
     // Set matrix C
-    D(0, 0) = 2;
-    D(1, 1) = 2;
-    D(2, 2) = 2;
-    D(3, 3) = 2;
-    D(4, 4) = 2;
-    D(5, 5) = 2;
+    D.replaceGlobalValue(0, 0, 2.);
+    D.replaceGlobalValue(1, 1, 2.);
+    D.replaceGlobalValue(2, 2, 2.);
+    D.replaceGlobalValue(3, 3, 2.);
+    D.replaceGlobalValue(4, 4, 2.);
+    D.replaceGlobalValue(5, 5, 2.);
 
     trrom::LowRankSVD svd;
     svd.formMatrixVbar(num_new_snap, V, D, Vbar);
 
     int numRows = rank + num_old_snap;
-    int numCols = rank + num_new_snap;
-    trrom::SerialVector<double> data(numRows * numCols, 0.);
+    int getNumCols = rank + num_new_snap;
+    trrom::SerialVector<double> data(numRows * getNumCols, 0.);
     data[0] = 20.4939015319;
     data[7] = -4.4891403355;
     data[14] = 8.0023805981;
@@ -880,18 +880,18 @@ TEST(LowRankSVD, solve)
     std::tr1::shared_ptr<trrom::mock::MatlabQR> qr(new trrom::mock::MatlabQR);
     trrom::LowRankSVD thin_svd(svd, qr);
 
-    int numRows = 4;
-    int numCols = 2;
-    trrom::SerialVector<double> x(numRows);
-    std::tr1::shared_ptr<trrom::Basis<double> > snapshots(new trrom::Basis<double>(x, numCols));
-    (*snapshots)(0, 0) = 2;
-    (*snapshots)(0, 1) = 0;
-    (*snapshots)(1, 0) = -1;
-    (*snapshots)(1, 1) = 3;
-    (*snapshots)(2, 0) = 10;
-    (*snapshots)(2, 1) = -1;
-    (*snapshots)(3, 0) = -1;
-    (*snapshots)(3, 1) = 8;
+    int NumRows = 4;
+    int NumCols = 2;
+    trrom::SerialVector<double> x(NumRows);
+    std::tr1::shared_ptr<trrom::Basis<double> > snapshots(new trrom::Basis<double>(x, NumCols));
+    (*snapshots).replaceGlobalValue(0, 0, 2.);
+    (*snapshots).replaceGlobalValue(0, 1, 0.);
+    (*snapshots).replaceGlobalValue(1, 0, -1);
+    (*snapshots).replaceGlobalValue(1, 1, 3.);
+    (*snapshots).replaceGlobalValue(2, 0, 10);
+    (*snapshots).replaceGlobalValue(2, 1, -1);
+    (*snapshots).replaceGlobalValue(3, 0, -1);
+    (*snapshots).replaceGlobalValue(3, 1, 8.);
 
     const int NUM_SINGULAR_VALUES = 2;
     std::tr1::shared_ptr<trrom::Vector<double> >
@@ -901,22 +901,22 @@ TEST(LowRankSVD, solve)
 
     std::tr1::shared_ptr<trrom::Matrix<double> > left_singular_vectors = snapshots->create(4, 2);
     // Column 1
-    (*left_singular_vectors)(0, 0) = 0.541332911177864;
-    (*left_singular_vectors)(1, 0) = -0.821530520345489;
-    (*left_singular_vectors)(2, 0) = 0.164589314655955;
-    (*left_singular_vectors)(3, 0) = 0.070403415525477;
+    (*left_singular_vectors).replaceGlobalValue(0, 0, 0.541332911177864);
+    (*left_singular_vectors).replaceGlobalValue(1, 0, -0.821530520345489);
+    (*left_singular_vectors).replaceGlobalValue(2, 0, 0.164589314655955);
+    (*left_singular_vectors).replaceGlobalValue(3, 0, 0.070403415525477);
     // Column 2
-    (*left_singular_vectors)(0, 1) = 0.819300293644437;
-    (*left_singular_vectors)(1, 1) = 0.558245394399770;
-    (*left_singular_vectors)(2, 1) = 0.116874706526009;
-    (*left_singular_vectors)(3, 1) = -0.058731690253598;
+    (*left_singular_vectors).replaceGlobalValue(0, 1, 0.819300293644437);
+    (*left_singular_vectors).replaceGlobalValue(1, 1, 0.558245394399770);
+    (*left_singular_vectors).replaceGlobalValue(2, 1, 0.116874706526009);
+    (*left_singular_vectors).replaceGlobalValue(3, 1, -0.058731690253598);
     std::tr1::shared_ptr<trrom::Matrix<double> > right_singular_vectors = snapshots->create(2, 2);
     // Column 1
-    (*right_singular_vectors)(0, 0) = 0.555985541889449;
-    (*right_singular_vectors)(1, 0) = -0.831191961709145;
+    (*right_singular_vectors).replaceGlobalValue(0, 0, 0.555985541889449);
+    (*right_singular_vectors).replaceGlobalValue(1, 0, -0.831191961709145);
     // Column 2
-    (*right_singular_vectors)(0, 1) = 0.831191961709145;
-    (*right_singular_vectors)(1, 1) = 0.555985541889449;
+    (*right_singular_vectors).replaceGlobalValue(0, 1, 0.831191961709145);
+    (*right_singular_vectors).replaceGlobalValue(1, 1, 0.555985541889449);
 
     thin_svd.solve(snapshots, singular_values, left_singular_vectors, right_singular_vectors);
 
@@ -929,48 +929,48 @@ TEST(LowRankSVD, solve)
 
     std::tr1::shared_ptr<trrom::Matrix<double> > gold = left_singular_vectors->create();
     // Column 1
-    (*gold)(0, 0) = 0.515062341395141;
-    (*gold)(1, 0) = -0.626687172996972;
-    (*gold)(2, 0) = 0.560102103374287;
-    (*gold)(3, 0) = -0.168105935270941;
+    (*gold).replaceGlobalValue(0, 0, 0.515062341395141);
+    (*gold).replaceGlobalValue(1, 0, -0.626687172996972);
+    (*gold).replaceGlobalValue(2, 0, 0.560102103374287);
+    (*gold).replaceGlobalValue(3, 0, -0.168105935270941);
     // Column 2
-    (*gold)(0, 1) = -0.494929865714162;
-    (*gold)(1, 1) = -0.758177136554344;
-    (*gold)(2, 1) = -0.417017162869087;
-    (*gold)(3, 1) = -0.079426340108521;
+    (*gold).replaceGlobalValue(0, 1, -0.494929865714162);
+    (*gold).replaceGlobalValue(1, 1, -0.758177136554344);
+    (*gold).replaceGlobalValue(2, 1, -0.417017162869087);
+    (*gold).replaceGlobalValue(3, 1, -0.079426340108521);
     // Column 3
-    (*gold)(0, 2) = 0.548509721924528;
-    (*gold)(1, 2) = -0.160444321628943;
-    (*gold)(2, 2) = -0.485317907230518;
-    (*gold)(3, 2) = 0.661710838306806;
+    (*gold).replaceGlobalValue(0, 2, 0.548509721924528);
+    (*gold).replaceGlobalValue(1, 2, -0.160444321628943);
+    (*gold).replaceGlobalValue(2, 2, -0.485317907230518);
+    (*gold).replaceGlobalValue(3, 2, 0.661710838306806);
     // Column 4
-    (*gold)(0, 3) = 0.434617415038783;
-    (*gold)(1, 3) = 0.081781638919421;
-    (*gold)(2, 3) = -0.526164279089438;
-    (*gold)(3, 3) = -0.726340565775416;
+    (*gold).replaceGlobalValue(0, 3, 0.434617415038783);
+    (*gold).replaceGlobalValue(1, 3, 0.081781638919421);
+    (*gold).replaceGlobalValue(2, 3, -0.526164279089438);
+    (*gold).replaceGlobalValue(3, 3, -0.726340565775416);
     trrom::test::checkResults(*gold, *left_singular_vectors, 1e-6);
 
     gold = right_singular_vectors->create();
     // Column 1
-    (*gold)(0, 0) = 0.517141370416288;
-    (*gold)(1, 0) = -0.584851515282251;
-    (*gold)(2, 0) = 0.556759977375391;
-    (*gold)(3, 0) = -0.283781316631262;
+    (*gold).replaceGlobalValue(0, 0, 0.517141370416288);
+    (*gold).replaceGlobalValue(1, 0, -0.584851515282251);
+    (*gold).replaceGlobalValue(2, 0, 0.556759977375391);
+    (*gold).replaceGlobalValue(3, 0, -0.283781316631262);
     // Column 2
-    (*gold)(0, 1) = -0.492397833884674;
-    (*gold)(1, 1) = -0.720061743054955;
-    (*gold)(2, 1) = -0.423539924337457;
-    (*gold)(3, 1) = -0.244273191051664;
+    (*gold).replaceGlobalValue(0, 1, -0.492397833884674);
+    (*gold).replaceGlobalValue(1, 1, -0.720061743054955);
+    (*gold).replaceGlobalValue(2, 1, -0.423539924337457);
+    (*gold).replaceGlobalValue(3, 1, -0.244273191051664);
     // Column 3
-    (*gold)(0, 2) = 0.542550082084813;
-    (*gold)(1, 2) = -0.288954676631222;
-    (*gold)(2, 2) = -0.494099141178771;
-    (*gold)(3, 2) = 0.614825700478688;
+    (*gold).replaceGlobalValue(0, 2, 0.542550082084813);
+    (*gold).replaceGlobalValue(1, 2, -0.288954676631222);
+    (*gold).replaceGlobalValue(2, 2, -0.494099141178771);
+    (*gold).replaceGlobalValue(3, 2, 0.614825700478688);
     // Column 4
-    (*gold)(0, 3) = 0.442434836579814;
-    (*gold)(1, 3) = 0.236569199418821;
-    (*gold)(2, 3) = -0.516234732240650;
-    (*gold)(3, 3) = -0.694109595449707;
+    (*gold).replaceGlobalValue(0, 3, 0.442434836579814);
+    (*gold).replaceGlobalValue(1, 3, 0.236569199418821);
+    (*gold).replaceGlobalValue(2, 3, -0.516234732240650);
+    (*gold).replaceGlobalValue(3, 3, -0.694109595449707);
     trrom::test::checkResults(*gold, *right_singular_vectors, 1e-6);
 }
 
@@ -1034,20 +1034,20 @@ TEST(SpectralDecompositionMng, allocation)
 
     int numRows = 6;
     trrom::SerialVector<double> x(numRows);
-    int numCols = 8;
-    trrom::Basis<double> dual_snapshots(x, numCols);
+    int NumCols = 8;
+    trrom::Basis<double> dual_snapshots(x, NumCols);
     mng.setDualSnapshotEnsemble(dual_snapshots);
-    EXPECT_EQ(numCols, mng.getNumDualSnapshots());
+    EXPECT_EQ(NumCols, mng.getNumDualSnapshots());
 
-    numCols = 4;
-    trrom::Basis<double> state_snapshots(x, numCols);
+    NumCols = 4;
+    trrom::Basis<double> state_snapshots(x, NumCols);
     mng.setStateSnapshotEnsemble(state_snapshots);
-    EXPECT_EQ(numCols, mng.getNumStateSnapshots());
+    EXPECT_EQ(NumCols, mng.getNumStateSnapshots());
 
-    numCols = 6;
-    trrom::Basis<double> lhs_snapshots(x, numCols);
+    NumCols = 6;
+    trrom::Basis<double> lhs_snapshots(x, NumCols);
     mng.setLeftHandSideSnapshotEnsemble(lhs_snapshots);
-    EXPECT_EQ(numCols, mng.getNumLeftHandSideSnapshots());
+    EXPECT_EQ(NumCols, mng.getNumLeftHandSideSnapshots());
 }
 
 TEST(SpectralDecompositionMng, dual_pod)
@@ -1064,38 +1064,38 @@ TEST(SpectralDecompositionMng, dual_pod)
     trrom::Basis<double> left_singular_vectors(y, num_singular_values);
 
     // Set snapshots for unit test
-    snapshots(0, 0) = 0.792207329559554;
-    snapshots(0, 1) = 0.678735154857774;
-    snapshots(0, 2) = 0.706046088019609;
-    snapshots(1, 0) = 0.959492426392903;
-    snapshots(1, 1) = 0.757740130578333;
-    snapshots(1, 2) = 0.031832846377421;
-    snapshots(2, 0) = 0.655740699156587;
-    snapshots(2, 1) = 0.743132468124916;
-    snapshots(2, 2) = 0.276922984960890;
-    snapshots(3, 0) = 0.035711678574190;
-    snapshots(3, 1) = 0.392227019534168;
-    snapshots(3, 2) = 0.046171390631154;
-    snapshots(4, 0) = 0.849129305868777;
-    snapshots(4, 1) = 0.655477890177557;
-    snapshots(4, 2) = 0.097131781235848;
-    snapshots(5, 0) = 0.933993247757551;
-    snapshots(5, 1) = 0.171186687811562;
-    snapshots(5, 2) = 0.823457828327293;
+    snapshots.replaceGlobalValue(0, 0, 0.792207329559554);
+    snapshots.replaceGlobalValue(0, 1, 0.678735154857774);
+    snapshots.replaceGlobalValue(0, 2, 0.706046088019609);
+    snapshots.replaceGlobalValue(1, 0, 0.959492426392903);
+    snapshots.replaceGlobalValue(1, 1, 0.757740130578333);
+    snapshots.replaceGlobalValue(1, 2, 0.031832846377421);
+    snapshots.replaceGlobalValue(2, 0, 0.655740699156587);
+    snapshots.replaceGlobalValue(2, 1, 0.743132468124916);
+    snapshots.replaceGlobalValue(2, 2, 0.276922984960890);
+    snapshots.replaceGlobalValue(3, 0, 0.035711678574190);
+    snapshots.replaceGlobalValue(3, 1, 0.392227019534168);
+    snapshots.replaceGlobalValue(3, 2, 0.046171390631154);
+    snapshots.replaceGlobalValue(4, 0, 0.849129305868777);
+    snapshots.replaceGlobalValue(4, 1, 0.655477890177557);
+    snapshots.replaceGlobalValue(4, 2, 0.097131781235848);
+    snapshots.replaceGlobalValue(5, 0, 0.933993247757551);
+    snapshots.replaceGlobalValue(5, 1, 0.171186687811562);
+    snapshots.replaceGlobalValue(5, 2, 0.823457828327293);
     // Set singular values for unit test
     singular_values[0] = 0.176291651111878;
     singular_values[1] = 0.695058842537319;
     singular_values[2] = 6.167248315069438;
     // Set singular vectors for unit test
-    left_singular_vectors(0, 0) = -0.655755263680298;
-    left_singular_vectors(0, 1) = 0.057661128661978;
-    left_singular_vectors(0, 2) = 0.752768376326350;
-    left_singular_vectors(1, 0) = 0.584312694702689;
-    left_singular_vectors(1, 1) = -0.592633544619941;
-    left_singular_vectors(1, 2) = 0.554404325921513;
-    left_singular_vectors(2, 0) = 0.478083370307800;
-    left_singular_vectors(2, 1) = 0.803405673388377;
-    left_singular_vectors(2, 2) = 0.354930436849960;
+    left_singular_vectors.replaceGlobalValue(0, 0, -0.655755263680298);
+    left_singular_vectors.replaceGlobalValue(0, 1, 0.057661128661978);
+    left_singular_vectors.replaceGlobalValue(0, 2, 0.752768376326350);
+    left_singular_vectors.replaceGlobalValue(1, 0, 0.584312694702689);
+    left_singular_vectors.replaceGlobalValue(1, 1, -0.592633544619941);
+    left_singular_vectors.replaceGlobalValue(1, 2, 0.554404325921513);
+    left_singular_vectors.replaceGlobalValue(2, 0, 0.478083370307800);
+    left_singular_vectors.replaceGlobalValue(2, 1, 0.803405673388377);
+    left_singular_vectors.replaceGlobalValue(2, 2, 0.354930436849960);
 
     std::tr1::shared_ptr<trrom::mock::SVD> svd(new trrom::mock::SVD);
     std::tr1::shared_ptr<trrom::mock::MatlabQR> qr(new trrom::mock::MatlabQR);
@@ -1144,38 +1144,38 @@ TEST(SpectralDecompositionMng, state_pod)
     trrom::Basis<double> left_singular_vectors(y, num_singular_values);
 
     // Set snapshots for unit test
-    snapshots(0, 0) = 0.792207329559554;
-    snapshots(0, 1) = 0.678735154857774;
-    snapshots(0, 2) = 0.706046088019609;
-    snapshots(1, 0) = 0.959492426392903;
-    snapshots(1, 1) = 0.757740130578333;
-    snapshots(1, 2) = 0.031832846377421;
-    snapshots(2, 0) = 0.655740699156587;
-    snapshots(2, 1) = 0.743132468124916;
-    snapshots(2, 2) = 0.276922984960890;
-    snapshots(3, 0) = 0.035711678574190;
-    snapshots(3, 1) = 0.392227019534168;
-    snapshots(3, 2) = 0.046171390631154;
-    snapshots(4, 0) = 0.849129305868777;
-    snapshots(4, 1) = 0.655477890177557;
-    snapshots(4, 2) = 0.097131781235848;
-    snapshots(5, 0) = 0.933993247757551;
-    snapshots(5, 1) = 0.171186687811562;
-    snapshots(5, 2) = 0.823457828327293;
+    snapshots.replaceGlobalValue(0, 0, 0.792207329559554);
+    snapshots.replaceGlobalValue(0, 1, 0.678735154857774);
+    snapshots.replaceGlobalValue(0, 2, 0.706046088019609);
+    snapshots.replaceGlobalValue(1, 0, 0.959492426392903);
+    snapshots.replaceGlobalValue(1, 1, 0.757740130578333);
+    snapshots.replaceGlobalValue(1, 2, 0.031832846377421);
+    snapshots.replaceGlobalValue(2, 0, 0.655740699156587);
+    snapshots.replaceGlobalValue(2, 1, 0.743132468124916);
+    snapshots.replaceGlobalValue(2, 2, 0.276922984960890);
+    snapshots.replaceGlobalValue(3, 0, 0.035711678574190);
+    snapshots.replaceGlobalValue(3, 1, 0.392227019534168);
+    snapshots.replaceGlobalValue(3, 2, 0.046171390631154);
+    snapshots.replaceGlobalValue(4, 0, 0.849129305868777);
+    snapshots.replaceGlobalValue(4, 1, 0.655477890177557);
+    snapshots.replaceGlobalValue(4, 2, 0.097131781235848);
+    snapshots.replaceGlobalValue(5, 0, 0.933993247757551);
+    snapshots.replaceGlobalValue(5, 1, 0.171186687811562);
+    snapshots.replaceGlobalValue(5, 2, 0.823457828327293);
     // Set singular values for unit test
     singular_values[0] = 0.176291651111878;
     singular_values[1] = 0.695058842537319;
     singular_values[2] = 6.167248315069438;
     // Set singular vectors for unit test
-    left_singular_vectors(0, 0) = -0.655755263680298;
-    left_singular_vectors(0, 1) = 0.057661128661978;
-    left_singular_vectors(0, 2) = 0.752768376326350;
-    left_singular_vectors(1, 0) = 0.584312694702689;
-    left_singular_vectors(1, 1) = -0.592633544619941;
-    left_singular_vectors(1, 2) = 0.554404325921513;
-    left_singular_vectors(2, 0) = 0.478083370307800;
-    left_singular_vectors(2, 1) = 0.803405673388377;
-    left_singular_vectors(2, 2) = 0.354930436849960;
+    left_singular_vectors.replaceGlobalValue(0, 0, -0.655755263680298);
+    left_singular_vectors.replaceGlobalValue(0, 1, 0.057661128661978);
+    left_singular_vectors.replaceGlobalValue(0, 2, 0.752768376326350);
+    left_singular_vectors.replaceGlobalValue(1, 0, 0.584312694702689);
+    left_singular_vectors.replaceGlobalValue(1, 1, -0.592633544619941);
+    left_singular_vectors.replaceGlobalValue(1, 2, 0.554404325921513);
+    left_singular_vectors.replaceGlobalValue(2, 0, 0.478083370307800);
+    left_singular_vectors.replaceGlobalValue(2, 1, 0.803405673388377);
+    left_singular_vectors.replaceGlobalValue(2, 2, 0.354930436849960);
 
     std::tr1::shared_ptr<trrom::mock::SVD> svd(new trrom::mock::SVD);
     std::tr1::shared_ptr<trrom::mock::MatlabQR> qr(new trrom::mock::MatlabQR);
@@ -1224,38 +1224,38 @@ TEST(SpectralDecompositionMng, lhs_pod)
     trrom::Basis<double> left_singular_vectors(y, num_singular_values);
 
     // Set snapshots for unit test
-    snapshots(0, 0) = 0.792207329559554;
-    snapshots(0, 1) = 0.678735154857774;
-    snapshots(0, 2) = 0.706046088019609;
-    snapshots(1, 0) = 0.959492426392903;
-    snapshots(1, 1) = 0.757740130578333;
-    snapshots(1, 2) = 0.031832846377421;
-    snapshots(2, 0) = 0.655740699156587;
-    snapshots(2, 1) = 0.743132468124916;
-    snapshots(2, 2) = 0.276922984960890;
-    snapshots(3, 0) = 0.035711678574190;
-    snapshots(3, 1) = 0.392227019534168;
-    snapshots(3, 2) = 0.046171390631154;
-    snapshots(4, 0) = 0.849129305868777;
-    snapshots(4, 1) = 0.655477890177557;
-    snapshots(4, 2) = 0.097131781235848;
-    snapshots(5, 0) = 0.933993247757551;
-    snapshots(5, 1) = 0.171186687811562;
-    snapshots(5, 2) = 0.823457828327293;
+    snapshots.replaceGlobalValue(0, 0, 0.792207329559554);
+    snapshots.replaceGlobalValue(0, 1, 0.678735154857774);
+    snapshots.replaceGlobalValue(0, 2, 0.706046088019609);
+    snapshots.replaceGlobalValue(1, 0, 0.959492426392903);
+    snapshots.replaceGlobalValue(1, 1, 0.757740130578333);
+    snapshots.replaceGlobalValue(1, 2, 0.031832846377421);
+    snapshots.replaceGlobalValue(2, 0, 0.655740699156587);
+    snapshots.replaceGlobalValue(2, 1, 0.743132468124916);
+    snapshots.replaceGlobalValue(2, 2, 0.276922984960890);
+    snapshots.replaceGlobalValue(3, 0, 0.035711678574190);
+    snapshots.replaceGlobalValue(3, 1, 0.392227019534168);
+    snapshots.replaceGlobalValue(3, 2, 0.046171390631154);
+    snapshots.replaceGlobalValue(4, 0, 0.849129305868777);
+    snapshots.replaceGlobalValue(4, 1, 0.655477890177557);
+    snapshots.replaceGlobalValue(4, 2, 0.097131781235848);
+    snapshots.replaceGlobalValue(5, 0, 0.933993247757551);
+    snapshots.replaceGlobalValue(5, 1, 0.171186687811562);
+    snapshots.replaceGlobalValue(5, 2, 0.823457828327293);
     // Set singular values for unit test
     singular_values[0] = 0.176291651111878;
     singular_values[1] = 0.695058842537319;
     singular_values[2] = 6.167248315069438;
     // Set singular vectors for unit test
-    left_singular_vectors(0, 0) = -0.655755263680298;
-    left_singular_vectors(0, 1) = 0.057661128661978;
-    left_singular_vectors(0, 2) = 0.752768376326350;
-    left_singular_vectors(1, 0) = 0.584312694702689;
-    left_singular_vectors(1, 1) = -0.592633544619941;
-    left_singular_vectors(1, 2) = 0.554404325921513;
-    left_singular_vectors(2, 0) = 0.478083370307800;
-    left_singular_vectors(2, 1) = 0.803405673388377;
-    left_singular_vectors(2, 2) = 0.354930436849960;
+    left_singular_vectors.replaceGlobalValue(0, 0, -0.655755263680298);
+    left_singular_vectors.replaceGlobalValue(0, 1, 0.057661128661978);
+    left_singular_vectors.replaceGlobalValue(0, 2, 0.752768376326350);
+    left_singular_vectors.replaceGlobalValue(1, 0, 0.584312694702689);
+    left_singular_vectors.replaceGlobalValue(1, 1, -0.592633544619941);
+    left_singular_vectors.replaceGlobalValue(1, 2, 0.554404325921513);
+    left_singular_vectors.replaceGlobalValue(2, 0, 0.478083370307800);
+    left_singular_vectors.replaceGlobalValue(2, 1, 0.803405673388377);
+    left_singular_vectors.replaceGlobalValue(2, 2, 0.354930436849960);
 
     std::tr1::shared_ptr<trrom::mock::SVD> svd(new trrom::mock::SVD);
     std::tr1::shared_ptr<trrom::mock::MatlabQR> qr(new trrom::mock::MatlabQR);

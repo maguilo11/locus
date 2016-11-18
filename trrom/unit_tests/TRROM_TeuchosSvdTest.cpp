@@ -22,20 +22,20 @@ TEST(TeuchosSerialDenseSolver, solve)
 {
     int num_rows = 3;
     int num_cols = 3;
-    trrom::TeuchosSerialDenseMatrix<double> A(num_rows, num_cols);
+    trrom::TeuchosSerialDenseMatrix A(num_rows, num_cols);
     A(0,0) = 1; A(0,1) = 0; A(0,2) = 2;
     A(1,0) = -1; A(1,1) = 5; A(1,2) = 0;
     A(2,0) = 0; A(2,1) = 3; A(2,2) = -9;
-    trrom::TeuchosSerialDenseVector<double> b(num_rows);
+    trrom::TeuchosSerialDenseVector b(num_rows);
     b[0] = 0.5376671395461;
     b[1] = 1.833885014595087;
     b[2] = -2.258846861003648;
-    trrom::TeuchosSerialDenseVector<double> x(num_cols);
+    trrom::TeuchosSerialDenseVector x(num_cols);
 
     trrom::TeuchosSerialDenseSolver solver;
     solver.solve(A, b, x);
 
-    trrom::TeuchosSerialDenseVector<double> gold(num_cols);
+    trrom::TeuchosSerialDenseVector gold(num_cols);
     gold[0] = -0.184250145451618;
     gold[1] = 0.329926973828694;
     gold[2] = 0.360958642498859;
@@ -47,8 +47,7 @@ TEST(TeuchosSerialSVD, solve)
 {
     int num_cols = 3;
     int num_rows = 2;
-    std::tr1::shared_ptr<trrom::TeuchosSerialDenseMatrix<double> >
-        A(new trrom::TeuchosSerialDenseMatrix<double>(num_rows, num_cols));
+    std::tr1::shared_ptr<trrom::TeuchosSerialDenseMatrix> A(new trrom::TeuchosSerialDenseMatrix(num_rows, num_cols));
     (*A)(0, 0) = 3;
     (*A)(0, 1) = 2;
     (*A)(0, 2) = 2;
@@ -71,23 +70,23 @@ TEST(TeuchosSerialSVD, solve)
 
     /* TEST LEFT SINGULAR VECTORS */
     std::tr1::shared_ptr<trrom::Matrix<double> > gold_left_singular_values = left_singular_values->create();
-    gold_left_singular_values->operator ()(0,0) = -1. / std::sqrt(2);
-    gold_left_singular_values->operator ()(0,1) = -1. / std::sqrt(2);
-    gold_left_singular_values->operator ()(1,0) = -1. / std::sqrt(2);
-    gold_left_singular_values->operator ()(1,1) = 1. / std::sqrt(2);
+    gold_left_singular_values->replaceGlobalValue(0, 0, (-1. / std::sqrt(2)));
+    gold_left_singular_values->replaceGlobalValue(0, 1, (-1. / std::sqrt(2)));
+    gold_left_singular_values->replaceGlobalValue(1, 0, (-1. / std::sqrt(2)));
+    gold_left_singular_values->replaceGlobalValue(1, 1, (1. / std::sqrt(2)));
     trrom::test::checkResults(*gold_left_singular_values, *left_singular_values);
 
     /* TEST RIGHT SINGULAR VECTORS */
     std::tr1::shared_ptr<trrom::Matrix<double> > gold_right_singular_values = right_singular_values->create();
-    gold_right_singular_values->operator ()(0,0) = -1. / std::sqrt(2);
-    gold_right_singular_values->operator ()(1,0) = -1. / std::sqrt(18);
-    gold_right_singular_values->operator ()(2,0) = -2. / 3.;
-    gold_right_singular_values->operator ()(0,1) = -1. / std::sqrt(2);
-    gold_right_singular_values->operator ()(1,1) = 1. / std::sqrt(18);
-    gold_right_singular_values->operator ()(2,1) = 2. / 3.;
-    gold_right_singular_values->operator ()(0,2) = -std::numeric_limits<double>::epsilon();
-    gold_right_singular_values->operator ()(1,2) = -4. / std::sqrt(18);
-    gold_right_singular_values->operator ()(2,2) = 1. / 3.;
+    gold_right_singular_values->replaceGlobalValue(0, 0, (-1. / std::sqrt(2)));
+    gold_right_singular_values->replaceGlobalValue(1, 0, (-1. / std::sqrt(18)));
+    gold_right_singular_values->replaceGlobalValue(2, 0, (-2. / 3.));
+    gold_right_singular_values->replaceGlobalValue(0, 1, (-1. / std::sqrt(2)));
+    gold_right_singular_values->replaceGlobalValue(1, 1, (1. / std::sqrt(18)));
+    gold_right_singular_values->replaceGlobalValue(2, 1, (2. / 3.));
+    gold_right_singular_values->replaceGlobalValue(0, 2, (-std::numeric_limits<double>::epsilon()));
+    gold_right_singular_values->replaceGlobalValue(1, 2, (-4. / std::sqrt(18)));
+    gold_right_singular_values->replaceGlobalValue(2, 2, (1. / 3.));
     trrom::test::checkResults(*gold_right_singular_values, *right_singular_values);
 }
 

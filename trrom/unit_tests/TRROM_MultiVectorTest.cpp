@@ -8,6 +8,7 @@
 #include <gtest/gtest.h>
 
 #include <Epetra_LocalMap.h>
+#include <Epetra_SerialComm.h>
 
 #include "TRROM_Matrix.hpp"
 #include "TRROM_EpetraVector.hpp"
@@ -40,8 +41,8 @@ public:
                       const trrom::MatrixBase<double> & input_,
                       const double & output_scalar_,
                       trrom::MatrixBase<double> & output_) const = 0;
-    virtual void replaceLocalValue(const int & row_index_, const int & column_index_, const ScalarType & value_) = 0;
     virtual void replaceGlobalValue(const int & row_index_, const int & column_index_, const ScalarType & value_) = 0;
+    virtual void replaceLocalValue(const int & my_row_index_, const int & my_column_index_, const ScalarType & value_) = 0;
 };
 
 template<typename ScalarType>
@@ -73,9 +74,8 @@ public:
     virtual void replaceGlobalValue(const int & row_index_, const int & column_index_, const ScalarType & value_) = 0;
 
     virtual void insert(const trrom::Vector<ScalarType> & input_) = 0;
-    virtual const std::tr1::shared_ptr<trrom::Vector<ScalarType> > & getVector(int global_vector_index_) = 0;
-    virtual std::tr1::shared_ptr<trrom::MultiVector<ScalarType> > create() const = 0;
-    virtual std::tr1::shared_ptr<trrom::MultiVector<ScalarType> > create(int global_num_elements_, int global_num_vectors_) const = 0;
+    virtual const std::tr1::shared_ptr<trrom::Vector<ScalarType> > & getVector(const int & global_vector_index_) = 0;
+    virtual std::tr1::shared_ptr<trrom::MultiVector<ScalarType> > create(int global_num_elements_ = 0, int global_num_vectors_ = 0) const = 0;
 };
 
 class EpetraMultiVector : public trrom::MultiVector<double>
@@ -258,27 +258,31 @@ public:
             m_NumVecStored++;
         }
     }
-    const std::tr1::shared_ptr< trrom::Vector<double> > & getVector(int global_vector_index_)
+    const std::tr1::shared_ptr< trrom::Vector<double> > & getVector(const int & global_vector_index_)
     {
         m_ThisVector.reset(new trrom::EpetraVector(Epetra_DataAccess::View, *m_CurrentEnsemble, global_vector_index_));
         return (m_ThisVector);
     }
-    std::tr1::shared_ptr<trrom::MultiVector<double> > create() const
+    std::tr1::shared_ptr<trrom::MultiVector<double> > create(int global_num_elements_ = 0, int num_vectors_ = 0) const
     {
-        /** Creates copy of this vector */
-        const int global_num_vectors = this->getNumCols();
-        const Epetra_BlockMap & map = m_CurrentEnsemble->Map();
-        std::tr1::shared_ptr<trrom::EpetraMultiVector> this_copy(new trrom::EpetraMultiVector(map, global_num_vectors));
+        /*! Creates copy of this vector with user supplied dimensions */
+        assert(num_vectors_ >= 0);
+        assert(global_num_elements_ >= 0);
+        std::tr1::shared_ptr<trrom::EpetraMultiVector> this_copy;
+        if(num_vectors_ > 0 && global_num_elements_ > 0)
+        {
+            const int index_base = m_CurrentEnsemble->Map().IndexBase();
+            const int element_size = m_CurrentEnsemble->Map().ElementSize();
+            Epetra_BlockMap map(global_num_elements_, element_size, index_base, m_CurrentEnsemble->Comm());
+            this_copy.reset(new trrom::EpetraMultiVector(map, num_vectors_));
+        }
+        else
+        {
+            const int global_num_vectors = this->getNumCols();
+            const Epetra_BlockMap & map = m_CurrentEnsemble->Map();
+            this_copy.reset(new trrom::EpetraMultiVector(map, global_num_vectors));
+        }
         return (this_copy);
-    }
-    std::tr1::shared_ptr<trrom::MultiVector<double> > create(int global_num_elements_, int num_vectors_) const
-    {
-        /** Creates copy of this vector with user supplied dimensions */
-        const int index_base = m_CurrentEnsemble->Map().IndexBase();
-        const int element_size = m_CurrentEnsemble->Map().ElementSize();
-        Epetra_BlockMap map(global_num_elements_, element_size, index_base, m_CurrentEnsemble->Comm());
-        std::tr1::shared_ptr<trrom::EpetraMultiVector> new_copy(new trrom::EpetraMultiVector(map, num_vectors_));
-        return (new_copy);
     }
 
     int maxStorageSize()
@@ -331,23 +335,32 @@ void checkResults(const trrom::Vector<double> & gold_, const trrom::Vector<doubl
     }
 }
 
-void checkResults(const std::tr1::shared_ptr<trrom::EpetraMultiVector> & gold_,
-                  const std::tr1::shared_ptr<trrom::EpetraMultiVector> & results_,
+void checkResults(const trrom::EpetraMultiVector & gold_,
+                  const trrom::EpetraMultiVector & results_,
+                  const int vector_length_,
                   double tolerance_ = 1e-6)
 {
-    assert(gold_->getNumCols() == results_->getNumCols());
-    assert(gold_->getNumRows() == results_->getNumRows());
+    assert(gold_.getNumCols() == results_.getNumCols());
+    assert(gold_.getNumRows() == results_.getNumRows());
 
-    int number_vectors = results_->getNumCols();
-    for(int vector_index = 0; vector_index < number_vectors; ++vector_index)
+    int number_vectors = results_.getNumCols();
+    for(int column = 0; column < number_vectors; ++column)
     {
-        int local_number_elements = gold_->getVector(vector_index)->size();
-        for(int element_index = 0; element_index < local_number_elements; ++element_index)
+        for(int row = 0; row < vector_length_; ++row)
         {
-            EXPECT_NEAR((*gold_->getVector(vector_index))[element_index],
-                        (*results_->getVector(vector_index))[element_index],
+            EXPECT_NEAR(gold_.data()->operator ()(column)->operator [](row),
+                        results_.data()->operator ()(column)->operator [](row),
                         tolerance_);
         }
+    }
+}
+
+void initialize(trrom::EpetraMultiVector & input_, double multiplier_ = 1)
+{
+    for(int column_index = 0; column_index < input_.getNumCols(); ++column_index)
+    {
+        double value = multiplier_ * static_cast<double>(column_index + 1.);
+        input_.data()->operator ()(column_index)->PutScalar(value);
     }
 }
 
@@ -416,6 +429,40 @@ TEST(EpetraMultiVector, getVector)
     std::tr1::shared_ptr< trrom::Vector<double> > gold = x.create();
     gold->fill(2);
     checkResults(*gold, *X.getVector(0));
+}
+
+TEST(EpetraMultiVector, getVector2)
+{
+    const int index_base = 0;
+    const int element_size = 1;
+    const int global_num_elements = 20;
+    Epetra_MpiComm comm(MPI_COMM_WORLD);
+    Epetra_BlockMap parallel_map(global_num_elements, element_size, index_base, comm);
+
+    bool initialize_ensemble = true;
+    const int global_num_vectors = 4;
+    trrom::EpetraMultiVector A(parallel_map, global_num_vectors, initialize_ensemble);
+    initialize(A);
+
+    double gold = 20;
+    double tolerance = 1e-6;
+    EXPECT_NEAR(gold, A.getVector(0)->sum(), tolerance);
+    gold = 40;
+    EXPECT_NEAR(gold, A.getVector(1)->sum(), tolerance);
+    gold = 60;
+    EXPECT_NEAR(gold, A.getVector(2)->sum(), tolerance);
+    gold = 80;
+    EXPECT_NEAR(gold, A.getVector(3)->sum(), tolerance);
+
+    // Repeat process again to determine if the Epetra_DataAccess::View mode is working as expected
+    gold = 20;
+    EXPECT_NEAR(gold, A.getVector(0)->sum(), tolerance);
+    gold = 40;
+    EXPECT_NEAR(gold, A.getVector(1)->sum(), tolerance);
+    gold = 60;
+    EXPECT_NEAR(gold, A.getVector(2)->sum(), tolerance);
+    gold = 80;
+    EXPECT_NEAR(gold, A.getVector(3)->sum(), tolerance);
 }
 
 TEST(EpetraMultiVector, fill)
@@ -620,7 +667,7 @@ TEST(EpetraMultiVector, gemv_T)
     checkResults(gold, output);
 }
 
-TEST(DISABLED_EpetraMultiVector, gemm)
+TEST(EpetraMultiVector, gemm1)
 {
     const int index_base = 0;
     const int element_size = 1;
@@ -631,27 +678,37 @@ TEST(DISABLED_EpetraMultiVector, gemm)
     bool initialize_ensemble = true;
     const int global_num_vectors = 4;
     trrom::EpetraMultiVector A(parallel_map, global_num_vectors, initialize_ensemble);
+    initialize(A);
     trrom::EpetraMultiVector B(parallel_map, global_num_vectors, initialize_ensemble);
-    A.data()->operator ()(0)->PutScalar(1);
-    A.data()->operator ()(1)->PutScalar(2);
-    A.data()->operator ()(2)->PutScalar(3);
-    A.data()->operator ()(3)->PutScalar(4);
     B.update(1., A, 0.);
 
-    // TEST 1: output = A * B'
-    const int global_output_num_vectors = 20;
-    trrom::EpetraMultiVector output(parallel_map, global_output_num_vectors, initialize_ensemble);
-    A.gemm(false, true, 1., B, 0., output);
+    /* TEST 1: output(local) = A(distributed)' * B(distributed), output is the local contribution from each
+     * subdomain. therefore, each subdomain contribution needs to be added in order to get the total result */
+    Epetra_SerialComm serial_comm;
+    const int output_num_vectors = 4;
+    const int output_num_elements = 4;
+    Epetra_BlockMap serial_map(output_num_elements, element_size, index_base, serial_comm);
+    trrom::EpetraMultiVector output(serial_map, output_num_vectors, initialize_ensemble);
+    A.gemm(true, false, 1., B, 0., output);
 
-/*    trrom::EpetraMultiVector gold(parallel_map, global_output_num_vectors, initialize_ensemble);
-    gold.fill(30);
-    checkResults(gold, output);*/
+    trrom::EpetraMultiVector gold(serial_map, output_num_vectors, initialize_ensemble);
+    (*(*gold.data())(0))[0] = 20; (*(*gold.data())(1))[0] = 40; (*(*gold.data())(2))[0] = 60; (*(*gold.data())(3))[0] = 80;
+    (*(*gold.data())(0))[1] = 40; (*(*gold.data())(1))[1] = 80; (*(*gold.data())(2))[1] = 120; (*(*gold.data())(3))[1] = 160;
+    (*(*gold.data())(0))[2] = 60; (*(*gold.data())(1))[2] = 120; (*(*gold.data())(2))[2] = 180; (*(*gold.data())(3))[2] = 240;
+    (*(*gold.data())(0))[3] = 80; (*(*gold.data())(1))[3] = 160; (*(*gold.data())(2))[3] = 240; (*(*gold.data())(3))[3] = 320;
+    double scaling = 1. / parallel_map.Comm().NumProc();
+    gold.scale(scaling);
+    checkResults(gold, output, gold.data()->GlobalLength());
 }
 
-TEST(EpetraMultiVector, getVector2)
+TEST(EpetraMultiVector, gemm2)
 {
     const int index_base = 0;
     const int element_size = 1;
+    const int serial_num_elements = 20;
+    Epetra_SerialComm serial_comm;
+    Epetra_BlockMap serial_map(serial_num_elements, element_size, index_base, serial_comm);
+
     const int global_num_elements = 20;
     Epetra_MpiComm comm(MPI_COMM_WORLD);
     Epetra_BlockMap parallel_map(global_num_elements, element_size, index_base, comm);
@@ -659,30 +716,59 @@ TEST(EpetraMultiVector, getVector2)
     bool initialize_ensemble = true;
     const int global_num_vectors = 4;
     trrom::EpetraMultiVector A(parallel_map, global_num_vectors, initialize_ensemble);
-    A.data()->operator ()(0)->PutScalar(1);
-    A.data()->operator ()(1)->PutScalar(2);
-    A.data()->operator ()(2)->PutScalar(3);
-    A.data()->operator ()(3)->PutScalar(4);
+    initialize(A);
 
-    double gold = 20;
-    double tolerance = 1e-6;
-    EXPECT_NEAR(gold, A.getVector(0)->sum(), tolerance);
-    gold = 40;
-    EXPECT_NEAR(gold, A.getVector(1)->sum(), tolerance);
-    gold = 60;
-    EXPECT_NEAR(gold, A.getVector(2)->sum(), tolerance);
-    gold = 80;
-    EXPECT_NEAR(gold, A.getVector(3)->sum(), tolerance);
+    const int serial_num_vectors = 4;
+    trrom::EpetraMultiVector B(serial_map, serial_num_vectors, initialize_ensemble);
+    EXPECT_EQ(serial_num_vectors, B.getNumCols());
+    initialize(B);
 
-    // Repeat process again to determine if the Epetra_DataAccess::View mode is working as expected
-    gold = 20;
-    EXPECT_NEAR(gold, A.getVector(0)->sum(), tolerance);
-    gold = 40;
-    EXPECT_NEAR(gold, A.getVector(1)->sum(), tolerance);
-    gold = 60;
-    EXPECT_NEAR(gold, A.getVector(2)->sum(), tolerance);
-    gold = 80;
-    EXPECT_NEAR(gold, A.getVector(3)->sum(), tolerance);
+    /* TEST 1: output(distributed) = A(distributed) * B(local)', output data is distributed across
+     * processors. therefore, global data is distributed and thus no reduce operation is required. */
+    const int output_num_vectors = 20;
+    const int output_num_elements = 20;
+    Epetra_BlockMap output_parallel_map(output_num_elements, element_size, index_base, comm);
+    trrom::EpetraMultiVector output(output_parallel_map, output_num_vectors, initialize_ensemble);
+    A.gemm(false, true, 1., B, 0., output);
+
+    trrom::EpetraMultiVector gold(output_parallel_map, output_num_vectors, initialize_ensemble);
+    gold.fill(30);
+    checkResults(gold, output, gold.data()->MyLength());
+}
+
+// TODO: Understand was going on here!!! What does BlockRowOffset is out-of-range means?
+TEST(DISABLED_EpetraMultiVector, gemm3)
+{
+    const int index_base = 0;
+    const int element_size = 1;
+    const int global_num_elements = 10;
+    Epetra_MpiComm mpi_comm(MPI_COMM_WORLD);
+    Epetra_BlockMap parallel_map(global_num_elements, element_size, index_base, mpi_comm);
+
+    bool initialize_ensemble = true;
+    const int global_num_vectors = 10;
+    trrom::EpetraMultiVector A(parallel_map, global_num_vectors, initialize_ensemble);
+    EXPECT_EQ(global_num_vectors, A.getNumCols());
+    initialize(A);
+
+    trrom::EpetraMultiVector B(parallel_map, global_num_vectors, initialize_ensemble);
+    EXPECT_EQ(global_num_vectors, B.getNumCols());
+    initialize(B);
+
+    /* TEST 1: output(local) = A(distributed) * B(distributed), output data is local.
+     * therefore, reduce operation is required to get global multivector output. */
+    const int output_num_vectors = 10;
+    const int output_num_elements = 10;
+    Epetra_SerialComm serial_comm;
+    Epetra_BlockMap serial_map(output_num_elements, element_size, index_base, serial_comm);
+    trrom::EpetraMultiVector output(serial_map, output_num_vectors, initialize_ensemble);
+    A.gemm(false, false, 1., B, 0., output);
+
+    trrom::EpetraMultiVector gold(serial_map, output_num_vectors, initialize_ensemble);
+    initialize(gold, 55);
+    double scaling = 1. / parallel_map.Comm().NumProc();
+    gold.scale(scaling);
+    checkResults(gold, output, gold.data()->GlobalLength());
 }
 
 }
