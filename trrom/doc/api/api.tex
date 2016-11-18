@@ -1,0 +1,111 @@
+\chapter{Optimization Interface}
+
+This Chapter describes the core interfaces used by the optimization algorithm to query high- and low-fidelity functional values and derivatives during optimization. This information is required to provide the best set of variables that meet a set of criteria at every iteration. Users are expected to implement these interfaces, without them, the algorithm cannot operate. 
+
+A general partial differential equation (PDE) constrained optimization problem is defined as:
+\begin{equation}
+\label{eq:definition}
+\begin{aligned}
+&\quad\min_{\substack{(u,z)\in\mathbb{R}^{n_u}\times\mathbb{R}^{n_z}}}\quad f(u,z) \\
+&\text{s.t.} \\
+&\quad g(u,z) = 0,\\
+&\quad h(u,z) \le 0,
+\end{aligned}
+\end{equation}
+where $u$ is the state, $z$ is the control variable, $f$ is the objective function, $g$ is the equality constraint (PDE constraint), and $h$ is the inequality constraint. A flexible interface is provided to enable easy communication between the optimization algorithm and a third-party application. These interfaces are discussed in the subsequent Sections.
+
+    %%%% Section: Objective function %%%% 
+    \section{Objective Function}\label{sec:ObjectiveAPI}
+    %%%% Section: Objective function  %%%% 
+    
+    %%% Section: Component-based API for objective function  %%%
+    \subsection{Component-based interface}\label{subsec:ObjectiveComponentAPI}
+    %%% Section: Component-based API for objective function  %%%
+    
+    The core objective function operations required by the algorithm for a component-based interface are: 
+    
+    \begin{enumerate}
+    \item \texttt{value(u,z,tolerance,flag)}: Evaluates the objective function given a set of state (\texttt{u}) and control (\texttt{z}) variables. Here, \texttt{tolerance} denotes the maximum allowable error due to inexact objective function evaluations, and \texttt{flag} is an output parameter that is respectively set to \texttt{true} or \texttt{false} if the error bound defined by the user is exceeded or not\footnote{\emph{The error bound should only be evaluated during low-fidelity evaluations (the parametric reduced-order model is active).}}
+    \item \texttt{partialDerivativeControl(u,z,output)}: Computes the partial derivative of the objective function with respect to the control variables, where \texttt{output} denotes $\mathtt{\partial{f}(u,z)/\partial{z}}$ 
+    \item \texttt{partialDerivativeState(u,z,output)}: Computes the partial derivative of the objective function with respect to the state variables, where \texttt{output} denotes $\mathtt{\partial{f}(u,z)/\partial{u}}$ 
+     \item \texttt{partialDerivativeStateState(u,z,du,output)}: Computes the application of direction \texttt{du} to the second-order partial derivative of the objective function with respect to the state variables, where \texttt{output} denotes $\mathtt{(\partial^2{f}(u,z)/\partial{u}^2)du}$ 
+     \item \texttt{partialDerivativeControlControl(u,z,dz,output)}: Computes the application of direction \texttt{dz} to the second-order partial derivative of the objective function with respect to the control variables, where \texttt{output} denotes $\mathtt{(\partial^2{f}(u,z)/\partial{z}^2)dz}$ 
+     \item \texttt{partialDerivativeStateControl(u,z,dz,output)}: Computes the application of direction \texttt{dz} to the mixed partial derivative of the objective function with respect to the state and control variables, where \texttt{output} denotes $\mathtt{(\partial^2{f}(u,z)/\partial{u}\partial{z})dz}$ 
+    \item \texttt{partialDerivativeControlState(u,z,du,output)}: Computes the application of direction \texttt{du} to the mixed partial derivative of the objective function with respect to the control and state variables, where \texttt{output} denotes $\mathtt{(\partial^2{f}(u,z)/\partial{z}\partial{u})du}$ 
+    \item \texttt{output checkGradientInexactness(u,z,gradient,tolerance)}: Evaluates the error bound on the \texttt{gradient} and checks if the allowable error due to an inexact gradient evaluation has been exceeded. The parameter \texttt{output} is either set to true or false if the error bound exceeds or satisfies the allowable error \texttt{tolerance}$^1$
+    \item \texttt{fidelity(flag)}: Informs the third-party application if the parametric reduced-order model is active or inactive, which is relevant in order to avoid unnecessary error bound evaluations. The \texttt{flag} is either set to \texttt{HIGH\_FIDELITY} or \texttt{LOW\_FIDELITY}, where \texttt{HIGH\_FIDELITY} denotes that the reduced-order model is inactive and \texttt{LOW\_FIDELITY} denotes that the reduced order model is active
+    \end{enumerate}
+    
+    The optimization algorithm relies on this interface to query relevant objective function information throughout optimization. Thus, the implementation of this interface is mandatory\footnote{\emph{Certain derivative operators, specifically the second-order and mixed partial derivatives, might not be defined for a given application. In this case, users are required to declared and defined a \texttt{NULL} operator (a function that returns or manipulates no data) for these functionalities}}.
+    
+    %%% Section: Standard API for objective function  %%%
+    \subsection{Standard interface}\label{subsec:ObjectiveStandardAPI}
+    %%% Section: Standard API for objective function  %%%
+    
+    The core objective function operations required by the algorithm given a standard interface are: 
+    
+    \begin{enumerate}
+    \item \texttt{value(u,z,tolerance,flag)}: Evaluates the objective function given a set of state (\texttt{u}) and control (\texttt{z}) variables. Here, \texttt{tolerance} denotes the maximum allowable error due to inexact objective function evaluations, and \texttt{flag} is an output parameter that is respectively set to \texttt{true} or \texttt{false} if the error bound defined by the user is exceeded or not
+    \item \texttt{gradient(u,z,$\mathtt{\lambda}$,g)}\footnote{\emph{Users are responsible for properly computing the Lagrange multipliers and assembling the total derivative.}}: Computes the total derivative of the objective function with respect to the control variables, where $\mathtt{\lambda}$ denotes the Lagrange multipliers \texttt{g} denotes $\mathtt{d{f}(u,z)/d{z}}$
+     \item \texttt{hessian(u,z,$\mathtt{\lambda}$,dz,h\_dz)}\footnote{\emph{Users are responsible for properly computing the application of direction dz to the Hessian operator.}}: Computes the application of direction \texttt{dz} to the Hessian operator, where $\mathtt{\lambda}$ denotes the Lagrange multipliers and \texttt{h\_dz} denotes $\mathtt{(d^2{f}(u,z)/d{z}^2)}$ $\mathtt{dz}$ 
+    \item \texttt{output checkGradientInexactness(u,z,gradient,tolerance)}: Evaluates the error bound on the \texttt{gradient} and checks if the allowable error due to an inexact gradient evaluation has been exceeded. The parameter \texttt{output} is either set to true or false if the error bound exceeds or satisfies the allowable error \texttt{tolerance}$^1$
+    \item \texttt{fidelity(flag)}: Informs the third-party application if the parametric reduced-order model is active or inactive, which is relevant in order to avoid unnecessary error bound evaluations. The \texttt{flag} is either set to \texttt{HIGH\_FIDELITY} or \texttt{LOW\_FIDELITY}, where \texttt{HIGH\_FIDELITY} denotes that the reduced-order model is inactive and \texttt{LOW\_FIDELITY} denotes that the reduced order model is active
+    \end{enumerate}
+    
+    %%%% Section: Equality constraint %%%% 
+    \section{Equality Constraint}\label{sec:EqualityAPI}
+    %%%% Section: Equality constraint  %%%% 
+    
+   %%% Section: Component-based API for equality constraint  %%%
+    \subsection{Component-based interface}\label{subsec:EqualityComponentAPI}
+    %%% Section: Component-based API for equality constraint  %%%
+    
+    The core equality constraint operations required by the algorithm for a component-based interface are: 
+    
+    \begin{enumerate}
+    \item \texttt{solve(z,u,data)}: Solves the following linear system of equations, $\mathtt{u=A(z)^{-1}f}$, where \texttt{data} denotes a reduced basis data structure of type \texttt{trrom:;ReducedBasisData} that the algorithm uses to collect key information during optimization, \texttt{u} is the state, \texttt{A(z)} is a matrix that depends on the control (\texttt{z}) variables, and \texttt{f} is the right hand side vector
+    \item \texttt{applyInverseJacobianState(u,z,b,x)}: Solves the following linear system of equations, $\mathtt{x=J_u(u,z)^{-1}b}$, where $\mathtt{J_u(u,z)}$ is the Jacobian with respect to \texttt{u} (state variables), \texttt{b} is right hand side vector, and \texttt{x} is the solution\footnote{\emph{In certain applications (nonlinear elasticity with large deformations) the state variables are necessary to compute the Jacobian operator.}}$^,$\footnote{\emph{This operations is only invoke if analytical Hessian information is provided by the user.}}
+    \item \texttt{applyAdjointInverseJacobianState(u,z,b,$\mathtt{\hat{x}}$)}: Solves the following linear system of equations, $\mathtt{\hat{x}=J_u(u,z)^{-\ast}b}$, where $\ast$ denotes the adjoint, $\mathtt{J_u(u,z)}$ is the Jacobian with respect to \texttt{u} (state variables), \texttt{b} is right hand side vector, and $\mathtt{\hat{x}}$ denotes the solution\footnote{\emph{This operation is necessary to compute the derivative of the objective function with respect to the control variables ($df/dz$). Furthermore, if analytical Hessian information is provided, this operation is invoke by the algorithm during the calculation of the application of the trail step to the Hessian operator.}}
+    \item \texttt{partialDerivativeControl(u,z,dp,output)}: Computes the application of direction \texttt{dp} to the partial derivative of the equality constraint with respect to the control variables (Jacobian with respect to the control variables), where \texttt{output} denotes $\mathtt{J_z(u,z)dp}$
+    \item \texttt{partialDerivativeState(u,z,dp,output)}: Computes the application of direction \texttt{dp} to the partial derivative of the equality constraint with respect to the state variables (Jacobian with respect to the state variables), where \texttt{output} denotes $\mathtt{J_u(u,z)dp}$
+    \item \texttt{adjointPartialDerivativeControl(u,z,$\mathtt{\lambda}$,output)}: Computes the application of the Lagrange multipliers ($\mathtt{\lambda}$) to the adjoint of the partial derivative of the equality constraint with respect to the control variables, where \texttt{output} denotes $\mathtt{J_z(u,z)^{\ast}\lambda}$
+    \item \texttt{adjointPartialDerivativeState(u,z,$\mathtt{\lambda}$,output)}: Computes the application of the Lagrange multipliers to the adjoint of the partial derivative of the equality constraint with respect to the state variables, where \texttt{output} denotes $\mathtt{J_u(u,z)^{\ast}\lambda}$
+    \item \texttt{adjointPartialDerivativeStateState(u,z,$\mathtt{\lambda}$,du,output)}: Computes the application of direction \texttt{du} to the adjoint of the second-order partial derivative of the equality constraint with respect to the state variables, where \texttt{output} denotes $\mathtt{(J_{uu}(u,z)^{\ast}\lambda)du}$
+    \item \texttt{adjointPartialDerivativeControlControl(u,z,$\mathtt{\lambda}$,dz,output)}: Computes the application of direction \texttt{dz} to the adjoint of the second-order partial derivative of the equality constraint with respect to the control variables, where \texttt{output} denotes $\mathtt{(J_{zz}(u,z)^{\ast}}$ $\mathtt{\lambda)dz}$
+    \item \texttt{adjointPartialDerivativeStateControl(u,z,$\mathtt{\lambda}$,dz,output)}: Computes the application of direction \texttt{dz} to the adjoint of the mixed partial derivative of the equality constraint with respect to the state and control variables, where \texttt{output} denotes $\mathtt{(J_{uz}(u,z)^{\ast}\lambda)dz}$
+    \item \texttt{adjointPartialDerivativeControlState(u,z,$\mathtt{\lambda}$,du,output)}: Computes the application of direction \texttt{du} to the adjoint of the mixed partial derivative of the equality constraint with respect to the control and state variables, where \texttt{output} denotes $\mathtt{(J_{zu}(u,z)^{\ast}\lambda)du}$
+    \end{enumerate}
+    
+        The optimization algorithm relies on this interface to query information pertinent to the equality constraint throughout optimization. Thus, the implementation of this interface is mandatory\footnote{\emph{Certain derivative operators, specifically the second-order and mixed partial derivatives, might not be defined for a given application. Similar to the objective function case, users are still required to declared and defined these functionalities. However, only a \texttt{NULL} operator is required.}}
+        
+    %%% Section: Standard API for equality constraint  %%%
+    \subsection{Standard interface}\label{subsec:EqualityStandardAPI}
+    %%% Section: Standard API for equality constraint  %%%
+    
+        
+    %%%% Section: Inequality constraint %%%% 
+    \section{Inequality Constraint}\label{sec:InequalityAPI}
+    %%%% Section: Inequality constraint  %%%% 
+    
+    %%% Section: Component-based API for inequality constraint  %%%
+    \subsection{Component-based interface}\label{subsec:InequalityComponentAPI}
+    %%% Section: Component-based API for inequality constraint  %%%
+    
+    The core inequality constraint operations required by the algorithm for a component-based interface are: 
+    
+    \begin{enumerate}
+    \item \texttt{bound()}: Evaluates the inequality constraint bound, \texttt{h(u,z) = value(u,z) - bound() $\mathtt{\le}$ 0}
+    \item \texttt{value(u,z)}: Evaluates the inequality constraint given a set of state (\texttt{u}) and control (\texttt{z}) variables
+    \item \texttt{partialDerivativeControl(u,z,output)}: Computes the partial derivative of the inequality constraint with respect to the control variables, where \texttt{output} denotes $\mathtt{\partial{h}(u,z)/\partial{z}}$ 
+    \item \texttt{partialDerivativeState(u,z,output)}: Computes the partial derivative of the inequality constraint with respect to the state variables, where \texttt{output} denotes $\mathtt{\partial{h}(u,z)/\partial{u}}$ 
+     \item \texttt{partialDerivativeStateState(u,z,du,output)}: Computes the application of direction \texttt{du} to the second-order partial derivative of the inequality constraint with respect to the state variables, where \texttt{output} denotes $\mathtt{(\partial^2{h}(u,z)/\partial{u}^2)du}$ 
+     \item \texttt{partialDerivativeControlControl(u,z,dz,output)}: Computes the application of direction \texttt{dz} to the second-order partial derivative of the inequality constraint with respect to the control variables, where \texttt{output} denotes $\mathtt{(\partial^2{h}(u,z)/\partial{z}^2)dz}$ 
+     \item \texttt{partialDerivativeStateControl(u,z,dz,output)}: Computes the application of direction \texttt{dz} to the mixed partial derivative of the inequality constraint with respect to the state and control variables, where \texttt{output} denotes $\mathtt{(\partial^2{h}(u,z)/\partial{u}\partial{z})dz}$ 
+    \item \texttt{partialDerivativeControlState(u,z,du,output)}: Computes the application of direction \texttt{du} to the mixed partial derivative of the inequality constraint with respect to the control and state variables, where \texttt{output} denotes $\mathtt{(\partial^2{h}(u,z)/\partial{z}\partial{u})du}$ 
+    \end{enumerate}
+    
+    The optimization algorithm relies on this interface to query information pertinent to the inequality constraint throughout optimization. Thus, the implementation of this interface is mandatory\footnote{\emph{Certain derivative operators, specifically the second-order and mixed partial derivatives, might not be defined for a given application. Furthermore, for linear inequalities, all the partial derivatives with respect to the state variables are zero. Thus, similar to the objective and equality constraint cases, users are still required to declared and defined these functionalities. However, only a \texttt{NULL} operator is necessary.}}
+    
+    %%% Section: Standard API for inequality constraint  %%%
+    \subsection{Standard interface}\label{subsec:InequalityStandardAPI}
+    %%% Section: Standard API for inequality constraint  %%%

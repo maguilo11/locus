@@ -1,0 +1,212 @@
+\chapter{Linear Algebra Interface}    
+
+    This Chapter describes the core linear algebra interfaces. The optimization algorithm was intentionally designed to enable users to rely on their preferred linear algebra package to perform essential linear algebra operations. This inherent flexibility minimizes software dependencies and gives users the freedom to rely on their custom linear algebra package when using the parametric reduced-order model based optimization algorithm. Examples with Trilinos' linear algebra packages will be provided to illustrate how to implement these core interfaces.
+    
+    %%%% Section: Vector adapter class %%%% 
+    \section{Vector Interface}
+    \label{sec:VecAPI}
+    %%%% Section: Vector adapter class %%%% 
+    
+    An adapter vector container class is needed to defines basic vector container operations that enable common linear algebra operations, data modification, and creation/construction of new vector containers that will utilize the underlying custom vector container operations\footnote{\emph{Default vector container adapter classes are provided based on C++ standard vector container library and Trilinos Epetra linear algebra package}}. The core vector container operations are:
+    
+    \begin{enumerate}
+    % scale
+    \item \texttt{scale(alpha)}: Scale vector by a constant, $\mathtt{this} = \alpha\ast\mathtt{this}$, where \texttt{this} denotes a vector
+    % update
+    \item \texttt{update(alpha,x,beta)}: Update vector values with scaled values of \texttt{x}, $\mathtt{this} = \mathtt{beta}\ast\mathtt{this} + \mathtt{alpha}\ast\mathtt{x}$
+    % dot
+    \item \texttt{dot(x)}: Returns the inner product of two vectors, $\mathtt{output} = \mathtt{this}^{\mathtt{T}}\mathtt{x}$, where \texttt{output} denotes a scalar number
+    % norm
+    \item \texttt{norm()}: Returns the norm of \texttt{this} vector, e.g. $\mathtt{output} = \sqrt{\mathtt{this}^{\mathtt{T}}\mathtt{this}}$
+    % elementWiseMultiplication
+    \item \texttt{elementWiseMultiplication(x)}: Perform element-wise multiplication between two vectors, $\mathtt{this} = \mathtt{this}\diamond\mathtt{x}$,  where $\diamond$ is used to denote element-wise multiplication
+    % sum
+    \item \texttt{sum()}: Returns the sum of all the elements in the vector, $\mathtt{output} = \sum_{\mathtt{i}=1}^{\mathtt{N}}\mathtt{this}_{\mathtt{i}}$, where $\mathtt{N}$ denotes the number of elements
+    % modulus
+    \item \texttt{modulus()}: Computes the absolute value of each element in the vector, $\vert\mathtt{this}\vert=\{\mathtt{this}$, if $\mathtt{this}\geq{0}$; or $-\mathtt{this}$, if $\mathtt{this}<{0}$
+    % max
+    \item \texttt{max(index)}: Returns the maximum element in a range and its global position index, $\mathtt{output}=\max(\mathtt{index})$, where \texttt{output} denotes the maximum value and \texttt{index} denotes its global position index\footnote{\emph{We intentionally use the keyword global to distinguish between local data and global data in distributed memory settings. Thus, for serial applications, there is not distinction between global and local data since both denote the same information.}}
+    % min
+    \item \texttt{min(index)}: Returns the maximum element in a range and its global position index, $\mathtt{output}=\min(\mathtt{index})$, where \texttt{output} denotes the minimum value and \texttt{index} denotes its global position index
+    % fill
+    \item \texttt{fill(alpha)}: Initialize all elements in \texttt{this} vector with constant value \texttt{alpha}
+    % size
+    \item \texttt{size()}: Returns the number of local elements in \texttt{this} vector
+    % create
+    \item \texttt{create(length)}: Creates memory for a vector that makes use of the underlying custom linear algebra library, where \texttt{length} denotes global length\footnote{\emph{The default input argument \textbf{length} is set to 0, where \textbf{length} denotes global length, and thus a vector of global length equal to \textbf{this} vector is created. However, if a non-zero value is provided, \textbf{length}$\neq0$, memory is created for a vector of global length equal to the non-zero \textbf{length} input parameter.}}
+    % operator []
+    \item \texttt{reference operator[](index)}: Returns a reference to the element at position \texttt{index} in the vector container
+    % operator [] const
+    \item \texttt{const reference operator[](index) const}: Returns a reference to the element at position \texttt{index} in the vector container
+    \end{enumerate}
+    
+    %%% Subsection: Vector adapter example %%%
+    \subsection{Example}\label{subsec:VecEx}
+    %%% Subsection: Vector adapter example %%%
+    
+    A brief example is presented to illustrate how to implement a custom vector container class. Specifically, the Trilinos Epetra linear algebra package is used to construct the custom vector class presented herein, which is shortened for simplicity. Readers are encouraged to explore the full adapter vector container class implementation, which is available in \emph{TRROM\_EpetraVector.hpp}. 
+    
+    The first step is to implement a custom vector container class that derives from pure virtual parent class \texttt{trrom::Vector$\mathbf{\langle}$ScalarType$\mathbf{\rangle}$} class, where \texttt{ScalarType} denotes a C++ templated typename. Finally, users need to define the mandatory vector container operations presented in Section \ref{sec:VecAPI}. For instance, a custom \texttt{Epetra\_Vector} container class can be implemented as follows:
+    
+    \noindent{\textbf{namespace \textcolor{ForestGreen}{trrom}\{}}\newline\textbf{class \textcolor{Melon}{EpetraVector} : public \textcolor{ForestGreen}{trrom}::\textcolor{Melon}{Vector}$\mathbf{\langle}$\textcolor{BrickRed}{double}$\mathbf{\rangle}$\{}\newline\textbf{public:}\newline
+    % constructor
+    \tab\textbf{explicit} \textbf{\textcolor{blue}{EpetraVector}(const \textcolor{Melon}{Epetra\_BlockMap}} \& \textbf{\textcolor{Purple}{ \_input}) :}\newline\tab\tab\textcolor{RoyalBlue}{m\_Data}\textbf{(new \textcolor{Melon}{Epetra\_Vector}(\textcolor{Purple}{\_input}))\{\}}\newline
+    % destructor
+    \tab\textbf{virtual \textcolor{blue}{\detokenize{~}EpetraVector}()\{\}}\newline\newline
+    % size
+    \tab\textbf{\textcolor{BrickRed}{int} \textcolor{blue}{size}() const \{}\textbf{return (}\textcolor{RoyalBlue}{m\_Data}-\textgreater\textbf{\textcolor{blue}{MyLength}());\}}\newline
+    % norm
+    \tab\textbf{\textcolor{BrickRed}{double} \textcolor{blue}{norm}() const \{}\newline\tab\tab\textbf{\textcolor{BrickRed}{double}} \textcolor{SkyBlue}{output} = 0.0;\newline\tab\tab\textcolor{RoyalBlue}{m\_Data}-\textgreater\textbf{\textcolor{blue}{Norm2}(}\&\textcolor{SkyBlue}{output}\textbf{)};\newline\tab\tab\textbf{return (}\textcolor{SkyBlue}{output}\textbf{)};\newline\tab\textbf{\}}\newline
+    % operator[]
+    \tab\textbf{\textcolor{BrickRed}{double}  \& \textcolor{blue}{operator}[ ](\textcolor{BrickRed}{int} \textcolor{Purple}{ \_input})}\newline\tab\tab\textbf{\{return (}\textcolor{RoyalBlue}{m\_Data}-\textgreater\textbf{\textcolor{blue}{operator}[ ](\textcolor{Purple}{ \_input}));\}}\newline
+    % const operator[] const
+    \tab\textbf{const \textcolor{BrickRed}{double}  \& \textcolor{blue}{operator}[ ](\textcolor{BrickRed}{int} \textcolor{Purple}{ \_input}) const}\newline\tab\tab\textbf{\{return (}\textcolor{RoyalBlue}{m\_Data}-\textgreater\textbf{\textcolor{blue}{operator}[ ](\textcolor{Purple}{ \_input}));\}}\newline\newline
+    % fill
+    \tab\textbf{\textcolor{BrickRed}{void} \textcolor{blue}{fill}(const \textcolor{BrickRed}{double}} \& \textbf{\textcolor{Purple}{ \_input}) \{}\textcolor{RoyalBlue}{m\_Data}-\textgreater\textbf{\textcolor{blue}{PutScalar}(\textcolor{Purple}{ \_input});\}}\newline
+    % scale
+    \tab\textbf{\textcolor{BrickRed}{void} \textcolor{blue}{scale}(const\textcolor{BrickRed}{double}} \& \textbf{\textcolor{Purple}{ \_input}) \{}\textcolor{RoyalBlue}{m\_Data}-\textgreater\textbf{\textcolor{blue}{Scale}(\textcolor{Purple}{ \_input});\}}\newline
+    % modulus
+    \tab\textbf{\textcolor{BrickRed}{void} \textcolor{blue}{modulus}()\{}\textcolor{RoyalBlue}{m\_Data}-\textgreater\textbf{\textcolor{blue}{Abs}();\}}\newline
+    % update
+    \tab\textbf{\textcolor{BrickRed}{void} \textcolor{blue}{update}(const\textcolor{BrickRed}{double}} \& \textbf{\textcolor{Purple}{ \_alpha},\newline\tab\tab\tab\ \ \ \ const \textcolor{ForestGreen}{trrom}::\textcolor{Melon}{Vector}$\mathbf{\langle}$\textcolor{BrickRed}{double}$\mathbf{\rangle}$} \& \textbf{\textcolor{Purple}{ \_x},\newline\tab\tab\tab\ \ \ \ const \textcolor{BrickRed}{double}} \& \textbf{\textcolor{Purple}{ \_beta})\{}\newline\tab\tab\textbf{\textcolor{BrickRed}{double}} \textcolor{SkyBlue}{this\_scalar} = 1.0;\newline\tab\tab\textbf{const \textcolor{ForestGreen}{trrom}::\textcolor{Melon}{EpetraVector}} \& \textcolor{SkyBlue}{input} = \newline\tab\tab\tab\textbf{dynamic\_cast$\langle$const \textcolor{ForestGreen}{trrom}::\textcolor{Melon}{EpetraVector}} \&$\rangle$\textbf{(\textcolor{Purple}{ \_x})};\newline\tab\tab\textcolor{RoyalBlue}{m\_Data}-\textgreater\textbf{\textcolor{blue}{Update}(\textcolor{Purple}{ \_alpha}}, *\textcolor{SkyBlue}{input}.\textcolor{RoyalBlue}{m\_Data}, \textcolor{SkyBlue}{this\_scalar}\textbf{)};\newline\tab\textbf{\}}\newline\newline
+    % comment
+    \tab\textcolor{gray}{/* implement remaining mandatory vector container operations */}\newline\newline
+    % helper function
+    \tab\textcolor{gray}{/* if necessary, implement additional vector container helper functions, e.g. */}\newline\tab\textbf{\textcolor{ForestGreen}{std}::\textcolor{ForestGreen}{tr1}::\textcolor{Melon}{shared\_ptr}$\langle$\textcolor{Melon}{Epetra\_Vector}$\rangle$} \& \textbf{\textcolor{blue}{data}()\{return (}\textcolor{RoyalBlue}{m\_Data}\textbf{)};\textbf{\}}\newline\tab\textbf{const \textcolor{ForestGreen}{std}::\textcolor{ForestGreen}{tr1}::\textcolor{Melon}{shared\_ptr}$\langle$\textcolor{Melon}{Epetra\_Vector}$\rangle$} \& \textbf{\textcolor{blue}{data}() const \{return (}\textcolor{RoyalBlue}{m\_Data}\textbf{)};\textbf{\}}\newline\newline
+    % private data
+    \textbf{private:}\newline\tab\textbf{\textcolor{ForestGreen}{std}::\textcolor{ForestGreen}{tr1}::\textcolor{Melon}{shared\_ptr}$\langle$\textcolor{Melon}{Epetra\_Vector}$\rangle$} \textcolor{RoyalBlue}{m\_Data};\newline\textbf{\}}; \textcolor{gray}{/* class EpetraVector */}\newline\textbf{\}}\ \ \textcolor{gray}{/* namespace trrom */}
+    
+    %%%% Section: MultiVector adapter class %%%%
+    \section{Matrix Interface}\label{sec:MultiVecAPI}
+    %%%% Section: MultiVector adapter class %%%%
+    
+    An adapter multivector container class is needed to defines basic multivector (e.g. matrix) container operations that enable common linear algebra operations, data modification, and creation/construction of new multivector containers that will utilize the underlying custom multivector container operations\footnote{\emph{Default multivector container adapter classes are provided based on C++ standard vector container library and Trilinos Epetra linear algebra package}}. The core multivector container operations are:
+    
+    \begin{enumerate}
+    % scale
+    \item \texttt{scale(alpha)}: Scale multivector by a constant, $\mathtt{This} = \alpha\ast\mathtt{This}$, where \texttt{This} denotes a multivector
+    % update
+    \item \texttt{update(alpha,X,beta)}: Update multivector values with scaled values of \texttt{X}, $\mathtt{This} = \mathtt{beta}\ast\mathtt{This} + \mathtt{alpha}\ast\mathtt{X}$
+    % fill
+    \item \texttt{fill(alpha)}: Initialize all elements in \texttt{This} multivector with constant value \texttt{alpha}
+    % gemv
+    \item \texttt{gemv(This\_transpose,alpha,x,beta,y)}: General Matrix-Vector multiplication, \texttt{y = beta*y + alpha*This$^{\mathtt{This\_transpose}}$*x}, where \texttt{This\_transpose} denotes the transpose of \texttt{This\_transpose} if=true, else no transpose if=false.
+    % gemm
+    \item \texttt{gemm(This\_transpose,A\_transpose,alpha,A,beta,B)}: General Matrix-Matrix multiplication, \texttt{B = beta*B + alpha*This$^{\mathtt{This\_transpose}}$*A$^{\mathtt{A\_transpose}}$}, where \texttt{This\_transpose} and \texttt{A\_transpose} respectively denotes the transpose of \texttt{This} and \texttt{A} if=true, else no transpose if=false.
+    % replaceGlobalValue
+    \item \texttt{replaceGlobalValue(global\_row\_index,global\_column\_index,new\_value)}: Replace current value at the specified \texttt{(global\_row\_index,global\_column\_index)} location with \texttt{new\_value}
+    % getNumRows
+    \item \texttt{getNumRows()}: Returns the global number of rows of \texttt{This} multivector
+    % getNumCols
+    \item \texttt{getNumCols()}: Returns the global number of columns of \texttt{This} multivector
+    % insert
+    \item \texttt{insert(x)}: \texttt{This} multivector is extended by inserting a new vector \texttt{x} after the last vector position, effectively increasing \texttt{This} multivector container size by one
+    % getVector
+    \item \texttt{getVector(global\_column\_index)}: Vector access function, returns a vector with global position\texttt{global\_column\_index}
+    %create
+    \item \texttt{create(global\_num\_rows,global\_num\_columns)}: Creates memory for a multivector that makes use of the underlying custom multivector operations\footnote{\emph{The default input arguments \textbf{global\_num\_rows} and \textbf{global\_num\_columns} are set to 0. Thus, a multivector of \textbf{global\_num\_rows} and \textbf{global\_num\_columns} equal to \textbf{This} multivector is created if no values are provided for \textbf{global\_num\_rows} and \textbf{global\_num\_columns}. However, if non-zero values are provided for these input arguments, \textbf{global\_num\_rows} $\neq0$ and \textbf{global\_num\_columns} $\neq0$, memory is created for a multivector of \textbf{global\_num\_rows} and \textbf{global\_num\_columns} equal to the non-zero values provided.}}
+    \end{enumerate}
+    
+    %%% Subsection: MultiVector Example %%%
+    \subsection{Example}\label{subsec:MultiVecEx}
+    %%% Subsection: MultiVector Example %%%
+    
+    A brief example is presented to illustrate how to implement a custom multivector container class. Specifically, the Trilinos Epetra linear algebra package is used to construct a custom multivector class. The example presented herein is shortened for simplicity. Readers are encouraged to explore the full multivector adapter class implementation, which is available in \emph{TRROM\_EpetraMultiVector.hpp}. 
+    
+    The first step is to implement a custom multivector container class that derives from the pure virtual parent class \texttt{trrom::MultiVector$\mathbf{\langle}$ScalarType$\mathbf{\rangle}$}, where \texttt{ScalarType} denotes a C++ templated typename. Finally, users need to define each multivector container operations presented in Section \ref{sec:MultiVecAPI} for the custom multivector container class. For instance, a custom \texttt{Epetra\_MultiVector} container class can be implemented as follows:
+    
+    \noindent{\textbf{namespace \textcolor{ForestGreen}{trrom}\{}}\newline\textbf{class \textcolor{Melon}{EpetraMultiVector} : public \textcolor{ForestGreen}{trrom}::\textcolor{Melon}{MultiVector}$\mathbf{\langle}$\textcolor{BrickRed}{double}$\mathbf{\rangle}$\{}\newline\textbf{public:}\newline
+    % constructor
+    \tab\textbf{\textcolor{blue}{EpetraMultiVector}(const \textcolor{Melon}{Epetra\_BlockMap}} \& \textbf{\textcolor{Purple}{ \_map},}\newline\tab\tab\tab\tab\tab\ \textbf{const \textcolor{BrickRed}{int}}  \& \textbf{\textcolor{Purple}{\_num\_vectors}) :}\newline\tab\tab\textcolor{RoyalBlue}{m\_ThisVector}\textbf{()},\newline\tab\tab\textcolor{RoyalBlue}{m\_Data}\textbf{(new \textcolor{Melon}{Epetra\_MultiVector}(\textcolor{Purple}{\_map}, \textcolor{Purple}{\_num\_vectors}))\{\}}\newline
+    % destructor
+    \tab\textbf{virtual \textcolor{blue}{\detokenize{~}EpetraMultiVector}()\{\}}\newline\newline
+    % getNumRows
+    \tab\textbf{\textcolor{BrickRed}{int} \textcolor{blue}{getNumRows}() const \{}\textbf{return (}\textcolor{RoyalBlue}{m\_Data}-\textgreater\textbf{\textcolor{blue}{GlobalLength}())};\textbf{\}}\newline
+    % getNumCols
+    \tab\textbf{\textcolor{BrickRed}{int} \textcolor{blue}{getNumCols}() const \{}\textbf{return (}\textcolor{RoyalBlue}{m\_Data}-\textgreater\textbf{\textcolor{blue}{NumVectors}())};\textbf{\}}\newline
+    % fill
+    \tab\textbf{\textcolor{BrickRed}{void} \textcolor{blue}{fill}(const \textcolor{BrickRed}{double}} \& \textbf{\textcolor{Purple}{ \_input}) \{}\textcolor{RoyalBlue}{m\_Data}-\textgreater\textbf{\textcolor{blue}{PutScalar}(\textcolor{Purple}{ \_input})};\textbf{\}}\newline
+    % getVector
+    \tab\textbf{\textcolor{ForestGreen}{std}::\textcolor{ForestGreen}{tr1}::\textcolor{Melon}{shared\_ptr}$\langle$\textcolor{ForestGreen}{trrom}::\textcolor{Melon}{Vector}$\mathbf{\langle}$\textcolor{BrickRed}{double}$\mathbf{\rangle}$$\rangle$} \& \textbf{\textcolor{blue}{getVector}(\textcolor{BrickRed}{int} \textcolor{Purple}{\_index})\{}\newline\tab\tab\textcolor{RoyalBlue}{m\_ThisVector}.\textbf{\textcolor{blue}{reset}(new \textcolor{ForestGreen}{trrom}::\textcolor{Melon}{EpetraVector}(\textcolor{Orange}{Epetra\_DataAccess}::\textcolor{Cyan}{View}},\newline\tab\tab\tab\tab\tab\tab\tab\tab\tab\tab\tab*\textcolor{RoyalBlue}{m\_Data},\newline\tab\tab\tab\tab\tab\tab\tab\tab\tab\tab\tab\textbf{\textcolor{Purple}{\_index}))};\newline\tab\tab\textbf{return (}\textcolor{RoyalBlue}{m\_ThisVector}\textbf{)};\newline\tab\textbf{\}}\newline
+    % replaceGlobalValue
+    \tab\textbf{\textcolor{BrickRed}{void} \textcolor{blue}{replaceGlobalValue}(const \textcolor{BrickRed}{int}} \& \textbf{\textcolor{Purple}{\_global\_row\_index}},\newline\tab\tab\tab\tab\tab\tab\ \ \textbf{const \textcolor{BrickRed}{int}} \& \textbf{\textcolor{Purple}{\_vector\_index}},\newline\tab\tab\tab\tab\tab\tab\ \ \textbf{const \textcolor{BrickRed}{int}} \& \textbf{\textcolor{Purple}{\_value}) \{}\newline\tab\tab\textcolor{RoyalBlue}{m\_Data}-\textgreater\textbf{\textcolor{blue}{ReplaceGlobalValue}(\textcolor{Purple}{\_global\_row\_index}},\textbf{\textcolor{Purple}{\_vector\_index}},\textbf{\textcolor{Purple}{\_value})};\newline\tab\textbf{\}}\newline
+    % gemv
+    \tab\textbf{\textcolor{BrickRed}{void} \textcolor{blue}{gemv}(const \textcolor{BrickRed}{bool}} \& \textbf{\textcolor{Purple}{\_this\_transpose}},\newline\tab\tab\tab\ \ \textbf{const \textcolor{BrickRed}{double}} \& \textbf{\textcolor{Purple}{\_this\_scalar}},\newline\tab\tab\tab\ \ \textbf{const \textcolor{ForestGreen}{trrom}::\textcolor{Melon}{Vector}$\langle$\textcolor{BrickRed}{double}$\rangle$} \& \textbf{\textcolor{Purple}{\_input}},\newline\tab\tab\tab\ \ \textbf{const \textcolor{BrickRed}{double}} \& \textbf{\textcolor{Purple}{\_output\_scalar}},\newline\tab\tab\tab\ \ \textbf{\textcolor{ForestGreen}{trrom}::\textcolor{Melon}{Vector}$\langle$\textcolor{BrickRed}{double}$\rangle$} \& \textbf{\textcolor{Purple}{\_output})\{}\newline\tab\tab\textcolor{gray}{/* convert bool type to char type */}\newline\tab\tab\textbf{\textcolor{ForestGreen}{std}::\textcolor{Melon}{vector}$\langle$\textcolor{BrickRed}{char}$\rangle$} \textcolor{SkyBlue}{this\_transpose} = \textbf{this}-\textgreater\textbf{\textcolor{blue}{transpose}(\textcolor{Purple}{\_this\_transpose})};\newline\tab\tab\textbf{\textcolor{ForestGreen}{trrom}::\textcolor{Melon}{EpetraVector}} \& \textcolor{SkyBlue}{output} = \newline\tab\tab\tab\textbf{dynamic\_cast$\langle$\textcolor{ForestGreen}{trrom}::\textcolor{Melon}{EpetraVector}} \&$\rangle$\textbf{(\textcolor{Purple}{ \_output})};\newline\tab\tab\textbf{const \textcolor{ForestGreen}{trrom}::\textcolor{Melon}{EpetraVector}} \& \textcolor{SkyBlue}{input} = \newline\tab\tab\tab\textbf{dynamic\_cast$\langle$const \textcolor{ForestGreen}{trrom}::\textcolor{Melon}{EpetraVector}} \&$\rangle$\textbf{(\textcolor{Purple}{ \_input})};\newline\tab\tab\textcolor{SkyBlue}{output}.\textbf{\textcolor{blue}{data}()}-\textgreater\textbf{\textcolor{blue}{Multiply}(}\textcolor{SkyBlue}{this\_transpose}\textbf{[}0\textbf{]},\newline\tab\tab\tab\tab\tab\tab\tab\textcolor{ForestGreen}{`N'},\newline\tab\tab\tab\tab\tab\tab\tab\textbf{\textcolor{Purple}{\_this\_scalar}},\newline\tab\tab\tab\tab\tab\tab\tab*\textcolor{RoyalBlue}{m\_Data},\newline\tab\tab\tab\tab\tab\tab\tab*\textcolor{SkyBlue}{input}.\textbf{\textcolor{blue}{data}()},\newline\tab\tab\tab\tab\tab\tab\tab\textbf{\textcolor{Purple}{\_output\_scalar})};\newline\tab\textbf{\}}\newline\newline
+    % comment
+    \tab\textcolor{gray}{/* implement remaining mandatory multivector container operations */}\newline\newline
+    % helper function
+    \tab\textcolor{gray}{/* if necessary, implement additional vector container helper functions, e.g. */}\newline\tab\textbf{\textcolor{ForestGreen}{std}::\textcolor{ForestGreen}{tr1}::\textcolor{Melon}{shared\_ptr}$\langle$\textcolor{Melon}{Epetra\_MultiVector}$\rangle$} \& \textbf{\textcolor{blue}{data}()\{return (}\textcolor{RoyalBlue}{m\_Data}\textbf{)};\textbf{\}}\newline\tab\textbf{const \textcolor{ForestGreen}{std}::\textcolor{ForestGreen}{tr1}::\textcolor{Melon}{shared\_ptr}$\langle$\textcolor{Melon}{Epetra\_MultiVector}$\rangle$} \& \textbf{\textcolor{blue}{data}() const \{return (}\textcolor{RoyalBlue}{m\_Data}\textbf{)};\textbf{\}}\newline\newline
+    % private data
+    \textbf{private:}\newline\tab\textbf{\textcolor{ForestGreen}{std}::\textcolor{ForestGreen}{tr1}::\textcolor{Melon}{shared\_ptr}$\langle$\textcolor{Melon}{Epetra\_Vector}$\rangle$} \textcolor{RoyalBlue}{m\_ThisVector};\newline\tab\textbf{\textcolor{ForestGreen}{std}::\textcolor{ForestGreen}{tr1}::\textcolor{Melon}{shared\_ptr}$\langle$\textcolor{Melon}{Epetra\_MultiVector}$\rangle$} \textcolor{RoyalBlue}{m\_Data};\newline
+    % end class declaration and definition
+    \textbf{\}}; \textcolor{gray}{/* class EpetraMultiVector */} \newline
+    \textbf{\}} \textcolor{gray}{/* namespace trrom */}
+    
+    %%%% Section: Spectral decomposition %%%%
+    \section{Spectral Decomposition Interface}\label{sec:SpectralDecom}
+    %%%% Section: Spectral decomposition %%%%
+    
+    The implementation of an adapter spectral decomposition class is required to enable parametric reduced-order models during optimization. The optimization algorithm will invoke the spectral decomposition solver online to update multiple orthonormal bases from data ensembles (displacement, Lagrange multipliers, etc.). However, if the low rank spectral decomposition solver is enabled, the high fidelity spectral decomposition solver will only be necessary for the first orthonormal basis updates. Subsequent orthonormal basis updates will rely on an in-situ low rank spectral decomposition solver. Thus, the high fidelity singular value decomposition solver will not be required during subsequent orthonormal basis updates. Contrary, if the low rank spectral decomposition solver is disabled, the high fidelity spectral decomposition solver accessed through the adapter spectral decomposition class will be used for all the orthonormal basis updates during optimization.
+    
+    The adapter spectral decomposition class needs to provide/implement the following \texttt{solve} function:
+    \begin{enumerate}
+    \item \texttt{solve(A,S,U,V)}: Performs singular value decomposition of matrix \texttt{A}, where \texttt{S} denotes the singular values, \texttt{U} denotes the left singular vectors, and \texttt{V} denotes the right singular vectors
+    \end{enumerate}
+    The algorithm will call \texttt{solve} every time an updated set of orthonormal basis is required to improve the predictive reliability of the parametric reduced-order model.
+    
+    %%% Section: Spectral decomposition %%%
+    \subsection{Example}\label{subsec:SpectralDecomEx}
+    %%% Section: Spectral decomposition %%%
+    
+    A brief example is presented to illustrate how to implement a custom spectral decomposition class. Specifically, the Trilinos Teuchos serial singular value decomposition solver is used to construct the custom class presented herein, which is shortened for simplicity. Readers are encouraged to explore the full implementation of the adapter spectral decomposition class available in \emph{TRROM\_TeuchosSVD.hpp} and \emph{TRROM\_TeuchosSVD.cpp}. 
+    
+    The first step is to implement a custom spectral decomposition class that derives from pure virtual parent class \texttt{trrom::SpectralDecomposition}. The final step is to implement the \texttt{solve} function described in Section \ref{sec:SpectralDecom}. For instance, a custom \texttt{Teuchos} based singular value decomposition class can be implemented as follows:
+    
+        \noindent{\textbf{namespace \textcolor{ForestGreen}{trrom} \{}}\newline\textbf{class \textcolor{Melon}{TeuchosSVD} : public \textcolor{ForestGreen}{trrom}::\textcolor{Melon}{SpectralDecomposition} \{}\newline\textbf{public:}\newline
+        % constructor
+        \tab\textbf{\textcolor{blue}{TeuchosSVD}() : }\textcolor{RoyalBlue}{m\_LAPACK}\textbf{() \{\}}\newline
+        % destructor
+        \tab\textbf{virtual \textcolor{blue}{\detokenize{~}TeuchosSVD}() \{\}}\newline\newline
+        % solve
+        \tab\textbf{\textcolor{BrickRed}{void} \textcolor{blue}{solve}(const \textcolor{ForestGreen}{std}::\textcolor{ForestGreen}{tr1}::\textcolor{Melon}{shared\_ptr}$\langle$\textcolor{ForestGreen}{trrom}::\textcolor{Melon}{Matrix}$\rangle$} \& \textbf{\textcolor{Purple}{\_A}},\newline\tab\tab\tab\ \ \textbf{\textcolor{ForestGreen}{std}::\textcolor{ForestGreen}{tr1}::\textcolor{Melon}{shared\_ptr}$\langle$\textcolor{ForestGreen}{trrom}::\textcolor{Melon}{Vector}$\rangle$} \& \textbf{\textcolor{Purple}{\_S}},\newline\tab\tab\tab\ \ \textbf{\textcolor{ForestGreen}{std}::\textcolor{ForestGreen}{tr1}::\textcolor{Melon}{shared\_ptr}$\langle$\textcolor{ForestGreen}{trrom}::\textcolor{Melon}{Matrix}$\rangle$} \& \textbf{\textcolor{Purple}{\_U}},\newline\tab\tab\tab\ \ \textbf{\textcolor{ForestGreen}{std}::\textcolor{ForestGreen}{tr1}::\textcolor{Melon}{shared\_ptr}$\langle$\textcolor{ForestGreen}{trrom}::\textcolor{Melon}{Matrix}$\rangle$} \& \textbf{\textcolor{Purple}{\_V}) \{}\newline\tab\tab\textbf{\textcolor{BrickRed}{int}} \textcolor{SkyBlue}{nrows} = \textbf{\textcolor{Purple}{\_A}}-\textgreater\textbf{\textcolor{blue}{getNumRows}()};\newline\tab\tab\textbf{\textcolor{BrickRed}{int}} \textcolor{SkyBlue}{ncols} = \textbf{\textcolor{Purple}{\_A}}-\textgreater\textbf{\textcolor{blue}{getNumCols}()};\newline\tab\tab\textbf{\textcolor{BrickRed}{int}} \textcolor{SkyBlue}{spectral\_dim} = \textbf{\textcolor{ForestGreen}{std}::\textcolor{magenta}{min}(}\textcolor{SkyBlue}{nrows}, \textcolor{SkyBlue}{ncols}\textbf{)};\newline\newline\tab\tab\textcolor{gray}{/* copy data since original data is always overwritten */}\newline\tab\tab\textbf{\textcolor{ForestGreen}{trrom}::\textcolor{Melon}{TeuchosArray}$\langle$\textcolor{BrickRed}{double}$\rangle$} \textcolor{SkyBlue}{A}\textbf{(}\textcolor{SkyBlue}{spectral\_dim}\textbf{)};\newline\tab\tab\textcolor{SkyBlue}{A}.\textbf{\textcolor{blue}{update}(}1.0, *(\textbf{\textcolor{Purple}{\_A}}), 0.0\textbf{)};\newline\newline\tab\tab\textcolor{gray}{/* resize output data accordingly */}\newline\tab\tab\textbf{\textcolor{Purple}{\_S}}.\textbf{\textcolor{blue}{reset}(new \textcolor{ForestGreen}{trrom}::\textcolor{Melon}{TeuchosArray}$\langle$\textcolor{BrickRed}{double}$\rangle$(}\textcolor{SkyBlue}{spectral\_dim}\textbf{))};\newline\tab\tab\textbf{\textcolor{Purple}{\_U}}.\textbf{\textcolor{blue}{reset}(new \textcolor{ForestGreen}{trrom}::\textcolor{Melon}{TeuchosSerialDenseMatrix}$\langle$\textcolor{BrickRed}{double}$\rangle$(}\textcolor{SkyBlue}{nrows}, \textcolor{SkyBlue}{ncols}\textbf{))};\newline\tab\tab\textbf{\textcolor{Purple}{\_V}}.\textbf{\textcolor{blue}{reset}(new \textcolor{ForestGreen}{trrom}::\textcolor{Melon}{TeuchosSerialDenseMatrix}$\langle$\textcolor{BrickRed}{double}$\rangle$(}\textcolor{SkyBlue}{ncols}, \textcolor{SkyBlue}{ncols}\textbf{))};\newline\newline\tab\tab\textcolor{gray}{/* solve singular value problem */}\newline\tab\tab\textcolor{RoyalBlue}{m\_LAPACK}-\textgreater\textbf{\textcolor{blue}{GESVD}(}\textcolor{gray}{/* provide mandatory input parameters */}\textbf{)};\newline\tab\textbf{\}}\newline\newline
+    % private data
+    \textbf{private:}\newline\tab\textbf{\textcolor{ForestGreen}{Teuchos}::\textcolor{Melon}{LAPACK}$\langle$\textcolor{BrickRed}{int}, \textcolor{BrickRed}{double}$\rangle$} \textcolor{RoyalBlue}{m\_LAPACK};\newline
+    % end class declaration and definition
+    \textbf{\}}; \textcolor{gray}{/* class TeuchosSVD */} \newline
+    \textbf{\}} \textcolor{gray}{/* namespace trrom */}
+    
+    %%%% Section: Spectral decomposition %%%%
+    \section{Solver Interface}\label{sec:Solver}
+    %%%% Section: Spectral decomposition %%%%
+    
+    An adapter solver class is available to enable the application of custom direct or iterative solvers for the solution of the low-fidelity (reduced) model. This interface allows the application of different solvers for the high- and low-fidelity calculations. This flexibility facilitates the use of a solver that is in agreement with the custom linear algebra specified by the user. However, users can potentially avoid implementing the adapter solver class by enabling the default Trilinos parallel solver.
+    
+    The adapter solver interface class needs to provide the following functionality:
+    
+    \begin{enumerate}
+    \item \texttt{solve(A,b,x)}: Solves the reduced system of equations, where \texttt{A} denotes the reduced matrix, \texttt{b} denotes the reduced right hand side vector, and \texttt{x} denotes the reduced left hand side vector (solution vector)
+    \end{enumerate}
+    
+    The optimization algorithm will query the solver interface during optimization to compute the low-fidelity solution \texttt{x}. If the default parallel Trilinos solver is enabled, the algorithm will manage the low-fidelity solve in-situ without having to interact with the application code. 
+
+    %%%% Section: Spectral decomposition %%%%
+    \subsection{Example}\label{subsec:SolverEx}
+    %%%% Section: Spectral decomposition %%%%
+        
+    A brief example is presented to illustrate how to implement a custom solver interface class. Specifically, the Trilinos Teuchos serial dense solver solver is used to construct the custom class presented in this section, which is shortened for simplicity. Readers are encouraged to explore the full implementation of the adapter solver interface class available in \emph{TRROM\_TeuchosSerialDenseSolver.hpp} and \emph{TRROM\_TeuchosSerialDenseSolver.cpp}.
+    
+    The first step is to implement the custom solver interface class that derives from the pure virtual parent class \texttt{trrom::SolverInterface}. Finally, the solve function described in Section \ref{sec:Solver} is implemented. For instance, a custom solver interface class based on the Teuchos serial dense solver can be implemented as follows:
+    
+            \noindent{\textbf{namespace \textcolor{ForestGreen}{trrom} \{}}\newline\textbf{class \textcolor{Melon}{TeuchosSerialDenseSolver} : public \textcolor{ForestGreen}{trrom}::\textcolor{Melon}{SolverInterface} \{}\newline\textbf{public:}\newline
+        % constructor
+        \tab\textbf{\textcolor{blue}{TeuchosSerialDenseSolver}() : }\newline\tab\tab\textcolor{RoyalBlue}{m\_Solver}(\textbf{new \textcolor{ForestGreen}{Teuchos}}::\textcolor{blue}{SerialDenseSolver$\langle$int, double$\rangle$}) \textbf{\{\}}\newline
+        % destructor
+        \tab\textbf{virtual \textcolor{blue}{\detokenize{~}TeuchosSerialDenseSolver}() \{\textbf{delete}} \textcolor{RoyalBlue}{m\_Solver};\textbf{\}}\newline\newline
+        % solve
+         \tab\textbf{\textcolor{BrickRed}{void} \textcolor{blue}{solve}(const \textcolor{ForestGreen}{std}::\textcolor{ForestGreen}{tr1}::\textcolor{Melon}{shared\_ptr}$\langle$\textcolor{ForestGreen}{trrom}::\textcolor{Melon}{Matrix}$\rangle$} \& \textbf{\textcolor{Purple}{\_A}},\newline\tab\tab\tab\ \ \textbf{const \textcolor{ForestGreen}{std}::\textcolor{ForestGreen}{tr1}::\textcolor{Melon}{shared\_ptr}$\langle$\textcolor{ForestGreen}{trrom}::\textcolor{Melon}{Vector}$\rangle$} \& \textbf{\textcolor{Purple}{\_b}},\newline\tab\tab\tab\ \ \textbf{\textcolor{ForestGreen}{std}::\textcolor{ForestGreen}{tr1}::\textcolor{Melon}{shared\_ptr}$\langle$\textcolor{ForestGreen}{trrom}::\textcolor{Melon}{Matrix}$\rangle$} \& \textbf{\textcolor{Purple}{\_x}}) \textbf{\{}\newline\tab\tab\textbf{\textcolor{BrickRed}{int}} \textcolor{SkyBlue}{nrows} = \textbf{\textcolor{Purple}{\_A}}-\textgreater\textbf{\textcolor{blue}{getNumRows}()};\newline\tab\tab\textbf{\textcolor{BrickRed}{int}} \textcolor{SkyBlue}{ncols} = \textbf{\textcolor{Purple}{\_A}}-\textgreater\textbf{\textcolor{blue}{getNumCols}()};\newline\newline\tab\tab\textbf{\textcolor{ForestGreen}{trrom}::\textcolor{Melon}{TeuchosSerialDenseMatrix}} \textcolor{SkyBlue}{matrix}(\textcolor{SkyBlue}{nrows}, \textcolor{SkyBlue}{ncols});\newline\tab\tab\textcolor{SkyBlue}{matrix}.\textbf{\textcolor{blue}{update}}(1., \textbf{\textcolor{Purple}{\_A}}, 0.);\newline\tab\tab\textcolor{RoyalBlue}{m\_Solver}-\textgreater\textbf{\textcolor{blue}{setMatrix}}(\textbf{\textcolor{ForestGreen}{Teuchos}::\textcolor{magenta}{rcp}}(\&(*\textcolor{SkyBlue}{matrix}.\textbf{\textcolor{blue}{data}}()), \textbf{false}));\newline\newline\tab\tab\textbf{\textcolor{ForestGreen}{trrom}::\textcolor{Melon}{TeuchosSerialDenseVector}} \textcolor{SkyBlue}{rhs}(\textcolor{SkyBlue}{nrows});\newline\tab\tab\textcolor{SkyBlue}{rhs}.\textbf{\textcolor{blue}{update}}(1., \textbf{\textcolor{Purple}{\_b}}, 0.);\newline\tab\tab\textbf{\textcolor{ForestGreen}{trrom}::\textcolor{Melon}{TeuchosSerialDenseVector}} \textcolor{SkyBlue}{lhs}(\textcolor{SkyBlue}{ncols});\newline\tab\tab\textcolor{RoyalBlue}{m\_Solver}-\textgreater\textbf{\textcolor{blue}{setVector}}(\textbf{\textcolor{ForestGreen}{Teuchos}::\textcolor{magenta}{rcp}}(\&(*\textcolor{SkyBlue}{lhs}.\textbf{\textcolor{blue}{data}}()), \textbf{false}),\newline\tab\tab\tab\tab\tab\tab\ \textbf{\textcolor{ForestGreen}{Teuchos}::\textcolor{magenta}{rcp}}(\&(*\textcolor{SkyBlue}{rhs}.\textbf{\textcolor{blue}{data}}()), \textbf{false}));\newline\newline\tab\tab\textcolor{RoyalBlue}{m\_Solver}-\textgreater\textbf{\textcolor{blue}{factorWithEquilibration}}(\textbf{true});\newline\tab\tab\textcolor{RoyalBlue}{m\_Solver}-\textgreater\textbf{\textcolor{blue}{factor}}();\newline\tab\tab\textcolor{RoyalBlue}{m\_Solver}-\textgreater\textbf{\textcolor{blue}{solve}}();\newline\newline\tab\tab\textbf{\textcolor{Purple}{\_lhs}}.\textbf{\textcolor{blue}{update}}(1., \textcolor{SkyBlue}{lhs}, 0.);\newline\tab\textbf{\}}\
+         % private data
+         \newline\newline\textbf{private:}\newline\tab\textbf{\textcolor{ForestGreen}{Teuchos}::\textcolor{Melon}{SerialDenseSolver}$\langle$\textcolor{BrickRed}{int}, \textcolor{BrickRed}{double}$\rangle$}* \textcolor{RoyalBlue}{m\_Solver};\newline
+    % end class declaration and definition
+    \textbf{\}}; \textcolor{gray}{/* class TeuchosSerialDenseSolver */} \newline
+    \textbf{\}} \textcolor{gray}{/* namespace trrom */}
+
