@@ -13,7 +13,7 @@
 namespace dotk
 {
 
-template<class Type>
+template<typename Type>
 DOTk_MexObjectiveFunction<Type>::DOTk_MexObjectiveFunction(const mxArray* operators_,
                                                            const dotk::types::problem_t & type_) :
         m_Value(NULL),
@@ -29,13 +29,13 @@ DOTk_MexObjectiveFunction<Type>::DOTk_MexObjectiveFunction(const mxArray* operat
     this->initialize(operators_, type_);
 }
 
-template<class Type>
+template<typename Type>
 DOTk_MexObjectiveFunction<Type>::~DOTk_MexObjectiveFunction()
 {
     this->clear();
 }
 
-template<class Type>
+template<typename Type>
 Type DOTk_MexObjectiveFunction<Type>::value(const dotk::vector<Type> & primal_)
 {
     dotk::DOTk_MexArrayPtr primal(mxCreateDoubleMatrix(primal_.size(), 1, mxREAL));
@@ -54,7 +54,7 @@ Type DOTk_MexObjectiveFunction<Type>::value(const dotk::vector<Type> & primal_)
     return (alpha);
 }
 
-template<class Type>
+template<typename Type>
 void DOTk_MexObjectiveFunction<Type>::gradient(const dotk::vector<Type> & primal_, dotk::vector<Type> & output_)
 {
     dotk::DOTk_MexArrayPtr primal(mxCreateDoubleMatrix(primal_.size(), 1, mxREAL));
@@ -71,7 +71,7 @@ void DOTk_MexObjectiveFunction<Type>::gradient(const dotk::vector<Type> & primal
     primal.release();
 }
 
-template<class Type>
+template<typename Type>
 void DOTk_MexObjectiveFunction<Type>::hessian(const dotk::vector<Type> & primal_,
                                               const dotk::vector<Type> & delta_primal_,
                                               dotk::vector<Type> & output_)
@@ -94,7 +94,7 @@ void DOTk_MexObjectiveFunction<Type>::hessian(const dotk::vector<Type> & primal_
     delta_primal.release();
 }
 
-template<class Type>
+template<typename Type>
 Type DOTk_MexObjectiveFunction<Type>::value(const dotk::vector<Type> & state_, const dotk::vector<Type> & control_)
 {
     dotk::DOTk_MexArrayPtr state(mxCreateDoubleMatrix(state_.size(), 1, mxREAL));
@@ -117,7 +117,7 @@ Type DOTk_MexObjectiveFunction<Type>::value(const dotk::vector<Type> & state_, c
     return (value);
 }
 
-template<class Type>
+template<typename Type>
 void DOTk_MexObjectiveFunction<Type>::partialDerivativeState(const dotk::vector<Type> & state_,
                                                              const dotk::vector<Type> & control_,
                                                              dotk::vector<Type> & output_)
@@ -140,7 +140,7 @@ void DOTk_MexObjectiveFunction<Type>::partialDerivativeState(const dotk::vector<
     control.release();
 }
 
-template<class Type>
+template<typename Type>
 void DOTk_MexObjectiveFunction<Type>::partialDerivativeControl(const dotk::vector<Type> & state_,
                                                                const dotk::vector<Type> & control_,
                                                                dotk::vector<Type> & output_)
@@ -163,7 +163,7 @@ void DOTk_MexObjectiveFunction<Type>::partialDerivativeControl(const dotk::vecto
     control.release();
 }
 
-template<class Type>
+template<typename Type>
 void DOTk_MexObjectiveFunction<Type>::partialDerivativeStateState(const dotk::vector<Type> & state_,
                                                                   const dotk::vector<Type> & control_,
                                                                   const dotk::vector<Type> & vector_,
@@ -191,7 +191,7 @@ void DOTk_MexObjectiveFunction<Type>::partialDerivativeStateState(const dotk::ve
     delta_state.release();
 }
 
-template<class Type>
+template<typename Type>
 void DOTk_MexObjectiveFunction<Type>::partialDerivativeStateControl(const dotk::vector<Type> & state_,
                                                                     const dotk::vector<Type> & control_,
                                                                     const dotk::vector<Type> & vector_,
@@ -220,7 +220,7 @@ void DOTk_MexObjectiveFunction<Type>::partialDerivativeStateControl(const dotk::
     delta_control.release();
 }
 
-template<class Type>
+template<typename Type>
 void DOTk_MexObjectiveFunction<Type>::partialDerivativeControlState(const dotk::vector<Type> & state_,
                                                                     const dotk::vector<Type> & control_,
                                                                     const dotk::vector<Type> & vector_,
@@ -249,7 +249,7 @@ void DOTk_MexObjectiveFunction<Type>::partialDerivativeControlState(const dotk::
     delta_state.release();
 }
 
-template<class Type>
+template<typename Type>
 void DOTk_MexObjectiveFunction<Type>::partialDerivativeControlControl(const dotk::vector<Type> & state_,
                                                                       const dotk::vector<Type> & control_,
                                                                       const dotk::vector<Type> & vector_,
@@ -278,7 +278,7 @@ void DOTk_MexObjectiveFunction<Type>::partialDerivativeControlControl(const dotk
     delta_control.release();
 }
 
-template<class Type>
+template<typename Type>
 void DOTk_MexObjectiveFunction<Type>::clear()
 {
     m_Value.release();
@@ -292,7 +292,7 @@ void DOTk_MexObjectiveFunction<Type>::clear()
     m_SecondDerivativeControlControl.release();
 }
 
-template<class Type>
+template<typename Type>
 void DOTk_MexObjectiveFunction<Type>::initialize(const mxArray* operators_, const dotk::types::problem_t & type_)
 {
     m_Value.reset(mxDuplicateArray(mxGetField(operators_, 0, "value")));

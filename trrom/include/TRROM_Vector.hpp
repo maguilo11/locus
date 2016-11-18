@@ -26,7 +26,9 @@ public:
     // Element-wise multiplication of two vectors.
     virtual void elementWiseMultiplication(const trrom::Vector<ScalarType> & input_) = 0;
     // Constant times a Vector plus a Vector.
-    virtual void axpy(const ScalarType & alpha_, const trrom::Vector<ScalarType> & input_) = 0;
+    virtual void update(const ScalarType & alpha_,
+                        const trrom::Vector<ScalarType> & input_,
+                        const ScalarType & beta_) = 0;
     // Returns the maximum element in a range and its global position index.
     virtual ScalarType max(int & index_) const = 0;
     // Returns the minimum element in a range and its global position index.
@@ -41,14 +43,12 @@ public:
     virtual ScalarType norm() const = 0;
     // Assigns new contents to the Vector, replacing its current contents, and not modifying its size.
     virtual void fill(const ScalarType & value_) = 0;
-    // Copies the elements in the range [first,last) into the range beginning at result.
-    virtual void copy(const trrom::Vector<ScalarType> & input_) = 0;
     // Returns the number of local elements in the Vector.
     virtual int size() const = 0;
     // Creates memory for an object of type trrom::Vector
-    virtual std::tr1::shared_ptr< trrom::Vector<ScalarType> > create() const = 0;
+    virtual std::tr1::shared_ptr<trrom::Vector<ScalarType> > create() const = 0;
     // Creates object of type trrom::Vector
-    virtual std::tr1::shared_ptr< trrom::Vector<ScalarType> > create(int global_dim_ = 0) const = 0;
+    virtual std::tr1::shared_ptr<trrom::Vector<ScalarType> > create(int global_dim_ = 0) const = 0;
     // Operator overloads the square bracket operator
     virtual ScalarType & operator [](int index_) = 0;
     // Operator overloads the square bracket operator

@@ -12,7 +12,7 @@ namespace dotk
 {
 
 DOTk_MexArrayPtr::DOTk_MexArrayPtr() :
-        m_Ptr(NULL)
+        m_Ptr(nullptr)
 {
 }
 
@@ -23,7 +23,7 @@ DOTk_MexArrayPtr::DOTk_MexArrayPtr(mxArray* ptr_) :
 
 void DOTk_MexArrayPtr::reset(mxArray* ptr_)
 {
-    if(m_Ptr != NULL)
+    if(m_Ptr != nullptr)
     {
         mxDestroyArray(m_Ptr);
     }
@@ -38,17 +38,17 @@ mxArray* DOTk_MexArrayPtr::get() const
 mxArray* DOTk_MexArrayPtr::release()
 {
     mxArray* ptr = m_Ptr;
-    m_Ptr = NULL;
+    m_Ptr = nullptr;
     return (ptr);
 }
 
 DOTk_MexArrayPtr::~DOTk_MexArrayPtr()
 {
-    if(m_Ptr != NULL)
+    if(m_Ptr != nullptr)
     {
         mxDestroyArray(m_Ptr);
     }
-    m_Ptr = NULL;
+    m_Ptr = nullptr;
 }
 
 }
