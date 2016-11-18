@@ -11,6 +11,7 @@
 
 namespace trrom
 {
+
 template<typename ScalarType>
 class Vector;
 
@@ -29,9 +30,13 @@ public:
     {
     }
 
-    ScalarType trace() const
+    int getNumRows() const
     {
-        return (m_Matrix->trace());
+        return (m_Matrix->getNumRows());
+    }
+    int getNumCols() const
+    {
+        return (m_Matrix->getNumCols());
     }
     void fill(ScalarType value_)
     {
@@ -45,14 +50,9 @@ public:
     {
         m_Matrix->insert(input_);
     }
-
-    void copy(const trrom::Matrix<ScalarType> & input_)
+    void update(const ScalarType & alpha_, const trrom::Matrix<ScalarType> & input_, const ScalarType & beta_)
     {
-        m_Matrix->copy(input_);
-    }
-    void add(const ScalarType & alpha_, const trrom::Matrix<ScalarType> & input_)
-    {
-        m_Matrix->add(alpha_, input_);
+        m_Matrix->update(alpha_, input_, beta_);
     }
     void gemv(bool transpose_,
               const ScalarType & alpha_,
@@ -71,41 +71,42 @@ public:
     {
         m_Matrix->gemm(transpose_A_, transpose_B_, alpha_, B_, beta_, C_);
     }
-
-    int numRows() const
+    double getGlobalValue(const int & global_row_index_, const int & global_column_index_) const
     {
-        return (m_Matrix->numRows());
+        return (m_Matrix->getGlobalValue(global_row_index_, global_column_index_));
     }
-    int numCols() const
+    void replaceGlobalValue(const int & global_row_index_, const int & global_column_index_, const ScalarType & value_)
     {
-        return (m_Matrix->numCols());
+        m_Matrix->replaceGlobalValue(global_row_index_, global_column_index_, value_);
     }
-    ScalarType & operator ()(const int & row_index_, const int & column_index_)
+    std::tr1::shared_ptr<trrom::Matrix<ScalarType> > create(int nrows_ = 0, int ncols_ = 0) const
     {
-        return (m_Matrix->operator ()(row_index_, column_index_));
-    }
-    const ScalarType & operator ()(const int & row_index_, const int & column_index_) const
-    {
-        return (m_Matrix->operator ()(row_index_, column_index_));
+        assert(nrows_ >= 0);
+        assert(ncols_ >= 0);
+        std::tr1::shared_ptr<trrom::mock::IndexMatrix<ScalarType> > this_copy;
+        if((nrows_ > 0) && (ncols_ > 0))
+        {
+            trrom::SerialVector<ScalarType> vector(nrows_);
+            this_copy.reset(new trrom::mock::IndexMatrix<ScalarType>(vector, ncols_));
+        }
+        else
+        {
+            int num_rows = this->getNumRows();
+            int num_cols = this->getNumCols();
+            trrom::SerialVector<ScalarType> vector(num_rows);
+            std::tr1::shared_ptr<trrom::mock::IndexMatrix<ScalarType> >
+                matrix(new trrom::mock::IndexMatrix<ScalarType>(vector, num_cols));
+        }
+        return (this_copy);
     }
 
     trrom::Vector<ScalarType> & vector(int index_) const
     {
         return (m_Matrix->vector(index_));
     }
-    std::tr1::shared_ptr<trrom::Matrix<ScalarType> > create() const
+    ScalarType trace() const
     {
-        int num_rows = this->numRows();
-        int num_cols = this->numCols();
-        trrom::SerialVector<ScalarType> vector(num_rows);
-        std::tr1::shared_ptr<trrom::mock::IndexMatrix<ScalarType> > matrix(new trrom::mock::IndexMatrix<ScalarType>(vector, num_cols));
-        return (matrix);
-    }
-    std::tr1::shared_ptr<trrom::Matrix<ScalarType> > create(int nrows_, int ncols_) const
-    {
-        trrom::SerialVector<ScalarType> vector(nrows_);
-        std::tr1::shared_ptr<trrom::mock::IndexMatrix<ScalarType> > matrix(new trrom::mock::IndexMatrix<ScalarType>(vector, ncols_));
-        return (matrix);
+        return (m_Matrix->trace());
     }
 
 private:

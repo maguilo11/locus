@@ -28,10 +28,10 @@ void properOrthogonalDecomposition(const double & threshold_,
     ///     snapshots_ (\mathbf{U})   - (In) current data storage
     ///     basis_ (\Phi)             - (Out) orthonormal basis
     int num_singular_values = singular_values_.size();
-    assert(basis_.numCols() > 0);
-    assert(num_singular_values == basis_.numCols());
-    assert(num_singular_values == left_singular_vectors_.numRows());
-    assert(num_singular_values == left_singular_vectors_.numCols());
+    assert(basis_.getNumCols() > 0);
+    assert(num_singular_values == basis_.getNumCols());
+    assert(num_singular_values == left_singular_vectors_.getNumRows());
+    assert(num_singular_values == left_singular_vectors_.getNumCols());
 
     double cumulative_energy = 0;
     double total_energy = singular_values_.sum();

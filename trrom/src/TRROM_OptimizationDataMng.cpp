@@ -164,7 +164,7 @@ const std::tr1::shared_ptr<trrom::Vector<double> > & OptimizationDataMng::getMat
 
 void OptimizationDataMng::setTrialStep(const trrom::Vector<double> & input_)
 {
-    m_TrialStep->copy(input_);
+    m_TrialStep->update(1., input_, 0.);
 }
 
 const std::tr1::shared_ptr<trrom::Vector<double> > & OptimizationDataMng::getTrialStep() const
@@ -174,12 +174,12 @@ const std::tr1::shared_ptr<trrom::Vector<double> > & OptimizationDataMng::getTri
 
 void OptimizationDataMng::setNewPrimal(const trrom::Vector<double> & input_)
 {
-    m_NewPrimal->copy(input_);
+    m_NewPrimal->update(1., input_, 0.);
 }
 
 void OptimizationDataMng::setOldPrimal(const trrom::Vector<double> & input_)
 {
-    m_OldPrimal->copy(input_);
+    m_OldPrimal->update(1., input_, 0.);
 }
 
 const std::tr1::shared_ptr<trrom::Vector<double> > & OptimizationDataMng::getNewPrimal() const
@@ -194,12 +194,12 @@ const std::tr1::shared_ptr<trrom::Vector<double> > & OptimizationDataMng::getOld
 
 void OptimizationDataMng::setNewGradient(const trrom::Vector<double> & input_)
 {
-    m_NewGradient->copy(input_);
+    m_NewGradient->update(1., input_, 0.);
 }
 
 void OptimizationDataMng::setOldGradient(const trrom::Vector<double> & input_)
 {
-    m_OldGradient->copy(input_);
+    m_OldGradient->update(1., input_, 0.);
 }
 
 const std::tr1::shared_ptr<trrom::Vector<double> > & OptimizationDataMng::getNewGradient() const
@@ -214,7 +214,7 @@ const std::tr1::shared_ptr<trrom::Vector<double> > & OptimizationDataMng::getOld
 
 void OptimizationDataMng::initialize(const std::tr1::shared_ptr<trrom::Data> & data_)
 {
-    m_NewPrimal->copy(*data_->control());
+    m_NewPrimal->update(1., *data_->control(), 0.);
 }
 
 }

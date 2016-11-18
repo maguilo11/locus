@@ -28,21 +28,21 @@ void TeuchosSerialDenseSolver::solve(const trrom::Matrix<double> & A_,
                                      trrom::Vector<double> & lhs_)
 {
     // NOTE: Matrix has to be set before the RHS and LHS vectors. If not, a segmentation fault is thrown
-    int num_rows = A_.numRows();
-    int num_columns = A_.numCols();
-    trrom::TeuchosSerialDenseMatrix<double> matrix(num_rows, num_columns);
-    matrix.copy(A_);
+    int num_rows = A_.getNumRows();
+    int num_columns = A_.getNumCols();
+    trrom::TeuchosSerialDenseMatrix matrix(num_rows, num_columns);
+    matrix.update(1., A_, 0.);
     m_Solver->setMatrix(Teuchos::rcp(&(*matrix.data()), false));
-    trrom::TeuchosSerialDenseVector<double> rhs(num_rows);
-    rhs.copy(rhs_);
-    trrom::TeuchosSerialDenseVector<double> lhs(num_columns);
+    trrom::TeuchosSerialDenseVector rhs(num_rows);
+    rhs.update(1., rhs_, 0.);
+    trrom::TeuchosSerialDenseVector lhs(num_columns);
     m_Solver->setVectors(Teuchos::rcp(&(*lhs.data()), false),Teuchos::rcp(&(*rhs.data()), false));
 
     m_Solver->factorWithEquilibration(true);
     m_Solver->factor();
     m_Solver->solve();
 
-    lhs_.copy(lhs);
+    lhs_.update(1., lhs, 0.);
 }
 
 }

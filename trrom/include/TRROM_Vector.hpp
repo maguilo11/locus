@@ -25,7 +25,7 @@ public:
     virtual void scale(const ScalarType & alpha_) = 0;
     // Element-wise multiplication of two vectors.
     virtual void elementWiseMultiplication(const trrom::Vector<ScalarType> & input_) = 0;
-    // Constant times a Vector plus a Vector.
+    /*! Update vector values with scaled values of A, this = beta*this + alpha*A. */
     virtual void update(const ScalarType & alpha_,
                         const trrom::Vector<ScalarType> & input_,
                         const ScalarType & beta_) = 0;
@@ -45,8 +45,6 @@ public:
     virtual void fill(const ScalarType & value_) = 0;
     // Returns the number of local elements in the Vector.
     virtual int size() const = 0;
-    // Creates memory for an object of type trrom::Vector
-    virtual std::tr1::shared_ptr<trrom::Vector<ScalarType> > create() const = 0;
     // Creates object of type trrom::Vector
     virtual std::tr1::shared_ptr<trrom::Vector<ScalarType> > create(int global_dim_ = 0) const = 0;
     // Operator overloads the square bracket operator

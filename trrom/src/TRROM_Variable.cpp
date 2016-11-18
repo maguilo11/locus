@@ -80,7 +80,7 @@ void Variable::setLowerBound(const trrom::Vector<double> & lower_bound_)
         m_LowerBound.reset();
         m_LowerBound = m_Data->create();
     }
-    m_LowerBound->copy(lower_bound_);
+    m_LowerBound->update(1., lower_bound_, 0.);
 }
 
 const std::tr1::shared_ptr<trrom::Vector<double> > & Variable::lowerBound() const
@@ -107,7 +107,7 @@ void Variable::setUpperBound(const trrom::Vector<double> & upper_bound_)
         m_UpperBound.reset();
         m_UpperBound = m_Data->create();
     }
-    m_UpperBound->copy(upper_bound_);
+    m_UpperBound->update(1., upper_bound_, 0.);
 }
 
 const std::tr1::shared_ptr<trrom::Vector<double> > & Variable::upperBound() const
@@ -134,7 +134,7 @@ void Variable::checkData()
 
 void Variable::initialize(const trrom::Vector<double> & data_)
 {
-    m_Data->copy(data_);
+    m_Data->update(1., data_, 0.);
 }
 
 void Variable::initialize(const trrom::Vector<double> & data_,
@@ -175,9 +175,9 @@ void Variable::initialize(const trrom::Vector<double> & data_,
             }
         }
 
-        m_Data->copy(data_);
-        m_LowerBound->copy(lower_bound_);
-        m_UpperBound->copy(upper_bound_);
+        m_Data->update(1., data_, 0.);
+        m_LowerBound->update(1., lower_bound_, 0.);
+        m_UpperBound->update(1., upper_bound_, 0.);
     }
     catch(const char *error_msg)
     {

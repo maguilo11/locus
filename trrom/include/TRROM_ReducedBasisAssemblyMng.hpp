@@ -91,18 +91,13 @@ private:
     int m_LowFidelityAdjointSolveCounter;
     int m_HighFidelityAdjointSolveCounter;
 
-    trrom::types::fidelity_t m_Fidelity;
-
     std::tr1::shared_ptr<trrom::Vector<double> > m_Dual;
     std::tr1::shared_ptr<trrom::Vector<double> > m_State;
     std::tr1::shared_ptr<trrom::Vector<double> > m_StateWorkVec;
     std::tr1::shared_ptr<trrom::Vector<double> > m_ControlWorkVec;
-
-    std::tr1::shared_ptr<trrom::Vector<double> > m_RightHandSide;
     std::tr1::shared_ptr<trrom::Vector<double> > m_LeftHandSideSnapshot;
 
     std::tr1::shared_ptr<trrom::ReducedBasisPDE> m_PDE;
-    std::tr1::shared_ptr<trrom::ReducedBasisData> m_Data;
     std::tr1::shared_ptr<trrom::ReducedBasisObjective> m_Objective;
     std::tr1::shared_ptr<trrom::ReducedBasisInterface> m_ReducedBasisInterface;
 

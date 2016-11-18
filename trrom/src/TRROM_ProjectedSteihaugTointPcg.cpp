@@ -55,9 +55,9 @@ void ProjectedSteihaugTointPcg::solve(const std::tr1::shared_ptr<trrom::Precondi
     m_NewtonStep->fill(0.);
     m_ConjugateDirection->fill(0);
 
-    m_Residual->copy(*mng_->getNewGradient());
+    m_Residual->update(1., *mng_->getNewGradient(), 0.);
     m_Residual->elementWiseMultiplication(*m_InactiveSet);
-    m_Residual->scale(static_cast<double>(-1.));
+    m_Residual->scale(-1.);
 
     this->iterate(preconditioner_, linear_operator_, mng_);
     if(trrom::SteihaugTointSolver::getNumItrDone() == 1)
@@ -68,11 +68,11 @@ void ProjectedSteihaugTointPcg::solve(const std::tr1::shared_ptr<trrom::Precondi
     double norm_newton_step = m_NewtonStep->norm();
     if(norm_newton_step <= static_cast<double>(0.))
     {
-        m_NewtonStep->copy(*mng_->getNewGradient());
-        m_NewtonStep->scale(static_cast<double>(-1.));
+        m_NewtonStep->update(1., *mng_->getNewGradient(), 0.);
+        m_NewtonStep->scale(-1.);
         m_NewtonStep->elementWiseMultiplication(*m_InactiveSet);
     }
-    mng_->getTrialStep()->copy(*m_NewtonStep);
+    mng_->getTrialStep()->update(1., *m_NewtonStep, 0.);
 }
 
 void ProjectedSteihaugTointPcg::iterate(const std::tr1::shared_ptr<trrom::Preconditioner> & preconditioner_,
@@ -100,12 +100,11 @@ void ProjectedSteihaugTointPcg::iterate(const std::tr1::shared_ptr<trrom::Precon
         if(itr > 1)
         {
             double beta = current_tau / previous_tau;
-            m_ConjugateDirection->scale(beta);
-            m_ConjugateDirection->axpy(static_cast<double>(1.), *m_InvPrecTimesResidual);
+            m_ConjugateDirection->update(1., *m_InvPrecTimesResidual, beta);
         }
         else
         {
-            m_ConjugateDirection->copy(*m_InvPrecTimesResidual);
+            m_ConjugateDirection->update(1., *m_InvPrecTimesResidual, 0.);
         }
         this->applyVectorToHessian(mng_, linear_operator_, m_ConjugateDirection, m_HessTimesConjugateDirection);
         double curvature = m_ConjugateDirection->dot(*m_HessTimesConjugateDirection);
@@ -113,23 +112,23 @@ void ProjectedSteihaugTointPcg::iterate(const std::tr1::shared_ptr<trrom::Precon
         {
             // compute scaled inexact trial step
             double scaling = this->step(mng_, preconditioner_);
-            m_NewtonStep->axpy(scaling, *m_ConjugateDirection);
+            m_NewtonStep->update(scaling, *m_ConjugateDirection, 1.);
             break;
         }
         double rayleigh_quotient = current_tau / curvature;
-        m_Residual->axpy(-rayleigh_quotient, *m_HessTimesConjugateDirection);
+        m_Residual->update(-rayleigh_quotient, *m_HessTimesConjugateDirection, 1.);
         norm_residual = m_Residual->norm();
-        m_NewtonStep->axpy(rayleigh_quotient, *m_ConjugateDirection);
+        m_NewtonStep->update(rayleigh_quotient, *m_ConjugateDirection, 1.);
         if(itr == 1)
         {
-            m_CauchyStep->copy(*m_NewtonStep);
+            m_CauchyStep->update(1., *m_NewtonStep, 0.);
         }
         double norm_newton_step = m_NewtonStep->norm();
         if(norm_newton_step > current_trust_region_radius)
         {
             // compute scaled inexact trial step
             double scaling = this->step(mng_, preconditioner_);
-            m_NewtonStep->axpy(scaling, *m_ConjugateDirection);
+            m_NewtonStep->update(scaling, *m_ConjugateDirection, 1.);
             trrom::SteihaugTointSolver::setStoppingCriterion(trrom::types::TRUST_REGION_VIOLATED);
             break;
         }
@@ -165,16 +164,16 @@ void ProjectedSteihaugTointPcg::applyVectorToHessian(const std::tr1::shared_ptr<
                                                      const std::tr1::shared_ptr<trrom::Vector<double> > & vector_,
                                                      std::tr1::shared_ptr<trrom::Vector<double> > & output_)
 {
-    m_ActiveVector->copy(*vector_);
+    m_ActiveVector->update(1., *vector_, 0.);
     m_ActiveVector->elementWiseMultiplication(*m_ActiveSet);
-    m_InactiveVector->copy(*vector_);
+    m_InactiveVector->update(1., *vector_, 0.);
     m_InactiveVector->elementWiseMultiplication(*m_InactiveSet);
 
     output_->fill(0);
     linear_operator_->apply(mng_, m_InactiveVector, output_);
 
     output_->elementWiseMultiplication(*m_InactiveSet);
-    output_->axpy(static_cast<double>(1.), *m_ActiveVector);
+    output_->update(1., *m_ActiveVector, 1.);
 }
 
 void ProjectedSteihaugTointPcg::applyVectorToPreconditioner(const std::tr1::shared_ptr<trrom::OptimizationDataMng> & mng_,
@@ -182,16 +181,16 @@ void ProjectedSteihaugTointPcg::applyVectorToPreconditioner(const std::tr1::shar
                                                             const std::tr1::shared_ptr<trrom::Vector<double> > & vector_,
                                                             std::tr1::shared_ptr<trrom::Vector<double> > & output_)
 {
-    m_ActiveVector->copy(*vector_);
+    m_ActiveVector->update(1., *vector_, 0.);
     m_ActiveVector->elementWiseMultiplication(*m_ActiveSet);
-    m_InactiveVector->copy(*vector_);
+    m_InactiveVector->update(1., *vector_, 0.);
     m_InactiveVector->elementWiseMultiplication(*m_InactiveSet);
 
     output_->fill(0);
     preconditioner_->applyPreconditioner(mng_, m_InactiveVector, output_);
 
     output_->elementWiseMultiplication(*m_InactiveSet);
-    output_->axpy(static_cast<double>(1.), *m_ActiveVector);
+    output_->update(1., *m_ActiveVector, 1.);
 }
 
 void ProjectedSteihaugTointPcg::applyVectorToInvPreconditioner(const std::tr1::shared_ptr<trrom::OptimizationDataMng> & mng_,
@@ -199,16 +198,16 @@ void ProjectedSteihaugTointPcg::applyVectorToInvPreconditioner(const std::tr1::s
                                                                const std::tr1::shared_ptr<trrom::Vector<double> > & vector_,
                                                                std::tr1::shared_ptr<trrom::Vector<double> > & output_)
 {
-    m_ActiveVector->copy(*vector_);
+    m_ActiveVector->update(1., *vector_, 0.);
     m_ActiveVector->elementWiseMultiplication(*m_ActiveSet);
-    m_InactiveVector->copy(*vector_);
+    m_InactiveVector->update(1., *vector_, 0.);
     m_InactiveVector->elementWiseMultiplication(*m_InactiveSet);
 
     output_->fill(0);
     preconditioner_->applyInvPreconditioner(mng_, m_InactiveVector, output_);
 
     output_->elementWiseMultiplication(*m_InactiveSet);
-    output_->axpy(static_cast<double>(1.), *m_ActiveVector);
+    output_->update(1., *m_ActiveVector, 1.);
 }
 
 }

@@ -24,12 +24,13 @@ public:
     {
     }
 
+    virtual int getNumRows() const = 0;
+    virtual int getNumCols() const = 0;
     virtual void fill(ScalarType value_) = 0;
     virtual void scale(ScalarType value_) = 0;
-    virtual void insert(const trrom::Vector<ScalarType> & input_) = 0;
-
-    virtual void copy(const trrom::Matrix<ScalarType> & input_) = 0;
-    virtual void add(const ScalarType & alpha_, const trrom::Matrix<ScalarType> & input_) = 0;
+    virtual void update(const ScalarType & alpha_,
+                        const trrom::Matrix<ScalarType> & input_,
+                        const ScalarType & beta_) = 0;
     virtual void gemv(bool transpose_,
                       const ScalarType & alpha_,
                       const trrom::Vector<ScalarType> & input_,
@@ -41,16 +42,15 @@ public:
                       const trrom::Matrix<ScalarType> & B_,
                       const ScalarType & beta_,
                       trrom::Matrix<ScalarType> & C_) const = 0;
-
-    virtual int numRows() const = 0;
-    virtual int numCols() const = 0;
-    virtual ScalarType & operator ()(const int & row_index_, const int & column_index_) = 0;
-    virtual const ScalarType & operator ()(const int & row_index_, const int & column_index_) const = 0;
+    virtual void replaceGlobalValue(const int & global_row_index_,
+                                    const int & global_column_index_,
+                                    const ScalarType & value_) = 0;
+    virtual ScalarType & operator ()(int my_row_index_, int my_column_index_) = 0;
+    virtual const ScalarType & operator ()(int my_row_index_, int my_column_index_) const = 0;
 
     virtual trrom::Vector<ScalarType> & vector(int index_) const = 0;
-
-    virtual std::tr1::shared_ptr<trrom::Matrix<ScalarType> > create() const = 0;
-    virtual std::tr1::shared_ptr<trrom::Matrix<ScalarType> > create(int nrows_, int ncols_) const = 0;
+    virtual void insert(const trrom::Vector<ScalarType> & input_) = 0;
+    virtual std::tr1::shared_ptr<trrom::Matrix<ScalarType> > create(int nrows_ = 0, int ncols_ = 0) const = 0;
 };
 
 }

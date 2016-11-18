@@ -51,26 +51,29 @@ void LowRankSVD::formMatrixK(const trrom::Vector<double> & singular_values_,
     ///     R_               - (In) upper triangular matrix computed from a QR decomposition, where
     ///                        \mathbf{R}\in\mathbb{R}^{k\times{k}}
     ///     K_               - (Out) \mathbf{K}=\left[\Sigma \mathbf{M}; 0 \mathbf{R}\right]
-    assert(M_.numCols() == R_.numCols());
-    assert(R_.numRows() == R_.numCols());
-    assert(singular_values_.size() == M_.numRows());
-    assert(K_.numRows() == (singular_values_.size() + M_.numCols()));
-    assert(K_.numCols() == (singular_values_.size() + M_.numCols()));
+    assert(M_.getNumCols() == R_.getNumCols());
+    assert(R_.getNumRows() == R_.getNumCols());
+    assert(singular_values_.size() == M_.getNumRows());
+    assert(K_.getNumRows() == (singular_values_.size() + M_.getNumCols()));
+    assert(K_.getNumCols() == (singular_values_.size() + M_.getNumCols()));
 
-    int num_new_snapshots = M_.numCols();
+    int num_new_snapshots = M_.getNumCols();
     int num_singular_values = singular_values_.size();
     for(int index = 0; index < num_singular_values; ++index)
     {
-        K_(index, index) = singular_values_[index];
+        double value = singular_values_[index];
+        K_(index, index) = value;
         for(int j = 0; j < num_new_snapshots; ++j)
         {
             int j_column = num_singular_values + j;
-            K_(index, j_column) = M_(index, j);
+            value = M_(index, j);
+            K_(index, j_column) = value;
             int k_row = num_singular_values + j;
             for(int k = 0; k < num_new_snapshots; ++k)
             {
                 int k_column = num_singular_values + k;
-                K_(k_row, k_column) = R_(j, k);
+                value = R_(j, k);
+                K_(k_row, k_column) = value;
             }
         }
     }
@@ -91,27 +94,29 @@ void LowRankSVD::formMatrixUbar(const trrom::Matrix<double> & left_singular_vect
     ///     C_                     - (In) left singular values obtained from a singular value decompostion of \mathbf{K}
     ///                              =\left[\Sigma \mathbf{M}; 0 \mathbf{R}\right], see description for function formMatrixK
     ///     Ubar_                  - (Out) new left singular basis \bar{\mathbf{U}} = \left[\Phi \mathbf{Q}\right]\mathbf{C}
-    assert(Ubar_.numCols() == C_.numCols());
-    assert(left_singular_vectors_.numRows() == Q_.numRows());
-    assert(left_singular_vectors_.numRows() == Ubar_.numRows());
-    assert(C_.numRows() == (Q_.numCols() + left_singular_vectors_.numCols()));
-    assert(C_.numCols() == (Q_.numCols() + left_singular_vectors_.numCols()));
+    assert(Ubar_.getNumCols() == C_.getNumCols());
+    assert(left_singular_vectors_.getNumRows() == Q_.getNumRows());
+    assert(left_singular_vectors_.getNumRows() == Ubar_.getNumRows());
+    assert(C_.getNumRows() == (Q_.getNumCols() + left_singular_vectors_.getNumCols()));
+    assert(C_.getNumCols() == (Q_.getNumCols() + left_singular_vectors_.getNumCols()));
 
-    int num_new_snapshots = Q_.numCols();
-    int new_singular_vectors = C_.numCols();
-    int num_dofs = left_singular_vectors_.numRows();
-    int num_singular_vectors = left_singular_vectors_.numCols();
+    int num_new_snapshots = Q_.getNumCols();
+    int new_singular_vectors = C_.getNumCols();
+    int num_dofs = left_singular_vectors_.getNumRows();
+    int num_singular_vectors = left_singular_vectors_.getNumCols();
     std::tr1::shared_ptr<trrom::Matrix<double> > matrix = left_singular_vectors_.create(num_dofs, new_singular_vectors);
     for(int row = 0; row < num_dofs; ++row)
     {
         for(int j = 0; j < num_singular_vectors; ++j)
         {
-            (*matrix)(row, j) = left_singular_vectors_(row, j);
+            double value = left_singular_vectors_(row, j);
+            (*matrix)(row, j) = value;
         }
         for(int k = 0; k < num_new_snapshots; ++k)
         {
             int column = num_singular_vectors + k;
-            (*matrix)(row, column) = Q_(row, k);
+            double value = Q_(row, k);
+            (*matrix)(row, column) = value;
         }
     }
     matrix->gemm(false, false, 1., C_, 0., Ubar_);
@@ -132,29 +137,30 @@ void LowRankSVD::formMatrixVbar(int num_new_snapshots_,
     ///                              =\left[\Sigma \mathbf{M}; 0 \mathbf{R}\right], see description for function formMatrixK
     ///     Vbar_                   - (Out) new right singular basis \bar{\mathbf{V}} = \left[\mathbf{V} 0; 0 \mathbf{I}\right]\mathbf{D}
     assert(num_new_snapshots_ > 0);
-    assert(Vbar_.numCols() == D_.numCols());
-    assert(D_.numRows() == (num_new_snapshots_ + right_singular_vectors_.numCols()));
-    assert(D_.numCols() == (num_new_snapshots_ + right_singular_vectors_.numCols()));
-    assert(right_singular_vectors_.numRows() == (Vbar_.numRows() - num_new_snapshots_));
-    assert(right_singular_vectors_.numCols() == (Vbar_.numCols() - num_new_snapshots_));
-    assert(Vbar_.numRows() == (right_singular_vectors_.numRows() + num_new_snapshots_));
+    assert(Vbar_.getNumCols() == D_.getNumCols());
+    assert(D_.getNumRows() == (num_new_snapshots_ + right_singular_vectors_.getNumCols()));
+    assert(D_.getNumCols() == (num_new_snapshots_ + right_singular_vectors_.getNumCols()));
+    assert(right_singular_vectors_.getNumRows() == (Vbar_.getNumRows() - num_new_snapshots_));
+    assert(right_singular_vectors_.getNumCols() == (Vbar_.getNumCols() - num_new_snapshots_));
+    assert(Vbar_.getNumRows() == (right_singular_vectors_.getNumRows() + num_new_snapshots_));
 
-    int rank = right_singular_vectors_.numCols();
-    int num_old_snapshots = right_singular_vectors_.numRows();
-    std::tr1::shared_ptr<trrom::Matrix<double> > matrix = Vbar_.create(Vbar_.numRows(), Vbar_.numCols());
+    int spectral_dimension = right_singular_vectors_.getNumCols();
+    int num_old_snapshots = right_singular_vectors_.getNumRows();
+    std::tr1::shared_ptr<trrom::Matrix<double> > matrix = Vbar_.create(Vbar_.getNumRows(), Vbar_.getNumCols());
     for(int i = 0; i < num_old_snapshots; ++i)
     {
-        for(int j = 0; j < rank; ++j)
+        for(int j = 0; j < spectral_dimension; ++j)
         {
-            (*matrix)(i, j) = right_singular_vectors_(i, j);
+            double value = right_singular_vectors_(i, j);
+            (*matrix)(i, j) = value;
         }
     }
     // Set Block 22 = \mathbf{I}
-    for(int i = 0; i < num_new_snapshots_; ++i)
+    for(int index = 0; index < num_new_snapshots_; ++index)
     {
-        int row = num_old_snapshots + i;
-        int column = rank + i;
-        (*matrix)(row, column) = static_cast<double>(1.);
+        int row = num_old_snapshots + index;
+        int column = spectral_dimension + index;
+        (*matrix)(row, column) = 1.;
     }
     matrix->gemm(false, false, 1., D_, 0., Vbar_);
 }
@@ -165,16 +171,16 @@ void LowRankSVD::solve(const std::tr1::shared_ptr<trrom::Matrix<double> > & new_
                        std::tr1::shared_ptr<trrom::Matrix<double> > & right_singular_vectors_)
 {
     // Compute \mathbf{M} = \mathbf{U}^{T}\mathbf{Y}\in\mathbb{R}^{{r}\times{k}}
-    int num_snapshots = new_snapshots_->numCols();
-    int num_singular_vectors = left_singular_vectors_->numCols();
+    int num_snapshots = new_snapshots_->getNumCols();
+    int num_singular_vectors = left_singular_vectors_->getNumCols();
     std::tr1::shared_ptr<trrom::Matrix<double> > M = new_snapshots_->create(num_singular_vectors, num_snapshots);
     left_singular_vectors_->gemm(true, false, 1., *new_snapshots_, 0., *M);
 
     // Compute \bar{\mathbf{P}} = \mathbf{Y} - \mathbf{U}\mathbf{M}\in\mathbb{R}^{{m}\times{k}}
-    int num_dofs = new_snapshots_->numRows();
+    int num_dofs = new_snapshots_->getNumRows();
     std::tr1::shared_ptr<trrom::Matrix<double> > Pb = new_snapshots_->create(num_dofs, num_snapshots);
     left_singular_vectors_->gemm(false, false, -1., *M, 0., *Pb);
-    Pb->add(1., *new_snapshots_);
+    Pb->update(1., *new_snapshots_, 1.);
 
     // Compute QR factorization of \bar{\mathbf{P}} = \mathbf{Q}\mathbf{R}, where
     // \mathbf{Q}\in\mathbb{R}^{{m}\times{k}} and \mathbf{R}\in\mathbb{R}^{{k}\times{k}}
@@ -183,9 +189,9 @@ void LowRankSVD::solve(const std::tr1::shared_ptr<trrom::Matrix<double> > & new_
     m_OrthoFactorization->factorize(*Pb, *Q, *R);
 
     // Form matrix \mathbf{K}
-    int numRows = num_singular_vectors + R->numRows();
-    int numCols = num_singular_vectors + num_snapshots;
-    std::tr1::shared_ptr<trrom::Matrix<double> > K = left_singular_vectors_->create(numRows, numCols);
+    int num_rows = num_singular_vectors + R->getNumRows();
+    int num_columns = num_singular_vectors + num_snapshots;
+    std::tr1::shared_ptr<trrom::Matrix<double> > K = left_singular_vectors_->create(num_rows, num_columns);
     this->formMatrixK(*singular_values_, *M, *R, *K);
 
     // Compute spectral decomposition of \mathbf{K}=\mathbf{C}\mathbf{S}\mathbf{D}^{T},
@@ -197,23 +203,23 @@ void LowRankSVD::solve(const std::tr1::shared_ptr<trrom::Matrix<double> > & new_
 
     // Set low rank singular value decomposition output
     singular_values_ = singular_values->create();
-    singular_values_->copy(*singular_values);
+    singular_values_->update(1., *singular_values, 0.);
 
     // Form matrix \bar{\mathbf{U}}, i.e. updated set of left singular vectors
-    numCols = left_singular_vectors->numCols();
-    std::tr1::shared_ptr<trrom::Matrix<double> > Ubar = new_snapshots_->create(num_dofs, numCols);
+    num_columns = left_singular_vectors->getNumCols();
+    std::tr1::shared_ptr<trrom::Matrix<double> > Ubar = new_snapshots_->create(num_dofs, num_columns);
     this->formMatrixUbar(*left_singular_vectors_, *Q, *left_singular_vectors, *Ubar);
     left_singular_vectors_ = Ubar->create();
-    left_singular_vectors_->copy(*Ubar);
+    left_singular_vectors_->update(1., *Ubar, 0.);
 
     // Form matrix \bar{\mathbf{V}}, i.e. updated set of right singular vectors
-    numCols = right_singular_vectors->numRows();
-    int dim = right_singular_vectors->numRows() - left_singular_vectors_->numCols();
-    numRows = left_singular_vectors_->numRows() + dim;
-    std::tr1::shared_ptr<trrom::Matrix<double> > Vbar = new_snapshots_->create(numRows, numCols);
+    num_columns = right_singular_vectors->getNumRows();
+    int dim = right_singular_vectors->getNumRows() - left_singular_vectors_->getNumCols();
+    num_rows = left_singular_vectors_->getNumRows() + dim;
+    std::tr1::shared_ptr<trrom::Matrix<double> > Vbar = new_snapshots_->create(num_rows, num_columns);
     this->formMatrixVbar(num_snapshots, *right_singular_vectors_, *right_singular_vectors, *Vbar);
     right_singular_vectors_ = Vbar->create();
-    right_singular_vectors_->copy(*Vbar);
+    right_singular_vectors_->update(1., *Vbar, 0.);
 }
 
 }

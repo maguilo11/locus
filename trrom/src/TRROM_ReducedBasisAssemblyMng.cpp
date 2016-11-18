@@ -28,15 +28,12 @@ ReducedBasisAssemblyMng::ReducedBasisAssemblyMng(const std::tr1::shared_ptr<trro
         m_HighFidelitySolveCounter(0),
         m_LowFidelityAdjointSolveCounter(0),
         m_HighFidelityAdjointSolveCounter(0),
-        m_Fidelity(trrom::types::HIGH_FIDELITY),
         m_Dual(data_->dual()->create()),
         m_State(data_->state()->create()),
         m_StateWorkVec(data_->state()->create()),
         m_ControlWorkVec(data_->control()->create()),
-        m_RightHandSide(data_->createRightHandSideSnapshotCopy()),
         m_LeftHandSideSnapshot(data_->createLeftHandSideSnapshotCopy()),
         m_PDE(pde_),
-        m_Data(data_),
         m_Objective(objective_),
         m_ReducedBasisInterface(interface_)
 {
@@ -122,7 +119,8 @@ double ReducedBasisAssemblyMng::objective(const std::tr1::shared_ptr<trrom::Vect
 {
     m_State->fill(0.);
 
-    if(m_Fidelity == trrom::types::LOW_FIDELITY)
+    trrom::types::fidelity_t fidelity = m_ReducedBasisInterface->fidelity();
+    if(fidelity == trrom::types::LOW_FIDELITY)
     {
         this->solveLowFidelityPDE(control_);
     }
@@ -131,7 +129,7 @@ double ReducedBasisAssemblyMng::objective(const std::tr1::shared_ptr<trrom::Vect
         this->solveHighFidelityPDE(control_);
     }
 
-    double value = m_Objective->value(tolerance_, *m_State, *control_, inexactness_violated_);
+    double value = m_Objective->value(*m_State, *control_, tolerance_, inexactness_violated_);
     this->updateObjectiveCounter();
 
     return (value);
@@ -145,7 +143,8 @@ void ReducedBasisAssemblyMng::gradient(const std::tr1::shared_ptr<trrom::Vector<
     m_Dual->fill(0.);
     m_StateWorkVec->fill(0.);
 
-    if(m_Fidelity == trrom::types::LOW_FIDELITY)
+    trrom::types::fidelity_t fidelity = m_ReducedBasisInterface->fidelity();
+    if(fidelity == trrom::types::LOW_FIDELITY)
     {
         this->solveLowFidelityAdjointPDE(control_);
     }
@@ -159,14 +158,14 @@ void ReducedBasisAssemblyMng::gradient(const std::tr1::shared_ptr<trrom::Vector<
     m_PDE->adjointPartialDerivativeControl(*m_State, *control_, *m_Dual, *m_ControlWorkVec);
 
     // Assemble gradient operator
-    gradient_->copy(*m_ControlWorkVec);
+    gradient_->update(1., *m_ControlWorkVec, 0.);
     m_ControlWorkVec->fill(0.);
     m_Objective->partialDerivativeControl(*m_State, *control_, *m_ControlWorkVec);
-    gradient_->axpy(static_cast<double>(1.0), *m_ControlWorkVec);
+    gradient_->update(1., *m_ControlWorkVec, 1.);
     this->updateGradientCounter();
 
     // Check gradient inexactness tolerance
-    inexactness_violated_ = m_Objective->checkGradientInexactness(tolerance_, *m_State, *control_, *gradient_);
+    inexactness_violated_ = m_Objective->checkGradientInexactness(*m_State, *control_, *gradient_, tolerance_);
 }
 
 void ReducedBasisAssemblyMng::hessian(const std::tr1::shared_ptr<trrom::Vector<double> > & control_,
@@ -196,27 +195,28 @@ void ReducedBasisAssemblyMng::computeGaussNewtonHessian(const trrom::Vector<doub
                                                         const trrom::Vector<double> & vector_,
                                                         trrom::Vector<double> & hess_times_vec_)
 {
-    ///
-    /// Compute Gauss Newton Hessian approximation: \mathcal{L}_{zz}(\mathbf{u}(\mathbf{z}), \mathbf{z};
-    /// \lambda(\mathbf{z}))\delta{z} contribution, where \mathbf{u} denotes state vector, \mathbf{z}
-    /// denotes control vector, and \mathcal{L} denotes the Lagrangian functional.
-    ///
+    /*!
+     Compute Gauss Newton Hessian approximation: \mathcal{L}_{zz}(\mathbf{u}(\mathbf{z}), \mathbf{z};
+     \lambda(\mathbf{z}))\delta{z} contribution, where \mathbf{u} denotes state vector, \mathbf{z}
+     denotes control vector, and \mathcal{L} denotes the Lagrangian functional.
+    */
     hess_times_vec_.fill(0.);
     m_Objective->partialDerivativeControlControl(*m_State, control_, vector_, hess_times_vec_);
     m_ControlWorkVec->fill(0.);
-    m_PDE->partialDerivativeControlControl(*m_State, control_, *m_Dual, vector_, *m_ControlWorkVec);
-    hess_times_vec_.axpy(static_cast<double>(1.0), *m_ControlWorkVec);
+    m_PDE->adjointPartialDerivativeControlControl(*m_State, control_, *m_Dual, vector_, *m_ControlWorkVec);
+    hess_times_vec_.update(1., *m_ControlWorkVec, 1.);
 }
 
 trrom::types::fidelity_t ReducedBasisAssemblyMng::fidelity() const
 {
-    return (m_Fidelity);
+    trrom::types::fidelity_t fidelity = m_ReducedBasisInterface->fidelity();
+    return (fidelity);
 }
 
 void ReducedBasisAssemblyMng::fidelity(trrom::types::fidelity_t input_)
 {
-    m_Fidelity = input_;
     m_Objective->fidelity(input_);
+    m_ReducedBasisInterface->fidelity(input_);
 }
 
 void ReducedBasisAssemblyMng::useGaussNewtonHessian()
@@ -228,35 +228,35 @@ void ReducedBasisAssemblyMng::updateLowFidelityModel()
 {
     // Update orthonormal bases (state, dual, and left hand side bases)
     m_ReducedBasisInterface->updateOrthonormalBases();
-    // Update reduced right hand side vector used during the solution of the reduced state equation
-    m_RightHandSide->fill(0);
-    m_PDE->getRightHandSideSnapshot(*m_RightHandSide);
-    m_ReducedBasisInterface->updateReducedStateRightHandSide(m_RightHandSide);
     // Update left hand side Discrete Empirical Interpolation Method (DEIM) active indices
     m_ReducedBasisInterface->updateLeftHandSideDeimDataStructures();
-    // Update active degrees of freedom for reduced system of equations solves
-    m_PDE->updateLeftHandSideActiveIndices(*m_ReducedBasisInterface->getLeftHandSideActiveIndices());
+    // Update reduced right hand side vector
+    m_ReducedBasisInterface->updateReducedStateRightHandSide();
 }
 
 void ReducedBasisAssemblyMng::solveHighFidelityPDE(const std::tr1::shared_ptr<trrom::Vector<double> > & control_)
 {
-    // Solve for \mathbf{u}(\mathbf{z})\in\mathbb{R}^{n_u}, \mathbf{K}(\mathbf{z})\mathbf{u} = \mathbf{f}
+    /*! Solve for \mathbf{u}(\mathbf{z})\in\mathbb{R}^{n_u}, \mathbf{K}(\mathbf{z})\mathbf{u} = \mathbf{f}. If the parametric
+     * reduced-order model (low-fidelity model) is disabled, the user is expected to provide the current nonaffine, parameter
+     * dependent matrix snapshot by calling the respective store snapshot functionality in the ReducedBasisInterface class. If
+     * the low-fidelity model is enabled, the user is expected to provide the respective reduced snapshot for the nonaffine,
+     * parameter dependent matrices and right-hand side vectors  */
     m_LeftHandSideSnapshot->fill(0.);
-    m_PDE->solve(*control_, *m_State);
+    m_PDE->solve(*control_, *m_State, *m_ReducedBasisInterface->data());
     m_ReducedBasisInterface->storeStateSnapshot(*m_State);
-    // Collect left hand side (LHS) snapshot. Snapshot is only collected if LHS is
-    // not an affine map
-    m_PDE->getLeftHandSideSnapshot(*m_LeftHandSideSnapshot);
-    m_ReducedBasisInterface->storeLeftHandSideSnapshot(*m_LeftHandSideSnapshot);
     this->updateHighFidelitySolveCounter();
 }
 
 void ReducedBasisAssemblyMng::solveLowFidelityPDE(const std::tr1::shared_ptr<trrom::Vector<double> > & control_)
 {
-    // Compute current left hand side matrix approximation using the Discrete empirical Interpolation Method (DEIM)
+    /*! Compute current left hand side matrix approximation using the Active Indices computed using the Discrete Empirical
+     * Interpolation Method (DEIM). Since the low-fidelity model is enabled, the third-party application code is required
+     * to only provide the reduced left hand matrix approximation in vectorized format. Thus, the user is not required to
+     * solve the low-fidelity system of equations. The low-fidelity system of equations will be solved in-situ using the
+     * (default or custom) solver interface. */
     m_LeftHandSideSnapshot->fill(0);
-    m_PDE->getReducedLeftHandSideSnapshot(*control_, *m_LeftHandSideSnapshot);
-    m_ReducedBasisInterface->solveLowFidelityPDE(m_RightHandSide, m_LeftHandSideSnapshot, m_State);
+    m_PDE->solve(*control_, *m_State, *m_ReducedBasisInterface->data());
+    m_ReducedBasisInterface->solveLowFidelityPDE(m_State);
     this->updateLowFidelitySolveCounter();
 }
 
@@ -264,7 +264,7 @@ void ReducedBasisAssemblyMng::solveHighFidelityAdjointPDE(const std::tr1::shared
 {
     // Compute right hand side (RHS) vector of adjoint system of equations.
     m_Objective->partialDerivativeState(*m_State, *control_, *m_StateWorkVec);
-    m_StateWorkVec->scale(static_cast<double>(-1.0));
+    m_StateWorkVec->scale(-1);
     // Solve adjoint system of equations, \mathbf{K}(z)\lambda = \mathbf{f}_{\lambda},
     // where \mathbf{f}_{\lambda} = -\frac{\partial{J}(\mathbf{u},\mathbf{z})}
     // {\partial\mathbf{u}}
@@ -277,7 +277,7 @@ void ReducedBasisAssemblyMng::solveLowFidelityAdjointPDE(const std::tr1::shared_
 {
     // Compute reduced right hand side (RHS) vector of adjoint system of equations.
     m_Objective->partialDerivativeState(*m_State, *control_, *m_StateWorkVec);
-    m_StateWorkVec->scale(static_cast<double>(-1.0));
+    m_StateWorkVec->scale(-1);
     m_ReducedBasisInterface->solveLowFidelityAdjointPDE(m_StateWorkVec, m_Dual);
     this->updateLowFidelityAdjointSolveCounter();
 }

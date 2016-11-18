@@ -8,6 +8,7 @@
 #ifndef TRROM_TEUCHOSARRAY_HPP_
 #define TRROM_TEUCHOSARRAY_HPP_
 
+#include <cmath>
 #include "TRROM_Vector.hpp"
 #include "Teuchos_Array.hpp"
 
@@ -46,13 +47,13 @@ public:
         }
     }
     // Constant times a Vector plus a Vector.
-    void axpy(const ScalarType & alpha_, const trrom::Vector<ScalarType> & input_)
+    void update(const ScalarType & alpha_, const trrom::Vector<ScalarType> & input_, const ScalarType & beta_)
     {
         int dim = this->size();
         assert(dim == input_.size());
         for(int index = 0; index < dim; ++index)
         {
-            (*m_Data)[index] = alpha_ * input_[index] + (*m_Data)[index];
+            (*m_Data)[index] = beta_ * (*m_Data)[index] + alpha_ * input_[index];
         }
     }
     // Returns the maximum element in a range.
@@ -140,37 +141,25 @@ public:
             (*m_Data)[index] = value_;
         }
     }
-    // Copies the elements in the range [first,last) into the range beginning at result.
-    void copy(const trrom::Vector<ScalarType> & input_)
-    {
-        int dim = this->size();
-        assert(dim == input_.size());
-        for(int index = 0; index < dim; ++index)
-        {
-            (*m_Data)[index] = input_[index];
-        }
-    }
     // Returns the number of elements in the Vector.
     int size() const
     {
         int num_elements = m_Data->size();
         return (num_elements);
     }
-    // Creates a copy of an object of type trrom::TeuchosArray
-    std::tr1::shared_ptr<trrom::Vector<ScalarType> > create() const
-    {
-        const int INITIAL_VALUE = 0.;
-        int dimension = this->size();
-        std::tr1::shared_ptr<trrom::TeuchosArray<ScalarType> >
-            vector(new trrom::TeuchosArray<ScalarType>(dimension, INITIAL_VALUE));
-        return (vector);
-    }
     // Create object of type trrom::Vector
-    std::tr1::shared_ptr<trrom::Vector<ScalarType> > create(const int & global_dim_) const
+    std::tr1::shared_ptr<trrom::Vector<ScalarType> > create(int global_dim_ = 0) const
     {
-        const int INITIAL_VALUE = 0.;
-        std::tr1::shared_ptr<trrom::TeuchosArray<ScalarType> >
-            vector(new trrom::TeuchosArray<ScalarType>(global_dim_, INITIAL_VALUE));
+        std::tr1::shared_ptr<trrom::TeuchosArray<ScalarType> > vector;
+        if(global_dim_ == 0)
+        {
+            int dimension = this->size();
+            vector.reset(new trrom::TeuchosArray<ScalarType>(dimension));
+        }
+        else
+        {
+            vector.reset(new trrom::TeuchosArray<ScalarType>(global_dim_));
+        }
         return (vector);
     }
     // Operator overloads the square bracket operator

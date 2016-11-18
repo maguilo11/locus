@@ -8,18 +8,18 @@
 #ifndef TRROM_TEUCHOSSERIALDENSEVECTOR_HPP_
 #define TRROM_TEUCHOSSERIALDENSEVECTOR_HPP_
 
+#include <cmath>
 #include "TRROM_Vector.hpp"
 #include "Teuchos_SerialDenseVector.hpp"
 
 namespace trrom
 {
 
-template<typename ScalarType>
-class TeuchosSerialDenseVector : public trrom::Vector<ScalarType>
+class TeuchosSerialDenseVector : public trrom::Vector<double>
 {
 public:
     explicit TeuchosSerialDenseVector(int num_elements_) :
-            m_Data(new Teuchos::SerialDenseVector<int, ScalarType>(num_elements_))
+            m_Data(new Teuchos::SerialDenseVector<int, double>(num_elements_))
     {
     }
     virtual ~TeuchosSerialDenseVector()
@@ -27,12 +27,12 @@ public:
     }
 
     // Scales a Vector by a real constant.
-    void scale(const ScalarType & alpha_)
+    void scale(const double & alpha_)
     {
         m_Data->scale(alpha_);
     }
     // Component wise multiplication of two vectors.
-    void elementWiseMultiplication(const trrom::Vector<ScalarType> & input_)
+    void elementWiseMultiplication(const trrom::Vector<double> & input_)
     {
         int num_elements = this->size();
         assert(num_elements == input_.size());
@@ -42,18 +42,18 @@ public:
         }
     }
     // Constant times a Vector plus a Vector.
-    void axpy(const ScalarType & alpha_, const trrom::Vector<ScalarType> & input_)
+    void update(const double & alpha_, const trrom::Vector<double> & input_, const double & beta_)
     {
-        int this_increment = 1;
-        int input_increment = 1;
         int num_elements = this->size();
-
-        m_Data->AXPY(num_elements, alpha_, &(input_)[0], input_increment, m_Data->values(), this_increment);
+        for(int index = 0; index < num_elements; ++index)
+        {
+            (*m_Data)[index] = beta_ * (*m_Data)[index] + alpha_ * input_[index];
+        }
     }
     // Returns the maximum element in a range.
-    ScalarType max(int & index_) const
+    double max(int & index_) const
     {
-        ScalarType max_value = 0;
+        double max_value = 0;
         int dim = this->size();
         for(int index = 0; index < dim; ++index)
         {
@@ -66,9 +66,9 @@ public:
         return (max_value);
     }
     // Returns the minimum element in a range.
-    ScalarType min(int & index_) const
+    double min(int & index_) const
     {
-        ScalarType min_value = 0;
+        double min_value = 0;
         for(int index = 0; index < this->size(); ++index)
         {
             if((*m_Data)[index] < min_value)
@@ -85,88 +85,77 @@ public:
         int dim = this->size();
         for(int index = 0; index < dim; ++index)
         {
-            (*m_Data)[index] = (*m_Data)[index] < static_cast<ScalarType>(0.) ? -(*m_Data)[index] : (*m_Data)[index];
+            (*m_Data)[index] = (*m_Data)[index] < static_cast<double>(0.) ? -(*m_Data)[index] : (*m_Data)[index];
         }
     }
     // Returns the sum of all the elements in the container.
-    ScalarType sum() const
+    double sum() const
     {
         int this_increment = 1;
         int num_elements = this->size();
-        ScalarType output = m_Data->ASUM(num_elements, m_Data->values(), this_increment);
+        double output = m_Data->ASUM(num_elements, m_Data->values(), this_increment);
         return (output);
     }
     // Returns the inner product of two vectors.
-    ScalarType dot(const trrom::Vector<ScalarType> & input_) const
+    double dot(const trrom::Vector<double> & input_) const
     {
-        int num_elements = 0;
-        trrom::TeuchosSerialDenseVector<ScalarType> in(num_elements);
-        in.copy(input_);
-        ScalarType output = m_Data->dot(*in.data());
+        const trrom::TeuchosSerialDenseVector & input = dynamic_cast<const trrom::TeuchosSerialDenseVector &>(input_);
+        double output = m_Data->dot(*input.data());
         return (output);
     }
     // Returns the euclidean norm of a Vector.
-    ScalarType norm() const
+    double norm() const
     {
-        ScalarType output = m_Data->normFrobenius();
+        double output = this->dot(*this);
+        output = std::sqrt(output);
         return (output);
     }
     // Assigns new contents to the Vector, replacing its current contents, and not modifying its size.
-    void fill(const ScalarType & value_)
+    void fill(const double & value_)
     {
         m_Data->putScalar(value_);
-    }
-    // Copies the elements in the range [first,last) into the range beginning at result.
-    void copy(const trrom::Vector<ScalarType> & input_)
-    {
-        assert(this->size() == input_.size());
-        for(int index = 0; index < this->size(); ++index)
-        {
-            m_Data->operator [](index) = input_.operator [](index);
-        }
     }
     // Returns the number of elements in the Vector.
     int size() const
     {
         return (m_Data->length());
     }
-    // Clones memory for an object of type trrom::Vector
-    std::tr1::shared_ptr<trrom::Vector<ScalarType> > create() const
+    /*! Create object of type trrom::Vector */
+    std::tr1::shared_ptr<trrom::Vector<double> > create(int global_length_ = 0) const
     {
-        int num_elements = this->size();
-        std::tr1::shared_ptr<trrom::TeuchosSerialDenseVector<ScalarType> > a_copy(new trrom::TeuchosSerialDenseVector<
-                ScalarType>(num_elements));
-        return (a_copy);
-    }
-    // Create object of type trrom::Vector
-    std::tr1::shared_ptr<trrom::Vector<ScalarType> > create(const int & global_dim_) const
-    {
-        std::tr1::shared_ptr<trrom::TeuchosSerialDenseVector<ScalarType> > a_copy(new trrom::TeuchosSerialDenseVector<
-                ScalarType>(global_dim_));
-        return (a_copy);
+        std::tr1::shared_ptr<trrom::TeuchosSerialDenseVector> this_copy;
+        if(global_length_ == 0)
+        {
+            int num_elements = this->size();
+            this_copy.reset(new trrom::TeuchosSerialDenseVector(num_elements));
+        }
+        else
+        {
+            this_copy.reset(new trrom::TeuchosSerialDenseVector(global_length_));
+        }
+        return (this_copy);
     }
     // Operator overloads the square bracket operator
-    ScalarType & operator [](int index_)
+    double & operator [](int index_)
     {
         return (m_Data->operator ()(index_));
     }
     // Operator overloads the square bracket operator
-    const ScalarType & operator [](int index_) const
+    const double & operator [](int index_) const
     {
         return (m_Data->operator ()(index_));
     }
-
-    const std::tr1::shared_ptr<Teuchos::SerialDenseVector<int, ScalarType> > & data() const
+    const std::tr1::shared_ptr<Teuchos::SerialDenseVector<int, double> > & data() const
     {
         return (m_Data);
     }
 
 private:
-    std::tr1::shared_ptr<Teuchos::SerialDenseVector<int, ScalarType> > m_Data;
+    std::tr1::shared_ptr<Teuchos::SerialDenseVector<int, double> > m_Data;
 
 private:
-    TeuchosSerialDenseVector(const trrom::TeuchosSerialDenseVector<ScalarType> &);
-    trrom::TeuchosSerialDenseVector<ScalarType> & operator=(const trrom::TeuchosSerialDenseVector<ScalarType> &);
+    TeuchosSerialDenseVector(const trrom::TeuchosSerialDenseVector &);
+    trrom::TeuchosSerialDenseVector & operator=(const trrom::TeuchosSerialDenseVector &);
 };
 
 }

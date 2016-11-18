@@ -8,6 +8,8 @@
 #include <cmath>
 #include <limits>
 #include <math.h>
+#include <cstdio>
+
 #include "TRROM_Vector.hpp"
 #include "TRROM_SteihaugTointSolver.hpp"
 

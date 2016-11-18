@@ -78,17 +78,17 @@ SpectralDecompositionMng::~SpectralDecompositionMng()
 
 int SpectralDecompositionMng::getNumDualSnapshots()
 {
-    return (m_DualSnapshotEnsemble->numCols());
+    return (m_DualSnapshotEnsemble->getNumCols());
 }
 
 int SpectralDecompositionMng::getNumStateSnapshots()
 {
-    return (m_StateSnapshotEnsemble->numCols());
+    return (m_StateSnapshotEnsemble->getNumCols());
 }
 
 int SpectralDecompositionMng::getNumLeftHandSideSnapshots()
 {
-    return (m_LeftHandSideSnapshotEnsemble->numCols());
+    return (m_LeftHandSideSnapshotEnsemble->getNumCols());
 }
 
 double SpectralDecompositionMng::getDualBasisEnergyThreshold() const
@@ -157,7 +157,7 @@ void SpectralDecompositionMng::setDualSingularValues(const trrom::Vector<double>
     {
         m_DualSingularValues = input_.create();
     }
-    m_DualSingularValues->copy(input_);
+    m_DualSingularValues->update(1., input_, 0.);
 }
 
 void SpectralDecompositionMng::setDualSnapshotEnsemble(const trrom::Matrix<double> & input_)
@@ -166,7 +166,7 @@ void SpectralDecompositionMng::setDualSnapshotEnsemble(const trrom::Matrix<doubl
     {
         m_DualSnapshotEnsemble = input_.create();
     }
-    m_DualSnapshotEnsemble->copy(input_);
+    m_DualSnapshotEnsemble->update(1., input_, 0.);
 }
 
 void SpectralDecompositionMng::setDualLeftSingularVectors(const trrom::Matrix<double> & input_)
@@ -175,7 +175,7 @@ void SpectralDecompositionMng::setDualLeftSingularVectors(const trrom::Matrix<do
     {
         m_DualLeftSingularVectors = input_.create();
     }
-    m_DualLeftSingularVectors->copy(input_);
+    m_DualLeftSingularVectors->update(1., input_, 0.);
 }
 
 void SpectralDecompositionMng::setStateSingularValues(const trrom::Vector<double> & input_)
@@ -184,7 +184,7 @@ void SpectralDecompositionMng::setStateSingularValues(const trrom::Vector<double
     {
         m_StateSingularValues = input_.create();
     }
-    m_StateSingularValues->copy(input_);
+    m_StateSingularValues->update(1., input_, 0.);
 }
 
 void SpectralDecompositionMng::setStateSnapshotEnsemble(const trrom::Matrix<double> & input_)
@@ -193,7 +193,7 @@ void SpectralDecompositionMng::setStateSnapshotEnsemble(const trrom::Matrix<doub
     {
         m_StateSnapshotEnsemble = input_.create();
     }
-    m_StateSnapshotEnsemble->copy(input_);
+    m_StateSnapshotEnsemble->update(1., input_, 0.);
 }
 
 void SpectralDecompositionMng::setStateLeftSingularVectors(const trrom::Matrix<double> & input_)
@@ -202,7 +202,7 @@ void SpectralDecompositionMng::setStateLeftSingularVectors(const trrom::Matrix<d
     {
         m_StateLeftSingularVectors = input_.create();
     }
-    m_StateLeftSingularVectors->copy(input_);
+    m_StateLeftSingularVectors->update(1., input_, 0.);
 }
 
 void SpectralDecompositionMng::setLeftHandSideSingularValues(const trrom::Vector<double> & input_)
@@ -211,7 +211,7 @@ void SpectralDecompositionMng::setLeftHandSideSingularValues(const trrom::Vector
     {
         m_LeftHandSideSingularValues = input_.create();
     }
-    m_LeftHandSideSingularValues->copy(input_);
+    m_LeftHandSideSingularValues->update(1., input_, 0.);
 }
 
 void SpectralDecompositionMng::setLeftHandSideSnapshotEnsemble(const trrom::Matrix<double> & input_)
@@ -220,7 +220,7 @@ void SpectralDecompositionMng::setLeftHandSideSnapshotEnsemble(const trrom::Matr
     {
         m_LeftHandSideSnapshotEnsemble = input_.create();
     }
-    m_LeftHandSideSnapshotEnsemble->copy(input_);
+    m_LeftHandSideSnapshotEnsemble->update(1., input_, 0.);
 }
 
 void SpectralDecompositionMng::setLeftHandSideLeftSingularVectors(const trrom::Matrix<double> & input_)
@@ -229,7 +229,7 @@ void SpectralDecompositionMng::setLeftHandSideLeftSingularVectors(const trrom::M
     {
         m_LeftHandSideLeftSingularVectors = input_.create();
     }
-    m_LeftHandSideLeftSingularVectors->copy(input_);
+    m_LeftHandSideLeftSingularVectors->update(1., input_, 0.);
 }
 
 void SpectralDecompositionMng::computeDualOrthonormalBasis(trrom::Matrix<double> & basis_)

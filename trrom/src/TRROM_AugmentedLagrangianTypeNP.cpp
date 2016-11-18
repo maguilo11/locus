@@ -287,7 +287,7 @@ void AugmentedLagrangianTypeNP::computeObjectiveGradient(const trrom::Vector<dou
 {
     m_StateWorkVec->fill(0.);
     m_Objective->partialDerivativeState(*m_State, control_, *m_StateWorkVec);
-    m_StateWorkVec->scale(static_cast<double>(-1.0));
+    m_StateWorkVec->scale(-1.);
 
     m_ObjectiveDual->fill(0.);
     m_PDE->applyAdjointInverseJacobianState(*m_State, control_, *m_StateWorkVec, *m_ObjectiveDual);
@@ -298,10 +298,10 @@ void AugmentedLagrangianTypeNP::computeObjectiveGradient(const trrom::Vector<dou
     m_PDE->adjointPartialDerivativeControl(*m_State, control_, *m_ObjectiveDual, *m_ControlWorkVec);
 
     // assemble gradient operator
-    m_LagrangianGradient->copy(*m_ControlWorkVec);
+    m_LagrangianGradient->update(1., *m_ControlWorkVec, 0.);
     m_ControlWorkVec->fill(0.);
     m_Objective->partialDerivativeControl(*m_State, control_, *m_ControlWorkVec);
-    m_LagrangianGradient->axpy(static_cast<double>(1.0), *m_ControlWorkVec);
+    m_LagrangianGradient->update(1., *m_ControlWorkVec, 1.);
 }
 
 void AugmentedLagrangianTypeNP::computeInequalityConstraintGradient(const trrom::Vector<double> & control_,
@@ -315,7 +315,7 @@ void AugmentedLagrangianTypeNP::computeInequalityConstraintGradient(const trrom:
         // Compute the partial derivative of the inequality constraint with respect to the state vector (\mathbf{u})
         m_StateWorkVec->fill(0.);
         m_Inequality[index]->partialDerivativeState(*m_State, control_, *m_StateWorkVec);
-        m_StateWorkVec->scale(static_cast<double>(-1.0));
+        m_StateWorkVec->scale(-1.);
 
         // Solve adjoint equations if the inequality constraint is nonlinear
         m_InequalityDual[index]->fill(0.);
@@ -325,26 +325,26 @@ void AugmentedLagrangianTypeNP::computeInequalityConstraintGradient(const trrom:
         // Get equality constraint contribution to the gradient operator if the inequality constraint is nonlinear
         m_ControlWorkVec->fill(0.);
         m_PDE->adjointPartialDerivativeControl(*m_State, control_, *(m_InequalityDual[index]), *m_ControlWorkVec);
-        m_GradientWorkVec->copy(*m_ControlWorkVec);
+        m_GradientWorkVec->update(1., *m_ControlWorkVec, 0.);
 
         // Compute the partial derivative of the inequality constraint with respect to the controls,
         //      i.e. \frac{\partial h_i}{\partial\mathbf{z}}
         m_ControlWorkVec->fill(0.);
         m_Inequality[index]->partialDerivativeControl(*m_State, control_, *m_ControlWorkVec);
-        m_GradientWorkVec->axpy(static_cast<double>(1.0), *m_ControlWorkVec);
+        m_GradientWorkVec->update(1., *m_ControlWorkVec, 1.);
 
         // Add contribution from inequality constraint to Lagrangian gradient
-        m_LagrangianGradient->axpy((*m_LagrangeMultipliers)[index], *m_GradientWorkVec);
+        m_LagrangianGradient->update((*m_LagrangeMultipliers)[index], *m_GradientWorkVec, 1.);
 
         // Compute i-th inequality constraint contribution from: \mu*h_i(\mathbf{u}(\mathbf{z}),\mathbf{z})
         //      \frac{\partial h_i(\mathbf{u}(\mathbf{z}),\mathbf{z})}{\partial\mathbf{z}}
         double alpha = one_over_penalty * (*m_CurrentInequalityConstraintValues)[index];
-        gradient_.axpy(alpha, *m_GradientWorkVec);
+        gradient_.update(alpha, *m_GradientWorkVec, 1.);
 
         this->updateInequalityGradientCounter();
     }
     // Compute augmented Lagrangian gradient
-    gradient_.axpy(static_cast<double>(1.), *m_LagrangianGradient);
+    gradient_.update(1., *m_LagrangianGradient, 1.);
     m_NormLagrangianGradient = m_LagrangianGradient->norm();
 }
 
@@ -364,15 +364,15 @@ void AugmentedLagrangianTypeNP::computeObjectiveHessianDual(const trrom::Vector<
     m_HessWorkVec->fill(0.);
     m_Objective->partialDerivativeStateState(*m_State, control_, *m_DeltaState, *m_StateWorkVec);
     m_PDE->partialDerivativeStateState(*m_State, control_, *m_ObjectiveDual, *m_DeltaState, *m_HessWorkVec);
-    m_StateWorkVec->axpy(static_cast<double>(1.0), *m_HessWorkVec);
+    m_StateWorkVec->update(1., *m_HessWorkVec, 1.);
 
     m_HessWorkVec->fill(0.);
     m_Objective->partialDerivativeStateControl(*m_State, control_, vector_, *m_HessWorkVec);
-    m_StateWorkVec->axpy(static_cast<double>(1.0), *m_HessWorkVec);
+    m_StateWorkVec->update(1., *m_HessWorkVec, 1.);
     m_HessWorkVec->fill(0.);
     m_PDE->partialDerivativeStateControl(*m_State, control_, *m_ObjectiveDual, vector_, *m_HessWorkVec);
-    m_StateWorkVec->axpy(static_cast<double>(1.0), *m_HessWorkVec);
-    m_StateWorkVec->scale(static_cast<double>(-1.0));
+    m_StateWorkVec->update(1., *m_HessWorkVec, 1.);
+    m_StateWorkVec->scale(-1.);
 
     m_ObjectiveDeltaDual->fill(0.);
     m_PDE->applyInverseJacobianState(*m_State, control_, *m_StateWorkVec, *m_ObjectiveDeltaDual);
@@ -394,22 +394,22 @@ void AugmentedLagrangianTypeNP::computeObjectiveHessianTimesVector(const trrom::
     m_Objective->partialDerivativeControlControl(*m_State, control_, vector_, *m_HessWorkVec);
     m_ControlWorkVec->fill(0.);
     m_PDE->partialDerivativeControlControl(*m_State, control_, *m_ObjectiveDual, vector_, *m_ControlWorkVec);
-    m_HessWorkVec->axpy(static_cast<double>(1.0), *m_ControlWorkVec);
+    m_HessWorkVec->update(1., *m_ControlWorkVec, 1.);
 
     // add L_zl(u(variables_); variables_; lambda(variables_))*dlambda contribution, where L denotes the Lagrangian functional
     m_ControlWorkVec->fill(0.);
     m_PDE->adjointPartialDerivativeControl(*m_State, control_, *m_ObjectiveDeltaDual, *m_ControlWorkVec);
-    m_HessWorkVec->axpy(static_cast<double>(1.0), *m_ControlWorkVec);
+    m_HessWorkVec->update(1., *m_ControlWorkVec, 1.);
 
     // add L_zu(u(variables_); variables_; lambda(variables_))*du contribution, where L denotes the Lagrangian functional
     m_ControlWorkVec->fill(0.);
     m_Objective->partialDerivativeControlState(*m_State, control_, *m_DeltaState, *m_ControlWorkVec);
-    m_HessWorkVec->axpy(static_cast<double>(1.0), *m_ControlWorkVec);
+    m_HessWorkVec->update(1., *m_ControlWorkVec, 1.);
     m_ControlWorkVec->fill(0.);
     m_PDE->partialDerivativeControlState(*m_State, control_, *m_ObjectiveDual, *m_DeltaState, *m_ControlWorkVec);
-    m_HessWorkVec->axpy(static_cast<double>(1.0), *m_ControlWorkVec);
+    m_HessWorkVec->update(1., *m_ControlWorkVec, 1.);
 
-    hess_times_vector_.copy(*m_HessWorkVec);
+    hess_times_vector_.update(1., *m_HessWorkVec, 0.);
 }
 
 void AugmentedLagrangianTypeNP::computeInequalityConstraintHessianDual(const int & index_,
@@ -429,15 +429,15 @@ void AugmentedLagrangianTypeNP::computeInequalityConstraintHessianDual(const int
     m_HessWorkVec->fill(0.);
     m_Inequality[index_]->partialDerivativeStateState(*m_State, control_, *m_DeltaState, *m_StateWorkVec);
     m_PDE->partialDerivativeStateState(*m_State, control_, *m_InequalityDual[index_], *m_DeltaState, *m_HessWorkVec);
-    m_StateWorkVec->axpy(static_cast<double>(1.0), *m_HessWorkVec);
+    m_StateWorkVec->update(1., *m_HessWorkVec, 1.);
 
     m_HessWorkVec->fill(0.);
     m_Inequality[index_]->partialDerivativeStateControl(*m_State, control_, vector_, *m_HessWorkVec);
-    m_StateWorkVec->axpy(static_cast<double>(1.0), *m_HessWorkVec);
+    m_StateWorkVec->update(1., *m_HessWorkVec, 1.);
     m_HessWorkVec->fill(0.);
     m_PDE->partialDerivativeStateControl(*m_State, control_, *m_InequalityDual[index_], vector_, *m_HessWorkVec);
-    m_StateWorkVec->axpy(static_cast<double>(1.0), *m_HessWorkVec);
-    m_StateWorkVec->scale(static_cast<double>(-1.0));
+    m_StateWorkVec->update(1., *m_HessWorkVec, 1.);
+    m_StateWorkVec->scale(-1.);
 
     m_InequalityDeltaDual[index_]->fill(0.);
     m_PDE->applyInverseJacobianState(*m_State, control_, *m_StateWorkVec, *m_InequalityDeltaDual[index_]);
@@ -482,7 +482,7 @@ void AugmentedLagrangianTypeNP::computeInequalityHessianTimesVector(const trrom:
                                                *m_InequalityDual[index],
                                                vector_,
                                                *m_ControlWorkVec);
-        m_HessWorkVec->axpy(alpha, *m_ControlWorkVec);
+        m_HessWorkVec->update(alpha, *m_ControlWorkVec, 1.);
 
         /*
          * Add contribution from \mathcal{L}_{\mathbf{z}\lambda}\left(\mathbf{u}(\mathbf{z}), \mathbf{z}; \lambda^h_i
@@ -491,7 +491,7 @@ void AugmentedLagrangianTypeNP::computeInequalityHessianTimesVector(const trrom:
          */
         m_GradientWorkVec->fill(0.);
         m_PDE->adjointPartialDerivativeControl(*m_State, control_, *m_InequalityDeltaDual[index], *m_GradientWorkVec);
-        m_HessWorkVec->axpy(alpha, *m_GradientWorkVec);
+        m_HessWorkVec->update(alpha, *m_GradientWorkVec, 1.);
 
         /* Add contribution from \mathcal{L}_{zu}\left(\mathbf{u}(\mathbf{z}),\mathbf{z};\lambda(\mathbf{z})\right)
          * \Delta\mathbf{u} = \alpha_i\left(\frac{\partial^2 h_i}{\partial\mathbf{z}\partial\mathbf{u}} + \left(
@@ -500,14 +500,14 @@ void AugmentedLagrangianTypeNP::computeInequalityHessianTimesVector(const trrom:
          */
         m_ControlWorkVec->fill(0.);
         m_Inequality[index]->partialDerivativeControlState(*m_State, control_, *m_DeltaState, *m_ControlWorkVec);
-        m_HessWorkVec->axpy(alpha, *m_ControlWorkVec);
+        m_HessWorkVec->update(alpha, *m_ControlWorkVec, 1.);
         m_ControlWorkVec->fill(0.);
         m_PDE->partialDerivativeControlState(*m_State,
                                              control_,
                                              *m_InequalityDual[index],
                                              *m_DeltaState,
                                              *m_ControlWorkVec);
-        m_HessWorkVec->axpy(alpha, *m_ControlWorkVec);
+        m_HessWorkVec->update(alpha, *m_ControlWorkVec, 1.);
 
         /* Add contribution from \beta_i\left(\frac{\partial h_i}{\partial\mathbf{z}} + \left(\frac{\partial g^{\ast}}
          * {\partial\mathbf{z}}\lambda_i^h\right)\right), where \beta_i = \mu\left(\frac{\partial h_i}{\partial\mathbf{z}}
@@ -517,16 +517,15 @@ void AugmentedLagrangianTypeNP::computeInequalityHessianTimesVector(const trrom:
         m_PDE->adjointPartialDerivativeControl(*m_State, control_, *m_InequalityDual[index], *m_GradientWorkVec);
         m_ControlWorkVec->fill(0);
         m_Inequality[index]->partialDerivativeControl(*m_State, control_, *m_ControlWorkVec);
-        m_GradientWorkVec->axpy(static_cast<double>(1.), *m_ControlWorkVec);
+        m_GradientWorkVec->update(1., *m_ControlWorkVec, 1.);
         double partial_derivative_control_dot_vector = m_ControlWorkVec->dot(vector_);
         m_StateWorkVec->fill(0);
         m_Inequality[index]->partialDerivativeState(*m_State, control_, *m_StateWorkVec);
         double partial_derivative_state_dot_delta_state = m_StateWorkVec->dot(*m_DeltaState);
         double beta = one_over_penalty
                 * (partial_derivative_control_dot_vector + partial_derivative_state_dot_delta_state);
-        m_HessWorkVec->axpy(beta, *m_GradientWorkVec);
-
-        hess_times_vector_.axpy(static_cast<double>(1.), *m_HessWorkVec);
+        m_HessWorkVec->update(beta, *m_GradientWorkVec, 1.);
+        hess_times_vector_.update(1., *m_HessWorkVec, 1.);
     }
 }
 
@@ -583,7 +582,7 @@ void AugmentedLagrangianTypeNP::computeGaussNewtonHessian(const trrom::Vector<do
     m_Objective->partialDerivativeControlControl(*m_State, control_, vector_, hess_times_vec_);
     m_ControlWorkVec->fill(0.);
     m_PDE->partialDerivativeControlControl(*m_State, control_, *m_ObjectiveDual, vector_, *m_ControlWorkVec);
-    hess_times_vec_.axpy(static_cast<double>(1.0), *m_ControlWorkVec);
+    hess_times_vec_.update(static_cast<double>(1.0), *m_ControlWorkVec, 1.);
 
     int num_constraints = m_InequalityDual.size();
     double one_over_penalty = static_cast<double>(1.) / m_Penalty;
@@ -604,7 +603,7 @@ void AugmentedLagrangianTypeNP::computeGaussNewtonHessian(const trrom::Vector<do
                                                *m_InequalityDual[index],
                                                vector_,
                                                *m_ControlWorkVec);
-        m_HessWorkVec->axpy(alpha, *m_ControlWorkVec);
+        m_HessWorkVec->update(alpha, *m_ControlWorkVec, 1.);
 
         /* Add contribution from \beta_i\left(\frac{\partial h_i}{\partial\mathbf{z}} + \left(\frac{\partial g^{\ast}}
          * {\partial\mathbf{z}}\lambda_i^h\right)\right), where \beta_i = \mu\left(\frac{\partial h_i}{\partial\mathbf{z}}
@@ -614,12 +613,11 @@ void AugmentedLagrangianTypeNP::computeGaussNewtonHessian(const trrom::Vector<do
         m_PDE->adjointPartialDerivativeControl(*m_State, control_, *m_InequalityDual[index], *m_GradientWorkVec);
         m_ControlWorkVec->fill(0);
         m_Inequality[index]->partialDerivativeControl(*m_State, control_, *m_ControlWorkVec);
-        m_GradientWorkVec->axpy(static_cast<double>(1.), *m_ControlWorkVec);
+        m_GradientWorkVec->update(static_cast<double>(1.), *m_ControlWorkVec, 1.);
         double partial_derivative_control_dot_vector = m_ControlWorkVec->dot(vector_);
         double beta = one_over_penalty * partial_derivative_control_dot_vector;
-        m_HessWorkVec->axpy(beta, *m_GradientWorkVec);
-
-        hess_times_vec_.axpy(static_cast<double>(1.), *m_HessWorkVec);
+        m_HessWorkVec->update(beta, *m_GradientWorkVec, 1.);
+        hess_times_vec_.update(static_cast<double>(1.), *m_HessWorkVec, 1.);
     }
 }
 

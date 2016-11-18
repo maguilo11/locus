@@ -49,13 +49,13 @@ public:
         }
     }
     // Constant times a Vector plus a Vector.
-    void axpy(const ScalarType & alpha_, const trrom::Vector<ScalarType> & input_)
+    void update(const ScalarType & alpha_, const trrom::Vector<ScalarType> & input_, const ScalarType & beta_)
     {
         int dim = this->size();
         assert(dim == input_.size());
         for(int i = 0; i < dim; ++i)
         {
-            m_Data[i] = alpha_ * input_[i] + m_Data[i];
+            m_Data[i] = beta_ * m_Data[i] + alpha_ * input_[i];
         }
     }
     // Returns the maximum element in a range.
@@ -148,35 +148,26 @@ public:
             m_Data[i] = value_;
         }
     }
-    // Copies the elements in the range [first,last) into the range beginning at result.
-    void copy(const trrom::Vector<ScalarType> & input_)
-    {
-        int dim = this->size();
-        assert(dim == input_.size());
-        for(int i = 0; i < dim; ++i)
-        {
-            m_Data[i] = input_[i];
-        }
-    }
     // Returns the number of elements in the Vector.
     int size() const
     {
         int dim = m_Data.size();
         return (dim);
     }
-    // Clones memory for an object of type trrom::Vector
-    std::tr1::shared_ptr<trrom::Vector<ScalarType> > create() const
-    {
-        int dim = this->size();
-        std::tr1::shared_ptr<trrom::SerialVector<ScalarType> > vec(new trrom::SerialVector<ScalarType>(dim, 0.));
-        return (vec);
-    }
     // Create object of type trrom::Vector
     std::tr1::shared_ptr<trrom::Vector<ScalarType> > create(int global_dim_ = 0) const
     {
-        std::tr1::shared_ptr<trrom::SerialVector<ScalarType> >
-            vector(new trrom::SerialVector<ScalarType>(global_dim_, 0.));
-        return (vector);
+        std::tr1::shared_ptr<trrom::SerialVector<ScalarType> > this_copy;
+        if(global_dim_ == 0)
+        {
+            int length = this->size();
+            this_copy.reset(new trrom::SerialVector<ScalarType>(length));
+        }
+        else
+        {
+            this_copy.reset(new trrom::SerialVector<ScalarType>(global_dim_));
+        }
+        return (this_copy);
     }
     // Operator overloads the square bracket operator
     ScalarType & operator [](int index_)

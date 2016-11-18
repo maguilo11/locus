@@ -59,8 +59,8 @@ void KelleySachsAugmentedLagrangian::getMin()
     m_DataMng->updateInequalityConstraintValues();
     m_DataMng->setNewObjectiveFunctionValue(new_objective_value);
     m_DataMng->computeGradient();
-    m_DataMng->getOldPrimal()->copy(*m_DataMng->getNewPrimal());
-    m_DataMng->getOldGradient()->copy(*m_DataMng->getNewGradient());
+    m_DataMng->getOldPrimal()->update(1., *m_DataMng->getNewPrimal(), 0.);
+    m_DataMng->getOldGradient()->update(1., *m_DataMng->getNewGradient(), 0.);
     double norm_gradient = m_DataMng->getNewGradient()->norm();
     m_DataMng->setNormNewGradient(norm_gradient);
     if(m_StepMng->isInitialTrustRegionRadiusSetToGradNorm() == true)
@@ -121,8 +121,8 @@ void KelleySachsAugmentedLagrangian::updateDataManager()
     double current_objective_value = m_DataMng->getNewObjectiveFunctionValue();
     m_DataMng->setOldObjectiveFunctionValue(current_objective_value);
     // update primal vector
-    m_DataMng->getOldPrimal()->copy(*m_DataMng->getNewPrimal());
-    m_DataMng->getOldGradient()->copy(*m_DataMng->getNewGradient());
+    m_DataMng->getOldPrimal()->update(1., *m_DataMng->getNewPrimal(), 0.);
+    m_DataMng->getOldGradient()->update(1., *m_DataMng->getNewGradient(), 0.);
 
     if(trrom::TrustRegionKelleySachs::updatePrimal(m_StepMng, m_DataMng, m_MidGradient) == true)
     {
@@ -133,16 +133,16 @@ void KelleySachsAugmentedLagrangian::updateDataManager()
     }
     else
     {
-        m_DataMng->getNewGradient()->copy(*m_MidGradient);
+        m_DataMng->getNewGradient()->update(1., *m_MidGradient, 0.);
     }
 
     // Compute stagnation measure
-    m_WorkVector->copy(*m_DataMng->getOldPrimal());
-    m_WorkVector->axpy(static_cast<double>(-1.), *m_DataMng->getNewPrimal());
+    m_WorkVector->update(1., *m_DataMng->getOldPrimal(), 0.);
+    m_WorkVector->update(-1., *m_DataMng->getNewPrimal(), 1.);
     double stagnation_measure = m_WorkVector->norm();
     m_DataMng->setStagnationMeasure(stagnation_measure);
     // compute norm of projected gradient
-    m_WorkVector->copy(*m_DataMng->getNewGradient());
+    m_WorkVector->update(1., *m_DataMng->getNewGradient(), 0.);
     m_WorkVector->elementWiseMultiplication(*m_Solver->getInactiveSet());
     double norm_proj_gradient = m_WorkVector->norm();
     m_DataMng->setNormNewGradient(norm_proj_gradient);

@@ -39,9 +39,9 @@ void SteihaugTointPcg::solve(const std::tr1::shared_ptr<trrom::Preconditioner> &
                              const std::tr1::shared_ptr<trrom::OptimizationDataMng> & mng_)
 {
     m_NewtonStep->fill(0.);
-    m_OldDescentDirection->copy(*mng_->getNewGradient());
+    m_OldDescentDirection->update(1., *mng_->getNewGradient(), 0.);
     preconditioner_->applyInvPreconditioner(mng_, m_OldDescentDirection, m_OldInvPrecTimesDescentDirection);
-    m_ConjugateDirection->copy(*m_OldInvPrecTimesDescentDirection);
+    m_ConjugateDirection->update(1., *m_OldInvPrecTimesDescentDirection, 0.);
     m_ConjugateDirection->scale(-1.);
 
     this->computeStoppingTolerance(m_OldDescentDirection);
@@ -61,25 +61,25 @@ void SteihaugTointPcg::solve(const std::tr1::shared_ptr<trrom::Preconditioner> &
         if(this->invalidCurvatureDetected(curvature) == true)
         {
             double scaling = this->step(mng_, preconditioner_);
-            m_NewtonStep->axpy(scaling, *m_ConjugateDirection);
+            m_NewtonStep->update(scaling, *m_ConjugateDirection, 1.);
             break;
         }
         double alpha = m_OldDescentDirection->dot(*m_OldInvPrecTimesDescentDirection) / curvature;
-        m_NewtonStep->axpy(alpha, *m_ConjugateDirection);
+        m_NewtonStep->update(alpha, *m_ConjugateDirection, 1.);
         if(itr == 1)
         {
-            m_CauchyStep->copy(*m_NewtonStep);
+            m_CauchyStep->update(1., *m_NewtonStep, 0.);
         }
         double norm_newton_step = m_NewtonStep->norm();
         if(norm_newton_step >= current_trust_region_radius)
         {
             double scaling = this->step(mng_, preconditioner_);
-            m_NewtonStep->axpy(scaling, *m_ConjugateDirection);
+            m_NewtonStep->update(scaling, *m_ConjugateDirection, 1.);
             this->setStoppingCriterion(trrom::types::TRUST_REGION_VIOLATED);
             break;
         }
-        m_NewDescentDirection->copy(*m_OldDescentDirection);
-        m_NewDescentDirection->axpy(alpha, *m_HessTimesConjugateDirection);
+        m_NewDescentDirection->update(1., *m_OldDescentDirection, 0.);
+        m_NewDescentDirection->update(alpha, *m_HessTimesConjugateDirection, 1.);
         double norm_new_descent_dir = m_NewDescentDirection->norm();
         if(trrom::SteihaugTointSolver::toleranceSatisfied(norm_new_descent_dir) == true)
         {
@@ -91,13 +91,13 @@ void SteihaugTointPcg::solve(const std::tr1::shared_ptr<trrom::Preconditioner> &
         double denominator = m_OldDescentDirection->dot(*m_OldInvPrecTimesDescentDirection);
         double rayleigh_quotient = numerator / denominator;
         m_ConjugateDirection->scale(rayleigh_quotient);
-        m_ConjugateDirection->axpy(-1., *m_NewInvPrecTimesDescentDirection);
+        m_ConjugateDirection->update(-1., *m_NewInvPrecTimesDescentDirection, 1.);
         ++ itr;
-        m_OldDescentDirection->copy(*m_NewDescentDirection);
-        m_OldInvPrecTimesDescentDirection->copy(*m_NewInvPrecTimesDescentDirection);
+        m_OldDescentDirection->update(1., *m_NewDescentDirection, 0.);
+        m_OldInvPrecTimesDescentDirection->update(1., *m_NewInvPrecTimesDescentDirection, 0.);
     }
     this->setNumItrDone(itr);
-    mng_->getTrialStep()->copy(*m_NewtonStep);
+    mng_->getTrialStep()->update(1., *m_NewtonStep, 0.);
 }
 
 void SteihaugTointPcg::computeStoppingTolerance(const std::tr1::shared_ptr<trrom::Vector<double> > & gradient_)

@@ -32,12 +32,12 @@ public:
     {
     }
 
-    int numRows() const
+    int getNumRows() const
     {
         int num_rows = m_Data[0]->size();
         return (num_rows);
     }
-    int numCols() const
+    int getNumCols() const
     {
         int num_cols = m_Data.size();
         return (num_cols);
@@ -50,7 +50,7 @@ public:
     ScalarType norm() const
     {
         ScalarType value = 0.;
-        for(int column = 0; column < this->numCols(); ++column)
+        for(int column = 0; column < this->getNumCols(); ++column)
         {
             value += m_Data[column]->dot(*m_Data[column]);
         }
@@ -59,14 +59,14 @@ public:
     }
     void fill(ScalarType value_)
     {
-        for(int column = 0; column < this->numCols(); ++column)
+        for(int column = 0; column < this->getNumCols(); ++column)
         {
             m_Data[column]->fill(value_);
         }
     }
     void scale(ScalarType alpha_)
     {
-        for(int column = 0; column < this->numCols(); ++column)
+        for(int column = 0; column < this->getNumCols(); ++column)
         {
             m_Data[column]->scale(alpha_);
         }
@@ -76,65 +76,53 @@ public:
         int this_vector_dimension = m_Data.size();
         if(m_NumSnapShots < this_vector_dimension)
         {
-            m_Data[m_NumSnapShots]->copy(input_);
+            m_Data[m_NumSnapShots]->update(1., input_, 0.);
         }
         else
         {
             m_Data.push_back(input_.create());
-            m_Data[m_NumSnapShots]->copy(input_);
+            m_Data[m_NumSnapShots]->update(1., input_, 0.);
         }
         m_NumSnapShots += 1;
     }
 
     void copy(const trrom::Vector<ScalarType> & input_)
     {
-        assert(this->numCols() * this->numRows() == input_.size());
+        assert(this->getNumCols() * this->getNumRows() == input_.size());
 
-        for(int column = 0; column < this->numCols(); ++column)
+        for(int column = 0; column < this->getNumCols(); ++column)
         {
-            for(int row = 0; row < this->numRows(); ++row)
+            for(int row = 0; row < this->getNumRows(); ++row)
             {
-                int index = (this->numRows() * column) + row;
+                int index = (this->getNumRows() * column) + row;
                 m_Data[column]->operator[](row) = input_[index];
             }
         }
     }
-    void copy(const trrom::Matrix<ScalarType> & input_)
+    void update(const ScalarType & alpha_, const trrom::Matrix<ScalarType> & input_, const ScalarType & beta_)
     {
-        assert(this->numCols() == input_.numCols());
-        assert(this->numRows() == input_.numRows());
+        assert(this->getNumCols() == input_.getNumCols());
+        assert(this->getNumRows() == input_.getNumRows());
 
-        for(int column = 0; column < input_.numCols(); ++column)
+        for(int column = 0; column < input_.getNumCols(); ++column)
         {
-            for(int row = 0; row < input_.numRows(); ++row)
+            for(int row = 0; row < input_.getNumRows(); ++row)
             {
-                m_Data[column]->operator[](row) = input_(row, column);
-            }
-        }
-    }
-    void add(const ScalarType & alpha_, const trrom::Matrix<ScalarType> & input_)
-    {
-        assert(this->numCols() == input_.numCols());
-        assert(this->numRows() == input_.numRows());
-
-        for(int column = 0; column < input_.numCols(); ++column)
-        {
-            for(int row = 0; row < input_.numRows(); ++row)
-            {
-                m_Data[column]->operator[](row) = alpha_ * input_(row, column) + m_Data[column]->operator[](row);
+                m_Data[column]->operator[](row) = alpha_ * input_(row, column)
+                                                  + beta_ * m_Data[column]->operator[](row);
             }
         }
     }
     void gemv(bool transpose_,
-                      const ScalarType & alpha_,
-                      const trrom::Vector<ScalarType> & input_,
-                      const ScalarType & beta_,
-                      trrom::Vector<ScalarType> & output_) const
+              const ScalarType & alpha_,
+              const trrom::Vector<ScalarType> & input_,
+              const ScalarType & beta_,
+              trrom::Vector<ScalarType> & output_) const
     {
         if(transpose_ == false)
         {
-            assert(this->numCols() == input_.size());
-            assert(this->numRows() == output_.size());
+            assert(this->getNumCols() == input_.size());
+            assert(this->getNumRows() == output_.size());
 
             int i;
             for(i = 0; i < output_.size(); ++i)
@@ -157,8 +145,8 @@ public:
         }
         else
         {
-            assert(this->numRows() == input_.size());
-            assert(this->numCols() == output_.size());
+            assert(this->getNumRows() == input_.size());
+            assert(this->getNumCols() == output_.size());
 
             int row, column;
             ScalarType value, sum, beta_times_output;
@@ -177,11 +165,11 @@ public:
         }
     }
     void gemm(const bool & transpose_A_,
-                      const bool & transpose_B_,
-                      const ScalarType & alpha_,
-                      const trrom::Matrix<ScalarType> & B_,
-                      const ScalarType & beta_,
-                      trrom::Matrix<ScalarType> & C_) const
+              const bool & transpose_B_,
+              const ScalarType & alpha_,
+              const trrom::Matrix<ScalarType> & B_,
+              const ScalarType & beta_,
+              trrom::Matrix<ScalarType> & C_) const
     {
         // Quick return if possible
         if(alpha_ == static_cast<ScalarType>(0.))
@@ -215,37 +203,40 @@ public:
             this->gemmBt(transpose_A_, alpha_, B_, C_);
         }
     }
-
+    ScalarType & operator ()(int my_row_index_, int my_column_index_)
+    {
+        return (m_Data[my_column_index_]->operator[](my_row_index_));
+    }
+    const ScalarType & operator ()(int my_row_index_, int my_column_index_) const
+    {
+        return (m_Data[my_column_index_]->operator[](my_row_index_));
+    }
+    void replaceGlobalValue(const int & global_row_index_, const int & global_column_index_, const ScalarType & value_)
+    {
+        m_Data[global_column_index_]->operator[](global_row_index_) = value_;
+    }
     trrom::Vector<ScalarType> & vector(int index_) const
     {
         return (*m_Data[index_]);
     }
-    ScalarType & operator ()(const int & row_index_, const int & column_index_)
+    std::tr1::shared_ptr<trrom::Matrix<ScalarType> > create(int num_rows_, int num_cols_) const
     {
-        assert(row_index_ <= this->numRows() - 1);
-        assert(column_index_ <= this->numCols() - 1);
-        return (m_Data[column_index_]->operator[](row_index_));
-    }
-    // Operator overloads the parenthesis operator
-    const ScalarType & operator ()(const int & row_index_, const int & column_index_) const
-    {
-        assert(row_index_ <= this->numRows() - 1);
-        assert(column_index_ <= this->numCols() - 1);
-        return (m_Data[column_index_]->operator[](row_index_));
-    }
-    std::tr1::shared_ptr<trrom::Matrix<ScalarType> > create() const
-    {
-        int num_rows = this->numRows();
-        int num_cols = this->numCols();
-        trrom::SerialVector<ScalarType> vector(num_rows);
-        std::tr1::shared_ptr<trrom::Basis<ScalarType> > matrix(new trrom::Basis<ScalarType>(vector, num_cols));
-        return (matrix);
-    }
-    std::tr1::shared_ptr<trrom::Matrix<ScalarType> > create(int nrows_, int ncols_) const
-    {
-        trrom::SerialVector<ScalarType> vector(nrows_);
-        std::tr1::shared_ptr<trrom::Basis<ScalarType> > matrix(new trrom::Basis<ScalarType>(vector, ncols_));
-        return (matrix);
+        assert(num_rows_ >= 0);
+        assert(num_cols_ >= 0);
+        std::tr1::shared_ptr<trrom::Basis<ScalarType> > this_copy;
+        if((num_rows_ > 0) && (num_cols_ > 0))
+        {
+            trrom::SerialVector<ScalarType> vector(num_rows_);
+            this_copy.reset(new trrom::Basis<ScalarType>(vector, num_cols_));
+        }
+        else
+        {
+            int num_rows = this->getNumRows();
+            int num_cols = this->getNumCols();
+            trrom::SerialVector<ScalarType> vector(num_rows);
+            this_copy.reset(new trrom::Basis<ScalarType>(vector, num_cols));
+        }
+        return (this_copy);
     }
 
     int snapshots() const
@@ -270,15 +261,15 @@ private:
         if(transpose_A_ == false)
         {
             // C = (A)(B)
-            assert(this->numCols() == B_.numRows());
-            assert(C_.numRows() == this->numRows());
-            assert(C_.numCols() == B_.numCols());
+            assert(this->getNumCols() == B_.getNumRows());
+            assert(C_.getNumRows() == this->getNumRows());
+            assert(C_.getNumCols() == B_.getNumCols());
 
             ScalarType value = 0.;
             int i, j, k;
-            int num_rows_A = this->numRows();
-            int num_cols_A = this->numCols();
-            int num_cols_B = B_.numCols();
+            int num_rows_A = this->getNumRows();
+            int num_cols_A = this->getNumCols();
+            int num_cols_B = B_.getNumCols();
 
             for(j = 0; j < num_cols_B; ++j)
             {
@@ -295,15 +286,15 @@ private:
         else
         {
             // C = (A^t)(B)
-            assert(this->numRows() == B_.numRows());
-            assert(C_.numRows() == this->numCols());
-            assert(C_.numCols() == B_.numCols());
+            assert(this->getNumRows() == B_.getNumRows());
+            assert(C_.getNumRows() == this->getNumCols());
+            assert(C_.getNumCols() == B_.getNumCols());
 
             ScalarType value = 0.;
             int i, j, k;
-            int num_rows_A = this->numRows();
-            int num_cols_A = this->numCols();
-            int num_cols_B = B_.numCols();
+            int num_rows_A = this->getNumRows();
+            int num_cols_A = this->getNumCols();
+            int num_cols_B = B_.getNumCols();
 
             for(j = 0; j < num_cols_B; ++j)
             {
@@ -326,15 +317,15 @@ private:
         if(transpose_A_ == false)
         {
             // C = (A)(B^t)
-            assert(this->numCols() == B_.numCols());
-            assert(C_.numRows() == this->numRows());
-            assert(C_.numCols() == B_.numRows());
+            assert(this->getNumCols() == B_.getNumCols());
+            assert(C_.getNumRows() == this->getNumRows());
+            assert(C_.getNumCols() == B_.getNumRows());
 
             ScalarType value = 0.;
             int i, j, k;
-            int num_rows_A = this->numRows();
-            int num_cols_A = this->numCols();
-            int num_rows_B = B_.numRows();
+            int num_rows_A = this->getNumRows();
+            int num_cols_A = this->getNumCols();
+            int num_rows_B = B_.getNumRows();
 
             for(k = 0; k < num_cols_A; ++k)
             {
@@ -351,15 +342,15 @@ private:
         else
         {
             // C = (A^t)(B^t)
-            assert(this->numRows() == B_.numCols());
-            assert(C_.numRows() == this->numCols());
-            assert(C_.numCols() == B_.numRows());
+            assert(this->getNumRows() == B_.getNumCols());
+            assert(C_.getNumRows() == this->getNumCols());
+            assert(C_.getNumCols() == B_.getNumRows());
 
             ScalarType value = 0.;
             int i, j, k;
-            int num_rows_A = this->numRows();
-            int num_cols_A = this->numCols();
-            int num_rows_B = B_.numRows();
+            int num_rows_A = this->getNumRows();
+            int num_cols_A = this->getNumCols();
+            int num_rows_B = B_.getNumRows();
 
             for(i = 0; i < num_cols_A; ++i)
             {

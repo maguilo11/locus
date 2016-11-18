@@ -28,23 +28,23 @@ public:
                           const std::tr1::shared_ptr<trrom::SpectralDecompositionMng> & mng_);
     ~ReducedBasisInterface();
 
+    trrom::types::fidelity_t fidelity() const;
+    void fidelity(trrom::types::fidelity_t input_);
     void storeDualSnapshot(const trrom::Vector<double> & dual_);
     void storeStateSnapshot(const trrom::Vector<double> & state_);
     void storeLeftHandSideSnapshot(const trrom::Vector<double> & lhs_);
 
     void updateOrthonormalBases();
+    void updateReducedStateRightHandSide();
     void updateReducedLeftHandSideEnsembles();
     void updateLeftHandSideDeimDataStructures();
     void applyDiscreteEmpiricalInterpolationMethod();
-    void updateReducedStateRightHandSide(const std::tr1::shared_ptr<trrom::Vector<double> > & high_fidelity_rhs_);
 
-    void solveLowFidelityPDE(const std::tr1::shared_ptr<trrom::Vector<double> > & high_fidelity_rhs_,
-                             const std::tr1::shared_ptr<trrom::Vector<double> > & high_fidelity_lhs_,
-                             std::tr1::shared_ptr<trrom::Vector<double> > & high_fidelity_solution_);
+    void solveLowFidelityPDE(std::tr1::shared_ptr<trrom::Vector<double> > & high_fidelity_solution_);
     void solveLowFidelityAdjointPDE(const std::tr1::shared_ptr<trrom::Vector<double> > & high_fidelity_rhs_,
                                     std::tr1::shared_ptr<trrom::Vector<double> > & high_fidelity_solution_);
 
-    const std::tr1::shared_ptr<trrom::Matrix<double> > & getLeftHandSideActiveIndices() const;
+    const std::tr1::shared_ptr<trrom::ReducedBasisData> & data() const;
 
 private:
     std::tr1::shared_ptr<trrom::ReducedBasisData> m_Data;

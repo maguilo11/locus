@@ -35,11 +35,11 @@ void checkResults(const trrom::Vector<ScalarType> & gold_,
 template<typename ScalarType>
 void checkResults(const trrom::Matrix<ScalarType> & gold_, const trrom::Matrix<ScalarType> & result_, ScalarType tolerance_ = 1e-8)
 {
-    assert(gold_.numCols() == result_.numCols());
-    assert(gold_.numRows() == result_.numRows());
-    for(int column = 0; column < gold_.numCols(); ++column)
+    assert(gold_.getNumCols() == result_.getNumCols());
+    assert(gold_.getNumRows() == result_.getNumRows());
+    for(int column = 0; column < gold_.getNumCols(); ++column)
     {
-        for(int row = 0; row < gold_.numRows(); ++row)
+        for(int row = 0; row < gold_.getNumRows(); ++row)
         {
             EXPECT_NEAR(gold_(row, column), result_(row, column), tolerance_);
         }

@@ -29,13 +29,13 @@ void Preconditioner::applyPreconditioner(const std::tr1::shared_ptr<trrom::Optim
                                          const std::tr1::shared_ptr<trrom::Vector<double> > & vector_,
                                          std::tr1::shared_ptr<trrom::Vector<double> > & prec_times_vector_)
 {
-    prec_times_vector_->copy(*vector_);
+    prec_times_vector_->update(1., *vector_, 0.);
 }
 void Preconditioner::applyInvPreconditioner(const std::tr1::shared_ptr<trrom::OptimizationDataMng> & mng_,
                                             const std::tr1::shared_ptr<trrom::Vector<double> > & vector_,
                                             std::tr1::shared_ptr<trrom::Vector<double> > & inv_prec_times_vector_)
 {
-    inv_prec_times_vector_->copy(*vector_);
+    inv_prec_times_vector_->update(1., *vector_, 0.);
 }
 
 }

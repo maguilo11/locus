@@ -17,69 +17,65 @@
 namespace trrom
 {
 
-template<typename ScalarType>
-class TeuchosSerialDenseMatrix : public trrom::Matrix<ScalarType>
+class TeuchosSerialDenseMatrix : public trrom::Matrix<double>
 {
 public:
     TeuchosSerialDenseMatrix() :
-            m_Data(new Teuchos::SerialDenseMatrix<int, ScalarType>()),
-            m_Vector(new trrom::SerialArray<ScalarType>(1))
+            m_Data(new Teuchos::SerialDenseMatrix<int, double>()),
+            m_Vector(new trrom::SerialArray<double>(1))
     {
     }
     TeuchosSerialDenseMatrix(int num_rows_, int num_columns_) :
-            m_Data(new Teuchos::SerialDenseMatrix<int, ScalarType>(num_rows_, num_columns_)),
-            m_Vector(new trrom::SerialArray<ScalarType>(1))
+            m_Data(new Teuchos::SerialDenseMatrix<int, double>(num_rows_, num_columns_)),
+            m_Vector(new trrom::SerialArray<double>(1))
     {
     }
     virtual ~TeuchosSerialDenseMatrix()
     {
     }
 
-    void fill(ScalarType value_)
+    void fill(double value_)
     {
         m_Data->putScalar(value_);
     }
-    void scale(ScalarType value_)
+    void scale(double value_)
     {
         m_Data->scale(value_);
     }
-    void insert(const trrom::Vector<ScalarType> & input_)
+    void insert(const trrom::Vector<double> & input_)
     {
         // TODO: RECONSIDER PURE VIRTUAL FUNCTION
     }
 
-    void copy(const trrom::Matrix<ScalarType> & input_)
+    void update(const double & alpha_, const trrom::Matrix<double> & input_, const double & beta_)
     {
-        m_Data->assign(*(dynamic_cast<const trrom::TeuchosSerialDenseMatrix<ScalarType>&>(input_).m_Data));
-    }
-    void add(const ScalarType & alpha_, const trrom::Matrix<ScalarType> & input_)
-    {
-        int num_rows = input_.numRows();
-        int num_columns = input_.numCols();
-        assert(num_rows == this->numRows());
-        assert(num_columns == this->numCols());
+        int num_rows = input_.getNumRows();
+        int num_columns = input_.getNumCols();
+        assert(num_rows == this->getNumRows());
+        assert(num_columns == this->getNumCols());
 
         for(int row_index = 0; row_index < num_rows; ++row_index)
         {
             for(int column_index = 0; column_index < num_columns; ++column_index)
             {
-                m_Data->operator ()(row_index, column_index) += alpha_ * input_(row_index, column_index);
+                (*m_Data)(row_index, column_index) =
+                        beta_ * (*m_Data)(row_index, column_index) + alpha_ * input_(row_index, column_index);
             }
         }
     }
     void gemv(bool transpose_,
-              const ScalarType & alpha_,
-              const trrom::Vector<ScalarType> & input_,
-              const ScalarType & beta_,
-              trrom::Vector<ScalarType> & output_) const
+              const double & alpha_,
+              const trrom::Vector<double> & input_,
+              const double & beta_,
+              trrom::Vector<double> & output_) const
     {
-        int num_rows = this->numRows();
-        int num_columns = this->numCols();
+        int num_rows = this->getNumRows();
+        int num_columns = this->getNumCols();
         int matrix_leading_dim = std::max(1, num_rows);
-        trrom::TeuchosArray<double> in(num_columns);
-        in.copy(input_);
+        trrom::TeuchosArray<double> input(num_columns);
+        input.update(1., input_, 0.);
         int increments_for_in_vector = 1;
-        trrom::TeuchosArray<double> out(num_rows);
+        trrom::TeuchosArray<double> output(num_rows);
         int increments_for_out_vector = 1;
 
         Teuchos::ETransp transpose = this->castTranspose(transpose_);
@@ -90,32 +86,32 @@ public:
                      alpha_,
                      m_Data->values(),
                      matrix_leading_dim,
-                     in.data()->getRawPtr(),
+                     input.data()->getRawPtr(),
                      increments_for_in_vector,
                      beta_,
-                     out.data()->getRawPtr(),
+                     output.data()->getRawPtr(),
                      increments_for_out_vector);
 
-        assert(output_.size() == out.size());
-        output_.copy(out);
+        assert(output_.size() == output.size());
+        output_.update(1., output, 0.);
     }
     void gemm(const bool & transpose_A_,
               const bool & transpose_B_,
-              const ScalarType & alpha_,
-              const trrom::Matrix<ScalarType> & B_,
-              const ScalarType & beta_,
-              trrom::Matrix<ScalarType> & C_) const
+              const double & alpha_,
+              const trrom::Matrix<double> & B_,
+              const double & beta_,
+              trrom::Matrix<double> & C_) const
     {
-        int num_rows = this->numRows();
-        int num_columns = this->numCols();
+        int num_rows = this->getNumRows();
+        int num_columns = this->getNumCols();
         int matrix_A_leading_dim = std::max(1, num_rows);
         int matrix_B_leading_dim = num_columns;
         int matrix_C_leading_dim = std::max(1, num_rows);
 
-        trrom::TeuchosSerialDenseMatrix<ScalarType> B_matrix(B_.numRows(), B_.numCols());
-        B_matrix.copy(B_);
-        trrom::TeuchosSerialDenseMatrix<ScalarType> C_matrix(C_.numRows(), C_.numCols());
-        C_matrix.copy(C_);
+        trrom::TeuchosSerialDenseMatrix B_matrix(B_.getNumRows(), B_.getNumCols());
+        B_matrix.update(1., B_, 0.);
+        trrom::TeuchosSerialDenseMatrix C_matrix(C_.getNumRows(), C_.getNumCols());
+        C_matrix.update(1., C_, 0.);
 
         Teuchos::ETransp transpose_A = this->castTranspose(transpose_A_);
         Teuchos::ETransp transpose_B = this->castTranspose(transpose_B_);
@@ -134,49 +130,55 @@ public:
                      C_matrix.data()->values(),
                      matrix_C_leading_dim);
 
-        C_.copy(C_matrix);
+        C_.update(1., C_matrix, 0.);
     }
 
-    int numRows() const
+    int getNumRows() const
     {
         int number_of_rows = m_Data->numRows();
         return (number_of_rows);
     }
-    int numCols() const
+    int getNumCols() const
     {
         int number_of_columns = m_Data->numCols();
         return (number_of_columns);
     }
-    ScalarType & operator ()(const int & row_index_, const int & column_index_)
+    double & operator ()(int global_row_index_, int global_column_index_)
     {
-        return (m_Data->operator ()(row_index_, column_index_));
+        return (m_Data->operator ()(global_row_index_, global_column_index_));
     }
-    const ScalarType & operator ()(const int & row_index_, const int & column_index_) const
+    const double & operator ()(int global_row_index_, int global_column_index_) const
     {
-        return (m_Data->operator ()(row_index_, column_index_));
+        return (m_Data->operator ()(global_row_index_, global_column_index_));
+    }
+    void replaceGlobalValue(const int & global_row_index_, const int & global_column_index_, const double & value_)
+    {
+        (*m_Data)(global_row_index_, global_column_index_) = value_;
     }
 
-    trrom::Vector<ScalarType> & vector(int index_) const
+    trrom::Vector<double> & vector(int index_) const
     {
         // TODO: RECONSIDER PURE VIRTUAL FUNCTION
         return (*m_Vector);
     }
-
-    std::tr1::shared_ptr<trrom::Matrix<ScalarType> > create() const
+    std::tr1::shared_ptr<trrom::Matrix<double> > create(int nrows_ = 0, int ncols_ = 0) const
     {
-        int rows = this->numRows();
-        int cols = this->numCols();
-        std::tr1::shared_ptr<trrom::Matrix<ScalarType> >
-            a_copy(new trrom::TeuchosSerialDenseMatrix<ScalarType>(rows, cols));
-        return (a_copy);
+        assert(nrows_ >= 0);
+        assert(ncols_ >= 0);
+        std::tr1::shared_ptr<trrom::TeuchosSerialDenseMatrix> this_copy;
+        if((nrows_ > 0) && (ncols_ > 0))
+        {
+            this_copy.reset(new trrom::TeuchosSerialDenseMatrix(nrows_, ncols_));
+        }
+        else
+        {
+            int num_rows = this->getNumRows();
+            int num_cols = this->getNumCols();
+            this_copy.reset(new trrom::TeuchosSerialDenseMatrix(num_rows, num_cols));
+        }
+        return (this_copy);
     }
-    std::tr1::shared_ptr<trrom::Matrix<ScalarType> > create(int nrows_, int ncols_) const
-    {
-        std::tr1::shared_ptr<trrom::Matrix<ScalarType> >
-            a_copy(new trrom::TeuchosSerialDenseMatrix<ScalarType>(nrows_, ncols_));
-        return (a_copy);
-    }
-    std::tr1::shared_ptr<Teuchos::SerialDenseMatrix<int, ScalarType> > & data()
+    std::tr1::shared_ptr<Teuchos::SerialDenseMatrix<int, double> > & data()
     {
         return (m_Data);
     }
@@ -198,12 +200,12 @@ private:
     }
 
 private:
-    std::tr1::shared_ptr< Teuchos::SerialDenseMatrix<int, ScalarType> > m_Data;
-    std::tr1::shared_ptr< trrom::SerialArray<ScalarType> > m_Vector;
+    std::tr1::shared_ptr< Teuchos::SerialDenseMatrix<int, double> > m_Data;
+    std::tr1::shared_ptr< trrom::SerialArray<double> > m_Vector;
 
 private:
-    TeuchosSerialDenseMatrix(const trrom::TeuchosSerialDenseMatrix<ScalarType> &);
-    trrom::TeuchosSerialDenseMatrix<ScalarType> & operator=(const trrom::TeuchosSerialDenseMatrix<ScalarType> & rhs_);
+    TeuchosSerialDenseMatrix(const trrom::TeuchosSerialDenseMatrix &);
+    trrom::TeuchosSerialDenseMatrix & operator=(const trrom::TeuchosSerialDenseMatrix & rhs_);
 };
 
 }

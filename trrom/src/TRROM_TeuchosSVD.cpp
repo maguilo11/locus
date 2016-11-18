@@ -27,19 +27,19 @@ void TeuchosSVD::solve(const std::tr1::shared_ptr<trrom::Matrix<double> > & data
                        std::tr1::shared_ptr<trrom::Matrix<double> > & left_singular_vectors_,
                        std::tr1::shared_ptr<trrom::Matrix<double> > & right_singular_vectors_)
 {
-    int input_data_num_rows = data_->numRows();
-    int input_data_num_columns = data_->numCols();
+    int input_data_num_rows = data_->getNumRows();
+    int input_data_num_columns = data_->getNumCols();
     int spectral_dimension = std::min(input_data_num_rows, input_data_num_columns);
 
     // Copy input data since GESVD routine overwrites it (always)
-    trrom::TeuchosSerialDenseMatrix<double> matrix(input_data_num_rows, input_data_num_columns);
-    matrix.copy(*data_);
+    trrom::TeuchosSerialDenseMatrix matrix(input_data_num_rows, input_data_num_columns);
+    matrix.update(1., *data_, 0.);
     int matrix_leading_dimension = matrix.data()->stride();
 
     // Resize output data appropriately
     trrom::TeuchosArray<double> singular_values(spectral_dimension);
-    trrom::TeuchosSerialDenseMatrix<double> left_singular_vectors(input_data_num_rows, input_data_num_rows);
-    trrom::TeuchosSerialDenseMatrix<double> right_singular_vectors(input_data_num_columns, input_data_num_columns);
+    trrom::TeuchosSerialDenseMatrix left_singular_vectors(input_data_num_rows, input_data_num_rows);
+    trrom::TeuchosSerialDenseMatrix right_singular_vectors(input_data_num_columns, input_data_num_columns);
 
     int leading_dimension_lsv = left_singular_vectors.data()->stride(); /* lsv = left singular vectors */
     int leading_dimension_rsv = right_singular_vectors.data()->stride(); /* rsv = right singular vectors */
@@ -88,13 +88,13 @@ void TeuchosSVD::solve(const std::tr1::shared_ptr<trrom::Matrix<double> > & data
 
     // Set output data given successful SVD solution
     singular_values_ = singular_values.create();
-    singular_values_->copy(singular_values);
+    singular_values_->update(1., singular_values, 0.);
 
     left_singular_vectors_ = left_singular_vectors.create();
-    left_singular_vectors_->copy(left_singular_vectors);
+    left_singular_vectors_->update(1., left_singular_vectors, 0.);
 
     right_singular_vectors_ = right_singular_vectors.create();
-    right_singular_vectors_->copy(right_singular_vectors);
+    right_singular_vectors_->update(1., right_singular_vectors, 0.);
 }
 
 }

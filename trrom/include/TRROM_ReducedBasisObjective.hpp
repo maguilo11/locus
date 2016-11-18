@@ -22,10 +22,10 @@ public:
     {
     }
 
-    virtual double value(const double & tolerance_,
-                         const trrom::Vector<double> & state_,
+    virtual double value(const trrom::Vector<double> & state_,
                          const trrom::Vector<double> & control_,
-                         bool & inexactness_violated_) = 0;
+                         const double & tolerance_,
+                         bool inexactness_violated_ = false) = 0;
 
     virtual void partialDerivativeState(const trrom::Vector<double> & state_,
                                         const trrom::Vector<double> & control_,
@@ -52,10 +52,10 @@ public:
                                                trrom::Vector<double> & output_) = 0;
 
     virtual void fidelity(trrom::types::fidelity_t input_) = 0;
-    virtual bool checkGradientInexactness(const double & tolerance_,
-                                          const trrom::Vector<double> & state_,
+    virtual bool checkGradientInexactness(const trrom::Vector<double> & state_,
                                           const trrom::Vector<double> & control_,
-                                          const trrom::Vector<double> & gradient_) = 0;
+                                          const trrom::Vector<double> & gradient_,
+                                          const double & tolerance_) = 0;
 };
 
 }

@@ -48,8 +48,8 @@ void KelleySachsReducedBasis::getMin()
     double new_objective_value = m_DataMng->evaluateObjective();
     m_DataMng->setNewObjectiveFunctionValue(new_objective_value);
     m_DataMng->computeGradient();
-    m_DataMng->getOldPrimal()->copy(*m_DataMng->getNewPrimal());
-    m_DataMng->getOldGradient()->copy(*m_DataMng->getNewGradient());
+    m_DataMng->getOldPrimal()->update(1., *m_DataMng->getNewPrimal(), 0.);
+    m_DataMng->getOldGradient()->update(1., *m_DataMng->getNewGradient(), 0.);
     double norm_gradient = m_DataMng->getNewGradient()->norm();
     m_DataMng->setNormNewGradient(norm_gradient);
     if(m_StepMng->isInitialTrustRegionRadiusSetToGradNorm() == true)

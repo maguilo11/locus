@@ -96,7 +96,7 @@ void ReducedSpaceAssemblyMng::gradient(const std::tr1::shared_ptr<trrom::Vector<
 {
     m_StateWorkVec->fill(0.);
     m_Objective->partialDerivativeState(*m_State, *control_, *m_StateWorkVec);
-    m_StateWorkVec->scale(static_cast<double>(-1.0));
+    m_StateWorkVec->scale(-1.);
 
     m_Dual->fill(0.);
     m_PDE->applyAdjointInverseJacobianState(*m_State, *control_, *m_StateWorkVec, *m_Dual);
@@ -107,10 +107,10 @@ void ReducedSpaceAssemblyMng::gradient(const std::tr1::shared_ptr<trrom::Vector<
     m_PDE->adjointPartialDerivativeControl(*m_State, *control_, *m_Dual, *m_ControlWorkVec);
 
     // assemble gradient operator
-    gradient_->copy(*m_ControlWorkVec);
+    gradient_->update(1., *m_ControlWorkVec, 0.);
     m_ControlWorkVec->fill(0.);
     m_Objective->partialDerivativeControl(*m_State, *control_, *m_ControlWorkVec);
-    gradient_->axpy(static_cast<double>(1.0), *m_ControlWorkVec);
+    gradient_->update(1., *m_ControlWorkVec, 1.);
     this->updateGradientCounter();
 
     // check gradient inexactness tolerance
@@ -182,20 +182,20 @@ void ReducedSpaceAssemblyMng::computeHessianTimesVector(const trrom::Vector<doub
     m_Objective->partialDerivativeControlControl(*m_State, input_, trial_step_, hess_times_vec_);
     m_ControlWorkVec->fill(0.);
     m_PDE->partialDerivativeControlControl(*m_State, input_, *m_Dual, trial_step_, *m_ControlWorkVec);
-    hess_times_vec_.axpy(static_cast<double>(1.0), *m_ControlWorkVec);
+    hess_times_vec_.update(1., *m_ControlWorkVec, 1.);
 
     // add L_zl(u(variables_); variables_; lambda(variables_))*dlambda contribution, where L denotes the Lagrangian functional
     m_ControlWorkVec->fill(0.);
     m_PDE->adjointPartialDerivativeControl(*m_State, input_, *m_DeltaDual, *m_ControlWorkVec);
-    hess_times_vec_.axpy(static_cast<double>(1.0), *m_ControlWorkVec);
+    hess_times_vec_.update(1., *m_ControlWorkVec, 1.);
 
     // add L_zu(u(variables_); variables_; lambda(variables_))*du contribution, where L denotes the Lagrangian functional
     m_ControlWorkVec->fill(0.);
     m_Objective->partialDerivativeControlState(*m_State, input_, *m_DeltaState, *m_ControlWorkVec);
-    hess_times_vec_.axpy(static_cast<double>(1.0), *m_ControlWorkVec);
+    hess_times_vec_.update(1., *m_ControlWorkVec, 1.);
     m_ControlWorkVec->fill(0.);
     m_PDE->partialDerivativeControlState(*m_State, input_, *m_Dual, *m_DeltaState, *m_ControlWorkVec);
-    hess_times_vec_.axpy(static_cast<double>(1.0), *m_ControlWorkVec);
+    hess_times_vec_.update(1., *m_ControlWorkVec, 1.);
 }
 
 void ReducedSpaceAssemblyMng::computeFullNewtonHessian(const trrom::Vector<double> & control_,
@@ -206,7 +206,7 @@ void ReducedSpaceAssemblyMng::computeFullNewtonHessian(const trrom::Vector<doubl
      * member data and optimize implementation) for forward solve needed for Hessian calculation */
     m_StateWorkVec->fill(0.);
     m_PDE->partialDerivativeControl(*m_State, control_, vector_, *m_StateWorkVec);
-    m_StateWorkVec->scale(static_cast<double>(-1.0));
+    m_StateWorkVec->scale(-1.);
 
     // FIRST SOLVE: Solve c_u(u(variables_); variables_) du = c_z(u(variables_); variables_) trial_step_ for du
     m_DeltaState->fill(0.);
@@ -219,15 +219,15 @@ void ReducedSpaceAssemblyMng::computeFullNewtonHessian(const trrom::Vector<doubl
     m_HessWorkVec->fill(0.);
     m_Objective->partialDerivativeStateState(*m_State, control_, *m_DeltaState, *m_StateWorkVec);
     m_PDE->partialDerivativeStateState(*m_State, control_, *m_Dual, *m_DeltaState, *m_HessWorkVec);
-    m_StateWorkVec->axpy(static_cast<double>(1.0), *m_HessWorkVec);
+    m_StateWorkVec->update(1., *m_HessWorkVec, 1.);
 
     m_HessWorkVec->fill(0.);
     m_Objective->partialDerivativeStateControl(*m_State, control_, vector_, *m_HessWorkVec);
-    m_StateWorkVec->axpy(static_cast<double>(1.0), *m_HessWorkVec);
+    m_StateWorkVec->update(1., *m_HessWorkVec, 1.);
     m_HessWorkVec->fill(0.);
     m_PDE->partialDerivativeStateControl(*m_State, control_, *m_Dual, vector_, *m_HessWorkVec);
-    m_StateWorkVec->axpy(static_cast<double>(1.0), *m_HessWorkVec);
-    m_StateWorkVec->scale(static_cast<double>(-1.0));
+    m_StateWorkVec->update(1., *m_HessWorkVec, 1.);
+    m_StateWorkVec->scale(-1.);
 
     /* Solve c_u(u(variables_); variables_) dlambda = -(L_uu(u(variables_), variables_, lambda(variables_)) du
      + L_uz(u(variables_), variables_, lambda(variables_)) trial_step_) for dlambda */
@@ -254,7 +254,7 @@ void ReducedSpaceAssemblyMng::computeGaussNewtonHessian(const trrom::Vector<doub
     m_Objective->partialDerivativeControlControl(*m_State, control_, vector_, hess_times_vec_);
     m_ControlWorkVec->fill(0.);
     m_PDE->partialDerivativeControlControl(*m_State, control_, *m_Dual, vector_, *m_ControlWorkVec);
-    hess_times_vec_.axpy(static_cast<double>(1.0), *m_ControlWorkVec);
+    hess_times_vec_.update(1., *m_ControlWorkVec, 1.);
 }
 
 }

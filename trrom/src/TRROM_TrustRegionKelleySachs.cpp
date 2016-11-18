@@ -153,8 +153,8 @@ bool TrustRegionKelleySachs::updatePrimal(const std::tr1::shared_ptr<trrom::Kell
     {
         // Compute trial point based on the mid gradient (i.e. mid steepest descent)
         double lambda = -xi / alpha;
-        m_WorkVector->copy(*step_->getMidPrimal());
-        m_WorkVector->axpy(lambda, *mid_gradient_);
+        m_WorkVector->update(1., *step_->getMidPrimal(), 0.);
+        m_WorkVector->update(lambda, *mid_gradient_, 1.);
         m_BoundConstraint->project(*m_LowerBound, *m_UpperBound, *m_WorkVector);
         // Compute trial objective function
         double trial_objective_value = data_->evaluateObjective(m_WorkVector);
@@ -164,7 +164,7 @@ bool TrustRegionKelleySachs::updatePrimal(const std::tr1::shared_ptr<trrom::Kell
         if(trial_actual_reduction < -mu * mid_actual_reduction)
         {
             primal_updated = true;
-            data_->getNewPrimal()->copy(*m_WorkVector);
+            data_->getNewPrimal()->update(1., *m_WorkVector, 0.);
             step_->setActualReduction(trial_actual_reduction);
             data_->setNewObjectiveFunctionValue(trial_objective_value);
             break;
@@ -183,7 +183,7 @@ bool TrustRegionKelleySachs::updatePrimal(const std::tr1::shared_ptr<trrom::Kell
 
     if(iteration >= max_num_updates)
     {
-        data_->getNewPrimal()->copy(*step_->getMidPrimal());
+        data_->getNewPrimal()->update(1., *step_->getMidPrimal(), 0.);
         data_->setNewObjectiveFunctionValue(mid_objective_value);
     }
 
@@ -199,8 +199,8 @@ void TrustRegionKelleySachs::updateDataManager(const std::tr1::shared_ptr<trrom:
     double current_objective_value = data_->getNewObjectiveFunctionValue();
     data_->setOldObjectiveFunctionValue(current_objective_value);
     // update primal vector
-    data_->getOldPrimal()->copy(*data_->getNewPrimal());
-    data_->getOldGradient()->copy(*data_->getNewGradient());
+    data_->getOldPrimal()->update(1., *data_->getNewPrimal(), 0.);
+    data_->getOldGradient()->update(1., *data_->getNewGradient(), 0.);
 
     if(this->updatePrimal(step_, data_, mid_gradient_) == true)
     {
@@ -210,11 +210,11 @@ void TrustRegionKelleySachs::updateDataManager(const std::tr1::shared_ptr<trrom:
     }
     else
     {
-        data_->getNewGradient()->copy(*mid_gradient_);
+        data_->getNewGradient()->update(1., *mid_gradient_, 0.);
     }
 
     // compute norm of projected gradient
-    m_WorkVector->copy(*data_->getNewGradient());
+    m_WorkVector->update(1., *data_->getNewGradient(), 0.);
     m_WorkVector->elementWiseMultiplication(*inactive_set_);
     double norm_proj_gradient = m_WorkVector->norm();
     data_->setNormNewGradient(norm_proj_gradient);
@@ -278,11 +278,11 @@ bool TrustRegionKelleySachs::checkStoppingCriteria(const std::tr1::shared_ptr<tr
 void TrustRegionKelleySachs::computeStationarityMeasure(const std::tr1::shared_ptr<trrom::OptimizationDataMng> & data_,
                                                         const std::tr1::shared_ptr<trrom::Vector<double> > & inactive_set_)
 {
-    m_WorkVector->copy(*data_->getNewPrimal());
-    m_WorkVector->axpy(static_cast<double>(-1.), *data_->getNewGradient());
+    m_WorkVector->update(1., *data_->getNewPrimal(), 0.);
+    m_WorkVector->update(-1., *data_->getNewGradient(), 1.);
     m_BoundConstraint->project(*m_LowerBound, *m_UpperBound, *m_WorkVector);
-    m_WorkVector->scale(static_cast<double>(-1.));
-    m_WorkVector->axpy(static_cast<double>(1.), *data_->getNewPrimal());
+    m_WorkVector->scale(-1.);
+    m_WorkVector->update(1., *data_->getNewPrimal(), 1.);
     m_WorkVector->elementWiseMultiplication(*inactive_set_);
 
     m_StationarityMeasure = m_WorkVector->norm();
@@ -291,8 +291,8 @@ void TrustRegionKelleySachs::computeStationarityMeasure(const std::tr1::shared_p
 
 void TrustRegionKelleySachs::resetCurrentStateToPreviousState(const std::tr1::shared_ptr<trrom::OptimizationDataMng> & data_)
 {
-    data_->getNewPrimal()->copy(*data_->getOldPrimal());
-    data_->getNewGradient()->copy(*data_->getOldGradient());
+    data_->getNewPrimal()->update(1., *data_->getOldPrimal(), 0.);
+    data_->getNewGradient()->update(1., *data_->getOldGradient(), 0.);
     data_->setNewObjectiveFunctionValue(data_->getOldObjectiveFunctionValue());
 }
 

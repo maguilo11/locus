@@ -171,15 +171,15 @@ void AugmentedLagrangianTypeLP::gradient(const std::tr1::shared_ptr<trrom::Vecto
         m_ControlWorkVec->fill(0.);
         m_Inequality[index]->gradient(*control_, *m_ControlWorkVec);
         this->updateInequalityGradientCounter();
-        m_LagrangianGradient->axpy((*m_LagrangeMultipliers)[index], *m_ControlWorkVec);
+        m_LagrangianGradient->update((*m_LagrangeMultipliers)[index], *m_ControlWorkVec, 1.);
 
         // Add contribution from \mu*h_i(\mathbf{u}(\mathbf{z}),\mathbf{z})\frac{\partial h_i}{\partial\mathbf{z}}.
         double alpha = one_over_penalty * (*m_CurrentInequalityConstraintValues)[index];
-        gradient_->axpy(alpha, *m_ControlWorkVec);
+        gradient_->update(alpha, *m_ControlWorkVec, 1.);
     }
     m_NormLagrangianGradient = m_LagrangianGradient->norm();
     // Compute augmented Lagrangian gradient
-    gradient_->axpy(static_cast<double>(1.), *m_LagrangianGradient);
+    gradient_->update(1., *m_LagrangianGradient, 1.);
     this->updateGradientCounter();
 }
 
@@ -211,11 +211,11 @@ void AugmentedLagrangianTypeLP::hessian(const std::tr1::shared_ptr<trrom::Vector
         // Add contribution from: \lambda_i\frac{\partial^2 h_i}{\partial\mathbf{z}^2}
         m_ControlWorkVec->fill(0.);
         m_Inequality[index]->hessian(*control_, *vector_, *m_ControlWorkVec);
-        hessian_times_vec_->axpy((*m_LagrangeMultipliers)[index], *m_ControlWorkVec);
+        hessian_times_vec_->update((*m_LagrangeMultipliers)[index], *m_ControlWorkVec, 1.);
 
         // Add contribution from: \mu\frac{\partial^2 h_i}{\partial\mathbf{z}^2}\h_i(\mathbf{z})
         double alpha = one_over_penalty * (*m_CurrentInequalityConstraintValues)[index];
-        hessian_times_vec_->axpy(alpha, *m_ControlWorkVec);
+        hessian_times_vec_->update(alpha, *m_ControlWorkVec, 1.);
 
         // Compute Jacobian, i.e. \frac{\partial h_i}{\partial\mathbf{z}}
         m_ControlWorkVec->fill(0.);
@@ -224,7 +224,7 @@ void AugmentedLagrangianTypeLP::hessian(const std::tr1::shared_ptr<trrom::Vector
         double beta = one_over_penalty * jacobian_dot_trial_direction;
         // Add contribution from: \mu\left(\frac{\partial h_i}{\partial\mathbf{z}}^{T}
         //                        \frac{\partial h_i}{\partial\mathbf{z}}\right)
-        hessian_times_vec_->axpy(beta, *m_ControlWorkVec);
+        hessian_times_vec_->update(beta, *m_ControlWorkVec, 1.);
     }
 
     this->updateHessianCounter();

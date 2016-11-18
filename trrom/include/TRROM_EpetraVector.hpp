@@ -105,27 +105,12 @@ public:
         m_Data->PutScalar(input_);
     }
 
-    void axpy(const double & alpha_, const trrom::Vector<double> & input_)
+    void update(const double & alpha_, const trrom::Vector<double> & input_, const double & beta_)
     {
         /** Update multi-vector values with scaled values of A, this = ScalarThis*this + ScalarA*A. */
         assert(this->size() == input_.size());
-
-        double this_scalar = 1.;
         const trrom::EpetraVector & input = dynamic_cast<const trrom::EpetraVector &>(input_);
-        m_Data->Update(alpha_, *input.m_Data, this_scalar);
-    }
-    void copy(const trrom::Vector<double> & input_)
-    {
-        /** **************************************************************************************
-         * Copies input vector into this For Epetra_Vectors this calculation is defined as
-         * this = ScalarThis*this + ScalarA*A..
-         * *************************************************************************************** */
-        assert(this->size() == input_.size());
-
-        double this_scalar = 0.;
-        double input_scalar = 1.;
-        const trrom::EpetraVector & input = dynamic_cast<const trrom::EpetraVector &>(input_);
-        m_Data->Update(input_scalar, *input.m_Data, this_scalar);
+        m_Data->Update(alpha_, *input.m_Data, beta_);
     }
     void elementWiseMultiplication(const trrom::Vector<double> & input_)
     {
@@ -155,19 +140,21 @@ public:
         /** Operator overloads square bracket operator */
         return (m_Data->operator [](index_));
     }
-    std::tr1::shared_ptr< trrom::Vector<double> > create() const
+    std::tr1::shared_ptr<trrom::Vector<double> > create(int global_length = 0) const
     {
-        /** Creates copy of this vector */
-        std::tr1::shared_ptr<trrom::EpetraVector> this_copy(new trrom::EpetraVector(m_Data->Map()));
-        return (this_copy);
-    }
-    std::tr1::shared_ptr< trrom::Vector<double> > create(int global_num_elements_ = 0) const
-    {
-        /** Creates copy of this vector */
-        const int index_base = m_Data->Map().IndexBase();
-        const int element_size = m_Data->Map().ElementSize();
-        Epetra_BlockMap map(global_num_elements_, element_size, index_base, m_Data->Comm());
-        std::tr1::shared_ptr<trrom::EpetraVector> this_copy(new trrom::EpetraVector(map));
+        /*! Creates copy of this vector */
+        std::tr1::shared_ptr<trrom::EpetraVector> this_copy;
+        if(global_length == 0)
+        {
+            this_copy.reset(new trrom::EpetraVector(m_Data->Map()));
+        }
+        else
+        {
+            const int index_base = m_Data->Map().IndexBase();
+            const int element_size = m_Data->Map().ElementSize();
+            Epetra_BlockMap map(global_length, element_size, index_base, m_Data->Comm());
+            this_copy.reset(new trrom::EpetraVector(map));
+        }
         return (this_copy);
     }
     int getNumProc() const
