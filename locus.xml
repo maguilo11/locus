@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<cdtprojectproperties>
+<section name="org.eclipse.cdt.internal.ui.wizards.settingswizards.IncludePaths">
+<language name="Object File">
+
+</language>
+<language name="Assembly Source File">
+
+</language>
+<language name="C++ Source File">
+<includepath>/usr/include/c++/4.2.1</includepath>
+<includepath>/Users/miguelaguilo/Software/gtest/include</includepath>
+<includepath>/Applications/MATLAB_R2015a.app/extern/include</includepath>
+<includepath>/usr/local/Cellar/gcc/4.9.2_1/lib/gcc/4.9/gcc/x86_64-apple-darwin13.4.0/4.9.2/include</includepath>
+<includepath>/usr/local/include</includepath>
+
+</language>
+<language name="C Source File">
+
+</language>
+</section>
+<section name="org.eclipse.cdt.internal.ui.wizards.settingswizards.Macros">
+<language name="Object File">
+
+</language>
+<language name="Assembly Source File">
+
+</language>
+<language name="C++ Source File">
+
+</language>
+<language name="C Source File">
+
+</language>
+</section>
+</cdtprojectproperties>
