@@ -7,7 +7,7 @@ MEX=/Applications/MATLAB_R2015a.app/bin/mex
 MEX_FLAG=
 
 # Set GNU compiler options
-CXXFLAGS=-std=c++11
+CXXFLAGS=-std=c++11 -Wall
 CXXOPTIMFLAGS=-O3
 
 # C++ include directory

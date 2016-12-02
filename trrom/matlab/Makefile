@@ -1,21 +1,22 @@
 # Set SOL install directory
-HOME=/scratch/maguilo/sierra/trrom/trrom/
+HOME=/Users/miguelaguilo/locus/trrom/
 
-# Set MEX compiler (MEX) and corresponding flags (MEX_FLAG)
-MEX=/usr/local/matlab/8.6/bin/mex
-MEX_FLAG=-cxx -lblas
-MEXINC=/usr/local/matlab/8.6/extern/include/
+# Set MEX compiler (MEX) and corresponding flags (MEXFLAG)
+MEXFLAG=-lblas
+MEX=/Applications/MATLAB_R2015a.app/bin/mex 
+MEXINC=/Applications/MATLAB_R2015a.app/extern/include/
 
 # Set GNU compiler options
-CXX=g++
-CXXOPTIMFLAGS=O3
+CXXOPTIMFLAGS=-O3
+CXX=/usr/local/Cellar/gcc/4.9.2_1/bin/g++-4.9
+CXXINCL=/usr/local/Cellar/gcc/4.9.2_1/include/c++/4.9.2/
+CXXFLAGS=-I$(HOME)include -I$(CXXINCL) -I$(MEXINC) -g -fPIC -Wall -std=c++11 
 
 # Set MEX source directory (MEXDIR), MEX include directory (MEXINC), objects output directory (OBJDIR), 
 # and executables output directory (EXEDIR)
 OBJDIR=obj/
 EXEDIR=exe/
 
-CXXFLAGS=-I$(HOME)include -I$(MEXINC) -g -fPIC -Wall
 
 OBJS=$(HOME)matlab/TRROM_MxVector.o \
 	$(HOME)matlab/TRROM_MxMatrix.o \
@@ -58,17 +59,17 @@ SOLVERTEST=$(HOME)matlab/TRROM_MxDirectSolverTest.o \
 	$(HOME)matlab/TRROM_MxVector.o
 
 .C.o:
-	$(MEX) CXX=$(CXX) CXXOPTIMFLAGS=$(CXXOPTIMFLAGS) LD=$(CXX) $(MEX_FLAG) -outdir $(OBJDIR) $(CXXFLAGS) -c -o $@ $<
+	$(MEX) -largeArrays CXX=$(CXX) CXXFLAGS=$(CXXFLAGS) CXXOPTIMFLAGS=$(CXXOPTIMFLAGS) -outdir $(OBJDIR) -c $@ $<
 
 test: $(OBJS) 
 
 MX:
-	$(MEX) CXX=$(CXX) CXXOPTIMFLAGS=$(CXXOPTIMFLAGS) LD=$(CXX) $(MEX_FLAG) -outdir $(EXEDIR) $(VECTEST)
-	$(MEX) CXX=$(CXX) CXXOPTIMFLAGS=$(CXXOPTIMFLAGS) LD=$(CXX) $(MEX_FLAG) -outdir $(EXEDIR) $(MATTEST)
-	$(MEX) CXX=$(CXX) CXXOPTIMFLAGS=$(CXXOPTIMFLAGS) LD=$(CXX) $(MEX_FLAG) -outdir $(EXEDIR) $(SVDTEST)
-	$(MEX) CXX=$(CXX) CXXOPTIMFLAGS=$(CXXOPTIMFLAGS) LD=$(CXX) $(MEX_FLAG) -outdir $(EXEDIR) $(OBJTEST)
-	$(MEX) CXX=$(CXX) CXXOPTIMFLAGS=$(CXXOPTIMFLAGS) LD=$(CXX) $(MEX_FLAG) -outdir $(EXEDIR) $(ORTHOTEST)
-	$(MEX) CXX=$(CXX) CXXOPTIMFLAGS=$(CXXOPTIMFLAGS) LD=$(CXX) $(MEX_FLAG) -outdir $(EXEDIR) $(SOLVERTEST)
+	$(MEX) CXX=$(CXX) CXXOPTIMFLAGS=$(CXXOPTIMFLAGS) LD=$(CXX) $(MEXFLAG) -outdir $(EXEDIR) $(VECTEST)
+	$(MEX) CXX=$(CXX) CXXOPTIMFLAGS=$(CXXOPTIMFLAGS) LD=$(CXX) $(MEXFLAG) -outdir $(EXEDIR) $(MATTEST)
+	$(MEX) CXX=$(CXX) CXXOPTIMFLAGS=$(CXXOPTIMFLAGS) LD=$(CXX) $(MEXFLAG) -outdir $(EXEDIR) $(SVDTEST)
+	$(MEX) CXX=$(CXX) CXXOPTIMFLAGS=$(CXXOPTIMFLAGS) LD=$(CXX) $(MEXFLAG) -outdir $(EXEDIR) $(OBJTEST)
+	$(MEX) CXX=$(CXX) CXXOPTIMFLAGS=$(CXXOPTIMFLAGS) LD=$(CXX) $(MEXFLAG) -outdir $(EXEDIR) $(ORTHOTEST)
+	$(MEX) CXX=$(CXX) CXXOPTIMFLAGS=$(CXXOPTIMFLAGS) LD=$(CXX) $(MEXFLAG) -outdir $(EXEDIR) $(SOLVERTEST)
 
 all:
 	make clean

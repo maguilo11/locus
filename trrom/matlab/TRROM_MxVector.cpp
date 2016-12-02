@@ -14,7 +14,7 @@ namespace trrom
 {
 
 MxVector::MxVector(int a_length, double a_initial_value) :
-        m_Data(mxCreateDoubleMatrix(a_length, 1, mxREAL))
+        m_Data(mxCreateDoubleMatrix_700(a_length, 1, mxREAL))
 {
     this->fill(a_initial_value);
 }

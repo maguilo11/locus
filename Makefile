@@ -12,7 +12,7 @@ UNITDIR = /Users/miguelaguilo/locus/utests/
 #CXX = /usr/bin/clang++
 #CXXFLAGS = -g -std=c++11 -stdlib=libstdc++
 CXX = /usr/local/bin/mpicxx
-CXXFLAGS =-fopenmp -O3 -g -std=c++11
+CXXFLAGS =-fopenmp -O3 -Wall -g -std=c++11
 
 # C++ include directory
 #CXX_INCLUDE = /usr/include/c++/4.2.1/

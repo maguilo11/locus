@@ -7,11 +7,13 @@
 
 #include <cmath>
 #include <cassert>
+#include <stddef.h>
+
+#include <blas.h>
 
 #include "TRROM_MxUtils.hpp"
 #include "TRROM_MxVector.hpp"
 #include "TRROM_MxMatrix.hpp"
-#include "/usr/local/matlab/8.6b/extern/include/blas.h"
 
 namespace trrom
 {
