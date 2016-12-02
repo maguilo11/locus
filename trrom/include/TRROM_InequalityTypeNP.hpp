@@ -21,17 +21,19 @@ public:
     {
     }
 
-    /// Inequality constraint: h(\mathbf{u}(\mathbf{z}),\mathbf{z}) \equiv
-    /// value(\mathbf{u}(\mathbf{z}),\mathbf{z}) - bound \leq 0
+    /*!
+     * Inequality constraint: h(\mathbf{u}(\mathbf{z}),\mathbf{z}) \equiv
+     * value(\mathbf{u}(\mathbf{z}),\mathbf{z}) - bound \leq 0v
+     **/
     virtual double bound() = 0;
     virtual double value(const trrom::Vector<double> & state_, const trrom::Vector<double> & control_) = 0;
 
-    /// Gradient operator: \partial{h(\mathbf{u}(\mathbf{z}),\mathbf{z})}{\partial\mathbf{z}}
+    //! Gradient operator: \partial{h(\mathbf{u}(\mathbf{z}),\mathbf{z})}{\partial\mathbf{z}}
     virtual void gradient(const trrom::Vector<double> & state_,
                           const trrom::Vector<double> & control_,
                           trrom::Vector<double> & output_) = 0;
 
-    /// Application of vector to hessian operator: \partial^2{h(\mathbf{z})}{\partial\mathbf{z}^2}
+    //! Application of vector to hessian operator: \partial^2{h(\mathbf{z})}{\partial\mathbf{z}^2}
     virtual void hessian(const trrom::Vector<double> & state_,
                          const trrom::Vector<double> & control_,
                          const trrom::Vector<double> & vector_,

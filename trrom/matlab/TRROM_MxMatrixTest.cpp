@@ -9,8 +9,9 @@
 #include <cmath>
 #include <string>
 
+#include "TRROM_MxVector.hpp"
+#include "TRROM_MxMatrix.hpp"
 #include "TRROM_MxTestUtils.hpp"
-#include "TRROM_MxDenseMatrix.hpp"
 
 void mexFunction(int nOutput, mxArray* pOutput[], int nInput, const mxArray* pInput[])
 {
@@ -24,7 +25,7 @@ void mexFunction(int nOutput, mxArray* pOutput[], int nInput, const mxArray* pIn
 
     int A_num_rows = 10;
     int A_num_columns = 5;
-    trrom::MxDenseMatrix A(A_num_rows, A_num_columns);
+    trrom::MxMatrix A(A_num_rows, A_num_columns);
 
     // TEST 1: getNumRows
     msg.assign("getNumRows");
@@ -39,7 +40,7 @@ void mexFunction(int nOutput, mxArray* pOutput[], int nInput, const mxArray* pIn
     // TEST 3: fill
     msg.assign("fill");
     A.fill(10);
-    trrom::MxDenseMatrix gold(A_num_rows, A_num_columns, 10);
+    trrom::MxMatrix gold(A_num_rows, A_num_columns, 10);
     did_test_pass = trrom::mx::checkResults(gold, A);
     trrom::mx::assert_test(msg, did_test_pass);
 
@@ -100,21 +101,78 @@ void mexFunction(int nOutput, mxArray* pOutput[], int nInput, const mxArray* pIn
 
     // TEST 11: gemm - A=B=not transpose
     msg.assign("gemm_A_NT_and_B_NT");
-    int B_num_rows = 5;
-    int B_num_columns = 10;
-    trrom::MxDenseMatrix IN1(B_num_rows, B_num_columns, 2);
-    trrom::MxDenseMatrix OUT1(A_num_rows, B_num_columns);
+    int in_num_rows = 5;
+    int in_num_columns = 10;
+    int out_num_rows = 10;
+    int out_num_columns = 10;
+    trrom::MxMatrix IN1(in_num_rows, in_num_columns, 2);
+    trrom::MxMatrix OUT1(out_num_rows, out_num_columns);
     A.gemm(false, false, 1., IN1, 0., OUT1);
-    trrom::MxDenseMatrix GOLD1(A_num_rows, B_num_columns, 1500);
+    trrom::MxMatrix GOLD1(out_num_rows, out_num_rows, 1500);
     did_test_pass = trrom::mx::checkResults(GOLD1, OUT1);
     trrom::mx::assert_test(msg, did_test_pass);
 
-    // TEST 11: gemm - A=T; B=NT
+    // TEST 12: gemm - A=T; B=NT
     msg.assign("gemm_A_T_and_B_NT");
-    trrom::MxDenseMatrix IN2(10, 5, 2);
-    trrom::MxDenseMatrix OUT2(5, 5);
+    in_num_rows = 10;
+    in_num_columns = 5;
+    out_num_rows = 5;
+    out_num_columns = 5;
+    trrom::MxMatrix IN2(in_num_rows, in_num_columns, 2);
+    trrom::MxMatrix OUT2(out_num_rows, out_num_columns);
     A.gemm(true, false, 1., IN2, 0., OUT2);
-    trrom::MxDenseMatrix GOLD2(5, 5, 3000);
+    trrom::MxMatrix GOLD2(out_num_rows, out_num_columns, 3000);
     did_test_pass = trrom::mx::checkResults(GOLD2, OUT2);
+    trrom::mx::assert_test(msg, did_test_pass);
+
+    // TEST 13: gemm - A=NT; B=T
+    msg.assign("gemm_A_NT_and_B_T");
+    in_num_rows = 10;
+    in_num_columns = 5;
+    out_num_rows = 10;
+    out_num_columns = 10;
+    A.fill(10);
+    trrom::MxMatrix IN3(in_num_rows, in_num_columns, 2);
+    trrom::MxMatrix OUT3(out_num_rows, out_num_rows);
+    A.gemm(false, true, 1., IN3, 0., OUT3);
+    trrom::MxMatrix GOLD3(out_num_rows, out_num_columns, 100);
+    did_test_pass = trrom::mx::checkResults(GOLD3, OUT3);
+    trrom::mx::assert_test(msg, did_test_pass);
+
+    // TEST 14: gemm - A=T; B=T
+    msg.assign("gemm_A_T_and_B_T");
+    in_num_rows = 5;
+    in_num_columns = 10;
+    out_num_rows = 5;
+    out_num_columns = 5;
+    trrom::MxMatrix IN4(in_num_rows, in_num_columns, 2);
+    trrom::MxMatrix OUT4(out_num_rows, out_num_rows);
+    A.gemm(true, true, 1., IN4, 0., OUT4);
+    trrom::MxMatrix GOLD4(out_num_rows, out_num_columns, 200);
+    did_test_pass = trrom::mx::checkResults(GOLD4, OUT4);
+    trrom::mx::assert_test(msg, did_test_pass);
+
+    // TEST 15: replaceGlobalValue
+    msg.assign("replaceGlobalValue");
+    did_test_pass = A(1,1) == 10;
+    trrom::mx::assert_test(msg, did_test_pass);
+    A.replaceGlobalValue(1, 1, 33);
+    did_test_pass = A(1,1) == 33;
+    trrom::mx::assert_test(msg, did_test_pass);
+
+    // TEST 16: create
+    msg.assign("create_default");
+    std::tr1::shared_ptr< trrom::Matrix<double> > copy = A.create();
+    did_test_pass = copy->getNumCols() == A.getNumCols();
+    trrom::mx::assert_test(msg, did_test_pass);
+    did_test_pass = copy->getNumRows() == A.getNumRows();
+    trrom::mx::assert_test(msg, did_test_pass);
+
+    // TEST 17: create
+    msg.assign("create_non_default");
+    copy = A.create(6,7);
+    did_test_pass = copy->getNumCols() == 7;
+    trrom::mx::assert_test(msg, did_test_pass);
+    did_test_pass = copy->getNumRows() == 6;
     trrom::mx::assert_test(msg, did_test_pass);
 }

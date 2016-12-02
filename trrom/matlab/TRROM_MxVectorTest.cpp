@@ -135,4 +135,13 @@ void mexFunction(int nOutput, mxArray* pOutput[], int nInput, const mxArray* pIn
     did_test_pass = z.size() == length;
     trrom::mx::assert_test(msg, did_test_pass);
     mxDestroyArray(array);
+
+    // TEST 16: setMxArray
+    msg.assign("setMxArray");
+    z.fill(10);
+    length = z.size();
+    trrom::MxVector vector(length);
+    vector.setMxArray(z.array());
+    did_test_pass = trrom::mx::checkResults(z, vector);
+    trrom::mx::assert_test(msg, did_test_pass);
 }

@@ -84,8 +84,12 @@ double ReducedSpaceAssemblyMng::objective(const std::tr1::shared_ptr<trrom::Vect
     this->updateObjectiveCounter();
 
     // check objective inexactness tolerance
-    inexactness_violated_ = m_Objective->checkObjectiveInexactness(tolerance_, value, *m_State, *control_);
-
+    inexactness_violated_ = false;
+    double objective_error = m_Objective->evaluateObjectiveInexactness(*m_State, *control_);
+    if(objective_error > tolerance_)
+    {
+        inexactness_violated_ = true;
+    }
     return (value);
 }
 
@@ -114,7 +118,12 @@ void ReducedSpaceAssemblyMng::gradient(const std::tr1::shared_ptr<trrom::Vector<
     this->updateGradientCounter();
 
     // check gradient inexactness tolerance
-    inexactness_violated_ = m_Objective->checkGradientInexactness(tolerance_, *m_State, *control_, *gradient_);
+    inexactness_violated_ = false;
+    double gradient_error = m_Objective->evaluateGradientInexactness(*m_State, *control_);
+    if(gradient_error > tolerance_)
+    {
+        inexactness_violated_ = true;
+    }
 }
 
 void ReducedSpaceAssemblyMng::hessian(const std::tr1::shared_ptr<trrom::Vector<double> > & control_,

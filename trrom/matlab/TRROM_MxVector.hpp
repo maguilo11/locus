@@ -38,17 +38,17 @@ public:
      * Creates a MxVector object by making a deep copy of the input MEX array
      * Parameters:
      *    \param In
-     *          array_: MEX array
+     *          array_: MEX array pointer
      *
      * \return Reference to MxVector.
      *
      **/
-    explicit MxVector(mxArray* array_);
+    explicit MxVector(const mxArray* array_);
     //! MxVector destructor.
     virtual ~MxVector();
     //@}
 
-    /*! Scales a Vector by a real constant. */
+    /*! Scales Vector by a real constant. */
     void scale(const double & a_alpha);
     /*! Element-wise multiplication of two vectors. */
     void elementWiseMultiplication(const trrom::Vector<double> & a_input);
@@ -81,6 +81,12 @@ public:
     double* data();
     //! Get constant real numeric pointer for numeric array.
     const double* data() const;
+    //! Get non-constant pointer to MEX array.
+    mxArray* array();
+    //! Get constant pointer to MEX array.
+    const mxArray* array() const;
+    //! Set new contents to this MEX array, replacing its current contents, and not modifying its size.
+    void setMxArray(const mxArray* input_);
 
 private:
     mxArray* m_Data;

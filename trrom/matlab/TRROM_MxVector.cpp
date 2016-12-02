@@ -19,7 +19,7 @@ MxVector::MxVector(int a_length, double a_initial_value) :
     this->fill(a_initial_value);
 }
 
-MxVector::MxVector(mxArray* array_) :
+MxVector::MxVector(const mxArray* array_) :
         m_Data(mxDuplicateArray(array_))
 {
 }
@@ -188,6 +188,29 @@ double* MxVector::data()
 const double* MxVector::data() const
 {
     return (mxGetPr(m_Data));
+}
+
+mxArray* MxVector::array()
+{
+    return (m_Data);
+}
+
+const mxArray* MxVector::array() const
+{
+    return (m_Data);
+}
+
+void MxVector::setMxArray(const mxArray* input_)
+{
+    const int input_length = mxGetM(input_);
+    assert(input_length == this->size());
+
+    double* my_data = this->data();
+    const double* input_data = mxGetPr(input_);
+    for(int index = 0; index < input_length; ++index)
+    {
+        my_data[index] = input_data[index];
+    }
 }
 
 }

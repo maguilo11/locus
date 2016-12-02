@@ -174,7 +174,12 @@ double AugmentedLagrangianTypeNP::objective(const std::tr1::shared_ptr<trrom::Ve
             + ((static_cast<double>(0.5) / m_Penalty) * inequality_residual_dot_inequality_residual);
 
     // Check objective inexactness tolerance. NOTE: THIS IS ONLY CHECKING OPTIMALITY, FEASIBILITY IS NOT CHECKED.
-    inexactness_violated_ = m_Objective->checkObjectiveInexactness(tolerance_, objective_value, *m_State, *control_);
+    inexactness_violated_ = false;
+    double objective_error = m_Objective->evaluateObjectiveInexactness(*m_State, *control_);
+    if(objective_error > tolerance_)
+    {
+        inexactness_violated_ = true;
+    }
 
     return (augmented_lagrangian_value);
 }
@@ -191,10 +196,12 @@ void AugmentedLagrangianTypeNP::gradient(const std::tr1::shared_ptr<trrom::Vecto
     this->computeInequalityConstraintGradient(*control_, *gradient_);
 
     // Check objective inexactness tolerance. NOTE: THIS IS ONLY CHECKING OPTIMALITY, FEASIBILITY IS NOT CHECKED.
-    inexactness_violated_ = m_Objective->checkGradientInexactness(tolerance_,
-                                                                  *m_State,
-                                                                  *control_,
-                                                                  *m_LagrangianGradient);
+    inexactness_violated_ = false;
+    double gradient_error = m_Objective->evaluateGradientInexactness(*m_State, *control_);
+    if(gradient_error > tolerance_)
+    {
+        inexactness_violated_ = true;
+    }
 
     this->updateGradientCounter();
 }
