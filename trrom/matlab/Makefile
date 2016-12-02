@@ -30,6 +30,7 @@ OBJS=$(HOME)matlab/TRROM_MxVector.o \
 	$(HOME)matlab/TRROM_MxOrthogonalDecompositionTest.o \
 	$(HOME)matlab/TRROM_MxReducedObjectiveOperators.o \
 	$(HOME)matlab/TRROM_MxReducedObjectiveOperatorsTest.o \
+	$(HOME)matlab/TRROM_MxInequalityOperators.o \
 	$(HOME)matlab/TRROM_MxInequalityOperatorsTest.o
 	
 VECTEST=$(HOME)matlab/TRROM_MxVectorTest.o \
@@ -50,6 +51,7 @@ OBJTEST=$(HOME)matlab/TRROM_MxReducedObjectiveOperatorsTest.o \
 	$(HOME)matlab/TRROM_MxVector.o
 
 INQTEST=$(HOME)matlab/TRROM_MxInequalityOperatorsTest.o \
+	$(HOME)matlab/TRROM_MxInequalityOperators.o \
 	$(HOME)matlab/TRROM_MxVector.o
 	
 ORTHOTEST=$(HOME)matlab/TRROM_MxOrthogonalDecompositionTest.o \
