@@ -47,7 +47,7 @@ double MxReducedObjectiveOperators::value(const trrom::Vector<double> & state_, 
     const trrom::MxVector & control = dynamic_cast<const trrom::MxVector &>(control_);
     mxArray* mx_control = const_cast<mxArray*>(control.array());
 
-    // Call objective function evaluation through mex interface
+    // Call objective function evaluation through the mex interface
     mxArray* mx_output[1];
     mxArray* mx_input[3] = {m_Value, mx_state, mx_control};
     mxArray* error = mexCallMATLABWithTrapWithObject(1, mx_output, 3, mx_input, "feval");
@@ -69,7 +69,7 @@ double MxReducedObjectiveOperators::evaluateObjectiveInexactness(const trrom::Ve
     const trrom::MxVector & control = dynamic_cast<const trrom::MxVector &>(control_);
     mxArray* mx_control = const_cast<mxArray*>(control.array());
 
-    // Call objective function evaluation through mex interface
+    // Call objective function evaluation through the mex interface
     mxArray* mx_output[1];
     mxArray* mx_input[3] = {m_ObjectiveError, mx_state, mx_control};
     mxArray* error = mexCallMATLABWithTrapWithObject(1, mx_output, 3, mx_input, "feval");
@@ -91,7 +91,7 @@ double MxReducedObjectiveOperators::evaluateGradientInexactness(const trrom::Vec
     const trrom::MxVector & control = dynamic_cast<const trrom::MxVector &>(control_);
     mxArray* mx_control = const_cast<mxArray*>(control.array());
 
-    // Call objective function evaluation through mex interface
+    // Call objective function evaluation through the mex interface
     mxArray* mx_output[1];
     mxArray* mx_input[3] = {m_GradientError, mx_state, mx_control};
     mxArray* error = mexCallMATLABWithTrapWithObject(1, mx_output, 3, mx_input, "feval");
@@ -114,7 +114,7 @@ void MxReducedObjectiveOperators::partialDerivativeState(const trrom::Vector<dou
     const trrom::MxVector & control = dynamic_cast<const trrom::MxVector &>(control_);
     mxArray* mx_control = const_cast<mxArray*>(control.array());
 
-    // Call partial derivative evaluation through mex interface
+    // Call partial derivative evaluation through the mex interface
     mxArray* mx_output[1];
     mxArray* mx_input[3] = {m_PartialDerivativeState, mx_state, mx_control};
     mxArray* error = mexCallMATLABWithTrapWithObject(1, mx_output, 3, mx_input, "feval");
@@ -137,7 +137,7 @@ void MxReducedObjectiveOperators::partialDerivativeControl(const trrom::Vector<d
     const trrom::MxVector & control = dynamic_cast<const trrom::MxVector &>(control_);
     mxArray* mx_control = const_cast<mxArray*>(control.array());
 
-    // Call partial derivative evaluation through mex interface
+    // Call partial derivative evaluation through the mex interface
     mxArray* mx_output[1];
     mxArray* mx_input[3] = {m_PartialDerivativeControl, mx_state, mx_control};
     mxArray* error = mexCallMATLABWithTrapWithObject(1, mx_output, 3, mx_input, "feval");
@@ -163,7 +163,7 @@ void MxReducedObjectiveOperators::partialDerivativeControlState(const trrom::Vec
     const trrom::MxVector & vector = dynamic_cast<const trrom::MxVector &>(vector_);
     mxArray* mx_vector = const_cast<mxArray*>(vector.array());
 
-    // Call mixed partial derivative evaluation through mex interface
+    // Call mixed partial derivative evaluation through the mex interface
     mxArray* mx_output[1];
     mxArray* mx_input[4] = {m_PartialDerivativeControlState, mx_state, mx_control, mx_vector};
     mxArray* error = mexCallMATLABWithTrapWithObject(1, mx_output, 4, mx_input, "feval");
@@ -189,7 +189,7 @@ void MxReducedObjectiveOperators::partialDerivativeControlControl(const trrom::V
     const trrom::MxVector & vector = dynamic_cast<const trrom::MxVector &>(vector_);
     mxArray* mx_vector = const_cast<mxArray*>(vector.array());
 
-    // Call mixed partial derivative evaluation through mex interface
+    // Call mixed partial derivative evaluation through the mex interface
     mxArray* mx_output[1];
     mxArray* mx_input[4] = {m_PartialDerivativeControlControl, mx_state, mx_control, mx_vector};
     mxArray* error = mexCallMATLABWithTrapWithObject(1, mx_output, 4, mx_input, "feval");
@@ -215,7 +215,7 @@ void MxReducedObjectiveOperators::partialDerivativeStateState(const trrom::Vecto
     const trrom::MxVector & vector = dynamic_cast<const trrom::MxVector &>(vector_);
     mxArray* mx_vector = const_cast<mxArray*>(vector.array());
 
-    // Call mixed partial derivative evaluation through mex interface
+    // Call mixed partial derivative evaluation through the mex interface
     mxArray* mx_output[1];
     mxArray* mx_input[4] = {m_PartialDerivativeStateState, mx_state, mx_control, mx_vector};
     mxArray* error = mexCallMATLABWithTrapWithObject(1, mx_output, 4, mx_input, "feval");
@@ -241,7 +241,7 @@ void MxReducedObjectiveOperators::partialDerivativeStateControl(const trrom::Vec
     const trrom::MxVector & vector = dynamic_cast<const trrom::MxVector &>(vector_);
     mxArray* mx_vector = const_cast<mxArray*>(vector.array());
 
-    // Call mixed partial derivative evaluation through mex interface
+    // Call mixed partial derivative evaluation through the mex interface
     mxArray* mx_output[1];
     mxArray* mx_input[4] = {m_PartialDerivativeStateControl, mx_state, mx_control, mx_vector};
     mxArray* error = mexCallMATLABWithTrapWithObject(1, mx_output, 4, mx_input, "feval");

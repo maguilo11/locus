@@ -29,7 +29,8 @@ OBJS=$(HOME)matlab/TRROM_MxVector.o \
 	$(HOME)matlab/TRROM_MxOrthogonalDecomposition.o \
 	$(HOME)matlab/TRROM_MxOrthogonalDecompositionTest.o \
 	$(HOME)matlab/TRROM_MxReducedObjectiveOperators.o \
-	$(HOME)matlab/TRROM_MxReducedObjectiveOperatorsTest.o
+	$(HOME)matlab/TRROM_MxReducedObjectiveOperatorsTest.o \
+	$(HOME)matlab/TRROM_MxInequalityOperatorsTest.o
 	
 VECTEST=$(HOME)matlab/TRROM_MxVectorTest.o \
 	$(HOME)matlab/TRROM_MxVector.o
@@ -46,6 +47,9 @@ SVDTEST=$(HOME)matlab/TRROM_MxSpectralDecompositionTest.o \
 	
 OBJTEST=$(HOME)matlab/TRROM_MxReducedObjectiveOperatorsTest.o \
 	$(HOME)matlab/TRROM_MxReducedObjectiveOperators.o \
+	$(HOME)matlab/TRROM_MxVector.o
+
+INQTEST=$(HOME)matlab/TRROM_MxInequalityOperatorsTest.o \
 	$(HOME)matlab/TRROM_MxVector.o
 	
 ORTHOTEST=$(HOME)matlab/TRROM_MxOrthogonalDecompositionTest.o \
@@ -68,6 +72,7 @@ MX:
 	$(MEX) CXX=$(CXX) CXXOPTIMFLAGS=$(CXXOPTIMFLAGS) LD=$(CXX) $(MEXFLAG) -outdir $(EXEDIR) $(MATTEST)
 	$(MEX) CXX=$(CXX) CXXOPTIMFLAGS=$(CXXOPTIMFLAGS) LD=$(CXX) $(MEXFLAG) -outdir $(EXEDIR) $(SVDTEST)
 	$(MEX) CXX=$(CXX) CXXOPTIMFLAGS=$(CXXOPTIMFLAGS) LD=$(CXX) $(MEXFLAG) -outdir $(EXEDIR) $(OBJTEST)
+	$(MEX) CXX=$(CXX) CXXOPTIMFLAGS=$(CXXOPTIMFLAGS) LD=$(CXX) $(MEXFLAG) -outdir $(EXEDIR) $(INQTEST)
 	$(MEX) CXX=$(CXX) CXXOPTIMFLAGS=$(CXXOPTIMFLAGS) LD=$(CXX) $(MEXFLAG) -outdir $(EXEDIR) $(ORTHOTEST)
 	$(MEX) CXX=$(CXX) CXXOPTIMFLAGS=$(CXXOPTIMFLAGS) LD=$(CXX) $(MEXFLAG) -outdir $(EXEDIR) $(SOLVERTEST)
 

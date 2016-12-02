@@ -28,7 +28,7 @@ public:
     /*! \partial{h(\mathbf{u}(\mathbf{z}),\mathbf{z})}{\partial\mathbf{z}} */
     virtual void partialDerivativeState(const trrom::Vector<double> & state_,
                                         const trrom::Vector<double> & control_,
-                                        const trrom::Vector<double> & output_) = 0;
+                                        trrom::Vector<double> & output_) = 0;
     /*! \partial{h(\mathbf{u}(\mathbf{z}),\mathbf{z})}{\partial\mathbf{u}} */
     virtual void partialDerivativeControl(const trrom::Vector<double> & state_,
                                           const trrom::Vector<double> & control_,
