@@ -64,7 +64,7 @@ public:
                                 trrom::Vector<double> & output_);
     /*!
      * Evaluates partial derivative of the inequality constraint with respect to the state variables,
-     * \frac{\partial{f(\mathbf{u},\mathbf{z})}}{\partial\mathbf{z}}, using the MEX interface.
+     * \frac{\partial{h(\mathbf{u},\mathbf{z})}}{\partial\mathbf{z}}, using the MEX interface.
      *  Parameters:
      *    \param In
      *          state_: state variables
@@ -78,7 +78,7 @@ public:
                                   trrom::Vector<double> & output_);
     /*!
      * Evaluates mixed partial derivative of the inequality constraint with respect to the control and
-     * state variables, \frac{\partial^2{f(\mathbf{u},\mathbf{z})}}{\partial\mathbf{z}\partial\mathbf{u}},
+     * state variables, \frac{\partial^2{h(\mathbf{u},\mathbf{z})}}{\partial\mathbf{z}\partial\mathbf{u}},
      * using the MEX interface.
      *  Parameters:
      *    \param In
@@ -96,7 +96,7 @@ public:
                                        trrom::Vector<double> & output_);
     /*!
      * Evaluates second order partial derivative of the inequality constraint with respect to the
-     * control variables, \frac{\partial^2{f(\mathbf{u},\mathbf{z})}}{\partial\mathbf{z}^2},
+     * control variables, \frac{\partial^2{h(\mathbf{u},\mathbf{z})}}{\partial\mathbf{z}^2},
      * using the MEX interface.
      *  Parameters:
      *    \param In
@@ -114,7 +114,7 @@ public:
                                          trrom::Vector<double> & output_);
     /*!
      * Evaluates second order partial derivative of the inequality constraint with respect to the
-     * state variables, \frac{\partial^2{f(\mathbf{u},\mathbf{z})}}{\partial\mathbf{u}^2},
+     * state variables, \frac{\partial^2{h(\mathbf{u},\mathbf{z})}}{\partial\mathbf{u}^2},
      * using the MEX interface.
      *  Parameters:
      *    \param In
@@ -132,7 +132,7 @@ public:
                                      trrom::Vector<double> & output_);
     /*!
      * Evaluates mixed partial derivative of the inequality constraint with respect to the control and
-     * state variables, \frac{\partial^2{f(\mathbf{u},\mathbf{z})}}{\partial\mathbf{u}\partial\mathbf{z}},
+     * state variables, \frac{\partial^2{h(\mathbf{u},\mathbf{z})}}{\partial\mathbf{u}\partial\mathbf{z}},
      * using the MEX interface.
      *  Parameters:
      *    \param In
