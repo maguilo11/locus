@@ -1,4 +1,4 @@
-############################################# LOCUS #############################################
+#############################################LOCUS#############################################
 
 Description: Multidisciplinary library for high-performance optimization
 
@@ -9,7 +9,7 @@ Author:      Miguel Alejandro Aguilo
 Contact:     aguilo.miguel@gmail.com
 
 COPYRIGHT © 2016 Miguel Alejandro Aguilo, all rights reserved
-################################ LOCUS #################################
+################################LOCUS#################################
 
 No part of this software may be reproduced, stored in a retrieval system
 or transmitted in any form or by any means, mechanical, electronic, pho-
