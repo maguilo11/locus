@@ -115,6 +115,10 @@ public:
             trrom::MxVector & solution = dynamic_cast<trrom::MxVector &>(solution_);
             solution.setMxArray(mx_output[0]);
         }
+        else
+        {
+            solution_.fill(0);
+        }
 
         // Set left-hand side snapshot output
         assert(static_cast<size_t>(data_.getLeftHandSideSnapshot().size()) == mxGetNumberOfElements(mx_output[1]));
@@ -712,11 +716,39 @@ void mexFunction(int nOutput, mxArray* pOutput[], int nInput, const mxArray* pIn
     trrom::mx::assert_test(msg, did_test_pass);
 
     msg.assign("solve - high fidelity - lhs");
-    trrom::MxVector lhs_gold(lhs_snapshot_length, 2.);
+    trrom::MxVector lhs_gold(lhs_snapshot_length);
     for(int index = 0; index < lhs_gold.size(); ++index)
     {
         lhs_gold[index] = index + 1;
     }
+    did_test_pass = trrom::mx::checkResults(lhs_gold, data.getLeftHandSideSnapshot());
+    trrom::mx::assert_test(msg, did_test_pass);
+
+    // **** TEST LOW FIDELITY SOLVE ****
+    msg.assign("solve - low fidelity - output");
+    data.fidelity(trrom::types::LOW_FIDELITY);
+    (data.getLeftHandSideActiveIndices())[22] = 0;
+    (data.getLeftHandSideActiveIndices())[30] = 0;
+    (data.getLeftHandSideActiveIndices())[80] = 0;
+    equality.solve(controls, output, data);
+    gold.fill(0);
+    did_test_pass = trrom::mx::checkResults(gold, output);
+    trrom::mx::assert_test(msg, did_test_pass);
+
+    msg.assign("solve - low fidelity - rhs");
+    for(int index = 0; index < gold.size(); ++index)
+    {
+        gold[index] = 2. * (index + 1.);
+    }
+    did_test_pass = trrom::mx::checkResults(gold, data.getRightHandSideSnapshot());
+    trrom::mx::assert_test(msg, did_test_pass);
+
+    msg.assign("solve - low fidelity - lhs");
+    for(int index = 0; index < lhs_gold.size(); ++index)
+    {
+        lhs_gold[index] = index + 1;
+    }
+    lhs_gold[22] = 0; lhs_gold[30] = 0; lhs_gold[80] = 0;
     did_test_pass = trrom::mx::checkResults(lhs_gold, data.getLeftHandSideSnapshot());
     trrom::mx::assert_test(msg, did_test_pass);
 }
