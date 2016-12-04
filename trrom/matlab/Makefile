@@ -31,7 +31,25 @@ OBJS=$(HOME)matlab/TRROM_MxVector.o \
 	$(HOME)matlab/TRROM_MxReducedObjectiveOperators.o \
 	$(HOME)matlab/TRROM_MxReducedObjectiveOperatorsTest.o \
 	$(HOME)matlab/TRROM_MxInequalityOperators.o \
-	$(HOME)matlab/TRROM_MxInequalityOperatorsTest.o
+	$(HOME)matlab/TRROM_MxInequalityOperatorsTest.o \
+	$(HOME)src/TRROM_Data.o \
+	$(HOME)src/TRROM_Dual.o \
+	$(HOME)src/TRROM_State.o \
+	$(HOME)src/TRROM_Slacks.o \
+	$(HOME)src/TRROM_Control.o \
+	$(HOME)src/TRROM_Variable.o \
+	$(HOME)src/TRROM_ReducedBasisData.o \
+	$(HOME)matlab/TRROM_MxReducedBasisPDETest.o
+	
+EQTEST=$(HOME)matlab/TRROM_MxReducedBasisPDETest.o \
+	$(HOME)matlab/TRROM_MxVector.o \
+	$(HOME)src/TRROM_Data.o \
+	$(HOME)src/TRROM_Dual.o \
+	$(HOME)src/TRROM_State.o \
+	$(HOME)src/TRROM_Slacks.o \
+	$(HOME)src/TRROM_Control.o \
+	$(HOME)src/TRROM_Variable.o \
+	$(HOME)src/TRROM_ReducedBasisData.o
 	
 VECTEST=$(HOME)matlab/TRROM_MxVectorTest.o \
 	$(HOME)matlab/TRROM_MxVector.o
@@ -44,7 +62,6 @@ SVDTEST=$(HOME)matlab/TRROM_MxSpectralDecompositionTest.o \
 	$(HOME)matlab/TRROM_MxSingularValueDecomposition.o \
 	$(HOME)matlab/TRROM_MxMatrix.o \
 	$(HOME)matlab/TRROM_MxVector.o
-
 	
 OBJTEST=$(HOME)matlab/TRROM_MxReducedObjectiveOperatorsTest.o \
 	$(HOME)matlab/TRROM_MxReducedObjectiveOperators.o \
@@ -70,6 +87,7 @@ SOLVERTEST=$(HOME)matlab/TRROM_MxDirectSolverTest.o \
 test: $(OBJS) 
 
 MX:
+	$(MEX) CXX=$(CXX) CXXOPTIMFLAGS=$(CXXOPTIMFLAGS) LD=$(CXX) $(MEXFLAG) -outdir $(EXEDIR) $(EQTEST)
 	$(MEX) CXX=$(CXX) CXXOPTIMFLAGS=$(CXXOPTIMFLAGS) LD=$(CXX) $(MEXFLAG) -outdir $(EXEDIR) $(VECTEST)
 	$(MEX) CXX=$(CXX) CXXOPTIMFLAGS=$(CXXOPTIMFLAGS) LD=$(CXX) $(MEXFLAG) -outdir $(EXEDIR) $(MATTEST)
 	$(MEX) CXX=$(CXX) CXXOPTIMFLAGS=$(CXXOPTIMFLAGS) LD=$(CXX) $(MEXFLAG) -outdir $(EXEDIR) $(SVDTEST)

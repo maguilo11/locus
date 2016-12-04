@@ -99,6 +99,11 @@ void ReducedBasisData::allocateRightHandSideSnapshot(const trrom::Vector<double>
     m_RightHandSideSnapshot = input_.create();
 }
 
+void ReducedBasisData::allocateLeftHandSideActiveIndices(const trrom::Vector<double> & input_)
+{
+    m_LeftHandSideActiveIndices = input_.create();
+}
+
 void ReducedBasisData::allocateLeftHandSideSnapshotEnsemble(const trrom::Matrix<double> & input_)
 {
     m_LeftHandSideSnapshotEnsemble = input_.create();
@@ -124,6 +129,11 @@ void ReducedBasisData::fidelity(trrom::types::fidelity_t input_)
     m_Fidelity = input_;
 }
 
+trrom::Vector<double> & ReducedBasisData::getLeftHandSideSnapshot()
+{
+    return (*m_LeftHandSideSnapshot);
+}
+
 const trrom::Vector<double> & ReducedBasisData::getLeftHandSideSnapshot() const
 {
     return (*m_LeftHandSideSnapshot);
@@ -142,6 +152,11 @@ void ReducedBasisData::setLeftHandSideSnapshot(const trrom::Vector<double> & inp
     }
 }
 
+trrom::Vector<double> & ReducedBasisData::getRightHandSideSnapshot()
+{
+    return (*m_RightHandSideSnapshot);
+}
+
 const trrom::Vector<double> & ReducedBasisData::getRightHandSideSnapshot() const
 {
     return (*m_RightHandSideSnapshot);
@@ -158,6 +173,11 @@ void ReducedBasisData::setRightHandSideSnapshot(const trrom::Vector<double> & in
     {
         m_RightHandSideSnapshot->update(1., input_, 0.);
     }
+}
+
+trrom::Vector<double> & ReducedBasisData::getLeftHandSideActiveIndices()
+{
+    return (*m_LeftHandSideActiveIndices);
 }
 
 const trrom::Vector<double> & ReducedBasisData::getLeftHandSideActiveIndices() const

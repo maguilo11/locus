@@ -8,7 +8,6 @@
 #ifndef DATA_HPP_
 #define DATA_HPP_
 
-#include <mpi.h>
 #include "TRROM_Types.hpp"
 
 namespace trrom

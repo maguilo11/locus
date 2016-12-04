@@ -141,7 +141,7 @@ void ReducedBasisInterface::updateReducedLeftHandSideEnsembles()
     m_ReducedStateLeftHandSideEnsemble.clear();
     for(int index = 0; index < num_state_snapshots; ++index)
     {
-        // Transform left hand side snapshot into matrix
+        // TODO: Transform left hand side snapshot into matrix
         //m_FullLeftHandSideMatrix = m_SpectralDecompositionMng->getLeftHandSideSnapshotEnsemble()->transform(index);
 
         m_FullLeftHandSideMatrix->gemm(true, false, 1., *m_StateBasis, 0., *state_work_matrix);
@@ -159,7 +159,7 @@ void ReducedBasisInterface::updateReducedLeftHandSideEnsembles()
 
 void ReducedBasisInterface::solveLowFidelityPDE(std::tr1::shared_ptr<trrom::Vector<double> > & high_fidelity_solution_)
 {
-    /* Solve for \theta(\mathbf{z})\in\mathbb{R}^{M}, where M = number of left hand
+    /*! Solve for \theta(\mathbf{z})\in\mathbb{R}^{M}, where M = number of left hand
      * side (LHS) snapshots. \theta(\mathbf{z}) = \Phi_{\mathcal{I}}^{-1}\mathbf{k}
      * _{\mathcal{I}}(\mathbf{z}). Here, \Phi_{\mathcal{I}} = \mathcal{I}^{T}\Phi and
      * \mathbf{k}_{\mathcal{I}}(\mathbf{z}) = \mathcal{I}^{T}\mathbf{k}(\mathbf{z}).

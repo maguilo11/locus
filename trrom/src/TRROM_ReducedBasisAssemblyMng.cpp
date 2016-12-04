@@ -244,6 +244,8 @@ void ReducedBasisAssemblyMng::solveHighFidelityPDE(const std::tr1::shared_ptr<tr
     m_LeftHandSideSnapshot->fill(0.);
     m_PDE->solve(*control_, *m_State, *m_ReducedBasisInterface->data());
     m_ReducedBasisInterface->storeStateSnapshot(*m_State);
+    const trrom::Vector<double> & lhs_snapshot = m_ReducedBasisInterface->data()->getLeftHandSideSnapshot();
+    m_ReducedBasisInterface->storeLeftHandSideSnapshot(lhs_snapshot);
     this->updateHighFidelitySolveCounter();
 }
 

@@ -8,7 +8,6 @@
 #ifndef TRROM_VARIABLE_HPP_
 #define TRROM_VARIABLE_HPP_
 
-#include <mpi.h>
 #include "TRROM_Types.hpp"
 
 namespace trrom

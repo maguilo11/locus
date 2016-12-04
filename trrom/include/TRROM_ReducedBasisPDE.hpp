@@ -93,6 +93,8 @@ public:
      *          state_: state variables
      *    \param In
      *          control_: control variables
+     *    \param In
+     *          vector_: perturbation vector
      *    \param Out
      *          output_: partial derivative of the equality constraint with respect
      *          to the state variables
@@ -109,6 +111,8 @@ public:
      *          state_: state variables
      *    \param In
      *          control_: control variables
+     *    \param In
+     *          vector_: perturbation vector
      *    \param Out
      *          output_: partial derivative of the equality constraint with respect
      *          to the control variables

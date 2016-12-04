@@ -14,7 +14,7 @@ namespace trrom
 {
 
 MxVector::MxVector(int a_length, double a_initial_value) :
-        m_Data(mxCreateDoubleMatrix_700(a_length, 1, mxREAL))
+        m_Data(mxCreateDoubleMatrix_700(1, a_length, mxREAL))
 {
     this->fill(a_initial_value);
 }
@@ -32,7 +32,7 @@ MxVector::~MxVector()
 void MxVector::scale(const double & a_alpha)
 {
     double* data = mxGetPr(m_Data);
-    int my_length = mxGetM(m_Data);
+    int my_length = mxGetN(m_Data);
     for(int index = 0; index < my_length; ++index)
     {
         data[index] = a_alpha * data[index];
@@ -43,7 +43,7 @@ void MxVector::elementWiseMultiplication(const trrom::Vector<double> & a_input)
 {
     assert(a_input.size() == this->size());
 
-    int my_length = mxGetM(m_Data);
+    int my_length = mxGetN(m_Data);
     double* my_data = mxGetPr(m_Data);
     for(int index = 0; index < my_length; ++index)
     {
@@ -55,7 +55,7 @@ void MxVector::update(const double & a_alpha, const trrom::Vector<double> & a_in
 {
     assert(a_input.size() == this->size());
 
-    int my_length = mxGetM(m_Data);
+    int my_length = mxGetN(m_Data);
     double* my_data = mxGetPr(m_Data);
     for(int index = 0; index < my_length; ++index)
     {
@@ -150,7 +150,7 @@ void MxVector::fill(const double & a_input)
 
 int MxVector::size() const
 {
-    return (mxGetM(m_Data));
+    return (mxGetN(m_Data));
 }
 
 std::tr1::shared_ptr<trrom::Vector<double> > MxVector::create(int a_length) const
@@ -202,7 +202,7 @@ const mxArray* MxVector::array() const
 
 void MxVector::setMxArray(const mxArray* input_)
 {
-    const int input_length = mxGetM(input_);
+    const int input_length = mxGetN(input_);
     assert(input_length == this->size());
 
     double* my_data = this->data();

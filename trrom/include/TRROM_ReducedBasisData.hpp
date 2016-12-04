@@ -44,10 +44,13 @@ public:
 
     trrom::types::fidelity_t fidelity() const;
     void fidelity(trrom::types::fidelity_t input_);
+    trrom::Vector<double> & getLeftHandSideSnapshot();
     const trrom::Vector<double> & getLeftHandSideSnapshot() const;
     void setLeftHandSideSnapshot(const trrom::Vector<double> & input_);
+    trrom::Vector<double> & getRightHandSideSnapshot();
     const trrom::Vector<double> & getRightHandSideSnapshot() const;
     void setRightHandSideSnapshot(const trrom::Vector<double> & input_);
+    trrom::Vector<double> & getLeftHandSideActiveIndices();
     const trrom::Vector<double> & getLeftHandSideActiveIndices() const;
     void setLeftHandSideActiveIndices(const trrom::Vector<double> & input_);
 
