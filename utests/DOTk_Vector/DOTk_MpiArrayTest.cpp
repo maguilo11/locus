@@ -379,7 +379,6 @@ TEST(DOTk_MpiArrayTest, copy)
     if(my_rank == 0)
     {
         printf("WTime is %f\n", time);
-        Real tolerance = 1e-8;
     }
 
     std::tr1::shared_ptr<dotk::vector<Real> > gold = x.clone();
@@ -390,7 +389,7 @@ TEST(DOTk_MpiArrayTest, copy)
 
 TEST(DOTk_MpiArrayTest, gather)
 {
-    int dim = 1e4;
+    size_t dim = 1e4;
     Real value = 1.;
     dotk::MpiArray<Real> x(MPI_COMM_WORLD, dim, value);
     std::vector<Real> y(dim, 0.);

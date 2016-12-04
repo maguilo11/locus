@@ -106,7 +106,6 @@ TEST(DOTk_KrylovSolverStoppingCriterion, DOTk_TangentialProblemCriterion)
     std::tr1::shared_ptr<dotk::DOTk_PrecGenMinResDataMng> smng(new dotk::DOTk_PrecGenMinResDataMng(primal, augmented_system));
     std::tr1::shared_ptr<dotk::DOTk_PrecGMRES> solver(new dotk::DOTk_PrecGMRES(smng));
 
-    Real tangential_tolerance = 1e-4;
     dotk::DOTk_TangentialProblemCriterion tol(mng->getTrialStep());
 
     // TEST 1: TOLERANCE < EPSILON

@@ -236,8 +236,8 @@ void DOTk_HagerZhangLineSearch::shrinkInterval(const Real & step_,
         }
         bool is_opposite_slope_condition1_ok =
                 innr_gradient_trialStep < std::numeric_limits<Real>::min() ? true : false;
-        Real error_estimate_in_fval = dotk::DOTk_LineSearch::getOldObjectiveFunctionValue()
-        + this->getObjectiveFunctionErrorEstimateParameter();
+        Real error_estimate_in_fval =
+                dotk::DOTk_LineSearch::getOldObjectiveFunctionValue() + this->getObjectiveFunctionErrorEstimateParameter();
         bool is_opposite_slope_condition2_ok = new_fval <= error_estimate_in_fval ? true : false;
         if(is_opposite_slope_condition1_ok && is_opposite_slope_condition2_ok)
         {

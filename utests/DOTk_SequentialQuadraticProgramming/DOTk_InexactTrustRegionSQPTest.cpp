@@ -689,7 +689,7 @@ TEST(DOTk_InexactTrustRegionSQPTest, getMin)
     EXPECT_NEAR(1.827245752927180, (*mng->getNewPrimal())[2], tolerance);
     EXPECT_NEAR(-0.763643078184132, (*mng->getNewPrimal())[3], tolerance);
     EXPECT_NEAR(-0.763643078184132, (*mng->getNewPrimal())[4], tolerance);
-    EXPECT_EQ(19, sqp.getNumItrDone());
+    EXPECT_EQ(19u, sqp.getNumItrDone());
 }
 
 void setSqpTestInitialGuess(std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_)

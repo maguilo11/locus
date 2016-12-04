@@ -634,7 +634,7 @@ void DOTk_DenseMatrix<Type>::gather(const size_t & dim_, Type* output_)
 template<class Type>
 void DOTk_DenseMatrix<Type>::identity()
 {
-    size_t index, row;
+    size_t row;
     for(row = 0; row < this->nrows(); ++row)
     {
         size_t index = (m_NumCols * row) + row;

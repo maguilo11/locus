@@ -379,7 +379,6 @@ TEST(DOTk_MpiX_ArrayTest, copy)
     if(my_rank == 0)
     {
         printf("WTime is %f\n", time);
-        double tolerance = 1e-8;
     }
 
     std::tr1::shared_ptr<dotk::vector<double> > gold = x.clone();
@@ -389,7 +388,7 @@ TEST(DOTk_MpiX_ArrayTest, copy)
 
 TEST(DOTk_MpiX_ArrayTest, gather)
 {
-    int dim = 1e4;
+    size_t dim = 1e4;
     double value = 1.;
     int thread_count = 4;
     dotk::MpiX_Array<double> x(MPI_COMM_WORLD, dim, thread_count, value);

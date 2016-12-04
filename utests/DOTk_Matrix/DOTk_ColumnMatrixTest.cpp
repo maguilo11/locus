@@ -774,7 +774,6 @@ TEST(ColumnMatrix, GemvTranspose)
     Real beta = 2;
     Real alpha = 2;
     dotk::StdArray<Real> input(nrows, 1.);
-    Real out_data[] = {1, 2, 3};
     dotk::StdArray<Real> output(ncols);
     output[0] = 1;
     output[1] = 2;

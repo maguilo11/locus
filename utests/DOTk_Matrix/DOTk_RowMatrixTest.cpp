@@ -184,7 +184,6 @@ TEST(RowMatrix, RowMajorDot)
     if(my_rank == 0)
     {
         printf("ROW MAJOR DOT WTime is %f\n", time);
-        Real tolerance = 1e-8;
         Real gold[] = {55, 155, 255};
         dotk::gtest::checkResults(nrows, gold, results.size(), results.data());
     }
@@ -228,7 +227,6 @@ TEST(RowMatrix, ColumnMajorDot)
     if(my_rank == 0)
     {
         printf("COLUMN MAJOR DOT WTime is %f\n", time);
-        Real tolerance = 1e-8;
         Real gold[] = {33, 36, 39, 42, 45, 48, 51, 54, 57, 60};
         dotk::gtest::checkResults(ncols, gold, results.size(), results.data());
     }
@@ -272,7 +270,6 @@ TEST(RowMatrix, RowMajorNorm)
     if(my_rank == 0)
     {
         printf("ROW MAJOR NORM WTime is %f\n", time);
-        Real tolerance = 1e-8;
         Real gold[] = {19.621416870348, 49.849774322458, 81.148012914673};
         dotk::gtest::checkResults(nrows, gold, results.size(), results.data());
     }
@@ -316,7 +313,6 @@ TEST(RowMatrix, ColumnMajorNorm)
     if(my_rank == 0)
     {
         printf("COLUMN MAJOR NORM WTime is %f\n", time);
-        Real tolerance = 1e-8;
         Real gold[] = {23.72762103540, 25.13961017995, 26.58947160061, 28.07133769523, 29.58039891549, 31.11269837220,
                        32.66496594212, 34.23448553724, 35.81898937714, 37.41657386773};
         dotk::gtest::checkResults(ncols, gold, results.size(), results.data());

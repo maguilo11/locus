@@ -79,16 +79,12 @@ template<class Type>
 Type DOTk_ColumnMatrix<Type>::norm(const size_t & index_, bool column_major_norm_) const
 {
     Type value = 0.;
-    const size_t num_rows = this->nrows();
     const size_t num_columns = this->ncols();
 
     if(column_major_norm_ == false)
     {
-        size_t data_index, column;
-
-        for(column = 0; column < num_columns; ++ column)
+        for(size_t column = 0; column < num_columns; ++ column)
         {
-            data_index = (num_rows * column) + index_;
             value += m_MatrixData[column]->operator[](index_) * m_MatrixData[column]->operator[](index_);
         }
 
@@ -262,7 +258,6 @@ void DOTk_ColumnMatrix<Type>::gemv(const Type & alpha_,
 
         for(column = 0; column < input_.size(); ++ column)
         {
-            Type scaled_row_sum = 0.;
             for(row = 0; row < output_.size(); ++ row)
             {
                 value = alpha_ * m_MatrixData[column]->operator[](row) * input_.operator[](column);

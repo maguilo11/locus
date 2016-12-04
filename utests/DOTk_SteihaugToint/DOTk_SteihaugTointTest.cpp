@@ -87,8 +87,8 @@ TEST(SteihaugTointStepMng, getAndSetFunctions)
     EXPECT_NEAR(0., mng.getPredictedReduction(), tolerance);
     EXPECT_NEAR(0., mng.getActualOverPredictedReduction(), tolerance);
     EXPECT_NEAR(1e-2, mng.getMinCosineAngleTolerance(), tolerance);
-    EXPECT_EQ(0, mng.getNumTrustRegionSubProblemItrDone());
-    EXPECT_EQ(30, mng.getMaxNumTrustRegionSubProblemItr());
+    EXPECT_EQ(0u, mng.getNumTrustRegionSubProblemItrDone());
+    EXPECT_EQ(30u, mng.getMaxNumTrustRegionSubProblemItr());
 
     // TEST SET FUNCTIONS VALUES
     mng.setTrustRegionRadius(1);
@@ -110,9 +110,9 @@ TEST(SteihaugTointStepMng, getAndSetFunctions)
     mng.setMinCosineAngleTolerance(1e-1);
     EXPECT_NEAR(1e-1, mng.getMinCosineAngleTolerance(), tolerance);
     mng.setNumTrustRegionSubProblemItrDone(2);
-    EXPECT_EQ(2, mng.getNumTrustRegionSubProblemItrDone());
+    EXPECT_EQ(2u, mng.getNumTrustRegionSubProblemItrDone());
     mng.setMaxNumTrustRegionSubProblemItr(23);
-    EXPECT_EQ(23, mng.getMaxNumTrustRegionSubProblemItr());
+    EXPECT_EQ(23u, mng.getMaxNumTrustRegionSubProblemItr());
 }
 
 TEST(Hessian, apply)
@@ -151,8 +151,8 @@ TEST(SteihaugTointLinMore, getAndSetFunctions)
     EXPECT_NEAR(1e-10, alg.getGradientTolerance(), tolerance);
     EXPECT_NEAR(1e-10, alg.getObjectiveTolerance(), tolerance);
     EXPECT_NEAR(1e-10, alg.getTrialStepTolerance(), tolerance);
-    EXPECT_EQ(0, alg.getNumOptimizationItrDone());
-    EXPECT_EQ(100, alg.getMaxNumOptimizationItr());
+    EXPECT_EQ(0u, alg.getNumOptimizationItrDone());
+    EXPECT_EQ(100u, alg.getMaxNumOptimizationItr());
     EXPECT_EQ(dotk::types::OPT_ALG_HAS_NOT_CONVERGED, alg.getStoppingCriterion());
 
     // TEST SET FUNCTIONS VALUES
@@ -163,9 +163,9 @@ TEST(SteihaugTointLinMore, getAndSetFunctions)
     alg.setTrialStepTolerance(0.32);
     EXPECT_NEAR(0.32, alg.getTrialStepTolerance(), tolerance);
     alg.setNumOptimizationItrDone(1);
-    EXPECT_EQ(1, alg.getNumOptimizationItrDone());
+    EXPECT_EQ(1u, alg.getNumOptimizationItrDone());
     alg.setMaxNumOptimizationItr(23);
-    EXPECT_EQ(23, alg.getMaxNumOptimizationItr());
+    EXPECT_EQ(23u, alg.getMaxNumOptimizationItr());
     alg.setStoppingCriterion(dotk::types::OBJECTIVE_FUNC_TOL_SATISFIED);
     EXPECT_EQ(dotk::types::OBJECTIVE_FUNC_TOL_SATISFIED, alg.getStoppingCriterion());
 }
@@ -185,7 +185,7 @@ TEST(SteihaugTointLinMore, getMin_UsrDefGrad_UsrDefHess_Rosenbrock)
     alg.getMin();
 
     EXPECT_EQ(dotk::types::OBJECTIVE_FUNC_TOL_SATISFIED, alg.getStoppingCriterion());
-    EXPECT_EQ(28, alg.getNumOptimizationItrDone());
+    EXPECT_EQ(28u, alg.getNumOptimizationItrDone());
     primal->control()->fill(1.);
     dotk::gtest::checkResults(*mng->getNewPrimal(), *primal->control(), 5e-6);
 }
@@ -207,7 +207,7 @@ TEST(SteihaugTointLinMore, getMin_UsrDefGrad_HessLDFP_Rosenbrock)
     alg.getMin();
 
     EXPECT_EQ(dotk::types::OBJECTIVE_FUNC_TOL_SATISFIED, alg.getStoppingCriterion());
-    EXPECT_EQ(74, alg.getNumOptimizationItrDone());
+    EXPECT_EQ(74u, alg.getNumOptimizationItrDone());
     primal->control()->fill(1.);
     dotk::gtest::checkResults(*mng->getNewPrimal(), *primal->control(), 1e-6);
 }
@@ -229,7 +229,7 @@ TEST(SteihaugTointLinMore, getMin_UsrDefGrad_HessLSR1_Rosenbrock)
     alg.getMin();
 
     EXPECT_EQ(dotk::types::OBJECTIVE_FUNC_TOL_SATISFIED, alg.getStoppingCriterion());
-    EXPECT_EQ(77, alg.getNumOptimizationItrDone());
+    EXPECT_EQ(77u, alg.getNumOptimizationItrDone());
     primal->control()->fill(1.);
     dotk::gtest::checkResults(*mng->getNewPrimal(), *primal->control(), 1e-6);
 }
@@ -250,7 +250,7 @@ TEST(SteihaugTointLinMore, getMin_GradFD_UsrDefHess_Rosenbrock)
     alg.getMin();
 
     EXPECT_EQ(dotk::types::GRADIENT_TOL_SATISFIED, alg.getStoppingCriterion());
-    EXPECT_EQ(22, alg.getNumOptimizationItrDone());
+    EXPECT_EQ(22u, alg.getNumOptimizationItrDone());
     primal->control()->fill(1.);
     dotk::gtest::checkResults(*mng->getNewPrimal(), *primal->control(), 1e-4);
 }
@@ -271,7 +271,7 @@ TEST(SteihaugTointLinMore, getMin_GradBD_UsrDefHess_Rosenbrock)
     alg.getMin();
 
     EXPECT_EQ(dotk::types::OBJECTIVE_FUNC_TOL_SATISFIED, alg.getStoppingCriterion());
-    EXPECT_EQ(28, alg.getNumOptimizationItrDone());
+    EXPECT_EQ(28u, alg.getNumOptimizationItrDone());
     primal->control()->fill(1.);
     dotk::gtest::checkResults(*mng->getNewPrimal(), *primal->control(), 1e-5);
 }
@@ -292,7 +292,7 @@ TEST(SteihaugTointLinMore, getMin_GradCD_UsrDefHess_Rosenbrock)
     alg.getMin();
 
     EXPECT_EQ(dotk::types::OBJECTIVE_FUNC_TOL_SATISFIED, alg.getStoppingCriterion());
-    EXPECT_EQ(23, alg.getNumOptimizationItrDone());
+    EXPECT_EQ(23u, alg.getNumOptimizationItrDone());
     primal->control()->fill(1.);
     dotk::gtest::checkResults(*mng->getNewPrimal(), *primal->control(), 5e-6);
 }
@@ -313,7 +313,7 @@ TEST(SteihaugTointLinMore, getMin_GradPFD_UsrDefHess_Rosenbrock)
     alg.getMin();
 
     EXPECT_EQ(dotk::types::OBJECTIVE_FUNC_TOL_SATISFIED, alg.getStoppingCriterion());
-    EXPECT_EQ(37, alg.getNumOptimizationItrDone());
+    EXPECT_EQ(37u, alg.getNumOptimizationItrDone());
     primal->control()->fill(1.);
     dotk::gtest::checkResults(*mng->getNewPrimal(), *primal->control(), 1e-5);
 }
@@ -334,7 +334,7 @@ TEST(SteihaugTointLinMore, getMin_GradPBD_UsrDefHess_Rosenbrock)
     alg.getMin();
 
     EXPECT_EQ(dotk::types::OBJECTIVE_FUNC_TOL_SATISFIED, alg.getStoppingCriterion());
-    EXPECT_EQ(28, alg.getNumOptimizationItrDone());
+    EXPECT_EQ(28u, alg.getNumOptimizationItrDone());
     primal->control()->fill(1.);
     dotk::gtest::checkResults(*mng->getNewPrimal(), *primal->control(), 1e-5);
 }
@@ -355,7 +355,7 @@ TEST(SteihaugTointLinMore, getMin_GradPCD_UsrDefHess_Rosenbrock)
     alg.getMin();
 
     EXPECT_EQ(dotk::types::OBJECTIVE_FUNC_TOL_SATISFIED, alg.getStoppingCriterion());
-    EXPECT_EQ(23, alg.getNumOptimizationItrDone());
+    EXPECT_EQ(23u, alg.getNumOptimizationItrDone());
     primal->control()->fill(1.);
     dotk::gtest::checkResults(*mng->getNewPrimal(), *primal->control(), 5e-6);
 }
@@ -376,7 +376,7 @@ TEST(SteihaugTointLinMore, getMin_UserDefGrad_NumDiffHessBD_Rosenbrock)
     alg.getMin();
 
     EXPECT_EQ(dotk::types::OBJECTIVE_FUNC_TOL_SATISFIED, alg.getStoppingCriterion());
-    EXPECT_EQ(22, alg.getNumOptimizationItrDone());
+    EXPECT_EQ(22u, alg.getNumOptimizationItrDone());
     primal->control()->fill(1.);
     dotk::gtest::checkResults(*mng->getNewPrimal(), *primal->control(), 2e-5);
 }
@@ -397,7 +397,7 @@ TEST(SteihaugTointLinMore, getMin_UserDefGrad_NumDiffHessFD_Rosenbrock)
     alg.getMin();
 
     EXPECT_EQ(dotk::types::OBJECTIVE_FUNC_TOL_SATISFIED, alg.getStoppingCriterion());
-    EXPECT_EQ(33, alg.getNumOptimizationItrDone());
+    EXPECT_EQ(33u, alg.getNumOptimizationItrDone());
     primal->control()->fill(1.);
     dotk::gtest::checkResults(*mng->getNewPrimal(), *primal->control(), 2e-5);
 }

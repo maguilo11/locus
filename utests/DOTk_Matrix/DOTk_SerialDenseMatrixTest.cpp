@@ -292,7 +292,7 @@ TEST(SerialDenseMatrix, RowMajorScale)
         matrix.scale(index, alpha);
     }
 
-    printf("ROW MAJOR SCALE WTime is %f\n", 0);
+    printf("ROW MAJOR SCALE WTime is %f\n", 0.);
     std::vector<Real> data(matrix.size());
     Real gold[] = {1, 2, 3, 8, 10, 12, 28, 32, 36};
     matrix.gather(data.size(), data.data());
@@ -314,7 +314,7 @@ TEST(SerialDenseMatrix, ColumnMajorScale)
         matrix.scale(index, alpha, false);
     }
 
-    printf("COLUMN MAJOR SCALE WTime is %f\n", 0);
+    printf("COLUMN MAJOR SCALE WTime is %f\n", 0.);
     std::vector<Real> data(matrix.size());
     Real gold[] = {1, 4, 12, 4, 10, 24, 7, 16, 36};
     matrix.gather(data.size(), data.data());
@@ -336,7 +336,7 @@ TEST(SerialDenseMatrix, RowMajorAxpy)
         matrix.axpy(index, alpha, input);
     }
 
-    printf("ROW MAJOR AXPY WTime is %f\n", 0);
+    printf("ROW MAJOR AXPY WTime is %f\n", 0.);
     std::vector<Real> data(matrix.size());
     Real gold[] = {3, 4, 5, 6, 7, 8, 9, 10, 11};
     matrix.gather(data.size(), data.data());
@@ -358,7 +358,7 @@ TEST(SerialDenseMatrix, ColumnMajorAxpy)
         matrix.axpy(index, alpha, input, false);
     }
 
-    printf("COLUMN MAJOR AXPY WTime is %f\n", 0);
+    printf("COLUMN MAJOR AXPY WTime is %f\n", 0.);
     std::vector<Real> data(matrix.size());
     Real gold[] = {3, 4, 5, 6, 7, 8, 9, 10, 11};
     matrix.gather(data.size(), data.data());

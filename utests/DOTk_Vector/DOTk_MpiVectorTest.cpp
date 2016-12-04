@@ -380,7 +380,6 @@ TEST(DOTk_MpiVectorTest, copy)
     if(my_rank == 0)
     {
         printf("WTime is %f\n", time);
-        double tolerance = 1e-8;
     }
 
     std::tr1::shared_ptr<dotk::vector<double> > gold = x.clone();
@@ -391,7 +390,7 @@ TEST(DOTk_MpiVectorTest, copy)
 
 TEST(DOTk_MpiVectorTest, gather)
 {
-    int dim = 1e4;
+    size_t dim = 1e4;
     double value = 1.;
     dotk::MpiVector<double> x(MPI_COMM_WORLD, dim, value);
     std::vector<double> y(dim, 0.);

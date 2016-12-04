@@ -96,7 +96,6 @@ TEST(Eigen, RayleighQuotientMethod)
 
 TEST(Eigen, QR)
 {
-    size_t nrows = 4;
     size_t ncols = 4;
     std::tr1::shared_ptr<dotk::vector<Real> > eigenvalues(new dotk::StdArray<Real>(ncols));
     std::tr1::shared_ptr<dotk::matrix<Real> > matrix(new dotk::serial::DOTk_ColumnMatrix<Real>(*eigenvalues, ncols));
@@ -125,7 +124,7 @@ TEST(Eigen, QR)
     std::tr1::shared_ptr<dotk::DOTk_OrthogonalFactorization> qr(new dotk::DOTk_Householder);
     dotk::DOTk_EigenQR eigen(qr);
     EXPECT_EQ(dotk::types::QR_EIGEN_METHOD, eigen.type());
-    EXPECT_EQ(25, eigen.getMaxNumItr());
+    EXPECT_EQ(25u, eigen.getMaxNumItr());
 
     eigen.solve(matrix, eigenvalues, eigenvectors);
 
@@ -197,7 +196,7 @@ TEST(Eigen, Power)
 
     dotk::DOTk_PowerMethod eigen;
     EXPECT_EQ(dotk::types::POWER_METHOD, eigen.type());
-    EXPECT_EQ(10, eigen.getMaxNumItr());
+    EXPECT_EQ(10u, eigen.getMaxNumItr());
     Real eigenvalue = 0.;
     eigen.solve(A, eigenvalue, eigenvector);
 
@@ -235,7 +234,7 @@ TEST(Eigen, RayleighQuotient)
 
     dotk::DOTk_RayleighQuotient eigen;
     EXPECT_EQ(dotk::types::RAYLEIGH_QUOTIENT_METHOD, eigen.type());
-    EXPECT_EQ(10, eigen.getMaxNumItr());
+    EXPECT_EQ(10u, eigen.getMaxNumItr());
     Real eigenvalue = 0.;
     eigen.solve(A, eigenvalue, eigenvector);
 
@@ -251,7 +250,6 @@ TEST(Eigen, RayleighQuotient)
 
 TEST(Eigen, RayleighRitz)
 {
-    size_t nrows = 4;
     size_t ncols = 4;
     std::tr1::shared_ptr<dotk::vector<Real> > eigenvalues(new dotk::StdArray<Real>(ncols));
     std::tr1::shared_ptr<dotk::matrix<Real> > matrix(new dotk::serial::DOTk_ColumnMatrix<Real>(*eigenvalues, ncols));

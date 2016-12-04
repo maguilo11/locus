@@ -149,7 +149,7 @@ public:
     private ( index )
 
 # pragma omp for
-        for(size_t index = 0; index < dim; ++index)
+        for(index = 0; index < dim; ++index)
         {
             m_Data[index] = m_Data[index] < static_cast<Type>(0.) ? -(m_Data[index]): m_Data[index];
         }
