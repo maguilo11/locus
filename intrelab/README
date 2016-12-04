@@ -1,0 +1,71 @@
+This README covers the installation of Intrelab, the
+Intrepid/Matlab interface, along with the installation
+of an interface to some Trilinos solvers, through ML.
+
+1) Get a recent version of Trilinos.
+
+2) Build Intrepid and solvers (ML, etc.) in shared library mode:
+
+   - for release mode use options
+      -D CMAKE_BUILD_TYPE:STRING=RELEASE \
+      -D Trilinos_ENABLE_ALL_PACKAGES:BOOL=OFF \
+      -D Trilinos_ENABLE_Amesos:BOOL=ON \
+      -D Trilinos_ENABLE_AztecOO:BOOL=ON \
+      -D Trilinos_ENABLE_Epetra:BOOL=ON \
+      -D Trilinos_ENABLE_EpetraExt:BOOL=ON \
+      -D Trilinos_ENABLE_Ifpack:BOOL=ON \
+      -D Trilinos_ENABLE_ML:BOOL=ON \
+      -D Trilinos_ENABLE_Teuchos:BOOL=ON \
+      -D Trilinos_ENABLE_Intrepid:BOOL=ON \
+      -D Trilinos_ENABLE_ALL_OPTIONAL_PACKAGES:BOOL=OFF \
+      -D Trilinos_ENABLE_TESTS:BOOL=OFF \
+      -D BUILD_SHARED_LIBS:BOOL=ON \
+      -D TPL_ENABLE_BinUtils=OFF \
+      -D CMAKE_INSTALL_PREFIX:PATH=/YOUR_INSTALL_PATH_HERE \
+
+   - for debug mode use options
+      -D CMAKE_BUILD_TYPE:STRING=DEBUG \
+      -D Trilinos_ENABLE_ALL_PACKAGES:BOOL=OFF \
+      -D Trilinos_ENABLE_Amesos:BOOL=ON \
+      -D Trilinos_ENABLE_AztecOO:BOOL=ON \
+      -D Trilinos_ENABLE_Epetra:BOOL=ON \
+      -D Trilinos_ENABLE_EpetraExt:BOOL=ON \
+      -D Trilinos_ENABLE_Ifpack:BOOL=ON \
+      -D Trilinos_ENABLE_ML:BOOL=ON \
+      -D Trilinos_ENABLE_Teuchos:BOOL=ON \
+      -D Trilinos_ENABLE_Intrepid:BOOL=ON \
+      -D Trilinos_ENABLE_ALL_OPTIONAL_PACKAGES:BOOL=OFF \
+      -D Trilinos_ENABLE_TESTS:BOOL=OFF \
+      -D BUILD_SHARED_LIBS:BOOL=ON \
+      -D TPL_ENABLE_BinUtils=OFF \
+      -D CMAKE_INSTALL_PREFIX:PATH=/YOUR_INSTALL_PATH_HERE \
+
+   Also see Trilinos compile scripts contained in
+     scripts/cmake.intrepid+ML.shared.release
+   and
+     scripts/cmake.intrepid+ML.shared.debug
+
+3) Modify the two makefiles, Makefile (for fast optimized interface)
+   and Makefile.debug (if debugging is needed).
+
+4) Run
+
+   make -j12
+
+5) Modify matlab startup scripts run_matlab_release.sh and run_matlab_debug.sh.
+   Note that the modifications will depend on your platform, your version
+   of Matlab, etc.  Some trial and error may be needed.  The main goal is to
+   make Matlab aware of the library paths and the versions of BLAS and LAPACK
+   used by Trilinos.  If Matlab's default BLAS and LAPACK (MKL) are used,
+   there could be problems.
+
+6) Start matlab using run_matlab_release.sh (or run_matlab_debug.sh, if
+   debugging is needed).
+
+7) To test the install of Intrelab discretizations, run the matlab script
+   m2i_test and check output.
+
+8) For the testing of ML solver capabilities, run m2ml_test and
+   check output.
+
+9) Obtain and play with the poisson_fem example.
