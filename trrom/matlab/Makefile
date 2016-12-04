@@ -32,16 +32,18 @@ OBJS=$(HOME)matlab/TRROM_MxVector.o \
 	$(HOME)matlab/TRROM_MxReducedObjectiveOperatorsTest.o \
 	$(HOME)matlab/TRROM_MxInequalityOperators.o \
 	$(HOME)matlab/TRROM_MxInequalityOperatorsTest.o \
+	$(HOME)matlab/TRROM_MxReducedBasisPDE.o \
+	$(HOME)matlab/TRROM_MxReducedBasisPDETest.o \
 	$(HOME)src/TRROM_Data.o \
 	$(HOME)src/TRROM_Dual.o \
 	$(HOME)src/TRROM_State.o \
 	$(HOME)src/TRROM_Slacks.o \
 	$(HOME)src/TRROM_Control.o \
 	$(HOME)src/TRROM_Variable.o \
-	$(HOME)src/TRROM_ReducedBasisData.o \
-	$(HOME)matlab/TRROM_MxReducedBasisPDETest.o
+	$(HOME)src/TRROM_ReducedBasisData.o
 	
 EQTEST=$(HOME)matlab/TRROM_MxReducedBasisPDETest.o \
+	$(HOME)matlab/TRROM_MxReducedBasisPDE.o \
 	$(HOME)matlab/TRROM_MxVector.o \
 	$(HOME)src/TRROM_Data.o \
 	$(HOME)src/TRROM_Dual.o \
