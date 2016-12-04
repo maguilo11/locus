@@ -1,0 +1,9 @@
+## /projects/cubit/claro.Lin64.15.1/bin/clarox
+## Cubit Version 15.1
+## Cubit Build 404325
+## Revised 2016-05-18 15:41:40 -0600 (Wed, 18 May 2016)
+## Running 06/20/2016 04:09:41 PM
+## Command Options:
+undo on
+import mesh geometry "/scratch/maguilo/research/matlab/intrelab/gcmma/lbracket_2D_quad.exo" block all use nodeset sideset feature_angle 135 linear merge
+save as "/scratch/maguilo/research/matlab/intrelab/gcmma/cubit01.cub" overwrite

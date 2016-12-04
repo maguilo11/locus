@@ -1,0 +1,4 @@
+#!python
+cubit.cmd('set node constraint on')
+cubit.cmd('import mesh geometry "/scratch/maguilo/research/matlab/intrelab/gcmma/lbracket_2D_quad.exo" block all use nodeset sideset feature_angle 135.00 linear merge ')
+cubit.cmd('save as "/scratch/maguilo/research/matlab/intrelab/gcmma/cubit01.cub" overwrite')

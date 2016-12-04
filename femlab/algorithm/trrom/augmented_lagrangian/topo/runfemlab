@@ -1,0 +1,5 @@
+#!/bin/bash
+DYLD_INSERT_LIBRARIES=/usr/lib/libstdc++.6.dylib:/usr/lib/libgcc_s.1.dylib:/usr/lib/libblas.dylib:/usr/lib/liblapack.dylib \
+DYLD_LIBRARY_PATH='/Users/maguilo/Software/Trilinos/BUILD/release/install/lib':${DYLD_LIBRARY_PATH} \
+/Applications/MATLAB_R2015a.app/bin/matlab -singleCompThread
+#/Applications/MATLAB_R2015a.app/bin/matlab -Dgdb -nodesktop

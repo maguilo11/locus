@@ -1,0 +1,323 @@
+function [Operators] = objectiveFunction()
+Operators.evaluate=@(state,control)evaluate(state,control);
+Operators.firstDerivativeWrtState=...
+    @(state,control)firstDerivativeWrtState(state,control);
+Operators.firstDerivativeWrtControl=...
+    @(state,control)firstDerivativeWrtControl(state,control);
+Operators.secondDerivativeWrtStateState=...
+    @(state,control,dstate)secondDerivativeWrtStateState(state,control,dstate);
+Operators.secondDerivativeWrtStateControl=...
+    @(state,control,dcontrol)secondDerivativeWrtStateControl(state,control,dcontrol);
+Operators.secondDerivativeWrtControlState=...
+    @(state,control,dstate)secondDerivativeWrtControlState(state,control,dstate);
+Operators.secondDerivativeWrtControlControl=...
+    @(state,control,dcontrol)secondDerivativeWrtControlControl(state,control,dcontrol);
+end
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+function [output] = evaluate(state,control)
+
+global GLB_INVP;
+
+%%%%%%%%%%% evaluate shear modulus at the cubature points
+shear_at_dof = GLB_INVP.G( GLB_INVP.mesh.t');
+shear_at_cub_points = zeros(GLB_INVP.numCubPoints, GLB_INVP.numCells);
+intrepid_evaluate(shear_at_cub_points, shear_at_dof, GLB_INVP.transformed_val_at_cub_points);
+    
+%%%%%%%%%%% evaluate bulk modulus at the cubature points
+bulk_at_dof = GLB_INVP.B( GLB_INVP.mesh.t');
+bulk_at_cub_points = zeros(GLB_INVP.numCubPoints, GLB_INVP.numCells);
+intrepid_evaluate(bulk_at_cub_points, bulk_at_dof, GLB_INVP.transformed_val_at_cub_points);
+
+%%%%%%%%%%% evaluate strain at the cubature points
+state_at_dof = state( GLB_INVP.mesh.d' );
+strain_at_cub_points = zeros(GLB_INVP.NumStress, GLB_INVP.numCubPoints, GLB_INVP.numCells);
+intrepid_evaluate(strain_at_cub_points, state_at_dof, GLB_INVP.Bmat);
+
+%%%%%%%%%%% compute deviatoric strain 
+dev_strain = zeros(GLB_INVP.NumStress, GLB_INVP.numCubPoints, GLB_INVP.numCells);
+intrepid_tensorMultiplyDataData(dev_strain, GLB_INVP.Ddev, strain_at_cub_points);
+
+%%%%%%%%%%% compute volumetric strain 
+vol_strain = zeros(GLB_INVP.NumStress, GLB_INVP.numCubPoints, GLB_INVP.numCells);
+intrepid_tensorMultiplyDataData(vol_strain, GLB_INVP.Dvol, strain_at_cub_points);
+
+%%%%%%%%%%% compute deviatoric stress
+dev_stress = zeros(GLB_INVP.NumStress, GLB_INVP.numCubPoints, GLB_INVP.numCells);
+intrepid_scalarMultiplyDataData(dev_stress, shear_at_cub_points, dev_strain);
+
+%%%%%%%%%%% compute volumetric stress
+vol_stress = zeros(GLB_INVP.NumStress, GLB_INVP.numCubPoints, GLB_INVP.numCells);
+intrepid_scalarMultiplyDataData(vol_stress, bulk_at_cub_points, vol_strain);
+
+%%%%%%%%%%% compute average stress per cell
+stress = dev_stress + vol_stress;
+elem_avg_stress = zeros(GLB_INVP.NumStress, GLB_INVP.numCells);
+elem_avg_stress(:,:) = sum(stress,2) ./ size(stress,2);
+
+%%%%%%%%%%% compute cell objective measure
+control_at_dof = control( GLB_INVP.mesh.t');
+elem_stress_measure = zeros(GLB_INVP.numCells,1);
+for cell=1:GLB_INVP.numCells
+    elem_mass_volume = sum( GLB_INVP.CellMassMatrices(:,:,cell)*control_at_dof(:,cell) );
+    elem_penalty = elem_mass_volume / GLB_INVP.ElemVolume(cell);
+    elem_von_mises_square = ...
+        ((elem_penalty^GLB_INVP.StressPower) * elem_avg_stress(1,cell))^2 + ...
+        ((elem_penalty^GLB_INVP.StressPower) * elem_avg_stress(2,cell))^2 - ...
+        ( ((elem_penalty^GLB_INVP.StressPower) * elem_avg_stress(1,cell)) * ...
+        ((elem_penalty^GLB_INVP.StressPower) * elem_avg_stress(2,cell)) ) + ...
+        (3 * ((elem_penalty^GLB_INVP.StressPower) * elem_avg_stress(3,cell))^2);
+    elem_stress_ratio = sqrt(elem_von_mises_square) / GLB_INVP.StressNormFactor(cell);
+    elem_stress_measure(cell) = GLB_INVP.ElemVolume(cell) * (elem_stress_ratio^GLB_INVP.PowerKS);
+end
+stress_measure = (sum(elem_stress_measure))^(1/GLB_INVP.PowerKS);
+
+output = stress_measure;
+
+end
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+function [output] = firstDerivativeWrtControl(state,control)
+
+global GLB_INVP;
+
+%%%%%%%%%%% evaluate shear modulus at the cubature points
+shear_at_dof = GLB_INVP.G( GLB_INVP.mesh.t');
+shear_at_cub_points = zeros(GLB_INVP.numCubPoints, GLB_INVP.numCells);
+intrepid_evaluate(shear_at_cub_points, shear_at_dof, GLB_INVP.transformed_val_at_cub_points);
+    
+%%%%%%%%%%% evaluate bulk modulus at the cubature points
+bulk_at_dof = GLB_INVP.B( GLB_INVP.mesh.t');
+bulk_at_cub_points = zeros(GLB_INVP.numCubPoints, GLB_INVP.numCells);
+intrepid_evaluate(bulk_at_cub_points, bulk_at_dof, GLB_INVP.transformed_val_at_cub_points);
+
+%%%%%%%%%%% evaluate strain at the cubature points
+state_at_dof = state( GLB_INVP.mesh.d' );
+strain_at_cub_points = zeros(GLB_INVP.NumStress, GLB_INVP.numCubPoints, GLB_INVP.numCells);
+intrepid_evaluate(strain_at_cub_points, state_at_dof, GLB_INVP.Bmat);
+
+%%%%%%%%%%% compute deviatoric strain 
+dev_strain = zeros(GLB_INVP.NumStress, GLB_INVP.numCubPoints, GLB_INVP.numCells);
+intrepid_tensorMultiplyDataData(dev_strain, GLB_INVP.Ddev, strain_at_cub_points);
+
+%%%%%%%%%%% compute volumetric strain 
+vol_strain = zeros(GLB_INVP.NumStress, GLB_INVP.numCubPoints, GLB_INVP.numCells);
+intrepid_tensorMultiplyDataData(vol_strain, GLB_INVP.Dvol, strain_at_cub_points);
+
+%%%%%%%%%%% compute deviatoric stress
+dev_stress = zeros(GLB_INVP.NumStress, GLB_INVP.numCubPoints, GLB_INVP.numCells);
+intrepid_scalarMultiplyDataData(dev_stress, shear_at_cub_points, dev_strain);
+
+%%%%%%%%%%% compute volumetric stress
+vol_stress = zeros(GLB_INVP.NumStress, GLB_INVP.numCubPoints, GLB_INVP.numCells);
+intrepid_scalarMultiplyDataData(vol_stress, bulk_at_cub_points, vol_strain);
+
+%%%%%%%%%%% compute average stress per cell
+stress = dev_stress + vol_stress;
+elem_avg_stress = zeros(GLB_INVP.NumStress, GLB_INVP.numCells);
+elem_avg_stress(:,:) = sum(stress,2) ./ size(stress,2);
+
+%%%%%%%%%%% compute cell objective measure
+control_at_dof = control( GLB_INVP.mesh.t');
+elem_stress_measure = zeros(GLB_INVP.numCells,1);
+PenalizedMassMatPerCellTwo = zeros(size(GLB_INVP.CellMassMatrices));
+for cell=1:GLB_INVP.numCells
+    %%%% Primary Coefficients
+    elem_mass_volume = sum( GLB_INVP.CellMassMatrices(:,:,cell)*control_at_dof(:,cell) );
+    elem_penalty = elem_mass_volume / GLB_INVP.ElemVolume(cell);
+    von_mises_stress_square = ...
+        ((elem_penalty^GLB_INVP.StressPower) * elem_avg_stress(1,cell))^2 + ...
+        ((elem_penalty^GLB_INVP.StressPower) * elem_avg_stress(2,cell))^2 - ...
+        (((elem_penalty^GLB_INVP.StressPower) * elem_avg_stress(1,cell)) * ...
+        ((elem_penalty^GLB_INVP.StressPower) * elem_avg_stress(2,cell))) + ...
+        (3 * ((elem_penalty^GLB_INVP.StressPower) * elem_avg_stress(3,cell))^2);
+    elem_von_mises_stress = sqrt(von_mises_stress_square);
+    elem_stress_ratio = elem_von_mises_stress / GLB_INVP.StressNormFactor(cell);
+    elem_stress_measure(cell) = GLB_INVP.ElemVolume(cell) * (elem_stress_ratio^GLB_INVP.PowerKS);
+    
+    elem_coeff = (2 * ((elem_penalty^GLB_INVP.StressPower) * elem_avg_stress(1,cell)) * ...
+        ((GLB_INVP.StressPower * (elem_penalty^(GLB_INVP.StressPower-1))) * elem_avg_stress(1,cell))) + ...
+        (2 * ((elem_penalty^GLB_INVP.StressPower) * elem_avg_stress(2,cell)) * ...
+        ((GLB_INVP.StressPower * (elem_penalty^(GLB_INVP.StressPower-1))) * elem_avg_stress(2,cell))) - ...
+        ( ((GLB_INVP.StressPower * (elem_penalty^(GLB_INVP.StressPower-1))) * elem_avg_stress(1,cell)) * ...
+        ((elem_penalty^GLB_INVP.StressPower) * elem_avg_stress(2,cell)) ) - ...
+        ( ((GLB_INVP.StressPower * (elem_penalty^(GLB_INVP.StressPower-1))) * elem_avg_stress(2,cell)) * ...
+        ((elem_penalty^GLB_INVP.StressPower) * elem_avg_stress(1,cell)) ) + ...
+        (6 * ((elem_penalty^GLB_INVP.StressPower) * elem_avg_stress(3,cell)) * ...
+        ((GLB_INVP.StressPower * (elem_penalty^(GLB_INVP.StressPower-1))) * elem_avg_stress(3,cell)));
+    elem_coeff = (0.5/(elem_von_mises_stress * GLB_INVP.StressNormFactor(cell))) * elem_coeff;
+    elem_coeff = GLB_INVP.ElemVolume(cell) * GLB_INVP.PowerKS * ...
+        (elem_stress_ratio^(GLB_INVP.PowerKS-1)) * elem_coeff;
+    
+    %%%% Penalized Mass Matrix One
+    PenalizedMassMatPerCellTwo(:,:,cell) = (elem_coeff / ...
+        GLB_INVP.ElemVolume(cell)) * GLB_INVP.CellMassMatrices(:,:,cell);
+end
+
+%%%%%%%%%%% Assemble stress measure gradient
+one = ones(GLB_INVP.nVertGrid,1);
+matrix = reshape(PenalizedMassMatPerCellTwo, 1, numel(PenalizedMassMatPerCellTwo));
+Mass2 = sparse(GLB_INVP.iIdxVertices, GLB_INVP.jIdxVertices, matrix);
+stress_measure_grad = ((1/GLB_INVP.PowerKS) * ...
+    sum(elem_stress_measure)^((1/GLB_INVP.PowerKS) - 1)) .* (Mass2 * one);
+
+output = stress_measure_grad;
+
+end
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+function [output] = firstDerivativeWrtState(state,control)
+
+global GLB_INVP;
+
+%%%%%%%%%%% evaluate shear modulus at the cubature points
+shear_at_dof = GLB_INVP.G( GLB_INVP.mesh.t');
+shear_at_cub_points = zeros(GLB_INVP.numCubPoints, GLB_INVP.numCells);
+intrepid_evaluate(shear_at_cub_points, shear_at_dof, GLB_INVP.transformed_val_at_cub_points);
+    
+%%%%%%%%%%% evaluate bulk modulus at the cubature points
+bulk_at_dof = GLB_INVP.B( GLB_INVP.mesh.t');
+bulk_at_cub_points = zeros(GLB_INVP.numCubPoints, GLB_INVP.numCells);
+intrepid_evaluate(bulk_at_cub_points, bulk_at_dof, GLB_INVP.transformed_val_at_cub_points);
+
+%%%%%%%%%%% evaluate strain at the cubature points
+state_at_dof = state( GLB_INVP.mesh.d' );
+strain_at_cub_points = zeros(GLB_INVP.NumStress, GLB_INVP.numCubPoints, GLB_INVP.numCells);
+intrepid_evaluate(strain_at_cub_points, state_at_dof, GLB_INVP.Bmat);
+
+%%%%%%%%%%% compute deviatoric strain 
+dev_strain = zeros(GLB_INVP.NumStress, GLB_INVP.numCubPoints, GLB_INVP.numCells);
+intrepid_tensorMultiplyDataData(dev_strain, GLB_INVP.Ddev, strain_at_cub_points);
+
+%%%%%%%%%%% compute volumetric strain 
+vol_strain = zeros(GLB_INVP.NumStress, GLB_INVP.numCubPoints, GLB_INVP.numCells);
+intrepid_tensorMultiplyDataData(vol_strain, GLB_INVP.Dvol, strain_at_cub_points);
+
+%%%%%%%%%%% compute deviatoric stress
+dev_stress = zeros(GLB_INVP.NumStress, GLB_INVP.numCubPoints, GLB_INVP.numCells);
+intrepid_scalarMultiplyDataData(dev_stress, shear_at_cub_points, dev_strain);
+
+%%%%%%%%%%% compute volumetric stress
+vol_stress = zeros(GLB_INVP.NumStress, GLB_INVP.numCubPoints, GLB_INVP.numCells);
+intrepid_scalarMultiplyDataData(vol_stress, bulk_at_cub_points, vol_strain);
+
+%%%%%%%%%%% compute average stress per cell
+stress_per_cell = dev_stress + vol_stress;
+avg_stress_per_cell = zeros(GLB_INVP.NumStress, GLB_INVP.numCells);
+avg_stress_per_cell(:,:) = sum(stress_per_cell,2) ./ size(stress_per_cell,2);
+
+%%%%%%%%%%% combine shape function gradients with shear modulus
+shear_times_Bmat = zeros(GLB_INVP.NumStress, GLB_INVP.numCubPoints, GLB_INVP.numDof, GLB_INVP.numCells);
+intrepid_scalarMultiplyDataField(shear_times_Bmat, shear_at_cub_points, GLB_INVP.Bmat);
+
+%%%%%%%%%%% matrix-vector product, deviatoric coefficient matrix and shape function gradient
+dev_stress_sensitivity = zeros(GLB_INVP.NumStress, GLB_INVP.numCubPoints, GLB_INVP.numDof, GLB_INVP.numCells);
+intrepid_tensorMultiplyDataField(dev_stress_sensitivity, GLB_INVP.Ddev, shear_times_Bmat);
+
+%%%%%%%%%%% combine shape function gradients with shear modulus
+bulk_times_Bmat = zeros(GLB_INVP.NumStress, GLB_INVP.numCubPoints, GLB_INVP.numDof, GLB_INVP.numCells);
+intrepid_scalarMultiplyDataField(bulk_times_Bmat, bulk_at_cub_points, GLB_INVP.Bmat);
+
+%%%%%%%%%%% matrix-vector product, volumetric coefficient matrix and shape function gradient
+vol_stress_sensitivity = zeros(GLB_INVP.NumStress, GLB_INVP.numCubPoints, GLB_INVP.numDof, GLB_INVP.numCells);
+intrepid_tensorMultiplyDataField(vol_stress_sensitivity, GLB_INVP.Dvol, bulk_times_Bmat);
+
+%%%%%%%%%%% compute average stress per cell
+stress_sens_per_cell = dev_stress_sensitivity + vol_stress_sensitivity;
+avg_stress_sens_per_cell = zeros(GLB_INVP.NumStress, GLB_INVP.numDof, GLB_INVP.numCells);
+avg_stress_sens_per_cell(:,:,:) = sum(stress_sens_per_cell,2) ./ size(stress_sens_per_cell,2);
+
+%%%%%%%%%%% compute objective sensitivity with respect to state
+control_at_dof = control( GLB_INVP.mesh.t');
+cell_stress_measure = zeros(GLB_INVP.numCells,1);
+cell_sensitivities = zeros(GLB_INVP.numDof, GLB_INVP.numCells);
+for cell=1:GLB_INVP.numCells
+    %%%% Primary Coefficients
+    elem_mass_volume = sum( GLB_INVP.CellMassMatrices(:,:,cell)*control_at_dof(:,cell) );
+    elem_penalty = elem_mass_volume / GLB_INVP.ElemVolume(cell);
+    von_mises_stress_square = ...
+        ((elem_penalty^GLB_INVP.StressPower) * avg_stress_per_cell(1,cell))^2 + ...
+        ((elem_penalty^GLB_INVP.StressPower) * avg_stress_per_cell(2,cell))^2 - ...
+        (((elem_penalty^GLB_INVP.StressPower) * avg_stress_per_cell(1,cell)) * ...
+        ((elem_penalty^GLB_INVP.StressPower) * avg_stress_per_cell(2,cell))) + ...
+        (3 * ((elem_penalty^GLB_INVP.StressPower) * avg_stress_per_cell(3,cell))^2);
+    elem_von_mises_stress = sqrt(von_mises_stress_square);
+    stress_ratio = elem_von_mises_stress / GLB_INVP.StressNormFactor(cell);
+    cell_stress_measure(cell) = GLB_INVP.ElemVolume(cell) * (stress_ratio^GLB_INVP.PowerKS);
+    
+    cell_sensitivities(:,cell) = ...
+        (2 * ((elem_penalty^GLB_INVP.StressPower) * avg_stress_per_cell(1,cell)) * ...
+        ((elem_penalty^GLB_INVP.StressPower) * avg_stress_sens_per_cell(1,:,cell))) + ...
+        (2 * ((elem_penalty^GLB_INVP.StressPower) * avg_stress_per_cell(2,cell)) * ...
+        ((elem_penalty^GLB_INVP.StressPower) * avg_stress_sens_per_cell(2,:,cell))) - ...
+        ( ((elem_penalty^GLB_INVP.StressPower) * avg_stress_sens_per_cell(1,:,cell)) * ...
+        ((elem_penalty^GLB_INVP.StressPower) * avg_stress_per_cell(2,cell)) ) - ...
+        ( ((elem_penalty^GLB_INVP.StressPower) * avg_stress_sens_per_cell(2,:,cell)) * ...
+        ((elem_penalty^GLB_INVP.StressPower) * avg_stress_per_cell(1,cell)) ) + ...
+        (6 * ((elem_penalty^GLB_INVP.StressPower) * avg_stress_per_cell(3,cell)) * ...
+        ((elem_penalty^GLB_INVP.StressPower) * avg_stress_sens_per_cell(3,:,cell)));
+    elem_coeff = (0.5/(elem_von_mises_stress * GLB_INVP.StressNormFactor(cell)));
+    elem_coeff = GLB_INVP.ElemVolume(cell) * GLB_INVP.PowerKS * ...
+        (stress_ratio^(GLB_INVP.PowerKS-1)) * elem_coeff;
+    cell_sensitivities = elem_coeff .* cell_sensitivities;
+
+end
+cell_sensitivities = ((1/GLB_INVP.PowerKS) * ...
+sum(cell_stress_measure)^((1/GLB_INVP.PowerKS) - 1)) .* cell_sensitivities;
+
+%%%%%%%%%%% store force vector
+reshape_sensitivities = reshape(cell_sensitivities, 1, numel(cell_sensitivities));
+sparse_sensitivities = sparse(GLB_INVP.iVecIdxDof, GLB_INVP.iVecIdxDof, reshape_sensitivities);
+output = spdiags(sparse_sensitivities,0);
+
+end
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+function [output] = secondDerivativeWrtStateState(state,control,dstate)
+
+end
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+function [output] = secondDerivativeWrtStateControl(state,control,dcontrol)
+
+end
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+function [output] = secondDerivativeWrtControlState(state,control,dstate)
+
+end
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+function [output] = secondDerivativeWrtControlControl(state,control,dcontrol)
+
+end
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+function [output] = computeElemVonMises(elem_penalty,stresses)
+
+global GLB_INVP;
+
+switch(GLB_INVP.NumStress)
+    case 3
+        penalty = elem_penalty^GLB_INVP.StressPower;
+        output = penalty*stresses(1);
+    case 6
+        stress_xx = elem_penalty * stresses(1);
+        stress_yy = elem_penalty * stresses(2);
+        stress_zz = elem_penalty * stresses(3);
+        stress_xy = elem_penalty * stresses(4);
+        stress_yz = elem_penalty * stresses(5);
+        stress_xz = elem_penalty * stresses(6);
+        output = (stress_xx-stress_yy)^2 + (stress_yy-stress_zz)^2 + ...
+            (stress_zz-stress_xx)^2 + 6*(stress_xy^2 + stress_yz^2 + stress_xz^2);
+end
+
+end
