@@ -23,8 +23,8 @@ DOTk_LeftPrecGenConjResDataMng::DOTk_LeftPrecGenConjResDataMng(const std::tr1::s
                                                                const std::tr1::shared_ptr<dotk::DOTk_LinearOperator> & linear_operator_,
                                                                size_t max_num_itr_) :
         dotk::DOTk_KrylovSolverDataMng(primal_, linear_operator_),
-        m_LeftPreconditioner(new dotk::DOTk_LeftPreconditioner(dotk::types::LEFT_PRECONDITIONER_DISABLED)),
-        m_LeftPrecTimesResidual()
+        m_LeftPrecTimesResidual(),
+        m_LeftPreconditioner(new dotk::DOTk_LeftPreconditioner(dotk::types::LEFT_PRECONDITIONER_DISABLED))
 {
     dotk::DOTk_KrylovSolverDataMng::setMaxNumSolverItr(max_num_itr_);
     dotk::DOTk_KrylovSolverDataMng::setSolverType(dotk::types::krylov_solver_t::LEFT_PREC_GCR);

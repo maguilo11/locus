@@ -79,7 +79,6 @@ void DOTk_RayleighRitz::initialize(const std::tr1::shared_ptr<dotk::matrix<Real>
 {
     if(m_OrthonormalBasis.use_count() <= 0)
     {
-        size_t basis_dim = eigenvectors_->basisDimension();
         m_WorkMatrix = eigenvectors_->clone();
         m_OrthonormalBasis = eigenvectors_->clone();
         // TODO: PROPERLY INITIALIZE REDUCED MATRICES

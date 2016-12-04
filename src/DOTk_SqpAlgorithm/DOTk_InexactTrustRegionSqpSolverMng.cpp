@@ -282,7 +282,6 @@ dotk::types::solver_stop_criterion_t DOTk_InexactTrustRegionSqpSolverMng::solveQ
     // solve the augmented system to approximate minimum-dot solution dn_k of:
     //      min || grad_x(C(x_k))n + C(x_k) ||,  s.t. ||n|| <= zeta*trust_region_radius_k
     // assemble rhs vector, -{ncp_k; grad_x(C(x_k)) ncp_k + C(x_k)}
-    size_t copy_first_n_fields = mng_->m_NormalCauchyStep->size();
     dotk::copy(mng_->m_NormalCauchyStep, mng_->m_AugmentedSystemRightHandSide);
     mng_->getAugmentedSystemRightHandSide()->dual()->copy(*m_DualWorkVector);
     mng_->m_AugmentedSystemRightHandSide->scale(static_cast<Real>(-1.));
@@ -393,7 +392,6 @@ void DOTk_InexactTrustRegionSqpSolverMng::computeScaledQuasiNormalStep
     Real trust_region_radius_penalty_param = m_QuasiNormalProbCriterion->getTrustRegionRadiusPenaltyParameter();
     Real penalized_trust_region_radius = trust_region_radius_penalty_param * current_trust_region_radius;
 
-    size_t copy_first_n_fields = mng_->m_NormalCauchyStep->size();
     dotk::copy(m_QuasiNormalProbSolver->getDataMng()->getSolution(), mng_->m_NormalStep);
 
     Real root = mng_->computeDoglegRoot(penalized_trust_region_radius,

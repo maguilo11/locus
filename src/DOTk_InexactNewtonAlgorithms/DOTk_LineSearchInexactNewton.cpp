@@ -32,12 +32,12 @@ DOTk_LineSearchInexactNewton::DOTk_LineSearchInexactNewton(const std::tr1::share
                                                            const std::tr1::shared_ptr<dotk::DOTk_LineSearchStepMng> & step_,
                                                            const std::tr1::shared_ptr<dotk::DOTk_LineSearchAlgorithmsDataMng> & mng_) :
         dotk::DOTk_InexactNewtonAlgorithms(dotk::types::LINE_SEARCH_INEXACT_NEWTON),
+        m_SolverRhsVector(mng_->getTrialStep()->clone()),
         m_KrylovSolver(),
         m_IO(new dotk::DOTk_LineSearchInexactNewtonIO),
         m_LineSearch(step_),
         m_LinearOperator(hessian_),
-        m_DataMng(mng_),
-        m_SolverRhsVector(mng_->getTrialStep()->clone())
+        m_DataMng(mng_)
 {
 }
 

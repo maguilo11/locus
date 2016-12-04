@@ -19,7 +19,7 @@ namespace qr
 
 void classicalGramSchmidt(dotk::matrix<Real> & Q_, dotk::matrix<Real> & R_)
 {
-    size_t basis_dimension = Q_.basisDimension();
+    int basis_dimension = Q_.basisDimension();
 
     for(int jth_dim = 0; jth_dim < basis_dimension; ++jth_dim)
     {
@@ -48,7 +48,7 @@ void classicalGramSchmidt(const dotk::matrix<Real> & A_, dotk::matrix<Real> & Q_
 
 void modifiedGramSchmidt(dotk::matrix<Real> & Q_, dotk::matrix<Real> & R_)
 {
-    size_t basis_dimension = Q_.basisDimension();
+    int basis_dimension = Q_.basisDimension();
 
     for(int ith_dim = 0; ith_dim < basis_dimension; ++ith_dim)
     {

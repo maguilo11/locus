@@ -30,8 +30,8 @@ DOTk_LineSearchQuasiNewton::DOTk_LineSearchQuasiNewton(const std::tr1::shared_pt
         m_InvHessianTimesVector(mng_->getNewPrimal()->clone()),
         m_IO(new dotk::DOTk_FirstOrderLineSearchAlgIO),
         m_LineSearch(step_),
-        m_DataMng(mng_),
-        m_InvHessian()
+        m_InvHessian(),
+        m_DataMng(mng_)
 {
     this->setBfgsSecantMethod();
 }

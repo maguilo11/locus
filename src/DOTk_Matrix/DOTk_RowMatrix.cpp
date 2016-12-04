@@ -105,7 +105,6 @@ Type DOTk_RowMatrix<Type>::norm(const size_t & index_, bool row_major_norm_) con
 {
     Type value = 0.;
     const size_t num_rows = this->nrows();
-    const size_t num_columns = this->ncols();
 
     if(row_major_norm_ == false)
     {
@@ -223,7 +222,7 @@ void DOTk_RowMatrix<Type>::matVec(const dotk::vector<Type> & input_,
         assert(this->ncols() == output_.size());
 
         size_t column, row;
-        Type sum, value, value_to_add;
+        Type value, value_to_add;
 
         for(row = 0; row < input_.size(); ++ row)
         {

@@ -25,18 +25,6 @@ DOTk_TrustRegionMngTypeELP::DOTk_TrustRegionMngTypeELP
  const std::tr1::shared_ptr<dotk::DOTk_ObjectiveFunction<Real> > & objective_,
  const std::tr1::shared_ptr<dotk::DOTk_EqualityConstraint<Real> > & equality_) :
         dotk::DOTk_OptimizationDataMng(),
-        m_OldObjectiveFunction(0),
-        m_NewObjectiveFunction(0),
-        m_OldDual(primal_->dual()->clone()),
-        m_NewDual(primal_->dual()->clone()),
-        m_TrialStep(new dotk::DOTk_PrimalVector<Real>(*primal_)),
-        m_OldPrimal(new dotk::DOTk_PrimalVector<Real>(*primal_)),
-        m_NewPrimal(new dotk::DOTk_PrimalVector<Real>(*primal_)),
-        m_OldGradient(new dotk::DOTk_PrimalVector<Real>(*primal_)),
-        m_NewGradient(new dotk::DOTk_PrimalVector<Real>(*primal_)),
-        m_MatrixTimesVector(new dotk::DOTk_PrimalVector<Real>(*primal_)),
-        m_TrustRegion(new dotk::DOTk_DoglegTrustRegion),
-        m_RoutinesMng(),
         m_DeltaDual(primal_->dual()->clone()),
         m_NormalStep(new dotk::DOTk_PrimalVector<Real>(*primal_)),
         m_DeltaPrimal(new dotk::DOTk_PrimalVector<Real>(*primal_)),
@@ -53,7 +41,19 @@ DOTk_TrustRegionMngTypeELP::DOTk_TrustRegionMngTypeELP
         m_JacobianTimesTangentialStep(primal_->dual()->clone()),
         m_AugmentedSystemLeftHandSide(new dotk::DOTk_MultiVector<Real>(*primal_)),
         m_AugmentedSystemRightHandSide(new dotk::DOTk_MultiVector<Real>(*primal_)),
-        m_ProjectedTangentialCauchyStep(new dotk::DOTk_PrimalVector<Real>(*primal_))
+        m_ProjectedTangentialCauchyStep(new dotk::DOTk_PrimalVector<Real>(*primal_)),
+        m_OldObjectiveFunction(0),
+        m_NewObjectiveFunction(0),
+        m_OldDual(primal_->dual()->clone()),
+        m_NewDual(primal_->dual()->clone()),
+        m_TrialStep(new dotk::DOTk_PrimalVector<Real>(*primal_)),
+        m_OldPrimal(new dotk::DOTk_PrimalVector<Real>(*primal_)),
+        m_NewPrimal(new dotk::DOTk_PrimalVector<Real>(*primal_)),
+        m_OldGradient(new dotk::DOTk_PrimalVector<Real>(*primal_)),
+        m_NewGradient(new dotk::DOTk_PrimalVector<Real>(*primal_)),
+        m_MatrixTimesVector(new dotk::DOTk_PrimalVector<Real>(*primal_)),
+        m_TrustRegion(new dotk::DOTk_DoglegTrustRegion),
+        m_RoutinesMng()
 {
     this->initialize(primal_, objective_, equality_);
 }

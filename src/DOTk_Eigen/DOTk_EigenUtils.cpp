@@ -22,7 +22,8 @@ Real powerMethod(const dotk::matrix<Real> & matrix_,
                  size_t max_num_itr_,
                  Real relative_difference_tolerance_)
 {
-    Real relative_difference, new_eigenvalue;
+    Real new_eigenvalue = 0;
+    Real relative_difference = 0;
     Real old_eigenvalue = std::numeric_limits<Real>::max();
     std::tr1::shared_ptr<dotk::vector<Real> > old_eigenvector = eigenvector_.clone();
     for(size_t itr = 0; itr < max_num_itr_; ++itr)
@@ -48,8 +49,10 @@ Real rayleighQuotientMethod(const dotk::matrix<Real> & matrix_,
                             size_t max_num_itr_,
                             Real relative_difference_tolerance_)
 {
+    Real new_eigenvalue = 0;
+    Real relative_difference = 0;
+    Real old_eigenvector_norm = 0;
     Real old_eigenvalue = std::numeric_limits<Real>::max();
-    Real relative_difference, new_eigenvalue, old_eigenvector_norm;
     std::tr1::shared_ptr<dotk::vector<Real> > old_eigenvector = eigenvector_.clone();
     for(size_t itr = 0; itr < max_num_itr_; ++itr)
     {

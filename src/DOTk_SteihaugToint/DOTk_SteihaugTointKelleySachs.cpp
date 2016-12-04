@@ -25,11 +25,11 @@ DOTk_SteihaugTointKelleySachs::DOTk_SteihaugTointKelleySachs(const std::tr1::sha
         m_MaxNumUpdates(10),
         m_StationarityMeasure(0),
         m_WorkVector(data_mng_->getNewGradient()->clone()),
-        m_Solver(new dotk::DOTk_ProjectedSteihaugTointPcg(data_mng_->getPrimalStruc())),
         m_IO(new dotk::DOTk_SteihaugTointNewtonIO),
         m_StepMng(step_mng),
         m_DataMng(data_mng_),
-        m_BoundConstraint(new dotk::DOTk_BoundConstraints)
+        m_BoundConstraint(new dotk::DOTk_BoundConstraints),
+        m_Solver(new dotk::DOTk_ProjectedSteihaugTointPcg(data_mng_->getPrimalStruc()))
 {
 }
 

@@ -53,13 +53,13 @@ void DOTk_LSR1Hessian::unrollingSR1(const std::tr1::shared_ptr<dotk::vector<Real
     ///                              the DOTk Hessian operator to the trial step. \n
     ///      (std::vector_<Real>) \n
     ///
-    size_t updates = dotk::DOTk_SecondOrderOperator::getNumUpdatesStored();
-    for(size_t index = 0; index < updates; ++index)
+    int updates = dotk::DOTk_SecondOrderOperator::getNumUpdatesStored();
+    for(int index = 0; index < updates; ++index)
     {
         m_MatrixA->basis(index)->copy(*m_DeltaPrimalStorage->basis(index));
     }
 
-    for(size_t index_i = 0; index_i < updates; ++index_i)
+    for(int index_i = 0; index_i < updates; ++index_i)
     {
         Real dgrad_dot_vector = m_DeltaGradientStorage->basis(index_i)->dot(*vector_);
         Real rowA_times_vector = m_MatrixA->basis(index_i)->dot(*vector_);
@@ -69,7 +69,7 @@ void DOTk_LSR1Hessian::unrollingSR1(const std::tr1::shared_ptr<dotk::vector<Real
         hess_times_vector_->axpy(alpha, *m_DeltaGradientStorage->basis(index_i));
         hess_times_vector_->axpy(-alpha, *m_MatrixA->basis(index_i));
 
-        for(Int index_j = updates - 1; index_j > index_i; --index_j)
+        for(int index_j = updates - 1; index_j > index_i; --index_j)
         {
             Real dgrad_dot_dprimal_inner =
                     m_DeltaGradientStorage->basis(index_i)->dot(*m_DeltaPrimalStorage->basis(index_j));

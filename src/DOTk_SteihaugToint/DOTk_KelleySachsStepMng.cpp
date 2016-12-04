@@ -128,7 +128,6 @@ void DOTk_KelleySachsStepMng::solveSubProblem(const std::tr1::shared_ptr<dotk::D
 {
     m_TrustRegionRadiusFlag = false;
     this->setNumTrustRegionSubProblemItrDone(1);
-    Real angle_tolerance = dotk::DOTk_TrustRegionStepMng::getMinCosineAngleTolerance();
     Real min_trust_region_radius = dotk::DOTk_TrustRegionStepMng::getMinTrustRegionRadius();
     if(dotk::DOTk_TrustRegionStepMng::getTrustRegionRadius() < min_trust_region_radius)
     {

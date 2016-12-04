@@ -19,9 +19,9 @@ namespace dotk
 DOTk_LSR1InvHessian::DOTk_LSR1InvHessian(const std::tr1::shared_ptr<dotk::vector<Real> > & vector_,
                                          size_t max_secant_storage_) :
         dotk::DOTk_SecondOrderOperator(max_secant_storage_),
+        m_RhoStorage(new std::vector<Real>(max_secant_storage_, 0.)),
         m_DeltaPrimal(vector_->clone()),
         m_DeltaGradient(vector_->clone()),
-        m_RhoStorage(new std::vector<Real>(max_secant_storage_, 0.)),
         m_MatrixA(new dotk::serial::DOTk_RowMatrix<Real>(*vector_, max_secant_storage_)),
         m_DeltaPrimalStorage(new dotk::serial::DOTk_RowMatrix<Real>(*vector_, max_secant_storage_)),
         m_DeltaGradientStorage(new dotk::serial::DOTk_RowMatrix<Real>(*vector_, max_secant_storage_))
@@ -62,13 +62,13 @@ void DOTk_LSR1InvHessian::unrollingSR1(const std::tr1::shared_ptr<dotk::vector<R
     ///                                 the SOL_Hessian operator to the trial step. \n
     ///      (std::vector_<Real>) \n
     ///
-    size_t updates = dotk::DOTk_SecondOrderOperator::getNumUpdatesStored();
-    for(size_t index = 0; index < updates; ++index)
+    int updates = dotk::DOTk_SecondOrderOperator::getNumUpdatesStored();
+    for(int index = 0; index < updates; ++index)
     {
         m_MatrixA->basis(index)->copy(*m_DeltaGradientStorage->basis(index));
     }
 
-    for(size_t index_i = 0; index_i < updates; ++index_i)
+    for(int index_i = 0; index_i < updates; ++index_i)
     {
         Real dgrad_dot_vec = m_DeltaPrimalStorage->basis(index_i)->dot(*vector_);
         Real rowA_dot_vec = m_MatrixA->basis(index_i)->dot(*vector_);
@@ -79,7 +79,7 @@ void DOTk_LSR1InvHessian::unrollingSR1(const std::tr1::shared_ptr<dotk::vector<R
         inv_hess_times_vector_->axpy(alpha, *m_DeltaPrimalStorage->basis(index_i));
         inv_hess_times_vector_->axpy(-alpha, *m_MatrixA->basis(index_i));
 
-        for(Int index_j = updates - 1; index_j > index_i; --index_j)
+        for(int index_j = updates - 1; index_j > index_i; --index_j)
         {
             Real dgrad_dot_dprimal_inner =
                     m_DeltaPrimalStorage->basis(index_i)->dot(*m_DeltaGradientStorage->basis(index_j));

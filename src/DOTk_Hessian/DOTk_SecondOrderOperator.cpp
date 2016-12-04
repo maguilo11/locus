@@ -183,18 +183,17 @@ void DOTk_SecondOrderOperator::updateSecantStorage(const std::tr1::shared_ptr<do
     {
         return;
     }
-    Int updates = this->getNumUpdatesStored();
+    int updates = this->getNumUpdatesStored();
     // Update limited memory work set work-set
-    Real kappa = 0.;
     this->setSecantStorageFullFlag((updates == this->getMaxNumSecantStorage() ? true : false));
     if(this->IsSecantStorageFull() == true)
     {
         // DO IF: Number of updates is equal to the maximum number of previous solutions stored.
         updates = static_cast<size_t>(std::floor(updates / 2.));
-        for(size_t i = 0; i < updates; ++i)
+        for(int index = 0; index < updates; ++index)
         {
-            dprimal_storage_->basis(i)->copy(*dprimal_storage_->basis(updates + i));
-            dgrad_storage_->basis(i)->copy(*dgrad_storage_->basis(updates + i));
+            dprimal_storage_->basis(index)->copy(*dprimal_storage_->basis(updates + index));
+            dgrad_storage_->basis(index)->copy(*dgrad_storage_->basis(updates + index));
         }
         dprimal_storage_->basis(updates)->copy(*dprimal_);
         dgrad_storage_->basis(updates)->copy(*dgrad_);
@@ -239,7 +238,7 @@ void DOTk_SecondOrderOperator::updateSecantStorage(const std::tr1::shared_ptr<do
     {
         return;
     }
-    Int updates = this->getNumUpdatesStored();
+    int updates = this->getNumUpdatesStored();
     // Update limited memory work set work-set
     Real kappa = 0.;
     this->setSecantStorageFullFlag((updates == this->getMaxNumSecantStorage() ? true : false));
@@ -247,7 +246,7 @@ void DOTk_SecondOrderOperator::updateSecantStorage(const std::tr1::shared_ptr<do
     {
         // DO IF: Number of updates is equal to the maximum number of previous solutions stored.
         updates = static_cast<size_t>(std::floor(updates / 2.));
-        for(size_t index = 0; index < updates; ++index)
+        for(int index = 0; index < updates; ++index)
         {
             dprimal_storage_->basis(index)->copy(*dprimal_storage_->basis(updates + index));
             dgrad_storage_->basis(index)->copy(*dgrad_storage_->basis(updates + index));

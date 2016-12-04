@@ -129,7 +129,6 @@ void DOTk_InexactTrustRegionSqpIO::writeInitialDiagnostics(const dotk::DOTk_Inex
                                                            const std::tr1::shared_ptr<dotk::DOTk_TrustRegionMngTypeELP> & mng_)
 {
     size_t num_opt_itr_done = alg_->getNumItrDone();
-    size_t num_trust_region_subproblem_itr = alg_->getNumTrustRegionSubProblemItrDone();
     size_t objective_function_counter = mng_->getObjectiveFunctionEvaluationCounter();
 
     Real new_objective_function_value = mng_->getNewObjectiveFunctionValue();
@@ -160,7 +159,6 @@ void DOTk_InexactTrustRegionSqpIO::writeFirstTrustRegionSubProblemItrDiagnostics
                                                                                          dotk::DOTk_InexactTrustRegionSqpSolverMng> & solver_mng_)
 {
     size_t num_opt_itr_done = alg_->getNumItrDone();
-    size_t num_trust_region_subproblem_itr = alg_->getNumTrustRegionSubProblemItrDone() + 1;
     size_t objective_function_counter = mng_->getObjectiveFunctionEvaluationCounter();
 
     Real new_objective_function_value = mng_->getNewObjectiveFunctionValue();
@@ -207,17 +205,6 @@ void DOTk_InexactTrustRegionSqpIO::writeTrustRegionSubProblemDiagnostics(const d
                                                                          const std::tr1::shared_ptr<
                                                                                  dotk::DOTk_InexactTrustRegionSqpSolverMng> & solver_mng_)
 {
-    size_t num_opt_itr_done = alg_->getNumItrDone();
-    size_t num_trust_region_subproblem_itr = alg_->getNumTrustRegionSubProblemItrDone();
-    size_t objective_function_counter = mng_->getObjectiveFunctionEvaluationCounter();
-
-    Real new_objective_function_value = mng_->getNewObjectiveFunctionValue();
-    Real norm_grad = mng_->getNewGradient()->norm();
-
-    Real norm_trial_step = mng_->getTrialStep()->norm();
-
-    Real norm_eq_constraint_residual = mng_->getNewEqualityConstraintResidual()->norm();
-
     std::ostringstream dual_prob_exit_criterion;
     dotk::ioUtils::getSolverExitCriterion(alg_->getDualProbExitCriterion(), dual_prob_exit_criterion);
     std::ostringstream quasi_normal_prob_exit_criterion;

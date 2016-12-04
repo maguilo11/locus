@@ -17,11 +17,11 @@ namespace dotk
 
 DOTk_KrylovSolver::DOTk_KrylovSolver(dotk::types::krylov_solver_t type_) :
         m_NumSolverItrDone(0),
-        m_InvalidCurvatureDetected(false),
-        m_TrustRegionRadiusViolation(false),
         m_TrustRegionRadius(std::numeric_limits<Real>::max()),
         m_SolverResidualNorm(0.),
         m_SolverStoppingTolerance(0.),
+        m_InvalidCurvatureDetected(false),
+        m_TrustRegionRadiusViolation(false),
         m_SolverType(type_),
         m_SolverStopCriterion(dotk::types::SOLVER_DID_NOT_CONVERGED)
 {

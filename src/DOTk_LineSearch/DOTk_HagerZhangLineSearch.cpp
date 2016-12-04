@@ -216,7 +216,7 @@ void DOTk_HagerZhangLineSearch::shrinkInterval(const Real & step_,
     Real theta = this->getIntervalUpdateParameter();
     Real new_interval_lower_bound = this->getStepInterval(dotk::types::LOWER_BOUND);
     Real new_interval_upper_bound = step_;
-    Int iterations = 1;
+    size_t iterations = 1;
     while(1)
     {
         Real secant_step = ((static_cast<Real>(1.0) - theta) * new_interval_lower_bound)
@@ -227,7 +227,6 @@ void DOTk_HagerZhangLineSearch::shrinkInterval(const Real & step_,
         dotk::DOTk_LineSearch::setNewObjectiveFunctionValue(new_fval);
         mng_->computeGradient(primal_new_, gradient_new_);
         Real innr_gradient_trialStep = gradient_new_->dot(*trial_step_);
-        bool max_iterations_reached = iterations == this->getMaxShrinkIntervalIterations() ? true : false;
         if(innr_gradient_trialStep >= std::numeric_limits<Real>::min())
         {
             this->setStepInterval(dotk::types::LOWER_BOUND, new_interval_lower_bound);

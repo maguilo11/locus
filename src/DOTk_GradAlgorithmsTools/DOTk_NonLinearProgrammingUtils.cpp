@@ -5,6 +5,9 @@
  *      Author: Miguel A. Aguilo Valentin
  */
 
+#include <string>
+#include <iostream>
+
 #include "vector.hpp"
 #include "DOTk_NonLinearProgrammingUtils.hpp"
 
@@ -17,29 +20,39 @@ namespace nlp
 std::tr1::shared_ptr<dotk::vector<Real> > clone(dotk::nlp::variables & variables_,
                                                 dotk::types::variable_t codomain_)
 {
+    std::tr1::shared_ptr<dotk::vector<Real> > output;
     switch(codomain_)
     {
         case dotk::types::STATE:
         {
-            return (variables_.mState->clone());
+            output = variables_.mState->clone();
             break;
         }
         case dotk::types::CONTROL:
         {
-            return(variables_.mControl->clone());
+            output = variables_.mControl->clone();
             break;
         }
         case dotk::types::DUAL:
         {
-            return(variables_.mDual->clone());
+            output = variables_.mDual->clone();
             break;
         }
         case dotk::types::UNDEFINED_VARIABLE:
         {
-            return (variables_.mState->clone());
+            output = variables_.mState->clone();
+            break;
+        }
+        case dotk::types::PRIMAL:
+        default:
+        {
+            std::string msg(" VARIABLE TYPE WAS NOT DEFINED. **** \n");
+            std::cerr << "\n **** ERROR IN: " << __FILE__ << ", LINE: "
+                    << __LINE__ << ", MSG: "<< msg.c_str() << std::flush;
             break;
         }
     }
+    return (output);
 }
 
 void resetField(const dotk::vector<Real> & data_, dotk::nlp::variables & variables_, dotk::types::derivative_t type_)

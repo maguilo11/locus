@@ -218,6 +218,7 @@ void DOTk_RoutinesTypeUNP::allocate(dotk::types::variable_t type_, const std::tr
             break;
         }
         case dotk::types::STATE:
+        case dotk::types::PRIMAL:
         case dotk::types::UNDEFINED_VARIABLE:
         {
             std::perror("\n**** Error in DOTk_RoutinesTypeUNP::allocate. User did not define control data. ABORT. ****\n");

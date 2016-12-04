@@ -16,10 +16,10 @@ DOTk_LineSearch::DOTk_LineSearch(dotk::types::line_search_t type_) :
         m_MaxNumLineSearchItr(50),
         m_NumLineSearchItrDone(0),
         m_StepSize(1.0),
-        m_StepStagnationTol(1e-8),
         m_ContractionFactor(0.5),
-        m_OldObjectiveFunctionValue(0.),
+        m_StepStagnationTol(1e-8),
         m_NewObjectiveFunctionValue(0.),
+        m_OldObjectiveFunctionValue(0.),
         m_Type(type_)
 {
 }

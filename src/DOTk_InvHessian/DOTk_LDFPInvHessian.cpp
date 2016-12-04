@@ -20,9 +20,9 @@ namespace dotk
 DOTk_LDFPInvHessian::DOTk_LDFPInvHessian(const std::tr1::shared_ptr<dotk::vector<Real> > & vector_,
                              size_t max_secant_storage_) :
         dotk::DOTk_SecondOrderOperator(max_secant_storage_),
+        m_RhoStorage(new std::vector<Real>(max_secant_storage_, 0.)),
         m_DeltaPrimal(vector_->clone()),
         m_DeltaGradient(vector_->clone()),
-        m_RhoStorage(new std::vector<Real>(max_secant_storage_, 0.)),
         m_MatrixA(new dotk::serial::DOTk_RowMatrix<Real>(*vector_, max_secant_storage_)),
         m_MatrixB(new dotk::serial::DOTk_RowMatrix<Real>(*vector_, max_secant_storage_)),
         m_DeltaPrimalStorage(new dotk::serial::DOTk_RowMatrix<Real>(*vector_, max_secant_storage_)),

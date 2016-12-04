@@ -8,6 +8,8 @@
 #include <cmath>
 #include <vector>
 #include <limits>
+#include <string>
+#include <iostream>
 #include <algorithm>
 
 #include "vector.hpp"
@@ -77,6 +79,12 @@ void DOTk_DualSolverNLCG::setNonlinearCgType(dotk::types::nonlinearcg_t input_)
             this->setConjugateDescentNLCG();
             break;
         }
+        case dotk::types::DANIELS_NLCG:
+        case dotk::types::DAI_LIAO_NLCG:
+        case dotk::types::UNDEFINED_NLCG:
+        case dotk::types::HAGER_ZHANG_NLCG:
+        case dotk::types::PERRY_SHANNO_NLCG:
+        case dotk::types::DAI_YUAN_HYBRID_NLCG:
         default:
         {
             this->setPolakRibiereNLCG();
@@ -288,6 +296,19 @@ Real DOTk_DualSolverNLCG::computeScaling()
             scale = dotk::nlcg::conjugateDescent(*m_DataMng->m_NewSteepestDescent,
                                                  *m_DataMng->m_OldSteepestDescent,
                                                  *m_DataMng->m_OldTrialStep);
+            break;
+        }
+        case dotk::types::DANIELS_NLCG:
+        case dotk::types::DAI_LIAO_NLCG:
+        case dotk::types::UNDEFINED_NLCG:
+        case dotk::types::HAGER_ZHANG_NLCG:
+        case dotk::types::PERRY_SHANNO_NLCG:
+        case dotk::types::DAI_YUAN_HYBRID_NLCG:
+        default:
+        {
+            std::string msg(" NONLINEAR CG STEP TYPE WAS NOT DEFINED. **** \n");
+            std::cerr << "\n **** ERROR IN: " << __FILE__ << ", LINE: "
+                    << __LINE__ << ", MSG: "<< msg.c_str() << std::flush;
             break;
         }
     }

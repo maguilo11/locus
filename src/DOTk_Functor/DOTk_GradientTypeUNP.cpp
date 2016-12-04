@@ -95,6 +95,7 @@ void DOTk_GradientTypeUNP::allocate
             break;
         }
         case dotk::types::STATE:
+        case dotk::types::PRIMAL:
         case dotk::types::UNDEFINED_VARIABLE:
         {
             break;

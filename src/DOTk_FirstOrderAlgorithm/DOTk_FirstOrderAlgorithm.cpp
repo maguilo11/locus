@@ -32,8 +32,8 @@ DOTk_FirstOrderAlgorithm::DOTk_FirstOrderAlgorithm(dotk::types::algorithm_t type
         mFvalTol(5.e-12),
         mGradTol(1.e-8),
         mStepTol(1.e-12),
-        mAlgorithmType(type_),
         mMinCosineAngleTol(1e-2),
+        mAlgorithmType(type_),
         m_StoppingCriterion(dotk::types::OPT_ALG_HAS_NOT_CONVERGED)
 {
 }

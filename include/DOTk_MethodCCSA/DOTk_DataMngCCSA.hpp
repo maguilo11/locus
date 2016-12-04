@@ -74,8 +74,8 @@ public:
     std::tr1::shared_ptr<dotk::vector<Real> > m_ControlUpperBound;
     std::tr1::shared_ptr<dotk::vector<Real> > m_CurrentObjectiveGradient;
     std::tr1::shared_ptr<dotk::vector<Real> > m_CurrentFeasibilityMeasures;
-    std::tr1::shared_ptr<dotk::matrix<Real> > m_CurrentInequalityGradients;
     std::tr1::shared_ptr<dotk::vector<Real> > m_CurrentInequalityResiduals;
+    std::tr1::shared_ptr<dotk::matrix<Real> > m_CurrentInequalityGradients;
     std::tr1::shared_ptr<dotk::vector<Real> > m_InputAuxiliaryVariablesY;
     std::tr1::shared_ptr<dotk::vector<Real> > m_InputInequalityCoefficientsA;
     std::tr1::shared_ptr<dotk::vector<Real> > m_InputInequalityCoefficientsC;

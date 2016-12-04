@@ -140,7 +140,7 @@ void DOTk_UpperTriangularMatrix<Type>::scale(const size_t & index_, const Type &
     else
     {
         Type scaled_value;
-        size_t input_index, data_index, col_index;
+        size_t data_index, col_index;
 
         for(col_index = 0; col_index < m_NumColumnCount[index_]; ++ col_index)
         {

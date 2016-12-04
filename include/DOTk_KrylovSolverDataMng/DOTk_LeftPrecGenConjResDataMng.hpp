@@ -41,7 +41,6 @@ public:
 
 private:
     std::tr1::shared_ptr<dotk::vector<Real> > m_LeftPrecTimesResidual;
-
     std::tr1::shared_ptr<dotk::DOTk_LeftPreconditioner> m_LeftPreconditioner;
 
 private:

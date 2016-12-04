@@ -52,7 +52,7 @@ const std::tr1::shared_ptr<dotk::vector<Real> > & DOTk_LBFGSInvHessian::getDelta
 void DOTk_LBFGSInvHessian::getInvHessian(const std::tr1::shared_ptr<dotk::vector<Real> > & vector_,
                                          const std::tr1::shared_ptr<dotk::vector<Real> > & inv_hess_times_vector_)
 {
-    Int storage_size = dotk::DOTk_SecondOrderOperator::getNumUpdatesStored() - 1;
+    int storage_size = dotk::DOTk_SecondOrderOperator::getNumUpdatesStored() - 1;
     inv_hess_times_vector_->copy(*vector_);
     bool is_secant_information_stored = dotk::DOTk_SecondOrderOperator::getNumUpdatesStored() <= 0 ? true : false;
     if(is_secant_information_stored == true)
@@ -61,13 +61,13 @@ void DOTk_LBFGSInvHessian::getInvHessian(const std::tr1::shared_ptr<dotk::vector
     }
 
     m_Alpha.assign(m_Alpha.size(), 0.);
-    for (Int index_i = storage_size; index_i >= 0; index_i--)
+    for (int index_i = storage_size; index_i >= 0; index_i--)
     {
         m_Alpha[index_i] = (*m_RhoStorage)[index_i] * m_DeltaPrimalStorage->basis(index_i)->dot(*inv_hess_times_vector_);
         inv_hess_times_vector_->axpy(-m_Alpha[index_i], *m_DeltaGradientStorage->basis(index_i));
     }
 
-    for(size_t index_j = 0; index_j <= storage_size; ++index_j)
+    for(int index_j = 0; index_j <= storage_size; ++index_j)
     {
         Real beta = (*m_RhoStorage)[index_j] * m_DeltaGradientStorage->basis(index_j)->dot(*inv_hess_times_vector_);
         Real kappa = m_Alpha[index_j] - beta;
