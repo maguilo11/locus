@@ -38,8 +38,8 @@ DOTk_MexMethodCCSA::DOTk_MexMethodCCSA(const mxArray* options_) :
         m_DualObjectiveTrialControlBoundScaling(0.5),
         m_DualSolverObjectiveStagnationTolerance(1e-8),
         m_ProblemType(dotk::types::problem_t::PROBLEM_TYPE_UNDEFINED),
-        m_DualSolverTypeNLCG(dotk::types::nonlinearcg_t::POLAK_RIBIERE_NLCG),
-        m_DualSolverType(dotk::ccsa::dual_solver_t::NONLINEAR_CG)
+        m_DualSolverType(dotk::ccsa::dual_solver_t::NONLINEAR_CG),
+        m_DualSolverTypeNLCG(dotk::types::nonlinearcg_t::POLAK_RIBIERE_NLCG)
 {
     this->initialize(options_);
 }

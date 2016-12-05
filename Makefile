@@ -11,8 +11,8 @@ UNITDIR = /Users/miguelaguilo/locus/utests/
 # Set compiler options
 #CXX = /usr/bin/clang++
 #CXXFLAGS = -g -std=c++11 -stdlib=libstdc++
-CXX = /usr/local/bin/mpicxx
-CXXFLAGS =-fopenmp -O3 -Wall -g -std=c++11
+CXX=/usr/local/bin/mpicxx
+CXXFLAGS=-fopenmp -O3 -Wall -g -std=c++11
 
 # C++ include directory
 #CXX_INCLUDE = /usr/include/c++/4.2.1/
