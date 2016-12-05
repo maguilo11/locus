@@ -130,7 +130,7 @@ void mexFunction(int nOutput, mxArray* pOutput[], int nInput, const mxArray* pIn
     // TEST 15: constructor
     msg.assign("constructor");
     length = 30;
-    mxArray* array = mxCreateDoubleMatrix(length, 1, mxREAL);
+    mxArray* array = mxCreateDoubleMatrix(1, length, mxREAL);
     trrom::MxVector z(array);
     did_test_pass = z.size() == length;
     trrom::mx::assert_test(msg, did_test_pass);

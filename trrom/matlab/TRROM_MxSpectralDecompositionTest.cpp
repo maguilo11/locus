@@ -5,6 +5,7 @@
  *      Author: maguilo
  */
 
+#include <mex.h>
 #include <string>
 
 #include "TRROM_MxUtils.hpp"
