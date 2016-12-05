@@ -10,7 +10,7 @@ CXX=/usr/local/Cellar/gcc/4.9.2_1/bin/g++-4.9
 CXX_HEADERS=/usr/local/Cellar/gcc/4.9.2_1/include/c++/4.9.2/
 MEX_HEADERS=/Applications/MATLAB_R2015a.app/extern/include/
 
-# Locus include directories
+# Include directories
 ALL_INCLUDE_DIR=-I$(CXX_HEADERS) -I$(MEX_HEADERS) -I$(MEX_INCLUDE_DIR) -I$(MEX_PARSER) -I$(MEX_ALG_TYPE_FO) \
 	-I$(MEX_OPERATOR_API) -I$(MEX_ALG_TYPE_NEWTON) -I$(MEX_FACTORIES) -I$(MEX_ALG_TYPE_SQP) -I$(MEX_ALG_TYPE_CCSA) \
 	-I$(MEX_ALG_TYPE_OC) -I$(MEX_UTILITIES)  -I$(MEX_FACTORIES_SRC) -I$(MEX_DIAGNOSTICS) -I$(MEX_OPERATOR_API_SRC) \
