@@ -5,6 +5,8 @@
  *      Author: maguilo
  */
 
+#include <sstream>
+
 #include "TRROM_Matrix.hpp"
 #include "TRROM_Vector.hpp"
 #include "TRROM_SolverInterface.hpp"
@@ -62,17 +64,57 @@ void ReducedBasisInterface::fidelity(trrom::types::fidelity_t input_)
 
 void ReducedBasisInterface::storeDualSnapshot(const trrom::Vector<double> & dual_)
 {
-    m_SpectralDecompositionMng->storeDualSnapshot(dual_);
+    try
+    {
+        if(dual_.size() <= 0)
+        {
+            std::ostringstream error;
+            error << "\nERROR IN: " << __FILE__ << ", LINE: " << __LINE__ << " -> Input dual snapshot length <= 0.\n";
+            throw error.str().c_str();
+        }
+        m_SpectralDecompositionMng->storeDualSnapshot(dual_);
+    }
+    catch(const char *error_msg)
+    {
+        std::cout << error_msg << std::flush;
+    }
 }
 
 void ReducedBasisInterface::storeStateSnapshot(const trrom::Vector<double> & state_)
 {
-    m_SpectralDecompositionMng->storeStateSnapshot(state_);
+    try
+    {
+        if(state_.size() <= 0)
+        {
+            std::ostringstream error;
+            error << "\nERROR IN: " << __FILE__ << ", LINE: " << __LINE__ << " -> Input state snapshot length <= 0.\n";
+            throw error.str().c_str();
+        }
+        m_SpectralDecompositionMng->storeStateSnapshot(state_);
+    }
+    catch(const char *error_msg)
+    {
+        std::cout << error_msg << std::flush;
+    }
 }
 
 void ReducedBasisInterface::storeLeftHandSideSnapshot(const trrom::Vector<double> & lhs_)
 {
-    m_SpectralDecompositionMng->storeLeftHandSideSnapshot(lhs_);
+    try
+    {
+        if(lhs_.size() <= 0)
+        {
+            std::ostringstream error;
+            error << "\nERROR IN: " << __FILE__ << ", LINE: " << __LINE__
+                    << " -> Input left hand side snapshot length <= 0.\n";
+            throw error.str().c_str();
+        }
+        m_SpectralDecompositionMng->storeLeftHandSideSnapshot(lhs_);
+    }
+    catch(const char *error_msg)
+    {
+        std::cout << error_msg << std::flush;
+    }
 }
 
 void ReducedBasisInterface::updateOrthonormalBases()
