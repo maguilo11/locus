@@ -54,8 +54,7 @@ OBJS = $(SRC)TRROM_DiscreteEmpiricalInterpolation.o \
 	$(SRC)TRROM_Slacks.o \
 	$(SRC)TRROM_State.o \
 	$(SRC)TRROM_Data.o \
-	$(SRC)TRROM_Dual.o \
-	TrromMain.o
+	$(SRC)TRROM_Dual.o
 	
 
 UTEST = $(GTEST_SRC)gtest-all.cc.o \
@@ -63,14 +62,14 @@ UTEST = $(GTEST_SRC)gtest-all.cc.o \
 	$(TEST)TRROM_AugmentedLagrangianTest.o \
 	$(TEST)TRROM_SimpleTest.o
 	
-MOCKFILES =$(MOCK)SVD.o \
-	$(MOCK)MatlabQR.o
+MOCKFILES =$(MOCK)TRROM_MOCK_SVD.o \
+	$(MOCK)TRROM_MOCK_MatlabQR.o
 
 .cpp.o:
 	$(CXX) $(CXXFLAGS) -I$(CXX_INCLUDE) -I$(GTEST_INCLUDE_DIR) -I$(MOCK) -I$(INC) -I$(SRC) \
 	-c -o $@ $<
 
-trrom: $(OBJS)
+trrom: $(OBJS) TrromMain.o
 	$(CXX) $(CXXFLAGS) -o trrom $^
 	
 utest: $(OBJS) $(UTEST) $(MOCKFILES)

@@ -10,7 +10,6 @@
 #include "TRROM_Data.hpp"
 #include "TRROM_Basis.hpp"
 #include "TRROM_Rosenbrock.hpp"
-#include "TRROM_EpetraVector.hpp"
 #include "TRROM_SerialVector.hpp"
 #include "TRROM_ReducedBasis.hpp"
 #include "TRROM_ReducedHessian.hpp"
@@ -522,7 +521,6 @@ TEST(ReducedBasis, pod)
     int ndofs = 6;
     int nsnap = 3;
     trrom::SerialVector<double> x(ndofs);
-    trrom::Basis<double> basis(x, nsnap);
     trrom::Basis<double> snapshots(x, nsnap);
     trrom::SerialVector<double> y(nsnap);
     trrom::SerialVector<double> singular_val(nsnap);
@@ -562,8 +560,10 @@ TEST(ReducedBasis, pod)
     singular_vec.replaceGlobalValue(2, 1, 0.803405673388377);
     singular_vec.replaceGlobalValue(2, 2, 0.354930436849960);
 
-    double threshold = 0.9999;
-    trrom::properOrthogonalDecomposition(threshold, singular_val, singular_vec, snapshots, basis);
+    double threshold = 1;
+    int num_basis_vectors = trrom::energy(threshold, singular_val);
+    trrom::Basis<double> basis(x, num_basis_vectors);
+    trrom::properOrthogonalDecomposition(singular_val, singular_vec, snapshots, basis);
 
     trrom::SerialVector<double> data(ndofs * nsnap, 0.);
     data[0] = 0.511224489804523;

@@ -12,6 +12,7 @@
 #include "TRROM_Matrix.hpp"
 #include "TRROM_ReducedBasis.hpp"
 #include "TRROM_BrandLowRankSVD.hpp"
+#include "TRROM_LinearAlgebraFactory.hpp"
 #include "TRROM_SpectralDecomposition.hpp"
 #include "TRROM_OrthogonalFactorization.hpp"
 #include "TRROM_SpectralDecompositionMng.hpp"
@@ -21,6 +22,7 @@ namespace trrom
 {
 
 SpectralDecompositionMng::SpectralDecompositionMng() :
+        m_Factory(),
         m_FullRankSVD(),
         m_LowRankSVD(),
         m_DualEnergyThreshold(0.99),
@@ -47,8 +49,10 @@ SpectralDecompositionMng::SpectralDecompositionMng() :
 {
 }
 
-SpectralDecompositionMng::SpectralDecompositionMng(const std::tr1::shared_ptr<trrom::SpectralDecomposition> & full_rank_svd_,
+SpectralDecompositionMng::SpectralDecompositionMng(const std::tr1::shared_ptr<trrom::LinearAlgebraFactory> & algebra_factory_,
+                                                   const std::tr1::shared_ptr<trrom::SpectralDecomposition> & full_rank_svd_,
                                                    const std::tr1::shared_ptr<trrom::LowRankSpectralDecomposition> & low_rank_svd_) :
+        m_Factory(algebra_factory_),
         m_FullRankSVD(full_rank_svd_),
         m_LowRankSVD(low_rank_svd_),
         m_DualEnergyThreshold(0.99),
@@ -75,11 +79,13 @@ SpectralDecompositionMng::SpectralDecompositionMng(const std::tr1::shared_ptr<tr
 {
 }
 
-SpectralDecompositionMng::SpectralDecompositionMng(const std::tr1::shared_ptr<trrom::BrandMatrixFactory> & factory_,
+SpectralDecompositionMng::SpectralDecompositionMng(const std::tr1::shared_ptr<trrom::BrandMatrixFactory> & brands_factory_,
+                                                   const std::tr1::shared_ptr<trrom::LinearAlgebraFactory> & algebra_factory_,
                                                    const std::tr1::shared_ptr<trrom::SpectralDecomposition> & svd_,
                                                    const std::tr1::shared_ptr<trrom::OrthogonalFactorization> & ortho_) :
+        m_Factory(algebra_factory_),
         m_FullRankSVD(svd_),
-        m_LowRankSVD(new trrom::BrandLowRankSVD(factory_, svd_, ortho_)),
+        m_LowRankSVD(new trrom::BrandLowRankSVD(brands_factory_, svd_, ortho_)),
         m_DualEnergyThreshold(0.99),
         m_StateEnergyThreshold(0.99),
         m_LeftHandSideEnergyThreshold(0.99),
@@ -237,31 +243,34 @@ void SpectralDecompositionMng::storeLeftHandSideSnapshot(const trrom::Vector<dou
     m_LeftHandSideSnapshotEnsemble->insert(input_);
 }
 
-void SpectralDecompositionMng::computeDualOrthonormalBasis(trrom::Matrix<double> & basis_)
+void SpectralDecompositionMng::computeDualOrthonormalBasis(std::tr1::shared_ptr<trrom::Matrix<double> > & basis_)
 {
-    trrom::properOrthogonalDecomposition(m_DualEnergyThreshold,
-                                         *m_DualSingularValues,
+    int num_basis_vectors = trrom::energy(m_DualEnergyThreshold, *m_DualSingularValues);
+    m_Factory->buildMultiVector(num_basis_vectors, m_DualSnapshotEnsemble->vector(0), basis_);
+    trrom::properOrthogonalDecomposition(*m_DualSingularValues,
                                          *m_DualLeftSingularVectors,
                                          *m_DualSnapshotEnsemble,
-                                         basis_);
+                                         *basis_);
 }
 
-void SpectralDecompositionMng::computeStateOrthonormalBasis(trrom::Matrix<double> & basis_)
+void SpectralDecompositionMng::computeStateOrthonormalBasis(std::tr1::shared_ptr<trrom::Matrix<double> > & basis_)
 {
-    trrom::properOrthogonalDecomposition(m_StateEnergyThreshold,
-                                         *m_StateSingularValues,
+    int num_basis_vectors = trrom::energy(m_StateEnergyThreshold, *m_StateSingularValues);
+    m_Factory->buildMultiVector(num_basis_vectors, m_StateSnapshotEnsemble->vector(0), basis_);
+    trrom::properOrthogonalDecomposition(*m_StateSingularValues,
                                          *m_StateLeftSingularVectors,
                                          *m_StateSnapshotEnsemble,
-                                         basis_);
+                                         *basis_);
 }
 
-void SpectralDecompositionMng::computeLeftHandSideOrthonormalBasis(trrom::Matrix<double> & basis_)
+void SpectralDecompositionMng::computeLeftHandSideOrthonormalBasis(std::tr1::shared_ptr<trrom::Matrix<double> > & basis_)
 {
-    trrom::properOrthogonalDecomposition(m_LeftHandSideEnergyThreshold,
-                                         *m_LeftHandSideSingularValues,
+    int num_basis_vectors = trrom::energy(m_LeftHandSideEnergyThreshold, *m_LeftHandSideSingularValues);
+    m_Factory->buildMultiVector(num_basis_vectors, m_LeftHandSideSnapshotEnsemble->vector(0), basis_);
+    trrom::properOrthogonalDecomposition(*m_LeftHandSideSingularValues,
                                          *m_LeftHandSideLeftSingularVectors,
                                          *m_LeftHandSideSnapshotEnsemble,
-                                         basis_);
+                                         *basis_);
 }
 
 void SpectralDecompositionMng::solveDualSingularValueDecomposition()

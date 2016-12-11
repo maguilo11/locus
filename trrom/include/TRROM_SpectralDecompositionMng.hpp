@@ -19,6 +19,7 @@ template<typename ScalarType>
 class Vector;
 
 class BrandMatrixFactory;
+class LinearAlgebraFactory;
 class SpectralDecomposition;
 class OrthogonalFactorization;
 class LowRankSpectralDecomposition;
@@ -42,7 +43,8 @@ public:
      *          low_rank_svd_: instance to a derived class from trrom::LowRankSpectralDecomposition
      * \return Reference to SpectralDecompositionMng.
      **/
-    SpectralDecompositionMng(const std::tr1::shared_ptr<trrom::SpectralDecomposition> & full_rank_svd_,
+    SpectralDecompositionMng(const std::tr1::shared_ptr<trrom::LinearAlgebraFactory> & algebra_factory_,
+                             const std::tr1::shared_ptr<trrom::SpectralDecomposition> & full_rank_svd_,
                              const std::tr1::shared_ptr<trrom::LowRankSpectralDecomposition> & low_rank_svd_);
     /*!
      * Creates a SpectralDecompositionMng object
@@ -54,7 +56,8 @@ public:
      *          ortho_: instance to a derived class from trrom::OrthogonalFactorization
      * \return Reference to SpectralDecompositionMng.
      **/
-    SpectralDecompositionMng(const std::tr1::shared_ptr<trrom::BrandMatrixFactory> & factory_,
+    SpectralDecompositionMng(const std::tr1::shared_ptr<trrom::BrandMatrixFactory> & brands_factory_,
+                             const std::tr1::shared_ptr<trrom::LinearAlgebraFactory> & algebra_factory_,
                              const std::tr1::shared_ptr<trrom::SpectralDecomposition> & svd_,
                              const std::tr1::shared_ptr<trrom::OrthogonalFactorization> & ortho_);
     //! SpectralDecompositionMng destructor.
@@ -84,9 +87,9 @@ public:
     void storeStateSnapshot(const trrom::Vector<double> & input_);
     void storeLeftHandSideSnapshot(const trrom::Vector<double> & input_);
 
-    void computeDualOrthonormalBasis(trrom::Matrix<double> & basis_);
-    void computeStateOrthonormalBasis(trrom::Matrix<double> & basis_);
-    void computeLeftHandSideOrthonormalBasis(trrom::Matrix<double> & basis_);
+    void computeDualOrthonormalBasis(std::tr1::shared_ptr<trrom::Matrix<double> > & basis_);
+    void computeStateOrthonormalBasis(std::tr1::shared_ptr<trrom::Matrix<double> > & basis_);
+    void computeLeftHandSideOrthonormalBasis(std::tr1::shared_ptr<trrom::Matrix<double> > & basis_);
 
     void solveDualSingularValueDecomposition();
     void solveStateSingularValueDecomposition();
@@ -97,6 +100,7 @@ public:
     const std::tr1::shared_ptr<trrom::Vector<double> > & getLeftHandSideSnapshot(int index_) const;
 
 private:
+    std::tr1::shared_ptr<trrom::LinearAlgebraFactory> m_Factory;
     std::tr1::shared_ptr<trrom::SpectralDecomposition> m_FullRankSVD;
     std::tr1::shared_ptr<trrom::LowRankSpectralDecomposition> m_LowRankSVD;
 

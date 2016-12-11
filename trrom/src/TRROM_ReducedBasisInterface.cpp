@@ -120,19 +120,19 @@ void ReducedBasisInterface::storeLeftHandSideSnapshot(const trrom::Vector<double
 void ReducedBasisInterface::updateOrthonormalBases()
 {
     m_SpectralDecompositionMng->solveStateSingularValueDecomposition();
-    m_SpectralDecompositionMng->computeStateOrthonormalBasis(*m_StateBasis);
+    m_SpectralDecompositionMng->computeStateOrthonormalBasis(m_StateBasis);
 
     int num_state_basis_vectors = m_StateBasis->getNumCols();
     m_Factory->buildLocalVector(num_state_basis_vectors, m_ReducedStateSolution);
     m_Factory->buildLocalVector(num_state_basis_vectors, m_ReducedStateRightHandSide);
 
     m_SpectralDecompositionMng->solveLeftHandSideSingularValueDecomposition();
-    m_SpectralDecompositionMng->computeLeftHandSideOrthonormalBasis(*m_LeftHandSideBasis);
+    m_SpectralDecompositionMng->computeLeftHandSideOrthonormalBasis(m_LeftHandSideBasis);
 
     if(m_SpectralDecompositionMng->areDualSnapshotsCollected() == true)
     {
         m_SpectralDecompositionMng->solveDualSingularValueDecomposition();
-        m_SpectralDecompositionMng->computeDualOrthonormalBasis(*m_DualBasis);
+        m_SpectralDecompositionMng->computeDualOrthonormalBasis(m_DualBasis);
 
         int num_dual_basis_vectors = m_DualBasis->getNumCols();
         m_Factory->buildLocalVector(num_dual_basis_vectors, m_ReducedDualSolution);
