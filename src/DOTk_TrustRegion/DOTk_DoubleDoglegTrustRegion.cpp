@@ -92,9 +92,8 @@ void DOTk_DoubleDoglegTrustRegion::doubleDogleg(const Real & trust_region_radius
             if(norm_cauchy_point >= trust_region_radius_)
             {
                 // Cauchy Point is outside trust region
-                newton_step_->copy(*grad_);
                 Real scale_factor = -trust_region_radius_ / norm_grad;
-                newton_step_->scale(scale_factor);
+                newton_step_->update(scale_factor, *grad_, 0.);
             }
             else
             {
@@ -117,19 +116,18 @@ void DOTk_DoubleDoglegTrustRegion::computeScaledNewtonStep(const std::tr1::share
                                                            const std::tr1::shared_ptr<dotk::Vector<Real> > & newton_step_)
 {
     Real double_dogleg_root = this->computeDoubleDoglegRoot(grad_, newton_step_, matrix_times_grad_);
-    mScaledNewtonStep->copy(*newton_step_);
-    mScaledNewtonStep->scale(double_dogleg_root);
+    mScaledNewtonStep->update(double_dogleg_root, *newton_step_, 0.);
 }
 
 void DOTk_DoubleDoglegTrustRegion::computeConvexCombinationBetweenCauchyAndDoglegStep
 (const Real & trust_region_radius_, const std::tr1::shared_ptr<dotk::Vector<Real> > & newton_step_)
 {
-    mScaledNewtonStep->axpy(static_cast<Real>(-1.0), *mCauchyPoint);
+    mScaledNewtonStep->update(-1., *mCauchyPoint, 1.);
     Real dogleg_root = dotk::DOTk_TrustRegion::computeDoglegRoot(trust_region_radius_,
                                                                  mScaledNewtonStep,
                                                                  mCauchyPoint);
-    newton_step_->copy(*mCauchyPoint);
-    newton_step_->axpy(dogleg_root, *mScaledNewtonStep);
+    newton_step_->update(1., *mCauchyPoint, 0.);
+    newton_step_->update(dogleg_root, *mScaledNewtonStep, 1.);
 }
 
 }

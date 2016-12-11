@@ -88,8 +88,7 @@ bool DOTk_DescentDirection::isTrialStepOrthogonalToSteepestDescent(Real cosine_v
 void DOTk_DescentDirection::steepestDescent(const std::tr1::shared_ptr<dotk::Vector<Real> > & grad_,
                                             const std::tr1::shared_ptr<dotk::Vector<Real> > & dir_)
 {
-    dir_->copy(*grad_);
-    dir_->scale(static_cast<Real>(-1.));
+    dir_->update(-1., *grad_, 0.);
 }
 
 }

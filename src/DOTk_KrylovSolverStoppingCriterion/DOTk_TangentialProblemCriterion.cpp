@@ -48,7 +48,7 @@ Real DOTk_TangentialProblemCriterion::getTangentialToleranceContractionFactor() 
 
 void DOTk_TangentialProblemCriterion::setCurrentTrialStep(const std::tr1::shared_ptr<dotk::Vector<Real> > & trial_step_)
 {
-    m_WorkVector->copy(*trial_step_);
+    m_WorkVector->update(1., *trial_step_, 0.);
 }
 
 Real DOTk_TangentialProblemCriterion::evaluate(const dotk::DOTk_KrylovSolver * const solver_,
@@ -69,7 +69,7 @@ void DOTk_TangentialProblemCriterion::initialize()
 
 Real DOTk_TangentialProblemCriterion::computeStoppingTolerance(const std::tr1::shared_ptr<dotk::Vector<Real> > & kernel_vector_)
 {
-    m_WorkVector->axpy(static_cast<Real>(1.0), *kernel_vector_);
+    m_WorkVector->update(static_cast<Real>(1.0), *kernel_vector_, 1.);
 
     Real trust_region_radius = dotk::DOTk_KrylovSolverStoppingCriterion::get(dotk::types::TRUST_REGION_RADIUS);
     m_StoppingCriterionOptions[0] = trust_region_radius;

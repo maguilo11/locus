@@ -115,7 +115,7 @@ TEST(DOTk_GramSchmidt, clear)
     (*primal->control())[2] = -3;
     (*primal->control())[3] = -4;
     (*primal->control())[4] = -5;
-    mng->getNewPrimal()->copy(*primal->control());
+    mng->getNewPrimal()->update(1., *primal->control(), 0.);
     projection.setOrthogonalVector(0, primal->control());
     projection.setLinearOperatorTimesOrthoVector(0, mng->getNewPrimal());
     dotk::gtest::checkResults(*mng->getNewPrimal(), *projection.getOrthogonalVector(0));
@@ -126,7 +126,7 @@ TEST(DOTk_GramSchmidt, clear)
     (*primal->control())[2] = -8;
     (*primal->control())[3] = -9;
     (*primal->control())[4] = -10;
-    mng->getNewPrimal()->copy(*primal->control());
+    mng->getNewPrimal()->update(1., *primal->control(), 0.);
     projection.setOrthogonalVector(1, primal->control());
     projection.setLinearOperatorTimesOrthoVector(1, mng->getNewPrimal());
     dotk::gtest::checkResults(*mng->getNewPrimal(), *projection.getOrthogonalVector(1));
@@ -137,7 +137,7 @@ TEST(DOTk_GramSchmidt, clear)
     (*primal->control())[2] = -13;
     (*primal->control())[3] = -14;
     (*primal->control())[4] = -15;
-    mng->getNewPrimal()->copy(*primal->control());
+    mng->getNewPrimal()->update(1., *primal->control(), 0.);
     projection.setOrthogonalVector(2, primal->control());
     projection.setLinearOperatorTimesOrthoVector(2, mng->getNewPrimal());
     dotk::gtest::checkResults(*mng->getNewPrimal(), *projection.getOrthogonalVector(2));

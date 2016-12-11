@@ -27,9 +27,9 @@ public:
     // Scales a vector by a real constant.
     virtual void scale(const ScalarType & alpha_);
     // Component wise multiplication of two vectors.
-    virtual void cwiseProd(const dotk::Vector<ScalarType> & input_);
-    // Constant times a vector plus a vector.
-    virtual void axpy(const ScalarType & alpha_, const dotk::Vector<ScalarType> & input_);
+    virtual void elementWiseMultiplication(const dotk::Vector<ScalarType> & input_);
+    //! Update vector values with scaled values of A, this = beta*this + alpha*A.
+    void update(const ScalarType & alpha_, const dotk::Vector<ScalarType> & input_, const ScalarType & beta_);
     // Returns the maximum element in a range.
     virtual ScalarType max() const;
     // Returns the minimum element in a range.
@@ -44,8 +44,6 @@ public:
     virtual ScalarType norm() const;
     // Assigns new contents to the vector, replacing its current contents, and not modifying its size.
     virtual void fill(const ScalarType & value_);
-    // Copies the elements in the range [first,last) into the range beginning at result.
-    virtual void copy(const dotk::Vector<ScalarType> & input_);
     // Gathers data from private member data of a group to one member.
     virtual void gather(ScalarType* input_) const;
     // Returns the number of elements in the vector.

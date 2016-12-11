@@ -100,7 +100,7 @@ void arnoldiModifiedGramSchmidt(const dotk::matrix<Real> & A_,
         {
             const std::tr1::shared_ptr<dotk::Vector<Real> > & vector_j = Q_.basis(jth_index);
             value = work->dot(*vector_j);
-            work->axpy(-value, *vector_j);
+            work->update(-value, *vector_j, 1.);
             Hessenberg_(jth_index, dim_index) = value;
         }
         value = work->norm();
@@ -111,7 +111,7 @@ void arnoldiModifiedGramSchmidt(const dotk::matrix<Real> & A_,
         Hessenberg_(dim_index + 1, dim_index) = value;
         value = static_cast<Real>(1.) / value;
         work->scale(value);
-        Q_.basis(dim_index + 1)->copy(*work);
+        Q_.basis(dim_index + 1)->update(1., *work, 0.);
         work->fill(0.);
     }
 }
@@ -124,7 +124,7 @@ void householder(dotk::matrix<Real> & Q_, dotk::matrix<Real> & R_)
 
     for(size_t kth_dim = 0; kth_dim < basis_dimension; ++kth_dim)
     {
-        work->copy(*R_.basis(kth_dim));
+        work->update(1., *R_.basis(kth_dim), 0.);
         for(size_t i = 0; i < kth_dim; ++i)
         {
             work->operator[](i) = 0.;
@@ -139,7 +139,7 @@ void householder(dotk::matrix<Real> & Q_, dotk::matrix<Real> & R_)
         for(size_t jth_dim = 0; jth_dim < basis_dimension; ++jth_dim)
         {
             value = tau * work->dot(*R_.basis(jth_dim));
-            R_.basis(jth_dim)->axpy(-value, *work);
+            R_.basis(jth_dim)->update(-value, *work, 1.);
             value = tau * Q_.dot(jth_dim, *work, false);
             Q_.axpy(jth_dim, -value, *work, false);
         }

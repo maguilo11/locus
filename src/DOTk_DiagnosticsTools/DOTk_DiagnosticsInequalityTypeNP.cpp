@@ -48,7 +48,7 @@ void DOTk_DiagnosticsInequalityTypeNP::checkPartialDerivativeControl(const dotk:
     dotk::nlp::variables vars(*state_.data(), *control_.data());
     m_OriginalField.reset();
     m_OriginalField = vars.mControl->clone();
-    m_OriginalField->copy(*vars.mControl);
+    m_OriginalField->update(1., *vars.mControl, 0.);
 
     std::tr1::shared_ptr<dotk::Vector<Real> > perturbtation = vars.mControl->clone();
     dotk::gtools::generateRandomVector(perturbtation);
@@ -94,7 +94,7 @@ void DOTk_DiagnosticsInequalityTypeNP::checkPartialDerivativeState(const dotk::D
     dotk::nlp::variables vars(*state_.data(), *control_.data());
     m_OriginalField.reset();
     m_OriginalField = vars.mState->clone();
-    m_OriginalField->copy(*vars.mState);
+    m_OriginalField->update(1., *vars.mState, 0.);
 
     std::tr1::shared_ptr<dotk::Vector<Real> > delta_state = vars.mState->clone();
     dotk::gtools::generateRandomVector(delta_state);

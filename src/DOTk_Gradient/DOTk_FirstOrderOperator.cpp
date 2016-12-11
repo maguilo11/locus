@@ -37,7 +37,7 @@ void DOTk_FirstOrderOperator::checkGrad(const std::tr1::shared_ptr<dotk::Vector<
 
     if(std::isnan(norm_new_grad))
     {
-        new_gradient_->copy(*old_gradient_);
+        new_gradient_->update(1., *old_gradient_, 0.);
         std::cout << "DOTk WARNING: There was a NaN entry in the new gradient operator. \n" << std::flush;
         std::cout << "              The new gradient operator will be set to the old \n" << std::flush;
         std::cout << "              gradient operator.\n" << std::flush;

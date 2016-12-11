@@ -63,16 +63,16 @@ void GradientProjectionMethod::getMin()
     while(stop == false)
     {
         // compute projected descent direction
-        m_Data->getTrialStep()->copy(*m_Data->getNewPrimal());
-        m_Data->getTrialStep()->axpy(static_cast<double>(-1.), *m_Data->getNewGradient());
+        m_Data->getTrialStep()->update(1., *m_Data->getNewPrimal(), 0.);
+        m_Data->getTrialStep()->update(static_cast<double>(-1.), *m_Data->getNewGradient(), 1.);
         m_Bounds->project(*m_Primal->getControlLowerBound(),
                           *m_Primal->getControlUpperBound(),
                           *m_Data->getTrialStep());
-        m_Data->getTrialStep()->axpy(static_cast<double>(-1.), *m_Data->getNewPrimal());
+        m_Data->getTrialStep()->update(static_cast<double>(-1.), *m_Data->getNewPrimal(), 1.);
 
         // solve line search step sub-problem
-        m_Data->getOldPrimal()->copy(*m_Data->getNewPrimal());
-        m_Data->getOldGradient()->copy(*m_Data->getNewGradient());
+        m_Data->getOldPrimal()->update(1., *m_Data->getNewPrimal(), 0.);
+        m_Data->getOldGradient()->update(1., *m_Data->getNewGradient(), 0.);
         m_Data->setOldObjectiveFunctionValue(m_Data->getNewObjectiveFunctionValue());
         m_LineSearchStep->solveSubProblem(m_Data);
 
@@ -127,8 +127,8 @@ dotk::types::stop_criterion_t GradientProjectionMethod::getStoppingCriterion() c
 
 void GradientProjectionMethod::reset()
 {
-    m_Data->getNewPrimal()->copy(*m_Data->getOldPrimal());
-    m_Data->getNewGradient()->copy(*m_Data->getOldGradient());
+    m_Data->getNewPrimal()->update(1., *m_Data->getOldPrimal(), 0.);
+    m_Data->getNewGradient()->update(1., *m_Data->getOldGradient(), 0.);
     m_Data->setNewObjectiveFunctionValue(m_Data->getOldObjectiveFunctionValue());
 }
 

@@ -74,8 +74,8 @@ void DOTk_BacktrackingCubicInterpolation::checkBacktrackingStep(std::vector<Real
 void DOTk_BacktrackingCubicInterpolation::step(const std::tr1::shared_ptr<dotk::DOTk_OptimizationDataMng> & mng_)
 {
     Real initial_step = 1;
-    m_TrialPrimal->copy(*mng_->getOldPrimal());
-    m_TrialPrimal->axpy(initial_step, *mng_->getTrialStep());
+    m_TrialPrimal->update(1., *mng_->getOldPrimal(), 0.);
+    m_TrialPrimal->update(initial_step, *mng_->getTrialStep(), 1.);
 
     Real new_objective_func_val = mng_->evaluateObjective(m_TrialPrimal);
     // objective_fun_val[0] = original, objective_fun_val[1] = old, objective_fun_val[2] = current
@@ -113,8 +113,8 @@ void DOTk_BacktrackingCubicInterpolation::step(const std::tr1::shared_ptr<dotk::
             this->getBacktrackingCubicFit(gradient_dot_step, objective_fun_val, steps);
         }
         this->checkBacktrackingStep(steps);
-        m_TrialPrimal->copy(*mng_->getOldPrimal());
-        m_TrialPrimal->axpy(steps[2], *mng_->getTrialStep());
+        m_TrialPrimal->update(1., *mng_->getOldPrimal(), 0.);
+        m_TrialPrimal->update(steps[2], *mng_->getTrialStep(), 1.);
 
         new_objective_func_val = mng_->evaluateObjective(m_TrialPrimal);
         objective_fun_val[1] = objective_fun_val[2];
@@ -122,7 +122,7 @@ void DOTk_BacktrackingCubicInterpolation::step(const std::tr1::shared_ptr<dotk::
         ++itr;
     }
     this->setNewObjectiveFunctionValue(new_objective_func_val);
-    mng_->getNewPrimal()->copy(*m_TrialPrimal);
+    mng_->getNewPrimal()->update(1., *m_TrialPrimal, 0.);
     dotk::DOTk_LineSearch::setStepSize(steps[2]);
 }
 

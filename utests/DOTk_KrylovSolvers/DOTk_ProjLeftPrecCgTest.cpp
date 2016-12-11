@@ -40,45 +40,45 @@ TEST(DOTk_ProjLeftPrecCgTest, checkOrthogonalityMeasure)
 
     (*primal->dual())[0] = 1.;
     (*primal->dual())[1] = 2.;
-    solver.getDataMng()->getResidual(0)->dual()->copy(*primal->dual());
+    solver.getDataMng()->getResidual(0)->dual()->update(1., *primal->dual(), 0.);
     (*primal->control())[0] = 3.;
     (*primal->control())[1] = 4.;
-    solver.getDataMng()->getResidual(0)->control()->copy(*primal->control());
+    solver.getDataMng()->getResidual(0)->control()->update(1., *primal->control(), 0.);
 
     (*primal->dual())[0] = 5.;
     (*primal->dual())[1] = 6.;
-    solver.getDataMng()->getResidual(1)->dual()->copy(*primal->dual());
+    solver.getDataMng()->getResidual(1)->dual()->update(1., *primal->dual(), 0.);
     (*primal->control())[0] = 7.;
     (*primal->control())[1] = 8.;
-    solver.getDataMng()->getResidual(1)->control()->copy(*primal->control());
+    solver.getDataMng()->getResidual(1)->control()->update(1., *primal->control(), 0.);
 
     (*primal->dual())[0] = 9.;
     (*primal->dual())[1] = 10.;
-    solver.getDataMng()->getResidual(2)->dual()->copy(*primal->dual());
+    solver.getDataMng()->getResidual(2)->dual()->update(1., *primal->dual(), 0.);
     (*primal->control())[0] = 11.;
     (*primal->control())[1] = 12.;
-    solver.getDataMng()->getResidual(2)->control()->copy(*primal->control());
+    solver.getDataMng()->getResidual(2)->control()->update(1., *primal->control(), 0);
 
     (*primal->dual())[0] = 1.;
     (*primal->dual())[1] = 2.;
-    solver.getDataMng()->getLeftPrecTimesVector(0)->dual()->copy(*primal->dual());
+    solver.getDataMng()->getLeftPrecTimesVector(0)->dual()->update(1., *primal->dual(), 0.);
     (*primal->control())[0] = 3.;
     (*primal->control())[1] = 4.;
-    solver.getDataMng()->getLeftPrecTimesVector(0)->control()->copy(*primal->control());
+    solver.getDataMng()->getLeftPrecTimesVector(0)->control()->update(1., *primal->control(), 0.);
 
     (*primal->dual())[0] = 5.;
     (*primal->dual())[1] = 6.;
-    solver.getDataMng()->getLeftPrecTimesVector(1)->dual()->copy(*primal->dual());
+    solver.getDataMng()->getLeftPrecTimesVector(1)->dual()->update(1., *primal->dual(), 0.);
     (*primal->control())[0] = 7.;
     (*primal->control())[1] = 8.;
-    solver.getDataMng()->getLeftPrecTimesVector(1)->control()->copy(*primal->control());
+    solver.getDataMng()->getLeftPrecTimesVector(1)->control()->update(1., *primal->control(), 0.);
 
     (*primal->dual())[0] = 9.;
     (*primal->dual())[1] = 10.;
-    solver.getDataMng()->getLeftPrecTimesVector(2)->dual()->copy(*primal->dual());
+    solver.getDataMng()->getLeftPrecTimesVector(2)->dual()->update(1., *primal->dual(), 0.);
     (*primal->control())[0] = 11.;
     (*primal->control())[1] = 12.;
-    solver.getDataMng()->getLeftPrecTimesVector(2)->control()->copy(*primal->control());
+    solver.getDataMng()->getLeftPrecTimesVector(2)->control()->update(1., *primal->control(), 0.);
 
     // TEST 0: FIRST ITERATION
     size_t current_itr = 0;
@@ -135,20 +135,20 @@ TEST(DOTk_ProjLeftPrecCgTest, ppcg)
     (*primal->dual())[0] = 0.0207961931305597;
     (*primal->dual())[1] = -0.019798867645168;
     (*primal->dual())[2] = 0.0834391241457092;
-    mng->getNewDual()->copy(*primal->dual());
-    mng->getNewPrimal()->control()->copy(*primal->control());
+    mng->getNewDual()->update(1., *primal->dual(), 0.);
+    mng->getNewPrimal()->control()->update(1., *primal->control(), 0.);
     (*primal->control())[0] = -0.737271611192309;
     (*primal->control())[1] = -0.755262411678706;
     (*primal->control())[2] = -0.0474142630809581;
     (*primal->control())[3] = 0.112608874817276;
     (*primal->control())[4] = 0.112608874817276;
-    mng->getNewGradient()->control()->copy(*primal->control());
+    mng->getNewGradient()->control()->update(1., *primal->control(), 0.);
     (*primal->control())[0] = 0.821886987715101;
     (*primal->control())[1] = 0.661914924684898;
     (*primal->control())[2] = -0.0339371478280196;
     (*primal->control())[3] = 0.0810737062636601;
     (*primal->control())[4] = 0.0810737062636601;
-    mng->getHessTimesNormalStep()->control()->copy(*primal->control());
+    mng->getHessTimesNormalStep()->control()->update(1., *primal->control(), 0.);
 
     size_t itr = 200;
     primal->dual()->fill(0.);
@@ -159,8 +159,8 @@ TEST(DOTk_ProjLeftPrecCgTest, ppcg)
     smng->setAugmentedSystemPrecWithGmresSolver(primal);
 
     dotk::DOTk_ProjectedLeftPrecCG solver(smng);
-    dotk::copy(mng->getNewGradient(), solver.getDataMng()->getResidual(0));
-    dotk::axpy(1, mng->getHessTimesNormalStep(), solver.getDataMng()->getResidual(0));
+    dotk::update(1., mng->getNewGradient(), 0., solver.getDataMng()->getResidual(0));
+    dotk::update(1., mng->getHessTimesNormalStep(), 1., solver.getDataMng()->getResidual(0));
 
     solver.getDataMng()->getLeftPrec()->setParameter(dotk::types::TRUST_REGION_RADIUS, 1e4);
     long double grad_dot_grad = mng->getNewGradient()->dot(*mng->getNewGradient());

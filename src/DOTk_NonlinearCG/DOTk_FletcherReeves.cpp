@@ -36,8 +36,7 @@ void DOTk_FletcherReeves::getDirection(const std::tr1::shared_ptr<dotk::Vector<R
 {
 
     Real beta = this->computeScaleFactor(old_grad_, new_grad_);
-    dir_->scale(beta);
-    dir_->axpy(static_cast<Real>(-1.0), *new_grad_);
+    dir_->update(static_cast<Real>(-1.0), *new_grad_, beta);
 }
 
 void DOTk_FletcherReeves::direction(const std::tr1::shared_ptr<dotk::DOTk_OptimizationDataMng> & mng_)

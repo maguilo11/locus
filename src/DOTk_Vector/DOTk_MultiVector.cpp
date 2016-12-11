@@ -63,28 +63,30 @@ void DOTk_MultiVector<ScalarType>::scale(const ScalarType & alpha_)
 }
 
 template<typename ScalarType>
-void DOTk_MultiVector<ScalarType>::cwiseProd(const dotk::Vector<ScalarType> & input_)
+void DOTk_MultiVector<ScalarType>::elementWiseMultiplication(const dotk::Vector<ScalarType> & input_)
 {
     assert(input_.size() == this->size());
-    m_Dual->cwiseProd(*input_.dual());
-    m_Control->cwiseProd(*input_.control());
+    m_Dual->elementWiseMultiplication(*input_.dual());
+    m_Control->elementWiseMultiplication(*input_.control());
     if(m_State.use_count() > 0)
     {
         assert(input_.state().use_count() > 0);
-        m_State->cwiseProd(*input_.state());
+        m_State->elementWiseMultiplication(*input_.state());
     }
 }
 
 template<typename ScalarType>
-void DOTk_MultiVector<ScalarType>::axpy(const ScalarType & alpha_, const dotk::Vector<ScalarType> & input_)
+void DOTk_MultiVector<ScalarType>::update(const ScalarType & alpha_,
+                                          const dotk::Vector<ScalarType> & input_,
+                                          const ScalarType & beta_)
 {
     assert(input_.size() == this->size());
-    m_Dual->axpy(alpha_, *input_.dual());
-    m_Control->axpy(alpha_, *input_.control());
+    m_Dual->update(alpha_, *input_.dual(), beta_);
+    m_Control->update(alpha_, *input_.control(), beta_);
     if(m_State.use_count() > 0)
     {
         assert(input_.state().use_count() > 0);
-        m_State->cwiseProd(*input_.state());
+        m_State->update(alpha_, *input_.state(), beta_);
     }
 }
 
@@ -167,19 +169,6 @@ void DOTk_MultiVector<ScalarType>::fill(const ScalarType & value_)
     if(m_State.use_count() > 0)
     {
         m_State->fill(value_);
-    }
-}
-
-template<typename ScalarType>
-void DOTk_MultiVector<ScalarType>::copy(const dotk::Vector<ScalarType> & input_)
-{
-    assert(input_.size() == this->size());
-    m_Dual->copy(*input_.dual());
-    m_Control->copy(*input_.control());
-    if(m_State.use_count() > 0)
-    {
-        assert(input_.state().use_count() > 0);
-        m_State->copy(*input_.state());
     }
 }
 
@@ -306,22 +295,22 @@ const ScalarType & DOTk_MultiVector<ScalarType>::operator [](size_t index_) cons
 template<typename ScalarType>
 void DOTk_MultiVector<ScalarType>::initialize(const dotk::DOTk_Primal & primal_)
 {
-    m_Dual->copy(*primal_.dual());
-    m_Control->copy(*primal_.control());
+    m_Dual->update(1., *primal_.dual(), 0.);
+    m_Control->update(1., *primal_.control(), 0.);
     m_Size = m_Dual->size() + m_Control->size();
     if(primal_.state().use_count() > 0)
     {
         m_Size += m_State->size();
         m_State = primal_.state()->clone();
-        m_State->copy(*primal_.state());
+        m_State->update(1., *primal_.state(), 0.);
     }
 }
 
 template<typename ScalarType>
 void DOTk_MultiVector<ScalarType>::initialize(const dotk::Vector<ScalarType> & control_, const dotk::Vector<ScalarType> & dual_)
 {
-    m_Dual->copy(dual_);
-    m_Control->copy(control_);
+    m_Dual->update(1., dual_, 0.);
+    m_Control->update(1., control_, 0.);
 }
 
 template<typename ScalarType>
@@ -329,9 +318,9 @@ void DOTk_MultiVector<ScalarType>::initialize(const dotk::Vector<ScalarType> & c
                                         const dotk::Vector<ScalarType> & state_,
                                         const dotk::Vector<ScalarType> & dual_)
 {
-    m_Dual->copy(dual_);
-    m_State->copy(state_);
-    m_Control->copy(control_);
+    m_Dual->update(1., dual_, 0.);
+    m_State->update(1., state_, 0.);
+    m_Control->update(1., control_, 0.);
 }
 
 }

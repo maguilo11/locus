@@ -109,12 +109,12 @@ Real DOTk_HagerZhangLineSearch::secantStep(const std::tr1::shared_ptr<dotk::Vect
                                            const std::tr1::shared_ptr<dotk::DOTk_OptimizationDataMng> & mng_)
 {
     Real step = 0.;
-    primal_new_->copy(*primal_old_);
-    primal_new_->axpy(this->getStepInterval(dotk::types::LOWER_BOUND), *trial_step_);
+    primal_new_->update(1., *primal_old_, 0.);
+    primal_new_->update(this->getStepInterval(dotk::types::LOWER_BOUND), *trial_step_, 1.);
     mng_->computeGradient(primal_new_, gradient_new_);
     Real grad_dot_step_lb = gradient_new_->dot(*trial_step_);
-    primal_new_->copy(*primal_old_);
-    primal_new_->axpy(this->getStepInterval(dotk::types::UPPER_BOUND), *trial_step_);
+    primal_new_->update(1., *primal_old_, 0.);
+    primal_new_->update(this->getStepInterval(dotk::types::UPPER_BOUND), *trial_step_, 1.);
     mng_->computeGradient(primal_new_, gradient_new_);
     Real grad_dot_step_ub = gradient_new_->dot(*trial_step_);
     step = (this->getStepInterval(dotk::types::LOWER_BOUND) * grad_dot_step_ub)
@@ -176,8 +176,8 @@ void DOTk_HagerZhangLineSearch::updateInterval(const Real & step_,
     {
         return;
     }
-    primal_new_->copy(*primal_old_);
-    primal_new_->axpy(step_, *trial_step_);
+    primal_new_->update(1., *primal_old_, 0.);
+    primal_new_->update(step_, *trial_step_, 1.);
     Real new_fval = mng_->evaluateObjective(primal_new_);
     dotk::DOTk_LineSearch::setNewObjectiveFunctionValue(new_fval);
     mng_->computeGradient(primal_new_, gradient_new_);
@@ -221,8 +221,8 @@ void DOTk_HagerZhangLineSearch::shrinkInterval(const Real & step_,
     {
         Real secant_step = ((static_cast<Real>(1.0) - theta) * new_interval_lower_bound)
                 + (theta * new_interval_upper_bound);
-        primal_new_->copy(*primal_old_);
-        primal_new_->axpy(secant_step, *trial_step_);
+        primal_new_->update(1., *primal_old_, 0.);
+        primal_new_->update(secant_step, *trial_step_, 1.);
         Real new_fval = mng_->evaluateObjective(primal_new_);
         dotk::DOTk_LineSearch::setNewObjectiveFunctionValue(new_fval);
         mng_->computeGradient(primal_new_, gradient_new_);
@@ -259,8 +259,8 @@ void DOTk_HagerZhangLineSearch::step(const std::tr1::shared_ptr<dotk::DOTk_Optim
     dotk::DOTk_LineSearch::setStepSize(static_cast<Real>(1.0));
     this->setStepInterval(dotk::types::LOWER_BOUND, std::numeric_limits<Real>::min());
     this->setStepInterval(dotk::types::UPPER_BOUND, dotk::DOTk_LineSearch::getStepSize());
-    mng_->getNewPrimal()->copy(*mng_->getOldPrimal());
-    mng_->getNewPrimal()->axpy(dotk::DOTk_LineSearch::getStepSize(), *mng_->getTrialStep());
+    mng_->getNewPrimal()->update(1., *mng_->getOldPrimal(), 0.);
+    mng_->getNewPrimal()->update(dotk::DOTk_LineSearch::getStepSize(), *mng_->getTrialStep(), 1.);
     Real new_objective_func_val = mng_->evaluateObjective(mng_->getNewPrimal());
     this->setNewObjectiveFunctionValue(new_objective_func_val);
     mng_->computeGradient(mng_->getNewPrimal(), mng_->getNewGradient());

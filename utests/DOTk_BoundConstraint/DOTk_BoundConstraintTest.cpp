@@ -82,8 +82,7 @@ TEST(BoundConstraint, getMinReductionStep)
     mng->setOldPrimal(*primal->control());
     mng->setOldObjectiveFunctionValue(mng->evaluateObjective(mng->getNewPrimal()));
     mng->computeGradient(mng->getOldPrimal(), mng->getOldGradient());
-    mng->getTrialStep()->copy(*mng->getOldGradient());
-    mng->getTrialStep()->scale(-1);
+    mng->getTrialStep()->update(-1., *mng->getOldGradient(), 0.);
     mng->setUserDefinedGradient();
 
     dotk::DOTk_BoundConstraint bound(primal);
@@ -112,8 +111,7 @@ TEST(BoundConstraint, getStep_Armijo)
     mng->setOldPrimal(*primal->control());
     mng->setOldObjectiveFunctionValue(mng->getRoutinesMng()->objective(mng->getNewPrimal()));
     mng->getRoutinesMng()->gradient(mng->getOldPrimal(), mng->getOldGradient());
-    mng->getTrialStep()->copy(*mng->getOldGradient());
-    mng->getTrialStep()->scale(-1);
+    mng->getTrialStep()->update(-1., *mng->getOldGradient(), 0.);
     mng->setUserDefinedGradient();
 
     dotk::DOTk_BoundConstraint bound(primal);
@@ -144,8 +142,7 @@ TEST(BoundConstraint, getStep_MinReduction)
     mng->setOldPrimal(*primal->control());
     mng->setOldObjectiveFunctionValue(mng->getRoutinesMng()->objective(mng->getNewPrimal()));
     mng->getRoutinesMng()->gradient(mng->getOldPrimal(), mng->getOldGradient());
-    mng->getTrialStep()->copy(*mng->getOldGradient());
-    mng->getTrialStep()->scale(-1);
+    mng->getTrialStep()->update(-1., *mng->getOldGradient(), 0.);
     mng->setUserDefinedGradient();
 
     dotk::DOTk_BoundConstraint bound(primal);
@@ -177,8 +174,7 @@ TEST(BoundConstraint, getStep_Constant)
     mng->setOldPrimal(*primal->control());
     mng->setOldObjectiveFunctionValue(mng->getRoutinesMng()->objective(mng->getNewPrimal()));
     mng->getRoutinesMng()->gradient(mng->getOldPrimal(), mng->getOldGradient());
-    mng->getTrialStep()->copy(*mng->getOldGradient());
-    mng->getTrialStep()->scale(-1);
+    mng->getTrialStep()->update(-1., *mng->getOldGradient(), 0.);
     mng->setUserDefinedGradient();
 
     dotk::DOTk_BoundConstraint bound(primal);

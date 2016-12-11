@@ -39,7 +39,7 @@ void DOTk_DoglegTrustRegion::dogleg(const std::tr1::shared_ptr<dotk::Vector<Real
     else if(dotk::DOTk_TrustRegion::isCurvatureInvalid() == true)
     {
         Real theta = dotk::DOTk_TrustRegion::computeDoglegRoot(current_trust_region_radius, cauchy_step_, newton_step_);
-        newton_step_->axpy(theta, *cauchy_step_);
+        newton_step_->update(theta, *cauchy_step_, 1.);
     }
     else
     {
@@ -52,14 +52,13 @@ void DOTk_DoglegTrustRegion::dogleg(const std::tr1::shared_ptr<dotk::Vector<Real
         }
         else if(grad_dot_matrix_times_grad <= std::numeric_limits<Real>::min())
         {
-            newton_step_->copy(*grad_);
             Real scale_factor = -current_trust_region_radius / norm_grad;
-            newton_step_->scale(scale_factor);
+            newton_step_->update(scale_factor, *grad_, 0.);
         }
         else
         {
             Real theta = dotk::DOTk_TrustRegion::computeDoglegRoot(current_trust_region_radius, cauchy_step_, newton_step_);
-            newton_step_->axpy(theta, *cauchy_step_);
+            newton_step_->update(theta, *cauchy_step_, 1.);
         }
     }
 }

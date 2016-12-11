@@ -141,8 +141,8 @@ void DOTk_KelleySachsStepMng::solveSubProblem(const std::tr1::shared_ptr<dotk::D
         this->computeActiveAndInactiveSet(mng_, solver_);
 
         // Set solver tolerance
-        m_InactiveGradient->copy(*mng_->getNewGradient());
-        m_InactiveGradient->cwiseProd(*solver_->getInactiveSet());
+        m_InactiveGradient->update(1., *mng_->getNewGradient(), 0.);
+        m_InactiveGradient->elementWiseMultiplication(*solver_->getInactiveSet());
         m_NormInactiveGradient = m_InactiveGradient->norm();
         Real solver_stopping_tolerance = this->getEta() * m_NormInactiveGradient;
 
@@ -152,12 +152,12 @@ void DOTk_KelleySachsStepMng::solveSubProblem(const std::tr1::shared_ptr<dotk::D
         solver_->solve(m_Preconditioner, m_LinearOperator, mng_);
 
         // Project trial control
-        m_MidPrimal->copy(*mng_->getNewPrimal());
-        m_MidPrimal->axpy(static_cast<Real>(1.), *mng_->getTrialStep());
+        m_MidPrimal->update(1., *mng_->getNewPrimal(), 0.);
+        m_MidPrimal->update(static_cast<Real>(1.), *mng_->getTrialStep(), 1.);
         m_BoundConstraint->project(*m_LowerBound, *m_UpperBound, *m_MidPrimal);
         // Compute projected trial step
-        m_ProjectedTrialStep->copy(*m_MidPrimal);
-        m_ProjectedTrialStep->axpy(static_cast<Real>(-1), *mng_->getNewPrimal());
+        m_ProjectedTrialStep->update(1., *m_MidPrimal, 0.);
+        m_ProjectedTrialStep->update(static_cast<Real>(-1), *mng_->getNewPrimal(), 1.);
 
         // Compute predicted reduction based on mid trial control
         this->applyProjectedTrialStepToHessian(mng_, solver_);
@@ -201,8 +201,8 @@ void DOTk_KelleySachsStepMng::bounds(const std::tr1::shared_ptr<dotk::DOTk_Prima
         std::abort();
     }
 
-    m_LowerBound->copy(*primal_->getControlLowerBound());
-    m_UpperBound->copy(*primal_->getControlUpperBound());
+    m_LowerBound->update(1., *primal_->getControlLowerBound(), 0.);
+    m_UpperBound->update(1., *primal_->getControlUpperBound(), 0.);
 }
 
 void DOTk_KelleySachsStepMng::initialize(const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_)
@@ -275,18 +275,18 @@ void DOTk_KelleySachsStepMng::applyProjectedTrialStepToHessian(const std::tr1::s
                                                                const std::tr1::shared_ptr<dotk::DOTk_SteihaugTointSolver> & solver_)
 {
     // Compute active and inactive projected trial step
-    m_ActiveProjectedTrialStep->copy(*m_ProjectedTrialStep);
-    m_ActiveProjectedTrialStep->cwiseProd(*solver_->getActiveSet());
-    m_InactiveProjectedTrialStep->copy(*m_ProjectedTrialStep);
-    m_InactiveProjectedTrialStep->cwiseProd(*solver_->getInactiveSet());
+    m_ActiveProjectedTrialStep->update(1., *m_ProjectedTrialStep, 0.);
+    m_ActiveProjectedTrialStep->elementWiseMultiplication(*solver_->getActiveSet());
+    m_InactiveProjectedTrialStep->update(1., *m_ProjectedTrialStep, 0.);
+    m_InactiveProjectedTrialStep->elementWiseMultiplication(*solver_->getInactiveSet());
 
     // Apply inactive projected trial step to Hessian
     mng_->getMatrixTimesVector()->fill(0);
     m_LinearOperator->apply(mng_, m_InactiveProjectedTrialStep, mng_->getMatrixTimesVector());
 
     // Compute Hessian times projected trial step, i.e. ( ActiveSet + (InactiveSet' * Hess * InactiveSet) ) * vector
-    mng_->getMatrixTimesVector()->cwiseProd(*solver_->getInactiveSet());
-    mng_->getMatrixTimesVector()->axpy(static_cast<Real>(1.), *m_ActiveProjectedTrialStep);
+    mng_->getMatrixTimesVector()->elementWiseMultiplication(*solver_->getInactiveSet());
+    mng_->getMatrixTimesVector()->update(static_cast<Real>(1.), *m_ActiveProjectedTrialStep, 1.);
 }
 
 Real DOTk_KelleySachsStepMng::computeActualReductionLowerBound(const std::tr1::shared_ptr<dotk::DOTk_OptimizationDataMng> & mng_)
@@ -294,11 +294,11 @@ Real DOTk_KelleySachsStepMng::computeActualReductionLowerBound(const std::tr1::s
     Real condition_one = dotk::DOTk_TrustRegionStepMng::getTrustRegionRadius() /
             (m_NormInactiveGradient + std::numeric_limits<Real>::epsilon());
     Real lambda = std::min(condition_one, static_cast<Real>(1.));
-    m_WorkVector->copy(*mng_->getNewPrimal());
-    m_WorkVector->axpy(-lambda, *m_InactiveGradient);
+    m_WorkVector->update(1., *mng_->getNewPrimal(), 0.);
+    m_WorkVector->update(-lambda, *m_InactiveGradient, 1.);
     m_BoundConstraint->project(*m_LowerBound, *m_UpperBound, *m_WorkVector);
-    m_ProjectedCauchyStep->copy(*mng_->getNewPrimal());
-    m_ProjectedCauchyStep->axpy(static_cast<Real>(-1.), *m_WorkVector);
+    m_ProjectedCauchyStep->update(1., *mng_->getNewPrimal(), 0.);
+    m_ProjectedCauchyStep->update(static_cast<Real>(-1.), *m_WorkVector, 1.);
 
     const Real SLOPE_CONSTANT = 1e-4;
     Real norm_proj_cauchy_step = m_ProjectedCauchyStep->norm();
@@ -310,8 +310,8 @@ Real DOTk_KelleySachsStepMng::computeActualReductionLowerBound(const std::tr1::s
 void DOTk_KelleySachsStepMng::computeActiveAndInactiveSet(const std::tr1::shared_ptr<dotk::DOTk_OptimizationDataMng> & mng_,
                                                           const std::tr1::shared_ptr<dotk::DOTk_SteihaugTointSolver> & solver_)
 {
-    m_WorkVector->copy(*mng_->getNewGradient());
-    m_WorkVector->cwiseProd(*solver_->getInactiveSet());
+    m_WorkVector->update(1., *mng_->getNewGradient(), 0.);
+    m_WorkVector->elementWiseMultiplication(*solver_->getInactiveSet());
 
     Real condition = 0;
     Real norm_current_proj_gradient = m_WorkVector->norm();
@@ -327,14 +327,14 @@ void DOTk_KelleySachsStepMng::computeActiveAndInactiveSet(const std::tr1::shared
     Real lambda = std::min(condition, static_cast<Real>(1.));
     // Compute current lower bound limit
     m_WorkVector->fill(this->getEpsilon());
-    m_LowerBoundLimit->copy(*m_LowerBound);
-    m_LowerBoundLimit->axpy(static_cast<Real>(-1.), *m_WorkVector);
+    m_LowerBoundLimit->update(1., *m_LowerBound, 0.);
+    m_LowerBoundLimit->update(static_cast<Real>(-1.), *m_WorkVector, 1.);
     // Compute current upper bound limit
-    m_UpperBoundLimit->copy(*m_UpperBound);
-    m_UpperBoundLimit->axpy(static_cast<Real>(1.), *m_WorkVector);
+    m_UpperBoundLimit->update(1., *m_UpperBound, 0.);
+    m_UpperBoundLimit->update(static_cast<Real>(1.), *m_WorkVector, 1.);
     // Compute active and inactive sets
-    m_WorkVector->copy(*mng_->getNewPrimal());
-    m_WorkVector->axpy(-lambda, *mng_->getNewGradient());
+    m_WorkVector->update(1., *mng_->getNewPrimal(), 0.);
+    m_WorkVector->update(-lambda, *mng_->getNewGradient(), 1.);
     m_BoundConstraint->computeActiveAndInactiveSets(*m_WorkVector,
                                                     *m_LowerBoundLimit,
                                                     *m_UpperBoundLimit,

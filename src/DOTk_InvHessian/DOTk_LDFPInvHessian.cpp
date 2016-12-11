@@ -55,7 +55,7 @@ void DOTk_LDFPInvHessian::getInvHessian(const std::tr1::shared_ptr<dotk::Vector<
                                         const std::tr1::shared_ptr<dotk::Vector<Real> > & inv_hess_times_vector_)
 {
     Int index = dotk::DOTk_SecondOrderOperator::getNumUpdatesStored() - 1;
-    inv_hess_times_vector_->copy(*vector_);
+    inv_hess_times_vector_->update(1., *vector_, 0.);
     bool is_secant_information_stored = dotk::DOTk_SecondOrderOperator::getNumUpdatesStored() <= 0 ? true : false;
     if(is_secant_information_stored == true)
     {
@@ -73,17 +73,17 @@ void DOTk_LDFPInvHessian::getInvHessian(const std::tr1::shared_ptr<dotk::Vector<
     for(Int index_i = 0; index_i < dotk::DOTk_SecondOrderOperator::getNumUpdatesStored(); ++index_i)
     {
         Real alpha = static_cast<Real>(1.0) / std::sqrt((*m_RhoStorage)[index_i]);
-        m_MatrixB->basis(index_i)->copy(*m_DeltaPrimalStorage->basis(index_i));
+        m_MatrixB->basis(index_i)->update(1., *m_DeltaPrimalStorage->basis(index_i), 0.);
         m_MatrixB->basis(index_i)->scale(alpha);
-        m_MatrixA->basis(index_i)->copy(*m_DeltaGradientStorage->basis(index_i));
+        m_MatrixA->basis(index_i)->update(1., *m_DeltaGradientStorage->basis(index_i), 0.);
         m_MatrixA->basis(index_i)->scale(barzilai_borwein_step);
 
         for(Int index_j = 0; index_j <= index_i - 1; ++index_j)
         {
             alpha = m_MatrixB->basis(index_j)->dot(*m_DeltaGradientStorage->basis(index_i));
-            m_MatrixA->basis(index_i)->axpy(alpha, *m_MatrixB->basis(index_j));
+            m_MatrixA->basis(index_i)->update(alpha, *m_MatrixB->basis(index_j), 1.);
             alpha = static_cast<Real>(-1.0) * (m_MatrixA->basis(index_j)->dot(*m_DeltaGradientStorage->basis(index_i)));
-            m_MatrixA->basis(index_i)->axpy(alpha, *m_MatrixA->basis(index_j));
+            m_MatrixA->basis(index_i)->update(alpha, *m_MatrixA->basis(index_j), 1.);
         }
 
         alpha = static_cast<Real>(1.0)
@@ -91,16 +91,16 @@ void DOTk_LDFPInvHessian::getInvHessian(const std::tr1::shared_ptr<dotk::Vector<
         m_MatrixA->basis(index_i)->scale(alpha);
         // compute application of direction to BFGS DOTk Hessian
         alpha = m_MatrixB->basis(index_i)->dot(*vector_);
-        inv_hess_times_vector_->axpy(alpha, *m_MatrixB->basis(index_i));
+        inv_hess_times_vector_->update(alpha, *m_MatrixB->basis(index_i), 1.);
         alpha = m_MatrixA->basis(index_i)->dot(*vector_);
-        inv_hess_times_vector_->axpy(-alpha, *m_MatrixA->basis(index_i));
+        inv_hess_times_vector_->update(-alpha, *m_MatrixA->basis(index_i), 1.);
     }
 
     Real norm_invHess_times_vec = inv_hess_times_vector_->norm();
     bool negative_curvature_encountered = norm_invHess_times_vec < std::numeric_limits<Real>::min() ? true: false;
     if(negative_curvature_encountered == true)
     {
-        inv_hess_times_vector_->copy(*vector_);
+        inv_hess_times_vector_->update(1., *vector_, 0.);
     }
 }
 

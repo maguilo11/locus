@@ -236,13 +236,13 @@ void DOTk_OptimalityCriteriaDataMng::initialize(const std::tr1::shared_ptr<dotk:
 {
     assert(primal_->state().use_count() > 0);
     assert(primal_->control().use_count() > 0);
-    m_State->copy(*primal_->state());
-    m_NewControl->copy(*primal_->control());
+    m_State->update(1., *primal_->state(), 0.);
+    m_NewControl->update(1., *primal_->control(), 0.);
 
     assert(primal_->getControlLowerBound().use_count() > 0);
     assert(primal_->getControlUpperBound().use_count() > 0);
-    m_ControlLowerBound->copy(*primal_->getControlLowerBound());
-    m_ControlUpperBound->copy(*primal_->getControlUpperBound());
+    m_ControlLowerBound->update(1., *primal_->getControlLowerBound(), 0.);
+    m_ControlUpperBound->update(1., *primal_->getControlUpperBound(), 0.);
 
     m_OldControl->fill(0.);
     m_ObjectiveGradient->fill(0.);

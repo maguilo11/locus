@@ -110,7 +110,7 @@ void DOTk_SteihaugTointProjGradStep::solveSubProblem(const std::tr1::shared_ptr<
     m_ActiveSet->fill(0);
     Real new_objective_value = 0.;
     this->setNumTrustRegionSubProblemItrDone(1);
-    m_CurrentPrimal->copy(*mng_->getNewPrimal());
+    m_CurrentPrimal->update(1., *mng_->getNewPrimal(), 0.);
     Real angle_tolerance = this->getMinCosineAngleTolerance();
     Real current_objective_value = mng_->getNewObjectiveFunctionValue();
     Real min_trust_region_radius = dotk::DOTk_TrustRegionStepMng::getMinTrustRegionRadius();
@@ -143,7 +143,7 @@ void DOTk_SteihaugTointProjGradStep::solveSubProblem(const std::tr1::shared_ptr<
             break;
         }
         this->updateNumTrustRegionSubProblemItrDone();
-        mng_->getNewPrimal()->copy(*m_CurrentPrimal);
+        mng_->getNewPrimal()->update(1., *m_CurrentPrimal, 0.);
     }
 
     mng_->setOldObjectiveFunctionValue(current_objective_value);
@@ -175,22 +175,22 @@ void DOTk_SteihaugTointProjGradStep::bounds(const std::tr1::shared_ptr<dotk::DOT
         std::abort();
     }
 
-    m_LowerBound->copy(*primal_->getControlLowerBound());
-    m_UpperBound->copy(*primal_->getControlUpperBound());
+    m_LowerBound->update(1., *primal_->getControlLowerBound(), 0.);
+    m_UpperBound->update(1., *primal_->getControlUpperBound(), 0.);
 }
 
 void DOTk_SteihaugTointProjGradStep::updateDataManager(const std::tr1::shared_ptr<dotk::DOTk_OptimizationDataMng> & mng_)
 {
-    mng_->getOldPrimal()->copy(*m_CurrentPrimal);
-    mng_->getOldGradient()->copy(*mng_->getNewGradient());
+    mng_->getOldPrimal()->update(1., *m_CurrentPrimal, 0.);
+    mng_->getOldGradient()->update(1., *mng_->getNewGradient(), 0.);
     mng_->computeGradient();
 
-    m_WorkVector->copy(*mng_->getNewGradient());
+    m_WorkVector->update(1., *mng_->getNewGradient(), 0.);
     m_BoundConstraint->pruneActive(*m_ActiveSet, *m_WorkVector);
     Real norm_projected_gradient = m_WorkVector->norm();
     mng_->setNormNewGradient(norm_projected_gradient);
 
-    m_WorkVector->copy(*mng_->getTrialStep());
+    m_WorkVector->update(1., *mng_->getTrialStep(), 0.);
     m_BoundConstraint->pruneActive(*m_ActiveSet, *m_WorkVector);
     Real norm_projected_trial_step = m_WorkVector->norm();
     mng_->setNormTrialStep(norm_projected_trial_step);
@@ -209,10 +209,10 @@ void DOTk_SteihaugTointProjGradStep::updateControl(const std::tr1::shared_ptr<do
     size_t max_num_projection = this->getMaxNumProjections();
     while(1)
     {
-        mng_->getNewPrimal()->axpy(step, *mng_->getTrialStep());
+        mng_->getNewPrimal()->update(step, *mng_->getTrialStep(), 1.);
         m_BoundConstraint->projectActive(*m_LowerBound, *m_UpperBound, *mng_->getNewPrimal(), *m_ActiveSet);
-        m_ProjectedTrialStep->copy(*mng_->getNewPrimal());
-        m_ProjectedTrialStep->axpy(static_cast<Real>(-1.), *m_CurrentPrimal);
+        m_ProjectedTrialStep->update(1., *mng_->getNewPrimal(), 0.);
+        m_ProjectedTrialStep->update(static_cast<Real>(-1.), *m_CurrentPrimal, 1.);
         m_LinearOperator->apply(mng_, m_ProjectedTrialStep, mng_->getMatrixTimesVector());
         Real old_grad_dot_proj_trial_step = mng_->getNewGradient()->dot(*m_ProjectedTrialStep);
         Real proj_trial_step_dot_hess_times_proj_trial_step = m_ProjectedTrialStep->dot(*mng_->getMatrixTimesVector());
@@ -231,7 +231,7 @@ void DOTk_SteihaugTointProjGradStep::updateControl(const std::tr1::shared_ptr<do
         {
             break;
         }
-        mng_->getNewPrimal()->copy(*m_CurrentPrimal);
+        mng_->getNewPrimal()->update(1., *m_CurrentPrimal, 0.);
         step = step * step_contraction;
         itr++;
     }
@@ -251,10 +251,10 @@ void DOTk_SteihaugTointProjGradStep::computeProjectedCauchyStep
     size_t max_num_projection = this->getMaxNumProjections();
     while(1)
     {
-        m_ProjectedCauchyStep->copy(*m_CurrentPrimal);
-        m_ProjectedCauchyStep->axpy(step, *mng_->getNewGradient());
+        m_ProjectedCauchyStep->update(1., *m_CurrentPrimal, 0.);
+        m_ProjectedCauchyStep->update(step, *mng_->getNewGradient(), 1.);
         m_BoundConstraint->project(*m_LowerBound, *m_UpperBound, *m_ProjectedCauchyStep);
-        m_ProjectedCauchyStep->axpy(static_cast<Real>(-1.), *m_CurrentPrimal);
+        m_ProjectedCauchyStep->update(static_cast<Real>(-1.), *m_CurrentPrimal, 1.);
         m_LinearOperator->apply(mng_, m_ProjectedCauchyStep, mng_->getMatrixTimesVector());
 
         Real old_grad_dot_proj_cauchy_step = mng_->getNewGradient()->dot(*m_ProjectedCauchyStep);

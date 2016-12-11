@@ -65,7 +65,7 @@ void DOTk_LSR1InvHessian::unrollingSR1(const std::tr1::shared_ptr<dotk::Vector<R
     int updates = dotk::DOTk_SecondOrderOperator::getNumUpdatesStored();
     for(int index = 0; index < updates; ++index)
     {
-        m_MatrixA->basis(index)->copy(*m_DeltaGradientStorage->basis(index));
+        m_MatrixA->basis(index)->update(1., *m_DeltaGradientStorage->basis(index), 0.);
     }
 
     for(int index_i = 0; index_i < updates; ++index_i)
@@ -76,8 +76,8 @@ void DOTk_LSR1InvHessian::unrollingSR1(const std::tr1::shared_ptr<dotk::Vector<R
                 m_DeltaPrimalStorage->basis(index_i)->dot(*m_DeltaGradientStorage->basis(index_i));
         Real rowA_dot_dgrad_outer = m_MatrixA->basis(index_i)->dot(*m_DeltaGradientStorage->basis(index_i));
         Real alpha = (dgrad_dot_vec - rowA_dot_vec) / (dprimal_dot_dgrad_outer - rowA_dot_dgrad_outer);
-        inv_hess_times_vector_->axpy(alpha, *m_DeltaPrimalStorage->basis(index_i));
-        inv_hess_times_vector_->axpy(-alpha, *m_MatrixA->basis(index_i));
+        inv_hess_times_vector_->update(alpha, *m_DeltaPrimalStorage->basis(index_i), 1.);
+        inv_hess_times_vector_->update(-alpha, *m_MatrixA->basis(index_i), 1.);
 
         for(int index_j = updates - 1; index_j > index_i; --index_j)
         {
@@ -86,8 +86,8 @@ void DOTk_LSR1InvHessian::unrollingSR1(const std::tr1::shared_ptr<dotk::Vector<R
             Real rowA_dot_dgrad_inner = m_MatrixA->basis(index_i)->dot(*m_DeltaGradientStorage->basis(index_j));
             Real beta = (dgrad_dot_dprimal_inner - rowA_dot_dgrad_inner)
                     / (dprimal_dot_dgrad_outer - rowA_dot_dgrad_outer);
-            m_MatrixA->basis(index_j)->axpy(beta, *m_DeltaPrimalStorage->basis(index_i));
-            m_MatrixA->basis(index_j)->axpy(-beta, *m_MatrixA->basis(index_i));
+            m_MatrixA->basis(index_j)->update(beta, *m_DeltaPrimalStorage->basis(index_i), 1.);
+            m_MatrixA->basis(index_j)->update(-beta, *m_MatrixA->basis(index_i), 1.);
         }
     }
 }
@@ -110,7 +110,7 @@ void DOTk_LSR1InvHessian::getInvHessian(const std::tr1::shared_ptr<dotk::Vector<
     ///      operator to the trial step. \n
     ///      (std::tr1::shared_ptr<dotk::Vector<Real> >) \n
     ///
-    inv_hess_times_vector_->copy(*vector_);
+    inv_hess_times_vector_->update(1., *vector_, 0.);
     bool is_secant_information_stored = dotk::DOTk_SecondOrderOperator::getNumUpdatesStored() <= 0 ? true: false;
     if(is_secant_information_stored == true)
     {
@@ -123,7 +123,7 @@ void DOTk_LSR1InvHessian::getInvHessian(const std::tr1::shared_ptr<dotk::Vector<
     bool negative_curvature_detected = norm_invHess_times_vec < std::numeric_limits<Real>::min() ? true: false;
     if(negative_curvature_detected == true)
     {
-        inv_hess_times_vector_->copy(*vector_);
+        inv_hess_times_vector_->update(1., *vector_, 0.);
     }
 }
 

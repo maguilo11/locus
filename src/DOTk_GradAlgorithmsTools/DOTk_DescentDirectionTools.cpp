@@ -22,8 +22,7 @@ namespace gtools
 void getSteepestDescent(const std::tr1::shared_ptr<dotk::Vector<Real> > & input_,
                         const std::tr1::shared_ptr<dotk::Vector<Real> > & output_)
 {
-    output_->copy(*input_);
-    output_->scale(static_cast<Real>(-1.));
+    output_->update(-1., *input_, 0.);
 }
 
 Real computeCosineAngle(const std::tr1::shared_ptr<dotk::Vector<Real> > & grad_,

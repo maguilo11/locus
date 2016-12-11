@@ -70,7 +70,7 @@ void DOTk_DiagnosticsTypeLP::checkObjectiveGradient(const dotk::DOTk_Variable & 
 
     m_OriginalPrimal.reset();
     m_OriginalPrimal = primal_.data()->clone();
-    m_OriginalPrimal->copy(*primal_.data());
+    m_OriginalPrimal->update(1., *primal_.data(), 0.);
 
     std::tr1::shared_ptr<dotk::Vector<Real> > delta_primal = primal_.data()->clone();
     dotk::gtools::generateRandomVector(delta_primal);
@@ -102,7 +102,7 @@ void DOTk_DiagnosticsTypeLP::checkObjectiveHessian(const dotk::DOTk_Variable & p
 
     m_OriginalPrimal.reset();
     m_OriginalPrimal = primal_.data()->clone();
-    m_OriginalPrimal->copy(*primal_.data());
+    m_OriginalPrimal->update(1., *primal_.data(), 0.);
 
     std::tr1::shared_ptr<dotk::Vector<Real> > delta_primal = primal_.data()->clone();
     dotk::gtools::generateRandomVector(delta_primal);
@@ -138,7 +138,7 @@ void DOTk_DiagnosticsTypeLP::checkEqualityConstraintJacobian(const dotk::DOTk_Va
 
     m_OriginalPrimal.reset();
     m_OriginalPrimal = primal_.data()->clone();
-    m_OriginalPrimal->copy(*primal_.data());
+    m_OriginalPrimal->update(1., *primal_.data(), 0.);
 
     std::tr1::shared_ptr<dotk::Vector<Real> > delta_primal = m_OriginalPrimal->clone();
     dotk::gtools::generateRandomVector(delta_primal);
@@ -204,7 +204,7 @@ void DOTk_DiagnosticsTypeLP::checkEqualityConstraintJacobianDerivative(const dot
 
     m_OriginalPrimal.reset();
     m_OriginalPrimal = primal_.data()->clone();
-    m_OriginalPrimal->copy(*primal_.data());
+    m_OriginalPrimal->update(1., *primal_.data(), 0.);
 
     std::tr1::shared_ptr<dotk::Vector<Real> > delta_primal = primal_.data()->clone();
     dotk::gtools::generateRandomVector(delta_primal);
@@ -236,7 +236,7 @@ void DOTk_DiagnosticsTypeLP::checkInequalityConstraintJacobian(const dotk::DOTk_
 
     m_OriginalPrimal.reset();
     m_OriginalPrimal = primal_.data()->clone();
-    m_OriginalPrimal->copy(*primal_.data());
+    m_OriginalPrimal->update(1., *primal_.data(), 0.);
 
     std::tr1::shared_ptr<dotk::Vector<Real> > perturbation = primal_.data()->clone();
     dotk::gtools::generateRandomVector(perturbation);
@@ -280,21 +280,21 @@ void DOTk_DiagnosticsTypeLP::checkScalarValuedFunctionFirstDerivative(const std:
     {
         Real epsilon = std::pow(static_cast<Real>(0.1), superscript);
         // four point finite difference approximation
-        primal_->axpy(epsilon, *delta_primal_);
+        primal_->update(epsilon, *delta_primal_, 1.);
         Real objective_function_value_one = functor_(operators_, primal_);
-        primal_->copy(*m_OriginalPrimal);
+        primal_->update(1., *m_OriginalPrimal, 0.);
 
-        primal_->axpy(-epsilon, *delta_primal_);
+        primal_->update(-epsilon, *delta_primal_, 1.);
         Real objective_function_value_two = functor_(operators_, primal_);
-        primal_->copy(*m_OriginalPrimal);
+        primal_->update(1., *m_OriginalPrimal, 0.);
 
-        primal_->axpy(static_cast<Real>(2.) * epsilon, *delta_primal_);
+        primal_->update(static_cast<Real>(2.) * epsilon, *delta_primal_, 1.);
         Real objective_function_value_three = functor_(operators_, primal_);
-        primal_->copy(*m_OriginalPrimal);
+        primal_->update(1., *m_OriginalPrimal, 0.);
 
-        primal_->axpy(static_cast<Real>(-2.) * epsilon, *delta_primal_);
+        primal_->update(static_cast<Real>(-2.) * epsilon, *delta_primal_, 1.);
         Real objective_function_value_four = functor_(operators_, primal_);
-        primal_->copy(*m_OriginalPrimal);
+        primal_->update(1., *m_OriginalPrimal, 0.);
 
         Real numerator = -objective_function_value_three + static_cast<Real>(8.) * objective_function_value_one
                 - static_cast<Real>(8.) * objective_function_value_two + objective_function_value_four;
@@ -330,31 +330,31 @@ void DOTk_DiagnosticsTypeLP::checkScalarValuedFunctionSecondDerivative(const std
         Real epsilon = std::pow(static_cast<Real>(0.1), superscript);
 
         // four point finite difference approximation
-        primal_->axpy(epsilon, *delta_primal_);
+        primal_->update(epsilon, *delta_primal_, 1.);
         first_derivative_(m_ObjectiveFunction, primal_, gradient);
-        finite_difference_derivative_times_dprimal->axpy(static_cast<Real>(8.), *gradient);
-        primal_->copy(*m_OriginalPrimal);
+        finite_difference_derivative_times_dprimal->update(static_cast<Real>(8.), *gradient, 1.);
+        primal_->update(1., *m_OriginalPrimal, 0.);
 
-        primal_->axpy(-epsilon, *delta_primal_);
+        primal_->update(-epsilon, *delta_primal_, 1.);
         first_derivative_(m_ObjectiveFunction, primal_, gradient);
-        finite_difference_derivative_times_dprimal->axpy(static_cast<Real>(-8.), *gradient);
-        primal_->copy(*m_OriginalPrimal);
+        finite_difference_derivative_times_dprimal->update(static_cast<Real>(-8.), *gradient, 1.);
+        primal_->update(1., *m_OriginalPrimal, 0.);
 
-        primal_->axpy(static_cast<Real>(2.) * epsilon, *delta_primal_);
+        primal_->update(static_cast<Real>(2.) * epsilon, *delta_primal_, 1.);
         first_derivative_(m_ObjectiveFunction, primal_, gradient);
-        finite_difference_derivative_times_dprimal->axpy(static_cast<Real>(-1.), *gradient);
-        primal_->copy(*m_OriginalPrimal);
+        finite_difference_derivative_times_dprimal->update(static_cast<Real>(-1.), *gradient, 1.);
+        primal_->update(1., *m_OriginalPrimal, 0.);
 
-        primal_->axpy(static_cast<Real>(-2.) * epsilon, *delta_primal_);
+        primal_->update(static_cast<Real>(-2.) * epsilon, *delta_primal_, 1.);
         first_derivative_(m_ObjectiveFunction, primal_, gradient);
-        finite_difference_derivative_times_dprimal->axpy(static_cast<Real>(1.), *gradient);
-        primal_->copy(*m_OriginalPrimal);
+        finite_difference_derivative_times_dprimal->update(static_cast<Real>(1.), *gradient, 1.);
+        primal_->update(1., *m_OriginalPrimal, 0.);
         Real alpha = static_cast<Real>(1.) / (static_cast<Real>(12.) * epsilon);
         finite_difference_derivative_times_dprimal->scale(alpha);
 
         Real norm_finite_difference_derivative = finite_difference_derivative_times_dprimal->norm();
 
-        finite_difference_derivative_times_dprimal->axpy(static_cast<Real>(-1.), *m_TrueDerivative);
+        finite_difference_derivative_times_dprimal->update(static_cast<Real>(-1.), *m_TrueDerivative, 1.);
         Real numerator = finite_difference_derivative_times_dprimal->norm();
         Real denominator = std::numeric_limits<Real>::epsilon() + norm_true_derivative_times_dprimal;
         Real relative_error = numerator / denominator;
@@ -388,31 +388,31 @@ void DOTk_DiagnosticsTypeLP::checkVectorValuedFunctionFirstDerivative(const std:
         Real epsilon = std::pow(static_cast<Real>(0.1), superscript);
 
         // four point finite difference approximation
-        primal_->axpy(epsilon, *delta_primal_);
+        primal_->update(epsilon, *delta_primal_, 1.);
         function_(m_EqualityConstraint, primal_, residual);
-        finite_diff_first_derivative->axpy(static_cast<Real>(8.), *residual);
-        primal_->copy(*m_OriginalPrimal);
+        finite_diff_first_derivative->update(static_cast<Real>(8.), *residual, 1.);
+        primal_->update(1., *m_OriginalPrimal, 0.);
 
-        primal_->axpy(-epsilon, *delta_primal_);
+        primal_->update(-epsilon, *delta_primal_, 1.);
         function_(m_EqualityConstraint, primal_, residual);
-        finite_diff_first_derivative->axpy(static_cast<Real>(-8.), *residual);
-        primal_->copy(*m_OriginalPrimal);
+        finite_diff_first_derivative->update(static_cast<Real>(-8.), *residual, 1.);
+        primal_->update(1., *m_OriginalPrimal, 0.);
 
-        primal_->axpy(static_cast<Real>(2.) * epsilon, *delta_primal_);
+        primal_->update(static_cast<Real>(2.) * epsilon, *delta_primal_, 1.);
         function_(m_EqualityConstraint, primal_, residual);
-        finite_diff_first_derivative->axpy(static_cast<Real>(-1.), *residual);
-        primal_->copy(*m_OriginalPrimal);
+        finite_diff_first_derivative->update(static_cast<Real>(-1.), *residual, 1.);
+        primal_->update(1., *m_OriginalPrimal, 0.);
 
-        primal_->axpy(static_cast<Real>(-2.) * epsilon, *delta_primal_);
+        primal_->update(static_cast<Real>(-2.) * epsilon, *delta_primal_, 1.);
         function_(m_EqualityConstraint, primal_, residual);
-        finite_diff_first_derivative->axpy(static_cast<Real>(1.), *residual);
-        primal_->copy(*m_OriginalPrimal);
+        finite_diff_first_derivative->update(static_cast<Real>(1.), *residual, 1.);
+        primal_->update(1., *m_OriginalPrimal, 0.);
 
         Real alpha = static_cast<Real>(1.) / (static_cast<Real>(12.) * epsilon);
         finite_diff_first_derivative->scale(alpha);
         Real finite_difference_approximation = finite_diff_first_derivative->norm();
 
-        finite_diff_first_derivative->axpy(static_cast<Real>(-1.), *true_first_derivative);
+        finite_diff_first_derivative->update(static_cast<Real>(-1.), *true_first_derivative, 1.);
         Real numerator = finite_diff_first_derivative->norm();
         Real denominator = std::numeric_limits<Real>::epsilon() + norm_true_first_derivative;
         Real relative_error = numerator / denominator;
@@ -476,32 +476,31 @@ void DOTk_DiagnosticsTypeLP::checkSecondDerivativeVectorValuedFunction(const std
         Real epsilon = std::pow(static_cast<Real>(0.1), superscript);
 
         // four point finite difference approximation
-        primal_->axpy(epsilon, *delta_primal_);
+        primal_->update(epsilon, *delta_primal_, 1.);
         adjoint_first_derivative_(m_EqualityConstraint, primal_, dual_, adjoint_first_derivative);
-        finite_diff_second_derivative_times_dprimal->axpy(static_cast<Real>(8.), *adjoint_first_derivative);
-        primal_->copy(*m_OriginalPrimal);
+        finite_diff_second_derivative_times_dprimal->update(8., *adjoint_first_derivative, 1.);
+        primal_->update(1., *m_OriginalPrimal, 0.);
 
-        primal_->axpy(-epsilon, *delta_primal_);
+        primal_->update(-epsilon, *delta_primal_, 1.);
         adjoint_first_derivative_(m_EqualityConstraint, primal_, dual_, adjoint_first_derivative);
-        finite_diff_second_derivative_times_dprimal->axpy(static_cast<Real>(-8.), *adjoint_first_derivative);
-        primal_->copy(*m_OriginalPrimal);
+        finite_diff_second_derivative_times_dprimal->update(-8., *adjoint_first_derivative, 1.);
+        primal_->update(1., *m_OriginalPrimal, 0.);
 
-        primal_->axpy(static_cast<Real>(2.) * epsilon, *delta_primal_);
+        primal_->update(2. * epsilon, *delta_primal_, 1.);
         adjoint_first_derivative_(m_EqualityConstraint, primal_, dual_, adjoint_first_derivative);
-        finite_diff_second_derivative_times_dprimal->axpy(static_cast<Real>(-1.), *adjoint_first_derivative);
-        primal_->copy(*m_OriginalPrimal);
+        finite_diff_second_derivative_times_dprimal->update(-1., *adjoint_first_derivative, 1.);
+        primal_->update(1., *m_OriginalPrimal, 0.);
 
-        primal_->axpy(static_cast<Real>(-2.) * epsilon, *delta_primal_);
+        primal_->update(-2. * epsilon, *delta_primal_, 1.);
         adjoint_first_derivative_(m_EqualityConstraint, primal_, dual_, adjoint_first_derivative);
-        finite_diff_second_derivative_times_dprimal->axpy(static_cast<Real>(1.), *adjoint_first_derivative);
-        primal_->copy(*m_OriginalPrimal);
+        finite_diff_second_derivative_times_dprimal->update(1., *adjoint_first_derivative, 1.);
+        primal_->update(1., *m_OriginalPrimal, 0.);
 
-        Real alpha = static_cast<Real>(1.) / (static_cast<Real>(12.) * epsilon);
+        Real alpha = 1. / (12. * epsilon);
         finite_diff_second_derivative_times_dprimal->scale(alpha);
         Real finite_difference_approximation = finite_diff_second_derivative_times_dprimal->norm();
 
-        finite_diff_second_derivative_times_dprimal->axpy(static_cast<Real>(-1.),
-                                                          *true_second_derivative_times_dprimal);
+        finite_diff_second_derivative_times_dprimal->update(-1., *true_second_derivative_times_dprimal, 1.);
         Real numerator = finite_diff_second_derivative_times_dprimal->norm();
         Real denominator = std::numeric_limits<Real>::epsilon() + true_norm_second_derivative_times_dprimal;
         Real relative_error = numerator / denominator;

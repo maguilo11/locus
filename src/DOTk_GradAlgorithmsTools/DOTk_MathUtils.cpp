@@ -25,17 +25,6 @@ Real norm(const std::tr1::shared_ptr<dotk::Vector<Real> > & input_)
     return (output);
 }
 
-void copy(const std::tr1::shared_ptr<dotk::Vector<Real> > & input_,
-          const std::tr1::shared_ptr<dotk::Vector<Real> > & output_)
-{
-    output_->control()->copy(*input_->control());
-    if(input_->state().use_count() > 0)
-    {
-        assert(input_->state().use_count() > 0);
-        output_->state()->copy(*input_->state());
-    }
-}
-
 void scale(const Real & alpha_, const std::tr1::shared_ptr<dotk::Vector<Real> > & output_)
 {
     output_->control()->scale(alpha_);
@@ -45,27 +34,28 @@ void scale(const Real & alpha_, const std::tr1::shared_ptr<dotk::Vector<Real> > 
     }
 }
 
-void axpy(const Real & alpha_,
-          const std::tr1::shared_ptr<dotk::Vector<Real> > & input_,
-          const std::tr1::shared_ptr<dotk::Vector<Real> > & output_)
+void update(const Real & alpha_,
+            const std::tr1::shared_ptr<dotk::Vector<Real> > & input_,
+            const Real & beta_,
+            const std::tr1::shared_ptr<dotk::Vector<Real> > & output_)
 {
-    output_->control()->axpy(alpha_, *input_->control());
+    output_->control()->update(alpha_, *input_->control(), beta_);
     if(input_->state().use_count() > 0)
     {
         assert(input_->state().use_count() > 0);
-        output_->state()->axpy(alpha_, *input_->state());
+        output_->state()->update(alpha_, *input_->state(), beta_);
     }
 }
 
-Real frobeniusNorm(const std::vector< std::vector<Real> > & matrix_)
+Real frobeniusNorm(const std::vector<std::vector<Real> > & matrix_)
 {
     Real value = 0.;
     size_t nrows = matrix_.size();
     size_t ncols = matrix_[0].size();
 
-    for(size_t row = 0; row < nrows; ++row)
+    for(size_t row = 0; row < nrows; ++ row)
     {
-        for(size_t col = 0; col < ncols; ++col)
+        for(size_t col = 0; col < ncols; ++ col)
         {
             value += matrix_[row][col] * matrix_[row][col];
         }

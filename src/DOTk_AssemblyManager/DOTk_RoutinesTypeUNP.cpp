@@ -82,10 +82,10 @@ void DOTk_RoutinesTypeUNP::gradient
     m_EqualityConstraint->adjointPartialDerivativeControl(*m_State, *primal_, *m_Dual, *m_ControlWorkVec);
 
     // assemble gradient operator
-    gradient_->copy(*m_ControlWorkVec);
+    gradient_->update(1., *m_ControlWorkVec, 0.);
     m_ControlWorkVec->fill(0.);
     m_ObjectiveFunction->partialDerivativeControl(*m_State, *primal_, *m_ControlWorkVec);
-    gradient_->axpy(static_cast<Real>(1.0), *m_ControlWorkVec);
+    gradient_->update(static_cast<Real>(1.0), *m_ControlWorkVec, 1.);
     dotk::DOTk_AssemblyManager::updateGradientEvaluationCounter();
 }
 
@@ -121,14 +121,14 @@ void DOTk_RoutinesTypeUNP::hessian
     m_HessCalcWorkVec->fill(0.);
     m_ObjectiveFunction->partialDerivativeStateState(*m_State, *primal_, *m_DeltaState, *m_StateWorkVec);
     m_EqualityConstraint->partialDerivativeStateState(*m_State, *primal_, *m_Dual, *m_DeltaState, *m_HessCalcWorkVec);
-    m_StateWorkVec->axpy(static_cast<Real>(1.0), *m_HessCalcWorkVec);
+    m_StateWorkVec->update(static_cast<Real>(1.0), *m_HessCalcWorkVec, 1.);
 
     m_HessCalcWorkVec->fill(0.);
     m_ObjectiveFunction->partialDerivativeStateControl(*m_State, *primal_, *vector_, *m_HessCalcWorkVec);
-    m_StateWorkVec->axpy(static_cast<Real>(1.0), *m_HessCalcWorkVec);
+    m_StateWorkVec->update(static_cast<Real>(1.0), *m_HessCalcWorkVec, 1.);
     m_HessCalcWorkVec->fill(0.);
     m_EqualityConstraint->partialDerivativeStateControl(*m_State, *primal_, *m_Dual, *vector_, *m_HessCalcWorkVec);
-    m_StateWorkVec->axpy(static_cast<Real>(1.0), *m_HessCalcWorkVec);
+    m_StateWorkVec->update(static_cast<Real>(1.0), *m_HessCalcWorkVec, 1.);
     m_StateWorkVec->scale(static_cast<Real>(-1.0));
 
     /* Solve c_u(u(variables_); variables_) dlambda = -(L_uu(u(variables_), variables_, lambda(variables_)) du
@@ -156,24 +156,24 @@ void DOTk_RoutinesTypeUNP::computeHessianTimesVector(const dotk::Vector<Real> & 
                                                             *m_Dual,
                                                             trial_step_,
                                                             *m_ControlWorkVec);
-    hessian_times_vector_.axpy(static_cast<Real>(1.0), *m_ControlWorkVec);
+    hessian_times_vector_.update(static_cast<Real>(1.0), *m_ControlWorkVec, 1.);
 
     // add L_zl(u(variables_); variables_; lambda(variables_))*dlambda contribution, where L denotes the Lagrangian functional
     m_ControlWorkVec->fill(0.);
     m_EqualityConstraint->adjointPartialDerivativeControl(*m_State, control_, *m_DeltaDual, *m_ControlWorkVec);
-    hessian_times_vector_.axpy(static_cast<Real>(1.0), *m_ControlWorkVec);
+    hessian_times_vector_.update(static_cast<Real>(1.0), *m_ControlWorkVec, 1.);
 
     // add L_zu(u(variables_); variables_; lambda(variables_))*du contribution, where L denotes the Lagrangian functional
     m_ControlWorkVec->fill(0.);
     m_ObjectiveFunction->partialDerivativeControlState(*m_State, control_, *m_DeltaState, *m_ControlWorkVec);
-    hessian_times_vector_.axpy(static_cast<Real>(1.0), *m_ControlWorkVec);
+    hessian_times_vector_.update(static_cast<Real>(1.0), *m_ControlWorkVec, 1.);
     m_ControlWorkVec->fill(0.);
     m_EqualityConstraint->partialDerivativeControlState(*m_State,
                                                           control_,
                                                           *m_Dual,
                                                           *m_DeltaState,
                                                           *m_ControlWorkVec);
-    hessian_times_vector_.axpy(static_cast<Real>(1.0), *m_ControlWorkVec);
+    hessian_times_vector_.update(static_cast<Real>(1.0), *m_ControlWorkVec, 1.);
 }
 
 void DOTk_RoutinesTypeUNP::initialize(const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_)

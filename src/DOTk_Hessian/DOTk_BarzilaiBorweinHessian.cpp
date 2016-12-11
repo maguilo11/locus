@@ -40,7 +40,7 @@ void DOTk_BarzilaiBorweinHessian::computeDeltaGradient(const std::tr1::shared_pt
 void DOTk_BarzilaiBorweinHessian::getHessian(const std::tr1::shared_ptr<dotk::Vector<Real> > & vector_,
                                              const std::tr1::shared_ptr<dotk::Vector<Real> > & mat_times_vec_)
 {
-    mat_times_vec_->copy(*vector_);
+    mat_times_vec_->update(1., *vector_, 0.);
     Real innr_deltaGrad_deltaPrimal = m_DeltaGradient->dot(*m_DeltaPrimal);
     bool negative_curvature_detected =
             innr_deltaGrad_deltaPrimal <= std::numeric_limits<Real>::min() ? true : false;

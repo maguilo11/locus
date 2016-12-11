@@ -55,8 +55,8 @@ void DOTk_ProjectedSteihaugTointPcg::solve(const std::tr1::shared_ptr<dotk::DOTk
     m_NewtonStep->fill(0.);
     m_ConjugateDirection->fill(0);
 
-    m_Residual->copy(*mng_->getNewGradient());
-    m_Residual->cwiseProd(*m_InactiveSet);
+    m_Residual->update(1., *mng_->getNewGradient(), 0.);
+    m_Residual->elementWiseMultiplication(*m_InactiveSet);
     m_Residual->scale(static_cast<Real>(-1.));
 
     this->iterate(preconditioner_, linear_operator_, mng_);
@@ -68,11 +68,11 @@ void DOTk_ProjectedSteihaugTointPcg::solve(const std::tr1::shared_ptr<dotk::DOTk
     Real norm_newton_step = m_NewtonStep->norm();
     if(norm_newton_step <= static_cast<Real>(0.))
     {
-        m_NewtonStep->copy(*mng_->getNewGradient());
+        m_NewtonStep->update(1., *mng_->getNewGradient(), 0.);
         m_NewtonStep->scale(static_cast<Real>(-1.));
-        m_NewtonStep->cwiseProd(*m_InactiveSet);
+        m_NewtonStep->elementWiseMultiplication(*m_InactiveSet);
     }
-    mng_->getTrialStep()->copy(*m_NewtonStep);
+    mng_->getTrialStep()->update(1., *m_NewtonStep, 0.);
 }
 
 void DOTk_ProjectedSteihaugTointPcg::iterate(const std::tr1::shared_ptr<dotk::DOTk_Preconditioner> & preconditioner_,
@@ -101,11 +101,11 @@ void DOTk_ProjectedSteihaugTointPcg::iterate(const std::tr1::shared_ptr<dotk::DO
         {
             Real beta = current_tau / previous_tau;
             m_ConjugateDirection->scale(beta);
-            m_ConjugateDirection->axpy(static_cast<Real>(1.), *m_InvPrecTimesResidual);
+            m_ConjugateDirection->update(1., *m_InvPrecTimesResidual, 1.);
         }
         else
         {
-            m_ConjugateDirection->copy(*m_InvPrecTimesResidual);
+            m_ConjugateDirection->update(1., *m_InvPrecTimesResidual, 0.);
         }
         this->applyVectorToHessian(mng_, linear_operator_, m_ConjugateDirection, m_HessTimesConjugateDirection);
         Real curvature = m_ConjugateDirection->dot(*m_HessTimesConjugateDirection);
@@ -113,23 +113,23 @@ void DOTk_ProjectedSteihaugTointPcg::iterate(const std::tr1::shared_ptr<dotk::DO
         {
             // compute scaled inexact trial step
             Real scaling = this->step(mng_, preconditioner_);
-            m_NewtonStep->axpy(scaling, *m_ConjugateDirection);
+            m_NewtonStep->update(scaling, *m_ConjugateDirection, 1.);
             break;
         }
         Real rayleigh_quotient = current_tau / curvature;
-        m_Residual->axpy(-rayleigh_quotient, *m_HessTimesConjugateDirection);
+        m_Residual->update(-rayleigh_quotient, *m_HessTimesConjugateDirection, 1.);
         norm_residual = m_Residual->norm();
-        m_NewtonStep->axpy(rayleigh_quotient, *m_ConjugateDirection);
+        m_NewtonStep->update(rayleigh_quotient, *m_ConjugateDirection, 1.);
         if(itr == 1)
         {
-            m_CauchyStep->copy(*m_NewtonStep);
+            m_CauchyStep->update(1., *m_NewtonStep, 0.);
         }
         Real norm_newton_step = m_NewtonStep->norm();
         if(norm_newton_step > current_trust_region_radius)
         {
             // compute scaled inexact trial step
             Real scaling = this->step(mng_, preconditioner_);
-            m_NewtonStep->axpy(scaling, *m_ConjugateDirection);
+            m_NewtonStep->update(scaling, *m_ConjugateDirection, 1.);
             dotk::DOTk_SteihaugTointSolver::setStoppingCriterion(dotk::types::TRUST_REGION_VIOLATED);
             break;
         }
@@ -165,16 +165,16 @@ void DOTk_ProjectedSteihaugTointPcg::applyVectorToHessian(const std::tr1::shared
                                                           const std::tr1::shared_ptr<dotk::Vector<Real> > & vector_,
                                                           std::tr1::shared_ptr<dotk::Vector<Real> > & output_)
 {
-    m_ActiveVector->copy(*vector_);
-    m_ActiveVector->cwiseProd(*m_ActiveSet);
-    m_InactiveVector->copy(*vector_);
-    m_InactiveVector->cwiseProd(*m_InactiveSet);
+    m_ActiveVector->update(1., *vector_, 0.);
+    m_ActiveVector->elementWiseMultiplication(*m_ActiveSet);
+    m_InactiveVector->update(1., *vector_, 0.);
+    m_InactiveVector->elementWiseMultiplication(*m_InactiveSet);
 
     output_->fill(0);
     linear_operator_->apply(mng_, m_InactiveVector, output_);
 
-    output_->cwiseProd(*m_InactiveSet);
-    output_->axpy(static_cast<Real>(1.), *m_ActiveVector);
+    output_->elementWiseMultiplication(*m_InactiveSet);
+    output_->update(static_cast<Real>(1.), *m_ActiveVector, 1.);
 }
 
 void DOTk_ProjectedSteihaugTointPcg::applyVectorToPreconditioner(const std::tr1::shared_ptr<dotk::DOTk_OptimizationDataMng> & mng_,
@@ -182,16 +182,16 @@ void DOTk_ProjectedSteihaugTointPcg::applyVectorToPreconditioner(const std::tr1:
                                                                  const std::tr1::shared_ptr<dotk::Vector<Real> > & vector_,
                                                                  std::tr1::shared_ptr<dotk::Vector<Real> > & output_)
 {
-    m_ActiveVector->copy(*vector_);
-    m_ActiveVector->cwiseProd(*m_ActiveSet);
-    m_InactiveVector->copy(*vector_);
-    m_InactiveVector->cwiseProd(*m_InactiveSet);
+    m_ActiveVector->update(1., *vector_, 0.);
+    m_ActiveVector->elementWiseMultiplication(*m_ActiveSet);
+    m_InactiveVector->update(1., *vector_, 0.);
+    m_InactiveVector->elementWiseMultiplication(*m_InactiveSet);
 
     output_->fill(0);
     preconditioner_->applyPreconditioner(mng_, m_InactiveVector, output_);
 
-    output_->cwiseProd(*m_InactiveSet);
-    output_->axpy(static_cast<Real>(1.), *m_ActiveVector);
+    output_->elementWiseMultiplication(*m_InactiveSet);
+    output_->update(static_cast<Real>(1.), *m_ActiveVector, 1.);
 }
 
 void DOTk_ProjectedSteihaugTointPcg::applyVectorToInvPreconditioner(const std::tr1::shared_ptr<dotk::DOTk_OptimizationDataMng> & mng_,
@@ -199,16 +199,16 @@ void DOTk_ProjectedSteihaugTointPcg::applyVectorToInvPreconditioner(const std::t
                                                                     const std::tr1::shared_ptr<dotk::Vector<Real> > & vector_,
                                                                     std::tr1::shared_ptr<dotk::Vector<Real> > & output_)
 {
-    m_ActiveVector->copy(*vector_);
-    m_ActiveVector->cwiseProd(*m_ActiveSet);
-    m_InactiveVector->copy(*vector_);
-    m_InactiveVector->cwiseProd(*m_InactiveSet);
+    m_ActiveVector->update(1., *vector_, 0.);
+    m_ActiveVector->elementWiseMultiplication(*m_ActiveSet);
+    m_InactiveVector->update(1., *vector_, 0.);
+    m_InactiveVector->elementWiseMultiplication(*m_InactiveSet);
 
     output_->fill(0);
     preconditioner_->applyInvPreconditioner(mng_, m_InactiveVector, output_);
 
-    output_->cwiseProd(*m_InactiveSet);
-    output_->axpy(static_cast<Real>(1.), *m_ActiveVector);
+    output_->elementWiseMultiplication(*m_InactiveSet);
+    output_->update(static_cast<Real>(1.), *m_ActiveVector, 1.);
 }
 
 }

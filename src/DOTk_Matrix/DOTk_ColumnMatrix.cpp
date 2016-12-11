@@ -54,8 +54,8 @@ size_t DOTk_ColumnMatrix<ScalarType>::size() const
 
 template<typename ScalarType>
 void DOTk_ColumnMatrix<ScalarType>::copy(const size_t & index_,
-                                   const dotk::Vector<ScalarType> & input_,
-                                   bool column_major_copy_)
+                                         const dotk::Vector<ScalarType> & input_,
+                                         bool column_major_copy_)
 {
     if(column_major_copy_ == false)
     {
@@ -71,7 +71,7 @@ void DOTk_ColumnMatrix<ScalarType>::copy(const size_t & index_,
     else
     {
         assert(input_.size() == this->nrows());
-        m_MatrixData[index_]->copy(input_);
+        m_MatrixData[index_]->update(1., input_, 0.);
     }
 }
 
@@ -121,9 +121,9 @@ void DOTk_ColumnMatrix<ScalarType>::scale(const size_t & index_, const ScalarTyp
 
 template<typename ScalarType>
 void DOTk_ColumnMatrix<ScalarType>::axpy(const size_t & index_,
-                                    const ScalarType & alpha_,
-                                    const dotk::Vector<ScalarType> & input_,
-                                    bool column_major_axpy_)
+                                         const ScalarType & alpha_,
+                                         const dotk::Vector<ScalarType> & input_,
+                                         bool column_major_axpy_)
 {
     ScalarType value, scaled_value;
 
@@ -144,7 +144,7 @@ void DOTk_ColumnMatrix<ScalarType>::axpy(const size_t & index_,
     else
     {
         assert(this->nrows() == input_.size());
-        m_MatrixData[index_]->axpy(alpha_, input_);
+        m_MatrixData[index_]->update(alpha_, input_, 1.);
     }
 }
 

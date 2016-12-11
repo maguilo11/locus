@@ -157,17 +157,17 @@ void DOTk_SequentialQuadraticProgramming::storePreviousSolution
 (const std::tr1::shared_ptr<dotk::DOTk_TrustRegionMngTypeELP> & mng_)
 {
     mng_->setOldObjectiveFunctionValue(mng_->getNewObjectiveFunctionValue());
-    mng_->getOldDual()->copy(*mng_->getNewDual());
-    mng_->getOldPrimal()->copy(*mng_->getNewPrimal());
-    mng_->getOldGradient()->copy(*mng_->getNewGradient());
-    mng_->getOldEqualityConstraintResidual()->copy(*mng_->getNewEqualityConstraintResidual());
+    mng_->getOldDual()->update(1., *mng_->getNewDual(), 0.);
+    mng_->getOldPrimal()->update(1., *mng_->getNewPrimal(), 0.);
+    mng_->getOldGradient()->update(1., *mng_->getNewGradient(), 0.);
+    mng_->getOldEqualityConstraintResidual()->update(1., *mng_->getNewEqualityConstraintResidual(), 0.);
 }
 
 void DOTk_SequentialQuadraticProgramming::resetCurrentStateToFormer
 (const std::tr1::shared_ptr<dotk::DOTk_TrustRegionMngTypeELP> & mng_)
 {
-    mng_->getNewPrimal()->copy(*mng_->getOldPrimal());
-    mng_->getNewGradient()->copy(*mng_->getOldGradient());
+    mng_->getNewPrimal()->update(1., *mng_->getOldPrimal(), 0.);
+    mng_->getNewGradient()->update(1., *mng_->getOldGradient(), 0.);
     mng_->setNewObjectiveFunctionValue(mng_->getOldObjectiveFunctionValue());
 }
 

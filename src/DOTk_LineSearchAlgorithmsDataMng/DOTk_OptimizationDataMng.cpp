@@ -84,8 +84,8 @@ Real DOTk_OptimizationDataMng::getNormNewGradient() const
 void DOTk_OptimizationDataMng::storeCurrentState()
 {
     m_OldObjectiveFunction = m_NewObjectiveFunction;
-    m_OldPrimal->copy(*m_NewPrimal);
-    m_OldGradient->copy(*m_NewGradient);
+    m_OldPrimal->update(1., *m_NewPrimal, 0.);
+    m_OldGradient->update(1., *m_NewGradient, 0.);
 }
 
 void DOTk_OptimizationDataMng::setNewObjectiveFunctionValue(Real value_)
@@ -125,7 +125,7 @@ const std::tr1::shared_ptr<dotk::Vector<Real> > & DOTk_OptimizationDataMng::getM
 
 void DOTk_OptimizationDataMng::setTrialStep(const dotk::Vector<Real> & input_)
 {
-    m_TrialStep->copy(input_);
+    m_TrialStep->update(1., input_, 0.);
 }
 
 const std::tr1::shared_ptr<dotk::Vector<Real> > & DOTk_OptimizationDataMng::getTrialStep() const
@@ -135,12 +135,12 @@ const std::tr1::shared_ptr<dotk::Vector<Real> > & DOTk_OptimizationDataMng::getT
 
 void DOTk_OptimizationDataMng::setNewPrimal(const dotk::Vector<Real> & input_)
 {
-    m_NewPrimal->copy(input_);
+    m_NewPrimal->update(1., input_, 0.);
 }
 
 void DOTk_OptimizationDataMng::setOldPrimal(const dotk::Vector<Real> & input_)
 {
-    m_OldPrimal->copy(input_);
+    m_OldPrimal->update(1., input_, 0.);
 }
 
 const std::tr1::shared_ptr<dotk::Vector<Real> > & DOTk_OptimizationDataMng::getNewPrimal() const
@@ -155,12 +155,12 @@ const std::tr1::shared_ptr<dotk::Vector<Real> > & DOTk_OptimizationDataMng::getO
 
 void DOTk_OptimizationDataMng::setNewGradient(const dotk::Vector<Real> & input_)
 {
-    m_NewGradient->copy(input_);
+    m_NewGradient->update(1., input_, 0.);
 }
 
 void DOTk_OptimizationDataMng::setOldGradient(const dotk::Vector<Real> & input_)
 {
-    m_OldGradient->copy(input_);
+    m_OldGradient->update(1., input_, 0.);
 }
 
 const std::tr1::shared_ptr<dotk::Vector<Real> > & DOTk_OptimizationDataMng::getNewGradient() const
@@ -229,10 +229,10 @@ void DOTk_OptimizationDataMng::initialize(const std::tr1::shared_ptr<dotk::DOTk_
     {
         m_NewDual = primal_->dual()->clone();
         m_OldDual = primal_->dual()->clone();
-        m_NewDual->copy(*primal_->dual());
-        m_OldDual->copy(*primal_->dual());
+        m_NewDual->update(1., *primal_->dual(), 0.);
+        m_OldDual->update(1., *primal_->dual(), 0.);
     }
-    m_NewPrimal->copy(*primal_->control());
+    m_NewPrimal->update(1., *primal_->control(), 0.);
 }
 
 }

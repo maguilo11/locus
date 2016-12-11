@@ -49,7 +49,7 @@ Real DOTk_ArnoldiProjection::getInitialResidual() const
 void DOTk_ArnoldiProjection::setOrthogonalVector(size_t index_,
                                                  const std::tr1::shared_ptr<dotk::Vector<Real> > & vector_)
 {
-    m_OrthogonalBasis[index_]->copy(*vector_);
+    m_OrthogonalBasis[index_]->update(1., *vector_, 0.);
 }
 
 const std::tr1::shared_ptr<dotk::Vector<Real> > &
@@ -85,7 +85,7 @@ void DOTk_ArnoldiProjection::updateHessenbergMatrix(size_t current_itr_,
     for(size_t index = 0; index <= current_itr_; ++ index)
     {
         Real alpha = left_prec_times_vec_->dot(*m_OrthogonalBasis[index]);
-        left_prec_times_vec_->axpy(-alpha, *m_OrthogonalBasis[index]);
+        left_prec_times_vec_->update(-alpha, *m_OrthogonalBasis[index], 1.);
         (*m_HessenbergMatrix)(index, current_itr_) = alpha;
     }
 }
@@ -105,8 +105,7 @@ void DOTk_ArnoldiProjection::arnoldi(size_t ortho_vector_index_,
     Real scaling = kernel_vector_->norm();
 
     Real beta = static_cast<Real>(1.) / scaling;
-    m_OrthogonalBasis[ortho_vector_index_ + 1]->copy(*kernel_vector_);
-    m_OrthogonalBasis[ortho_vector_index_ + 1]->scale(beta);
+    m_OrthogonalBasis[ortho_vector_index_ + 1]->update(beta, *kernel_vector_, 0.);
 
     this->applyGivensRotationsToHessenbergMatrix(ortho_vector_index_);
     Real hessenberg_matrix_entry = (*m_HessenbergMatrix)(ortho_vector_index_, ortho_vector_index_);
@@ -126,7 +125,7 @@ void DOTk_ArnoldiProjection::arnoldi(size_t ortho_vector_index_,
     kernel_vector_->fill(0.);
     for(size_t index = 0; index <= ortho_vector_index_; ++ index)
     {
-        kernel_vector_->axpy(m_ScaleFactorsStorage[index], *m_OrthogonalBasis[index]);
+        kernel_vector_->update(m_ScaleFactorsStorage[index], *m_OrthogonalBasis[index], 1.);
     }
 }
 

@@ -200,20 +200,20 @@ TEST(DOTk_InexactTrustRegionSQPTest, solveTangentialSubProb)
     (*primal->dual())[0] = 0.0207961931305597;
     (*primal->dual())[1] = -0.019798867645168;
     (*primal->dual())[2] = 0.0834391241457092;
-    mng->getNewDual()->copy(*primal->dual());
-    mng->getNewPrimal()->control()->copy(*primal->control());
+    mng->getNewDual()->update(1., *primal->dual(), 0.);
+    mng->getNewPrimal()->control()->update(1., *primal->control(), 0.);
     (*primal->control())[0] = -0.737271611192309;
     (*primal->control())[1] = -0.755262411678706;
     (*primal->control())[2] = -0.0474142630809581;
     (*primal->control())[3] = 0.112608874817276;
     (*primal->control())[4] = 0.112608874817276;
-    mng->getNewGradient()->control()->copy(*primal->control());
+    mng->getNewGradient()->control()->update(1., *primal->control(), 0.);
     (*primal->control())[0] = 0.821886987715101;
     (*primal->control())[1] = 0.661914924684898;
     (*primal->control())[2] = -0.0339371478280196;
     (*primal->control())[3] = 0.0810737062636601;
     (*primal->control())[4] = 0.0810737062636601;
-    mng->getHessTimesNormalStep()->control()->copy(*primal->control());
+    mng->getHessTimesNormalStep()->control()->update(1., *primal->control(), 0.);
 
     std::tr1::shared_ptr<dotk::DOTk_InexactTrustRegionSqpSolverMng>
         sqp_solver_mng(new dotk::DOTk_InexactTrustRegionSqpSolverMng(primal, mng));
@@ -429,7 +429,7 @@ TEST(DOTk_InexactTrustRegionSQPTest, updateMeritFunctionPenaltyParameter)
     Real tolerance = 1e-10;
     mng->m_LinearizedEqConstraint->fill(0.1);
     mng->getNewEqualityConstraintResidual()->fill(0.1);
-    mng->m_LinearizedEqConstraint->axpy(1., *mng->getNewEqualityConstraintResidual());
+    mng->m_LinearizedEqConstraint->update(1., *mng->getNewEqualityConstraintResidual(), 1.);
     Real partial_predicted_reduction = 1.;
     sqp.updateMeritFunctionPenaltyParameter(partial_predicted_reduction);
     EXPECT_NEAR(1., sqp.getMeritFunctionPenaltyParameter(), tolerance);
@@ -437,7 +437,7 @@ TEST(DOTk_InexactTrustRegionSQPTest, updateMeritFunctionPenaltyParameter)
     // TEST 2: PARTIAL REDUCTION GREATER THAN UPDATE CRITERION
     mng->m_LinearizedEqConstraint->fill(-1.);
     mng->getNewEqualityConstraintResidual()->fill(4.);
-    mng->m_LinearizedEqConstraint->axpy(1., *mng->getNewEqualityConstraintResidual());
+    mng->m_LinearizedEqConstraint->update(1., *mng->getNewEqualityConstraintResidual(), 1.);
     partial_predicted_reduction = -11;
     sqp.updateMeritFunctionPenaltyParameter(partial_predicted_reduction);
     EXPECT_NEAR(1.0476190576190476, sqp.getMeritFunctionPenaltyParameter(), tolerance);

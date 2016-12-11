@@ -123,9 +123,9 @@ void DOTk_PerryShanno::getDirection(const std::tr1::shared_ptr<dotk::Vector<Real
 
     // compute Perry-Shannon direction
     dir_->scale(beta);
-    dir_->axpy(static_cast<Real>(-1.0), *new_grad_);
-    dir_->axpy(alpha, *new_grad_);
-    dir_->axpy(-alpha, *old_grad_);
+    dir_->update(-1., *new_grad_, 1.);
+    dir_->update(alpha, *new_grad_, 1.);
+    dir_->update(-alpha, *old_grad_, 1.);
     dir_->scale(theta);
 }
 

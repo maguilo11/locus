@@ -25,8 +25,8 @@ DOTk_ProjectedStep::DOTk_ProjectedStep(const std::tr1::shared_ptr<dotk::DOTk_Pri
 {
     dotk::DOTk_LineSearchFactory step_factory;
     step_factory.buildCubicLineSearch(primal_->control(), m_LineSearch);
-    m_LowerBound->copy(*primal_->getControlLowerBound());
-    m_UpperBound->copy(*primal_->getControlUpperBound());
+    m_LowerBound->update(1., *primal_->getControlLowerBound(), 0.);
+    m_UpperBound->update(1., *primal_->getControlUpperBound(), 0.);
 }
 
 DOTk_ProjectedStep::~DOTk_ProjectedStep()
@@ -101,11 +101,11 @@ void DOTk_ProjectedStep::build(const std::tr1::shared_ptr<dotk::DOTk_Primal> & p
 
 void DOTk_ProjectedStep::solveSubProblem(const std::tr1::shared_ptr<dotk::DOTk_OptimizationDataMng> & mng_)
 {
-    m_WorkVector->copy(*mng_->getNewPrimal());
-    m_WorkVector->axpy(1., *mng_->getTrialStep());
+    m_WorkVector->update(1., *mng_->getNewPrimal(), 0.);
+    m_WorkVector->update(1., *mng_->getTrialStep(), 1.);
     m_BoundConstraint->project(*m_LowerBound, *m_UpperBound, *m_WorkVector);
-    m_WorkVector->axpy(-1., *mng_->getNewPrimal());
-    mng_->getTrialStep()->copy(*m_WorkVector);
+    m_WorkVector->update(-1., *mng_->getNewPrimal(), 1.);
+    mng_->getTrialStep()->update(1., *m_WorkVector, 0.);
     Real norm_trial_step = mng_->getTrialStep()->norm();
     mng_->setNormTrialStep(norm_trial_step);
 

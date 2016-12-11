@@ -69,8 +69,8 @@ void DOTk_SteihaugTointKelleySachs::getMin()
     Real new_objective_value = m_DataMng->evaluateObjective();
     m_DataMng->setNewObjectiveFunctionValue(new_objective_value);
     m_DataMng->computeGradient();
-    m_DataMng->getOldPrimal()->copy(*m_DataMng->getNewPrimal());
-    m_DataMng->getOldGradient()->copy(*m_DataMng->getNewGradient());
+    m_DataMng->getOldPrimal()->update(1., *m_DataMng->getNewPrimal(), 0.);
+    m_DataMng->getOldGradient()->update(1., *m_DataMng->getNewGradient(), 0.);
     Real norm_gradient = m_DataMng->getNewGradient()->norm();
     m_DataMng->setNormNewGradient(norm_gradient);
     if(m_StepMng->isInitialTrustRegionRadiusSetToGradNorm() == true)
@@ -95,11 +95,11 @@ void DOTk_SteihaugTointKelleySachs::getMin()
         // Solve trust region subproblem
         m_StepMng->solveSubProblem(m_DataMng, m_Solver, m_IO);
         // Store current primal and gradient
-        m_WorkVector->copy(*m_DataMng->getNewPrimal()); // copy current primal
-        m_DataMng->getNewPrimal()->copy(*m_StepMng->getMidPrimal());
+        m_WorkVector->update(1., *m_DataMng->getNewPrimal(), 0.); // update current primal
+        m_DataMng->getNewPrimal()->update(1., *m_StepMng->getMidPrimal(), 0.);
         // Compute new midpoint gradient
         m_DataMng->computeGradient();
-        m_DataMng->getNewPrimal()->copy(*m_WorkVector);  // reset current primal
+        m_DataMng->getNewPrimal()->update(1., *m_WorkVector, 0.);  // reset current primal
         // Update current primal and gradient information
         this->updateDataManager();
         // Update stationarity measure
@@ -176,14 +176,13 @@ bool DOTk_SteihaugTointKelleySachs::checkStoppingCriteria()
 
 void DOTk_SteihaugTointKelleySachs::computeStationarityMeasure()
 {
-    m_WorkVector->copy(*m_DataMng->getNewPrimal());
-    m_WorkVector->axpy(static_cast<Real>(-1.), *m_DataMng->getNewGradient());
+    m_WorkVector->update(1., *m_DataMng->getNewPrimal(), 0.);
+    m_WorkVector->update(static_cast<Real>(-1.), *m_DataMng->getNewGradient(), 1.);
     m_BoundConstraint->project(*m_DataMng->getPrimalStruc()->getControlLowerBound(),
                                *m_DataMng->getPrimalStruc()->getControlUpperBound(),
                                *m_WorkVector);
-    m_WorkVector->scale(static_cast<Real>(-1.));
-    m_WorkVector->axpy(static_cast<Real>(1.), *m_DataMng->getNewPrimal());
-    m_WorkVector->cwiseProd(*m_Solver->getInactiveSet());
+    m_WorkVector->update(static_cast<Real>(1.), *m_DataMng->getNewPrimal(), -1.);
+    m_WorkVector->elementWiseMultiplication(*m_Solver->getInactiveSet());
 
     m_StationarityMeasure = m_WorkVector->norm();
     m_DataMng->setNormTrialStep(m_StationarityMeasure);
@@ -191,8 +190,8 @@ void DOTk_SteihaugTointKelleySachs::computeStationarityMeasure()
 
 void DOTk_SteihaugTointKelleySachs::resetCurrentStateToPreviousState()
 {
-    m_DataMng->getNewPrimal()->copy(*m_DataMng->getOldPrimal());
-    m_DataMng->getNewGradient()->copy(*m_DataMng->getOldGradient());
+    m_DataMng->getNewPrimal()->update(1., *m_DataMng->getOldPrimal(), 0.);
+    m_DataMng->getNewGradient()->update(1., *m_DataMng->getOldGradient(), 0.);
     m_DataMng->setNewObjectiveFunctionValue(m_DataMng->getOldObjectiveFunctionValue());
 }
 
@@ -213,9 +212,9 @@ bool DOTk_SteihaugTointKelleySachs::updatePrimal()
     {
         // Compute trial point
         Real lambda = -xi / alpha;
-        m_WorkVector->copy(*m_StepMng->getMidPrimal());
+        m_WorkVector->update(1., *m_StepMng->getMidPrimal(), 0.);
         // NOTE: new gradient stores the current mid gradient
-        m_WorkVector->axpy(lambda, *m_DataMng->getNewGradient());
+        m_WorkVector->update(lambda, *m_DataMng->getNewGradient(), 1.);
         m_BoundConstraint->project(*m_DataMng->getPrimalStruc()->getControlLowerBound(),
                                    *m_DataMng->getPrimalStruc()->getControlUpperBound(),
                                    *m_WorkVector);
@@ -227,7 +226,7 @@ bool DOTk_SteihaugTointKelleySachs::updatePrimal()
         if(actual_reduction < -mu * mid_actual_reduction)
         {
             primal_updated = true;
-            m_DataMng->getNewPrimal()->copy(*m_WorkVector);
+            m_DataMng->getNewPrimal()->update(1., *m_WorkVector, 0.);
             m_StepMng->setActualReduction(actual_reduction);
             m_DataMng->setNewObjectiveFunctionValue(trial_objective_value);
             break;
@@ -246,7 +245,7 @@ bool DOTk_SteihaugTointKelleySachs::updatePrimal()
 
     if(iteration >= max_num_updates)
     {
-        m_DataMng->getNewPrimal()->copy(*m_StepMng->getMidPrimal());
+        m_DataMng->getNewPrimal()->update(1., *m_StepMng->getMidPrimal(), 0.);
         m_DataMng->setNewObjectiveFunctionValue(mid_objective_value);
     }
 
@@ -257,8 +256,8 @@ void DOTk_SteihaugTointKelleySachs::updateDataManager()
 {
     Real current_objective_value = m_DataMng->getNewObjectiveFunctionValue();
     m_DataMng->setOldObjectiveFunctionValue(current_objective_value);
-    m_DataMng->getOldPrimal()->copy(*m_DataMng->getNewPrimal());
-    m_DataMng->getOldGradient()->copy(*m_DataMng->getNewGradient());
+    m_DataMng->getOldPrimal()->update(1., *m_DataMng->getNewPrimal(), 0.);
+    m_DataMng->getOldGradient()->update(1., *m_DataMng->getNewGradient(), 0.);
 
     if(this->updatePrimal() == true)
     {
@@ -267,8 +266,8 @@ void DOTk_SteihaugTointKelleySachs::updateDataManager()
         m_DataMng->computeGradient();
     }
 
-    m_WorkVector->copy(*m_DataMng->getNewGradient());
-    m_WorkVector->cwiseProd(*m_Solver->getInactiveSet());
+    m_WorkVector->update(1., *m_DataMng->getNewGradient(), 0.);
+    m_WorkVector->elementWiseMultiplication(*m_Solver->getInactiveSet());
     Real norm_proj_gradient = m_WorkVector->norm();
     m_DataMng->setNormNewGradient(norm_proj_gradient);
 }

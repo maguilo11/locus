@@ -63,14 +63,14 @@ void resetField(const dotk::Vector<Real> & data_, dotk::nlp::variables & variabl
         case dotk::types::ZU:
         case dotk::types::UU:
         {
-            variables_.mState->copy(data_);
+            variables_.mState->update(1., data_, 0.);
             break;
         }
         case dotk::types::Z:
         case dotk::types::UZ:
         case dotk::types::ZZ:
         {
-            variables_.mControl->copy(data_);
+            variables_.mControl->update(1., data_, 0.);
             break;
         }
         case dotk::types::ZERO_ORDER_DERIVATIVE:
@@ -91,14 +91,14 @@ void perturbField(const Real epsilon_,
         case dotk::types::ZU:
         case dotk::types::UU:
         {
-            variables_.mState->axpy(epsilon_, direction_);
+            variables_.mState->update(epsilon_, direction_, 1.);
             break;
         }
         case dotk::types::Z:
         case dotk::types::UZ:
         case dotk::types::ZZ:
         {
-            variables_.mControl->axpy(epsilon_, direction_);
+            variables_.mControl->update(epsilon_, direction_, 1.);
             break;
         }
         case dotk::types::ZERO_ORDER_DERIVATIVE:

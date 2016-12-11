@@ -137,7 +137,7 @@ void DOTk_ProjectedLeftPrecCG::initialize(const std::tr1::shared_ptr<dotk::Vecto
     m_DataMng->getSolution()->fill(0.);
     m_DataMng->getLeftPrec()->setParameter(dotk::types::CURRENT_KRYLOV_SOLVER_ITR, itr);
     m_DataMng->getLeftPrec()->apply(mng_, rhs_vec_, m_DataMng->getLeftPrecTimesVector(itr));
-    m_DataMng->getResidual(itr)->copy(*m_DataMng->getLeftPrecTimesVector(itr));
+    m_DataMng->getResidual(itr)->update(1., *m_DataMng->getLeftPrecTimesVector(itr), 0.);
 }
 
 void DOTk_ProjectedLeftPrecCG::ppcg(const std::tr1::shared_ptr<dotk::Vector<Real> > & rhs_vec_,
@@ -174,8 +174,8 @@ void DOTk_ProjectedLeftPrecCG::ppcg(const std::tr1::shared_ptr<dotk::Vector<Real
             break;
         }
         Real alpha = -old_residual_dot_proj_prec_residual / curvature;
-        m_DataMng->getPreviousSolution()->copy(*m_DataMng->getSolution());
-        m_DataMng->getSolution()->axpy(alpha, *projection->getOrthogonalVector(itr));
+        m_DataMng->getPreviousSolution()->update(1., *m_DataMng->getSolution(), 0.);
+        m_DataMng->getSolution()->update(alpha, *projection->getOrthogonalVector(itr), 1.);
         Real norm_solution = m_DataMng->getSolution()->norm();
         Real trust_region_radius = dotk::DOTk_KrylovSolver::getTrustRegionRadius();
         if(norm_solution >= trust_region_radius)
@@ -184,8 +184,8 @@ void DOTk_ProjectedLeftPrecCG::ppcg(const std::tr1::shared_ptr<dotk::Vector<Real
             dotk::DOTk_KrylovSolver::setSolverStopCriterion(dotk::types::TRUST_REGION_VIOLATED);
             break;
         }
-        m_DataMng->getResidual(itr + 1)->copy(*m_DataMng->getResidual(itr));
-        m_DataMng->getResidual(itr + 1)->axpy(alpha, *projection->getLinearOperatorTimesOrthoVector(itr));
+        m_DataMng->getResidual(itr + 1)->update(1., *m_DataMng->getResidual(itr), 0.);
+        m_DataMng->getResidual(itr + 1)->update(alpha, *projection->getLinearOperatorTimesOrthoVector(itr), 1.);
 
         m_DataMng->getLeftPrec()->setParameter(dotk::types::CURRENT_KRYLOV_SOLVER_ITR, itr + 1);
         m_DataMng->getLeftPrec()->apply(optimization_data_mng_,
@@ -204,7 +204,7 @@ void DOTk_ProjectedLeftPrecCG::ppcg(const std::tr1::shared_ptr<dotk::Vector<Real
     this->setProjectedConjugateDirection();
     if(itr == 0)
     {
-        m_DataMng->getFirstSolution()->copy(*m_DataMng->getSolution());
+        m_DataMng->getFirstSolution()->update(1., *m_DataMng->getSolution(), 0.);
     }
 }
 
@@ -224,16 +224,16 @@ void DOTk_ProjectedLeftPrecCG::setProjectedConjugateDirection()
     {
         if(itr > 0)
         {
-            m_ProjectedConjugateDirection->copy(*m_DataMng->getProjection()->getOrthogonalVector(itr - 1));
+            m_ProjectedConjugateDirection->update(1., *m_DataMng->getProjection()->getOrthogonalVector(itr - 1), 0.);
         }
         else
         {
-            m_ProjectedConjugateDirection->copy(*m_DataMng->getProjection()->getOrthogonalVector(itr));
+            m_ProjectedConjugateDirection->update(1., *m_DataMng->getProjection()->getOrthogonalVector(itr), 0.);
         }
     }
     else
     {
-        m_ProjectedConjugateDirection->copy(*m_DataMng->getProjection()->getOrthogonalVector(itr));
+        m_ProjectedConjugateDirection->update(1., *m_DataMng->getProjection()->getOrthogonalVector(itr), 0.);
     }
 }
 
@@ -286,7 +286,7 @@ void DOTk_ProjectedLeftPrecCG::setFirstSolution()
     size_t current_itr = dotk::DOTk_KrylovSolver::getNumSolverItrDone();
     if(current_itr == 1)
     {
-        m_DataMng->getFirstSolution()->copy(*m_DataMng->getSolution());
+        m_DataMng->getFirstSolution()->update(1., *m_DataMng->getSolution(), 0.);
     }
 }
 

@@ -76,31 +76,31 @@ TEST(DOTk_NLP, resetField)
     dotk::gtest::checkResults(*vars.mControl, original_control);
 
     // TEST 2: DERIVATIVE W.R.T. STATE
-    vars.mControl->copy(control);
+    vars.mControl->update(1., control, 0.);
     dotk::nlp::resetField(original_state, vars, dotk::types::U);
     dotk::gtest::checkResults(*vars.mState, original_state);
     dotk::gtest::checkResults(*vars.mControl, control);
 
     // TEST 3: DERIVATIVE W.R.T. STATE_CONTROL
-    vars.mState->copy(state);
+    vars.mState->update(1., state, 0.);
     dotk::nlp::resetField(original_control, vars, dotk::types::UZ);
     dotk::gtest::checkResults(*vars.mState, state);
     dotk::gtest::checkResults(*vars.mControl, original_control);
 
     // TEST 4: DERIVATIVE W.R.T. CONTROL_STATE
-    vars.mControl->copy(control);
+    vars.mControl->update(1., control, 0.);
     dotk::nlp::resetField(original_state, vars, dotk::types::ZU);
     dotk::gtest::checkResults(*vars.mState, original_state);
     dotk::gtest::checkResults(*vars.mControl, control);
 
     // TEST 5: DERIVATIVE W.R.T. CONTROL_CONTROL
-    vars.mState->copy(state);
+    vars.mState->update(1., state, 0.);
     dotk::nlp::resetField(original_control, vars, dotk::types::ZZ);
     dotk::gtest::checkResults(*vars.mState, state);
     dotk::gtest::checkResults(*vars.mControl, original_control);
 
     // TEST 6: DERIVATIVE W.R.T. STATE_STATE
-    vars.mControl->copy(control);
+    vars.mControl->update(1., control, 0.);
     dotk::nlp::resetField(original_state, vars, dotk::types::UU);
     dotk::gtest::checkResults(*vars.mState, original_state);
     dotk::gtest::checkResults(*vars.mControl, control);
@@ -127,32 +127,32 @@ TEST(DOTk_NLP, perturbField)
     dotk::gtest::checkResults(*vars.mControl, control_gold);
 
     // TEST 2: DERIVATIVE W.R.T. STATE
-    vars.mControl->copy(control);
+    vars.mControl->update(1., control, 0.);
     dotk::StdVector<Real> state_gold(num_states, 4.004);
     dotk::nlp::perturbField(epsilon, state_perturbation_vector, vars, dotk::types::U);
     dotk::gtest::checkResults(*vars.mState, state_gold);
     dotk::gtest::checkResults(*vars.mControl, control);
 
     // TEST 3: DERIVATIVE W.R.T. STATE_CONTROL
-    vars.mState->copy(state);
+    vars.mState->update(1., state, 0.);
     dotk::nlp::perturbField(epsilon, control_perturbation_vector, vars, dotk::types::UZ);
     dotk::gtest::checkResults(*vars.mState, state);
     dotk::gtest::checkResults(*vars.mControl, control_gold);
 
     // TEST 4: DERIVATIVE W.R.T. CONTROL_STATE
-    vars.mControl->copy(control);
+    vars.mControl->update(1., control, 0.);
     dotk::nlp::perturbField(epsilon, state_perturbation_vector, vars, dotk::types::ZU);
     dotk::gtest::checkResults(*vars.mState, state_gold);
     dotk::gtest::checkResults(*vars.mControl, control);
 
     // TEST 5: DERIVATIVE W.R.T. CONTROL_CONTROL
-    vars.mState->copy(state);
+    vars.mState->update(1., state, 0.);
     dotk::nlp::perturbField(epsilon, control_perturbation_vector, vars, dotk::types::ZZ);
     dotk::gtest::checkResults(*vars.mState, state);
     dotk::gtest::checkResults(*vars.mControl, control_gold);
 
     // TEST 6: DERIVATIVE W.R.T. STATE_STATE
-    vars.mControl->copy(control);
+    vars.mControl->update(1., control, 0.);
     dotk::nlp::perturbField(epsilon, state_perturbation_vector, vars, dotk::types::UU);
     dotk::gtest::checkResults(*vars.mState, state_gold);
     dotk::gtest::checkResults(*vars.mControl, control);

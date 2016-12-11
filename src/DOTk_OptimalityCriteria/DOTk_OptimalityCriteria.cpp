@@ -129,12 +129,12 @@ void DOTk_OptimalityCriteria::setInequalityConstraintDualUpperBound(Real value_)
 
 void DOTk_OptimalityCriteria::gatherSolution(dotk::Vector<Real> & data_) const
 {
-    data_.copy(m_DataMng->getNewControl());
+    data_.update(1., m_DataMng->getNewControl(), 0.);
 }
 
 void DOTk_OptimalityCriteria::gatherGradient(dotk::Vector<Real> & data_) const
 {
-    data_.copy(m_DataMng->getObjectiveGradient());
+    data_.update(1., m_DataMng->getObjectiveGradient(), 0.);
 }
 
 void DOTk_OptimalityCriteria::gatherOuputStream(std::ostringstream & output_)

@@ -179,8 +179,8 @@ void DOTk_FirstOrderAlgorithm::resetCurrentStateToFormer(const std::tr1::shared_
     ///    vector_space_ = shared pointer to reduced space algorithm vector space. \n
     ///      (const std::tr1::shared_ptr<dotk::DOTk_VectorSpaceReduced>)\n
     ///
-    mng_->getNewPrimal()->copy(*mng_->getOldPrimal());
-    mng_->getNewGradient()->copy(*mng_->getOldGradient());
+    mng_->getNewPrimal()->update(1., *mng_->getOldPrimal(), 0.);
+    mng_->getNewGradient()->update(1., *mng_->getOldGradient(), 0.);
     mng_->setNewObjectiveFunctionValue(mng_->getOldObjectiveFunctionValue());
 }
 

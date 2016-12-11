@@ -144,8 +144,8 @@ void DOTk_SecondOrderOperator::computeDeltaPrimal(const std::tr1::shared_ptr<dot
 {
     if(this->updateSecondOrderOperator() == true)
     {
-        delta_primal_->copy(*new_primal_);
-        delta_primal_->axpy(static_cast<Real>(-1.0), *old_primal_);
+        delta_primal_->update(1., *new_primal_, 0.);
+        delta_primal_->update(-1., *old_primal_, 1.);
     }
 }
 
@@ -155,8 +155,8 @@ void DOTk_SecondOrderOperator::computeDeltaGradient(const std::tr1::shared_ptr<d
 {
     if(this->updateSecondOrderOperator() == true)
     {
-        delta_gradient_->copy(*new_gradient_);
-        delta_gradient_->axpy(static_cast<Real>(-1.0), *old_gradient_);
+        delta_gradient_->update(1., *new_gradient_, 0.);
+        delta_gradient_->update(-1., *old_gradient_, 1.);
     }
 }
 
@@ -192,11 +192,11 @@ void DOTk_SecondOrderOperator::updateSecantStorage(const std::tr1::shared_ptr<do
         updates = static_cast<size_t>(std::floor(updates / 2.));
         for(int index = 0; index < updates; ++index)
         {
-            dprimal_storage_->basis(index)->copy(*dprimal_storage_->basis(updates + index));
-            dgrad_storage_->basis(index)->copy(*dgrad_storage_->basis(updates + index));
+            dprimal_storage_->basis(index)->update(1., *dprimal_storage_->basis(updates + index), 0.);
+            dgrad_storage_->basis(index)->update(1., *dgrad_storage_->basis(updates + index), 0.);
         }
-        dprimal_storage_->basis(updates)->copy(*dprimal_);
-        dgrad_storage_->basis(updates)->copy(*dgrad_);
+        dprimal_storage_->basis(updates)->update(1., *dprimal_, 0.);
+        dgrad_storage_->basis(updates)->update(1., *dgrad_, 0.);
         ++updates;
         this->setNumUpdatesStored(updates);
         this->setUpdateSecondOrderOperator(false);
@@ -204,8 +204,8 @@ void DOTk_SecondOrderOperator::updateSecantStorage(const std::tr1::shared_ptr<do
     else
     {
         // DO IF: Number of updates is less to the maximum number of previous solutions stored.
-        dprimal_storage_->basis(updates)->copy(*dprimal_);
-        dgrad_storage_->basis(updates)->copy(*dgrad_);
+        dprimal_storage_->basis(updates)->update(1., *dprimal_, 0.);
+        dgrad_storage_->basis(updates)->update(1., *dgrad_, 0.);
         ++updates;
         this->setNumUpdatesStored(updates);
         this->setUpdateSecondOrderOperator(false);
@@ -248,12 +248,12 @@ void DOTk_SecondOrderOperator::updateSecantStorage(const std::tr1::shared_ptr<do
         updates = static_cast<size_t>(std::floor(updates / 2.));
         for(int index = 0; index < updates; ++index)
         {
-            dprimal_storage_->basis(index)->copy(*dprimal_storage_->basis(updates + index));
-            dgrad_storage_->basis(index)->copy(*dgrad_storage_->basis(updates + index));
+            dprimal_storage_->basis(index)->update(1., *dprimal_storage_->basis(updates + index), 0.);
+            dgrad_storage_->basis(index)->update(1., *dgrad_storage_->basis(updates + index), 0.);
             rho_storage_[index] = rho_storage_[updates + index];
         }
-        dprimal_storage_->basis(updates)->copy(*dprimal_);
-        dgrad_storage_->basis(updates)->copy(*dgrad_);
+        dprimal_storage_->basis(updates)->update(1., *dprimal_, 0.);
+        dgrad_storage_->basis(updates)->update(1., *dgrad_, 0.);
         kappa = static_cast<Real>(1.0)
                 / dgrad_storage_->basis(updates)->dot(*dprimal_storage_->basis(updates));
         rho_storage_[updates] = kappa;
@@ -264,8 +264,8 @@ void DOTk_SecondOrderOperator::updateSecantStorage(const std::tr1::shared_ptr<do
     else
     {
         // DO IF: Number of updates is less to the maximum number of previous solutions stored.
-        dprimal_storage_->basis(updates)->copy(*dprimal_);
-        dgrad_storage_->basis(updates)->copy(*dgrad_);
+        dprimal_storage_->basis(updates)->update(1., *dprimal_, 0.);
+        dgrad_storage_->basis(updates)->update(1., *dgrad_, 0.);
         kappa = static_cast<Real>(1.0) / dgrad_storage_->basis(updates)->dot(*dprimal_storage_->basis(updates));
         rho_storage_[updates] = kappa;
         ++updates;

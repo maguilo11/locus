@@ -41,7 +41,7 @@ const std::tr1::shared_ptr<dotk::Vector<Real> > & DOTk_SR1Hessian::getDeltaPrima
 void DOTk_SR1Hessian::getHessian(const std::tr1::shared_ptr<dotk::Vector<Real> > & vector_,
                                  const std::tr1::shared_ptr<dotk::Vector<Real> > & hess_times_vector_)
 {
-    hess_times_vector_->copy(*vector_);
+    hess_times_vector_->update(1., *vector_, 0.);
     Real dgrad_dot_dprimal = m_DeltaGradient->dot(*m_DeltaPrimal);
     Real value = std::fabs(dgrad_dot_dprimal - static_cast<Real>(0.0));
     bool zero_dgrad_dot_dprimal = value <= std::numeric_limits<Real>::min() ? true : false;
@@ -57,19 +57,19 @@ void DOTk_SR1Hessian::getHessian(const std::tr1::shared_ptr<dotk::Vector<Real> >
     barzilai_borwein_step_lower_bound = std::min(barzilai_borwein_step, barzilai_borwein_step_lower_bound);
     hess_times_vector_->scale(barzilai_borwein_step_lower_bound);
     // use secant equation to approximate H_k * y_k (i.e. H_k+1 s_k = H_k y_k ) assuming H_k = I
-    m_HessTimesVec->copy(*m_DeltaGradient);
+    m_HessTimesVec->update(1., *m_DeltaGradient, 0.);
     Real alpha = dgrad_dot_dprimal - m_DeltaPrimal->dot(*m_DeltaPrimal);
     // get beta = (dot(y,vector_) - dot(Hs,vector_) ) / ( dot(y,s) - dot(Hs,s)
     Real beta = (m_DeltaGradient->dot(*vector_) - m_HessTimesVec->dot(*vector_)) / alpha;
     // get hess_times_vector_(k+1) = vector_(k) + dot(gamma*y,vector_)(k) - dot(gamma*Hs,vector_)(k), k=iteration counter
-    hess_times_vector_->axpy(beta, *m_DeltaGradient);
-    hess_times_vector_->axpy(-beta, *m_HessTimesVec);
+    hess_times_vector_->update(beta, *m_DeltaGradient, 1.);
+    hess_times_vector_->update(-beta, *m_HessTimesVec, 1.);
 
     Real norm_Hv = hess_times_vector_->norm();
     bool negative_curvature_detected = norm_Hv < std::numeric_limits<Real>::min() ? true : false;
     if(negative_curvature_detected == true)
     {
-        hess_times_vector_->copy(*vector_);
+        hess_times_vector_->update(1., *vector_, 0.);
     }
 }
 

@@ -260,8 +260,8 @@ void DOTk_AlgorithmCCSA::getMin()
 
         this->updateSigmaParameters();
 
-        m_ControlAtIterationIminusTwo->copy(*m_DataMng->m_PreviousControl);
-        m_DataMng->m_PreviousControl->copy(*m_DataMng->m_CurrentControl);
+        m_ControlAtIterationIminusTwo->update(1., *m_DataMng->m_PreviousControl, 0.);
+        m_DataMng->m_PreviousControl->update(1., *m_DataMng->m_CurrentControl, 0.);
 
         m_SubProblem->solve(m_DataMng);
 
@@ -284,12 +284,12 @@ void DOTk_AlgorithmCCSA::updateIterationCount()
 void DOTk_AlgorithmCCSA::updateSigmaParameters()
 {
     size_t number_controls = m_DataMng->m_CurrentControl->size();
-    m_OldSigma->copy(*m_DataMng->m_CurrentSigma);
+    m_OldSigma->update(1., *m_DataMng->m_CurrentSigma, 0.);
 
     if(this->getIterationCount() < static_cast<size_t>(2))
     {
-        m_DataMng->m_CurrentSigma->copy(*m_DataMng->m_ControlUpperBound);
-        m_DataMng->m_CurrentSigma->axpy(static_cast<Real>(-1.), *m_DataMng->m_ControlLowerBound);
+        m_DataMng->m_CurrentSigma->update(1., *m_DataMng->m_ControlUpperBound, 0.);
+        m_DataMng->m_CurrentSigma->update(static_cast<Real>(-1.), *m_DataMng->m_ControlLowerBound, 1.);
         m_DataMng->m_CurrentSigma->scale(static_cast<Real>(0.5));
     }
     else
@@ -333,12 +333,12 @@ bool DOTk_AlgorithmCCSA::stoppingCriteriaSatisfied()
     Real residual_norm = dotk::ccsa::computeResidualNorm(m_DataMng->m_CurrentControl, m_DataMng->m_Dual, m_DataMng);
     this->setCurrentResidualNorm(residual_norm);
 
-    m_DataMng->m_WorkVector->copy(*m_DataMng->m_CurrentControl);
-    m_DataMng->m_WorkVector->axpy(static_cast<Real>(-1), *m_DataMng->m_PreviousControl);
+    m_DataMng->m_WorkVector->update(1., *m_DataMng->m_CurrentControl, 0.);
+    m_DataMng->m_WorkVector->update(-1., *m_DataMng->m_PreviousControl, 1.);
     Real control_stagnation_measure = m_DataMng->m_WorkVector->norm();
     this->setCurrentControlStagnationMeasure(control_stagnation_measure);
 
-    m_DataMng->m_WorkVector->copy(*m_DataMng->m_CurrentObjectiveGradient);
+    m_DataMng->m_WorkVector->update(1., *m_DataMng->m_CurrentObjectiveGradient, 0.);
     m_Bounds->pruneActive(*m_DataMng->m_ActiveSet, *m_DataMng->m_WorkVector);
     Real optimality_gradient_norm = m_DataMng->m_WorkVector->norm();
     Real feasibility_measure = m_DataMng->m_CurrentFeasibilityMeasures->max();

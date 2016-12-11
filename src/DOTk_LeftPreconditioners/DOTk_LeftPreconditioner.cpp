@@ -96,7 +96,7 @@ void DOTk_LeftPreconditioner::apply(const std::tr1::shared_ptr<dotk::DOTk_Optimi
                                     const std::tr1::shared_ptr<dotk::Vector<Real> > & vec_,
                                     const std::tr1::shared_ptr<dotk::Vector<Real> > & matrix_times_vec_)
 {
-    matrix_times_vec_->copy(*vec_);
+    matrix_times_vec_->update(1., *vec_, 0.);
 }
 
 }

@@ -48,23 +48,23 @@ void DOTk_LDFPHessian::getHessian(const std::tr1::shared_ptr<dotk::Vector<Real> 
 {
     Int storage_size = dotk::DOTk_SecondOrderOperator::getNumUpdatesStored() - 1;
     m_Alpha.assign(m_Alpha.size(), 0.);
-    hess_times_vec_->copy(*vector_);
+    hess_times_vec_->update(1., *vector_, 0.);
     for(Int index = storage_size; index >= 0; index--)
     {
         m_Alpha[index] = m_RhoStorage[index] * m_DeltaGradientStorage->basis(index)->dot(*hess_times_vec_);
-        hess_times_vec_->axpy(-m_Alpha[index], *m_DeltaPrimalStorage->basis(index));
+        hess_times_vec_->update(-m_Alpha[index], *m_DeltaPrimalStorage->basis(index), 1.);
     }
     for(Int index = 0; index <= storage_size; ++index)
     {
         Real beta = m_RhoStorage[index] * m_DeltaPrimalStorage->basis(index)->dot(*hess_times_vec_);
         Real kappa = m_Alpha[index] - beta;
-        hess_times_vec_->axpy(kappa, *m_DeltaGradientStorage->basis(index));
+        hess_times_vec_->update(kappa, *m_DeltaGradientStorage->basis(index), 1.);
     }
     Real norm_Hv = hess_times_vec_->norm();
     bool negative_curvature_detected = norm_Hv < std::numeric_limits<Real>::min() ? true : false;
     if(negative_curvature_detected)
     {
-        hess_times_vec_->copy(*vector_);
+        hess_times_vec_->update(1., *vector_, 0.);
     }
 }
 

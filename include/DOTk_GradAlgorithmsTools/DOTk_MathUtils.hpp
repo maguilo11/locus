@@ -20,14 +20,13 @@ template<typename ScalarType>
 class Vector;
 
 Real norm(const std::tr1::shared_ptr<dotk::Vector<Real> > & input_);
-void copy(const std::tr1::shared_ptr<dotk::Vector<Real> > & input_,
-          const std::tr1::shared_ptr<dotk::Vector<Real> > & output_);
 void scale(const Real & alpha_, const std::tr1::shared_ptr<dotk::Vector<Real> > & output_);
-void axpy(const Real & alpha_,
-          const std::tr1::shared_ptr<dotk::Vector<Real> > & input_,
-          const std::tr1::shared_ptr<dotk::Vector<Real> > & output_);
+void update(const Real & alpha_,
+            const std::tr1::shared_ptr<dotk::Vector<Real> > & input_,
+            const Real & beta_,
+            const std::tr1::shared_ptr<dotk::Vector<Real> > & output_);
 
-Real frobeniusNorm(const std::vector< std::vector<Real> > & matrix_);
+Real frobeniusNorm(const std::vector<std::vector<Real> > & matrix_);
 void givens(const Real & a_, const Real & b_, Real & cosine_, Real & sine_);
 
 template<typename Type>
@@ -35,11 +34,11 @@ inline int sign(const Type & value_)
 {
     if(value_ > static_cast<Type>(0))
     {
-        return(1);
+        return (1);
     }
     else
     {
-        return(-1);
+        return (-1);
     }
 }
 

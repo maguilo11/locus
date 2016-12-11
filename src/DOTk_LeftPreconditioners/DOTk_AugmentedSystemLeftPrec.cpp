@@ -100,9 +100,9 @@ void DOTk_AugmentedSystemLeftPrec::apply(const std::tr1::shared_ptr<dotk::DOTk_O
     Real norm_residual = dotk::norm(vector_);
     m_Criterion->set(dotk::types::NORM_RESIDUAL, norm_residual);
 
-    dotk::copy(vector_, m_RhsVector);
+    dotk::update(1., vector_, 0., m_RhsVector);
     m_Solver->solve(m_RhsVector, m_Criterion, mng_);
-    dotk::copy(m_Solver->getDataMng()->getSolution(), output_);
+    dotk::update(1., m_Solver->getDataMng()->getSolution(), 0., output_);
 }
 
 void DOTk_AugmentedSystemLeftPrec::initialize(const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_)

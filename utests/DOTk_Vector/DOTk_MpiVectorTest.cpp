@@ -179,7 +179,7 @@ TEST(DOTk_MpiVectorTest, scale)
     dotk::gtest::checkResults(*gold, vector, thread_count);
 }
 
-TEST(DOTk_MpiVectorTest, cwiseProd)
+TEST(DOTk_MpiVectorTest, elementWiseMultiplication)
 {
     int dim = 1e4;
     dotk::MpiVector<double> x(MPI_COMM_WORLD, dim, 2.);
@@ -193,7 +193,7 @@ TEST(DOTk_MpiVectorTest, cwiseProd)
         start = MPI_Wtime();
     }
 
-    x.cwiseProd(y);
+    x.elementWiseMultiplication(y);
 
     double finish = 0.;
     if(my_rank == 0)
@@ -230,7 +230,7 @@ TEST(DOTk_MpiVectorTest, axpy)
         start = MPI_Wtime();
     }
 
-    y.axpy(3., x);
+    y.update(3., x, 1.);
 
     double finish = 0.;
     if(my_rank == 0)
@@ -368,7 +368,7 @@ TEST(DOTk_MpiVectorTest, copy)
         start = MPI_Wtime();
     }
 
-    y->copy(x);
+    y->update(1., x, 0.);
 
     double finish = 0.;
     if(my_rank == 0)

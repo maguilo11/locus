@@ -83,7 +83,7 @@ void DOTk_Variable::setLowerBound(const dotk::Vector<Real> & lower_bound_)
         m_LowerBound.reset();
         m_LowerBound = m_Data->clone();
     }
-    m_LowerBound->copy(lower_bound_);
+    m_LowerBound->update(1., lower_bound_, 0.);
 }
 
 const std::tr1::shared_ptr<dotk::Vector<Real> > & DOTk_Variable::lowerBound() const
@@ -110,7 +110,7 @@ void DOTk_Variable::setUpperBound(const dotk::Vector<Real> & upper_bound_)
         m_UpperBound.reset();
         m_UpperBound = m_Data->clone();
     }
-    m_UpperBound->copy(upper_bound_);
+    m_UpperBound->update(1., upper_bound_, 0.);
 }
 
 const std::tr1::shared_ptr<dotk::Vector<Real> > & DOTk_Variable::upperBound() const
@@ -144,7 +144,7 @@ void DOTk_Variable::checkData()
 
 void DOTk_Variable::initialize(const dotk::Vector<Real> & data_)
 {
-    m_Data->copy(data_);
+    m_Data->update(1., data_, 0.);
 }
 
 void DOTk_Variable::initialize(const dotk::Vector<Real> & data_,
@@ -185,9 +185,9 @@ void DOTk_Variable::initialize(const dotk::Vector<Real> & data_,
             }
         }
 
-        m_Data->copy(data_);
-        m_LowerBound->copy(lower_bound_);
-        m_UpperBound->copy(upper_bound_);
+        m_Data->update(1., data_, 0.);
+        m_LowerBound->update(1., lower_bound_, 0.);
+        m_UpperBound->update(1., upper_bound_, 0.);
     }
     catch(const char *error_msg)
     {

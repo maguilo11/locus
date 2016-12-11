@@ -52,7 +52,7 @@ void DOTk_SteihaugTointStepMng::solveSubProblem(const std::tr1::shared_ptr<dotk:
 {
     Real new_objective_value = 0.;
     this->setNumTrustRegionSubProblemItrDone(1);
-    m_CurrentPrimal->copy(*mng_->getNewPrimal());
+    m_CurrentPrimal->update(1., *mng_->getNewPrimal(), 0.);
     Real angle_tolerance = this->getMinCosineAngleTolerance();
     Real current_objective_value = mng_->getNewObjectiveFunctionValue();
     Real min_trust_region_radius = dotk::DOTk_TrustRegionStepMng::getMinTrustRegionRadius();
@@ -76,7 +76,7 @@ void DOTk_SteihaugTointStepMng::solveSubProblem(const std::tr1::shared_ptr<dotk:
 
         dotk::DOTk_TrustRegionStepMng::updateAdaptiveObjectiveInexactnessTolerance();
 
-        mng_->getNewPrimal()->axpy(1., *mng_->getTrialStep());
+        mng_->getNewPrimal()->update(1., *mng_->getTrialStep(), 1.);
         new_objective_value = mng_->evaluateObjective();
         Real actual_reduction = new_objective_value - current_objective_value;
         this->setActualReduction(actual_reduction);
@@ -90,7 +90,7 @@ void DOTk_SteihaugTointStepMng::solveSubProblem(const std::tr1::shared_ptr<dotk:
             break;
         }
         this->updateNumTrustRegionSubProblemItrDone();
-        mng_->getNewPrimal()->copy(*m_CurrentPrimal);
+        mng_->getNewPrimal()->update(1., *m_CurrentPrimal, 0.);
     }
 
     mng_->setOldObjectiveFunctionValue(current_objective_value);
@@ -101,8 +101,8 @@ void DOTk_SteihaugTointStepMng::solveSubProblem(const std::tr1::shared_ptr<dotk:
 
 void DOTk_SteihaugTointStepMng::updateDataManager(const std::tr1::shared_ptr<dotk::DOTk_OptimizationDataMng> & mng_)
 {
-    mng_->getOldPrimal()->copy(*m_CurrentPrimal);
-    mng_->getOldGradient()->copy(*mng_->getNewGradient());
+    mng_->getOldPrimal()->update(1., *m_CurrentPrimal, 0.);
+    mng_->getOldGradient()->update(1., *mng_->getNewGradient(), 0.);
     mng_->computeGradient();
 
     Real norm_new_gradient = mng_->getNewGradient()->norm();

@@ -177,8 +177,7 @@ TEST(DOTk_LeftPrecCG, initialize)
     std::tr1::shared_ptr<dotk::DOTk_LeftPrecConjGradDataMng> solver_mng(new dotk::DOTk_LeftPrecConjGradDataMng(primal, hessian));
     dotk::DOTk_LeftPrecCG solver(solver_mng);
     std::tr1::shared_ptr<dotk::Vector<Real> > vec = primal->control()->clone();
-    vec->copy(*mng->getNewGradient());
-    vec->scale(-1);
+    vec->update(-1., *mng->getNewGradient(), 0.);
 
     Real relative_tolerance = 1e-2;
     std::tr1::shared_ptr<dotk::DOTk_RelativeCriterion> criterion(new dotk::DOTk_RelativeCriterion(relative_tolerance));

@@ -27,20 +27,20 @@ TEST(DOTk_DoglegTrustRegion, dogleg)
     std::tr1::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
     dotk::DOTk_LineSearchMngTypeULP mng(primal, objective);
 
-    std::tr1::shared_ptr<dotk::Vector<Real> > grad = primal->control()->clone();
+    std::tr1::shared_ptr<dotk::Vector<Real> > gradient = primal->control()->clone();
     std::tr1::shared_ptr<dotk::Vector<Real> > vector = primal->control()->clone();
     std::tr1::shared_ptr<dotk::Vector<Real> > newton_dir = primal->control()->clone();
     std::tr1::shared_ptr<dotk::Vector<Real> > conjugate_dir = primal->control()->clone();
     std::tr1::shared_ptr<dotk::Vector<Real> > matrix_times_grad = primal->control()->clone();
 
     vector->fill(2);
-    mng.getRoutinesMng()->gradient(vector, grad);
-    mng.getRoutinesMng()->hessian(vector, grad, matrix_times_grad);
-    newton_dir->copy(*grad);
+    mng.getRoutinesMng()->gradient(vector, gradient);
+    mng.getRoutinesMng()->hessian(vector, gradient, matrix_times_grad);
+    newton_dir->update(1., *gradient, 0.);
 
     dotk::DOTk_DoglegTrustRegion step;
     EXPECT_EQ(dotk::types::TRUST_REGION_DOGLEG, step.getTrustRegionType());
-    step.dogleg(grad, matrix_times_grad, conjugate_dir, newton_dir);
+    step.dogleg(gradient, matrix_times_grad, conjugate_dir, newton_dir);
 
     std::tr1::shared_ptr<dotk::Vector<Real> > gold = primal->control()->clone();
     (*gold)[0] = -3855.6568684884;
@@ -62,7 +62,7 @@ TEST(DOTk_DoglegTrustRegion, step)
     vector->fill(2);
     mng.getRoutinesMng()->gradient(vector, mng.getNewGradient());
     mng.getRoutinesMng()->hessian(vector, mng.getNewGradient(), mng.getMatrixTimesVector());
-    mng.getTrialStep()->copy(*mng.getNewGradient());
+    mng.getTrialStep()->update(1., *mng.getNewGradient(), 0.);
 
     dotk::DOTk_DoglegTrustRegion step;
     EXPECT_EQ(dotk::types::TRUST_REGION_DOGLEG, step.getTrustRegionType());

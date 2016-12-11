@@ -30,17 +30,17 @@ DOTk_ProjectionAlongFeasibleDir::~DOTk_ProjectionAlongFeasibleDir()
 void DOTk_ProjectionAlongFeasibleDir::getDirection(const std::tr1::shared_ptr<dotk::Vector<Real> > & primal_,
                                                    const std::tr1::shared_ptr<dotk::Vector<Real> > & feasible_dir_)
 {
-    m_TrialPrimal->copy(*primal_);
-    m_TrialPrimal->axpy(dotk::DOTk_BoundConstraint::getStepSize(), *feasible_dir_);
+    m_TrialPrimal->update(1., *primal_, 0.);
+    m_TrialPrimal->update(dotk::DOTk_BoundConstraint::getStepSize(), *feasible_dir_, 1.);
     dotk::DOTk_BoundConstraint::project(m_LowerBounds, m_UpperBounds, m_TrialPrimal);
-    feasible_dir_->copy(*m_TrialPrimal);
-    feasible_dir_->axpy(static_cast<Real>(-1.0), *primal_);
+    feasible_dir_->update(1., *m_TrialPrimal, 0.);
+    feasible_dir_->update(static_cast<Real>(-1.0), *primal_, 1.);
 }
 
 void DOTk_ProjectionAlongFeasibleDir::constraint(const std::tr1::shared_ptr<dotk::DOTk_LineSearch> & step_,
                                                  const std::tr1::shared_ptr<dotk::DOTk_OptimizationDataMng> & mng_)
 {
-    m_TrialPrimal->copy(*mng_->getNewPrimal());
+    m_TrialPrimal->update(1., *mng_->getNewPrimal(), 0.);
     dotk::DOTk_BoundConstraint::computeScaledTrialStep(step_, mng_, m_TrialPrimal);
     this->getDirection(mng_->getNewPrimal(), mng_->getTrialStep());
     step_->step(mng_);
@@ -52,7 +52,7 @@ void DOTk_ProjectionAlongFeasibleDir::initialize(const std::tr1::shared_ptr<dotk
 {
     if(primal_->getControlLowerBound().use_count() > 0)
     {
-        m_LowerBounds->copy(*primal_->getControlLowerBound());
+        m_LowerBounds->update(1., *primal_->getControlLowerBound(), 0.);
     }
     else
     {
@@ -61,7 +61,7 @@ void DOTk_ProjectionAlongFeasibleDir::initialize(const std::tr1::shared_ptr<dotk
     }
     if(primal_->getControlUpperBound().use_count() > 0)
     {
-        m_UpperBounds->copy(*primal_->getControlUpperBound());
+        m_UpperBounds->update(1., *primal_->getControlUpperBound(), 0.);
     }
     else
     {

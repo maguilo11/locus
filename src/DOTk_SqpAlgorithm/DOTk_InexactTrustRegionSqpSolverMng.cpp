@@ -212,13 +212,13 @@ dotk::types::solver_stop_criterion_t DOTk_InexactTrustRegionSqpSolverMng::solveD
     Real norm_gradient = mng_->getNewGradient()->norm();
     m_DualProblemCriterion->set(dotk::types::NORM_GRADIENT, norm_gradient);
 
-    dotk::copy(mng_->getNewGradient(), mng_->m_AugmentedSystemRightHandSide);
+    dotk::update(1., mng_->getNewGradient(), 0., mng_->m_AugmentedSystemRightHandSide);
     dotk::scale(static_cast<Real>(-1.), mng_->m_AugmentedSystemRightHandSide);
     m_DualProbSolver->solve(mng_->m_AugmentedSystemRightHandSide, m_DualProblemCriterion, mng_);
 
-    mng_->getDeltaDual()->copy(*m_DualProbSolver->getDataMng()->getSolution()->dual());
-    mng_->getNewDual()->copy(*mng_->getOldDual());
-    mng_->getNewDual()->axpy(static_cast<Real>(1.), *mng_->m_DeltaDual);
+    mng_->getDeltaDual()->update(1., *m_DualProbSolver->getDataMng()->getSolution()->dual(), 0.);
+    mng_->getNewDual()->update(1., *mng_->getOldDual(), 0.);
+    mng_->getNewDual()->update(static_cast<Real>(1.), *mng_->m_DeltaDual, 1.);
 
     return (m_DualProbSolver->getSolverStopCriterion());
 }
@@ -226,12 +226,12 @@ dotk::types::solver_stop_criterion_t DOTk_InexactTrustRegionSqpSolverMng::solveD
 dotk::types::solver_stop_criterion_t DOTk_InexactTrustRegionSqpSolverMng::solveTangentialProb
 (const std::tr1::shared_ptr<dotk::DOTk_TrustRegionMngTypeELP> & mng_)
 {
-    dotk::copy(mng_->m_ProjectedTangentialStep, mng_->m_AugmentedSystemLeftHandSide);
+    dotk::update(1., mng_->m_ProjectedTangentialStep, 0., mng_->m_AugmentedSystemLeftHandSide);
     mng_->getAugmentedSystemLeftHandSide()->dual()->fill(static_cast<Real>(0.));
     m_TangentialProbSolver->getLinearOperator()->apply(mng_,
                                                        mng_->m_AugmentedSystemLeftHandSide,
                                                        mng_->m_TangentialStepResidual);
-    dotk::axpy(static_cast<Real>(-1.), mng_->m_AugmentedSystemLeftHandSide, mng_->m_TangentialStepResidual);
+    dotk::update(-1., mng_->m_AugmentedSystemLeftHandSide, 1., mng_->m_TangentialStepResidual);
 
     Real current_trust_region_radius = mng_->getTrustRegionRadius();
     m_TangentialProblemCriterion->set(dotk::types::TRUST_REGION_RADIUS, current_trust_region_radius);
@@ -243,11 +243,11 @@ dotk::types::solver_stop_criterion_t DOTk_InexactTrustRegionSqpSolverMng::solveT
     m_TangentialProblemCriterion->set(dotk::types::NORM_TANGENTIAL_STEP_RESIDUAL, norm_tangential_step_residual);
 
     m_TangentialProblemCriterion->setCurrentTrialStep(mng_->getTrialStep());
-    dotk::copy(mng_->m_TangentialStepResidual, mng_->m_AugmentedSystemRightHandSide);
+    dotk::update(1., mng_->m_TangentialStepResidual, 0., mng_->m_AugmentedSystemRightHandSide);
     m_TangentialProbSolver->solve(mng_->m_AugmentedSystemRightHandSide, m_TangentialProblemCriterion, mng_);
     // Get tangential step, i.e. T_k = Wt_k + dt_k, where dt_k denotes the correction term from augmented system solution
-    dotk::copy(m_TangentialProbSolver->getDataMng()->getSolution(), mng_->m_TangentialStep);
-    mng_->m_TangentialStep->axpy(static_cast<Real>(1.0), *mng_->m_ProjectedTangentialStep);
+    dotk::update(1., m_TangentialProbSolver->getDataMng()->getSolution(), 0., mng_->m_TangentialStep);
+    mng_->m_TangentialStep->update(static_cast<Real>(1.0), *mng_->m_ProjectedTangentialStep, 1.);
 
     return (m_TangentialProbSolver->getSolverStopCriterion());
 }
@@ -266,14 +266,14 @@ dotk::types::solver_stop_criterion_t DOTk_InexactTrustRegionSqpSolverMng::solveQ
         // Cauchy step is outside the trust region, return scaled Cauchy step.
         Real scale_factor = penalized_trust_region_radius / norm_normal_cauchy_step;
         mng_->m_NormalCauchyStep->scale(scale_factor);
-        mng_->m_NormalStep->copy(*mng_->m_NormalCauchyStep);
+        mng_->m_NormalStep->update(1., *mng_->m_NormalCauchyStep, 0.);
         return (dotk::types::TRUST_REGION_VIOLATED);
     }
     // Find the Newton step, solve the augmented system to compute the Newton step
     // compute grad_x(C(x_k)) ncp_k + C(x_k)
     m_DualWorkVector->fill(0.);
     mng_->getRoutinesMng()->jacobian(mng_->getNewPrimal(), mng_->m_NormalCauchyStep, m_DualWorkVector);
-    m_DualWorkVector->axpy(static_cast<Real>(1.), *mng_->getNewEqualityConstraintResidual());
+    m_DualWorkVector->update(static_cast<Real>(1.), *mng_->getNewEqualityConstraintResidual(), 1.);
     Real norm_jacobian_times_normal_cauchy_step = m_DualWorkVector->norm();
 
     Real augmented_system_stop_tolerance =
@@ -282,15 +282,15 @@ dotk::types::solver_stop_criterion_t DOTk_InexactTrustRegionSqpSolverMng::solveQ
     // solve the augmented system to approximate minimum-dot solution dn_k of:
     //      min || grad_x(C(x_k))n + C(x_k) ||,  s.t. ||n|| <= zeta*trust_region_radius_k
     // assemble rhs vector, -{ncp_k; grad_x(C(x_k)) ncp_k + C(x_k)}
-    dotk::copy(mng_->m_NormalCauchyStep, mng_->m_AugmentedSystemRightHandSide);
-    mng_->getAugmentedSystemRightHandSide()->dual()->copy(*m_DualWorkVector);
+    dotk::update(1., mng_->m_NormalCauchyStep, 0., mng_->m_AugmentedSystemRightHandSide);
+    mng_->getAugmentedSystemRightHandSide()->dual()->update(1., *m_DualWorkVector, 0.);
     mng_->m_AugmentedSystemRightHandSide->scale(static_cast<Real>(-1.));
 
     m_QuasiNormalProbSolver->solve(mng_->m_AugmentedSystemRightHandSide, m_QuasiNormalProbCriterion, mng_);
 
     // get Newton shift, dNewton = NewtonStep - NormalCauchyStep, store it in work vector
-    dotk::copy(m_QuasiNormalProbSolver->getDataMng()->getSolution(), mng_->m_NormalStep);
-    mng_->m_NormalStep->axpy(static_cast<Real>(1.), *mng_->m_NormalCauchyStep);
+    dotk::update(1., m_QuasiNormalProbSolver->getDataMng()->getSolution(), 0., mng_->m_NormalStep);
+    mng_->m_NormalStep->update(static_cast<Real>(1.), *mng_->m_NormalCauchyStep, 1.);
 
     Real norm_normal_step = mng_->m_NormalStep->norm();
     if (norm_normal_step > penalized_trust_region_radius)
@@ -314,16 +314,16 @@ dotk::types::solver_stop_criterion_t DOTk_InexactTrustRegionSqpSolverMng::solveT
     Real norm_grad = mng_->getNewGradient()->norm();
     preconditioner->setParameter(dotk::types::NORM_GRADIENT, norm_grad);
 
-    dotk::copy(mng_->getNewGradient(), mng_->m_TangentialSubProblemRhs);
-    dotk::axpy(static_cast<Real>(1.), mng_->m_HessTimesNormalStep, mng_->m_TangentialSubProblemRhs);
+    dotk::update(1., mng_->getNewGradient(), 0., mng_->m_TangentialSubProblemRhs);
+    dotk::update(1., mng_->m_HessTimesNormalStep, 1., mng_->m_TangentialSubProblemRhs);
 
     m_TangentialSubProbSolver->solve(mng_->m_TangentialSubProblemRhs, m_TangentialSubProbCriterion, mng_);
 
-    dotk::copy(m_TangentialSubProbSolver->getDataMng()->getSolution(), mng_->m_ProjectedTangentialStep);
+    dotk::update(1., m_TangentialSubProbSolver->getDataMng()->getSolution(), 0., mng_->m_ProjectedTangentialStep);
     this->computeScaledProjectedTangentialStep(mng_);
 
-    dotk::copy(m_TangentialSubProbSolver->getDataMng()->getFirstSolution(), mng_->m_ProjectedTangentialCauchyStep);
-    dotk::copy(m_TangentialSubProbSolver->getDataMng()->getResidual(0), mng_->m_ProjectedGradient);
+    dotk::update(1., m_TangentialSubProbSolver->getDataMng()->getFirstSolution(), 0., mng_->m_ProjectedTangentialCauchyStep);
+    dotk::update(1., m_TangentialSubProbSolver->getDataMng()->getResidual(0), 0., mng_->m_ProjectedGradient);
 
     return (m_TangentialSubProbSolver->getSolverStopCriterion());
 }
@@ -392,13 +392,13 @@ void DOTk_InexactTrustRegionSqpSolverMng::computeScaledQuasiNormalStep
     Real trust_region_radius_penalty_param = m_QuasiNormalProbCriterion->getTrustRegionRadiusPenaltyParameter();
     Real penalized_trust_region_radius = trust_region_radius_penalty_param * current_trust_region_radius;
 
-    dotk::copy(m_QuasiNormalProbSolver->getDataMng()->getSolution(), mng_->m_NormalStep);
+    dotk::update(1., m_QuasiNormalProbSolver->getDataMng()->getSolution(), 0., mng_->m_NormalStep);
 
     Real root = mng_->computeDoglegRoot(penalized_trust_region_radius,
                                         mng_->m_NormalStep,
                                         mng_->m_NormalCauchyStep);
     mng_->m_NormalStep->scale(root);
-    mng_->m_NormalStep->axpy(static_cast<Real>(1.0), *mng_->m_NormalCauchyStep);
+    mng_->m_NormalStep->update(static_cast<Real>(1.0), *mng_->m_NormalCauchyStep, 1.);
 }
 
 void DOTk_InexactTrustRegionSqpSolverMng::computeNormalCauchyStep

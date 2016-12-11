@@ -41,33 +41,33 @@ const std::tr1::shared_ptr<dotk::Vector<Real> > & DOTk_DFPHessian::getDeltaPrima
 void DOTk_DFPHessian::getHessian(const std::tr1::shared_ptr<dotk::Vector<Real> > & vec_,
                                  const std::tr1::shared_ptr<dotk::Vector<Real> > & hess_times_vec_)
 {
-    hess_times_vec_->copy(*vec_);
+    hess_times_vec_->update(1., *vec_, 0.);
     Real innr_deltaGrad_vector = m_DeltaGradient->dot(*vec_);
-    Real value = std::fabs(innr_deltaGrad_vector - static_cast<Real>(0.0));
+    Real value = std::fabs(innr_deltaGrad_vector - 0.);
     bool zero_innr_deltaGrad_vector = value <= std::numeric_limits<Real>::min() ? true : false;
     if((zero_innr_deltaGrad_vector == true) || (dotk::DOTk_SecondOrderOperator::getNumOptimizationItrDone() == 1))
     {
         return;
     }
     // get Hv_new = (I - rho*y*s) * (I - rho*s*y)*vec_ + rho*y*y^t*vec_
-    Real rho = static_cast<Real>(1.) / m_DeltaGradient->dot(*m_DeltaPrimal);
+    Real rho = 1. / m_DeltaGradient->dot(*m_DeltaPrimal);
     Real alpha = rho * innr_deltaGrad_vector;
     // compute rho*y*y^t*vec_
-    hess_times_vec_->copy(*m_DeltaGradient);
+    hess_times_vec_->update(1., *m_DeltaGradient, 0.);
     hess_times_vec_->scale(alpha);
     // compute gamma*I*(vec_ - alpha*s)
-    m_HessTimesVec->copy(*vec_);
-    m_HessTimesVec->axpy(-alpha, *m_DeltaPrimal);
+    m_HessTimesVec->update(1., *vec_, 0.);
+    m_HessTimesVec->update(-alpha, *m_DeltaPrimal, 1.);
     // compute beta = rho * dot(Svec,(vec_ - alpha*s))
     Real beta = rho * m_HessTimesVec->dot(*m_DeltaPrimal);
     // compute (I - rho*y*s)^t * (I - rho*s*y)*vec_
-    hess_times_vec_->axpy(-beta, *m_DeltaGradient);
-    hess_times_vec_->axpy(static_cast<Real>(1.0), *m_HessTimesVec);
+    hess_times_vec_->update(-beta, *m_DeltaGradient, 1.);
+    hess_times_vec_->update(1., *m_HessTimesVec, 1.);
     Real norm_Hv = hess_times_vec_->norm();
     bool negative_curvature_detected = norm_Hv < std::numeric_limits<Real>::min() ? true : false;
     if(negative_curvature_detected == true)
     {
-        hess_times_vec_->copy(*vec_);
+        hess_times_vec_->update(1., *vec_, 0.);
     }
 }
 

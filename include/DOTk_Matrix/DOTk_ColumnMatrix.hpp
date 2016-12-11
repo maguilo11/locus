@@ -20,7 +20,7 @@ namespace serial
 {
 
 template<typename ScalarType>
-class DOTk_ColumnMatrix: public dotk::matrix<ScalarType>
+class DOTk_ColumnMatrix : public dotk::matrix<ScalarType>
 {
 public:
     DOTk_ColumnMatrix(const dotk::Vector<ScalarType> & column_, size_t storage_size_);
@@ -32,9 +32,7 @@ public:
     // Returns the number of elements contained in the matrix object.
     virtual size_t size() const;
     // Copies row/column into matrix row/column defined by index.
-    virtual void copy(const size_t & index_,
-                      const dotk::Vector<ScalarType> & input_,
-                      bool column_major_copy_ = true);
+    virtual void copy(const size_t & index_, const dotk::Vector<ScalarType> & input_, bool column_major_copy_ = true);
     // Returns the euclidean norm of a vector. Index indicates row/column index.
     virtual ScalarType norm(const size_t & index_, bool column_major_dot_product_ = true) const;
     // Scales a vector by a real constant. Index indicates row/column index.
@@ -46,14 +44,13 @@ public:
                       bool column_major_axpy_ = true);
     // Returns the dot product of two vectors. Index indicates row/column index.
     virtual ScalarType dot(const size_t & index_,
-                     const dotk::Vector<ScalarType> & input_,
-                     bool column_major_dot_product_ = true) const;
+                           const dotk::Vector<ScalarType> & input_,
+                           bool column_major_dot_product_ = true) const;
     // Returns the Frobenius norm of a matrix.
     virtual ScalarType norm() const;
     // Matrix-vector multiplication.
-    virtual void matVec(const dotk::Vector<ScalarType> & input_,
-                        dotk::Vector<ScalarType> & output_,
-                        bool transpose_ = false) const;
+    virtual void matVec(const dotk::Vector<ScalarType> & input_, dotk::Vector<ScalarType> & output_, bool transpose_ =
+                                false) const;
     // General matrix-vector multiplication.
     virtual void gemv(const ScalarType & alpha_,
                       const dotk::Vector<ScalarType> & input_,
@@ -98,7 +95,7 @@ public:
     // Operator overloads the parenthesis operator
     virtual const ScalarType & operator ()(const size_t & row_index_, const size_t & column_index_) const;
     // Clones memory for an object of type dotk::matrix
-    virtual std::tr1::shared_ptr< dotk::matrix<ScalarType> > clone() const;
+    virtual std::tr1::shared_ptr<dotk::matrix<ScalarType> > clone() const;
     // Returns dotk matrix type
     virtual dotk::types::matrix_t type() const;
 

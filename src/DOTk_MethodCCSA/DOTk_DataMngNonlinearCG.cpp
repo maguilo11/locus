@@ -48,10 +48,10 @@ void DOTk_DataMngNonlinearCG::reset()
 
 void DOTk_DataMngNonlinearCG::storeCurrentState()
 {
-    m_OldDual->copy(*m_NewDual);
-    m_OldGradient->copy(*m_NewGradient);
-    m_OldTrialStep->copy(*m_NewTrialStep);
-    m_OldSteepestDescent->copy(*m_NewSteepestDescent);
+    m_OldDual->update(1., *m_NewDual, 0.);
+    m_OldGradient->update(1., *m_NewGradient, 0.);
+    m_OldTrialStep->update(1., *m_NewTrialStep, 0.);
+    m_OldSteepestDescent->update(1., *m_NewSteepestDescent, 0.);
 
     m_OldObjectiveFunctionValue = m_NewObjectiveFunctionValue;
 }

@@ -78,8 +78,8 @@ void DOTk_SteihaugTointLinMore::getMin()
     Real new_objective_value = m_DataMng->evaluateObjective();
     m_DataMng->setNewObjectiveFunctionValue(new_objective_value);
     m_DataMng->computeGradient();
-    m_DataMng->getOldPrimal()->copy(*m_DataMng->getNewPrimal());
-    m_DataMng->getOldGradient()->copy(*m_DataMng->getNewGradient());
+    m_DataMng->getOldPrimal()->update(1., *m_DataMng->getNewPrimal(), 0.);
+    m_DataMng->getOldGradient()->update(1., *m_DataMng->getNewGradient(), 0.);
     Real norm_gradient = m_DataMng->getNewGradient()->norm();
     m_DataMng->setNormNewGradient(norm_gradient);
     if(m_StepMng->isInitialTrustRegionRadiusSetToGradNorm() == true)
@@ -161,8 +161,8 @@ bool DOTk_SteihaugTointLinMore::checkStoppingCriteria()
 
 void DOTk_SteihaugTointLinMore::resetCurrentStateToPreviousState()
 {
-    m_DataMng->getNewPrimal()->copy(*m_DataMng->getOldPrimal());
-    m_DataMng->getNewGradient()->copy(*m_DataMng->getOldGradient());
+    m_DataMng->getNewPrimal()->update(1., *m_DataMng->getOldPrimal(), 0.);
+    m_DataMng->getNewGradient()->update(1., *m_DataMng->getOldGradient(), 0.);
     m_DataMng->setNewObjectiveFunctionValue(m_DataMng->getOldObjectiveFunctionValue());
 }
 

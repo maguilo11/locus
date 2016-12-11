@@ -170,8 +170,8 @@ TEST(LineSearchMngTypeULP, Fval_P)
     std::tr1::shared_ptr<dotk::Vector<Real> > fval = primal->control()->clone();
     std::tr1::shared_ptr<dotk::Vector<Real> > vector = primal->control()->clone();
     std::vector< std::tr1::shared_ptr<dotk::Vector<Real> > > control(2, primal->control()->clone());
-    control[0]->copy(*primal->control());
-    control[1]->copy(*primal->control());
+    control[0]->update(1., *primal->control(), 0.);
+    control[1]->update(1., *primal->control(), 0.);
     size_t numvars = 2;
     dotk::StdVector<Real> gold(numvars, 401.);
     mng.getRoutinesMng()->objective(control, fval);

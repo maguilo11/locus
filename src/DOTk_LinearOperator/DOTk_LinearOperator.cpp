@@ -43,7 +43,7 @@ void DOTk_LinearOperator::apply(const std::tr1::shared_ptr<dotk::DOTk_Optimizati
                                 const std::tr1::shared_ptr<dotk::Vector<Real> > & vector_,
                                 const std::tr1::shared_ptr<dotk::Vector<Real> > & output_)
 {
-    output_->copy(*vector_);
+    output_->update(1., *vector_, 0.);
 }
 
 }

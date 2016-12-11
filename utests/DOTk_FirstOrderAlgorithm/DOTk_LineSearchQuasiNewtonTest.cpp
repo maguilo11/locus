@@ -65,28 +65,25 @@ TEST(GradientBasedOptimizationTools, checkDescentDirection)
     // TEST 1: DESCENT DIRECTION IS VALID, DO NOT TAKE STEEPEST DESCENT
     dotk::gtools::checkDescentDirection(grad, step);
     std::tr1::shared_ptr<dotk::Vector<Real> > gold = grad->clone();
-    gold->copy(*step);
+    gold->update(1., *step, 0.);
     dotk::gtest::checkResults(*step, *gold);
 
     // TEST 2: INVALID DESCENT DIRECTION, TAKE STEEPEST DESCENT
     step->fill(std::numeric_limits<Real>::min());
     dotk::gtools::checkDescentDirection(grad, step);
-    gold->copy(*grad);
-    gold->scale(-1);
+    gold->update(-1., *grad, 0.);
     dotk::gtest::checkResults(*step, *gold);
 
     // TEST 3: INVALID DESCENT DIRECTION, TAKE STEEPEST DESCENT
     step->fill(std::numeric_limits<Real>::quiet_NaN());
     dotk::gtools::checkDescentDirection(grad, step);
-    gold->copy(*grad);
-    gold->scale(-1);
+    gold->update(-1., *grad, 0.);
     dotk::gtest::checkResults(*step, *gold);
 
     // TEST 4: INVALID DESCENT DIRECTION, TAKE STEEPEST DESCENT
     step->fill(std::numeric_limits<Real>::infinity());
     dotk::gtools::checkDescentDirection(grad, step);
-    gold->copy(*grad);
-    gold->scale(-1);
+    gold->update(-1., *grad, 0.);
     dotk::gtest::checkResults(*step, *gold);
 }
 

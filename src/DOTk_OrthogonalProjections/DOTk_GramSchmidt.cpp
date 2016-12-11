@@ -30,7 +30,7 @@ DOTk_GramSchmidt::~DOTk_GramSchmidt()
 void DOTk_GramSchmidt::gramSchmidt(size_t ortho_vector_index_,
                                    const std::tr1::shared_ptr<dotk::Vector<Real> > & kernel_vector_)
 {
-    m_OrthogonalBasis[ortho_vector_index_]->axpy(static_cast<Real>(-1.), *kernel_vector_);
+    m_OrthogonalBasis[ortho_vector_index_]->update(static_cast<Real>(-1.), *kernel_vector_, 1.);
     for(size_t index = 0; index < ortho_vector_index_; ++index)
     {
         Real kernel_vector_dot_linear_operator_times_ortho_vector =
@@ -41,13 +41,13 @@ void DOTk_GramSchmidt::gramSchmidt(size_t ortho_vector_index_,
         Real rayleigh_quotient = kernel_vector_dot_linear_operator_times_ortho_vector
                 / projected_prec_residual_dot_linear_operator_times_projected_prec_residual;
 
-        m_OrthogonalBasis[ortho_vector_index_]->axpy(-rayleigh_quotient, *m_OrthogonalBasis[index]);
+        m_OrthogonalBasis[ortho_vector_index_]->update(-rayleigh_quotient, *m_OrthogonalBasis[index], 1.);
     }
 }
 
 void DOTk_GramSchmidt::setOrthogonalVector(size_t index_, const std::tr1::shared_ptr<dotk::Vector<Real> > & vec_)
 {
-    m_OrthogonalBasis[index_]->copy(*vec_);
+    m_OrthogonalBasis[index_]->update(1., *vec_, 0.);
 }
 
 const std::tr1::shared_ptr<dotk::Vector<Real> > & DOTk_GramSchmidt::getOrthogonalVector(size_t index_) const
@@ -74,7 +74,7 @@ void DOTk_GramSchmidt::apply(const dotk::DOTk_KrylovSolver * const solver_,
 
 void DOTk_GramSchmidt::setLinearOperatorTimesOrthoVector(size_t index_, const std::tr1::shared_ptr<dotk::Vector<Real> > & vec_)
 {
-    m_LinearOperatorTimesOrthoVector[index_]->copy(*vec_);
+    m_LinearOperatorTimesOrthoVector[index_]->update(1., *vec_, 0.);
 }
 
 const std::tr1::shared_ptr<dotk::Vector<Real> > & DOTk_GramSchmidt::getLinearOperatorTimesOrthoVector(size_t index_) const

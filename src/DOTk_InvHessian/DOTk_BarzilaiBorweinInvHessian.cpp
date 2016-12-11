@@ -41,7 +41,7 @@ const std::tr1::shared_ptr<dotk::Vector<Real> > & DOTk_BarzilaiBorweinInvHessian
 void DOTk_BarzilaiBorweinInvHessian::getInvHessian(const std::tr1::shared_ptr<dotk::Vector<Real> > & vector_,
                                                    const std::tr1::shared_ptr<dotk::Vector<Real> > & inv_hess_times_vector_)
 {
-    inv_hess_times_vector_->copy(*vector_);
+    inv_hess_times_vector_->update(1., *vector_, 0.);
     Real dgrad_dot_dprimal = m_DeltaGradient->dot(*m_DeltaPrimal);
     Real value = std::fabs(dgrad_dot_dprimal - static_cast<Real>(0.0));
     bool zero_dgrad_dot_dprimal = value <= std::numeric_limits<Real>::min() ? true : false;

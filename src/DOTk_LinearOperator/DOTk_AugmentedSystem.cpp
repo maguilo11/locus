@@ -34,7 +34,7 @@ void DOTk_AugmentedSystem::apply(const std::tr1::shared_ptr<dotk::DOTk_Optimizat
     /// \n
     ///
     mng_->getRoutinesMng()->adjointJacobian(mng_->getNewPrimal(), input_->dual(), output_);
-    output_->axpy(static_cast<Real>(1.), *input_);
+    output_->update(1., *input_, 1.);
     mng_->getRoutinesMng()->jacobian(mng_->getNewPrimal(), input_, output_->dual());
 }
 

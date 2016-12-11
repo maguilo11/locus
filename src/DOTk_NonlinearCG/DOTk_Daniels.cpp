@@ -40,8 +40,7 @@ void DOTk_Daniels::direction(const std::tr1::shared_ptr<dotk::DOTk_OptimizationD
     Real scale_factor = gradient_dot_matrix_times_direction / direction_dot_matrix_times_direction;
 
     dotk::DOTk_DescentDirection::setScaleFactor(scale_factor);
-    mng_->getTrialStep()->scale(scale_factor);
-    mng_->getTrialStep()->axpy(static_cast<Real>(-1.0), *mng_->getNewGradient());
+    mng_->getTrialStep()->update(-1., *mng_->getNewGradient(), scale_factor);
 }
 
 }

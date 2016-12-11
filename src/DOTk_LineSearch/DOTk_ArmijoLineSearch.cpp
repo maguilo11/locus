@@ -36,8 +36,8 @@ void DOTk_ArmijoLineSearch::setConstant(Real value_)
 void DOTk_ArmijoLineSearch::step(const std::tr1::shared_ptr<dotk::DOTk_OptimizationDataMng> & mng_)
 {
     Real step = 1.;
-    m_TrialPrimal->copy(*mng_->getOldPrimal());
-    m_TrialPrimal->axpy(step, *mng_->getTrialStep());
+    m_TrialPrimal->update(1., *mng_->getOldPrimal(), 0.);
+    m_TrialPrimal->update(step, *mng_->getTrialStep(), 1.);
 
     size_t itr = 1;
     Real new_objective_func_val = mng_->evaluateObjective(m_TrialPrimal);
@@ -58,14 +58,14 @@ void DOTk_ArmijoLineSearch::step(const std::tr1::shared_ptr<dotk::DOTk_Optimizat
         }
 
         step *= contraction_factor;
-        m_TrialPrimal->copy(*mng_->getOldPrimal());
-        m_TrialPrimal->axpy(step, *mng_->getTrialStep());
+        m_TrialPrimal->update(1., *mng_->getOldPrimal(), 0.);
+        m_TrialPrimal->update(step, *mng_->getTrialStep(), 1.);
         new_objective_func_val = mng_->evaluateObjective(m_TrialPrimal);
         ++itr;
     }
 
     dotk::DOTk_LineSearch::setNewObjectiveFunctionValue(new_objective_func_val);
-    mng_->getNewPrimal()->copy(*m_TrialPrimal);
+    mng_->getNewPrimal()->update(1., *m_TrialPrimal, 0.);
     dotk::DOTk_LineSearch::setStepSize(step);
 }
 

@@ -237,14 +237,12 @@ void DOTk_TrustRegion::computeCauchyPoint(const std::tr1::shared_ptr<dotk::Vecto
         cauchy_pt_scale_factor = (norm_grad * norm_grad * norm_grad) / curvature;
         cauchy_pt_scale_factor = std::min(cauchy_pt_scale_factor, 1.0);
         Real alpha = cauchy_pt_scale_factor / norm_grad;
-        cauchy_point_->copy(*grad_);
-        cauchy_point_->scale(-alpha);
+        cauchy_point_->update(-alpha, *grad_, 0.);
     }
     else
     {
         Real alpha = cauchy_pt_scale_factor / norm_grad;
-        cauchy_point_->copy(*grad_);
-        cauchy_point_->scale(-alpha);
+        cauchy_point_->update(-alpha, *grad_, 0.);
     }
 }
 

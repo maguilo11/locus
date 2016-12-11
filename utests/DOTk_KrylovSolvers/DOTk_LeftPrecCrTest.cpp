@@ -34,8 +34,7 @@ TEST(DOTk_LeftPrecCR, setProblem)
 
     mng->computeGradient();
     std::tr1::shared_ptr<dotk::Vector<Real> > vec = primal->control()->clone();
-    vec->copy(*mng->getNewGradient());
-    vec->scale(-1);
+    vec->update(-1., *mng->getNewGradient(), 0.);
     std::tr1::shared_ptr<dotk::DOTk_LeftPrecConjResDataMng> solver_mng(new dotk::DOTk_LeftPrecConjResDataMng(primal, hessian));
     dotk::DOTk_LeftPrecCR solver(solver_mng);
 

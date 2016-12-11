@@ -54,14 +54,14 @@ void DOTk_GoldenSectionLineSearch::step(const std::tr1::shared_ptr<dotk::DOTk_Op
 
         // f(x + k_LB*trial_step)
         m_Step[2] = m_Step[0] + tau * (m_Step[1] - m_Step[0]);
-        m_TrialPrimal->copy(*mng_->getOldPrimal());
-        m_TrialPrimal->axpy(m_Step[2], *mng_->getTrialStep());
+        m_TrialPrimal->update(1., *mng_->getOldPrimal(), 0.);
+        m_TrialPrimal->update(m_Step[2], *mng_->getTrialStep(), 1.);
         m_ObjectiveFuncVal[2] = mng_->evaluateObjective(m_TrialPrimal);
 
         // f(primal + k_UB*trial_step)
         m_Step[3] = m_Step[1] - tau * (m_Step[1] - m_Step[0]);
-        m_TrialPrimal->copy(*mng_->getOldPrimal());
-        m_TrialPrimal->axpy(m_Step[3], *mng_->getTrialStep());
+        m_TrialPrimal->update(1., *mng_->getOldPrimal(), 0.);
+        m_TrialPrimal->update(m_Step[3], *mng_->getTrialStep(), 1.);
         m_ObjectiveFuncVal[3] = mng_->evaluateObjective(m_TrialPrimal);
 
         this->checkGoldenSectionStep();
@@ -78,15 +78,15 @@ void DOTk_GoldenSectionLineSearch::step(const std::tr1::shared_ptr<dotk::DOTk_Op
     // Select the optimal step length
     Real step = m_ObjectiveFuncVal[2] < m_ObjectiveFuncVal[3] ? m_Step[2] : m_Step[3];
     // update state vector
-    m_TrialPrimal->copy(*mng_->getOldPrimal());
-    m_TrialPrimal->axpy(step, *mng_->getTrialStep());
+    m_TrialPrimal->update(1., *mng_->getOldPrimal(), 0.);
+    m_TrialPrimal->update(step, *mng_->getTrialStep(), 1.);
 
     // Save the optimal state
     Real new_objective_func_value =
             m_ObjectiveFuncVal[2] < m_ObjectiveFuncVal[3] ? m_ObjectiveFuncVal[2] : m_ObjectiveFuncVal[3];
     dotk::DOTk_LineSearch::setNewObjectiveFunctionValue(new_objective_func_value);
-    mng_->getNewPrimal()->copy(*m_TrialPrimal);
-    mng_->getTrialStep()->copy(*mng_->getTrialStep());
+    mng_->getNewPrimal()->update(1., *m_TrialPrimal, 0.);
+    mng_->getTrialStep()->update(1., *mng_->getTrialStep(), 0.);
     dotk::DOTk_LineSearch::setStepSize(step);
 }
 

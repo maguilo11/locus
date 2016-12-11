@@ -78,7 +78,7 @@ const std::tr1::shared_ptr<dotk::Vector<Real> > & DOTk_KrylovSolverDataMng::getP
 
 void DOTk_KrylovSolverDataMng::setResidual (const std::tr1::shared_ptr<dotk::Vector<Real> > & vec_)
 {
-    m_Residual->copy(*vec_);
+    m_Residual->update(1., *vec_, 0.);
 }
 
 const std::tr1::shared_ptr<dotk::Vector<Real> > & DOTk_KrylovSolverDataMng::getResidual() const

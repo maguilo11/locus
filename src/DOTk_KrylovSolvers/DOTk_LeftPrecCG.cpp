@@ -66,9 +66,9 @@ void DOTk_LeftPrecCG::initialize(const std::tr1::shared_ptr<dotk::Vector<Real> >
     dotk::DOTk_KrylovSolver::setNumSolverItrDone(0);
     dotk::DOTk_KrylovSolver::trustRegionViolation(false);
 
-    m_DataMng->getResidual()->copy(*rhs_vec_);
+    m_DataMng->getResidual()->update(1., *rhs_vec_, 0.);
     m_DataMng->getLeftPrec()->apply(opt_mng_, m_DataMng->getResidual(), m_DataMng->getLeftPrecTimesVector());
-    m_ConjugateDirection->copy(*m_DataMng->getLeftPrecTimesVector());
+    m_ConjugateDirection->update(1., *m_DataMng->getLeftPrecTimesVector(), 0.);
     m_DataMng->getSolution()->fill(0.);
 
     Real res_dot_prec_times_res = m_DataMng->getResidual()->dot(*m_DataMng->getLeftPrecTimesVector());
@@ -102,10 +102,10 @@ void DOTk_LeftPrecCG::pcg(const std::tr1::shared_ptr<dotk::Vector<Real> > & rhs_
         {
             break;
         }
-        m_DataMng->getPreviousSolution()->copy(*m_DataMng->getSolution());
+        m_DataMng->getPreviousSolution()->update(1., *m_DataMng->getSolution(), 0.);
         Real old_res_dot_prec_times_res = m_DataMng->getResidual()->dot(*m_DataMng->getLeftPrecTimesVector());
         Real alpha = old_res_dot_prec_times_res / curvature;
-        m_DataMng->getSolution()->axpy(alpha, *m_ConjugateDirection);
+        m_DataMng->getSolution()->update(alpha, *m_ConjugateDirection, 1.);
         Real norm_solution = m_DataMng->getSolution()->norm();
         Real trust_region_radius = dotk::DOTk_KrylovSolver::getTrustRegionRadius();
         if (norm_solution >= trust_region_radius)
@@ -114,7 +114,7 @@ void DOTk_LeftPrecCG::pcg(const std::tr1::shared_ptr<dotk::Vector<Real> > & rhs_
             dotk::DOTk_KrylovSolver::setSolverStopCriterion(dotk::types::TRUST_REGION_VIOLATED);
             break;
         }
-        m_DataMng->getResidual()->axpy(-alpha, *m_DataMng->getMatrixTimesVector());
+        m_DataMng->getResidual()->update(-alpha, *m_DataMng->getMatrixTimesVector(), 1.);
         m_DataMng->getLeftPrec()->apply(opt_mng_, m_DataMng->getResidual(), m_DataMng->getLeftPrecTimesVector());
         Real new_res_dot_prec_times_res = m_DataMng->getResidual()->dot(*m_DataMng->getLeftPrecTimesVector());
         Real residual_norm = std::sqrt(new_res_dot_prec_times_res);
@@ -126,7 +126,7 @@ void DOTk_LeftPrecCG::pcg(const std::tr1::shared_ptr<dotk::Vector<Real> > & rhs_
         }
         Real beta = new_res_dot_prec_times_res / old_res_dot_prec_times_res;
         m_ConjugateDirection->scale(beta);
-        m_ConjugateDirection->axpy(static_cast<Real>(1.0), *m_DataMng->getLeftPrecTimesVector());
+        m_ConjugateDirection->update(1., *m_DataMng->getLeftPrecTimesVector(), 1.);
         ++itr;
     }
 }

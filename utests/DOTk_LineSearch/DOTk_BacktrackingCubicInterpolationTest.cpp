@@ -37,7 +37,7 @@ TEST(DOTk_BacktrackingCubicInterpolationTest, step)
     mng->getRoutinesMng()->gradient(mng->getOldPrimal(), mng->getOldGradient());
     (*mng->getTrialStep())[0] = -0.996267103929714;
     (*mng->getTrialStep())[1] = -3.980093283615503;
-    mng->getNewGradient()->copy(*mng->getOldGradient());
+    mng->getNewGradient()->update(1., *mng->getOldGradient(), 0.);
     line_search.step(mng);
     const Real tol = 1e-6;
     EXPECT_NEAR(0.1, line_search.getStepSize(), tol);
@@ -52,7 +52,7 @@ TEST(DOTk_BacktrackingCubicInterpolationTest, step)
     (*mng->getTrialStep())[0] = -0.300674706720995;
     (*mng->getTrialStep())[1] = -1.131357660149725;
     line_search.dotk::DOTk_LineSearch::setStepSize(1.);
-    mng->getNewGradient()->copy(*mng->getOldGradient());
+    mng->getNewGradient()->update(1., *mng->getOldGradient(), 0.);
     line_search.step(mng);
     EXPECT_NEAR(0.30496794684811185, line_search.getStepSize(), tol);
     EXPECT_EQ(50, line_search.getMaxNumLineSearchItr());
@@ -66,7 +66,7 @@ TEST(DOTk_BacktrackingCubicInterpolationTest, step)
     (*mng->getTrialStep())[0] = 5.99683492222362;
     (*mng->getTrialStep())[1] = -59.95323273819937;
     line_search.dotk::DOTk_LineSearch::setStepSize(1.);
-    mng->getNewGradient()->copy(*mng->getOldGradient());
+    mng->getNewGradient()->update(1., *mng->getOldGradient(), 0.);
     line_search.step(mng);
     EXPECT_NEAR(0.05, line_search.getStepSize(), tol);
     EXPECT_EQ(50, line_search.getMaxNumLineSearchItr());

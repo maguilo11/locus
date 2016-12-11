@@ -144,9 +144,9 @@ void DOTk_DenseMatrix<ScalarType>::scale(const size_t & index_, const ScalarType
 
 template<typename ScalarType>
 void DOTk_DenseMatrix<ScalarType>::axpy(const size_t & index_,
-                                  const ScalarType & alpha_,
-                                  const dotk::Vector<ScalarType> & input_,
-                                  bool row_major_axpy_)
+                                        const ScalarType & alpha_,
+                                        const dotk::Vector<ScalarType> & input_,
+                                        bool row_major_axpy_)
 {
     if(row_major_axpy_ == false)
     {

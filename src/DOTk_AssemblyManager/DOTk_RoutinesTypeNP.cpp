@@ -74,10 +74,10 @@ void DOTk_RoutinesTypeNP::gradient(const std::tr1::shared_ptr<dotk::Vector<Real>
                                                           *m_ControlWorkVec);
 
     // assemble gradient operator
-    gradient_->copy(*m_ControlWorkVec);
+    gradient_->update(1., *m_ControlWorkVec, 0.);
     m_ControlWorkVec->fill(0.);
     m_ObjectiveFunction->partialDerivativeControl(*m_State, *control_, *m_ControlWorkVec);
-    gradient_->axpy(static_cast<Real>(1.0), *m_ControlWorkVec);
+    gradient_->update(static_cast<Real>(1.0), *m_ControlWorkVec, 1.);
     DOTk_AssemblyManager::updateGradientEvaluationCounter();
 }
 

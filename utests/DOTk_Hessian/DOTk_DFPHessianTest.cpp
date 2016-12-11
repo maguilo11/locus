@@ -36,8 +36,8 @@ TEST(DOTk_DFPHessian, getHessian)
     control[0] = 1.;
     control[1] = 3.;
     mng->setNewPrimal(control);
-    hess.getDeltaPrimal()->copy(*mng->getNewPrimal());
-    hess.getDeltaPrimal()->axpy(-1.0, *mng->getOldPrimal());
+    hess.getDeltaPrimal()->update(1., *mng->getNewPrimal(), 0.);
+    hess.getDeltaPrimal()->update(-1.0, *mng->getOldPrimal(), 1.);
 
     // Gradient Information
     std::tr1::shared_ptr<dotk::Vector<Real> > grad = primal->control()->clone();
@@ -45,8 +45,8 @@ TEST(DOTk_DFPHessian, getHessian)
     mng->setOldGradient(*grad);
     mng->getRoutinesMng()->gradient(mng->getNewPrimal(), grad);
     mng->setNewGradient(*grad);
-    hess.getDeltaGrad()->copy(*mng->getNewGradient());
-    hess.getDeltaGrad()->axpy(-1.0, *mng->getOldGradient());
+    hess.getDeltaGrad()->update(1., *mng->getNewGradient(), 0.);
+    hess.getDeltaGrad()->update(-1.0, *mng->getOldGradient(), 1.);
 
     // Trial step information
     mng->setTrialStep(*mng->getNewGradient());

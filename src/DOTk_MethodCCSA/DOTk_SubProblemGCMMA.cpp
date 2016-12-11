@@ -101,8 +101,8 @@ void DOTk_SubProblemGCMMA::solve(const std::tr1::shared_ptr<dotk::DOTk_DataMngCC
         m_NewTrialObjectiveFunctionValue = data_mng_->evaluateObjectiveFunction(m_TrialControl);
         data_mng_->evaluateInequalityConstraints(m_TrialControl, m_TrialInequalityResiduals, m_TrialFeasibilityMeasures);
 
-        m_DeltaControl->copy(*m_TrialControl);
-        m_DeltaControl->axpy(static_cast<Real>(-1), *data_mng_->m_CurrentControl);
+        m_DeltaControl->update(1., *m_TrialControl, 0.);
+        m_DeltaControl->update(-1., *data_mng_->m_CurrentControl, 1.);
         this->updateObjectiveGlobalizationScalingParameters(data_mng_);
         this->updateInequalityGlobalizationScalingParameters(data_mng_);
 
@@ -143,9 +143,9 @@ void DOTk_SubProblemGCMMA::updateState(const std::tr1::shared_ptr<dotk::DOTk_Dat
 {
     this->checkGlobalizationScalingParameters();
 
-    data_mng_->m_CurrentControl->copy(*m_TrialControl);
-    data_mng_->m_CurrentInequalityResiduals->copy(*m_TrialInequalityResiduals);
-    data_mng_->m_CurrentFeasibilityMeasures->copy(*m_TrialFeasibilityMeasures);
+    data_mng_->m_CurrentControl->update(1., *m_TrialControl, 0.);
+    data_mng_->m_CurrentInequalityResiduals->update(1., *m_TrialInequalityResiduals, 0.);
+    data_mng_->m_CurrentFeasibilityMeasures->update(1., *m_TrialFeasibilityMeasures, 0.);
     data_mng_->m_CurrentObjectiveFunctionValue = m_NewTrialObjectiveFunctionValue;
 }
 

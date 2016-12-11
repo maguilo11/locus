@@ -185,9 +185,9 @@ void DOTk_TrustRegionAlgorithmsDataMng::updateState(const Real new_objective_fun
     Real old_objective_func_value = dotk::DOTk_OptimizationDataMng::getNewObjectiveFunctionValue();
     dotk::DOTk_OptimizationDataMng::setOldObjectiveFunctionValue(old_objective_func_value);
 
-    this->getOldPrimal()->copy(*this->getNewPrimal());
-    this->getOldGradient()->copy(*this->getNewGradient());
-    this->getNewPrimal()->copy(*new_primal_);
+    this->getOldPrimal()->update(1., *this->getNewPrimal(), 0.);
+    this->getOldGradient()->update(1., *this->getNewGradient(), 0.);
+    this->getNewPrimal()->update(1., *new_primal_, 0.);
 
     dotk::DOTk_OptimizationDataMng::setNewObjectiveFunctionValue(new_objective_function_value_);
     this->computeGradient();

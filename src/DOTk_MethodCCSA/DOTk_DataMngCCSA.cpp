@@ -205,10 +205,10 @@ void DOTk_DataMngCCSA::initialize(const std::tr1::shared_ptr<dotk::DOTk_Primal> 
 {
     this->checkInputs(primal_);
 
-    m_Dual->copy(*primal_->dual());
-    m_CurrentControl->copy(*primal_->control());
-    m_ControlLowerBound->copy(*primal_->getControlLowerBound());
-    m_ControlUpperBound->copy(*primal_->getControlUpperBound());
+    m_Dual->update(1., *primal_->dual(), 0.);
+    m_CurrentControl->update(1., *primal_->control(), 0.);
+    m_ControlLowerBound->update(1., *primal_->getControlLowerBound(), 0.);
+    m_ControlUpperBound->update(1., *primal_->getControlUpperBound(), 0.);
 
     m_MinRho->fill(1e-5);
     m_InputInequalityCoefficientsA->fill(0.);

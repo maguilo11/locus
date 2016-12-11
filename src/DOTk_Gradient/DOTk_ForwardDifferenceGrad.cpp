@@ -31,7 +31,7 @@ const std::tr1::shared_ptr<dotk::Vector<Real> > & DOTk_ForwardDifferenceGrad::ge
 
 void DOTk_ForwardDifferenceGrad::setFiniteDiffPerturbationVec(const dotk::Vector<Real> & input_)
 {
-    m_FiniteDiffPerturbationVec->copy(input_);
+    m_FiniteDiffPerturbationVec->update(1., input_, 0.);
 }
 
 void DOTk_ForwardDifferenceGrad::getGradient(Real fval_,
@@ -52,7 +52,7 @@ void DOTk_ForwardDifferenceGrad::getGradient(Real fval_,
     ///        (std::tr1::shared_ptr<dotk::Vector<Real> >)
     for(size_t index = 0; index < primal_->size(); ++index)
     {
-        // copy original state solution i-th element
+        // update original state solution i-th element
         Real xi_original = (*primal_)[index];
         // compute perturbation
         Real epsilon = (*m_FiniteDiffPerturbationVec)[index] * xi_original;

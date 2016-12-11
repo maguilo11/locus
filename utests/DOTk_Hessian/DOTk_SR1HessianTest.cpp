@@ -39,7 +39,7 @@ TEST(SR1Hessian, apply)
     mng->getRoutinesMng()->gradient(mng->getOldPrimal(), mng->getOldGradient());
     mng->getRoutinesMng()->gradient(mng->getNewPrimal(), mng->getNewGradient());
     // Trial step information
-    mng->getTrialStep()->copy(*mng->getNewGradient());
+    mng->getTrialStep()->update(1., *mng->getNewGradient(), 0.);
     mng->getTrialStep()->scale(-1.);
     // ODD CASE
     hess.setNumOptimizationItrDone(3);
@@ -73,8 +73,8 @@ TEST(SR1Hessian, getDeltaPrimal)
 
     dotk::DOTk_SR1Hessian hess(mng.getMatrixTimesVector());
 
-    hess.getDeltaPrimal()->copy(*mng.getNewPrimal());
-    hess.getDeltaPrimal()->axpy(-1.0, *mng.getOldPrimal());
+    hess.getDeltaPrimal()->update(1., *mng.getNewPrimal(), 0.);
+    hess.getDeltaPrimal()->update(-1.0, *mng.getOldPrimal(), 1.);
 
     std::tr1::shared_ptr<dotk::Vector<Real> > gold = primal->control()->clone();
     (*gold)[0] = -1.;
@@ -103,8 +103,8 @@ TEST(SR1Hessian, getDeltaGrad)
 
     dotk::DOTk_SR1Hessian hess(mng.getMatrixTimesVector());
     EXPECT_EQ(dotk::types::SR1_HESS, hess.getHessianType());
-    hess.getDeltaGrad()->copy(*mng.getNewGradient());
-    hess.getDeltaGrad()->axpy(-1.0, *mng.getOldGradient());
+    hess.getDeltaGrad()->update(1., *mng.getNewGradient(), 0.);
+    hess.getDeltaGrad()->update(-1.0, *mng.getOldGradient(), 1.);
 
     std::tr1::shared_ptr<dotk::Vector<Real> > gold = primal->control()->clone();
     (*gold)[0] = -2402.;
@@ -130,18 +130,17 @@ TEST(SR1Hessian, getHessian)
 
     dotk::DOTk_SR1Hessian hess(mng->getMatrixTimesVector());
     EXPECT_EQ(dotk::types::SR1_HESS, hess.getHessianType());
-    hess.getDeltaPrimal()->copy(*mng->getNewPrimal());
-    hess.getDeltaPrimal()->axpy(-1.0, *mng->getOldPrimal());
+    hess.getDeltaPrimal()->update(1., *mng->getNewPrimal(), 0.);
+    hess.getDeltaPrimal()->update(-1.0, *mng->getOldPrimal(), 1.);
 
     // Gradient Information
     mng->getRoutinesMng()->gradient(mng->getOldPrimal(), mng->getOldGradient());
     mng->getRoutinesMng()->gradient(mng->getNewPrimal(), mng->getNewGradient());
-    hess.getDeltaGrad()->copy(*mng->getNewGradient());
-    hess.getDeltaGrad()->axpy(-1.0, *mng->getOldGradient());
+    hess.getDeltaGrad()->update(1., *mng->getNewGradient(), 0.);
+    hess.getDeltaGrad()->update(-1.0, *mng->getOldGradient(), 1.);
 
     // Trial step information
-    mng->getTrialStep()->copy(*mng->getNewGradient());
-    mng->getTrialStep()->scale(-1.);
+    mng->getTrialStep()->update(-1., *mng->getNewGradient(), 0.);
 
     // EVEN CASE
     hess.getHessian(mng->getTrialStep(), mng->getMatrixTimesVector());

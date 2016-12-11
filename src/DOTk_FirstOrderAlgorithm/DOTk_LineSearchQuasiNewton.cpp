@@ -109,8 +109,7 @@ void DOTk_LineSearchQuasiNewton::getMin()
 
         m_InvHessian->apply(m_DataMng, m_DataMng->getNewGradient(), m_InvHessianTimesVector);
         m_InvHessian->setUpdateSecondOrderOperator(true);
-        m_DataMng->getTrialStep()->copy(*m_InvHessianTimesVector);
-        m_DataMng->getTrialStep()->scale(static_cast<Real>(-1.0));
+        m_DataMng->getTrialStep()->update(-1., *m_InvHessianTimesVector, 0.);
         dotk::gtools::checkDescentDirection(m_DataMng->getNewGradient(),
                                             m_DataMng->getTrialStep(),
                                             dotk::DOTk_FirstOrderAlgorithm::getMinCosineAngleTol());

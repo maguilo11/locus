@@ -141,7 +141,7 @@ Real DOTk_BoundConstraint::getMinReductionStep(const std::tr1::shared_ptr<dotk::
     Real current_objective_func_val = mng_->getOldObjectiveFunctionValue();
     while(1)
     {
-        mng_->getNewPrimal()->axpy(step, *mng_->getTrialStep());
+        mng_->getNewPrimal()->update(step, *mng_->getTrialStep(), 1.);
         new_objective_function_value = mng_->evaluateObjective(mng_->getNewPrimal());
         bool is_new_fval_less_than_current_fval =
                 new_objective_function_value < current_objective_func_val ? true: false;
@@ -149,7 +149,7 @@ Real DOTk_BoundConstraint::getMinReductionStep(const std::tr1::shared_ptr<dotk::
         {
             break;
         }
-        mng_->getNewPrimal()->copy(*mng_->getOldPrimal());
+        mng_->getNewPrimal()->update(1., *mng_->getOldPrimal(), 0.);
         step = step * this->getContractionStep();
         ++ itr;
     }
@@ -206,7 +206,7 @@ void DOTk_BoundConstraint::computeScaledTrialStep(const std::tr1::shared_ptr<dot
             Real current_objective_function_value = mng_->getNewObjectiveFunctionValue();
             Real step = this->getStep(step_, mng_);
             mng_->getTrialStep()->scale(step);
-            mng_->getNewPrimal()->copy(*current_primal_);
+            mng_->getNewPrimal()->update(1., *current_primal_, 0.);
             mng_->setNewObjectiveFunctionValue(current_objective_function_value);
             break;
         }

@@ -49,10 +49,10 @@ void DOTk_GradientTypeUNP::operator()(const dotk::Vector<Real> & primal_, dotk::
     m_EqualityContraint->adjointPartialDerivativeControl(*m_State, primal_, *m_Dual, *m_ControlWorkVec);
 
     // assemble gradient operator
-    gradient_.copy(*m_ControlWorkVec);
+    gradient_.update(1., *m_ControlWorkVec, 0.);
     m_ControlWorkVec->fill(static_cast<Real>(0.0));
     m_ObjectiveFunction->partialDerivativeControl((*m_State), primal_, *m_ControlWorkVec);
-    gradient_.axpy(static_cast<Real>(1.0), *m_ControlWorkVec);
+    gradient_.update(static_cast<Real>(1.0), *m_ControlWorkVec, 1.);
 }
 
 void DOTk_GradientTypeUNP::initialize(const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_)

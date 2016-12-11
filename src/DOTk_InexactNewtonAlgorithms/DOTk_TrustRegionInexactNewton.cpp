@@ -182,8 +182,8 @@ void DOTk_TrustRegionInexactNewton::initialize()
     m_DataMng->computeGradient();
     Real initial_norm_gradient = m_DataMng->getNewGradient()->norm();
     m_DataMng->setNormNewGradient(initial_norm_gradient);
-    m_DataMng->getOldPrimal()->copy(*m_DataMng->getNewPrimal());
-    m_DataMng->getOldGradient()->copy(*m_DataMng->getNewGradient());
+    m_DataMng->getOldPrimal()->update(1., *m_DataMng->getNewPrimal(), 0.);
+    m_DataMng->getOldGradient()->update(1., *m_DataMng->getNewGradient(), 0.);
 }
 
 void DOTk_TrustRegionInexactNewton::checkAlgorithmInputs()
@@ -253,8 +253,8 @@ void DOTk_TrustRegionInexactNewton::computeScaledInexactNewtonStep()
 void DOTk_TrustRegionInexactNewton::computeActualReduction()
 {
     const std::tr1::shared_ptr<dotk::DOTk_TrustRegion> & trust_region_ptr = m_DataMng->getTrustRegion();
-    m_WorkVector->copy(*m_DataMng->getNewPrimal());
-    m_WorkVector->axpy(static_cast<Real>(1.0), *m_DataMng->getTrialStep());
+    m_WorkVector->update(1., *m_DataMng->getNewPrimal(), 0.);
+    m_WorkVector->update(static_cast<Real>(1.0), *m_DataMng->getTrialStep(), 1.);
 
     Real new_objective_func_val = m_DataMng->evaluateObjective(m_WorkVector);
     this->setNewObjectiveFunctionValue(new_objective_func_val);

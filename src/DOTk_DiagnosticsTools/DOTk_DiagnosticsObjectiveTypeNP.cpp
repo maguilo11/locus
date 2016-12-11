@@ -49,7 +49,7 @@ void DOTk_DiagnosticsObjectiveTypeNP::checkPartialDerivativeControl(const dotk::
     dotk::nlp::variables vars(*state_.data(), *control_.data());
     m_OriginalField.reset();
     m_OriginalField = vars.mControl->clone();
-    m_OriginalField->copy(*vars.mControl);
+    m_OriginalField->update(1., *vars.mControl, 0.);
 
     std::tr1::shared_ptr<dotk::Vector<Real> > delta_control = vars.mControl->clone();
     dotk::gtools::generateRandomVector(delta_control);
@@ -79,7 +79,7 @@ void DOTk_DiagnosticsObjectiveTypeNP::checkPartialDerivativeState(const dotk::DO
     dotk::nlp::variables vars(*state_.data(), *control_.data());
     m_OriginalField.reset();
     m_OriginalField = vars.mState->clone();
-    m_OriginalField->copy(*vars.mState);
+    m_OriginalField->update(1., *vars.mState, 0.);
 
     std::tr1::shared_ptr<dotk::Vector<Real> > delta_state = vars.mState->clone();
     dotk::gtools::generateRandomVector(delta_state);
@@ -109,7 +109,7 @@ void DOTk_DiagnosticsObjectiveTypeNP::checkPartialDerivativeStateState(const dot
     dotk::nlp::variables vars(*state_.data(), *control_.data());
     m_OriginalField.reset();
     m_OriginalField = vars.mState->clone();
-    m_OriginalField->copy(*vars.mState);
+    m_OriginalField->update(1., *vars.mState, 0.);
 
     std::tr1::shared_ptr<dotk::Vector<Real> > delta_state = vars.mState->clone();
     dotk::gtools::generateRandomVector(delta_state);
@@ -142,7 +142,7 @@ void DOTk_DiagnosticsObjectiveTypeNP::checkPartialDerivativeStateControl(const d
     dotk::nlp::variables vars(*state_.data(), *control_.data());
     m_OriginalField.reset();
     m_OriginalField = vars.mControl->clone();
-    m_OriginalField->copy(*vars.mControl);
+    m_OriginalField->update(1., *vars.mControl, 0.);
 
     std::tr1::shared_ptr<dotk::Vector<Real> > delta_control = vars.mControl->clone();
     dotk::gtools::generateRandomVector(delta_control);
@@ -172,7 +172,7 @@ void DOTk_DiagnosticsObjectiveTypeNP::checkPartialDerivativeControlControl(const
     dotk::nlp::variables vars(*state_.data(), *control_.data());
     m_OriginalField.reset();
     m_OriginalField = vars.mControl->clone();
-    m_OriginalField->copy(*vars.mControl);
+    m_OriginalField->update(1., *vars.mControl, 0.);
 
     std::tr1::shared_ptr<dotk::Vector<Real> > delta_control = vars.mControl->clone();
     dotk::gtools::generateRandomVector(delta_control);
@@ -205,7 +205,7 @@ void DOTk_DiagnosticsObjectiveTypeNP::checkPartialDerivativeControlState(const d
     dotk::nlp::variables vars(*state_.data(), *control_.data());
     m_OriginalField.reset();
     m_OriginalField = vars.mState->clone();
-    m_OriginalField->copy(*vars.mState);
+    m_OriginalField->update(1., *vars.mState, 0.);
 
     std::tr1::shared_ptr<dotk::Vector<Real> > delta_state = vars.mState->clone();
     dotk::gtools::generateRandomVector(delta_state);
@@ -303,31 +303,30 @@ void DOTk_DiagnosticsObjectiveTypeNP::checkScalarValuedFunctionSecondDerivative(
         // four point finite difference approximation
         dotk::nlp::perturbField(epsilon, *perturbation_vec_, variables_, derivative_type);
         first_derivative_(m_ObjectiveFunction, variables_.mState, variables_.mControl, first_derivative);
-        finite_diff_second_derivative_times_direction->axpy(static_cast<Real>(8.), *first_derivative);
+        finite_diff_second_derivative_times_direction->update(8., *first_derivative, 1.);
         dotk::nlp::resetField(*m_OriginalField, variables_, derivative_type);
 
         dotk::nlp::perturbField(-epsilon, *perturbation_vec_, variables_, derivative_type);
         first_derivative_(m_ObjectiveFunction, variables_.mState, variables_.mControl, first_derivative);
-        finite_diff_second_derivative_times_direction->axpy(static_cast<Real>(-8.), *first_derivative);
+        finite_diff_second_derivative_times_direction->update(-8., *first_derivative, 1.);
         dotk::nlp::resetField(*m_OriginalField, variables_, derivative_type);
 
-        dotk::nlp::perturbField(static_cast<Real>(2.) * epsilon, *perturbation_vec_, variables_, derivative_type);
+        dotk::nlp::perturbField(2. * epsilon, *perturbation_vec_, variables_, derivative_type);
         first_derivative_(m_ObjectiveFunction, variables_.mState, variables_.mControl, first_derivative);
-        finite_diff_second_derivative_times_direction->axpy(static_cast<Real>(-1.), *first_derivative);
+        finite_diff_second_derivative_times_direction->update(-1., *first_derivative, 1.);
         dotk::nlp::resetField(*m_OriginalField, variables_, derivative_type);
 
-        dotk::nlp::perturbField(static_cast<Real>(-2.) * epsilon, *perturbation_vec_, variables_, derivative_type);
+        dotk::nlp::perturbField(-2. * epsilon, *perturbation_vec_, variables_, derivative_type);
         first_derivative_(m_ObjectiveFunction, variables_.mState, variables_.mControl, first_derivative);
-        finite_diff_second_derivative_times_direction->axpy(static_cast<Real>(1.), *first_derivative);
+        finite_diff_second_derivative_times_direction->update(1., *first_derivative, 1.);
         dotk::nlp::resetField(*m_OriginalField, variables_, derivative_type);
 
-        Real alpha = static_cast<Real>(1.) / (static_cast<Real>(12.) * epsilon);
+        Real alpha = 1. / (12. * epsilon);
         finite_diff_second_derivative_times_direction->scale(alpha);
 
         Real norm_finite_diff_second_derivative_times_direction = finite_diff_second_derivative_times_direction->norm();
 
-        finite_diff_second_derivative_times_direction->axpy(static_cast<Real>(-1.),
-                                                            *true_second_derivative_times_direction);
+        finite_diff_second_derivative_times_direction->update(-1., *true_second_derivative_times_direction, 1.);
         Real numerator = finite_diff_second_derivative_times_direction->norm();
         Real denominator = std::numeric_limits<Real>::epsilon() + norm_true_second_derivative_times_direction;
         Real relative_error = numerator / denominator;

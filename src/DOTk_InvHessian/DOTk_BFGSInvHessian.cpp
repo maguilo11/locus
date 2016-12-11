@@ -42,7 +42,7 @@ const std::tr1::shared_ptr<dotk::Vector<Real> > & DOTk_BFGSInvHessian::getDeltaP
 void DOTk_BFGSInvHessian::getInvHessian(const std::tr1::shared_ptr<dotk::Vector<Real> > & vector_,
                                         const std::tr1::shared_ptr<dotk::Vector<Real> > & inv_hess_times_vector_)
 {
-    inv_hess_times_vector_->copy(*vector_);
+    inv_hess_times_vector_->update(1., *vector_, 0.);
     Real dprimal_dot_vec = mDeltaPrimal->dot(*vector_);
     Real value = std::fabs(dprimal_dot_vec - static_cast<Real>(0.0));
     bool zero_dprimal_dot_vec = value <= std::numeric_limits<Real>::min() ? true: false;
@@ -55,22 +55,21 @@ void DOTk_BFGSInvHessian::getInvHessian(const std::tr1::shared_ptr<dotk::Vector<
     Real rho = static_cast<Real>(1.0) / mDeltaGradient->dot(*mDeltaPrimal);
     Real alpha = rho * dprimal_dot_vec;
     // compute rho*s*s^t*vector_
-    inv_hess_times_vector_->copy(*mDeltaPrimal);
-    inv_hess_times_vector_->scale(alpha);
+    inv_hess_times_vector_->update(alpha, *mDeltaPrimal, 0.);
     // compute gamma*I*(vector_ - alpha*y)
-    m_InvHessTimesVec->copy(*vector_);
-    m_InvHessTimesVec->axpy(-alpha, *mDeltaGradient);
+    m_InvHessTimesVec->update(1., *vector_, 0.);
+    m_InvHessTimesVec->update(-alpha, *mDeltaGradient, 1.);
     // compute beta = rho *dotk::scalar::dot(Yvec,(vector_ - alpha*y))
     Real beta = rho * mDeltaGradient->dot(*m_InvHessTimesVec);
     // compute (I - rho*s*y)^t * (I - rho*s*y)*vector_
-    inv_hess_times_vector_->axpy(-beta, *mDeltaPrimal);
-    inv_hess_times_vector_->axpy(static_cast<Real>(1.0), *m_InvHessTimesVec);
+    inv_hess_times_vector_->update(-beta, *mDeltaPrimal, 1.);
+    inv_hess_times_vector_->update(1., *m_InvHessTimesVec, 1.);
 
     Real norm_invHess_times_vec = inv_hess_times_vector_->norm();
     bool negative_curvature_detected = norm_invHess_times_vec < std::numeric_limits<Real>::min() ? true: false;
     if(negative_curvature_detected == true)
     {
-        inv_hess_times_vector_->copy(*vector_);
+        inv_hess_times_vector_->update(1., *vector_, 0);
     }
 }
 

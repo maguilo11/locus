@@ -100,7 +100,7 @@ const std::tr1::shared_ptr<dotk::Vector<Real> > & DOTk_TrustRegionMngTypeELP::ge
 
 void DOTk_TrustRegionMngTypeELP::setTrialStep(const dotk::Vector<Real> & input_)
 {
-    m_TrialStep->copy(input_);
+    m_TrialStep->update(1., input_, 0.);
 }
 
 const std::tr1::shared_ptr<dotk::Vector<Real> > & DOTk_TrustRegionMngTypeELP::getTrialStep() const
@@ -110,12 +110,12 @@ const std::tr1::shared_ptr<dotk::Vector<Real> > & DOTk_TrustRegionMngTypeELP::ge
 
 void DOTk_TrustRegionMngTypeELP::setNewPrimal(const dotk::Vector<Real> & input_)
 {
-    m_NewPrimal->copy(input_);
+    m_NewPrimal->update(1., input_, 0.);
 }
 
 void DOTk_TrustRegionMngTypeELP::setOldPrimal(const dotk::Vector<Real> & input_)
 {
-    m_OldPrimal->copy(input_);
+    m_OldPrimal->update(1., input_, 0.);
 }
 
 const std::tr1::shared_ptr<dotk::Vector<Real> > & DOTk_TrustRegionMngTypeELP::getNewPrimal() const
@@ -130,12 +130,12 @@ const std::tr1::shared_ptr<dotk::Vector<Real> > & DOTk_TrustRegionMngTypeELP::ge
 
 void DOTk_TrustRegionMngTypeELP::setNewGradient(const dotk::Vector<Real> & input_)
 {
-    m_NewGradient->copy(input_);
+    m_NewGradient->update(1., input_, 0.);
 }
 
 void DOTk_TrustRegionMngTypeELP::setOldGradient(const dotk::Vector<Real> & input_)
 {
-    m_OldGradient->copy(input_);
+    m_OldGradient->update(1., input_, 0.);
 }
 
 const std::tr1::shared_ptr<dotk::Vector<Real> > & DOTk_TrustRegionMngTypeELP::getNewGradient() const
@@ -370,8 +370,8 @@ void DOTk_TrustRegionMngTypeELP::initialize(const std::tr1::shared_ptr<dotk::DOT
     m_AugmentedSystemLeftHandSide->fill(0);
     m_AugmentedSystemRightHandSide->fill(0);
 
-    m_NewDual->copy(*primal_->dual());
-    m_OldDual->copy(*primal_->dual());
+    m_NewDual->update(1., *primal_->dual(), 0.);
+    m_OldDual->update(1., *primal_->dual(), 0.);
 
     m_RoutinesMng.reset(new dotk::DOTk_RoutinesTypeELP(primal_, objective_, equality_));
 }

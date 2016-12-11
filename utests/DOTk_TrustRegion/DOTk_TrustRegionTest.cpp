@@ -191,7 +191,7 @@ TEST(DOTk_TrustRegion, computeDoglegStep)
     (*newton_dir)[0] = -0.320;
     (*newton_dir)[1] = -0.747;
     Real trust_region_radius = 0.75;
-    newton_dir->axpy(-1, *cauchy_dir);
+    newton_dir->update(-1, *cauchy_dir, 1.);
     Real root = step.computeDoglegRoot(trust_region_radius, cauchy_dir, newton_dir);
     const Real tol = 1e-8;
     EXPECT_NEAR(0.797731933418, root, tol);

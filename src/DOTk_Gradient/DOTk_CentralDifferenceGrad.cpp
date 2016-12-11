@@ -31,7 +31,7 @@ const std::tr1::shared_ptr<dotk::Vector<Real> > & DOTk_CentralDifferenceGrad::ge
 
 void DOTk_CentralDifferenceGrad::setFiniteDiffPerturbationVec(const dotk::Vector<Real> & input_)
 {
-    m_FiniteDiffPerturbationVec->copy(input_);
+    m_FiniteDiffPerturbationVec->update(1., input_, 0.);
 }
 
 void DOTk_CentralDifferenceGrad::getGradient(const std::tr1::shared_ptr<dotk::DOTk_AssemblyManager> & interface_,

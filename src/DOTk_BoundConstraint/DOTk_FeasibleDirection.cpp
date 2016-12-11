@@ -31,8 +31,8 @@ void DOTk_FeasibleDirection::getDirection(const std::tr1::shared_ptr<dotk::Vecto
                                           const std::tr1::shared_ptr<dotk::Vector<Real> > & feasible_dir_)
 {
     Real factor = 1.;
-    m_TrialPrimal->copy(*primal_);
-    m_TrialPrimal->axpy(factor, *feasible_dir_);
+    m_TrialPrimal->update(1., *primal_, 0.);
+    m_TrialPrimal->update(factor, *feasible_dir_, 1.);
     dotk::DOTk_BoundConstraint::computeActiveSet(m_LowerBounds, m_UpperBounds, m_TrialPrimal);
 
     size_t itr = 1;
@@ -45,8 +45,8 @@ void DOTk_FeasibleDirection::getDirection(const std::tr1::shared_ptr<dotk::Vecto
             break;
         }
         factor = factor * dotk::DOTk_BoundConstraint::getContractionStep();
-        m_TrialPrimal->copy(*primal_);
-        m_TrialPrimal->axpy(factor, *feasible_dir_);
+        m_TrialPrimal->update(1., *primal_, 0.);
+        m_TrialPrimal->update(factor, *feasible_dir_, 1.);
         ++itr;
     }
 }
@@ -63,7 +63,7 @@ void DOTk_FeasibleDirection::initialize(const std::tr1::shared_ptr<dotk::DOTk_Pr
 {
     if(primal_->getControlLowerBound().use_count() > 0)
     {
-        m_LowerBounds->copy(*primal_->getControlLowerBound());
+        m_LowerBounds->update(1., *primal_->getControlLowerBound(), 0.);
     }
     else
     {
@@ -72,7 +72,7 @@ void DOTk_FeasibleDirection::initialize(const std::tr1::shared_ptr<dotk::DOTk_Pr
     }
     if(primal_->getControlUpperBound().use_count() > 0)
     {
-        m_UpperBounds->copy(*primal_->getControlUpperBound());
+        m_UpperBounds->update(1., *primal_->getControlUpperBound(), 0.);
     }
     else
     {

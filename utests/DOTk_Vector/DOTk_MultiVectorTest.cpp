@@ -38,7 +38,7 @@ TEST(DOTkMultiVariableVector, scale)
     dotk::gtest::checkResults(control_gold.size(), control_gold.data(), *multi_vector.control());
 }
 
-TEST(DOTkMultiVariableVector, cwiseProd)
+TEST(DOTkMultiVariableVector, elementWiseMultiplication)
 {
     size_t num_duals = 10;
     size_t num_controls = 8;
@@ -46,7 +46,7 @@ TEST(DOTkMultiVariableVector, cwiseProd)
     dotk::StdArray<Real> control(num_controls, 3.);
     dotk::DOTk_MultiVector<Real> x(control, dual);
     dotk::DOTk_MultiVector<Real> y(control, dual);
-    x.cwiseProd(y);
+    x.elementWiseMultiplication(y);
 
     std::vector<Real> dual_gold(num_duals, 4.);
     std::vector<Real> control_gold(num_controls, 9.);
@@ -64,7 +64,7 @@ TEST(DOTkMultiVariableVector, axpy)
     dotk::DOTk_MultiVector<Real> multi_vector(control, dual);
 
     dotk::DOTk_MultiVector<Real> input(control, dual);
-    multi_vector.axpy(2, input);
+    multi_vector.update(2, input, 1.);
 
     std::vector<Real> dual_gold(num_duals, 3.);
     std::vector<Real> control_gold(num_controls, 6.);
@@ -193,7 +193,7 @@ TEST(DOTkMultiVariableVector, copy)
     input->dual()->fill(-8);
     input->control()->fill(-16);
 
-    multi_vector.copy(*input);
+    multi_vector.update(1., *input, 0.);
 
     std::vector<Real> dual_gold(num_duals, -8.);
     std::vector<Real> control_gold(num_controls, -16.);
@@ -275,7 +275,7 @@ TEST(DOTkMultiVariableVector, cwiseProd2)
     dotk::StdArray<Real> control(num_controls, 3.);
     dotk::DOTk_MultiVector<Real> x(control, state, dual);
     dotk::DOTk_MultiVector<Real> y(control, state, dual);
-    x.cwiseProd(y);
+    x.elementWiseMultiplication(y);
 
     std::vector<Real> dual_gold(num_duals, 4.);
     std::vector<Real> state_gold(num_states, 16);
@@ -297,7 +297,7 @@ TEST(DOTkMultiVariableVector, axpy2)
     dotk::DOTk_MultiVector<Real> multi_vector(control, state, dual);
 
     dotk::DOTk_MultiVector<Real> input(control, state, dual);
-    multi_vector.axpy(2, input);
+    multi_vector.update(2, input, 1.);
 
     std::vector<Real> dual_gold(num_duals, 3.);
     std::vector<Real> state_gold(num_states, 9);
@@ -450,7 +450,7 @@ TEST(DOTkMultiVariableVector, copy2)
     input->state()->fill(-2);
     input->control()->fill(-16);
 
-    multi_vector.copy(*input);
+    multi_vector.update(1., *input, 0.);
 
     std::vector<Real> dual_gold(num_duals, -8.);
     std::vector<Real> state_gold(num_states, -2.);

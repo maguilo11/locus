@@ -38,20 +38,20 @@ void DOTk_CentralFiniteDifference::differentiate(const std::tr1::shared_ptr<dotk
                                                  const dotk::Vector<Real> & first_derivative_,
                                                  dotk::Vector<Real> & second_derivative_)
 {
-    m_OriginalPrimal->copy(primal_);
+    m_OriginalPrimal->update(1., primal_, 0.);
 
     Real epsilon = dotk::DOTk_NumericalDifferentiation::getEpsilon();
-    m_OriginalPrimal->axpy(epsilon, direction_);
+    m_OriginalPrimal->update(epsilon, direction_, 1.);
     functor_->operator()(*m_OriginalPrimal, second_derivative_);
 
-    m_OriginalPrimal->copy(primal_);
-    m_OriginalPrimal->axpy(-epsilon, direction_);
+    m_OriginalPrimal->update(1., primal_, 0.);
+    m_OriginalPrimal->update(-epsilon, direction_, 1.);
     m_Gradient->fill(0.);
     functor_->operator()(*m_OriginalPrimal, *m_Gradient);
 
-    second_derivative_.axpy(static_cast<Real>(-1.), *m_Gradient);
+    second_derivative_.update(-1., *m_Gradient, 1.);
 
-    Real scale_factor = static_cast<Real>(1.) / (static_cast<Real>(2.) * epsilon);
+    Real scale_factor = 1. / (2. * epsilon);
     second_derivative_.scale(scale_factor);
 }
 

@@ -273,8 +273,7 @@ void DOTk_InexactTrustRegionSQP::solveTrustRegionSubProblem()
             m_SqpDataMng->getRoutinesMng()->jacobian(m_SqpDataMng->getNewPrimal(),
                                                      m_SqpDataMng->m_NormalStep,
                                                      m_SqpDataMng->m_LinearizedEqConstraint);
-            m_SqpDataMng->m_LinearizedEqConstraint->axpy(static_cast<Real>(1.),
-                                                         *m_SqpDataMng->getNewEqualityConstraintResidual());
+            m_SqpDataMng->m_LinearizedEqConstraint->update(1., *m_SqpDataMng->getNewEqualityConstraintResidual(), 1.);
             m_Hessian->apply(m_SqpDataMng, m_SqpDataMng->m_NormalStep, m_SqpDataMng->m_HessTimesNormalStep);
 
             criterion = m_SqpSolverMng->solveTangentialSubProb(m_SqpDataMng);
@@ -287,7 +286,7 @@ void DOTk_InexactTrustRegionSQP::solveTrustRegionSubProblem()
         {
             /* If inexactness in the tangential step isn't acceptable, try the tangential
              Cauchy step before re-computing effective tangential and quasi-normal steps. */
-            m_SqpDataMng->m_ProjectedTangentialStep->copy(*m_SqpDataMng->m_ProjectedTangentialCauchyStep);
+            m_SqpDataMng->m_ProjectedTangentialStep->update(1., *m_SqpDataMng->m_ProjectedTangentialCauchyStep, 0.);
         }
         else
         {
@@ -427,20 +426,20 @@ void DOTk_InexactTrustRegionSQP::correctTrialStep()
 
     this->setPredictedReduction(static_cast<Real>(1.));
 
-    m_SqpDataMng->getTrialStep()->copy(*m_SqpDataMng->m_NormalStep);
-    m_SqpDataMng->getTrialStep()->axpy(static_cast<Real>(1.), *m_SqpDataMng->m_ProjectedTangentialStep);
+    m_SqpDataMng->getTrialStep()->update(1., *m_SqpDataMng->m_NormalStep, 0.);
+    m_SqpDataMng->getTrialStep()->update(static_cast<Real>(1.), *m_SqpDataMng->m_ProjectedTangentialStep, 1.);
     while(prediceted_reduction_residual_over_prediceted_reduction > stopping_criterion)
     {
-        m_SqpDataMng->getNewPrimal()->copy(*m_SqpDataMng->getOldPrimal());
+        m_SqpDataMng->getNewPrimal()->update(1., *m_SqpDataMng->getOldPrimal(), 0.);
         dotk::types::solver_stop_criterion_t criterion = m_SqpSolverMng->solveTangentialProb(m_SqpDataMng);
         this->setTangentialProbExitCriterion(criterion);
 
         m_SqpDataMng->getRoutinesMng()->jacobian(m_SqpDataMng->getNewPrimal(),
                                                  m_SqpDataMng->m_TangentialStep,
                                                  m_SqpDataMng->m_JacobianTimesTangentialStep);
-        m_SqpDataMng->getTrialStep()->copy(*m_SqpDataMng->m_NormalStep);
-        m_SqpDataMng->getTrialStep()->axpy(static_cast<Real>(1.), *m_SqpDataMng->m_TangentialStep);
-        m_SqpDataMng->getNewPrimal()->axpy(static_cast<Real>(1.), *m_SqpDataMng->getTrialStep());
+        m_SqpDataMng->getTrialStep()->update(1., *m_SqpDataMng->m_NormalStep, 0.);
+        m_SqpDataMng->getTrialStep()->update(static_cast<Real>(1.), *m_SqpDataMng->m_TangentialStep, 1.);
+        m_SqpDataMng->getNewPrimal()->update(static_cast<Real>(1.), *m_SqpDataMng->getTrialStep(), 1.);
         m_SqpDataMng->getRoutinesMng()->gradient(m_SqpDataMng->getNewPrimal(),
                                                  m_SqpDataMng->getOldDual(),
                                                  m_SqpDataMng->getNewGradient());
@@ -541,10 +540,10 @@ Real DOTk_InexactTrustRegionSQP::computePredictedReduction(Real partial_predicte
 void DOTk_InexactTrustRegionSQP::resetState()
 {
     m_SqpDataMng->setNewObjectiveFunctionValue(m_SqpDataMng->getOldObjectiveFunctionValue());
-    m_SqpDataMng->getNewPrimal()->copy(*m_SqpDataMng->getOldPrimal());
-    m_SqpDataMng->getNewEqualityConstraintResidual()->copy(*m_SqpDataMng->getOldEqualityConstraintResidual());
-    m_SqpDataMng->getNewGradient()->copy(*m_SqpDataMng->getOldGradient());
-    m_SqpDataMng->getNewDual()->copy(*m_SqpDataMng->getOldDual());
+    m_SqpDataMng->getNewPrimal()->update(1., *m_SqpDataMng->getOldPrimal(), 0.);
+    m_SqpDataMng->getNewEqualityConstraintResidual()->update(1., *m_SqpDataMng->getOldEqualityConstraintResidual(), 0.);
+    m_SqpDataMng->getNewGradient()->update(1., *m_SqpDataMng->getOldGradient(), 0.);
+    m_SqpDataMng->getNewDual()->update(1., *m_SqpDataMng->getOldDual(), 0.);
 }
 
 void DOTk_InexactTrustRegionSQP::setActualReduction(Real actual_reduction_)

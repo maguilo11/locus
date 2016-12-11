@@ -85,16 +85,16 @@ void DOTk_BoundConstraints::computeFeasibleDirection(const dotk::Vector<Real> & 
                                                      dotk::Vector<Real> & feasible_direction_)
 {
     Real step = 1.0;
-    feasible_direction_.copy(current_trial_step_);
-    trial_variable_.copy(current_variable_);
-    trial_variable_.axpy(step, feasible_direction_);
+    feasible_direction_.update(1., current_trial_step_, 0.);
+    trial_variable_.update(1., current_variable_, 0.);
+    trial_variable_.update(step, feasible_direction_, 1.);
 
     size_t itr = 1;
     while(this->isDirectionFeasible(lower_bound_, upper_bound_, trial_variable_) == false)
     {
         step *= m_ContractionFactor;
-        trial_variable_.copy(current_variable_);
-        trial_variable_.axpy(step, feasible_direction_);
+        trial_variable_.update(1., current_variable_, 0.);
+        trial_variable_.update(step, feasible_direction_, 1.);
         if(itr >= m_MaxNumFeasibleIterations)
         {
             feasible_direction_.scale(step);
@@ -141,8 +141,8 @@ void DOTk_BoundConstraints::computeProjectedStep(const dotk::Vector<Real> & tria
                                                  const dotk::Vector<Real> & current_variables_,
                                                  dotk::Vector<Real> & projected_step_)
 {
-    projected_step_.copy(trial_variables_);
-    projected_step_.axpy(static_cast<Real>(-1), current_variables_);
+    projected_step_.update(1., trial_variables_, 0.);
+    projected_step_.update(-1., current_variables_, 1.);
 }
 
 void DOTk_BoundConstraints::computeProjectedGradient(const dotk::Vector<Real> & trial_variable_,

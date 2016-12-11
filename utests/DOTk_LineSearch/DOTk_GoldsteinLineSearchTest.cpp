@@ -49,11 +49,10 @@ TEST(DOTk_GoldsteinLineSearchTest, step)
     mng->setOldObjectiveFunctionValue(old_objective_value);
     mng->getRoutinesMng()->gradient(mng->getOldPrimal(), mng->getOldGradient());
 
-    mng->getTrialStep()->copy(*mng->getOldGradient());
-    mng->getTrialStep()->scale(-1.);
-    mng->getNewPrimal()->copy(*mng->getOldPrimal());
-    mng->getNewPrimal()->axpy(1., *mng->getTrialStep());
-    mng->getNewGradient()->copy(*mng->getOldGradient());
+    mng->getTrialStep()->update(-1., *mng->getOldGradient(), 0.);
+    mng->getNewPrimal()->update(1., *mng->getOldPrimal(), 0.);
+    mng->getNewPrimal()->update(1., *mng->getTrialStep(), 1.);
+    mng->getNewGradient()->update(1., *mng->getOldGradient(), 0.);
 
     Real new_objective_value = mng->getRoutinesMng()->objective(mng->getNewPrimal());
     mng->setNewObjectiveFunctionValue(new_objective_value);

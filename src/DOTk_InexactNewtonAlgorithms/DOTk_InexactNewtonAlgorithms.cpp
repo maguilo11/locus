@@ -149,7 +149,7 @@ void DOTk_InexactNewtonAlgorithms::setTrialStep(const std::tr1::shared_ptr<dotk:
         case dotk::types::INVALID_INEXACTNESS_MEASURE:
         case dotk::types::INVALID_ORTHOGONALITY_MEASURE:
         {
-            mng_->getTrialStep()->copy(*solver_->getDataMng()->getSolution());
+            mng_->getTrialStep()->update(1., *solver_->getDataMng()->getSolution(), 0.);
             break;
         }
     }
@@ -206,8 +206,8 @@ bool DOTk_InexactNewtonAlgorithms::checkStoppingCriteria(const std::tr1::shared_
 
 void DOTk_InexactNewtonAlgorithms::resetCurrentStateToFormer(const std::tr1::shared_ptr<dotk::DOTk_OptimizationDataMng> & mng_)
 {
-    mng_->getNewPrimal()->copy(*mng_->getOldPrimal());
-    mng_->getNewGradient()->copy(*mng_->getOldGradient());
+    mng_->getNewPrimal()->update(1., *mng_->getOldPrimal(), 0.);
+    mng_->getNewGradient()->update(1., *mng_->getOldGradient(), 0.);
     mng_->setNewObjectiveFunctionValue(mng_->getOldObjectiveFunctionValue());
 }
 

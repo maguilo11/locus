@@ -53,9 +53,9 @@ void DOTk_LeftPrecGCR::initialize(const std::tr1::shared_ptr<dotk::Vector<Real> 
     dotk::DOTk_KrylovSolver::setNumSolverItrDone(itr_done);
     dotk::DOTk_KrylovSolver::trustRegionViolation(false);
 
-    m_DataMng->getResidual()->copy(*rhs_vec_);
+    m_DataMng->getResidual()->update(1., *rhs_vec_, 0.);
     m_DataMng->getLeftPrec()->apply(opt_mng_, m_DataMng->getResidual(), m_DataMng->getLeftPrecTimesVector());
-    mConjugateDirectionStorage[itr_done]->copy(*m_DataMng->getLeftPrecTimesVector());
+    mConjugateDirectionStorage[itr_done]->update(1., *m_DataMng->getLeftPrecTimesVector(), 0.);
     m_DataMng->getLinearOperator()->apply(opt_mng_,
                                           m_DataMng->getResidual(),
                                           mLinearOperatorTimesConjugateDirStorage[itr_done]);
@@ -80,48 +80,48 @@ void DOTk_LeftPrecGCR::pgcr(const std::tr1::shared_ptr<dotk::Vector<Real> > & rh
         return;
     }
     size_t itr = 0;
-    while (1)
+    while(1)
     {
-        if (itr == m_DataMng->getMaxNumSolverItr())
+        if(itr == m_DataMng->getMaxNumSolverItr())
         {
             dotk::DOTk_KrylovSolver::setSolverStopCriterion(dotk::types::MAX_SOLVER_ITR_REACHED);
             break;
         }
         dotk::DOTk_KrylovSolver::setNumSolverItrDone(itr + 1);
-        m_DataMng->getLeftPrec()->apply(opt_mng_, mLinearOperatorTimesConjugateDirStorage[itr],
-                m_DataMng->getLeftPrecTimesVector());
-        Real scaled_curvature =
-                mLinearOperatorTimesConjugateDirStorage[itr]->dot(*m_DataMng->getLeftPrecTimesVector());
-        if (dotk::DOTk_KrylovSolver::checkCurvature(scaled_curvature) == true)
+        m_DataMng->getLeftPrec()->apply(opt_mng_,
+                                        mLinearOperatorTimesConjugateDirStorage[itr],
+                                        m_DataMng->getLeftPrecTimesVector());
+        Real scaled_curvature = mLinearOperatorTimesConjugateDirStorage[itr]->dot(*m_DataMng->getLeftPrecTimesVector());
+        if(dotk::DOTk_KrylovSolver::checkCurvature(scaled_curvature) == true)
         {
             break;
         }
         Real old_res_dot_linear_operator_times_conjugate_dir =
                 m_DataMng->getResidual()->dot(*mLinearOperatorTimesConjugateDirStorage[itr]);
         Real alpha = old_res_dot_linear_operator_times_conjugate_dir / scaled_curvature;
-        m_DataMng->getPreviousSolution()->copy(*m_DataMng->getSolution());
-        m_DataMng->getSolution()->axpy(alpha, *mConjugateDirectionStorage[itr]);
+        m_DataMng->getPreviousSolution()->update(1., *m_DataMng->getSolution(), 0.);
+        m_DataMng->getSolution()->update(alpha, *mConjugateDirectionStorage[itr], 1.);
         Real norm_solution = m_DataMng->getSolution()->norm();
-        if (norm_solution >= dotk::DOTk_KrylovSolver::getTrustRegionRadius())
+        if(norm_solution >= dotk::DOTk_KrylovSolver::getTrustRegionRadius())
         {
             dotk::DOTk_KrylovSolver::trustRegionViolation(true);
             dotk::DOTk_KrylovSolver::setSolverStopCriterion(dotk::types::TRUST_REGION_VIOLATED);
             break;
         }
-        m_DataMng->getResidual()->axpy(-alpha, *m_DataMng->getLeftPrecTimesVector());
+        m_DataMng->getResidual()->update(-alpha, *m_DataMng->getLeftPrecTimesVector(), 1.);
         m_DataMng->getLinearOperator()->apply(opt_mng_, m_DataMng->getResidual(), m_DataMng->getMatrixTimesVector());
         Real res_dot_linear_operator_times_res = m_DataMng->getResidual()->dot(*m_DataMng->getMatrixTimesVector());
         Real scaled_residual_norm = std::sqrt(res_dot_linear_operator_times_res);
         dotk::DOTk_KrylovSolver::setSolverResidualNorm(scaled_residual_norm);
         Real stopping_tolerance = criterion_->evaluate(this, m_DataMng->getLeftPrecTimesVector());
-        if (dotk::DOTk_KrylovSolver::checkResidualNorm(scaled_residual_norm, stopping_tolerance) == true)
+        if(dotk::DOTk_KrylovSolver::checkResidualNorm(scaled_residual_norm, stopping_tolerance) == true)
         {
             break;
         }
         this->updateBetaCoefficientStorage(itr);
         this->updateConjugateDirectionStorage(itr);
         this->updateLinearOperatorTimesConjugateDirStorage(itr);
-        ++itr;
+        ++ itr;
     }
 }
 
@@ -156,7 +156,7 @@ void DOTk_LeftPrecGCR::solve(const std::tr1::shared_ptr<dotk::Vector<Real> > & r
 void DOTk_LeftPrecGCR::initialize(const std::tr1::shared_ptr<dotk::Vector<Real> > vector_)
 {
     size_t dimensions = m_DataMng->getMaxNumSolverItr();
-    for(size_t row = 0; row < dimensions; ++row)
+    for(size_t row = 0; row < dimensions; ++ row)
     {
         mConjugateDirectionStorage[row] = vector_->clone();
         mLinearOperatorTimesConjugateDirStorage[row] = vector_->clone();
@@ -178,10 +178,10 @@ void DOTk_LeftPrecGCR::updateConjugateDirectionStorage(size_t current_itr_)
     size_t next_itr = current_itr_ + 1;
     if(next_itr < m_DataMng->getMaxNumSolverItr())
     {
-        mConjugateDirectionStorage[next_itr]->copy(*m_DataMng->getResidual());
-        for(size_t i = 0; i <= current_itr_; ++i)
+        mConjugateDirectionStorage[next_itr]->update(1., *m_DataMng->getResidual(), 0.);
+        for(size_t i = 0; i <= current_itr_; ++ i)
         {
-            mConjugateDirectionStorage[next_itr]->axpy(mBetaCoefficients[i], *mConjugateDirectionStorage[i]);
+            mConjugateDirectionStorage[next_itr]->update(mBetaCoefficients[i], *mConjugateDirectionStorage[i], 1.);
         }
     }
     else
@@ -195,11 +195,12 @@ void DOTk_LeftPrecGCR::updateLinearOperatorTimesConjugateDirStorage(size_t curre
     size_t next_itr = current_itr_ + 1;
     if(next_itr < m_DataMng->getMaxNumSolverItr())
     {
-        mLinearOperatorTimesConjugateDirStorage[next_itr]->copy(*m_DataMng->getMatrixTimesVector());
-        for(size_t i = 0; i <= current_itr_; ++i)
+        mLinearOperatorTimesConjugateDirStorage[next_itr]->update(1., *m_DataMng->getMatrixTimesVector(), 0.);
+        for(size_t i = 0; i <= current_itr_; ++ i)
         {
-            mLinearOperatorTimesConjugateDirStorage[next_itr]->axpy(mBetaCoefficients[i],
-                                                                    *mLinearOperatorTimesConjugateDirStorage[i]);
+            mLinearOperatorTimesConjugateDirStorage[next_itr]->update(mBetaCoefficients[i],
+                                                                      *mLinearOperatorTimesConjugateDirStorage[i],
+                                                                      1.);
         }
     }
     else

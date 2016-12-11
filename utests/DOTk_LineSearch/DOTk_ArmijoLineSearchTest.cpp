@@ -73,9 +73,8 @@ TEST(DOTk_ArmijoLineSearchTest, step)
     mng->setOldObjectiveFunctionValue(old_objective_func_value);
     mng->getRoutinesMng()->gradient(mng->getNewPrimal(), mng->getNewGradient());
 
-    mng->getTrialStep()->copy(*mng->getNewGradient());
-    mng->getTrialStep()->scale(-1.0);
-    mng->getNewPrimal()->axpy(1., *mng->getTrialStep());
+    mng->getTrialStep()->update(-1., *mng->getNewGradient(), 0.);
+    mng->getNewPrimal()->update(1., *mng->getTrialStep(), 1.);
 
     Real new_objective_value = mng->getRoutinesMng()->objective(mng->getNewGradient());
     mng->setNewObjectiveFunctionValue(new_objective_value);

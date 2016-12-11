@@ -140,19 +140,18 @@ void DOTk_DualSolverNLCG::reset()
 void DOTk_DualSolverNLCG::solve(const std::tr1::shared_ptr<dotk::DOTk_ObjectiveFunction<Real> > & objective_,
                                 const std::tr1::shared_ptr<dotk::Vector<Real> > & solution_)
 {
-    m_DataMng->m_NewDual->copy(*solution_);
+    m_DataMng->m_NewDual->update(1., *solution_, 0.);
     m_DataMng->m_NewObjectiveFunctionValue = objective_->value(*m_DataMng->m_NewDual);
     objective_->gradient(*solution_, *m_DataMng->m_NewGradient);
 
-    m_DataMng->m_NewSteepestDescent->copy(*m_DataMng->m_NewGradient);
-    m_DataMng->m_NewSteepestDescent->scale(static_cast<Real>(-1));
-    m_TrialDual->copy(*m_DataMng->m_NewDual);
-    m_TrialDual->axpy(static_cast<Real>(1), *m_DataMng->m_NewSteepestDescent);
+    m_DataMng->m_NewSteepestDescent->update(-1., *m_DataMng->m_NewGradient, 0.);
+    m_TrialDual->update(1., *m_DataMng->m_NewDual, 0.);
+    m_TrialDual->update(static_cast<Real>(1), *m_DataMng->m_NewSteepestDescent, 1.);
     m_Bounds->computeProjectedGradient(*m_TrialDual,
                                        *m_DualLowerBound,
                                        *m_DualUpperBound,
                                        *m_DataMng->m_NewSteepestDescent);
-    m_DataMng->m_NewTrialStep->copy(*m_DataMng->m_NewSteepestDescent);
+    m_DataMng->m_NewTrialStep->update(1., *m_DataMng->m_NewSteepestDescent, 0.);
 
     m_DataMng->storeCurrentState();
     this->step(objective_);
@@ -166,11 +165,10 @@ void DOTk_DualSolverNLCG::solve(const std::tr1::shared_ptr<dotk::DOTk_ObjectiveF
     {
         objective_->gradient(*m_DataMng->m_NewDual, *m_DataMng->m_NewGradient);
 
-        m_DataMng->m_NewSteepestDescent->copy(*m_DataMng->m_NewGradient);
-        m_DataMng->m_NewSteepestDescent->scale(static_cast<Real>(-1));
+        m_DataMng->m_NewSteepestDescent->update(-1., *m_DataMng->m_NewGradient, 0.);
 
-        m_TrialDual->copy(*m_DataMng->m_NewDual);
-        m_TrialDual->axpy(static_cast<Real>(1), *m_DataMng->m_NewSteepestDescent);
+        m_TrialDual->update(1., *m_DataMng->m_NewDual, 0.);
+        m_TrialDual->update(static_cast<Real>(1), *m_DataMng->m_NewSteepestDescent, 1.);
         m_Bounds->computeProjectedGradient(*m_TrialDual,
                                            *m_DualLowerBound,
                                            *m_DualUpperBound,
@@ -182,8 +180,8 @@ void DOTk_DualSolverNLCG::solve(const std::tr1::shared_ptr<dotk::DOTk_ObjectiveF
             break;
         }
 
-        m_DataMng->m_NewTrialStep->copy(*m_DataMng->m_NewSteepestDescent);
-        m_DataMng->m_NewTrialStep->axpy(scale_parameter, *m_DataMng->m_OldTrialStep);
+        m_DataMng->m_NewTrialStep->update(1., *m_DataMng->m_NewSteepestDescent, 0.);
+        m_DataMng->m_NewTrialStep->update(scale_parameter, *m_DataMng->m_OldTrialStep, 1.);
         m_DataMng->storeCurrentState();
         this->step(objective_);
 
@@ -198,7 +196,7 @@ void DOTk_DualSolverNLCG::solve(const std::tr1::shared_ptr<dotk::DOTk_ObjectiveF
     {
         dotk::DOTk_DualSolverCCSA::setStoppingCriterion(dotk::ccsa::stopping_criterion_t::MAX_NUMBER_ITERATIONS);
     }
-    solution_->copy(*m_DataMng->m_NewDual);
+    solution_->update(1., *m_DataMng->m_NewDual, 0.);
 }
 
 void DOTk_DualSolverNLCG::step(const std::tr1::shared_ptr<dotk::DOTk_ObjectiveFunction<Real> > & objective_)
@@ -215,8 +213,8 @@ void DOTk_DualSolverNLCG::step(const std::tr1::shared_ptr<dotk::DOTk_ObjectiveFu
     step_values[1] = std::min(static_cast<Real>(1.),
                               static_cast<Real>(100.) / (static_cast<Real>(1.) + norm_trial_step));
 
-    m_TrialDual->copy(*m_DataMng->m_NewDual);
-    m_TrialDual->axpy(step_values[1], *m_DataMng->m_NewTrialStep);
+    m_TrialDual->update(1., *m_DataMng->m_NewDual, 0.);
+    m_TrialDual->update(step_values[1], *m_DataMng->m_NewTrialStep, 1.);
     m_Bounds->project(*m_DualLowerBound, *m_DualUpperBound, *m_TrialDual);
     m_Bounds->computeProjectedStep(*m_TrialDual, *m_DataMng->m_NewDual, *m_ProjectedStep);
 
@@ -236,8 +234,8 @@ void DOTk_DualSolverNLCG::step(const std::tr1::shared_ptr<dotk::DOTk_ObjectiveFu
                                                     initial_projected_step_dot_gradient);
         step_values[1] = new_step;
 
-        m_TrialDual->copy(*m_DataMng->m_NewDual);
-        m_TrialDual->axpy(step_values[1], *m_DataMng->m_NewTrialStep);
+        m_TrialDual->update(1., *m_DataMng->m_NewDual, 0.);
+        m_TrialDual->update(step_values[1], *m_DataMng->m_NewTrialStep, 1.);
         m_Bounds->project(*m_DualLowerBound, *m_DualUpperBound, *m_TrialDual);
         m_Bounds->computeProjectedStep(*m_TrialDual, *m_DataMng->m_NewDual, *m_ProjectedStep);
 
@@ -252,7 +250,7 @@ void DOTk_DualSolverNLCG::step(const std::tr1::shared_ptr<dotk::DOTk_ObjectiveFu
         this->updateLineSearchIterationCount();
     }
     m_DataMng->m_NewObjectiveFunctionValue = objective_function_values[2];
-    m_DataMng->m_NewDual->copy(*m_TrialDual);
+    m_DataMng->m_NewDual->update(1., *m_TrialDual, 0.);
 }
 
 Real DOTk_DualSolverNLCG::computeScaling()
@@ -324,7 +322,7 @@ void DOTk_DualSolverNLCG::initialize(const std::tr1::shared_ptr<dotk::DOTk_Prima
     }
     else
     {
-        m_DualLowerBound->copy(*primal_->getDualLowerBound());
+        m_DualLowerBound->update(1., *primal_->getDualLowerBound(), 0.);
     }
     if(primal_->getDualUpperBound().use_count() < 1)
     {
@@ -332,7 +330,7 @@ void DOTk_DualSolverNLCG::initialize(const std::tr1::shared_ptr<dotk::DOTk_Prima
     }
     else
     {
-        m_DualUpperBound->copy(*primal_->getDualUpperBound());
+        m_DualUpperBound->update(1., *primal_->getDualUpperBound(), 0.);
     }
 }
 

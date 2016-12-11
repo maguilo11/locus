@@ -28,17 +28,17 @@ public:
             mControl(control_.clone())
     {
         mDual->fill(0.);
-        mState->copy(state_);
-        mControl->copy(control_);
+        mState->update(1., state_, 0.);
+        mControl->update(1., control_, 0.);
     }
     variables(const dotk::Vector<Real> & state_, const dotk::Vector<Real> & control_, const dotk::Vector<Real> & dual_) :
             mDual(dual_.clone()),
             mState(state_.clone()),
             mControl(control_.clone())
     {
-        mDual->copy(dual_);
-        mState->copy(state_);
-        mControl->copy(control_);
+        mDual->update(1., dual_, 0.);
+        mState->update(1., state_, 0.);
+        mControl->update(1., control_, 0.);
     }
 
     std::tr1::shared_ptr<dotk::Vector<Real> > mDual;

@@ -29,7 +29,7 @@ TEST(DOTk_Daniels, getDirection)
     std::tr1::shared_ptr<dotk::DOTk_LineSearchMngTypeULP> mng(new dotk::DOTk_LineSearchMngTypeULP(primal, objective));
 
     objective->gradient(*primal->control(), *mng->getNewGradient());
-    mng->getTrialStep()->copy(*mng->getNewGradient());
+    mng->getTrialStep()->update(1., *mng->getNewGradient(), 0.);
 
     // SET OLD GRADIENT TO AVOID RETURNING PREMATURELY DUE TO ORTHOGONALITY CHECK
     primal->control()->fill(2.1);
@@ -67,7 +67,7 @@ TEST(DOTk_Daniels, direction_TakeSteepestDescent)
     std::tr1::shared_ptr<dotk::DOTk_LineSearchMngTypeULP> mng(new dotk::DOTk_LineSearchMngTypeULP(primal, objective));
 
     objective->gradient(*primal->control(), *mng->getNewGradient());
-    mng->getTrialStep()->copy(*mng->getNewGradient());
+    mng->getTrialStep()->update(1., *mng->getNewGradient(), 0.);
 
     Real tolerance = 1e-8;
     EXPECT_NEAR(1602., (*mng->getNewGradient())[0], tolerance);

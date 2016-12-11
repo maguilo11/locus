@@ -64,7 +64,7 @@ void DOTk_LBFGSHessian::getHessian(const std::tr1::shared_ptr<dotk::Vector<Real>
     ///      (std::vector<Real>) \n
     ///
     Int index = dotk::DOTk_SecondOrderOperator::getNumUpdatesStored() - 1;
-    hess_times_vec_->copy(*vector_);
+    hess_times_vec_->update(1., *vector_, 0.);
     if(dotk::DOTk_SecondOrderOperator::getNumUpdatesStored() == 0)
     {
         return;
@@ -80,32 +80,32 @@ void DOTk_LBFGSHessian::getHessian(const std::tr1::shared_ptr<dotk::Vector<Real>
     for(Int index_i = 0; index_i < dotk::DOTk_SecondOrderOperator::getNumUpdatesStored(); ++index_i)
     {
         Real alpha = static_cast<Real>(1.) / std::sqrt((*m_RhoStorage)[index_i]);
-        m_MatrixB->basis(index_i)->copy(*m_DeltaGradientStorage->basis(index_i));
+        m_MatrixB->basis(index_i)->update(1., *m_DeltaGradientStorage->basis(index_i), 0.);
         m_MatrixB->basis(index_i)->scale(alpha);
-        m_MatrixA->basis(index_i)->copy(*m_DeltaPrimalStorage->basis(index_i));
+        m_MatrixA->basis(index_i)->update(1., *m_DeltaPrimalStorage->basis(index_i), 0.);
         m_MatrixA->basis(index_i)->scale(inv_barzilai_borwein_step);
 
         for(Int index_j = 0; index_j <= index_i - 1; ++index_j)
         {
             alpha = m_MatrixB->basis(index_j)->dot(*m_DeltaPrimalStorage->basis(index_i));
-            m_MatrixA->basis(index_i)->axpy(alpha, *m_MatrixB->basis(index_j));
+            m_MatrixA->basis(index_i)->update(alpha, *m_MatrixB->basis(index_j), 1.);
             alpha = static_cast<Real>(-1.0) * m_MatrixA->basis(index_j)->dot(*m_DeltaPrimalStorage->basis(index_i));
-            m_MatrixA->basis(index_i)->axpy(alpha, *m_MatrixA->basis(index_j));
+            m_MatrixA->basis(index_i)->update(alpha, *m_MatrixA->basis(index_j), 1.);
         }
 
         alpha = static_cast<Real>(1.) / std::sqrt(m_DeltaPrimalStorage->basis(index_i)->dot(*m_MatrixA->basis(index_i)));
         m_MatrixA->basis(index_i)->scale(alpha);
         // compute application of direction to BFGS DOTk Hessian
         alpha = m_MatrixB->basis(index_i)->dot(*vector_);
-        hess_times_vec_->axpy(alpha, *m_MatrixB->basis(index_i));
+        hess_times_vec_->update(alpha, *m_MatrixB->basis(index_i), 1.);
         alpha = m_MatrixA->basis(index_i)->dot(*vector_);
-        hess_times_vec_->axpy(-alpha, *m_MatrixA->basis(index_i));
+        hess_times_vec_->update(-alpha, *m_MatrixA->basis(index_i), 1.);
     }
     Real norm_Hv = hess_times_vec_->norm();
     bool negative_curvature_detected = norm_Hv < std::numeric_limits<Real>::min() ? true: false;
     if(negative_curvature_detected)
     {
-        hess_times_vec_->copy(*vector_);
+        hess_times_vec_->update(1., *vector_, 0.);
     }
 }
 

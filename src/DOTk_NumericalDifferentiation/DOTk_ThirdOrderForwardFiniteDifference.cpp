@@ -38,27 +38,27 @@ void DOTk_ThirdOrderForwardFiniteDifference::differentiate(const std::tr1::share
                                                            const dotk::Vector<Real> & first_derivative_,
                                                            dotk::Vector<Real> & second_derivative_)
 {
-    m_OriginalPrimal->copy(primal_);
+    m_OriginalPrimal->update(1., primal_, 0.);
 
     Real epsilon = dotk::DOTk_NumericalDifferentiation::getEpsilon();
-    m_OriginalPrimal->axpy(epsilon, direction_);
+    m_OriginalPrimal->update(epsilon, direction_, 1.);
     functor_->operator()(*m_OriginalPrimal, second_derivative_);
     second_derivative_.scale(static_cast<Real>(6.));
 
     m_Gradient->fill(0.);
-    m_OriginalPrimal->copy(primal_);
-    m_OriginalPrimal->axpy(-epsilon, direction_);
+    m_OriginalPrimal->update(1., primal_, 0.);
+    m_OriginalPrimal->update(-epsilon, direction_, 1.);
     functor_->operator()(*m_OriginalPrimal, *m_Gradient);
-    second_derivative_.axpy(static_cast<Real>(-2.), *m_Gradient);
+    second_derivative_.update(static_cast<Real>(-2.), *m_Gradient, 1.);
 
     m_Gradient->fill(0.);
-    m_OriginalPrimal->copy(primal_);
+    m_OriginalPrimal->update(1., primal_, 0.);
     Real scale_factor = static_cast<Real>(2.) * epsilon;
-    m_OriginalPrimal->axpy(scale_factor, direction_);
+    m_OriginalPrimal->update(scale_factor, direction_, 1.);
     functor_->operator()(*m_OriginalPrimal, *m_Gradient);
-    second_derivative_.axpy(static_cast<Real>(-1.), *m_Gradient);
+    second_derivative_.update(static_cast<Real>(-1.), *m_Gradient, 1.);
 
-    second_derivative_.axpy(static_cast<Real>(-3.), first_derivative_);
+    second_derivative_.update(static_cast<Real>(-3.), first_derivative_, 1.);
 
     scale_factor = static_cast<Real>(1.) / (static_cast<Real>(6.) * epsilon);
     second_derivative_.scale(scale_factor);

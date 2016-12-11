@@ -63,7 +63,7 @@ void DOTk_RoutinesTypeELP::gradient(const std::tr1::shared_ptr<dotk::Vector<Real
     m_WorkVector->fill(0.);
     m_EqualityConstraint->adjointJacobian(*primal_->control(), *dual_, *m_WorkVector);
 
-    output_->control()->axpy(static_cast<Real>(1.0), *m_WorkVector);
+    output_->control()->update(static_cast<Real>(1.0), *m_WorkVector, 1.);
 
     dotk::DOTk_AssemblyManager::updateGradientEvaluationCounter();
 }
@@ -108,7 +108,7 @@ void DOTk_RoutinesTypeELP::hessian(const std::tr1::shared_ptr<dotk::Vector<Real>
     m_WorkVector->fill(0.);
     m_EqualityConstraint->hessian(*primal_->control(), *dual_, *delta_primal_->control(), *m_WorkVector);
 
-    output_->control()->axpy(static_cast<Real>(1.0), *m_WorkVector);
+    output_->control()->update(static_cast<Real>(1.0), *m_WorkVector, 1.);
     dotk::DOTk_AssemblyManager::updateHessianEvaluationCounter();
 }
 

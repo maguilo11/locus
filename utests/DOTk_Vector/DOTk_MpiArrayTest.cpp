@@ -179,7 +179,7 @@ TEST(DOTk_MpiArrayTest, scale)
     dotk::gtest::checkResults(*gold, array, thread_count);
 }
 
-TEST(DOTk_MpiArrayTest, cwiseProd)
+TEST(DOTk_MpiArrayTest, elementWiseMultiplication)
 {
     int dim = 1e4;
     dotk::MpiArray<Real> x(MPI_COMM_WORLD, dim, 2.);
@@ -193,7 +193,7 @@ TEST(DOTk_MpiArrayTest, cwiseProd)
         start = MPI_Wtime();
     }
 
-    x.cwiseProd(y);
+    x.elementWiseMultiplication(y);
 
     Real finish = 0.;
     if(my_rank == 0)
@@ -230,7 +230,7 @@ TEST(DOTk_MpiArrayTest, axpy)
         start = MPI_Wtime();
     }
 
-    y.axpy(3., x);
+    y.update(3., x, 1.);
 
     Real finish = 0.;
     if(my_rank == 0)
@@ -367,7 +367,7 @@ TEST(DOTk_MpiArrayTest, copy)
         start = MPI_Wtime();
     }
 
-    y->copy(x);
+    y->update(1., x, 0.);
 
     Real finish = 0.;
     if(my_rank == 0)

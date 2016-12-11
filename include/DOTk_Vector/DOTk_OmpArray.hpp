@@ -52,7 +52,7 @@ public:
         }
     }
     // Component wise multiplication of two vectors.
-    void cwiseProd(const dotk::Vector<ScalarType> & input_)
+    void elementWiseMultiplication(const dotk::Vector<ScalarType> & input_)
     {
         size_t index;
         size_t dim = this->size();
@@ -70,23 +70,40 @@ public:
             m_Data[index] = m_Data[index] * input_[index];
         }
     }
-    // Constant times a vector plus a vector.
-    void axpy(const ScalarType & alpha_, const dotk::Vector<ScalarType> & input_)
+    //! Update vector values with scaled values of A, this = beta*this + alpha*A.
+    void update(const ScalarType & alpha_, const dotk::Vector<ScalarType> & input_, const ScalarType & beta_)
     {
+        assert(this->size() == input_.size());
+
         size_t index;
         size_t dim = this->size();
-        assert(dim == input_.size());
-
         int thread_count = this->threads();
+
+        if(beta_ == 0.)
+        {
 # pragma omp parallel num_threads(thread_count) \
     default( none ) \
     shared ( dim, input_, alpha_ ) \
     private ( index )
 
 # pragma omp for
-        for(index = 0; index < dim; ++index)
+            for(index = 0; index < dim; ++ index)
+            {
+                m_Data[index] = alpha_ * input_[index];
+            }
+        }
+        else
         {
-            m_Data[index] = alpha_ * input_[index] + m_Data[index];
+# pragma omp parallel num_threads(thread_count) \
+    default( none ) \
+    shared ( dim, input_, alpha_, beta_ ) \
+    private ( index )
+
+# pragma omp for
+            for(index = 0; index < dim; ++ index)
+            {
+                m_Data[index] = alpha_ * input_[index] + beta_ * m_Data[index];
+            }
         }
     }
     // Returns the maximum element in a range.
@@ -219,25 +236,6 @@ public:
         for(index = 0; index < dim; ++index)
         {
             m_Data[index] = value_;
-        }
-    }
-    // Copies the elements in the range [first,last) into the range beginning at result.
-    void copy(const dotk::Vector<ScalarType> & input_)
-    {
-        size_t index;
-        size_t dim = this->size();
-        assert(dim == input_.size());
-
-        int thread_count = this->threads();
-# pragma omp parallel num_threads(thread_count) \
-    default( none ) \
-    shared ( dim, input_ ) \
-    private ( index )
-
-# pragma omp for
-        for(index = 0; index < dim; ++index)
-        {
-            m_Data[index] = input_[index];
         }
     }
     // Gathers data from private member data of a group to one member.

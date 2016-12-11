@@ -32,7 +32,7 @@ DOTk_OptimalityCriteriaRoutineMng::~DOTk_OptimalityCriteriaRoutineMng()
 void DOTk_OptimalityCriteriaRoutineMng::solveEqualityConstraint(std::tr1::shared_ptr<dotk::DOTk_OptimalityCriteriaDataMng> & mng_)
 {
     mng_->getState().fill(0);
-    mng_->getOldControl().copy(mng_->getNewControl());
+    mng_->getOldControl().update(1., mng_->getNewControl(), 0.);
     m_Equality->solve(mng_->getNewControl(), mng_->getState());
 }
 
@@ -54,7 +54,7 @@ void DOTk_OptimalityCriteriaRoutineMng::computeObjectiveFunctionGradient(std::tr
 
 void DOTk_OptimalityCriteriaRoutineMng::computeMaxControlRelativeDifference(std::tr1::shared_ptr<dotk::DOTk_OptimalityCriteriaDataMng> & mng_)
 {
-    mng_->getOldControl().axpy(static_cast<Real>(-1), mng_->getNewControl());
+    mng_->getOldControl().update(-1., mng_->getNewControl(), 1.);
     mng_->getOldControl().abs();
     Real value = mng_->getOldControl().max();
     mng_->setMaxControlRelativeDifference(value);

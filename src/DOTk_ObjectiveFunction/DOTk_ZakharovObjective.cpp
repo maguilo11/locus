@@ -37,8 +37,8 @@ void DOTk_ZakharovObjective::gradient(const dotk::Vector<Real> & primal_, dotk::
     Real k_dot_primal = primal_.dot(*m_Data);
     Real coeff = static_cast<Real>(0.25) * (static_cast<Real>(2.) * k_dot_primal + std::pow(k_dot_primal, 3.));
 
-    output_.axpy(2., primal_);
-    output_.axpy(coeff, *m_Data);
+    output_.update(2., primal_, 1.);
+    output_.update(coeff, *m_Data, 1.);
 }
 
 void DOTk_ZakharovObjective::hessian(const dotk::Vector<Real> & primal_,
@@ -50,8 +50,8 @@ void DOTk_ZakharovObjective::hessian(const dotk::Vector<Real> & primal_,
     Real coeff = static_cast<Real>(0.25) * (static_cast<Real>(2.) + static_cast<Real>(3.) * std::pow(k_dot_primal, 2.))
             * k_dot_delta_primal;
 
-    output_.axpy(coeff, *m_Data);
-    output_.axpy(2., vector_);
+    output_.update(coeff, *m_Data, 1.);
+    output_.update(2., vector_, 1.);
 }
 
 }

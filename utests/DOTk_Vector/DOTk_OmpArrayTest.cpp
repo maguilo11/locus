@@ -177,7 +177,7 @@ TEST(DOTk_OmpArrayTest, scale)
     dotk::gtest::checkResults(*gold, vector, thread_count);
 }
 
-TEST(DOTk_OmpVectorTest, cwiseProd)
+TEST(DOTk_OmpVectorTest, elementWiseMultiplication)
 {
     int dim = 1e4;
     int thread_count = 4;
@@ -191,7 +191,7 @@ TEST(DOTk_OmpVectorTest, cwiseProd)
         start = omp_get_wtime();
     }
 
-    x.cwiseProd(y);
+    x.elementWiseMultiplication(y);
 
     double finish = 0.;
     if(my_rank == 0)
@@ -225,7 +225,7 @@ TEST(DOTk_OmpArrayTest, axpy)
         start = omp_get_wtime();
     }
 
-    y.axpy(3., x);
+    y.update(3., x, 1.);
 
     double finish = 0.;
     if(my_rank == 0)
@@ -356,7 +356,7 @@ TEST(DOTk_OmpArrayTest, copy)
         start = omp_get_wtime();
     }
 
-    x.copy(y);
+    x.update(1., y, 0.);
 
     double finish = 0.;
     if(my_rank == 0)

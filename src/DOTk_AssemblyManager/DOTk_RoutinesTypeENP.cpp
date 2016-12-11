@@ -64,7 +64,7 @@ void DOTk_RoutinesTypeENP::gradient(const std::tr1::shared_ptr<dotk::Vector<Real
                                                         *primal_->control(),
                                                         *dual_,
                                                         *m_StateWorkVector);
-    output_->state()->axpy(static_cast<Real>(1.0), *m_StateWorkVector);
+    output_->state()->update(static_cast<Real>(1.0), *m_StateWorkVector, 1.);
 
     output_->control()->fill(0.);
     m_ObjectiveFunction->partialDerivativeControl(*primal_->state(), *primal_->control(), *output_->control());
@@ -74,7 +74,7 @@ void DOTk_RoutinesTypeENP::gradient(const std::tr1::shared_ptr<dotk::Vector<Real
                                                           *primal_->control(),
                                                           *dual_,
                                                           *m_ControlWorkVector);
-    output_->control()->axpy(static_cast<Real>(1.0), *m_ControlWorkVector);
+    output_->control()->update(static_cast<Real>(1.0), *m_ControlWorkVector, 1.);
 
     dotk::DOTk_AssemblyManager::updateGradientEvaluationCounter();
 }
@@ -97,7 +97,7 @@ void DOTk_RoutinesTypeENP::jacobian(const std::tr1::shared_ptr<dotk::Vector<Real
                                                    *primal_->control(),
                                                    *delta_primal_->control(),
                                                    *m_StateWorkVector);
-    output_->axpy(static_cast<Real>(1.0), *m_StateWorkVector);
+    output_->update(static_cast<Real>(1.0), *m_StateWorkVector, 1.);
 
     dotk::DOTk_AssemblyManager::updateJacobianEvaluationCounter();
 }
@@ -145,7 +145,7 @@ void DOTk_RoutinesTypeENP::hessian(const std::tr1::shared_ptr<dotk::Vector<Real>
                                                       *dual_,
                                                       *delta_primal_->state(),
                                                       *(m_StateWorkVector));
-    output_->state()->axpy(static_cast<Real>(1.0), *m_StateWorkVector);
+    output_->state()->update(static_cast<Real>(1.0), *m_StateWorkVector, 1.);
 
     // Hessian Block UZ, i.e. Hessian Block 12, where Hessian = [H_uu H_uz; H_zu H_zz]
     output_->control()->fill(0.);
@@ -154,14 +154,14 @@ void DOTk_RoutinesTypeENP::hessian(const std::tr1::shared_ptr<dotk::Vector<Real>
                                                        *primal_->control(),
                                                        *delta_primal_->control(),
                                                        *(m_StateWorkVector));
-    output_->state()->axpy(static_cast<Real>(1.0), *m_StateWorkVector);
+    output_->state()->update(static_cast<Real>(1.0), *m_StateWorkVector, 1.);
     m_StateWorkVector->fill(0.);
     m_EqualityConstraint->partialDerivativeStateControl(*primal_->state(),
                                                         *primal_->control(),
                                                         *dual_,
                                                         *delta_primal_->control(),
                                                         *(m_StateWorkVector));
-    output_->state()->axpy(static_cast<Real>(1.0), *m_StateWorkVector);
+    output_->state()->update(static_cast<Real>(1.0), *m_StateWorkVector, 1.);
 
     // Hessian Block ZU, where Hessian = [H_uu H_uz; H_zu H_zz]
     m_ObjectiveFunction->partialDerivativeControlState(*primal_->state(),
@@ -176,20 +176,20 @@ void DOTk_RoutinesTypeENP::hessian(const std::tr1::shared_ptr<dotk::Vector<Real>
                                                         *(m_ControlWorkVector));
 
     // Hessian Block ZZ, where Hessian = [H_uu H_uz; H_zu H_zz]
-    output_->control()->axpy(static_cast<Real>(1.0), *m_ControlWorkVector);
+    output_->control()->update(static_cast<Real>(1.0), *m_ControlWorkVector, 1.);
     m_ControlWorkVector->fill(0.);
     m_ObjectiveFunction->partialDerivativeControlControl(*primal_->state(),
                                                          *primal_->control(),
                                                          *delta_primal_->control(),
                                                          *(m_ControlWorkVector));
-    output_->control()->axpy(static_cast<Real>(1.0), *m_ControlWorkVector);
+    output_->control()->update(static_cast<Real>(1.0), *m_ControlWorkVector, 1.);
     m_ControlWorkVector->fill(0.);
     m_EqualityConstraint->partialDerivativeControlControl(*primal_->state(),
                                                           *primal_->control(),
                                                           *dual_,
                                                           *delta_primal_->control(),
                                                           *(m_ControlWorkVector));
-    output_->control()->axpy(static_cast<Real>(1.0), *m_ControlWorkVector);
+    output_->control()->update(static_cast<Real>(1.0), *m_ControlWorkVector, 1.);
 
     dotk::DOTk_AssemblyManager::updateHessianEvaluationCounter();
 }

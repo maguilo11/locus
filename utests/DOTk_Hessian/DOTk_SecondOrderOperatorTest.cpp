@@ -164,8 +164,8 @@ TEST(SecondOrderOperator, computeStatePerturbation)
 
     mng->getRoutinesMng()->gradient(vector, grad);
 
-    mng->getNewPrimal()->copy(*vector);
-    mng->getNewGradient()->copy(*grad);
+    mng->getNewPrimal()->update(1., *vector, 0.);
+    mng->getNewGradient()->update(1., *grad, 0.);
 
     dotk::DOTk_SecondOrderOperator hess;
     std::tr1::shared_ptr<dotk::Vector<Real> > dgrad = primal->control()->clone();

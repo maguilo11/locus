@@ -33,7 +33,7 @@ const std::tr1::shared_ptr<dotk::Vector<Real> > & DOTk_ParallelBackwardDiffGrad:
 
 void DOTk_ParallelBackwardDiffGrad::setFiniteDiffPerturbationVec(const dotk::Vector<Real> & input_)
 {
-    m_FiniteDiffPerturbationVec->copy(input_);
+    m_FiniteDiffPerturbationVec->update(1., input_, 0.);
 }
 
 void DOTk_ParallelBackwardDiffGrad::getGradient(Real fval_,
@@ -57,7 +57,7 @@ void DOTk_ParallelBackwardDiffGrad::getGradient(Real fval_,
     m_Fval->fill(static_cast<Real>(0.));
     for(size_t index = 0; index < primal_->size(); ++index)
     {
-        m_PerturbedPrimal[index]->copy(*primal_);
+        m_PerturbedPrimal[index]->update(1., *primal_, 0.);
         Real original_entry = (*primal_)[index];
         Real epsilon = (*m_FiniteDiffPerturbationVec)[index] * original_entry;
         Real new_entry = (*primal_)[index] - epsilon;
