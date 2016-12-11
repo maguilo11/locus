@@ -28,6 +28,7 @@ int energy(const double & threshold_, const trrom::Vector<double> & singular_val
     {
         // Check if energy threshold is violated, i.e. \sum_{i=1}^{index}\Sigma_i > \epsilon
         cumulative_energy += singular_values_[index];
+        // TODO: reduced needed here
         double energy = cumulative_energy / total_energy;
         if(energy > threshold_)
         {
