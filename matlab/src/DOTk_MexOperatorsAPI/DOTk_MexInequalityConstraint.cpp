@@ -13,8 +13,8 @@
 namespace dotk
 {
 
-template<class Type>
-DOTk_MexInequalityConstraint<Type>::DOTk_MexInequalityConstraint(const mxArray* operators_,
+template<typename ScalarType>
+DOTk_MexInequalityConstraint<ScalarType>::DOTk_MexInequalityConstraint(const mxArray* operators_,
                                                                  const dotk::types::problem_t & type_) :
         dotk::DOTk_InequalityConstraint<double>(),
         m_Value(NULL),
@@ -27,14 +27,14 @@ DOTk_MexInequalityConstraint<Type>::DOTk_MexInequalityConstraint(const mxArray* 
     this->initialize(operators_, type_);
 }
 
-template<class Type>
-DOTk_MexInequalityConstraint<Type>::~DOTk_MexInequalityConstraint()
+template<typename ScalarType>
+DOTk_MexInequalityConstraint<ScalarType>::~DOTk_MexInequalityConstraint()
 {
     this->clear();
 }
 
-template<class Type>
-Type DOTk_MexInequalityConstraint<Type>::bound(const size_t & index_)
+template<typename ScalarType>
+ScalarType DOTk_MexInequalityConstraint<ScalarType>::bound(const size_t & index_)
 {
     dotk::DOTk_MexArrayPtr index(mxCreateNumericMatrix_730(1, 1, mxINDEX_CLASS, mxREAL));
     static_cast<size_t*>(mxGetData(index.get()))[0] = index_;
@@ -52,8 +52,8 @@ Type DOTk_MexInequalityConstraint<Type>::bound(const size_t & index_)
     return (bound);
 }
 
-template<class Type>
-Type DOTk_MexInequalityConstraint<Type>::value(const dotk::vector<Type> & primal_, const size_t & index_)
+template<typename ScalarType>
+ScalarType DOTk_MexInequalityConstraint<ScalarType>::value(const dotk::Vector<ScalarType> & primal_, const size_t & index_)
 {
     dotk::DOTk_MexArrayPtr index(mxCreateNumericMatrix_730(1, 1, mxINDEX_CLASS, mxREAL));
     static_cast<size_t*>(mxGetData(index.get()))[0] = index_;
@@ -75,10 +75,10 @@ Type DOTk_MexInequalityConstraint<Type>::value(const dotk::vector<Type> & primal
     return (bound);
 }
 
-template<class Type>
-void DOTk_MexInequalityConstraint<Type>::gradient(const dotk::vector<Type> & primal_,
+template<typename ScalarType>
+void DOTk_MexInequalityConstraint<ScalarType>::gradient(const dotk::Vector<ScalarType> & primal_,
                                                   const size_t & index_,
-                                                  dotk::vector<Type> & derivative_)
+                                                  dotk::Vector<ScalarType> & derivative_)
 {
     dotk::DOTk_MexArrayPtr index(mxCreateNumericMatrix_730(1, 1, mxINDEX_CLASS, mxREAL));
     static_cast<size_t*>(mxGetData(index.get()))[0] = index_;
@@ -98,11 +98,11 @@ void DOTk_MexInequalityConstraint<Type>::gradient(const dotk::vector<Type> & pri
     primal.release();
 }
 
-template<class Type>
-void DOTk_MexInequalityConstraint<Type>::hessian(const dotk::vector<Type> & primal_,
-                                                 const dotk::vector<Type> & delta_primal_,
+template<typename ScalarType>
+void DOTk_MexInequalityConstraint<ScalarType>::hessian(const dotk::Vector<ScalarType> & primal_,
+                                                 const dotk::Vector<ScalarType> & delta_primal_,
                                                  const size_t & index_,
-                                                 dotk::vector<Type> & derivative_)
+                                                 dotk::Vector<ScalarType> & derivative_)
 {
     dotk::DOTk_MexArrayPtr index(mxCreateNumericMatrix_730(1, 1, mxINDEX_CLASS, mxREAL));
     static_cast<size_t*>(mxGetData(index.get()))[0] = index_;
@@ -126,9 +126,9 @@ void DOTk_MexInequalityConstraint<Type>::hessian(const dotk::vector<Type> & prim
     delta_primal.release();
 }
 
-template<class Type>
-Type DOTk_MexInequalityConstraint<Type>::value(const dotk::vector<Type> & state_,
-                                               const dotk::vector<Type> & control_,
+template<typename ScalarType>
+ScalarType DOTk_MexInequalityConstraint<ScalarType>::value(const dotk::Vector<ScalarType> & state_,
+                                               const dotk::Vector<ScalarType> & control_,
                                                const size_t & index_)
 {
     dotk::DOTk_MexArrayPtr index(mxCreateNumericMatrix_730(1, 1, mxINDEX_CLASS, mxREAL));
@@ -145,7 +145,7 @@ Type DOTk_MexInequalityConstraint<Type>::value(const dotk::vector<Type> & state_
     mxArray* output[1];
 
     mxArray* err = mexCallMATLABWithTrap(1, output, 4, input, "feval");
-    dotk::mex::handleException(err, "ERROR: Invalid Call to DOTk_MexInequalityConstraint::value Type NLP");
+    dotk::mex::handleException(err, "ERROR: Invalid Call to DOTk_MexInequalityConstraint::value ScalarType NLP");
     double bound = mxGetScalar(output[0]);
 
     index.release();
@@ -155,11 +155,11 @@ Type DOTk_MexInequalityConstraint<Type>::value(const dotk::vector<Type> & state_
     return (bound);
 }
 
-template<class Type>
-void DOTk_MexInequalityConstraint<Type>::partialDerivativeState(const dotk::vector<Type> & state_,
-                                                                const dotk::vector<Type> & control_,
+template<typename ScalarType>
+void DOTk_MexInequalityConstraint<ScalarType>::partialDerivativeState(const dotk::Vector<ScalarType> & state_,
+                                                                const dotk::Vector<ScalarType> & control_,
                                                                 const size_t & index_,
-                                                                dotk::vector<Type> & derivative_)
+                                                                dotk::Vector<ScalarType> & derivative_)
 {
     dotk::DOTk_MexArrayPtr index(mxCreateNumericMatrix_730(1, 1, mxINDEX_CLASS, mxREAL));
     static_cast<size_t*>(mxGetData(index.get()))[0] = index_;
@@ -183,11 +183,11 @@ void DOTk_MexInequalityConstraint<Type>::partialDerivativeState(const dotk::vect
     control.release();
 }
 
-template<class Type>
-void DOTk_MexInequalityConstraint<Type>::partialDerivativeControl(const dotk::vector<Type> & state_,
-                                                                  const dotk::vector<Type> & control_,
+template<typename ScalarType>
+void DOTk_MexInequalityConstraint<ScalarType>::partialDerivativeControl(const dotk::Vector<ScalarType> & state_,
+                                                                  const dotk::Vector<ScalarType> & control_,
                                                                   const size_t & index_,
-                                                                  dotk::vector<Type> & derivative_)
+                                                                  dotk::Vector<ScalarType> & derivative_)
 {
     dotk::DOTk_MexArrayPtr index(mxCreateNumericMatrix_730(1, 1, mxINDEX_CLASS, mxREAL));
     static_cast<size_t*>(mxGetData(index.get()))[0] = index_;
@@ -211,8 +211,8 @@ void DOTk_MexInequalityConstraint<Type>::partialDerivativeControl(const dotk::ve
     control.release();
 }
 
-template<class Type>
-void DOTk_MexInequalityConstraint<Type>::clear()
+template<typename ScalarType>
+void DOTk_MexInequalityConstraint<ScalarType>::clear()
 {
     m_Value.release();
     m_Evaluate.release();
@@ -222,8 +222,8 @@ void DOTk_MexInequalityConstraint<Type>::clear()
     m_FirstDerivativeWrtControl.release();
 }
 
-template<class Type>
-void DOTk_MexInequalityConstraint<Type>::initialize(const mxArray* operators_, const dotk::types::problem_t & type_)
+template<typename ScalarType>
+void DOTk_MexInequalityConstraint<ScalarType>::initialize(const mxArray* operators_, const dotk::types::problem_t & type_)
 {
     m_Value.reset(mxDuplicateArray(mxGetField(operators_, 0, "bound")));
     m_Evaluate.reset(mxDuplicateArray(mxGetField(operators_, 0, "value")));
@@ -253,7 +253,7 @@ void DOTk_MexInequalityConstraint<Type>::initialize(const mxArray* operators_, c
         case dotk::types::PROBLEM_TYPE_UNDEFINED:
         default:
         {
-            std::string err("\nERROR: Invalid Problem Type in Call to DOTk_MexInequalityConstraint::initialize\n");
+            std::string err("\nERROR: Invalid Problem ScalarType in Call to DOTk_MexInequalityConstraint::initialize\n");
             mexErrMsgTxt(err.c_str());
             break;
         }

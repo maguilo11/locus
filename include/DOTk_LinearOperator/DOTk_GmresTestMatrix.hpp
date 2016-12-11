@@ -13,11 +13,11 @@
 namespace dotk
 {
 
-template<class Type>
-class vector;
-template<class Type>
+template<typename ScalarType>
+class Vector;
+template<typename ScalarType>
 class matrix;
-template<class Type>
+template<typename ScalarType>
 class DOTk_MultiVector;
 
 class DOTk_OptimizationDataMng;
@@ -28,11 +28,11 @@ public:
     explicit DOTk_GmresTestMatrix(const std::tr1::shared_ptr<dotk::DOTk_MultiVector<Real> > & vector_);
     virtual ~DOTk_GmresTestMatrix();
 
-    void apply(const std::tr1::shared_ptr<dotk::vector<Real> > & vec_,
-               const std::tr1::shared_ptr<dotk::vector<Real> > & matrix_times_vec_);
+    void apply(const std::tr1::shared_ptr<dotk::Vector<Real> > & vec_,
+               const std::tr1::shared_ptr<dotk::Vector<Real> > & matrix_times_vec_);
     void apply(const std::tr1::shared_ptr<dotk::DOTk_OptimizationDataMng> & mng_,
-               const std::tr1::shared_ptr<dotk::vector<Real> > & vec_,
-               const std::tr1::shared_ptr<dotk::vector<Real> > & matrix_times_vec_);
+               const std::tr1::shared_ptr<dotk::Vector<Real> > & vec_,
+               const std::tr1::shared_ptr<dotk::Vector<Real> > & matrix_times_vec_);
 
 private:
     std::tr1::shared_ptr<dotk::matrix<Real> > m_Matrix;

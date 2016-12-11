@@ -21,9 +21,9 @@ DOTk_LiuStorey::~DOTk_LiuStorey()
 {
 }
 
-Real DOTk_LiuStorey::computeScaleFactor(const std::tr1::shared_ptr<dotk::vector<Real> > & old_grad_,
-                                        const std::tr1::shared_ptr<dotk::vector<Real> > & new_grad_,
-                                        const std::tr1::shared_ptr<dotk::vector<Real> > & dir_)
+Real DOTk_LiuStorey::computeScaleFactor(const std::tr1::shared_ptr<dotk::Vector<Real> > & old_grad_,
+                                        const std::tr1::shared_ptr<dotk::Vector<Real> > & new_grad_,
+                                        const std::tr1::shared_ptr<dotk::Vector<Real> > & dir_)
 {
     /// Do I need the negative sign?
     Real new_grad_dot_new_grad = new_grad_->dot(*new_grad_);
@@ -34,9 +34,9 @@ Real DOTk_LiuStorey::computeScaleFactor(const std::tr1::shared_ptr<dotk::vector<
     return (beta);
 }
 
-void DOTk_LiuStorey::getDirection(const std::tr1::shared_ptr<dotk::vector<Real> > & old_grad_,
-                                  const std::tr1::shared_ptr<dotk::vector<Real> > & new_grad_,
-                                  const std::tr1::shared_ptr<dotk::vector<Real> > & dir_)
+void DOTk_LiuStorey::getDirection(const std::tr1::shared_ptr<dotk::Vector<Real> > & old_grad_,
+                                  const std::tr1::shared_ptr<dotk::Vector<Real> > & new_grad_,
+                                  const std::tr1::shared_ptr<dotk::Vector<Real> > & dir_)
 {
     Real beta = this->computeScaleFactor(old_grad_, new_grad_, dir_);
     dir_->scale(beta);

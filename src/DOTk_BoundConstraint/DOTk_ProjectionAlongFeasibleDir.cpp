@@ -27,8 +27,8 @@ DOTk_ProjectionAlongFeasibleDir::~DOTk_ProjectionAlongFeasibleDir()
 {
 }
 
-void DOTk_ProjectionAlongFeasibleDir::getDirection(const std::tr1::shared_ptr<dotk::vector<Real> > & primal_,
-                                                   const std::tr1::shared_ptr<dotk::vector<Real> > & feasible_dir_)
+void DOTk_ProjectionAlongFeasibleDir::getDirection(const std::tr1::shared_ptr<dotk::Vector<Real> > & primal_,
+                                                   const std::tr1::shared_ptr<dotk::Vector<Real> > & feasible_dir_)
 {
     m_TrialPrimal->copy(*primal_);
     m_TrialPrimal->axpy(dotk::DOTk_BoundConstraint::getStepSize(), *feasible_dir_);

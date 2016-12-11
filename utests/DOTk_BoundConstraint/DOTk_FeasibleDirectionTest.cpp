@@ -28,7 +28,7 @@ TEST(DOTk_FeasibleDirection, getDirection)
     primal->setControlLowerBound(1);
     primal->setControlUpperBound(4);
 
-    std::tr1::shared_ptr<dotk::vector<Real> > dir = primal->control()->clone();
+    std::tr1::shared_ptr<dotk::Vector<Real> > dir = primal->control()->clone();
     dir->fill(7.);
 
     // TEST 1: NOT FEASIBLE
@@ -39,7 +39,7 @@ TEST(DOTk_FeasibleDirection, getDirection)
     Real tol = 1e-8;
     EXPECT_EQ(3, bound.getNumFeasibleItr());
     EXPECT_NEAR(0.5, bound.getContractionStep(), tol);
-    std::tr1::shared_ptr<dotk::vector<Real> > gold = primal->control()->clone();
+    std::tr1::shared_ptr<dotk::Vector<Real> > gold = primal->control()->clone();
     gold->fill(1.75);
     dotk::gtest::checkResults(*dir, *gold);
 
@@ -63,7 +63,7 @@ TEST(DOTk_FeasibleDirection, constraint)
 
     mng->setUserDefinedGradient();
     mng->setNewPrimal(*primal->control());
-    std::tr1::shared_ptr<dotk::vector<Real> > dir = primal->control()->clone();
+    std::tr1::shared_ptr<dotk::Vector<Real> > dir = primal->control()->clone();
     dir->fill(7.);
     mng->setTrialStep(*dir);
 

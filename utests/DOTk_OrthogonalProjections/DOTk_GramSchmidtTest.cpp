@@ -28,7 +28,7 @@ TEST(DOTk_GramSchmidt, gramSchmidt)
 
     dotk::DOTk_GramSchmidt projection(primal, nduals);
 
-    std::tr1::shared_ptr<dotk::vector<Real> >
+    std::tr1::shared_ptr<dotk::Vector<Real> >
         vector(new dotk::DOTk_MultiVector<Real>(*primal->control(), *primal->dual()));
     size_t index = 0;
     (*vector->control())[0] = -1;
@@ -145,7 +145,7 @@ TEST(DOTk_GramSchmidt, clear)
 
     projection.clear();
 
-    std::tr1::shared_ptr<dotk::vector<Real> > gold = primal->control()->clone();
+    std::tr1::shared_ptr<dotk::Vector<Real> > gold = primal->control()->clone();
     dotk::gtest::checkResults(*gold, *projection.getOrthogonalVector(0));
     dotk::gtest::checkResults(*gold, *projection.getLinearOperatorTimesOrthoVector(0));
     dotk::gtest::checkResults(*gold, *projection.getOrthogonalVector(1));

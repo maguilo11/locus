@@ -88,7 +88,7 @@ TEST(DOTk_HagerZhang, getDirection)
     // TEST 1: Hager Zhang scale
     dir.getDirection(mng.getOldGradient(), mng.getNewGradient(), mng.getTrialStep());
 
-    std::tr1::shared_ptr<dotk::vector<Real> > gold = dotk::gtest::allocateControl();
+    std::tr1::shared_ptr<dotk::Vector<Real> > gold = dotk::gtest::allocateControl();
     (*gold)[0] = -14.367346938775;
     (*gold)[1] = -72.734693877551;
     Real tol = 1e-8;
@@ -129,7 +129,7 @@ TEST(DOTk_HagerZhang, direction)
     // TEST 1: Hager Zhang scale
     dir.direction(mng);
 
-    std::tr1::shared_ptr<dotk::vector<Real> > gold = dotk::gtest::allocateControl();
+    std::tr1::shared_ptr<dotk::Vector<Real> > gold = dotk::gtest::allocateControl();
     (*gold)[0] = -14.367346938775;
     (*gold)[1] = -72.734693877551;
     Real tol = 1e-8;

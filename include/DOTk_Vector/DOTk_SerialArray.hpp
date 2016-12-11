@@ -17,13 +17,13 @@
 namespace dotk
 {
 
-template<typename Type>
-class StdArray : public dotk::vector<Type>
+template<typename ScalarType>
+class StdArray : public dotk::Vector<ScalarType>
 {
 public:
-    StdArray(int dim_, Type value_ = 0.) :
+    StdArray(int dim_, ScalarType value_ = 0.) :
             m_LocalDim(dim_),
-            m_Data(new Type[dim_])
+            m_Data(new ScalarType[dim_])
     {
         this->fill(value_);
     }
@@ -33,7 +33,7 @@ public:
         m_Data = nullptr;
     }
     // Scales a vector by a real constant.
-    void scale(const Type & alpha_)
+    void scale(const ScalarType & alpha_)
     {
         size_t dim = this->size();
         for(size_t index = 0; index < dim; ++index)
@@ -42,7 +42,7 @@ public:
         }
     }
     // Component wise multiplication of two vectors.
-    void cwiseProd(const dotk::vector<Type> & input_)
+    void cwiseProd(const dotk::Vector<ScalarType> & input_)
     {
         size_t dim = this->size();
         assert(dim == input_.size());
@@ -52,7 +52,7 @@ public:
         }
     }
     // Constant times a vector plus a vector.
-    void axpy(const Type & alpha_, const dotk::vector<Type> & input_)
+    void axpy(const ScalarType & alpha_, const dotk::Vector<ScalarType> & input_)
     {
         size_t dim = this->size();
         assert(dim == input_.size());
@@ -62,17 +62,17 @@ public:
         }
     }
     // Returns the maximum element in a range.
-    Type max() const
+    ScalarType max() const
     {
         size_t dim = this->size();
-        Type output = *std::max_element(m_Data, m_Data + dim);
+        ScalarType output = *std::max_element(m_Data, m_Data + dim);
         return (output);
     }
     // Returns the minimum element in a range.
-    Type min() const
+    ScalarType min() const
     {
         size_t dim = this->size();
-        Type output = *std::min_element(m_Data, m_Data + dim);
+        ScalarType output = *std::min_element(m_Data, m_Data + dim);
         return (output);
     }
     // Computes the absolute value of each element in the container.
@@ -81,13 +81,13 @@ public:
         size_t dim = this->size();
         for(size_t index = 0; index < dim; ++index)
         {
-            m_Data[index] = m_Data[index] < static_cast<Type>(0.) ? -(m_Data[index]) : m_Data[index];
+            m_Data[index] = m_Data[index] < static_cast<ScalarType>(0.) ? -(m_Data[index]) : m_Data[index];
         }
     }
     // Returns the sum of all the elements in the container.
-    Type sum() const
+    ScalarType sum() const
     {
-        Type output = 0.;
+        ScalarType output = 0.;
         size_t dim = this->size();
         for(size_t i = 0; i < dim; ++i)
         {
@@ -96,9 +96,9 @@ public:
         return (output);
     }
     // Returns the inner product of two vectors.
-    Type dot(const dotk::vector<Type> & input_) const
+    ScalarType dot(const dotk::Vector<ScalarType> & input_) const
     {
-        Type output = 0;
+        ScalarType output = 0;
         size_t dim = this->size();
         assert(dim == input_.size());
         for(size_t index = 0; index < dim; ++index)
@@ -108,14 +108,14 @@ public:
         return (output);
     }
     // Returns the euclidean norm of a vector.
-    Type norm() const
+    ScalarType norm() const
     {
-        Type output = this->dot(*this);
+        ScalarType output = this->dot(*this);
         output = std::sqrt(output);
         return (output);
     }
     // Assigns new contents to the vector, replacing its current contents, and not modifying its size.
-    void fill(const Type & value_)
+    void fill(const ScalarType & value_)
     {
         size_t dim = this->size();
         for(size_t index = 0; index < dim; ++index)
@@ -124,7 +124,7 @@ public:
         }
     }
     // Copies the elements in the range [first,last) into the range beginning at result.
-    void copy(const dotk::vector<Type> & input_)
+    void copy(const dotk::Vector<ScalarType> & input_)
     {
         size_t dim = this->size();
         assert(dim == input_.size());
@@ -134,7 +134,7 @@ public:
         }
     }
     // Gathers data from private member data of a group to one member.
-    void gather(Type* input_) const
+    void gather(ScalarType* input_) const
     {
         size_t dim = this->size();
         for(size_t index = 0; index < dim; ++index)
@@ -147,30 +147,30 @@ public:
     {
         return (m_LocalDim);
     }
-    // Clones memory for an object of type dotk::vector<Type>
-    std::tr1::shared_ptr<dotk::vector<Type> > clone() const
+    // Clones memory for an object of ScalarType dotk::Vector<ScalarType>
+    std::tr1::shared_ptr<dotk::Vector<ScalarType> > clone() const
     {
-        std::tr1::shared_ptr < dotk::StdArray<Type> > output(new dotk::StdArray<Type>(m_LocalDim));
+        std::tr1::shared_ptr < dotk::StdArray<ScalarType> > output(new dotk::StdArray<ScalarType>(m_LocalDim));
         return (output);
     }
     // Operator overloads the square bracket operator
-    Type & operator [](size_t index_)
+    ScalarType & operator [](size_t index_)
     {
         return (m_Data[index_]);
     }
     // Operator overloads the const square bracket operator
-    const Type & operator [](size_t index_) const
+    const ScalarType & operator [](size_t index_) const
     {
         return (m_Data[index_]);
     }
 
 private:
     int m_LocalDim;
-    Type* m_Data;
+    ScalarType* m_Data;
 
 private:
-    StdArray(const dotk::StdArray<Type> &);
-    dotk::StdArray<Type> & operator=(const dotk::StdArray<Type> & rhs_);
+    StdArray(const dotk::StdArray<ScalarType> &);
+    dotk::StdArray<ScalarType> & operator=(const dotk::StdArray<ScalarType> & rhs_);
 };
 
 }

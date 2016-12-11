@@ -40,7 +40,7 @@ TEST(DOTk_DFPHessian, getHessian)
     hess.getDeltaPrimal()->axpy(-1.0, *mng->getOldPrimal());
 
     // Gradient Information
-    std::tr1::shared_ptr<dotk::vector<Real> > grad = primal->control()->clone();
+    std::tr1::shared_ptr<dotk::Vector<Real> > grad = primal->control()->clone();
     mng->getRoutinesMng()->gradient(mng->getOldPrimal(), grad);
     mng->setOldGradient(*grad);
     mng->getRoutinesMng()->gradient(mng->getNewPrimal(), grad);
@@ -51,10 +51,10 @@ TEST(DOTk_DFPHessian, getHessian)
     // Trial step information
     mng->setTrialStep(*mng->getNewGradient());
     mng->getTrialStep()->scale(-1.);
-    std::tr1::shared_ptr<dotk::vector<Real> > solution = primal->control()->clone();
+    std::tr1::shared_ptr<dotk::Vector<Real> > solution = primal->control()->clone();
     hess.getHessian(mng->getTrialStep(), solution);
 
-    std::tr1::shared_ptr<dotk::vector<Real> > gold = primal->control()->clone();
+    std::tr1::shared_ptr<dotk::Vector<Real> > gold = primal->control()->clone();
     (*gold)[0] = 1681800.0937109496;
     (*gold)[1] = -559799.90628905024;
     dotk::gtest::checkResults(*solution, *gold);
@@ -78,7 +78,7 @@ TEST(DOTk_DFPHessian, apply)
     mng->setNewPrimal(control);
 
     // Gradient Information
-    std::tr1::shared_ptr<dotk::vector<Real> > grad = primal->control()->clone();
+    std::tr1::shared_ptr<dotk::Vector<Real> > grad = primal->control()->clone();
     mng->getRoutinesMng()->gradient(mng->getOldPrimal(), grad);
     mng->setOldGradient(*grad);
     mng->getRoutinesMng()->gradient(mng->getNewPrimal(), grad);
@@ -89,7 +89,7 @@ TEST(DOTk_DFPHessian, apply)
     mng->getTrialStep()->scale(-1.);
     hess.apply(mng, mng->getTrialStep(), mng->getMatrixTimesVector());
 
-    std::tr1::shared_ptr<dotk::vector<Real> > gold = primal->control()->clone();
+    std::tr1::shared_ptr<dotk::Vector<Real> > gold = primal->control()->clone();
     (*gold)[0] = 1681800.0937109496;
     (*gold)[1] = -559799.90628905024;
     dotk::gtest::checkResults(*mng->getMatrixTimesVector(), *gold);

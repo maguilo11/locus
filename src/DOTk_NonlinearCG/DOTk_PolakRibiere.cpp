@@ -23,8 +23,8 @@ DOTk_PolakRibiere::~DOTk_PolakRibiere()
 {
 }
 
-Real DOTk_PolakRibiere::computeScaleFactor(const std::tr1::shared_ptr<dotk::vector<Real> > & old_grad_,
-                                           const std::tr1::shared_ptr<dotk::vector<Real> > & new_grad_)
+Real DOTk_PolakRibiere::computeScaleFactor(const std::tr1::shared_ptr<dotk::Vector<Real> > & old_grad_,
+                                           const std::tr1::shared_ptr<dotk::Vector<Real> > & new_grad_)
 {
     Real beta = (new_grad_->dot(*new_grad_) - new_grad_->dot(*old_grad_))
             / old_grad_->dot(*old_grad_);
@@ -33,9 +33,9 @@ Real DOTk_PolakRibiere::computeScaleFactor(const std::tr1::shared_ptr<dotk::vect
     return (beta);
 }
 
-void DOTk_PolakRibiere::getDirection(const std::tr1::shared_ptr<dotk::vector<Real> > & old_grad_,
-                                     const std::tr1::shared_ptr<dotk::vector<Real> > & new_grad_,
-                                     const std::tr1::shared_ptr<dotk::vector<Real> > & dir_)
+void DOTk_PolakRibiere::getDirection(const std::tr1::shared_ptr<dotk::Vector<Real> > & old_grad_,
+                                     const std::tr1::shared_ptr<dotk::Vector<Real> > & new_grad_,
+                                     const std::tr1::shared_ptr<dotk::Vector<Real> > & dir_)
 {
     Real beta = this->computeScaleFactor(old_grad_, new_grad_);
     dir_->scale(beta);

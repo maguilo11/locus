@@ -7,6 +7,7 @@
 
 #include <iostream>
 
+#include "vector.hpp"
 #include "DOTk_SR1Hessian.hpp"
 #include "DOTk_DFPHessian.hpp"
 #include "DOTk_LDFPHessian.hpp"
@@ -72,7 +73,7 @@ void DOTk_HessianFactory::buildReducedSpaceHessian(std::tr1::shared_ptr<dotk::DO
 
 void DOTk_HessianFactory::buildLbfgsHessian
 (size_t secant_storage_,
- const std::tr1::shared_ptr<dotk::vector<Real> > & vector_,
+ const std::tr1::shared_ptr<dotk::Vector<Real> > & vector_,
  std::tr1::shared_ptr<dotk::DOTk_SecondOrderOperator> & operator_)
 {
     this->setFactoryType(dotk::types::LBFGS_HESS);
@@ -82,7 +83,7 @@ void DOTk_HessianFactory::buildLbfgsHessian
 
 void DOTk_HessianFactory::buildLdfpHessian
 (size_t secant_storage_,
- const std::tr1::shared_ptr<dotk::vector<Real> > & vector_,
+ const std::tr1::shared_ptr<dotk::Vector<Real> > & vector_,
  std::tr1::shared_ptr<dotk::DOTk_SecondOrderOperator> & operator_)
 {
     this->setFactoryType(dotk::types::LDFP_HESS);
@@ -92,7 +93,7 @@ void DOTk_HessianFactory::buildLdfpHessian
 
 void DOTk_HessianFactory::buildLsr1Hessian
 (size_t secant_storage_,
- const std::tr1::shared_ptr<dotk::vector<Real> > & vector_,
+ const std::tr1::shared_ptr<dotk::Vector<Real> > & vector_,
  std::tr1::shared_ptr<dotk::DOTk_SecondOrderOperator> & operator_)
 {
     this->setFactoryType(dotk::types::LSR1_HESS);
@@ -101,7 +102,7 @@ void DOTk_HessianFactory::buildLsr1Hessian
 }
 
 void DOTk_HessianFactory::buildSr1Hessian
-(const std::tr1::shared_ptr<dotk::vector<Real> > & vector_,
+(const std::tr1::shared_ptr<dotk::Vector<Real> > & vector_,
  std::tr1::shared_ptr<dotk::DOTk_SecondOrderOperator> & operator_)
 {
     this->setFactoryType(dotk::types::SR1_HESS);
@@ -109,7 +110,7 @@ void DOTk_HessianFactory::buildSr1Hessian
 }
 
 void DOTk_HessianFactory::buildDfpHessian
-(const std::tr1::shared_ptr<dotk::vector<Real> > & vector_,
+(const std::tr1::shared_ptr<dotk::Vector<Real> > & vector_,
  std::tr1::shared_ptr<dotk::DOTk_SecondOrderOperator> & operator_)
 {
     this->setFactoryType(dotk::types::DFP_HESS);
@@ -117,7 +118,7 @@ void DOTk_HessianFactory::buildDfpHessian
 }
 
 void DOTk_HessianFactory::buildBarzilaiBorweinHessian
-(const std::tr1::shared_ptr<dotk::vector<Real> > & vector_,
+(const std::tr1::shared_ptr<dotk::Vector<Real> > & vector_,
  std::tr1::shared_ptr<dotk::DOTk_SecondOrderOperator> & operator_)
 {
     this->setFactoryType(dotk::types::BARZILAIBORWEIN_HESS);

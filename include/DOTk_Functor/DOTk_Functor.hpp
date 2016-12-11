@@ -13,8 +13,8 @@
 namespace dotk
 {
 
-template<typename Type>
-class vector;
+template<typename ScalarType>
+class Vector;
 
 class DOTk_Functor
 {
@@ -23,11 +23,11 @@ public:
     virtual ~DOTk_Functor();
 
     dotk::types::functor_t getFunctorType() const;
-    virtual void operator()(const dotk::vector<Real> & control_, dotk::vector<Real> & output_);
-    virtual void operator()(const dotk::vector<Real> & state_,
-                            const dotk::vector<Real> & control_,
-                            const dotk::vector<Real> & dual_,
-                            dotk::vector<Real> & output_);
+    virtual void operator()(const dotk::Vector<Real> & control_, dotk::Vector<Real> & output_);
+    virtual void operator()(const dotk::Vector<Real> & state_,
+                            const dotk::Vector<Real> & control_,
+                            const dotk::Vector<Real> & dual_,
+                            dotk::Vector<Real> & output_);
 
 private:
     dotk::types::functor_t m_FunctorType;

@@ -5,6 +5,7 @@
  *      Author: Miguel A. Aguilo Valentin
  */
 
+#include "vector.hpp"
 #include "DOTk_Types.hpp"
 #include "DOTk_Dual.hpp"
 
@@ -17,15 +18,15 @@ DOTk_Dual::DOTk_Dual() :
 {
 }
 
-DOTk_Dual::DOTk_Dual(const dotk::vector<Real> & data_) :
+DOTk_Dual::DOTk_Dual(const dotk::Vector<Real> & data_) :
         dotk::DOTk_Variable::DOTk_Variable(dotk::types::DUAL, data_),
         m_DualBasisSize(0)
 {
 }
 
-DOTk_Dual::DOTk_Dual(const dotk::vector<Real> & data_,
-                     const dotk::vector<Real> & lower_bound_,
-                     const dotk::vector<Real> & upper_bound_) :
+DOTk_Dual::DOTk_Dual(const dotk::Vector<Real> & data_,
+                     const dotk::Vector<Real> & lower_bound_,
+                     const dotk::Vector<Real> & upper_bound_) :
         dotk::DOTk_Variable::DOTk_Variable(dotk::types::DUAL, data_, lower_bound_, upper_bound_),
         m_DualBasisSize(0)
 {

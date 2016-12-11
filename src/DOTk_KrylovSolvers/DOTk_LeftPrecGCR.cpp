@@ -45,7 +45,7 @@ DOTk_LeftPrecGCR::~DOTk_LeftPrecGCR()
 {
 }
 
-void DOTk_LeftPrecGCR::initialize(const std::tr1::shared_ptr<dotk::vector<Real> > & rhs_vec_,
+void DOTk_LeftPrecGCR::initialize(const std::tr1::shared_ptr<dotk::Vector<Real> > & rhs_vec_,
                                   const std::tr1::shared_ptr<dotk::DOTk_KrylovSolverStoppingCriterion> & criterion_,
                                   const std::tr1::shared_ptr<dotk::DOTk_OptimizationDataMng> & opt_mng_)
 {
@@ -70,7 +70,7 @@ void DOTk_LeftPrecGCR::initialize(const std::tr1::shared_ptr<dotk::vector<Real> 
     dotk::DOTk_KrylovSolver::setInitialStoppingTolerance(stopping_tolerance);
 }
 
-void DOTk_LeftPrecGCR::pgcr(const std::tr1::shared_ptr<dotk::vector<Real> > & rhs_vec_,
+void DOTk_LeftPrecGCR::pgcr(const std::tr1::shared_ptr<dotk::Vector<Real> > & rhs_vec_,
                             const std::tr1::shared_ptr<dotk::DOTk_KrylovSolverStoppingCriterion> & criterion_,
                             const std::tr1::shared_ptr<dotk::DOTk_OptimizationDataMng> & opt_mng_)
 {
@@ -140,20 +140,20 @@ const std::tr1::shared_ptr<dotk::DOTk_LinearOperator> & DOTk_LeftPrecGCR::getLin
     return (m_DataMng->getLinearOperator());
 }
 
-const std::tr1::shared_ptr<dotk::vector<Real> > & DOTk_LeftPrecGCR::getDescentDirection()
+const std::tr1::shared_ptr<dotk::Vector<Real> > & DOTk_LeftPrecGCR::getDescentDirection()
 {
     size_t index = dotk::DOTk_KrylovSolver::getNumSolverItrDone() - 1;
     return (mConjugateDirectionStorage[index]);
 }
 
-void DOTk_LeftPrecGCR::solve(const std::tr1::shared_ptr<dotk::vector<Real> > & rhs_vec_,
+void DOTk_LeftPrecGCR::solve(const std::tr1::shared_ptr<dotk::Vector<Real> > & rhs_vec_,
                              const std::tr1::shared_ptr<dotk::DOTk_KrylovSolverStoppingCriterion> & criterion_,
                              const std::tr1::shared_ptr<dotk::DOTk_OptimizationDataMng> & opt_mng_)
 {
     this->pgcr(rhs_vec_, criterion_, opt_mng_);
 }
 
-void DOTk_LeftPrecGCR::initialize(const std::tr1::shared_ptr<dotk::vector<Real> > vector_)
+void DOTk_LeftPrecGCR::initialize(const std::tr1::shared_ptr<dotk::Vector<Real> > vector_)
 {
     size_t dimensions = m_DataMng->getMaxNumSolverItr();
     for(size_t row = 0; row < dimensions; ++row)

@@ -20,7 +20,7 @@ DOTk_NocedalAndWrightObjective::~DOTk_NocedalAndWrightObjective()
 {
 }
 
-Real DOTk_NocedalAndWrightObjective::value(const dotk::vector<Real> & primal_)
+Real DOTk_NocedalAndWrightObjective::value(const dotk::Vector<Real> & primal_)
 {
     // J(X) = exp(u1 * u2 * u3 * u4 * u5) - 0.5 * (1 + u1^3 + u2^3)^2
     const Real a = std::exp(primal_[0] * primal_[1] * primal_[2] * primal_[3] * primal_[4]);
@@ -31,7 +31,7 @@ Real DOTk_NocedalAndWrightObjective::value(const dotk::vector<Real> & primal_)
     return (fval);
 }
 
-void DOTk_NocedalAndWrightObjective::gradient(const dotk::vector<Real> & primal_, dotk::vector<Real> & output_)
+void DOTk_NocedalAndWrightObjective::gradient(const dotk::Vector<Real> & primal_, dotk::Vector<Real> & output_)
 {
     // (1 + x1^3 + x2^3)
     const Real a = 1. + pow(primal_[0], 3) + pow(primal_[1], 3.);
@@ -49,9 +49,9 @@ void DOTk_NocedalAndWrightObjective::gradient(const dotk::vector<Real> & primal_
     output_[4] = b * primal_[0] * primal_[1] * primal_[2] * primal_[3];
 }
 
-void DOTk_NocedalAndWrightObjective::hessian(const dotk::vector<Real> & primal_,
-                                             const dotk::vector<Real> & vector_,
-                                             dotk::vector<Real> & output_)
+void DOTk_NocedalAndWrightObjective::hessian(const dotk::Vector<Real> & primal_,
+                                             const dotk::Vector<Real> & vector_,
+                                             dotk::Vector<Real> & output_)
 {
     const Real u1 = primal_[0];
     const Real u2 = primal_[1];

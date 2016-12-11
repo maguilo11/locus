@@ -21,7 +21,7 @@ DOTk_GradientTypeULP::~DOTk_GradientTypeULP()
 {
 }
 
-void DOTk_GradientTypeULP::operator()(const dotk::vector<Real> & control_, dotk::vector<Real> & gradient_)
+void DOTk_GradientTypeULP::operator()(const dotk::Vector<Real> & control_, dotk::Vector<Real> & gradient_)
 {
     m_ObjectiveFunction->gradient(control_, gradient_);
 }

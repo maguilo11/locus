@@ -13,14 +13,17 @@
 namespace dotk
 {
 
+template<typename ScalarType>
+class Vector;
+
 class DOTk_Control: public dotk::DOTk_Variable
 {
 public:
     DOTk_Control();
-    explicit DOTk_Control(const dotk::vector<Real> & data_);
-    DOTk_Control(const dotk::vector<Real> & data_,
-                 const dotk::vector<Real> & lower_bound_,
-                 const dotk::vector<Real> & upper_bound_);
+    explicit DOTk_Control(const dotk::Vector<Real> & data_);
+    DOTk_Control(const dotk::Vector<Real> & data_,
+                 const dotk::Vector<Real> & lower_bound_,
+                 const dotk::Vector<Real> & upper_bound_);
     virtual ~DOTk_Control();
 
     size_t getControlBasisSize() const;

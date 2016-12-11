@@ -16,26 +16,26 @@ namespace dotk
 
 class DOTk_OptimizationDataMng;
 
-template<class Type>
-class vector;
+template<typename ScalarType>
+class Vector;
 
 namespace gtools
 {
 
-void getSteepestDescent(const std::tr1::shared_ptr<dotk::vector<Real> > & input_,
-                        const std::tr1::shared_ptr<dotk::vector<Real> > & output_);
+void getSteepestDescent(const std::tr1::shared_ptr<dotk::Vector<Real> > & input_,
+                        const std::tr1::shared_ptr<dotk::Vector<Real> > & output_);
 
-Real computeCosineAngle(const std::tr1::shared_ptr<dotk::vector<Real> > & grad_,
-                        const std::tr1::shared_ptr<dotk::vector<Real> > & dir_);
+Real computeCosineAngle(const std::tr1::shared_ptr<dotk::Vector<Real> > & grad_,
+                        const std::tr1::shared_ptr<dotk::Vector<Real> > & dir_);
 
-void checkDescentDirection(const std::tr1::shared_ptr<dotk::vector<Real> > & grad_,
-                           const std::tr1::shared_ptr<dotk::vector<Real> > & dir_,
+void checkDescentDirection(const std::tr1::shared_ptr<dotk::Vector<Real> > & grad_,
+                           const std::tr1::shared_ptr<dotk::Vector<Real> > & dir_,
                            Real tol_ = 1e-2);
 
-bool didDataChanged(const std::tr1::shared_ptr<dotk::vector<Real> > & old_data_,
-                    const std::tr1::shared_ptr<dotk::vector<Real> > & new_data_);
+bool didDataChanged(const std::tr1::shared_ptr<dotk::Vector<Real> > & old_data_,
+                    const std::tr1::shared_ptr<dotk::Vector<Real> > & new_data_);
 
-void generateRandomVector(const std::tr1::shared_ptr< dotk::vector<Real> > & input_);
+void generateRandomVector(const std::tr1::shared_ptr< dotk::Vector<Real> > & input_);
 
 template<typename Type>
 Type random(Type min_, Type max_);

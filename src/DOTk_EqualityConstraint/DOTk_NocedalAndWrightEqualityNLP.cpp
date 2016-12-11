@@ -19,9 +19,9 @@ DOTk_NocedalAndWrightEqualityNLP::~DOTk_NocedalAndWrightEqualityNLP()
 {
 }
 
-void DOTk_NocedalAndWrightEqualityNLP::residual(const dotk::vector<Real> & state_,
-                                                const dotk::vector<Real> & control_,
-                                                dotk::vector<Real> & residual_)
+void DOTk_NocedalAndWrightEqualityNLP::residual(const dotk::Vector<Real> & state_,
+                                                const dotk::Vector<Real> & control_,
+                                                dotk::Vector<Real> & residual_)
 {
     // C1 = u1^2 + u2^2 + u3^2 + u4^2 + u5^2 - 10
     residual_[0] = pow(state_[0], static_cast<Real>(2.)) + pow(state_[1], static_cast<Real>(2.))
@@ -35,10 +35,10 @@ void DOTk_NocedalAndWrightEqualityNLP::residual(const dotk::vector<Real> & state
             + static_cast<Real>(1.);
 }
 
-void DOTk_NocedalAndWrightEqualityNLP::partialDerivativeState(const dotk::vector<Real> & state_,
-                                                              const dotk::vector<Real> & control_,
-                                                              const dotk::vector<Real> & delta_state_,
-                                                              dotk::vector<Real> & jacobian_times_delta_state_)
+void DOTk_NocedalAndWrightEqualityNLP::partialDerivativeState(const dotk::Vector<Real> & state_,
+                                                              const dotk::Vector<Real> & control_,
+                                                              const dotk::Vector<Real> & delta_state_,
+                                                              dotk::Vector<Real> & jacobian_times_delta_state_)
 {
     // |  2*u1    2*u2   2*u3   2*u4   2*u5 |
     // |   0       u3     u2   -5*u5  -5*u4 |
@@ -55,18 +55,18 @@ void DOTk_NocedalAndWrightEqualityNLP::partialDerivativeState(const dotk::vector
             + static_cast<Real>(3.) * pow(state_[1], static_cast<Real>(2.)) * delta_state_[1];
 }
 
-void DOTk_NocedalAndWrightEqualityNLP::partialDerivativeControl(const dotk::vector<Real> & state_,
-                                                                const dotk::vector<Real> & control_,
-                                                                const dotk::vector<Real> & vector_,
-                                                                dotk::vector<Real> & output_)
+void DOTk_NocedalAndWrightEqualityNLP::partialDerivativeControl(const dotk::Vector<Real> & state_,
+                                                                const dotk::Vector<Real> & control_,
+                                                                const dotk::Vector<Real> & vector_,
+                                                                dotk::Vector<Real> & output_)
 {
     return;
 }
 
-void DOTk_NocedalAndWrightEqualityNLP::adjointPartialDerivativeState(const dotk::vector<Real> & state_,
-                                                                     const dotk::vector<Real> & control_,
-                                                                     const dotk::vector<Real> & dual_,
-                                                                     dotk::vector<Real> & output_)
+void DOTk_NocedalAndWrightEqualityNLP::adjointPartialDerivativeState(const dotk::Vector<Real> & state_,
+                                                                     const dotk::Vector<Real> & control_,
+                                                                     const dotk::Vector<Real> & dual_,
+                                                                     dotk::Vector<Real> & output_)
 {
     // | 2*u1    0    3*u1^2 |
     // | 2*u2    u3   3*u2^2 |
@@ -87,19 +87,19 @@ void DOTk_NocedalAndWrightEqualityNLP::adjointPartialDerivativeState(const dotk:
     output_[4] = static_cast<Real>(2.) * state_[4] * dual_[0] - static_cast<Real>(5.) * state_[3] * dual_[1];
 }
 
-void DOTk_NocedalAndWrightEqualityNLP::adjointPartialDerivativeControl(const dotk::vector<Real> & state_,
-                                                                       const dotk::vector<Real> & control_,
-                                                                       const dotk::vector<Real> & dual_,
-                                                                       dotk::vector<Real> & output_)
+void DOTk_NocedalAndWrightEqualityNLP::adjointPartialDerivativeControl(const dotk::Vector<Real> & state_,
+                                                                       const dotk::Vector<Real> & control_,
+                                                                       const dotk::Vector<Real> & dual_,
+                                                                       dotk::Vector<Real> & output_)
 {
     return;
 }
 
-void DOTk_NocedalAndWrightEqualityNLP::partialDerivativeStateState(const dotk::vector<Real> & state_,
-                                                                   const dotk::vector<Real> & control_,
-                                                                   const dotk::vector<Real> & dual_,
-                                                                   const dotk::vector<Real> & delta_state_,
-                                                                   dotk::vector<Real> & vector_)
+void DOTk_NocedalAndWrightEqualityNLP::partialDerivativeStateState(const dotk::Vector<Real> & state_,
+                                                                   const dotk::Vector<Real> & control_,
+                                                                   const dotk::Vector<Real> & dual_,
+                                                                   const dotk::Vector<Real> & delta_state_,
+                                                                   dotk::Vector<Real> & vector_)
 {
     const Real du1 = delta_state_[0];
     const Real du2 = delta_state_[1];
@@ -122,29 +122,29 @@ void DOTk_NocedalAndWrightEqualityNLP::partialDerivativeStateState(const dotk::v
     vector_[4] = static_cast<Real>(-5.) * lambda2 * du4 + static_cast<Real>(2.) * lambda1 * du5;
 }
 
-void DOTk_NocedalAndWrightEqualityNLP::partialDerivativeStateControl(const dotk::vector<Real> & state_,
-                                                                     const dotk::vector<Real> & control_,
-                                                                     const dotk::vector<Real> & dual_,
-                                                                     const dotk::vector<Real> & vector_,
-                                                                     dotk::vector<Real> & output_)
+void DOTk_NocedalAndWrightEqualityNLP::partialDerivativeStateControl(const dotk::Vector<Real> & state_,
+                                                                     const dotk::Vector<Real> & control_,
+                                                                     const dotk::Vector<Real> & dual_,
+                                                                     const dotk::Vector<Real> & vector_,
+                                                                     dotk::Vector<Real> & output_)
 {
     return;
 }
 
-void DOTk_NocedalAndWrightEqualityNLP::partialDerivativeControlControl(const dotk::vector<Real> & state_,
-                                                                       const dotk::vector<Real> & control_,
-                                                                       const dotk::vector<Real> & dual_,
-                                                                       const dotk::vector<Real> & vector_,
-                                                                       dotk::vector<Real> & output_)
+void DOTk_NocedalAndWrightEqualityNLP::partialDerivativeControlControl(const dotk::Vector<Real> & state_,
+                                                                       const dotk::Vector<Real> & control_,
+                                                                       const dotk::Vector<Real> & dual_,
+                                                                       const dotk::Vector<Real> & vector_,
+                                                                       dotk::Vector<Real> & output_)
 {
     return;
 }
 
-void DOTk_NocedalAndWrightEqualityNLP::partialDerivativeControlState(const dotk::vector<Real> & state_,
-                                                                     const dotk::vector<Real> & control_,
-                                                                     const dotk::vector<Real> & dual_,
-                                                                     const dotk::vector<Real> & delta_state_,
-                                                                     dotk::vector<Real> & vector_)
+void DOTk_NocedalAndWrightEqualityNLP::partialDerivativeControlState(const dotk::Vector<Real> & state_,
+                                                                     const dotk::Vector<Real> & control_,
+                                                                     const dotk::Vector<Real> & dual_,
+                                                                     const dotk::Vector<Real> & delta_state_,
+                                                                     dotk::Vector<Real> & vector_)
 {
     return;
 }

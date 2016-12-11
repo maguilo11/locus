@@ -19,8 +19,8 @@ class DOTk_KrylovSolverDataMng;
 class DOTk_OptimizationDataMng;
 class DOTk_KrylovSolverStoppingCriterion;
 
-template<typename Type>
-class vector;
+template<typename ScalarType>
+class Vector;
 
 class DOTk_KrylovSolver
 {
@@ -54,8 +54,8 @@ public:
     virtual void setMaxNumKrylovSolverItr(size_t itr_) = 0;
     virtual const std::tr1::shared_ptr<dotk::DOTk_KrylovSolverDataMng> & getDataMng() const = 0;
     virtual const std::tr1::shared_ptr<dotk::DOTk_LinearOperator> & getLinearOperator() const = 0;
-    virtual const std::tr1::shared_ptr<dotk::vector<Real> > & getDescentDirection() = 0;
-    virtual void solve(const std::tr1::shared_ptr<dotk::vector<Real> > & rhs_,
+    virtual const std::tr1::shared_ptr<dotk::Vector<Real> > & getDescentDirection() = 0;
+    virtual void solve(const std::tr1::shared_ptr<dotk::Vector<Real> > & rhs_,
                        const std::tr1::shared_ptr<dotk::DOTk_KrylovSolverStoppingCriterion> & criterion_,
                        const std::tr1::shared_ptr<dotk::DOTk_OptimizationDataMng> & opt_prob_mng_) = 0;
 

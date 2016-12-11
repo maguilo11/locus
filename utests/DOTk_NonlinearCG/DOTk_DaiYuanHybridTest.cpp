@@ -92,7 +92,7 @@ TEST(DOTk_DaiYuanHybrid, getDirection)
     dotk::DOTk_DaiYuanHybrid dir;
     EXPECT_EQ(dotk::types::DAI_YUAN_HYBRID_NLCG, dir.getNonlinearCGType());
     dir.getDirection(mng.getOldGradient(), mng.getNewGradient(), mng.getTrialStep());
-    std::tr1::shared_ptr<dotk::vector<Real> > gold = dotk::gtest::allocateControl();
+    std::tr1::shared_ptr<dotk::Vector<Real> > gold = dotk::gtest::allocateControl();
     (*gold)[0] = 0.19642857142857;
     (*gold)[1] = -43.607142857142;
     Real tol = 1e-8;
@@ -136,7 +136,7 @@ TEST(DOTk_DaiYuanHybrid, direction)
     dotk::DOTk_DaiYuanHybrid dir;
     EXPECT_EQ(dotk::types::DAI_YUAN_HYBRID_NLCG, dir.getNonlinearCGType());
     dir.direction(mng);
-    std::tr1::shared_ptr<dotk::vector<Real> > gold = dotk::gtest::allocateControl();
+    std::tr1::shared_ptr<dotk::Vector<Real> > gold = dotk::gtest::allocateControl();
     (*gold)[0] = 0.19642857142857;
     (*gold)[1] = -43.607142857142;
     Real tol = 1e-8;

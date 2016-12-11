@@ -16,8 +16,8 @@ namespace dotk
 class DOTk_AssemblyManager;
 class DOTk_OptimizationDataMng;
 
-template<class Type>
-class vector;
+template<typename ScalarType>
+class Vector;
 
 class DOTk_UserDefinedHessianTypeCNP : public dotk::DOTk_SecondOrderOperator
 {
@@ -26,8 +26,8 @@ public:
     virtual ~DOTk_UserDefinedHessianTypeCNP();
 
     virtual void apply(const std::tr1::shared_ptr<dotk::DOTk_OptimizationDataMng> & mng_,
-                       const std::tr1::shared_ptr<dotk::vector<Real> > & vector_,
-                       const std::tr1::shared_ptr<dotk::vector<Real> > & hessian_times_vector_);
+                       const std::tr1::shared_ptr<dotk::Vector<Real> > & vector_,
+                       const std::tr1::shared_ptr<dotk::Vector<Real> > & hessian_times_vector_);
 
 private:
     DOTk_UserDefinedHessianTypeCNP(const dotk::DOTk_UserDefinedHessianTypeCNP &);

@@ -24,13 +24,13 @@ Real DOTk_GcmmaTestObjectiveFunction::getConstant() const
     return (m_Constant);
 }
 
-Real DOTk_GcmmaTestObjectiveFunction::value(const dotk::vector<Real> & primal_)
+Real DOTk_GcmmaTestObjectiveFunction::value(const dotk::Vector<Real> & primal_)
 {
     Real value = this->getConstant() * primal_.sum();
     return (value);
 }
 
-void DOTk_GcmmaTestObjectiveFunction::gradient(const dotk::vector<Real> & primal_, dotk::vector<Real> & output_)
+void DOTk_GcmmaTestObjectiveFunction::gradient(const dotk::Vector<Real> & primal_, dotk::Vector<Real> & output_)
 {
     Real constant = this->getConstant();
     output_.fill(constant);

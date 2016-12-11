@@ -15,8 +15,8 @@ namespace dotk
 
 class DOTk_KrylovSolver;
 
-template<typename Type>
-class vector;
+template<typename ScalarType>
+class Vector;
 
 class DOTk_TangentialSubProblemCriterion: public dotk::DOTk_KrylovSolverStoppingCriterion
 {
@@ -25,15 +25,15 @@ public:
     virtual ~DOTk_TangentialSubProblemCriterion();
 
     virtual Real evaluate(const dotk::DOTk_KrylovSolver * const solver_,
-                          const std::tr1::shared_ptr<dotk::vector<Real> > & kernel_vector_);
+                          const std::tr1::shared_ptr<dotk::Vector<Real> > & kernel_vector_);
 
 private:
     void initialize(Real value_);
 
     Real computeStoppingTolerance(Real norm_residual_,
-                                  const std::tr1::shared_ptr<dotk::vector<Real> > & kernel_vector_);
+                                  const std::tr1::shared_ptr<dotk::Vector<Real> > & kernel_vector_);
     Real computeInitialStoppingTolerance(Real trust_region_radius_,
-                                         const std::tr1::shared_ptr<dotk::vector<Real> > & kernel_vector_);
+                                         const std::tr1::shared_ptr<dotk::Vector<Real> > & kernel_vector_);
 
 private:
     DOTk_TangentialSubProblemCriterion(const dotk::DOTk_TangentialSubProblemCriterion &);

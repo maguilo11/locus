@@ -15,9 +15,9 @@
 namespace dotk
 {
 
-template<typename Type>
-class vector;
-template<typename Type>
+template<typename ScalarType>
+class Vector;
+template<typename ScalarType>
 class DOTk_ObjectiveFunction;
 
 class DOTk_DualSolverCCSA
@@ -57,7 +57,7 @@ public:
 
     virtual void reset() = 0;
     virtual void solve(const std::tr1::shared_ptr<dotk::DOTk_ObjectiveFunction<Real> > & objective_,
-                       const std::tr1::shared_ptr<dotk::vector<Real> > & solution_) = 0;
+                       const std::tr1::shared_ptr<dotk::Vector<Real> > & solution_) = 0;
 
 private:
     dotk::ccsa::dual_solver_t m_DualSolverType;

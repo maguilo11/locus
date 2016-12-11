@@ -28,7 +28,7 @@ DOTk_GramSchmidt::~DOTk_GramSchmidt()
 }
 
 void DOTk_GramSchmidt::gramSchmidt(size_t ortho_vector_index_,
-                                   const std::tr1::shared_ptr<dotk::vector<Real> > & kernel_vector_)
+                                   const std::tr1::shared_ptr<dotk::Vector<Real> > & kernel_vector_)
 {
     m_OrthogonalBasis[ortho_vector_index_]->axpy(static_cast<Real>(-1.), *kernel_vector_);
     for(size_t index = 0; index < ortho_vector_index_; ++index)
@@ -45,12 +45,12 @@ void DOTk_GramSchmidt::gramSchmidt(size_t ortho_vector_index_,
     }
 }
 
-void DOTk_GramSchmidt::setOrthogonalVector(size_t index_, const std::tr1::shared_ptr<dotk::vector<Real> > & vec_)
+void DOTk_GramSchmidt::setOrthogonalVector(size_t index_, const std::tr1::shared_ptr<dotk::Vector<Real> > & vec_)
 {
     m_OrthogonalBasis[index_]->copy(*vec_);
 }
 
-const std::tr1::shared_ptr<dotk::vector<Real> > & DOTk_GramSchmidt::getOrthogonalVector(size_t index_) const
+const std::tr1::shared_ptr<dotk::Vector<Real> > & DOTk_GramSchmidt::getOrthogonalVector(size_t index_) const
 {
     return (m_OrthogonalBasis[index_]);
 }
@@ -66,18 +66,18 @@ void DOTk_GramSchmidt::clear()
 }
 
 void DOTk_GramSchmidt::apply(const dotk::DOTk_KrylovSolver * const solver_,
-                             const std::tr1::shared_ptr<dotk::vector<Real> > & kernel_vector_)
+                             const std::tr1::shared_ptr<dotk::Vector<Real> > & kernel_vector_)
 {
     size_t current_solver_itr = solver_->getNumSolverItrDone();
     this->gramSchmidt(current_solver_itr, kernel_vector_);
 }
 
-void DOTk_GramSchmidt::setLinearOperatorTimesOrthoVector(size_t index_, const std::tr1::shared_ptr<dotk::vector<Real> > & vec_)
+void DOTk_GramSchmidt::setLinearOperatorTimesOrthoVector(size_t index_, const std::tr1::shared_ptr<dotk::Vector<Real> > & vec_)
 {
     m_LinearOperatorTimesOrthoVector[index_]->copy(*vec_);
 }
 
-const std::tr1::shared_ptr<dotk::vector<Real> > & DOTk_GramSchmidt::getLinearOperatorTimesOrthoVector(size_t index_) const
+const std::tr1::shared_ptr<dotk::Vector<Real> > & DOTk_GramSchmidt::getLinearOperatorTimesOrthoVector(size_t index_) const
 {
     return (m_LinearOperatorTimesOrthoVector[index_]);
 }

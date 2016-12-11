@@ -13,7 +13,7 @@
 namespace dotk
 {
 
-Real norm(const std::tr1::shared_ptr<dotk::vector<Real> > & input_)
+Real norm(const std::tr1::shared_ptr<dotk::Vector<Real> > & input_)
 {
     Real output = input_->control()->dot(*input_->control());
     if(input_->state().use_count() > 0)
@@ -25,8 +25,8 @@ Real norm(const std::tr1::shared_ptr<dotk::vector<Real> > & input_)
     return (output);
 }
 
-void copy(const std::tr1::shared_ptr<dotk::vector<Real> > & input_,
-          const std::tr1::shared_ptr<dotk::vector<Real> > & output_)
+void copy(const std::tr1::shared_ptr<dotk::Vector<Real> > & input_,
+          const std::tr1::shared_ptr<dotk::Vector<Real> > & output_)
 {
     output_->control()->copy(*input_->control());
     if(input_->state().use_count() > 0)
@@ -36,7 +36,7 @@ void copy(const std::tr1::shared_ptr<dotk::vector<Real> > & input_,
     }
 }
 
-void scale(const Real & alpha_, const std::tr1::shared_ptr<dotk::vector<Real> > & output_)
+void scale(const Real & alpha_, const std::tr1::shared_ptr<dotk::Vector<Real> > & output_)
 {
     output_->control()->scale(alpha_);
     if(output_->state().use_count() > 0)
@@ -46,8 +46,8 @@ void scale(const Real & alpha_, const std::tr1::shared_ptr<dotk::vector<Real> > 
 }
 
 void axpy(const Real & alpha_,
-          const std::tr1::shared_ptr<dotk::vector<Real> > & input_,
-          const std::tr1::shared_ptr<dotk::vector<Real> > & output_)
+          const std::tr1::shared_ptr<dotk::Vector<Real> > & input_,
+          const std::tr1::shared_ptr<dotk::Vector<Real> > & output_)
 {
     output_->control()->axpy(alpha_, *input_->control());
     if(input_->state().use_count() > 0)

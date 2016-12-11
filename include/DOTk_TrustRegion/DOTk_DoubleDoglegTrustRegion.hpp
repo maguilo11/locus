@@ -15,43 +15,43 @@ namespace dotk
 
 class DOTk_OptimizationDataMng;
 
-template<class Type>
-class vector;
+template<typename ScalarType>
+class Vector;
 
 class DOTk_DoubleDoglegTrustRegion : public dotk::DOTk_TrustRegion
 {
 public:
-    explicit DOTk_DoubleDoglegTrustRegion(const std::tr1::shared_ptr<dotk::vector<Real> > & vector_);
+    explicit DOTk_DoubleDoglegTrustRegion(const std::tr1::shared_ptr<dotk::Vector<Real> > & vector_);
     virtual ~DOTk_DoubleDoglegTrustRegion();
 
     Real getParamPromotesMonotonicallyDecreasingQuadraticModel() const;
     void setParamPromotesMonotonicallyDecreasingQuadraticModel(Real value_);
 
-    Real computeDoubleDoglegRoot(const std::tr1::shared_ptr<dotk::vector<Real> > & grad_,
-                                 const std::tr1::shared_ptr<dotk::vector<Real> > & newton_direction_,
-                                 const std::tr1::shared_ptr<dotk::vector<Real> > & matrix_times_grad_);
+    Real computeDoubleDoglegRoot(const std::tr1::shared_ptr<dotk::Vector<Real> > & grad_,
+                                 const std::tr1::shared_ptr<dotk::Vector<Real> > & newton_direction_,
+                                 const std::tr1::shared_ptr<dotk::Vector<Real> > & matrix_times_grad_);
 
     void doubleDogleg(const Real & trust_region_radius_,
-                      const std::tr1::shared_ptr<dotk::vector<Real> > & grad_,
-                      const std::tr1::shared_ptr<dotk::vector<Real> > & matrix_times_grad_,
-                      const std::tr1::shared_ptr<dotk::vector<Real> > & newton_step_);
+                      const std::tr1::shared_ptr<dotk::Vector<Real> > & grad_,
+                      const std::tr1::shared_ptr<dotk::Vector<Real> > & matrix_times_grad_,
+                      const std::tr1::shared_ptr<dotk::Vector<Real> > & newton_step_);
 
     virtual void step(const dotk::DOTk_OptimizationDataMng * const mng_,
-                      const std::tr1::shared_ptr<dotk::vector<Real> > & matrix_times_grad_,
-                      const std::tr1::shared_ptr<dotk::vector<Real> > & scaled_direction_);
+                      const std::tr1::shared_ptr<dotk::Vector<Real> > & matrix_times_grad_,
+                      const std::tr1::shared_ptr<dotk::Vector<Real> > & scaled_direction_);
 
 private:
-    void computeScaledNewtonStep(const std::tr1::shared_ptr<dotk::vector<Real> > & grad_,
-                                 const std::tr1::shared_ptr<dotk::vector<Real> > & matrix_times_grad_,
-                                 const std::tr1::shared_ptr<dotk::vector<Real> > & newton_step_);
+    void computeScaledNewtonStep(const std::tr1::shared_ptr<dotk::Vector<Real> > & grad_,
+                                 const std::tr1::shared_ptr<dotk::Vector<Real> > & matrix_times_grad_,
+                                 const std::tr1::shared_ptr<dotk::Vector<Real> > & newton_step_);
     void computeConvexCombinationBetweenCauchyAndDoglegStep(const Real & trust_region_radius_,
-                                                            const std::tr1::shared_ptr<dotk::vector<Real> > & newton_step_);
+                                                            const std::tr1::shared_ptr<dotk::Vector<Real> > & newton_step_);
 
 private:
     Real mParamPromoteMonotonicallyDecreasingQuadraticModel;
 
-    std::tr1::shared_ptr<dotk::vector<Real> > mCauchyPoint;
-    std::tr1::shared_ptr<dotk::vector<Real> > mScaledNewtonStep;
+    std::tr1::shared_ptr<dotk::Vector<Real> > mCauchyPoint;
+    std::tr1::shared_ptr<dotk::Vector<Real> > mScaledNewtonStep;
 
 private:
     DOTk_DoubleDoglegTrustRegion(const dotk::DOTk_DoubleDoglegTrustRegion &);

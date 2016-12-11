@@ -53,7 +53,7 @@ TEST(DOTk_SerialArrayTest, abs)
 
     array.abs();
 
-    std::tr1::shared_ptr<dotk::vector<double> > gold = array.clone();
+    std::tr1::shared_ptr<dotk::Vector<double> > gold = array.clone();
     gold->fill(111.);
     int thread_count = 4;
     dotk::gtest::checkResults(*gold, array, thread_count);
@@ -66,7 +66,7 @@ TEST(DOTk_SerialArrayTest, scale)
 
     array.scale(3.);
 
-    std::tr1::shared_ptr<dotk::vector<double> > gold = array.clone();
+    std::tr1::shared_ptr<dotk::Vector<double> > gold = array.clone();
     gold->fill(3.);
     int thread_count = 4;
     dotk::gtest::checkResults(*gold, array, thread_count);
@@ -80,7 +80,7 @@ TEST(DOTk_SerialArrayTest, cwiseProd)
 
     x.cwiseProd(y);
 
-    std::tr1::shared_ptr<dotk::vector<double> > gold = x.clone();
+    std::tr1::shared_ptr<dotk::Vector<double> > gold = x.clone();
     gold->fill(4.);
     int thread_count = 4;
     dotk::gtest::checkResults(*gold, x, thread_count);
@@ -94,7 +94,7 @@ TEST(DOTk_SerialArrayTest, axpy)
 
     y.axpy(3., x);
 
-    std::tr1::shared_ptr<dotk::vector<double> > gold = x.clone();
+    std::tr1::shared_ptr<dotk::Vector<double> > gold = x.clone();
     gold->fill(4.);
     int thread_count = 4;
     dotk::gtest::checkResults(*gold, y, thread_count);
@@ -138,11 +138,11 @@ TEST(DOTk_SerialArrayTest, copy)
 {
     int dim = 1e4;
     dotk::StdArray<double> array(dim, 1.);
-    std::tr1::shared_ptr<dotk::vector<double> > y = array.clone();
+    std::tr1::shared_ptr<dotk::Vector<double> > y = array.clone();
 
     y->copy(array);
 
-    std::tr1::shared_ptr<dotk::vector<double> > gold = array.clone();
+    std::tr1::shared_ptr<dotk::Vector<double> > gold = array.clone();
     gold->fill(1.);
     int thread_count = 4;
     dotk::gtest::checkResults(*gold, *y, thread_count);
@@ -156,7 +156,7 @@ TEST(DOTk_SerialArrayTest, gather)
 
     array.gather(y.data());
 
-    std::tr1::shared_ptr<dotk::vector<double> > gold = array.clone();
+    std::tr1::shared_ptr<dotk::Vector<double> > gold = array.clone();
     gold->fill(1.);
     int thread_count = 4;
     dotk::gtest::checkResults(y.size(), y.data(), *gold, thread_count);

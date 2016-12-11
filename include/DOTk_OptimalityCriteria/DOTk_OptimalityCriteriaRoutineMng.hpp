@@ -16,11 +16,11 @@ namespace dotk
 
 class DOTk_OptimalityCriteriaDataMng;
 
-template <typename Type>
+template <typename ScalarType>
 class DOTk_ObjectiveFunction;
-template <typename Type>
+template <typename ScalarType>
 class DOTk_EqualityConstraint;
-template <typename Type>
+template <typename ScalarType>
 class DOTk_InequalityConstraint;
 
 class DOTk_OptimalityCriteriaRoutineMng

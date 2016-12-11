@@ -33,10 +33,10 @@ DOTk_ThirdOrderForwardFiniteDifference::~DOTk_ThirdOrderForwardFiniteDifference(
 }
 
 void DOTk_ThirdOrderForwardFiniteDifference::differentiate(const std::tr1::shared_ptr<dotk::DOTk_Functor> & functor_,
-                                                           const dotk::vector<Real> & primal_,
-                                                           const dotk::vector<Real> & direction_,
-                                                           const dotk::vector<Real> & first_derivative_,
-                                                           dotk::vector<Real> & second_derivative_)
+                                                           const dotk::Vector<Real> & primal_,
+                                                           const dotk::Vector<Real> & direction_,
+                                                           const dotk::Vector<Real> & first_derivative_,
+                                                           dotk::Vector<Real> & second_derivative_)
 {
     m_OriginalPrimal->copy(primal_);
 

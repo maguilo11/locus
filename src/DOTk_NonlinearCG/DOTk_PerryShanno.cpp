@@ -54,9 +54,9 @@ Real DOTk_PerryShanno::getLowerBoundLimit() const
     return (mLowerBoundLimit);
 }
 
-Real DOTk_PerryShanno::computeAlphaScaleFactor(const std::tr1::shared_ptr<dotk::vector<Real> > & old_grad_,
-                                               const std::tr1::shared_ptr<dotk::vector<Real> > & new_grad_,
-                                               const std::tr1::shared_ptr<dotk::vector<Real> > & dir_)
+Real DOTk_PerryShanno::computeAlphaScaleFactor(const std::tr1::shared_ptr<dotk::Vector<Real> > & old_grad_,
+                                               const std::tr1::shared_ptr<dotk::Vector<Real> > & new_grad_,
+                                               const std::tr1::shared_ptr<dotk::Vector<Real> > & dir_)
 {
     Real dir_dot_new_grad = dir_->dot(*new_grad_);
     Real dir_dot_old_grad = dir_->dot(*old_grad_);
@@ -65,10 +65,10 @@ Real DOTk_PerryShanno::computeAlphaScaleFactor(const std::tr1::shared_ptr<dotk::
     return (alpha);
 }
 
-Real DOTk_PerryShanno::computeThetaScaleFactor(const std::tr1::shared_ptr<dotk::vector<Real> > & old_grad_,
-                                               const std::tr1::shared_ptr<dotk::vector<Real> > & new_grad_,
-                                               const std::tr1::shared_ptr<dotk::vector<Real> > & old_primal_,
-                                               const std::tr1::shared_ptr<dotk::vector<Real> > & new_primal_)
+Real DOTk_PerryShanno::computeThetaScaleFactor(const std::tr1::shared_ptr<dotk::Vector<Real> > & old_grad_,
+                                               const std::tr1::shared_ptr<dotk::Vector<Real> > & new_grad_,
+                                               const std::tr1::shared_ptr<dotk::Vector<Real> > & old_primal_,
+                                               const std::tr1::shared_ptr<dotk::Vector<Real> > & new_primal_)
 {
     Real nwgrad_dot_nwprimal = new_grad_->dot(*new_primal_);
     Real odgrad_dot_nwprimal = old_grad_->dot(*new_primal_);
@@ -84,9 +84,9 @@ Real DOTk_PerryShanno::computeThetaScaleFactor(const std::tr1::shared_ptr<dotk::
     return (theta);
 }
 
-Real DOTk_PerryShanno::computeScaleFactor(const std::tr1::shared_ptr<dotk::vector<Real> > & old_grad_,
-                                          const std::tr1::shared_ptr<dotk::vector<Real> > & new_grad_,
-                                          const std::tr1::shared_ptr<dotk::vector<Real> > & dir_)
+Real DOTk_PerryShanno::computeScaleFactor(const std::tr1::shared_ptr<dotk::Vector<Real> > & old_grad_,
+                                          const std::tr1::shared_ptr<dotk::Vector<Real> > & new_grad_,
+                                          const std::tr1::shared_ptr<dotk::Vector<Real> > & dir_)
 {
     Real dir_dot_new_grad = dir_->dot(*new_grad_);
     Real dir_dot_old_grad = dir_->dot(*old_grad_);
@@ -111,11 +111,11 @@ Real DOTk_PerryShanno::computeScaleFactor(const std::tr1::shared_ptr<dotk::vecto
     return (beta);
 }
 
-void DOTk_PerryShanno::getDirection(const std::tr1::shared_ptr<dotk::vector<Real> > & old_grad_,
-                                    const std::tr1::shared_ptr<dotk::vector<Real> > & new_grad_,
-                                    const std::tr1::shared_ptr<dotk::vector<Real> > & old_primal_,
-                                    const std::tr1::shared_ptr<dotk::vector<Real> > & new_primal_,
-                                    const std::tr1::shared_ptr<dotk::vector<Real> > & dir_)
+void DOTk_PerryShanno::getDirection(const std::tr1::shared_ptr<dotk::Vector<Real> > & old_grad_,
+                                    const std::tr1::shared_ptr<dotk::Vector<Real> > & new_grad_,
+                                    const std::tr1::shared_ptr<dotk::Vector<Real> > & old_primal_,
+                                    const std::tr1::shared_ptr<dotk::Vector<Real> > & new_primal_,
+                                    const std::tr1::shared_ptr<dotk::Vector<Real> > & dir_)
 {
     Real beta = this->computeScaleFactor(old_grad_, new_grad_, dir_);
     Real alpha = this->computeAlphaScaleFactor(old_grad_, new_grad_, dir_);

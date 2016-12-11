@@ -13,8 +13,8 @@
 namespace dotk
 {
 
-template<typename Type>
-class vector;
+template<typename ScalarType>
+class Vector;
 
 class DOTk_NocedalAndWrightObjectiveNLP : public dotk::DOTk_ObjectiveFunction<Real>
 {
@@ -22,29 +22,29 @@ public:
     DOTk_NocedalAndWrightObjectiveNLP();
     virtual ~DOTk_NocedalAndWrightObjectiveNLP();
 
-    virtual Real value(const dotk::vector<Real> & state_, const dotk::vector<Real> & control_);
-    virtual void partialDerivativeState(const dotk::vector<Real> & state_,
-                                        const dotk::vector<Real> & control_,
-                                        dotk::vector<Real> & output_);
-    virtual void partialDerivativeControl(const dotk::vector<Real> & state_,
-                                          const dotk::vector<Real> & control_,
-                                          dotk::vector<Real> & output_);
-    virtual void partialDerivativeStateState(const dotk::vector<Real> & state_,
-                                             const dotk::vector<Real> & control_,
-                                             const dotk::vector<Real> & vector_,
-                                             dotk::vector<Real> & output_);
-    virtual void partialDerivativeStateControl(const dotk::vector<Real> & state_,
-                                               const dotk::vector<Real> & control_,
-                                               const dotk::vector<Real> & vector_,
-                                               dotk::vector<Real> & output_);
-    virtual void partialDerivativeControlControl(const dotk::vector<Real> & state_,
-                                                 const dotk::vector<Real> & control_,
-                                                 const dotk::vector<Real> & vector_,
-                                                 dotk::vector<Real> & output_);
-    virtual void partialDerivativeControlState(const dotk::vector<Real> & state_,
-                                               const dotk::vector<Real> & control_,
-                                               const dotk::vector<Real> & vector_,
-                                               dotk::vector<Real> & output_);
+    virtual Real value(const dotk::Vector<Real> & state_, const dotk::Vector<Real> & control_);
+    virtual void partialDerivativeState(const dotk::Vector<Real> & state_,
+                                        const dotk::Vector<Real> & control_,
+                                        dotk::Vector<Real> & output_);
+    virtual void partialDerivativeControl(const dotk::Vector<Real> & state_,
+                                          const dotk::Vector<Real> & control_,
+                                          dotk::Vector<Real> & output_);
+    virtual void partialDerivativeStateState(const dotk::Vector<Real> & state_,
+                                             const dotk::Vector<Real> & control_,
+                                             const dotk::Vector<Real> & vector_,
+                                             dotk::Vector<Real> & output_);
+    virtual void partialDerivativeStateControl(const dotk::Vector<Real> & state_,
+                                               const dotk::Vector<Real> & control_,
+                                               const dotk::Vector<Real> & vector_,
+                                               dotk::Vector<Real> & output_);
+    virtual void partialDerivativeControlControl(const dotk::Vector<Real> & state_,
+                                                 const dotk::Vector<Real> & control_,
+                                                 const dotk::Vector<Real> & vector_,
+                                                 dotk::Vector<Real> & output_);
+    virtual void partialDerivativeControlState(const dotk::Vector<Real> & state_,
+                                               const dotk::Vector<Real> & control_,
+                                               const dotk::Vector<Real> & vector_,
+                                               dotk::Vector<Real> & output_);
 
 private:
     // unimplemented

@@ -18,11 +18,11 @@ class DOTk_Functor;
 class DOTk_OptimizationDataMng;
 class DOTk_NumericalDifferentiation;
 
-template<class Type>
-class vector;
-template<class Type>
+template<typename ScalarType>
+class Vector;
+template<typename ScalarType>
 class DOTk_ObjectiveFunction;
-template<class Type>
+template<typename ScalarType>
 class DOTk_EqualityConstraint;
 
 class NumericallyDifferentiatedHessian : public dotk::DOTk_LinearOperator
@@ -42,13 +42,13 @@ public:
     void setThirdOrderForwardDifference(const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_, Real epsilon_ = 1e-6);
     void setThirdOrderBackwardDifference(const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_, Real epsilon_ = 1e-6);
 
-    void apply(const std::tr1::shared_ptr<dotk::vector<Real> > & primal_,
-               const std::tr1::shared_ptr<dotk::vector<Real> > & gradient_,
-               const std::tr1::shared_ptr<dotk::vector<Real> > & vector_,
-               const std::tr1::shared_ptr<dotk::vector<Real> > & output_);
+    void apply(const std::tr1::shared_ptr<dotk::Vector<Real> > & primal_,
+               const std::tr1::shared_ptr<dotk::Vector<Real> > & gradient_,
+               const std::tr1::shared_ptr<dotk::Vector<Real> > & vector_,
+               const std::tr1::shared_ptr<dotk::Vector<Real> > & output_);
     void apply(const std::tr1::shared_ptr<dotk::DOTk_OptimizationDataMng> & mng_,
-               const std::tr1::shared_ptr<dotk::vector<Real> > & vector_,
-               const std::tr1::shared_ptr<dotk::vector<Real> > & output_);
+               const std::tr1::shared_ptr<dotk::Vector<Real> > & vector_,
+               const std::tr1::shared_ptr<dotk::Vector<Real> > & output_);
 
     void setNumOtimizationItrDone(size_t itr_);
     void updateLimitedMemoryStorage(bool update_);

@@ -68,7 +68,7 @@ TEST(DOTk_HestenesStiefel, getDirection)
     EXPECT_EQ(dotk::types::HESTENES_STIEFEL_NLCG, dir.getNonlinearCGType());
     dir.getDirection(mng.getOldGradient(), mng.getNewGradient(), mng.getTrialStep());
 
-    std::tr1::shared_ptr<dotk::vector<Real> > gold = primal->control()->clone();
+    std::tr1::shared_ptr<dotk::Vector<Real> > gold = primal->control()->clone();
     (*gold)[0] = 31.4285714285714;
     (*gold)[1] = 18.8571428571429;
     Real tol = 1e-8;
@@ -99,7 +99,7 @@ TEST(DOTk_HestenesStiefel, direction)
     EXPECT_EQ(dotk::types::HESTENES_STIEFEL_NLCG, dir.getNonlinearCGType());
     dir.direction(mng);
 
-    std::tr1::shared_ptr<dotk::vector<Real> > gold = primal->control()->clone();
+    std::tr1::shared_ptr<dotk::Vector<Real> > gold = primal->control()->clone();
     (*gold)[0] = 31.4285714285714;
     (*gold)[1] = 18.8571428571429;
     Real tol = 1e-8;

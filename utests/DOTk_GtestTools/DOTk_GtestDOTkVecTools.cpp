@@ -17,21 +17,21 @@ namespace dotk
 namespace gtest
 {
 
-std::tr1::shared_ptr<dotk::vector<Real> > allocateControl()
+std::tr1::shared_ptr<dotk::Vector<Real> > allocateControl()
 {
     size_t num_controls = 2;
     std::vector<Real> data(num_controls, 2.);
-    std::tr1::shared_ptr<dotk::vector<Real> > vector(new dotk::StdVector<Real>(data));
+    std::tr1::shared_ptr<dotk::Vector<Real> > vector(new dotk::StdVector<Real>(data));
     return (vector);
 }
 
-std::tr1::shared_ptr<dotk::vector<Real> > allocateData(size_t dim_, Real value_)
+std::tr1::shared_ptr<dotk::Vector<Real> > allocateData(size_t dim_, Real value_)
 {
-    std::tr1::shared_ptr<dotk::vector<Real> > vector(new dotk::StdVector<Real>(dim_, value_));
+    std::tr1::shared_ptr<dotk::Vector<Real> > vector(new dotk::StdVector<Real>(dim_, value_));
     return (vector);
 }
 
-void checkResults(const dotk::vector<Real>& results_, const dotk::vector<Real>& gold_, Real tol_)
+void checkResults(const dotk::Vector<Real>& results_, const dotk::Vector<Real>& gold_, Real tol_)
 {
     assert(results_.size() == gold_.size());
     for(size_t i = 0; i < results_.size(); ++i)
@@ -51,7 +51,7 @@ void checkResults(const std::vector<Real> & results_, const std::vector<Real> & 
 
 void checkResults(const size_t & num_gold_values,
                   const Real* gold_,
-                  const dotk::vector<Real> & results_,
+                  const dotk::Vector<Real> & results_,
                   int thread_count_,
                   Real tol_)
 {
@@ -94,7 +94,7 @@ void checkResults(const size_t & num_gold_values,
     }
 }
 
-void checkResults(const dotk::vector<Real> & gold_, const dotk::vector<Real> & results_, int thread_count_, Real tol_)
+void checkResults(const dotk::Vector<Real> & gold_, const dotk::Vector<Real> & results_, int thread_count_, Real tol_)
 {
     size_t i;
     size_t dim = gold_.size();

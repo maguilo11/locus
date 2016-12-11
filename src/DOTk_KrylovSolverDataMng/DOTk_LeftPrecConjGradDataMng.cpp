@@ -76,7 +76,7 @@ const std::tr1::shared_ptr<dotk::DOTk_LeftPreconditioner> & DOTk_LeftPrecConjGra
     return (m_LeftPreconditioner);
 }
 
-const std::tr1::shared_ptr<dotk::vector<Real> > & DOTk_LeftPrecConjGradDataMng::getLeftPrecTimesVector() const
+const std::tr1::shared_ptr<dotk::Vector<Real> > & DOTk_LeftPrecConjGradDataMng::getLeftPrecTimesVector() const
 {
     return (m_LeftPrecTimesResidual);
 }

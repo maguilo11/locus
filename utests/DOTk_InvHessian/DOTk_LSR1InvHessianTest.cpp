@@ -28,7 +28,7 @@ TEST(DOTk_LSR1InvHessian, apply)
     std::tr1::shared_ptr<dotk::DOTk_LineSearchMngTypeULP> mng(new dotk::DOTk_LineSearchMngTypeULP(primal, objective));
 
     size_t secant_storage = 2;
-    std::tr1::shared_ptr<dotk::vector<Real> > vec = primal->control()->clone();
+    std::tr1::shared_ptr<dotk::Vector<Real> > vec = primal->control()->clone();
     dotk::DOTk_LSR1InvHessian invhess(vec, secant_storage);
     EXPECT_EQ(dotk::types::LSR1_INV_HESS, invhess.getInvHessianType());
 
@@ -46,7 +46,7 @@ TEST(DOTk_LSR1InvHessian, apply)
 
     invhess.apply(mng, mng->getTrialStep(), vec);
 
-    std::tr1::shared_ptr<dotk::vector<Real> > gold = primal->control()->clone();
+    std::tr1::shared_ptr<dotk::Vector<Real> > gold = primal->control()->clone();
     (*gold)[0] = -39.66013996624;
     (*gold)[1] = -120.57957024863;
     dotk::gtest::checkResults(*vec, *gold);
@@ -61,7 +61,7 @@ TEST(DOTk_LSR1InvHessian, getInvHessian)
     std::tr1::shared_ptr<dotk::DOTk_LineSearchMngTypeULP> mng(new dotk::DOTk_LineSearchMngTypeULP(primal, objective));
 
     size_t secant_storage = 2;
-    std::tr1::shared_ptr<dotk::vector<Real> > vec = primal->control()->clone();
+    std::tr1::shared_ptr<dotk::Vector<Real> > vec = primal->control()->clone();
     dotk::DOTk_LSR1InvHessian invhess(vec, secant_storage);
     EXPECT_EQ(dotk::types::LSR1_INV_HESS, invhess.getInvHessianType());
 
@@ -78,7 +78,7 @@ TEST(DOTk_LSR1InvHessian, getInvHessian)
 
     invhess.getInvHessian(mng->getTrialStep(), vec);
 
-    std::tr1::shared_ptr<dotk::vector<Real> > gold = primal->control()->clone();
+    std::tr1::shared_ptr<dotk::Vector<Real> > gold = primal->control()->clone();
     (*gold)[0] = -39.66013996624;
     (*gold)[1] = -120.57957024863;
     dotk::gtest::checkResults(*vec, *gold);

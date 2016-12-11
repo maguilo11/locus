@@ -97,7 +97,7 @@ TEST(DOTk_DaiLiao, getDirection)
                      mng.getNewPrimal(),
                      mng.getTrialStep());
 
-    std::tr1::shared_ptr<dotk::vector<Real> > gold = primal->control()->clone();
+    std::tr1::shared_ptr<dotk::Vector<Real> > gold = primal->control()->clone();
     (*gold)[0] = 31.3892857142857;
     (*gold)[1] = 18.7785714285714;
     Real tol = 1e-8;
@@ -133,7 +133,7 @@ TEST(DOTk_DaiLiao, direction)
     EXPECT_EQ(dotk::types::DAI_LIAO_NLCG, dir.getNonlinearCGType());
     dir.direction(mng);
 
-    std::tr1::shared_ptr<dotk::vector<Real> > gold = primal->control()->clone();
+    std::tr1::shared_ptr<dotk::Vector<Real> > gold = primal->control()->clone();
     (*gold)[0] = 31.3892857142857;
     (*gold)[1] = 18.7785714285714;
     Real tol = 1e-8;

@@ -14,13 +14,13 @@
 namespace dotk
 {
 
-template<typename Type>
-class vector;
+template<typename ScalarType>
+class Vector;
 
-void printDual(const std::tr1::shared_ptr<dotk::vector<Real> > & dual_);
-void printState(const std::tr1::shared_ptr<dotk::vector<Real> > & state_);
-void printControl(const std::tr1::shared_ptr<dotk::vector<Real> > & control_);
-void printSolution(const std::tr1::shared_ptr<dotk::vector<Real> > & solution_);
+void printDual(const std::tr1::shared_ptr<dotk::Vector<Real> > & dual_);
+void printState(const std::tr1::shared_ptr<dotk::Vector<Real> > & state_);
+void printControl(const std::tr1::shared_ptr<dotk::Vector<Real> > & control_);
+void printSolution(const std::tr1::shared_ptr<dotk::Vector<Real> > & solution_);
 
 }
 

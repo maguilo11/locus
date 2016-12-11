@@ -63,9 +63,9 @@ TEST(DOTk_MATH, frobeniusNorm)
 
 TEST(DOTk_GTOOLS, didDataChanged)
 {
-    std::tr1::shared_ptr<dotk::vector<Real> > vecA = dotk::gtest::allocateControl();
+    std::tr1::shared_ptr<dotk::Vector<Real> > vecA = dotk::gtest::allocateControl();
     vecA->fill(2);
-    std::tr1::shared_ptr<dotk::vector<Real> > vecB = dotk::gtest::allocateControl();
+    std::tr1::shared_ptr<dotk::Vector<Real> > vecB = dotk::gtest::allocateControl();
     vecB->fill(2);
     EXPECT_FALSE(dotk::gtools::didDataChanged(vecA, vecB));
 

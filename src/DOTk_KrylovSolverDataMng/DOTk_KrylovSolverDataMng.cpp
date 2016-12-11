@@ -61,55 +61,55 @@ const std::tr1::shared_ptr<dotk::DOTk_LinearOperator> & DOTk_KrylovSolverDataMng
     return (m_LinearOperator);
 }
 
-const std::tr1::shared_ptr<dotk::vector<Real> > & DOTk_KrylovSolverDataMng::getSolution() const
+const std::tr1::shared_ptr<dotk::Vector<Real> > & DOTk_KrylovSolverDataMng::getSolution() const
 {
     return (m_Solution);
 }
 
-const std::tr1::shared_ptr<dotk::vector<Real> > & DOTk_KrylovSolverDataMng::getFirstSolution() const
+const std::tr1::shared_ptr<dotk::Vector<Real> > & DOTk_KrylovSolverDataMng::getFirstSolution() const
 {
     return (m_FirstSolution);
 }
 
-const std::tr1::shared_ptr<dotk::vector<Real> > & DOTk_KrylovSolverDataMng::getPreviousSolution() const
+const std::tr1::shared_ptr<dotk::Vector<Real> > & DOTk_KrylovSolverDataMng::getPreviousSolution() const
 {
     return (m_PreviousSolution);
 }
 
-void DOTk_KrylovSolverDataMng::setResidual (const std::tr1::shared_ptr<dotk::vector<Real> > & vec_)
+void DOTk_KrylovSolverDataMng::setResidual (const std::tr1::shared_ptr<dotk::Vector<Real> > & vec_)
 {
     m_Residual->copy(*vec_);
 }
 
-const std::tr1::shared_ptr<dotk::vector<Real> > & DOTk_KrylovSolverDataMng::getResidual() const
+const std::tr1::shared_ptr<dotk::Vector<Real> > & DOTk_KrylovSolverDataMng::getResidual() const
 {
     return (m_Residual);
 }
 
-const std::tr1::shared_ptr<dotk::vector<Real> > & DOTk_KrylovSolverDataMng::getResidual(size_t index_) const
+const std::tr1::shared_ptr<dotk::Vector<Real> > & DOTk_KrylovSolverDataMng::getResidual(size_t index_) const
 {
     std::perror("\n**** Unimplemented Function DOTk_KrylovSolverDataMng::getResidual(index). ABORT. ****\n");
     std::abort();
 }
 
-const std::tr1::shared_ptr<dotk::vector<Real> > & DOTk_KrylovSolverDataMng::getMatrixTimesVector() const
+const std::tr1::shared_ptr<dotk::Vector<Real> > & DOTk_KrylovSolverDataMng::getMatrixTimesVector() const
 {
     return (m_MatrixTimesVector);
 }
 
-const std::tr1::shared_ptr<dotk::vector<Real> > & DOTk_KrylovSolverDataMng::getLeftPrecTimesVector() const
+const std::tr1::shared_ptr<dotk::Vector<Real> > & DOTk_KrylovSolverDataMng::getLeftPrecTimesVector() const
 {
     std::perror("\n**** Unimplemented Function DOTk_KrylovSolverDataMng::getLeftPrecTimesVector. ABORT. ****\n");
     std::abort();
 }
 
-const std::tr1::shared_ptr<dotk::vector<Real> > & DOTk_KrylovSolverDataMng::getLeftPrecTimesVector(size_t index_) const
+const std::tr1::shared_ptr<dotk::Vector<Real> > & DOTk_KrylovSolverDataMng::getLeftPrecTimesVector(size_t index_) const
 {
     std::perror("\n**** Unimplemented Function DOTk_KrylovSolverDataMng::getLeftPrecTimesVector(index). ABORT. ****\n");
     std::abort();
 }
 
-const std::tr1::shared_ptr<dotk::vector<Real> > & DOTk_KrylovSolverDataMng::getRightPrecTimesVector() const
+const std::tr1::shared_ptr<dotk::Vector<Real> > & DOTk_KrylovSolverDataMng::getRightPrecTimesVector() const
 {
     std::perror("\n**** Unimplemented Function DOTk_KrylovSolverDataMng::getRightPrecTimesVector. ABORT. ****\n");
     std::abort();

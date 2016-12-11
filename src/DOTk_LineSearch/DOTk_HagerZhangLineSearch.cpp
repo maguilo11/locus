@@ -14,7 +14,7 @@
 namespace dotk
 {
 
-DOTk_HagerZhangLineSearch::DOTk_HagerZhangLineSearch(const std::tr1::shared_ptr<dotk::vector<Real> > & vector_) :
+DOTk_HagerZhangLineSearch::DOTk_HagerZhangLineSearch(const std::tr1::shared_ptr<dotk::Vector<Real> > & vector_) :
         dotk::DOTk_LineSearch(dotk::types::line_search_t::LINE_SEARCH_HAGER_ZHANG),
         m_MaxShrinkIntervalIterations(5),
         m_ArmijoRuleConstant(0.1),
@@ -102,10 +102,10 @@ Real DOTk_HagerZhangLineSearch::getStepInterval(dotk::types::bound_t type_)
     return (m_StepInterval.find(type_)->second);
 }
 
-Real DOTk_HagerZhangLineSearch::secantStep(const std::tr1::shared_ptr<dotk::vector<Real> > & trial_step_,
-                                           const std::tr1::shared_ptr<dotk::vector<Real> > & primal_old_,
-                                           const std::tr1::shared_ptr<dotk::vector<Real> > & primal_new_,
-                                           const std::tr1::shared_ptr<dotk::vector<Real> > & gradient_new_,
+Real DOTk_HagerZhangLineSearch::secantStep(const std::tr1::shared_ptr<dotk::Vector<Real> > & trial_step_,
+                                           const std::tr1::shared_ptr<dotk::Vector<Real> > & primal_old_,
+                                           const std::tr1::shared_ptr<dotk::Vector<Real> > & primal_new_,
+                                           const std::tr1::shared_ptr<dotk::Vector<Real> > & gradient_new_,
                                            const std::tr1::shared_ptr<dotk::DOTk_OptimizationDataMng> & mng_)
 {
     Real step = 0.;
@@ -123,10 +123,10 @@ Real DOTk_HagerZhangLineSearch::secantStep(const std::tr1::shared_ptr<dotk::vect
     return (step);
 }
 
-void DOTk_HagerZhangLineSearch::doubleSecantStep(const std::tr1::shared_ptr<dotk::vector<Real> > & trial_step_,
-                                                 const std::tr1::shared_ptr<dotk::vector<Real> > & primal_old_,
-                                                 const std::tr1::shared_ptr<dotk::vector<Real> > & primal_new_,
-                                                 const std::tr1::shared_ptr<dotk::vector<Real> > & gradient_new_,
+void DOTk_HagerZhangLineSearch::doubleSecantStep(const std::tr1::shared_ptr<dotk::Vector<Real> > & trial_step_,
+                                                 const std::tr1::shared_ptr<dotk::Vector<Real> > & primal_old_,
+                                                 const std::tr1::shared_ptr<dotk::Vector<Real> > & primal_new_,
+                                                 const std::tr1::shared_ptr<dotk::Vector<Real> > & gradient_new_,
                                                  const std::tr1::shared_ptr<dotk::DOTk_OptimizationDataMng> & mng_)
 {
     Real current_step_lower_bound = this->getStepInterval(dotk::types::LOWER_BOUND);
@@ -164,10 +164,10 @@ void DOTk_HagerZhangLineSearch::doubleSecantStep(const std::tr1::shared_ptr<dotk
 }
 
 void DOTk_HagerZhangLineSearch::updateInterval(const Real & step_,
-                                               const std::tr1::shared_ptr<dotk::vector<Real> > & trial_step_,
-                                               const std::tr1::shared_ptr<dotk::vector<Real> > & primal_old_,
-                                               const std::tr1::shared_ptr<dotk::vector<Real> > & primal_new_,
-                                               const std::tr1::shared_ptr<dotk::vector<Real> > & gradient_new_,
+                                               const std::tr1::shared_ptr<dotk::Vector<Real> > & trial_step_,
+                                               const std::tr1::shared_ptr<dotk::Vector<Real> > & primal_old_,
+                                               const std::tr1::shared_ptr<dotk::Vector<Real> > & primal_new_,
+                                               const std::tr1::shared_ptr<dotk::Vector<Real> > & gradient_new_,
                                                const std::tr1::shared_ptr<dotk::DOTk_OptimizationDataMng> & mng_)
 {
     bool is_step_smaller_than_lower_bound = step_ < this->getStepInterval(dotk::types::LOWER_BOUND) ? true : false;
@@ -207,10 +207,10 @@ void DOTk_HagerZhangLineSearch::updateInterval(const Real & step_,
 }
 
 void DOTk_HagerZhangLineSearch::shrinkInterval(const Real & step_,
-                                               const std::tr1::shared_ptr<dotk::vector<Real> > & trial_step_,
-                                               const std::tr1::shared_ptr<dotk::vector<Real> > & primal_old_,
-                                               const std::tr1::shared_ptr<dotk::vector<Real> > & primal_new_,
-                                               const std::tr1::shared_ptr<dotk::vector<Real> > & gradient_new_,
+                                               const std::tr1::shared_ptr<dotk::Vector<Real> > & trial_step_,
+                                               const std::tr1::shared_ptr<dotk::Vector<Real> > & primal_old_,
+                                               const std::tr1::shared_ptr<dotk::Vector<Real> > & primal_new_,
+                                               const std::tr1::shared_ptr<dotk::Vector<Real> > & gradient_new_,
                                                const std::tr1::shared_ptr<dotk::DOTk_OptimizationDataMng> & mng_)
 {
     Real theta = this->getIntervalUpdateParameter();

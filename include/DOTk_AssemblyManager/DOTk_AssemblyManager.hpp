@@ -16,8 +16,8 @@
 namespace dotk
 {
 
-template<typename Type>
-class vector;
+template<typename ScalarType>
+class Vector;
 
 class DOTk_AssemblyManager
 {
@@ -45,42 +45,42 @@ public:
     size_t getAdjointInverseJacobianStateCounter() const;
     void updateAdjointInverseJacobianStateCounter();
 
-    virtual Real objective(const std::tr1::shared_ptr<dotk::vector<Real> > & primal_);
-    virtual void objective(const std::vector<std::tr1::shared_ptr<dotk::vector<Real> > > & primal_,
-                           const std::tr1::shared_ptr<dotk::vector<Real> > & output_);
-    virtual void objective(const std::vector<std::tr1::shared_ptr<dotk::vector<Real> > > & primal_plus_,
-                           const std::vector<std::tr1::shared_ptr<dotk::vector<Real> > > & primal_minus_,
-                           const std::tr1::shared_ptr<dotk::vector<Real> > & fval_plus_,
-                           const std::tr1::shared_ptr<dotk::vector<Real> > & fval_minus_);
+    virtual Real objective(const std::tr1::shared_ptr<dotk::Vector<Real> > & primal_);
+    virtual void objective(const std::vector<std::tr1::shared_ptr<dotk::Vector<Real> > > & primal_,
+                           const std::tr1::shared_ptr<dotk::Vector<Real> > & output_);
+    virtual void objective(const std::vector<std::tr1::shared_ptr<dotk::Vector<Real> > > & primal_plus_,
+                           const std::vector<std::tr1::shared_ptr<dotk::Vector<Real> > > & primal_minus_,
+                           const std::tr1::shared_ptr<dotk::Vector<Real> > & fval_plus_,
+                           const std::tr1::shared_ptr<dotk::Vector<Real> > & fval_minus_);
 
-    virtual void gradient(const std::tr1::shared_ptr<dotk::vector<Real> > & primal_,
-                          const std::tr1::shared_ptr<dotk::vector<Real> > & gradient_);
-    virtual void gradient(const std::tr1::shared_ptr<dotk::vector<Real> > & primal_,
-                          const std::tr1::shared_ptr<dotk::vector<Real> > & dual_,
-                          const std::tr1::shared_ptr<dotk::vector<Real> > & output_);
+    virtual void gradient(const std::tr1::shared_ptr<dotk::Vector<Real> > & primal_,
+                          const std::tr1::shared_ptr<dotk::Vector<Real> > & gradient_);
+    virtual void gradient(const std::tr1::shared_ptr<dotk::Vector<Real> > & primal_,
+                          const std::tr1::shared_ptr<dotk::Vector<Real> > & dual_,
+                          const std::tr1::shared_ptr<dotk::Vector<Real> > & output_);
 
-    virtual void hessian(const std::tr1::shared_ptr<dotk::vector<Real> > & primal_,
-                         const std::tr1::shared_ptr<dotk::vector<Real> > & vector_,
-                         const std::tr1::shared_ptr<dotk::vector<Real> > & output_);
-    virtual void hessian(const std::tr1::shared_ptr<dotk::vector<Real> > & primal_,
-                         const std::tr1::shared_ptr<dotk::vector<Real> > & dual_,
-                         const std::tr1::shared_ptr<dotk::vector<Real> > & delta_primal_,
-                         const std::tr1::shared_ptr<dotk::vector<Real> > & output_);
+    virtual void hessian(const std::tr1::shared_ptr<dotk::Vector<Real> > & primal_,
+                         const std::tr1::shared_ptr<dotk::Vector<Real> > & vector_,
+                         const std::tr1::shared_ptr<dotk::Vector<Real> > & output_);
+    virtual void hessian(const std::tr1::shared_ptr<dotk::Vector<Real> > & primal_,
+                         const std::tr1::shared_ptr<dotk::Vector<Real> > & dual_,
+                         const std::tr1::shared_ptr<dotk::Vector<Real> > & delta_primal_,
+                         const std::tr1::shared_ptr<dotk::Vector<Real> > & output_);
 
-    virtual void equalityConstraint(const std::tr1::shared_ptr<dotk::vector<Real> > & primal_,
-                                    const std::tr1::shared_ptr<dotk::vector<Real> > & output_);
-    virtual void jacobian(const std::tr1::shared_ptr<dotk::vector<Real> > & primal_,
-                          const std::tr1::shared_ptr<dotk::vector<Real> > & delta_primal_,
-                          const std::tr1::shared_ptr<dotk::vector<Real> > & output_);
-    virtual void adjointJacobian(const std::tr1::shared_ptr<dotk::vector<Real> > & primal_,
-                                 const std::tr1::shared_ptr<dotk::vector<Real> > & dual_,
-                                 const std::tr1::shared_ptr<dotk::vector<Real> > & output_);
+    virtual void equalityConstraint(const std::tr1::shared_ptr<dotk::Vector<Real> > & primal_,
+                                    const std::tr1::shared_ptr<dotk::Vector<Real> > & output_);
+    virtual void jacobian(const std::tr1::shared_ptr<dotk::Vector<Real> > & primal_,
+                          const std::tr1::shared_ptr<dotk::Vector<Real> > & delta_primal_,
+                          const std::tr1::shared_ptr<dotk::Vector<Real> > & output_);
+    virtual void adjointJacobian(const std::tr1::shared_ptr<dotk::Vector<Real> > & primal_,
+                                 const std::tr1::shared_ptr<dotk::Vector<Real> > & dual_,
+                                 const std::tr1::shared_ptr<dotk::Vector<Real> > & output_);
 
     virtual Real inequalityBound(const size_t index_);
-    virtual Real inequalityValue(const size_t index_, const std::tr1::shared_ptr<dotk::vector<Real> > & control_);
+    virtual Real inequalityValue(const size_t index_, const std::tr1::shared_ptr<dotk::Vector<Real> > & control_);
     virtual void inequalityGradient(const size_t index_,
-                                    const std::tr1::shared_ptr<dotk::vector<Real> > & control_,
-                                    const std::tr1::shared_ptr<dotk::vector<Real> > & gradient_);
+                                    const std::tr1::shared_ptr<dotk::Vector<Real> > & control_,
+                                    const std::tr1::shared_ptr<dotk::Vector<Real> > & gradient_);
 
 private:
     size_t m_HessianEvaluationCounter;

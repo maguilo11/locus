@@ -14,10 +14,10 @@
 namespace dotk
 {
 
-template<typename Type>
-class vector;
+template<typename ScalarType>
+class Vector;
 
-template<typename Type>
+template<typename ScalarType>
 class DOTk_EqualityConstraint
 {
 public:
@@ -28,137 +28,137 @@ public:
     {
     }
 
-    virtual void jacobian(const dotk::vector<Type> & primal_,
-                          const dotk::vector<Type> & vector_,
-                          dotk::vector<Type> & output_)
+    virtual void jacobian(const dotk::Vector<ScalarType> & primal_,
+                          const dotk::Vector<ScalarType> & vector_,
+                          dotk::Vector<ScalarType> & output_)
     {
         std::perror("\n**** Calling Unimplemented Function DOTk_EqualityConstraint::jacobian. ABORT. ****\n");
         std::abort();
     }
-    virtual void residual(const dotk::vector<Type> & primal_, dotk::vector<Type> & output_)
+    virtual void residual(const dotk::Vector<ScalarType> & primal_, dotk::Vector<ScalarType> & output_)
     {
         std::perror("\n**** Calling Unimplemented Function DOTk_EqualityConstraint::residual(control,output). ABORT. ****\n");
         std::abort();
     }
-    virtual void adjointJacobian(const dotk::vector<Type> & primal_,
-                                 const dotk::vector<Type> & dual_,
-                                 dotk::vector<Type> & output_)
+    virtual void adjointJacobian(const dotk::Vector<ScalarType> & primal_,
+                                 const dotk::Vector<ScalarType> & dual_,
+                                 dotk::Vector<ScalarType> & output_)
     {
         std::perror("\n**** Calling Unimplemented Function DOTk_EqualityConstraint::adjointJacobian. ABORT. ****\n");
         std::abort();
     }
-    virtual void hessian(const dotk::vector<Type> & primal_,
-                         const dotk::vector<Type> & dual_,
-                         const dotk::vector<Type> & vector_,
-                         dotk::vector<Type> & output_)
+    virtual void hessian(const dotk::Vector<ScalarType> & primal_,
+                         const dotk::Vector<ScalarType> & dual_,
+                         const dotk::Vector<ScalarType> & vector_,
+                         dotk::Vector<ScalarType> & output_)
     {
         std::perror("\n**** Calling Unimplemented Function DOTk_EqualityConstraint::hessian. ABORT. ****\n");
         std::abort();
     }
 
-    virtual void solve(const dotk::vector<Type> & control_, dotk::vector<Type> & output_)
+    virtual void solve(const dotk::Vector<ScalarType> & control_, dotk::Vector<ScalarType> & output_)
     {
         std::perror("\n**** Calling Unimplemented Function DOTk_EqualityConstraint::solve. ABORT. ****\n");
         std::abort();
     }
-    virtual void applyInverseJacobianState(const dotk::vector<Type> & state_,
-                                           const dotk::vector<Type> & control_,
-                                           const dotk::vector<Type> & rhs_,
-                                           dotk::vector<Type> & output_)
+    virtual void applyInverseJacobianState(const dotk::Vector<ScalarType> & state_,
+                                           const dotk::Vector<ScalarType> & control_,
+                                           const dotk::Vector<ScalarType> & rhs_,
+                                           dotk::Vector<ScalarType> & output_)
     {
         std::perror("\n**** Calling Unimplemented Function DOTk_EqualityConstraint::applyInverseJacobianState. ABORT. ****\n");
         std::abort();
     }
-    virtual void applyAdjointInverseJacobianState(const dotk::vector<Type> & state_,
-                                                  const dotk::vector<Type> & control_,
-                                                  const dotk::vector<Type> & rhs_,
-                                                  dotk::vector<Type> & output_)
+    virtual void applyAdjointInverseJacobianState(const dotk::Vector<ScalarType> & state_,
+                                                  const dotk::Vector<ScalarType> & control_,
+                                                  const dotk::Vector<ScalarType> & rhs_,
+                                                  dotk::Vector<ScalarType> & output_)
     {
         std::perror("\n**** Calling Unimplemented Function DOTk_EqualityConstraint::applyInverseAdjointJacobianState. ABORT. ****\n");
         std::abort();
     }
 
-    virtual void residual(const dotk::vector<Type> & state,
-                          const dotk::vector<Type> & control_,
-                          dotk::vector<Type> & output_)
+    virtual void residual(const dotk::Vector<ScalarType> & state,
+                          const dotk::Vector<ScalarType> & control_,
+                          dotk::Vector<ScalarType> & output_)
     {
         std::perror("\n**** Calling Unimplemented Function DOTk_EqualityConstraint::residual(state,control,output). ABORT. ****\n");
         std::abort();
     }
-    virtual void partialDerivativeState(const dotk::vector<Type> & state_,
-                                        const dotk::vector<Type> & control_,
-                                        const dotk::vector<Type> & vector_,
-                                        dotk::vector<Type> & output_)
+    virtual void partialDerivativeState(const dotk::Vector<ScalarType> & state_,
+                                        const dotk::Vector<ScalarType> & control_,
+                                        const dotk::Vector<ScalarType> & vector_,
+                                        dotk::Vector<ScalarType> & output_)
     {
         std::perror("\n**** Calling Unimplemented Function DOTk_EqualityConstraint::partialDerivativeState. ABORT. ****\n");
         std::abort();
     }
-    virtual void partialDerivativeControl(const dotk::vector<Type> & state_,
-                                          const dotk::vector<Type> & control_,
-                                          const dotk::vector<Type> & vector_,
-                                          dotk::vector<Type> & output_)
+    virtual void partialDerivativeControl(const dotk::Vector<ScalarType> & state_,
+                                          const dotk::Vector<ScalarType> & control_,
+                                          const dotk::Vector<ScalarType> & vector_,
+                                          dotk::Vector<ScalarType> & output_)
     {
         std::perror("\n**** Calling Unimplemented Function DOTk_EqualityConstraint::partialDerivativeControl. ABORT. ****\n");
         std::abort();
     }
 
-    virtual void adjointPartialDerivativeState(const dotk::vector<Type> & state_,
-                                               const dotk::vector<Type> & control_,
-                                               const dotk::vector<Type> & dual_,
-                                               dotk::vector<Type> & output_)
+    virtual void adjointPartialDerivativeState(const dotk::Vector<ScalarType> & state_,
+                                               const dotk::Vector<ScalarType> & control_,
+                                               const dotk::Vector<ScalarType> & dual_,
+                                               dotk::Vector<ScalarType> & output_)
     {
         std::perror("\n**** Calling Unimplemented Function DOTk_EqualityConstraint::adjointFirstDerivativeState. ABORT. ****\n");
         std::abort();
     }
-    virtual void adjointPartialDerivativeControl(const dotk::vector<Type> & state_,
-                                                 const dotk::vector<Type> & control_,
-                                                 const dotk::vector<Type> & dual_,
-                                                 dotk::vector<Type> & output_)
+    virtual void adjointPartialDerivativeControl(const dotk::Vector<ScalarType> & state_,
+                                                 const dotk::Vector<ScalarType> & control_,
+                                                 const dotk::Vector<ScalarType> & dual_,
+                                                 dotk::Vector<ScalarType> & output_)
     {
         std::perror("\n**** Calling Unimplemented Function DOTk_EqualityConstraint::adjointFirstDerivativeControl. ABORT. ****\n");
         std::abort();
     }
 
-    virtual void partialDerivativeStateState(const dotk::vector<Type> & state_,
-                                             const dotk::vector<Type> & control_,
-                                             const dotk::vector<Type> & dual_,
-                                             const dotk::vector<Type> & vector_,
-                                             dotk::vector<Type> & output_)
+    virtual void partialDerivativeStateState(const dotk::Vector<ScalarType> & state_,
+                                             const dotk::Vector<ScalarType> & control_,
+                                             const dotk::Vector<ScalarType> & dual_,
+                                             const dotk::Vector<ScalarType> & vector_,
+                                             dotk::Vector<ScalarType> & output_)
     {
         std::perror("\n**** Calling Unimplemented Function DOTk_EqualityConstraint::partialDerivativeStateState. ABORT. ****\n");
         std::abort();
     }
-    virtual void partialDerivativeStateControl(const dotk::vector<Type> & state_,
-                                               const dotk::vector<Type> & control_,
-                                               const dotk::vector<Type> & dual_,
-                                               const dotk::vector<Type> & vector_,
-                                               dotk::vector<Type> & output_)
+    virtual void partialDerivativeStateControl(const dotk::Vector<ScalarType> & state_,
+                                               const dotk::Vector<ScalarType> & control_,
+                                               const dotk::Vector<ScalarType> & dual_,
+                                               const dotk::Vector<ScalarType> & vector_,
+                                               dotk::Vector<ScalarType> & output_)
     {
         std::perror("\n**** Calling Unimplemented Function DOTk_EqualityConstraint::partialDerivativeStateControl. ABORT. ****\n");
         std::abort();
     }
-    virtual void partialDerivativeControlControl(const dotk::vector<Type> & state_,
-                                                 const dotk::vector<Type> & control_,
-                                                 const dotk::vector<Type> & dual_,
-                                                 const dotk::vector<Type> & vector_,
-                                                 dotk::vector<Type> & output_)
+    virtual void partialDerivativeControlControl(const dotk::Vector<ScalarType> & state_,
+                                                 const dotk::Vector<ScalarType> & control_,
+                                                 const dotk::Vector<ScalarType> & dual_,
+                                                 const dotk::Vector<ScalarType> & vector_,
+                                                 dotk::Vector<ScalarType> & output_)
     {
         std::perror("\n**** Calling Unimplemented Function DOTk_EqualityConstraint::partialDerivativeControlControl. ABORT. ****\n");
         std::abort();
     }
-    virtual void partialDerivativeControlState(const dotk::vector<Type> & state_,
-                                               const dotk::vector<Type> & control_,
-                                               const dotk::vector<Type> & dual_,
-                                               const dotk::vector<Type> & vector_,
-                                               dotk::vector<Type> & output_)
+    virtual void partialDerivativeControlState(const dotk::Vector<ScalarType> & state_,
+                                               const dotk::Vector<ScalarType> & control_,
+                                               const dotk::Vector<ScalarType> & dual_,
+                                               const dotk::Vector<ScalarType> & vector_,
+                                               dotk::Vector<ScalarType> & output_)
     {
         std::perror("\n**** Calling Unimplemented Function DOTk_EqualityConstraint::partialDerivativeControlState. ABORT. ****\n");
         std::abort();
     }
 
 private:
-    DOTk_EqualityConstraint(const dotk::DOTk_EqualityConstraint<Type> &);
-    dotk::DOTk_EqualityConstraint<Type> & operator=(const dotk::DOTk_EqualityConstraint<Type> &);
+    DOTk_EqualityConstraint(const dotk::DOTk_EqualityConstraint<ScalarType> &);
+    dotk::DOTk_EqualityConstraint<ScalarType> & operator=(const dotk::DOTk_EqualityConstraint<ScalarType> &);
 };
 
 }

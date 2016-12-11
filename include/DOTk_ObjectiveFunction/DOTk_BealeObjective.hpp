@@ -13,8 +13,8 @@
 namespace dotk
 {
 
-template<typename Type>
-class vector;
+template<typename ScalarType>
+class Vector;
 
 class DOTk_BealeObjective : public dotk::DOTk_ObjectiveFunction<Real>
 {
@@ -22,11 +22,11 @@ public:
     DOTk_BealeObjective();
     virtual ~DOTk_BealeObjective();
 
-    virtual Real value(const dotk::vector<Real> & primal_);
-    virtual void gradient(const dotk::vector<Real> & primal_, dotk::vector<Real> & derivative_);
-    virtual void hessian(const dotk::vector<Real> & primal_,
-                         const dotk::vector<Real> & delta_primal_,
-                         dotk::vector<Real> & hessian_times_delta_primal_);
+    virtual Real value(const dotk::Vector<Real> & primal_);
+    virtual void gradient(const dotk::Vector<Real> & primal_, dotk::Vector<Real> & derivative_);
+    virtual void hessian(const dotk::Vector<Real> & primal_,
+                         const dotk::Vector<Real> & delta_primal_,
+                         dotk::Vector<Real> & hessian_times_delta_primal_);
 
 private:
     DOTk_BealeObjective(const dotk::DOTk_BealeObjective&);

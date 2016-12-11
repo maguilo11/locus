@@ -25,7 +25,7 @@ TEST(DOTk_DerivativeDiagnosticsTool, checkCodomainDimensions)
 
     std::ostringstream msg;
     size_t num_controls = 0;
-    std::tr1::shared_ptr< dotk::vector<Real> > field(new dotk::StdVector<Real>(num_controls, 0.));
+    std::tr1::shared_ptr< dotk::Vector<Real> > field(new dotk::StdVector<Real>(num_controls, 0.));
     std::string function_name("FUNCTION NAME");
     diagnostic.checkCodomainDimensions(field, function_name, msg);
 
@@ -39,7 +39,7 @@ TEST(DOTk_DerivativeDiagnosticsTool, checkDomainDimensions)
 
     std::ostringstream msg;
     size_t num_controls = 0;
-    std::tr1::shared_ptr< dotk::vector<Real> > field(new dotk::StdVector<Real>(num_controls, 0.));
+    std::tr1::shared_ptr< dotk::Vector<Real> > field(new dotk::StdVector<Real>(num_controls, 0.));
     std::string function_name("FUNCTION NAME");
     diagnostic.checkDomainDimensions(field, function_name, msg);
 

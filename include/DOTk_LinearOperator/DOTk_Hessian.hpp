@@ -16,8 +16,8 @@ namespace dotk
 class DOTk_SecondOrderOperator;
 class DOTk_OptimizationDataMng;
 
-template<typename Type>
-class vector;
+template<typename ScalarType>
+class Vector;
 
 class DOTk_Hessian : public dotk::DOTk_LinearOperator
 {
@@ -30,18 +30,18 @@ public:
 
     void setFullSpaceHessian();
     void setReducedSpaceHessian();
-    void setSr1Hessian(const std::tr1::shared_ptr<dotk::vector<Real> > & vector_);
-    void setDfpHessian(const std::tr1::shared_ptr<dotk::vector<Real> > & vector_);
-    void setBarzilaiBorweinHessian(const std::tr1::shared_ptr<dotk::vector<Real> > & vector_);
-    void setLbfgsHessian(const std::tr1::shared_ptr<dotk::vector<Real> > & vector_, size_t secant_storage_ = 2);
-    void setLdfpHessian(const std::tr1::shared_ptr<dotk::vector<Real> > & vector_, size_t secant_storage_ = 2);
-    void setLsr1Hessian(const std::tr1::shared_ptr<dotk::vector<Real> > & vector_, size_t secant_storage_ = 2);
+    void setSr1Hessian(const std::tr1::shared_ptr<dotk::Vector<Real> > & vector_);
+    void setDfpHessian(const std::tr1::shared_ptr<dotk::Vector<Real> > & vector_);
+    void setBarzilaiBorweinHessian(const std::tr1::shared_ptr<dotk::Vector<Real> > & vector_);
+    void setLbfgsHessian(const std::tr1::shared_ptr<dotk::Vector<Real> > & vector_, size_t secant_storage_ = 2);
+    void setLdfpHessian(const std::tr1::shared_ptr<dotk::Vector<Real> > & vector_, size_t secant_storage_ = 2);
+    void setLsr1Hessian(const std::tr1::shared_ptr<dotk::Vector<Real> > & vector_, size_t secant_storage_ = 2);
 
     virtual void setNumOtimizationItrDone(size_t itr_);
     virtual void updateLimitedMemoryStorage(bool update_);
     virtual void apply(const std::tr1::shared_ptr<dotk::DOTk_OptimizationDataMng> & mng_,
-                       const std::tr1::shared_ptr<dotk::vector<Real> > & vector_,
-                       const std::tr1::shared_ptr<dotk::vector<Real> > & output_);
+                       const std::tr1::shared_ptr<dotk::Vector<Real> > & vector_,
+                       const std::tr1::shared_ptr<dotk::Vector<Real> > & output_);
 
 private:
     dotk::types::hessian_t m_Type;

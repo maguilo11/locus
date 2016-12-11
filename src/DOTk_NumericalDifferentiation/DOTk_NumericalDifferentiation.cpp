@@ -5,7 +5,6 @@
  *      Author: Miguel A. Aguilo Valentin
  */
 
-#include "vector.hpp"
 #include "DOTk_Functor.hpp"
 #include "DOTk_NumericalDifferentiation.hpp"
 

@@ -108,67 +108,67 @@ Real DOTk_OptimizationDataMng::getOldObjectiveFunctionValue() const
     return (m_OldObjectiveFunction);
 }
 
-const std::tr1::shared_ptr<dotk::vector<Real> > & DOTk_OptimizationDataMng::getOldDual() const
+const std::tr1::shared_ptr<dotk::Vector<Real> > & DOTk_OptimizationDataMng::getOldDual() const
 {
     return (m_OldDual);
 }
 
-const std::tr1::shared_ptr<dotk::vector<Real> > & DOTk_OptimizationDataMng::getNewDual() const
+const std::tr1::shared_ptr<dotk::Vector<Real> > & DOTk_OptimizationDataMng::getNewDual() const
 {
     return (m_NewDual);
 }
 
-const std::tr1::shared_ptr<dotk::vector<Real> > & DOTk_OptimizationDataMng::getMatrixTimesVector() const
+const std::tr1::shared_ptr<dotk::Vector<Real> > & DOTk_OptimizationDataMng::getMatrixTimesVector() const
 {
     return (m_MatrixTimesVector);
 }
 
-void DOTk_OptimizationDataMng::setTrialStep(const dotk::vector<Real> & input_)
+void DOTk_OptimizationDataMng::setTrialStep(const dotk::Vector<Real> & input_)
 {
     m_TrialStep->copy(input_);
 }
 
-const std::tr1::shared_ptr<dotk::vector<Real> > & DOTk_OptimizationDataMng::getTrialStep() const
+const std::tr1::shared_ptr<dotk::Vector<Real> > & DOTk_OptimizationDataMng::getTrialStep() const
 {
     return (m_TrialStep);
 }
 
-void DOTk_OptimizationDataMng::setNewPrimal(const dotk::vector<Real> & input_)
+void DOTk_OptimizationDataMng::setNewPrimal(const dotk::Vector<Real> & input_)
 {
     m_NewPrimal->copy(input_);
 }
 
-void DOTk_OptimizationDataMng::setOldPrimal(const dotk::vector<Real> & input_)
+void DOTk_OptimizationDataMng::setOldPrimal(const dotk::Vector<Real> & input_)
 {
     m_OldPrimal->copy(input_);
 }
 
-const std::tr1::shared_ptr<dotk::vector<Real> > & DOTk_OptimizationDataMng::getNewPrimal() const
+const std::tr1::shared_ptr<dotk::Vector<Real> > & DOTk_OptimizationDataMng::getNewPrimal() const
 {
     return (m_NewPrimal);
 }
 
-const std::tr1::shared_ptr<dotk::vector<Real> > & DOTk_OptimizationDataMng::getOldPrimal() const
+const std::tr1::shared_ptr<dotk::Vector<Real> > & DOTk_OptimizationDataMng::getOldPrimal() const
 {
     return (m_OldPrimal);
 }
 
-void DOTk_OptimizationDataMng::setNewGradient(const dotk::vector<Real> & input_)
+void DOTk_OptimizationDataMng::setNewGradient(const dotk::Vector<Real> & input_)
 {
     m_NewGradient->copy(input_);
 }
 
-void DOTk_OptimizationDataMng::setOldGradient(const dotk::vector<Real> & input_)
+void DOTk_OptimizationDataMng::setOldGradient(const dotk::Vector<Real> & input_)
 {
     m_OldGradient->copy(input_);
 }
 
-const std::tr1::shared_ptr<dotk::vector<Real> > & DOTk_OptimizationDataMng::getNewGradient() const
+const std::tr1::shared_ptr<dotk::Vector<Real> > & DOTk_OptimizationDataMng::getNewGradient() const
 {
     return (m_NewGradient);
 }
 
-const std::tr1::shared_ptr<dotk::vector<Real> > & DOTk_OptimizationDataMng::getOldGradient() const
+const std::tr1::shared_ptr<dotk::Vector<Real> > & DOTk_OptimizationDataMng::getOldGradient() const
 {
     return (m_OldGradient);
 }
@@ -185,15 +185,15 @@ void DOTk_OptimizationDataMng::computeGradient()
     std::abort();
 }
 
-void DOTk_OptimizationDataMng::computeGradient(const std::tr1::shared_ptr<dotk::vector<Real> > & input_,
-                                                 const std::tr1::shared_ptr<dotk::vector<Real> > & gradient_)
+void DOTk_OptimizationDataMng::computeGradient(const std::tr1::shared_ptr<dotk::Vector<Real> > & input_,
+                                                 const std::tr1::shared_ptr<dotk::Vector<Real> > & gradient_)
 {
     std::perror("\n**** Unimplemented Function DOTk_OptimizationDataMng::computeGradient(in). ABORT. ****\n");
     std::abort();
 }
 
-void DOTk_OptimizationDataMng::applyVectorToHessian(const std::tr1::shared_ptr<dotk::vector<Real> > & input_,
-                                                    const std::tr1::shared_ptr<dotk::vector<Real> > & output_)
+void DOTk_OptimizationDataMng::applyVectorToHessian(const std::tr1::shared_ptr<dotk::Vector<Real> > & input_,
+                                                    const std::tr1::shared_ptr<dotk::Vector<Real> > & output_)
 {
     std::perror("\n**** Unimplemented Function DOTk_OptimizationDataMng::applyVectorToHessian(in,out). ABORT. ****\n");
     std::abort();
@@ -205,7 +205,7 @@ Real DOTk_OptimizationDataMng::evaluateObjective()
     std::abort();
 }
 
-Real DOTk_OptimizationDataMng::evaluateObjective(const std::tr1::shared_ptr<dotk::vector<Real> > & input_)
+Real DOTk_OptimizationDataMng::evaluateObjective(const std::tr1::shared_ptr<dotk::Vector<Real> > & input_)
 {
     std::perror("\n**** Unimplemented Function DOTk_OptimizationDataMng::evaluateObjective(in). ABORT. ****\n");
     std::abort();

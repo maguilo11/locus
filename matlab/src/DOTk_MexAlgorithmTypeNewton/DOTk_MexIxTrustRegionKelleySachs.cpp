@@ -182,7 +182,7 @@ void DOTk_MexIxTrustRegionKelleySachs::solveTypeBoundLinearProgramming(const mxA
     std::tr1::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
     dotk::mex::buildControlContainer(input_[0], *primal);
 
-    std::tr1::shared_ptr<dotk::vector<double> > bounds = primal->control()->clone();
+    std::tr1::shared_ptr<dotk::Vector<double> > bounds = primal->control()->clone();
     dotk::mex::parseControlLowerBound(input_[0], *bounds);
     primal->setControlLowerBound(*bounds);
     bounds->fill(0.);
@@ -220,7 +220,7 @@ void DOTk_MexIxTrustRegionKelleySachs::solveTypeBoundNonlinearProgramming(const 
     dotk::mex::buildDualContainer(input_[0], *primal);
     dotk::mex::buildControlContainer(input_[0], *primal);
 
-    std::tr1::shared_ptr<dotk::vector<double> > bounds = primal->control()->clone();
+    std::tr1::shared_ptr<dotk::Vector<double> > bounds = primal->control()->clone();
     dotk::mex::parseControlLowerBound(input_[0], *bounds);
     primal->setControlLowerBound(*bounds);
     bounds->fill(0.);

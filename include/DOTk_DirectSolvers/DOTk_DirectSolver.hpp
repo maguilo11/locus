@@ -16,9 +16,9 @@
 namespace dotk
 {
 
-template<typename Type>
-class vector;
-template<typename Type>
+template<typename ScalarType>
+class Vector;
+template<typename ScalarType>
 class matrix;
 
 class DOTk_DirectSolver

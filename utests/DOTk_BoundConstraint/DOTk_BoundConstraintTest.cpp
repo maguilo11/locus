@@ -286,7 +286,7 @@ TEST(BoundConstraint, computeActiveSet)
     dotk::DOTk_BoundConstraint bounds(primal);
     bounds.computeActiveSet(primal->getControlLowerBound(), primal->getControlUpperBound(), primal->control());
 
-    std::tr1::shared_ptr<dotk::vector<Real> > gold = primal->control()->clone();
+    std::tr1::shared_ptr<dotk::Vector<Real> > gold = primal->control()->clone();
     (*gold)[0] = 1;
     (*gold)[4] = 1;
     (*gold)[8] = 1;
@@ -305,10 +305,10 @@ TEST(BoundConstraint, pruneActive)
     (*bounds.activeSet())[4] = 1;
     (*bounds.activeSet())[8] = 1;
     (*bounds.activeSet())[9] = 1;
-    std::tr1::shared_ptr<dotk::vector<Real> > gradient = dotk::gtest::allocateData(nvars, 3);
+    std::tr1::shared_ptr<dotk::Vector<Real> > gradient = dotk::gtest::allocateData(nvars, 3);
     bounds.pruneActive(gradient);
 
-    std::tr1::shared_ptr<dotk::vector<Real> > gold = gradient->clone();
+    std::tr1::shared_ptr<dotk::Vector<Real> > gold = gradient->clone();
     gold->fill(3);
     (*gold)[0] = 0;
     (*gold)[4] = 0;

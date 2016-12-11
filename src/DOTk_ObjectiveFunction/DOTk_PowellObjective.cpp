@@ -20,7 +20,7 @@ DOTk_PowellObjective::~DOTk_PowellObjective()
 {
 }
 
-Real DOTk_PowellObjective::value(const dotk::vector<Real> & primal_)
+Real DOTk_PowellObjective::value(const dotk::Vector<Real> & primal_)
 {
     Real f1 = static_cast<Real>(1e4) * primal_[0] * primal_[1] - static_cast<Real>(1.);
     Real f2 = std::exp(-primal_[0]) + std::exp(-primal_[1]) - static_cast<Real>(1.0001);
@@ -29,7 +29,7 @@ Real DOTk_PowellObjective::value(const dotk::vector<Real> & primal_)
     return (value);
 }
 
-void DOTk_PowellObjective::gradient(const dotk::vector<Real> & primal_, dotk::vector<Real> & output_)
+void DOTk_PowellObjective::gradient(const dotk::Vector<Real> & primal_, dotk::Vector<Real> & output_)
 {
     Real f1 = static_cast<Real>(1e4) * primal_[0] * primal_[1] - static_cast<Real>(1.);
     Real f2 = std::exp(-primal_[0]) + std::exp(-primal_[1]) - static_cast<Real>(1.0001);
@@ -43,9 +43,9 @@ void DOTk_PowellObjective::gradient(const dotk::vector<Real> & primal_, dotk::ve
     output_[1] = static_cast<Real>(2.) * (f12 * f1 + f22 * f2);
 }
 
-void DOTk_PowellObjective::hessian(const dotk::vector<Real> & primal_,
-                                   const dotk::vector<Real> & vector_,
-                                   dotk::vector<Real> & output_)
+void DOTk_PowellObjective::hessian(const dotk::Vector<Real> & primal_,
+                                   const dotk::Vector<Real> & vector_,
+                                   dotk::Vector<Real> & output_)
 {
     Real f1 = static_cast<Real>(1e4) * primal_[0] * primal_[1] - static_cast<Real>(1.);
     Real f2 = std::exp(-primal_[0]) + std::exp(-primal_[1]) - static_cast<Real>(1.0001);

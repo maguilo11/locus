@@ -5,6 +5,7 @@
  *      Author: Miguel A. Aguilo Valentin
  */
 
+#include "vector.hpp"
 #include "DOTk_Types.hpp"
 #include "DOTk_OptimizationDataMng.hpp"
 #include "DOTk_RightPreconditioner.hpp"
@@ -43,7 +44,7 @@ dotk::types::right_prec_t DOTk_RightPreconditionerFactory::getFactoryType() cons
     return (mFactoryType);
 }
 
-void DOTk_RightPreconditionerFactory::build(const std::tr1::shared_ptr<dotk::vector<Real> > & vec_template_,
+void DOTk_RightPreconditionerFactory::build(const std::tr1::shared_ptr<dotk::Vector<Real> > & vec_template_,
                                             std::tr1::shared_ptr<dotk::DOTk_RightPreconditioner> & right_prec_)
 {
 }

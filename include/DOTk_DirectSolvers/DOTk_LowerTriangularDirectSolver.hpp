@@ -13,9 +13,9 @@
 namespace dotk
 {
 
-template<class Type>
-class vector;
-template<class Type>
+template<class ScalarType>
+class Vector;
+template<class ScalarType>
 class matrix;
 
 class DOTk_LowerTriangularDirectSolver : public dotk::DOTk_DirectSolver

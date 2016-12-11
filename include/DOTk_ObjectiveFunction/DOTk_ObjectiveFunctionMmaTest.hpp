@@ -13,8 +13,8 @@
 namespace dotk
 {
 
-template<typename Type>
-class vector;
+template<typename ScalarType>
+class Vector;
 
 class DOTk_ObjectiveFunctionMmaTest: public dotk::DOTk_ObjectiveFunction<Real>
 {
@@ -24,8 +24,8 @@ public:
 
     Real getConstant() const;
 
-    virtual Real value(const dotk::vector<Real> & primal_);
-    virtual void gradient(const dotk::vector<Real> & primal_, dotk::vector<Real> & output_);
+    virtual Real value(const dotk::Vector<Real> & primal_);
+    virtual void gradient(const dotk::Vector<Real> & primal_, dotk::Vector<Real> & output_);
 
 private:
     Real m_Constant;

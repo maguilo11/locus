@@ -28,7 +28,7 @@ Real DOTk_GcmmaTestInequalityConstraint::bound()
     return (m_Constant);
 }
 
-Real DOTk_GcmmaTestInequalityConstraint::value(const dotk::vector<Real> & primal_)
+Real DOTk_GcmmaTestInequalityConstraint::value(const dotk::Vector<Real> & primal_)
 {
     Real term_one = static_cast<Real>(61.) / std::pow(primal_[0], 3.);
     Real term_two = static_cast<Real>(37.) / std::pow(primal_[1], 3.);
@@ -41,14 +41,14 @@ Real DOTk_GcmmaTestInequalityConstraint::value(const dotk::vector<Real> & primal
     return (sum);
 }
 
-Real DOTk_GcmmaTestInequalityConstraint::residual(const dotk::vector<Real> & primal_)
+Real DOTk_GcmmaTestInequalityConstraint::residual(const dotk::Vector<Real> & primal_)
 {
     Real current_residual = this->value(primal_) - this->bound();
     return (current_residual);
 }
 
-void DOTk_GcmmaTestInequalityConstraint::gradient(const dotk::vector<Real> & primal_,
-                                                  dotk::vector<Real> & gradient_)
+void DOTk_GcmmaTestInequalityConstraint::gradient(const dotk::Vector<Real> & primal_,
+                                                  dotk::Vector<Real> & gradient_)
 {
     Real factor = -3.;
 

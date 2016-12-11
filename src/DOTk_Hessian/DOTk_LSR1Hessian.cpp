@@ -14,7 +14,7 @@
 namespace dotk
 {
 
-DOTk_LSR1Hessian::DOTk_LSR1Hessian(const std::tr1::shared_ptr<dotk::vector<Real> > & vector_,
+DOTk_LSR1Hessian::DOTk_LSR1Hessian(const std::tr1::shared_ptr<dotk::Vector<Real> > & vector_,
                                    size_t max_secant_storage_) :
         dotk::DOTk_SecondOrderOperator(max_secant_storage_),
         m_DeltaPrimal(vector_->clone()),
@@ -30,18 +30,18 @@ DOTk_LSR1Hessian::~DOTk_LSR1Hessian()
 {
 }
 
-const std::tr1::shared_ptr<dotk::vector<Real> > & DOTk_LSR1Hessian::getDeltaGradStorage(size_t at_) const
+const std::tr1::shared_ptr<dotk::Vector<Real> > & DOTk_LSR1Hessian::getDeltaGradStorage(size_t at_) const
 {
     return (m_DeltaGradientStorage->basis(at_));
 }
 
-const std::tr1::shared_ptr<dotk::vector<Real> > & DOTk_LSR1Hessian::getDeltaPrimalStorage(size_t at_) const
+const std::tr1::shared_ptr<dotk::Vector<Real> > & DOTk_LSR1Hessian::getDeltaPrimalStorage(size_t at_) const
 {
     return (m_DeltaPrimalStorage->basis(at_));
 }
 
-void DOTk_LSR1Hessian::unrollingSR1(const std::tr1::shared_ptr<dotk::vector<Real> > & vector_,
-                                    const std::tr1::shared_ptr<dotk::vector<Real> > & hess_times_vector_)
+void DOTk_LSR1Hessian::unrollingSR1(const std::tr1::shared_ptr<dotk::Vector<Real> > & vector_,
+                                    const std::tr1::shared_ptr<dotk::Vector<Real> > & hess_times_vector_)
 {
     /// Memory efficient SR1 formula, use for limited memory DOTk Hessian approximations \n
     /// \n
@@ -82,8 +82,8 @@ void DOTk_LSR1Hessian::unrollingSR1(const std::tr1::shared_ptr<dotk::vector<Real
     }
 }
 
-void DOTk_LSR1Hessian::getHessian(const std::tr1::shared_ptr<dotk::vector<Real> > & vector_,
-                                  const std::tr1::shared_ptr<dotk::vector<Real> > & hess_times_vector_)
+void DOTk_LSR1Hessian::getHessian(const std::tr1::shared_ptr<dotk::Vector<Real> > & vector_,
+                                  const std::tr1::shared_ptr<dotk::Vector<Real> > & hess_times_vector_)
 {
     hess_times_vector_->copy(*vector_);
     if(dotk::DOTk_SecondOrderOperator::getNumUpdatesStored() == 0)
@@ -100,8 +100,8 @@ void DOTk_LSR1Hessian::getHessian(const std::tr1::shared_ptr<dotk::vector<Real> 
 }
 
 void DOTk_LSR1Hessian::apply(const std::tr1::shared_ptr<dotk::DOTk_OptimizationDataMng> & mng_,
-                             const std::tr1::shared_ptr<dotk::vector<Real> > & vector_,
-                             const std::tr1::shared_ptr<dotk::vector<Real> > & matrix_times_vector_)
+                             const std::tr1::shared_ptr<dotk::Vector<Real> > & vector_,
+                             const std::tr1::shared_ptr<dotk::Vector<Real> > & matrix_times_vector_)
 {
     dotk::DOTk_SecondOrderOperator::computeDeltaPrimal(mng_->getNewPrimal(), mng_->getOldPrimal(), m_DeltaPrimal);
     dotk::DOTk_SecondOrderOperator::computeDeltaGradient(mng_->getNewGradient(), mng_->getOldGradient(), m_DeltaGradient);

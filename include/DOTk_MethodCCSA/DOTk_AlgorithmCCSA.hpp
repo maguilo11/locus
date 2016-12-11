@@ -20,8 +20,8 @@ class DOTK_MethodCcsaIO;
 class DOTk_SubProblemCCSA;
 class DOTk_BoundConstraints;
 
-template<class Type>
-class vector;
+template<typename ScalarType>
+class Vector;
 
 class DOTk_AlgorithmCCSA
 {
@@ -103,9 +103,9 @@ private:
     Real m_MovingAsymptoteExpansionParameter;
     Real m_MovingAsymptoteContractionParameter;
 
-    std::tr1::shared_ptr<dotk::vector<Real> > m_OldSigma;
-    std::tr1::shared_ptr<dotk::vector<Real> > m_AuxiliaryZcandidates;
-    std::tr1::shared_ptr<dotk::vector<Real> > m_ControlAtIterationIminusTwo;
+    std::tr1::shared_ptr<dotk::Vector<Real> > m_OldSigma;
+    std::tr1::shared_ptr<dotk::Vector<Real> > m_AuxiliaryZcandidates;
+    std::tr1::shared_ptr<dotk::Vector<Real> > m_ControlAtIterationIminusTwo;
 
     std::tr1::shared_ptr<dotk::DOTK_MethodCcsaIO> m_IO;
     std::tr1::shared_ptr<dotk::DOTk_DataMngCCSA> m_DataMng;

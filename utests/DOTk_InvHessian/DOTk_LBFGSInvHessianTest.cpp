@@ -42,7 +42,7 @@ TEST(DOTk_LBFGSInvHessian, apply)
     EXPECT_EQ(dotk::types::LBFGS_INV_HESS, invhess.getInvHessianType());
     invhess.apply(mng, mng->getTrialStep(), mng->getMatrixTimesVector());
 
-    std::tr1::shared_ptr<dotk::vector<Real> > gold = primal->control()->clone();
+    std::tr1::shared_ptr<dotk::Vector<Real> > gold = primal->control()->clone();
     (*gold)[0] = -49.68763666992951;
     (*gold)[1] = -150.68712910146334;
     dotk::gtest::checkResults(*mng->getMatrixTimesVector(), *gold);
@@ -57,7 +57,7 @@ TEST(DOTk_LBFGSInvHessian, getInvHessian)
     std::tr1::shared_ptr<dotk::DOTk_LineSearchMngTypeULP> mng(new dotk::DOTk_LineSearchMngTypeULP(primal, objective));
 
     size_t secant_storage = 3;
-    std::tr1::shared_ptr<dotk::vector<Real> > vec = primal->control()->clone();
+    std::tr1::shared_ptr<dotk::Vector<Real> > vec = primal->control()->clone();
     dotk::DOTk_LBFGSInvHessian invhess(vec, secant_storage);
     EXPECT_EQ(dotk::types::LBFGS_INV_HESS, invhess.getInvHessianType());
 
@@ -81,7 +81,7 @@ TEST(DOTk_LBFGSInvHessian, getInvHessian)
     // Test
     invhess.getInvHessian(mng->getTrialStep(), vec);
 
-    std::tr1::shared_ptr<dotk::vector<Real> > gold = primal->control()->clone();
+    std::tr1::shared_ptr<dotk::Vector<Real> > gold = primal->control()->clone();
     (*gold)[0] = -49.68763666992951;
     (*gold)[1] = -150.68712910146334;
     dotk::gtest::checkResults(*vec, *gold);

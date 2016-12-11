@@ -18,31 +18,31 @@ namespace dotk
 class DOTk_OptimizationDataMng;
 class DOTk_AssemblyManager;
 
-template<class Type>
-class vector;
+template<typename ScalarType>
+class Vector;
 
 class DOTk_ParallelForwardDiffGrad : public dotk::DOTk_FirstOrderOperator
 {
 public:
-    explicit DOTk_ParallelForwardDiffGrad(const std::tr1::shared_ptr<dotk::vector<Real> > & vector_);
+    explicit DOTk_ParallelForwardDiffGrad(const std::tr1::shared_ptr<dotk::Vector<Real> > & vector_);
     virtual ~DOTk_ParallelForwardDiffGrad();
 
-    const std::tr1::shared_ptr<dotk::vector<Real> > & getFiniteDiffPerturbationVec() const;
-    virtual void setFiniteDiffPerturbationVec(const dotk::vector<Real> & input_);
+    const std::tr1::shared_ptr<dotk::Vector<Real> > & getFiniteDiffPerturbationVec() const;
+    virtual void setFiniteDiffPerturbationVec(const dotk::Vector<Real> & input_);
 
     void getGradient(const Real & fval_,
                      const std::tr1::shared_ptr<dotk::DOTk_AssemblyManager> & interface_,
-                     const std::tr1::shared_ptr<dotk::vector<Real> > & primal_,
-                     const std::tr1::shared_ptr<dotk::vector<Real> > & grad_);
+                     const std::tr1::shared_ptr<dotk::Vector<Real> > & primal_,
+                     const std::tr1::shared_ptr<dotk::Vector<Real> > & grad_);
     virtual void gradient(const dotk::DOTk_OptimizationDataMng * const mng_);
 
 private:
-    void initialize(const std::tr1::shared_ptr<dotk::vector<Real> > & vector_);
+    void initialize(const std::tr1::shared_ptr<dotk::Vector<Real> > & vector_);
 
 private:
-    std::tr1::shared_ptr<dotk::vector<Real> > m_Fval;
-    std::tr1::shared_ptr<dotk::vector<Real> > m_FiniteDiffPerturbationVec;
-    std::vector<std::tr1::shared_ptr<dotk::vector<Real> > > m_PerturbedPrimal;
+    std::tr1::shared_ptr<dotk::Vector<Real> > m_Fval;
+    std::tr1::shared_ptr<dotk::Vector<Real> > m_FiniteDiffPerturbationVec;
+    std::vector<std::tr1::shared_ptr<dotk::Vector<Real> > > m_PerturbedPrimal;
 
 private:
     DOTk_ParallelForwardDiffGrad(const dotk::DOTk_ParallelForwardDiffGrad &);

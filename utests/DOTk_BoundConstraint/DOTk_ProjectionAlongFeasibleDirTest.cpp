@@ -28,14 +28,14 @@ TEST(DOTk_ProjectionAlongFeasibleDir, getDirection)
     primal->allocateSerialControlArray(ncontrols, 2);
     primal->setControlLowerBound(1);
     primal->setControlUpperBound(4);
-    std::tr1::shared_ptr<dotk::vector<Real> > dir = primal->control()->clone();
+    std::tr1::shared_ptr<dotk::Vector<Real> > dir = primal->control()->clone();
     dir->fill(7.);
 
     // TEST 1: DIRECTION IS NOT FEASIBLE, PROJECT DIRECTION
     dotk::DOTk_ProjectionAlongFeasibleDir bound(primal);
     EXPECT_EQ(dotk::types::PROJECTION_ALONG_FEASIBLE_DIR, bound.type());
     bound.getDirection(primal->control(), dir);
-    std::tr1::shared_ptr<dotk::vector<Real> > gold = primal->control()->clone();
+    std::tr1::shared_ptr<dotk::Vector<Real> > gold = primal->control()->clone();
     gold->fill(2);
     dotk::gtest::checkResults(*dir, *gold);
 
@@ -67,7 +67,7 @@ TEST(DOTk_ProjectionAlongFeasibleDir, constraint)
 
     // TEST 1: DIRECTION IS NOT FEASIBLE, SCALE AND PROJECT DIRECTION
     bound.constraint(step, mng);
-    std::tr1::shared_ptr<dotk::vector<Real> > gold = primal->control()->clone();
+    std::tr1::shared_ptr<dotk::Vector<Real> > gold = primal->control()->clone();
     gold->fill(5.2154064178466797e-08);
     dotk::gtest::checkResults(*mng->getTrialStep(), *gold);
 

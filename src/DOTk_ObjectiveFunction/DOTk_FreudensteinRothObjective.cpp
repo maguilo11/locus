@@ -18,7 +18,7 @@ DOTk_FreudensteinRothObjective::~DOTk_FreudensteinRothObjective()
 {
 }
 
-Real DOTk_FreudensteinRothObjective::value(const dotk::vector<Real> & primal_)
+Real DOTk_FreudensteinRothObjective::value(const dotk::Vector<Real> & primal_)
 {
     Real f1 = static_cast<Real>(-13.) + primal_[0]
             + ((static_cast<Real>(5.) - primal_[1]) * primal_[1] - static_cast<Real>(2.)) * primal_[1];
@@ -29,7 +29,7 @@ Real DOTk_FreudensteinRothObjective::value(const dotk::vector<Real> & primal_)
     return (value);
 }
 
-void DOTk_FreudensteinRothObjective::gradient(const dotk::vector<Real> & primal_, dotk::vector<Real> & output_)
+void DOTk_FreudensteinRothObjective::gradient(const dotk::Vector<Real> & primal_, dotk::Vector<Real> & output_)
 {
     Real f1 = static_cast<Real>(-13.) + primal_[0]
             + ((static_cast<Real>(5.) - primal_[1]) * primal_[1] - static_cast<Real>(2.)) * primal_[1];
@@ -47,9 +47,9 @@ void DOTk_FreudensteinRothObjective::gradient(const dotk::vector<Real> & primal_
     output_[1] = static_cast<Real>(2.) * (df12 * f1 + df22 * f2);
 }
 
-void DOTk_FreudensteinRothObjective::hessian(const dotk::vector<Real> & primal_,
-                                             const dotk::vector<Real> & vector_,
-                                             dotk::vector<Real> & output_)
+void DOTk_FreudensteinRothObjective::hessian(const dotk::Vector<Real> & primal_,
+                                             const dotk::Vector<Real> & vector_,
+                                             dotk::Vector<Real> & output_)
 {
     Real f1 = static_cast<Real>(-13.) + primal_[0]
             + ((static_cast<Real>(5.) - primal_[1]) * primal_[1] - static_cast<Real>(2.)) * primal_[1];

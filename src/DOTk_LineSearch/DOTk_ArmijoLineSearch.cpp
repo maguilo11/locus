@@ -12,7 +12,7 @@
 namespace dotk
 {
 
-DOTk_ArmijoLineSearch::DOTk_ArmijoLineSearch(const std::tr1::shared_ptr<dotk::vector<Real> > & vector_) :
+DOTk_ArmijoLineSearch::DOTk_ArmijoLineSearch(const std::tr1::shared_ptr<dotk::Vector<Real> > & vector_) :
         dotk::DOTk_LineSearch(dotk::types::line_search_t::BACKTRACKING_ARMIJO),
         m_ArmijoRuleConstant(1e-4),
         m_TrialPrimal(vector_->clone())

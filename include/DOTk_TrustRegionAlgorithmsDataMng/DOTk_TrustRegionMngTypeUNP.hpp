@@ -15,11 +15,9 @@ namespace dotk
 
 class DOTk_Primal;
 
-template<typename Type>
-class vector;
-template<typename Type>
+template<typename ScalarType>
 class DOTk_ObjectiveFunction;
-template<typename Type>
+template<typename ScalarType>
 class DOTk_EqualityConstraint;
 
 class DOTk_TrustRegionMngTypeUNP : public dotk::DOTk_TrustRegionAlgorithmsDataMng

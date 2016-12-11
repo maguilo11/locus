@@ -17,8 +17,8 @@ namespace dotk
 class DOTk_Primal;
 class DOTk_OptimizationDataMng;
 
-template<typename Type>
-class vector;
+template<typename ScalarType>
+class Vector;
 
 class DOTk_LeftPreconditioner
 {
@@ -44,8 +44,8 @@ public:
     virtual void setPrecGmresSolver(const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_, size_t max_num_itr_ = 200);
 
     virtual void apply(const std::tr1::shared_ptr<dotk::DOTk_OptimizationDataMng> & mng_,
-                       const std::tr1::shared_ptr<dotk::vector<Real> > & vec_,
-                       const std::tr1::shared_ptr<dotk::vector<Real> > & matrix_times_vec_);
+                       const std::tr1::shared_ptr<dotk::Vector<Real> > & vec_,
+                       const std::tr1::shared_ptr<dotk::Vector<Real> > & matrix_times_vec_);
 
 private:
     size_t m_NumOptimizationItrDone;

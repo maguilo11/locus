@@ -40,9 +40,9 @@ TEST(DOTk_InexactTrustRegionSQPTest, AugmentedSystem)
     std::tr1::shared_ptr<dotk::DOTk_NocedalAndWrightObjective> objective(new dotk::DOTk_NocedalAndWrightObjective);
     std::tr1::shared_ptr<dotk::DOTk_TrustRegionMngTypeELP> mng(new dotk::DOTk_TrustRegionMngTypeELP(primal, objective, equality));
 
-    std::tr1::shared_ptr<dotk::vector<Real> > input(new dotk::DOTk_MultiVector<Real>(*primal->control(), *primal->dual()));
+    std::tr1::shared_ptr<dotk::Vector<Real> > input(new dotk::DOTk_MultiVector<Real>(*primal->control(), *primal->dual()));
     input->fill(1);
-    std::tr1::shared_ptr<dotk::vector<Real> > output = input->clone();
+    std::tr1::shared_ptr<dotk::Vector<Real> > output = input->clone();
     std::tr1::shared_ptr<dotk::DOTk_AugmentedSystem> augmented_system(new dotk::DOTk_AugmentedSystem);
     augmented_system->apply(mng, input, output);
 
@@ -86,7 +86,7 @@ TEST(DOTk_InexactTrustRegionSQPTest, solveDualProb)
 
     dotk::types::solver_stop_criterion_t criterion = sqp_solver_mng->solveDualProb(mng);
 
-    std::tr1::shared_ptr<dotk::vector<Real> > gold = primal->dual()->clone();
+    std::tr1::shared_ptr<dotk::Vector<Real> > gold = primal->dual()->clone();
     (*gold)[0] = 0.0207961931305597;
     (*gold)[1] = -0.019798867645168;
     (*gold)[2] = 0.0834391241457092;
@@ -120,7 +120,7 @@ TEST(DOTk_InexactTrustRegionSQPTest, computeTangentialStep)
 
     dotk::types::solver_stop_criterion_t criterion = sqp_solver_mng->solveTangentialProb(mng);
 
-    std::tr1::shared_ptr<dotk::vector<Real> > gold = primal->control()->clone();
+    std::tr1::shared_ptr<dotk::Vector<Real> > gold = primal->control()->clone();
     (*gold)[0] = 0.019600012568408;
     (*gold)[1] = - 0.0219737165126789;
     (*gold)[2] = 0.0361541754328155;
@@ -152,7 +152,7 @@ TEST(DOTk_InexactTrustRegionSQPTest, computeQuasiNormalStep)
 
     // TEST 1: TAKE FULL QUASI-NORMAL STEP
     dotk::types::solver_stop_criterion_t criterion = sqp_solver_mng->solveQuasiNormalProb(mng);
-    std::tr1::shared_ptr<dotk::vector<Real> > gold = primal->control()->clone();
+    std::tr1::shared_ptr<dotk::Vector<Real> > gold = primal->control()->clone();
     (*gold)[0] = 0.073897884488436552;
     (*gold)[1] = -0.087999993220813047;
     (*gold)[2] = -0.088747496365614562;
@@ -223,7 +223,7 @@ TEST(DOTk_InexactTrustRegionSQPTest, solveTangentialSubProb)
 
     sqp_solver_mng->solveTangentialSubProb(mng);
 
-    std::tr1::shared_ptr<dotk::vector<Real> > gold = primal->control()->clone();
+    std::tr1::shared_ptr<dotk::Vector<Real> > gold = primal->control()->clone();
     (*gold)[0] = 0.0196000125684081;
     (*gold)[1] = -0.0219737165126789;
     (*gold)[2] = 0.0361541754328155;
@@ -255,7 +255,7 @@ TEST(DOTk_InexactTrustRegionSQPTest, apply)
     dotk::DOTk_UserDefinedHessianTypeCNP hessian;
     hessian.apply(mng, mng->getTrialStep(), mng->getMatrixTimesVector());
 
-    std::tr1::shared_ptr<dotk::vector<Real> > gold = mng->getMatrixTimesVector()->clone();
+    std::tr1::shared_ptr<dotk::Vector<Real> > gold = mng->getMatrixTimesVector()->clone();
     (*gold)[0] = -186.38387000271706;
     (*gold)[1] = -147.31620187919;
     (*gold)[2] = 2.7745413983048834;
@@ -298,11 +298,11 @@ TEST(DOTk_InexactTrustRegionSQPTest, storePreviousSolution)
 
     Real tolerance = 1e-8;
     EXPECT_NEAR(0.1, mng->getOldObjectiveFunctionValue(), tolerance);
-    std::tr1::shared_ptr<dotk::vector<Real> > gold = dotk::gtest::allocateData(5, 4.);
+    std::tr1::shared_ptr<dotk::Vector<Real> > gold = dotk::gtest::allocateData(5, 4.);
     dotk::gtest::checkResults(*mng->getOldPrimal(), *gold);
     gold->fill(2.);
     dotk::gtest::checkResults(*mng->getOldGradient(), *gold);
-    std::tr1::shared_ptr<dotk::vector<Real> > eq_constraint_gold = dotk::gtest::allocateData(3, 5.);
+    std::tr1::shared_ptr<dotk::Vector<Real> > eq_constraint_gold = dotk::gtest::allocateData(3, 5.);
     dotk::gtest::checkResults(*mng->getOldEqualityConstraintResidual(), *eq_constraint_gold);
 }
 
@@ -354,7 +354,7 @@ TEST(DOTk_InexactTrustRegionSQPTest, checkConvergence)
     mng->getNewEqualityConstraintResidual()->fill(1.);
     EXPECT_TRUE(sqp.checkStoppingCriteria(mng));
     EXPECT_EQ(dotk::types::NaN_GRADIENT_NORM, sqp.getStoppingCriterion());
-    std::tr1::shared_ptr<dotk::vector<Real> > gold = dotk::gtest::allocateData(5, 3.);
+    std::tr1::shared_ptr<dotk::Vector<Real> > gold = dotk::gtest::allocateData(5, 3.);
     dotk::gtest::checkResults(*mng->getNewPrimal(), *gold);
     gold->fill(1.);
     dotk::gtest::checkResults(*mng->getNewGradient(), *gold);

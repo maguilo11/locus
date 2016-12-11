@@ -13,8 +13,8 @@
 namespace dotk
 {
 
-template<typename Type>
-class vector;
+template<typename ScalarType>
+class Vector;
 
 class DOTk_PowellObjective : public dotk::DOTk_ObjectiveFunction<Real>
 {
@@ -22,11 +22,11 @@ public:
     DOTk_PowellObjective();
     virtual ~DOTk_PowellObjective();
 
-    virtual Real value(const dotk::vector<Real> & primal_);
-    virtual void gradient(const dotk::vector<Real> & primal_, dotk::vector<Real> & output_);
-    virtual void hessian(const dotk::vector<Real> & primal_,
-                         const dotk::vector<Real> & vector_,
-                         dotk::vector<Real> & output_);
+    virtual Real value(const dotk::Vector<Real> & primal_);
+    virtual void gradient(const dotk::Vector<Real> & primal_, dotk::Vector<Real> & output_);
+    virtual void hessian(const dotk::Vector<Real> & primal_,
+                         const dotk::Vector<Real> & vector_,
+                         dotk::Vector<Real> & output_);
 
 private:
     DOTk_PowellObjective(const dotk::DOTk_PowellObjective&);

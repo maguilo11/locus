@@ -40,7 +40,7 @@ TEST(LineSearchQuasiNewtonBound, LBFGArmijoLS_ProjectFeasibleDirBound)
     EXPECT_EQ(dotk::types::LBFGS_INV_HESS, alg.getInvHessianPtr()->getInvHessianType());
     alg.getMin();
 
-    std::tr1::shared_ptr<dotk::vector<Real> > gold = dotk::gtest::allocateControl();
+    std::tr1::shared_ptr<dotk::Vector<Real> > gold = dotk::gtest::allocateControl();
     gold->fill(1);
     dotk::gtest::checkResults(*mng->getNewPrimal(), *gold, 1e-6);
     EXPECT_EQ(dotk::types::OBJECTIVE_FUNC_TOL_SATISFIED, alg.getStoppingCriterion());
@@ -67,7 +67,7 @@ TEST(LineSearchQuasiNewtonBound, LDFPArmijoLS_ProjectFeasibleDirBound)
     alg.setLdfpSecantMethod(secant_storage);
     EXPECT_EQ(dotk::types::LDFP_INV_HESS, alg.getInvHessianPtr()->getInvHessianType());
     alg.getMin();
-    std::tr1::shared_ptr<dotk::vector<Real> > gold = dotk::gtest::allocateControl();
+    std::tr1::shared_ptr<dotk::Vector<Real> > gold = dotk::gtest::allocateControl();
     gold->fill(1);
     dotk::gtest::checkResults(*mng->getNewPrimal(), *gold, 1e-6);
     EXPECT_EQ(dotk::types::TRIAL_STEP_TOL_SATISFIED, alg.getStoppingCriterion());
@@ -94,7 +94,7 @@ TEST(LineSearchQuasiNewtonBound, LSR1ArmijoLS_FeasibleDirBound)
     alg.setLsr1SecantMethod(secant_storage);
     EXPECT_EQ(dotk::types::LSR1_INV_HESS, alg.getInvHessianPtr()->getInvHessianType());
     alg.getMin();
-    std::tr1::shared_ptr<dotk::vector<Real> > gold = dotk::gtest::allocateControl();
+    std::tr1::shared_ptr<dotk::Vector<Real> > gold = dotk::gtest::allocateControl();
     gold->fill(1);
     dotk::gtest::checkResults(*mng->getNewPrimal(), *gold, 1e-6);
     EXPECT_EQ(dotk::types::OBJECTIVE_FUNC_TOL_SATISFIED, alg.getStoppingCriterion());
@@ -121,7 +121,7 @@ TEST(LineSearchQuasiNewtonBound, LSR1ArmijoLS_ProjectFeasibleDirBound)
     alg.setLsr1SecantMethod(secant_storage);
     EXPECT_EQ(dotk::types::LSR1_INV_HESS, alg.getInvHessianPtr()->getInvHessianType());
     alg.getMin();
-    std::tr1::shared_ptr<dotk::vector<Real> > gold = dotk::gtest::allocateControl();
+    std::tr1::shared_ptr<dotk::Vector<Real> > gold = dotk::gtest::allocateControl();
     gold->fill(1);
     dotk::gtest::checkResults(*mng->getNewPrimal(), *gold, 1e-6);
     EXPECT_EQ(dotk::types::OBJECTIVE_FUNC_TOL_SATISFIED, alg.getStoppingCriterion());
@@ -146,7 +146,7 @@ TEST(LineSearchQuasiNewtonBound, SR1ArmijoLS_FeasibleDirBound)
     alg.setSr1SecantMethod();
     EXPECT_EQ(dotk::types::SR1_INV_HESS, alg.getInvHessianPtr()->getInvHessianType());
     alg.getMin();
-    std::tr1::shared_ptr<dotk::vector<Real> > gold = dotk::gtest::allocateControl();
+    std::tr1::shared_ptr<dotk::Vector<Real> > gold = dotk::gtest::allocateControl();
     gold->fill(1);
     dotk::gtest::checkResults(*mng->getNewPrimal(), *gold, 1e-6);
     EXPECT_EQ(dotk::types::OBJECTIVE_FUNC_TOL_SATISFIED, alg.getStoppingCriterion());
@@ -173,7 +173,7 @@ TEST(LineSearchQuasiNewtonBound, SR1ArmijoLS_ProjectFeasibleDirBound)
     EXPECT_EQ(dotk::types::SR1_INV_HESS, alg.getInvHessianPtr()->getInvHessianType());
     alg.getMin();
 
-    std::tr1::shared_ptr<dotk::vector<Real> > gold = dotk::gtest::allocateControl();
+    std::tr1::shared_ptr<dotk::Vector<Real> > gold = dotk::gtest::allocateControl();
     gold->fill(1);
     dotk::gtest::checkResults(*mng->getNewPrimal(), *gold, 1e-6);
     EXPECT_EQ(dotk::types::OBJECTIVE_FUNC_TOL_SATISFIED, alg.getStoppingCriterion());
@@ -199,7 +199,7 @@ TEST(LineSearchQuasiNewtonBound, BBArmijoLS_FeasibleDirBound)
     EXPECT_EQ(dotk::types::BARZILAIBORWEIN_INV_HESS, alg.getInvHessianPtr()->getInvHessianType());
     alg.getMin();
 
-    std::tr1::shared_ptr<dotk::vector<Real> > gold = dotk::gtest::allocateControl();
+    std::tr1::shared_ptr<dotk::Vector<Real> > gold = dotk::gtest::allocateControl();
     gold->fill(1);
     dotk::gtest::checkResults(*mng->getNewPrimal(), *gold, 1e-6);
     EXPECT_EQ(dotk::types::OBJECTIVE_FUNC_TOL_SATISFIED, alg.getStoppingCriterion());
@@ -226,7 +226,7 @@ TEST(LineSearchQuasiNewtonBound, BBArmijoLS_ProjectFeasibleDirBound)
     EXPECT_EQ(dotk::types::BARZILAIBORWEIN_INV_HESS, alg.getInvHessianPtr()->getInvHessianType());
     alg.getMin();
 
-    std::tr1::shared_ptr<dotk::vector<Real> > gold = dotk::gtest::allocateControl();
+    std::tr1::shared_ptr<dotk::Vector<Real> > gold = dotk::gtest::allocateControl();
     gold->fill(1);
     dotk::gtest::checkResults(*mng->getNewPrimal(), *gold, 1e-6);
     EXPECT_EQ(dotk::types::OBJECTIVE_FUNC_TOL_SATISFIED, alg.getStoppingCriterion());

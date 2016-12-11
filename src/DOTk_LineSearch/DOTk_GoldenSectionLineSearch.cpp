@@ -15,7 +15,7 @@
 namespace dotk
 {
 
-DOTk_GoldenSectionLineSearch::DOTk_GoldenSectionLineSearch(const std::tr1::shared_ptr<dotk::vector<Real> > & vector_) :
+DOTk_GoldenSectionLineSearch::DOTk_GoldenSectionLineSearch(const std::tr1::shared_ptr<dotk::Vector<Real> > & vector_) :
         dotk::DOTk_LineSearch(dotk::types::line_search_t::GOLDENSECTION),
         m_Step(4, 0.),
         m_ObjectiveFuncVal(4, 0.),

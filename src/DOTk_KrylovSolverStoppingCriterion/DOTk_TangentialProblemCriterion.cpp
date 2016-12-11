@@ -14,7 +14,7 @@
 namespace dotk
 {
 
-DOTk_TangentialProblemCriterion::DOTk_TangentialProblemCriterion(const std::tr1::shared_ptr<dotk::vector<Real> > & vector_) :
+DOTk_TangentialProblemCriterion::DOTk_TangentialProblemCriterion(const std::tr1::shared_ptr<dotk::Vector<Real> > & vector_) :
         dotk::DOTk_KrylovSolverStoppingCriterion(dotk::types::TANGENTIAL_PROBLEM_CRITERION),
         m_StoppingCriterionOptions(4, 0.),
         m_WorkVector(vector_->clone())
@@ -46,13 +46,13 @@ Real DOTk_TangentialProblemCriterion::getTangentialToleranceContractionFactor() 
     return (dotk::DOTk_KrylovSolverStoppingCriterion::get(dotk::types::TANGENTIAL_TOL_CONTRACTION_FACTOR));
 }
 
-void DOTk_TangentialProblemCriterion::setCurrentTrialStep(const std::tr1::shared_ptr<dotk::vector<Real> > & trial_step_)
+void DOTk_TangentialProblemCriterion::setCurrentTrialStep(const std::tr1::shared_ptr<dotk::Vector<Real> > & trial_step_)
 {
     m_WorkVector->copy(*trial_step_);
 }
 
 Real DOTk_TangentialProblemCriterion::evaluate(const dotk::DOTk_KrylovSolver * const solver_,
-                                               const std::tr1::shared_ptr<dotk::vector<Real> > & kernel_vector_)
+                                               const std::tr1::shared_ptr<dotk::Vector<Real> > & kernel_vector_)
 {
     Real stopping_tolerance = this->computeStoppingTolerance(kernel_vector_);
     return (stopping_tolerance);
@@ -67,7 +67,7 @@ void DOTk_TangentialProblemCriterion::initialize()
     this->insert(dotk::types::NORM_PROJECTED_TANGENTIAL_STEP);
 }
 
-Real DOTk_TangentialProblemCriterion::computeStoppingTolerance(const std::tr1::shared_ptr<dotk::vector<Real> > & kernel_vector_)
+Real DOTk_TangentialProblemCriterion::computeStoppingTolerance(const std::tr1::shared_ptr<dotk::Vector<Real> > & kernel_vector_)
 {
     m_WorkVector->axpy(static_cast<Real>(1.0), *kernel_vector_);
 

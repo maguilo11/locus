@@ -26,7 +26,7 @@ DOTk_TangentialSubProblemCriterion::~DOTk_TangentialSubProblemCriterion()
 }
 
 Real DOTk_TangentialSubProblemCriterion::evaluate(const dotk::DOTk_KrylovSolver * const solver_,
-                                                  const std::tr1::shared_ptr<dotk::vector<Real> > & kernel_vector_)
+                                                  const std::tr1::shared_ptr<dotk::Vector<Real> > & kernel_vector_)
 {
     Real stopping_tolerance = 0.;
     size_t current_krylov_itr = dotk::DOTk_KrylovSolverStoppingCriterion::get(dotk::types::CURRENT_KRYLOV_SOLVER_ITR);
@@ -46,7 +46,7 @@ Real DOTk_TangentialSubProblemCriterion::evaluate(const dotk::DOTk_KrylovSolver 
 }
 
 Real DOTk_TangentialSubProblemCriterion::computeStoppingTolerance(Real norm_residual_,
-                                                                  const std::tr1::shared_ptr<dotk::vector<Real> > & kernel_vector_)
+                                                                  const std::tr1::shared_ptr<dotk::Vector<Real> > & kernel_vector_)
 {
     Real norm_kernel_vector = kernel_vector_->norm();
     Real projected_gradient_tol =
@@ -62,7 +62,7 @@ Real DOTk_TangentialSubProblemCriterion::computeStoppingTolerance(Real norm_resi
 }
 
 Real DOTk_TangentialSubProblemCriterion::computeInitialStoppingTolerance(Real trust_region_radius_,
-                                                                         const std::tr1::shared_ptr<dotk::vector<Real> > & kernel_vector_)
+                                                                         const std::tr1::shared_ptr<dotk::Vector<Real> > & kernel_vector_)
 {
     Real norm_kernel_vector = kernel_vector_->norm();
     Real projected_gradient_tol =

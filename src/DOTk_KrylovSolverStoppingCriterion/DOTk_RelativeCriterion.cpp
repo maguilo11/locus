@@ -27,7 +27,7 @@ DOTk_RelativeCriterion::~DOTk_RelativeCriterion()
 }
 
 Real DOTk_RelativeCriterion::evaluate(const dotk::DOTk_KrylovSolver * const solver_,
-                                      const std::tr1::shared_ptr<dotk::vector<Real> > & kernel_vector_)
+                                      const std::tr1::shared_ptr<dotk::Vector<Real> > & kernel_vector_)
 {
     if(solver_->getNumSolverItrDone() == 0)
     {

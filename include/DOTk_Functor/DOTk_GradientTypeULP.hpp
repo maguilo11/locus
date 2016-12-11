@@ -8,14 +8,14 @@
 #ifndef DOTK_GRADIENTTYPEULP_HPP_
 #define DOTK_GRADIENTTYPEULP_HPP_
 
-#include "DOTk_ObjectiveFunction.hpp"
 #include "DOTk_Functor.hpp"
+#include "DOTk_ObjectiveFunction.hpp"
 
 namespace dotk
 {
 
-template<class Type>
-class vector;
+template<typename ScalarType>
+class Vector;
 
 class DOTk_GradientTypeULP : public DOTk_Functor
 {
@@ -23,7 +23,7 @@ public:
     explicit DOTk_GradientTypeULP(const std::tr1::shared_ptr<dotk::DOTk_ObjectiveFunction<Real> > & operators_);
     virtual ~DOTk_GradientTypeULP();
 
-    virtual void operator()(const dotk::vector<Real> & control_, dotk::vector<Real> & gradient_);
+    virtual void operator()(const dotk::Vector<Real> & control_, dotk::Vector<Real> & gradient_);
 
 private:
     std::tr1::shared_ptr<dotk::DOTk_ObjectiveFunction<Real> > m_ObjectiveFunction;

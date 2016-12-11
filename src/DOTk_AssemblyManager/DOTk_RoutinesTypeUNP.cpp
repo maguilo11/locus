@@ -36,7 +36,7 @@ DOTk_RoutinesTypeUNP::~DOTk_RoutinesTypeUNP()
 {
 }
 
-Real DOTk_RoutinesTypeUNP::objective(const std::tr1::shared_ptr<dotk::vector<Real> > & primal_)
+Real DOTk_RoutinesTypeUNP::objective(const std::tr1::shared_ptr<dotk::Vector<Real> > & primal_)
 {
     /// DOTk interface: Objective function interface. \n
     /// In: \n
@@ -58,8 +58,8 @@ Real DOTk_RoutinesTypeUNP::objective(const std::tr1::shared_ptr<dotk::vector<Rea
 }
 
 void DOTk_RoutinesTypeUNP::gradient
-(const std::tr1::shared_ptr<dotk::vector<Real> > & primal_,
- const std::tr1::shared_ptr<dotk::vector<Real> > & gradient_)
+(const std::tr1::shared_ptr<dotk::Vector<Real> > & primal_,
+ const std::tr1::shared_ptr<dotk::Vector<Real> > & gradient_)
 {
     /// Reduced space interface: Assemble the reduced space gradient operator. \n
     /// In: \n
@@ -90,9 +90,9 @@ void DOTk_RoutinesTypeUNP::gradient
 }
 
 void DOTk_RoutinesTypeUNP::hessian
-(const std::tr1::shared_ptr<dotk::vector<Real> > & primal_,
- const std::tr1::shared_ptr<dotk::vector<Real> > & vector_,
- const std::tr1::shared_ptr<dotk::vector<Real> > & hessian_times_vector_)
+(const std::tr1::shared_ptr<dotk::Vector<Real> > & primal_,
+ const std::tr1::shared_ptr<dotk::Vector<Real> > & vector_,
+ const std::tr1::shared_ptr<dotk::Vector<Real> > & hessian_times_vector_)
 {
     /// Reduced space interface: Assemble the reduced space gradient operator. \n
     /// In: \n
@@ -144,9 +144,9 @@ void DOTk_RoutinesTypeUNP::hessian
     dotk::DOTk_AssemblyManager::updateHessianEvaluationCounter();
 }
 
-void DOTk_RoutinesTypeUNP::computeHessianTimesVector(const dotk::vector<Real> & control_,
-                                                     const dotk::vector<Real> & trial_step_,
-                                                     dotk::vector<Real> & hessian_times_vector_)
+void DOTk_RoutinesTypeUNP::computeHessianTimesVector(const dotk::Vector<Real> & control_,
+                                                     const dotk::Vector<Real> & trial_step_,
+                                                     dotk::Vector<Real> & hessian_times_vector_)
 {
     hessian_times_vector_.fill(0.);
     m_ObjectiveFunction->partialDerivativeControlControl(*m_State, control_, trial_step_, hessian_times_vector_);
@@ -198,7 +198,7 @@ void DOTk_RoutinesTypeUNP::initialize(const std::tr1::shared_ptr<dotk::DOTk_Prim
     }
 }
 
-void DOTk_RoutinesTypeUNP::allocate(dotk::types::variable_t type_, const std::tr1::shared_ptr<dotk::vector<Real> > & data_)
+void DOTk_RoutinesTypeUNP::allocate(dotk::types::variable_t type_, const std::tr1::shared_ptr<dotk::Vector<Real> > & data_)
 {
     switch(type_)
     {

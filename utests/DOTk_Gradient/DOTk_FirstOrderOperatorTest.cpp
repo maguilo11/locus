@@ -20,10 +20,10 @@ namespace DOTkFirstOrderOperatorTest
 
 TEST(DOTk_FirstOrderOperator, checkGrad)
 {
-    std::tr1::shared_ptr<dotk::vector<Real> > new_grad = dotk::gtest::allocateControl();
+    std::tr1::shared_ptr<dotk::Vector<Real> > new_grad = dotk::gtest::allocateControl();
     new_grad->fill(std::numeric_limits<Real>::quiet_NaN());
 
-    std::tr1::shared_ptr<dotk::vector<Real> > old_grad = new_grad->clone();
+    std::tr1::shared_ptr<dotk::Vector<Real> > old_grad = new_grad->clone();
     old_grad->fill(2);
 
     dotk::DOTk_FirstOrderOperator grad;
@@ -44,7 +44,7 @@ TEST(DOTk_UserDefinedGrad, gradient)
     EXPECT_EQ(dotk::types::USER_DEFINED_GRAD, grad.type());
     grad.gradient(&mng);
 
-    std::tr1::shared_ptr<dotk::vector<Real> > gold = dotk::gtest::allocateControl();
+    std::tr1::shared_ptr<dotk::Vector<Real> > gold = dotk::gtest::allocateControl();
     (*gold)[0] = 1602.;
     (*gold)[1] = -400.;
     dotk::gtest::checkResults(*mng.getNewGradient(), *gold);

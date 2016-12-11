@@ -13,8 +13,8 @@
 namespace dotk
 {
 
-template<class Type>
-class vector;
+template<typename ScalarType>
+class Vector;
 
 class DOTk_GcmmaTestInequalityConstraint : public dotk::DOTk_InequalityConstraint<Real>
 {
@@ -22,11 +22,11 @@ public:
     DOTk_GcmmaTestInequalityConstraint();
     virtual ~DOTk_GcmmaTestInequalityConstraint();
 
-    Real residual(const dotk::vector<Real> & primal_);
+    Real residual(const dotk::Vector<Real> & primal_);
 
     Real bound();
-    Real value(const dotk::vector<Real> & primal_);
-    void gradient(const dotk::vector<Real> & primal_, dotk::vector<Real> & gradient_);
+    Real value(const dotk::Vector<Real> & primal_);
+    void gradient(const dotk::Vector<Real> & primal_, dotk::Vector<Real> & gradient_);
 
 private:
     Real m_Constant;

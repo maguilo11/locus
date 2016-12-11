@@ -114,13 +114,13 @@ DOTk_PrecGenMinResDataMng::getRightPrec() const
     return (m_RightPreconditioner);
 }
 
-const std::tr1::shared_ptr<dotk::vector<Real> > &
+const std::tr1::shared_ptr<dotk::Vector<Real> > &
 DOTk_PrecGenMinResDataMng::getLeftPrecTimesVector() const
 {
     return (m_LeftPrecTimesResidual);
 }
 
-const std::tr1::shared_ptr<dotk::vector<Real> > &
+const std::tr1::shared_ptr<dotk::Vector<Real> > &
 DOTk_PrecGenMinResDataMng::getRightPrecTimesVector() const
 {
     return (m_RightPrecTimesResidual);

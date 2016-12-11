@@ -70,7 +70,7 @@ TEST(DOTk_LiuStorey, getDirection)
                      mng.getNewGradient(),
                      mng.getTrialStep());
 
-    std::tr1::shared_ptr<dotk::vector<Real> > gold = dotk::gtest::allocateControl();
+    std::tr1::shared_ptr<dotk::Vector<Real> > gold = dotk::gtest::allocateControl();
     (*gold)[0] = -103.4;
     (*gold)[1] = -250.8;
     Real tol = 1e-8;
@@ -100,7 +100,7 @@ TEST(DOTk_LiuStorey, direction)
     EXPECT_EQ(dotk::types::LIU_STOREY_NLCG, dir.getNonlinearCGType());
     dir.direction(mng);
 
-    std::tr1::shared_ptr<dotk::vector<Real> > gold = dotk::gtest::allocateControl();
+    std::tr1::shared_ptr<dotk::Vector<Real> > gold = dotk::gtest::allocateControl();
     (*gold)[0] = -103.4;
     (*gold)[1] = -250.8;
     Real tol = 1e-8;

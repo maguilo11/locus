@@ -69,14 +69,14 @@ Real DOTk_LineSearchAlgorithmsDataMng::evaluateObjective()
     return (value);
 }
 
-Real DOTk_LineSearchAlgorithmsDataMng::evaluateObjective(const std::tr1::shared_ptr<dotk::vector<Real> > & input_)
+Real DOTk_LineSearchAlgorithmsDataMng::evaluateObjective(const std::tr1::shared_ptr<dotk::Vector<Real> > & input_)
 {
     Real value = m_RoutinesMng->objective(input_);
     return (value);
 }
 
-void DOTk_LineSearchAlgorithmsDataMng::computeGradient(const std::tr1::shared_ptr<dotk::vector<Real> > & input_,
-                                                       const std::tr1::shared_ptr<dotk::vector<Real> > & gradient_)
+void DOTk_LineSearchAlgorithmsDataMng::computeGradient(const std::tr1::shared_ptr<dotk::Vector<Real> > & input_,
+                                                       const std::tr1::shared_ptr<dotk::Vector<Real> > & gradient_)
 {
     m_RoutinesMng->gradient(input_, gradient_);
 }

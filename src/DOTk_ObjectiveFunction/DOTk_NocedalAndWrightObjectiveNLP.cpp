@@ -20,7 +20,7 @@ DOTk_NocedalAndWrightObjectiveNLP::~DOTk_NocedalAndWrightObjectiveNLP()
 {
 }
 
-Real DOTk_NocedalAndWrightObjectiveNLP::value(const dotk::vector<Real> & state_, const dotk::vector<Real> & control_)
+Real DOTk_NocedalAndWrightObjectiveNLP::value(const dotk::Vector<Real> & state_, const dotk::Vector<Real> & control_)
 {
     // J(X) = exp(u1 * u2 * u3 * u4 * u5) - 0.5 * (1 + u1^3 + u2^3)^2
     const Real a = exp(state_[0] * state_[1] * state_[2] * state_[3] * state_[4]);
@@ -32,9 +32,9 @@ Real DOTk_NocedalAndWrightObjectiveNLP::value(const dotk::vector<Real> & state_,
     return (fval);
 }
 
-void DOTk_NocedalAndWrightObjectiveNLP::partialDerivativeState(const dotk::vector<Real> & state_,
-                                                               const dotk::vector<Real> & control_,
-                                                               dotk::vector<Real> & output_)
+void DOTk_NocedalAndWrightObjectiveNLP::partialDerivativeState(const dotk::Vector<Real> & state_,
+                                                               const dotk::Vector<Real> & control_,
+                                                               dotk::Vector<Real> & output_)
 {
     // (1 + x1^3 + x2^3)
     const Real a = 1. + pow(state_[0], 3) + pow(state_[1], 3.);
@@ -52,17 +52,17 @@ void DOTk_NocedalAndWrightObjectiveNLP::partialDerivativeState(const dotk::vecto
     output_[4] = b * state_[0] * state_[1] * state_[2] * state_[3];
 }
 
-void DOTk_NocedalAndWrightObjectiveNLP::partialDerivativeControl(const dotk::vector<Real> & state_,
-                                                                 const dotk::vector<Real> & control_,
-                                                                 dotk::vector<Real> & output_)
+void DOTk_NocedalAndWrightObjectiveNLP::partialDerivativeControl(const dotk::Vector<Real> & state_,
+                                                                 const dotk::Vector<Real> & control_,
+                                                                 dotk::Vector<Real> & output_)
 {
     return;
 }
 
-void DOTk_NocedalAndWrightObjectiveNLP::partialDerivativeStateState(const dotk::vector<Real> & state_,
-                                                                    const dotk::vector<Real> & control_,
-                                                                    const dotk::vector<Real> & vector_,
-                                                                    dotk::vector<Real> & output_)
+void DOTk_NocedalAndWrightObjectiveNLP::partialDerivativeStateState(const dotk::Vector<Real> & state_,
+                                                                    const dotk::Vector<Real> & control_,
+                                                                    const dotk::Vector<Real> & vector_,
+                                                                    dotk::Vector<Real> & output_)
 {
     const Real u1 = state_[0];
     const Real u2 = state_[1];
@@ -145,26 +145,26 @@ void DOTk_NocedalAndWrightObjectiveNLP::partialDerivativeStateState(const dotk::
     output_[4] = H15 * vector_[0] + H25 * vector_[1] + H35 * vector_[2] + H45 * vector_[3] + H55 * vector_[4];
 }
 
-void DOTk_NocedalAndWrightObjectiveNLP::partialDerivativeStateControl(const dotk::vector<Real> & state_,
-                                                                      const dotk::vector<Real> & control_,
-                                                                      const dotk::vector<Real> & vector_,
-                                                                      dotk::vector<Real> & output_)
+void DOTk_NocedalAndWrightObjectiveNLP::partialDerivativeStateControl(const dotk::Vector<Real> & state_,
+                                                                      const dotk::Vector<Real> & control_,
+                                                                      const dotk::Vector<Real> & vector_,
+                                                                      dotk::Vector<Real> & output_)
 {
     return;
 }
 
-void DOTk_NocedalAndWrightObjectiveNLP::partialDerivativeControlControl(const dotk::vector<Real> & state_,
-                                                                        const dotk::vector<Real> & control_,
-                                                                        const dotk::vector<Real> & vector_,
-                                                                        dotk::vector<Real> & output_)
+void DOTk_NocedalAndWrightObjectiveNLP::partialDerivativeControlControl(const dotk::Vector<Real> & state_,
+                                                                        const dotk::Vector<Real> & control_,
+                                                                        const dotk::Vector<Real> & vector_,
+                                                                        dotk::Vector<Real> & output_)
 {
     return;
 }
 
-void DOTk_NocedalAndWrightObjectiveNLP::partialDerivativeControlState(const dotk::vector<Real> & state_,
-                                                                      const dotk::vector<Real> & control_,
-                                                                      const dotk::vector<Real> & vector_,
-                                                                      dotk::vector<Real> & output_)
+void DOTk_NocedalAndWrightObjectiveNLP::partialDerivativeControlState(const dotk::Vector<Real> & state_,
+                                                                      const dotk::Vector<Real> & control_,
+                                                                      const dotk::Vector<Real> & vector_,
+                                                                      dotk::Vector<Real> & output_)
 {
     return;
 }

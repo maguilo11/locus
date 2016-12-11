@@ -5,6 +5,7 @@
  *      Author: Miguel A. Aguilo Valentin
  */
 
+#include "vector.hpp"
 #include "DOTk_Types.hpp"
 #include "DOTk_LeftPreconditioner.hpp"
 #include "DOTk_OptimizationDataMng.hpp"
@@ -31,7 +32,7 @@ dotk::types::invhessian_t DOTk_SecantLeftPreconditionerFactory::getSecantType() 
 
 void DOTk_SecantLeftPreconditionerFactory::buildLdfpSecantPreconditioner
 (size_t secant_storage_,
- const std::tr1::shared_ptr<dotk::vector<Real> > & vector_,
+ const std::tr1::shared_ptr<dotk::Vector<Real> > & vector_,
  std::tr1::shared_ptr<dotk::DOTk_LeftPreconditioner> & left_prec_)
 {
     left_prec_.reset(new dotk::DOTK_SecantLeftPreconditioner(vector_, dotk::types::LDFP_INV_HESS, secant_storage_));
@@ -40,7 +41,7 @@ void DOTk_SecantLeftPreconditionerFactory::buildLdfpSecantPreconditioner
 
 void DOTk_SecantLeftPreconditionerFactory::buildLsr1SecantPreconditioner
 (size_t secant_storage_,
- const std::tr1::shared_ptr<dotk::vector<Real> > & vector_,
+ const std::tr1::shared_ptr<dotk::Vector<Real> > & vector_,
  std::tr1::shared_ptr<dotk::DOTk_LeftPreconditioner> & left_prec_)
 {
     left_prec_.reset(new dotk::DOTK_SecantLeftPreconditioner(vector_, dotk::types::LSR1_INV_HESS, secant_storage_));
@@ -49,7 +50,7 @@ void DOTk_SecantLeftPreconditionerFactory::buildLsr1SecantPreconditioner
 
 void DOTk_SecantLeftPreconditionerFactory::buildLbfgsSecantPreconditioner
 (size_t secant_storage_,
- const std::tr1::shared_ptr<dotk::vector<Real> > & vector_,
+ const std::tr1::shared_ptr<dotk::Vector<Real> > & vector_,
  std::tr1::shared_ptr<dotk::DOTk_LeftPreconditioner> & left_prec_)
 {
     left_prec_.reset(new dotk::DOTK_SecantLeftPreconditioner(vector_, dotk::types::LBFGS_INV_HESS, secant_storage_));
@@ -57,7 +58,7 @@ void DOTk_SecantLeftPreconditionerFactory::buildLbfgsSecantPreconditioner
 }
 
 void DOTk_SecantLeftPreconditionerFactory::buildBfgsSecantPreconditioner
-(const std::tr1::shared_ptr<dotk::vector<Real> > & vector_,
+(const std::tr1::shared_ptr<dotk::Vector<Real> > & vector_,
  std::tr1::shared_ptr<dotk::DOTk_LeftPreconditioner> & left_prec_)
 {
     left_prec_.reset(new dotk::DOTK_SecantLeftPreconditioner(vector_, dotk::types::BFGS_INV_HESS));
@@ -65,7 +66,7 @@ void DOTk_SecantLeftPreconditionerFactory::buildBfgsSecantPreconditioner
 }
 
 void DOTk_SecantLeftPreconditionerFactory::buildSr1SecantPreconditioner
-(const std::tr1::shared_ptr<dotk::vector<Real> > & vector_,
+(const std::tr1::shared_ptr<dotk::Vector<Real> > & vector_,
  std::tr1::shared_ptr<dotk::DOTk_LeftPreconditioner> & left_prec_)
 {
     left_prec_.reset(new dotk::DOTK_SecantLeftPreconditioner(vector_, dotk::types::SR1_INV_HESS));
@@ -73,7 +74,7 @@ void DOTk_SecantLeftPreconditionerFactory::buildSr1SecantPreconditioner
 }
 
 void DOTk_SecantLeftPreconditionerFactory::buildBarzilaiBorweinSecantPreconditioner
-(const std::tr1::shared_ptr<dotk::vector<Real> > & vector_,
+(const std::tr1::shared_ptr<dotk::Vector<Real> > & vector_,
  std::tr1::shared_ptr<dotk::DOTk_LeftPreconditioner> & left_prec_)
 {
     left_prec_.reset(new dotk::DOTK_SecantLeftPreconditioner(vector_, dotk::types::BARZILAIBORWEIN_INV_HESS));

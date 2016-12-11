@@ -17,8 +17,8 @@ class DOTk_Primal;
 class DOTk_LineSearch;
 class DOTk_OptimizationDataMng;
 
-template<class Type>
-class vector;
+template<class ScalarType>
+class Vector;
 
 class DOTk_ProjectionAlongFeasibleDir: public dotk::DOTk_BoundConstraint
 {
@@ -26,8 +26,8 @@ public:
     explicit DOTk_ProjectionAlongFeasibleDir(const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_);
     virtual ~DOTk_ProjectionAlongFeasibleDir();
 
-    void getDirection(const std::tr1::shared_ptr<dotk::vector<Real> > & primal_,
-                      const std::tr1::shared_ptr<dotk::vector<Real> > & feasible_dir_);
+    void getDirection(const std::tr1::shared_ptr<dotk::Vector<Real> > & primal_,
+                      const std::tr1::shared_ptr<dotk::Vector<Real> > & feasible_dir_);
     virtual void constraint(const std::tr1::shared_ptr<dotk::DOTk_LineSearch> & step_,
                             const std::tr1::shared_ptr<dotk::DOTk_OptimizationDataMng> & mng_);
 
@@ -35,9 +35,9 @@ private:
     void initialize(const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_);
 
 private:
-    std::tr1::shared_ptr<dotk::vector<Real> > m_LowerBounds;
-    std::tr1::shared_ptr<dotk::vector<Real> > m_UpperBounds;
-    std::tr1::shared_ptr<dotk::vector<Real> > m_TrialPrimal;
+    std::tr1::shared_ptr<dotk::Vector<Real> > m_LowerBounds;
+    std::tr1::shared_ptr<dotk::Vector<Real> > m_UpperBounds;
+    std::tr1::shared_ptr<dotk::Vector<Real> > m_TrialPrimal;
 
 private:
     DOTk_ProjectionAlongFeasibleDir(const dotk::DOTk_ProjectionAlongFeasibleDir &);

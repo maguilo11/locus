@@ -33,8 +33,8 @@ dotk::types::right_prec_t DOTk_RightPreconditioner::getRightPreconditionerType()
 }
 
 void DOTk_RightPreconditioner::apply(const std::tr1::shared_ptr<dotk::DOTk_OptimizationDataMng> & opt_prob_mng_,
-                                     const std::tr1::shared_ptr<dotk::vector<Real> > & vec_,
-                                     const std::tr1::shared_ptr<dotk::vector<Real> > & matrix_times_vec_)
+                                     const std::tr1::shared_ptr<dotk::Vector<Real> > & vec_,
+                                     const std::tr1::shared_ptr<dotk::Vector<Real> > & matrix_times_vec_)
 {
     matrix_times_vec_->copy(*vec_);
 }

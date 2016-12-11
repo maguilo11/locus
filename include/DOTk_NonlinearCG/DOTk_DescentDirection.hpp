@@ -16,8 +16,8 @@ namespace dotk
 
 class DOTk_OptimizationDataMng;
 
-template<typename Type>
-class vector;
+template<typename ScalarType>
+class Vector;
 
 class DOTk_DescentDirection
 {
@@ -33,11 +33,11 @@ public:
     void setNonlinearCGType(dotk::types::nonlinearcg_t type_);
     dotk::types::nonlinearcg_t getNonlinearCGType() const;
 
-    Real computeCosineAngle(const std::tr1::shared_ptr<dotk::vector<Real> > & grad_,
-                            const std::tr1::shared_ptr<dotk::vector<Real> > & dir_);
+    Real computeCosineAngle(const std::tr1::shared_ptr<dotk::Vector<Real> > & grad_,
+                            const std::tr1::shared_ptr<dotk::Vector<Real> > & dir_);
     bool isTrialStepOrthogonalToSteepestDescent(Real cosine_val_);
-    void steepestDescent(const std::tr1::shared_ptr<dotk::vector<Real> > & grad_,
-                         const std::tr1::shared_ptr<dotk::vector<Real> > & dir_);
+    void steepestDescent(const std::tr1::shared_ptr<dotk::Vector<Real> > & grad_,
+                         const std::tr1::shared_ptr<dotk::Vector<Real> > & dir_);
 
     virtual void direction(const std::tr1::shared_ptr<dotk::DOTk_OptimizationDataMng> & mng_) = 0;
 

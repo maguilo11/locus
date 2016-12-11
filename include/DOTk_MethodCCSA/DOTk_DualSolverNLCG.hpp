@@ -17,9 +17,9 @@ class DOTk_Primal;
 class DOTk_BoundConstraints;
 class DOTk_DataMngNonlinearCG;
 
-template<typename Type>
-class vector;
-template<typename Type>
+template<typename ScalarType>
+class Vector;
+template<typename ScalarType>
 class DOTk_ObjectiveFunction;
 
 class DOTk_DualSolverNLCG : public dotk::DOTk_DualSolverCCSA
@@ -43,7 +43,7 @@ public:
 
     virtual void reset();
     virtual void solve(const std::tr1::shared_ptr<dotk::DOTk_ObjectiveFunction<Real> > & objective_,
-                       const std::tr1::shared_ptr<dotk::vector<Real> > & solution_);
+                       const std::tr1::shared_ptr<dotk::Vector<Real> > & solution_);
     void step(const std::tr1::shared_ptr<dotk::DOTk_ObjectiveFunction<Real> > & objective_);
 
 private:
@@ -57,10 +57,10 @@ private:
 private:
     dotk::types::nonlinearcg_t m_NonlinearCgType;
 
-    std::tr1::shared_ptr<dotk::vector<Real> > m_TrialDual;
-    std::tr1::shared_ptr<dotk::vector<Real> > m_ProjectedStep;
-    std::tr1::shared_ptr<dotk::vector<Real> > m_DualLowerBound;
-    std::tr1::shared_ptr<dotk::vector<Real> > m_DualUpperBound;
+    std::tr1::shared_ptr<dotk::Vector<Real> > m_TrialDual;
+    std::tr1::shared_ptr<dotk::Vector<Real> > m_ProjectedStep;
+    std::tr1::shared_ptr<dotk::Vector<Real> > m_DualLowerBound;
+    std::tr1::shared_ptr<dotk::Vector<Real> > m_DualUpperBound;
 
     std::tr1::shared_ptr<dotk::DOTk_BoundConstraints> m_Bounds;
     std::tr1::shared_ptr<dotk::DOTk_DataMngNonlinearCG> m_DataMng;

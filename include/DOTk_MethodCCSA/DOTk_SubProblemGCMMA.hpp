@@ -18,8 +18,8 @@ class DOTk_DualSolverCCSA;
 class DOTk_BoundConstraints;
 class DOTk_DualObjectiveFunctionMMA;
 
-template<typename Type>
-class vector;
+template<typename ScalarType>
+class Vector;
 
 class DOTk_SubProblemGCMMA : public dotk::DOTk_SubProblemCCSA
 {
@@ -53,12 +53,12 @@ private:
     Real m_NewTrialObjectiveFunctionValue;
     Real m_OldTrialObjectiveFunctionValue;
 
-    std::tr1::shared_ptr<dotk::vector<Real> > m_DeltaControl;
-    std::tr1::shared_ptr<dotk::vector<Real> > m_TrialControl;
-    std::tr1::shared_ptr<dotk::vector<Real> > m_InequalityConstraintRho;
-    std::tr1::shared_ptr<dotk::vector<Real> > m_TrialFeasibilityMeasures;
-    std::tr1::shared_ptr<dotk::vector<Real> > m_TrialInequalityResiduals;
-    std::tr1::shared_ptr<dotk::vector<Real> > m_InequalityConstraintMinRho;
+    std::tr1::shared_ptr<dotk::Vector<Real> > m_DeltaControl;
+    std::tr1::shared_ptr<dotk::Vector<Real> > m_TrialControl;
+    std::tr1::shared_ptr<dotk::Vector<Real> > m_InequalityConstraintRho;
+    std::tr1::shared_ptr<dotk::Vector<Real> > m_TrialFeasibilityMeasures;
+    std::tr1::shared_ptr<dotk::Vector<Real> > m_TrialInequalityResiduals;
+    std::tr1::shared_ptr<dotk::Vector<Real> > m_InequalityConstraintMinRho;
 
 
     std::tr1::shared_ptr<dotk::DOTk_BoundConstraints> m_Bounds;

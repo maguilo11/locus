@@ -17,15 +17,15 @@ namespace DOTkVariable
 
 TEST(DOTk_Variable, control)
 {
-    std::tr1::shared_ptr<dotk::vector<Real> > data = dotk::gtest::allocateData(5, 1.);
+    std::tr1::shared_ptr<dotk::Vector<Real> > data = dotk::gtest::allocateData(5, 1.);
     dotk::DOTk_Control control(*data);
 
     EXPECT_EQ(dotk::types::CONTROL, control.type());
     EXPECT_EQ(5, control.size());
     dotk::gtest::checkResults(*control.data(), *data);
 
-    std::tr1::shared_ptr<dotk::vector<Real> > lower = dotk::gtest::allocateData(5, -1.);
-    std::tr1::shared_ptr<dotk::vector<Real> > upper = dotk::gtest::allocateData(5, 5.);
+    std::tr1::shared_ptr<dotk::Vector<Real> > lower = dotk::gtest::allocateData(5, -1.);
+    std::tr1::shared_ptr<dotk::Vector<Real> > upper = dotk::gtest::allocateData(5, 5.);
     dotk::DOTk_Control control_bounds_active(*data, *lower, *upper);
 
     EXPECT_EQ(dotk::types::CONTROL, control_bounds_active.type());
@@ -37,15 +37,15 @@ TEST(DOTk_Variable, control)
 
 TEST(DOTk_Variable, state)
 {
-    std::tr1::shared_ptr<dotk::vector<Real> > data = dotk::gtest::allocateData(6, 1.);
+    std::tr1::shared_ptr<dotk::Vector<Real> > data = dotk::gtest::allocateData(6, 1.);
     dotk::DOTk_State state(*data);
 
     EXPECT_EQ(dotk::types::STATE, state.type());
     EXPECT_EQ(6, state.size());
     dotk::gtest::checkResults(*state.data(), *data);
 
-    std::tr1::shared_ptr<dotk::vector<Real> > lower = dotk::gtest::allocateData(6, -1.);
-    std::tr1::shared_ptr<dotk::vector<Real> > upper = dotk::gtest::allocateData(6, 5.);
+    std::tr1::shared_ptr<dotk::Vector<Real> > lower = dotk::gtest::allocateData(6, -1.);
+    std::tr1::shared_ptr<dotk::Vector<Real> > upper = dotk::gtest::allocateData(6, 5.);
     dotk::DOTk_State state_bounds_active(*data, *lower, *upper);
 
     EXPECT_EQ(dotk::types::STATE, state_bounds_active.type());
@@ -57,15 +57,15 @@ TEST(DOTk_Variable, state)
 
 TEST(DOTk_Variable, dual)
 {
-    std::tr1::shared_ptr<dotk::vector<Real> > data = dotk::gtest::allocateData(4, 1.);
+    std::tr1::shared_ptr<dotk::Vector<Real> > data = dotk::gtest::allocateData(4, 1.);
     dotk::DOTk_Dual dual(*data);
 
     EXPECT_EQ(dotk::types::DUAL, dual.type());
     EXPECT_EQ(4, dual.size());
     dotk::gtest::checkResults(*dual.data(), *data);
 
-    std::tr1::shared_ptr<dotk::vector<Real> > lower = dotk::gtest::allocateData(4, -1.);
-    std::tr1::shared_ptr<dotk::vector<Real> > upper = dotk::gtest::allocateData(4, 5.);
+    std::tr1::shared_ptr<dotk::Vector<Real> > lower = dotk::gtest::allocateData(4, -1.);
+    std::tr1::shared_ptr<dotk::Vector<Real> > upper = dotk::gtest::allocateData(4, 5.);
     dotk::DOTk_Dual dual_bounds_active(*data, *lower, *upper);
 
     EXPECT_EQ(dotk::types::DUAL, dual_bounds_active.type());

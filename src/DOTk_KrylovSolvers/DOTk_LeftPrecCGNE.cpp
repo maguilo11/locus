@@ -43,7 +43,7 @@ DOTk_LeftPrecCGNE::~DOTk_LeftPrecCGNE()
 {
 }
 
-void DOTk_LeftPrecCGNE::initialize(const std::tr1::shared_ptr<dotk::vector<Real> > & rhs_vec_,
+void DOTk_LeftPrecCGNE::initialize(const std::tr1::shared_ptr<dotk::Vector<Real> > & rhs_vec_,
                                    const std::tr1::shared_ptr<dotk::DOTk_KrylovSolverStoppingCriterion> & criterion_,
                                    const std::tr1::shared_ptr<dotk::DOTk_OptimizationDataMng> & opt_mng_)
 {
@@ -62,7 +62,7 @@ void DOTk_LeftPrecCGNE::initialize(const std::tr1::shared_ptr<dotk::vector<Real>
     dotk::DOTk_KrylovSolver::setInitialStoppingTolerance(stopping_tolerance);
 }
 
-void DOTk_LeftPrecCGNE::cgne(const std::tr1::shared_ptr<dotk::vector<Real> > & rhs_vec_,
+void DOTk_LeftPrecCGNE::cgne(const std::tr1::shared_ptr<dotk::Vector<Real> > & rhs_vec_,
                              const std::tr1::shared_ptr<dotk::DOTk_KrylovSolverStoppingCriterion> & criterion_,
                              const std::tr1::shared_ptr<dotk::DOTk_OptimizationDataMng> & opt_mng_)
 {
@@ -133,19 +133,19 @@ DOTk_LeftPrecCGNE::getLinearOperator() const
     return (m_DataMng->getLinearOperator());
 }
 
-const std::tr1::shared_ptr<dotk::vector<Real> > & DOTk_LeftPrecCGNE::getDescentDirection()
+const std::tr1::shared_ptr<dotk::Vector<Real> > & DOTk_LeftPrecCGNE::getDescentDirection()
 {
     return (m_ConjugateDirection);
 }
 
-void DOTk_LeftPrecCGNE::solve(const std::tr1::shared_ptr<dotk::vector<Real> > & rhs_vec_,
+void DOTk_LeftPrecCGNE::solve(const std::tr1::shared_ptr<dotk::Vector<Real> > & rhs_vec_,
                               const std::tr1::shared_ptr<dotk::DOTk_KrylovSolverStoppingCriterion> & criterion_,
                               const std::tr1::shared_ptr<dotk::DOTk_OptimizationDataMng> & opt_mng_)
 {
     this->cgne(rhs_vec_, criterion_, opt_mng_);
 }
 
-void DOTk_LeftPrecCGNE::initialize(const std::tr1::shared_ptr<dotk::vector<Real> > vector_)
+void DOTk_LeftPrecCGNE::initialize(const std::tr1::shared_ptr<dotk::Vector<Real> > vector_)
 {
     m_AuxiliaryVector = vector_->clone();
     m_ConjugateDirection = vector_->clone();

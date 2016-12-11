@@ -25,15 +25,15 @@ namespace DOTkPrecGMRESTest
 
 TEST(DOTk_GmresTestMatrix, apply)
 {
-    std::tr1::shared_ptr<dotk::vector<Real> > dual = dotk::gtest::allocateData(2, 1);
-    std::tr1::shared_ptr<dotk::vector<Real> > control = dotk::gtest::allocateData(2, 1);
+    std::tr1::shared_ptr<dotk::Vector<Real> > dual = dotk::gtest::allocateData(2, 1);
+    std::tr1::shared_ptr<dotk::Vector<Real> > control = dotk::gtest::allocateData(2, 1);
     std::tr1::shared_ptr<dotk::DOTk_MultiVector<Real> > primal(new dotk::DOTk_MultiVector<Real>(*control, *dual));
 
-    std::tr1::shared_ptr<dotk::vector<Real> > matrix_times_primal = primal->clone();
+    std::tr1::shared_ptr<dotk::Vector<Real> > matrix_times_primal = primal->clone();
     dotk::DOTk_GmresTestMatrix matrix(primal);
     matrix.apply(primal, matrix_times_primal);
 
-    std::tr1::shared_ptr<dotk::vector<Real> > gold = primal->clone();
+    std::tr1::shared_ptr<dotk::Vector<Real> > gold = primal->clone();
     (*gold->dual())[0] = 1.794823519789998;
     (*gold->dual())[1] = 2.598897110484027;
     (*gold->control())[0] = 1.195922379007526;
@@ -101,12 +101,12 @@ TEST(DOTk_PrecGMRES, gmres)
     dotk::DOTk_PrecGMRES solver(solver_mng);
     solver.gmres(multi_vector, criterion, mng);
 
-    std::tr1::shared_ptr<dotk::vector<Real> > control_gold = primal->control()->clone();
+    std::tr1::shared_ptr<dotk::Vector<Real> > control_gold = primal->control()->clone();
     (*control_gold)[0] = 4.959572514354128;
     (*control_gold)[1] = -0.273403699946782;
     dotk::gtest::checkResults(*solver_mng->getSolution()->control(), *control_gold);
 
-    std::tr1::shared_ptr<dotk::vector<Real> > dual_gold = primal->dual()->clone();
+    std::tr1::shared_ptr<dotk::Vector<Real> > dual_gold = primal->dual()->clone();
     (*dual_gold)[0] = -4.563421968790186;
     (*dual_gold)[1] = 1.837364600836567;
     dotk::gtest::checkResults(*solver_mng->getSolution()->dual(), *dual_gold);

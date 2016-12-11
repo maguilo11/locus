@@ -174,7 +174,7 @@ TEST(PerryShanno, getDirection)
                      mng.getNewPrimal(),
                      mng.getTrialStep());
 
-    std::tr1::shared_ptr<dotk::vector<Real> > gold = primal->control()->clone();
+    std::tr1::shared_ptr<dotk::Vector<Real> > gold = primal->control()->clone();
     (*gold)[0] = -0.419267707083;
     (*gold)[1] = -0.722989195678;
     Real tol = 1e-8;
@@ -213,7 +213,7 @@ TEST(PerryShanno, direction)
     EXPECT_EQ(dotk::types::PERRY_SHANNO_NLCG, dir.getNonlinearCGType());
     dir.direction(mng);
 
-    std::tr1::shared_ptr<dotk::vector<Real> > gold = primal->control()->clone();
+    std::tr1::shared_ptr<dotk::Vector<Real> > gold = primal->control()->clone();
     (*gold)[0] = -0.419267707083;
     (*gold)[1] = -0.722989195678;
     Real tol = 1e-8;

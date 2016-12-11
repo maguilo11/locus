@@ -13,26 +13,26 @@
 namespace dotk
 {
 
-template<typename Type>
-class vector;
+template<typename ScalarType>
+class Vector;
 
 namespace nlcg
 {
 
-Real fletcherReeves(const dotk::vector<Real> & new_steepest_descent_, const dotk::vector<Real> & old_steepest_descent_);
-Real polakRibiere(const dotk::vector<Real> & new_steepest_descent_, const dotk::vector<Real> & old_steepest_descent_);
-Real hestenesStiefel(const dotk::vector<Real> & new_steepest_descent_,
-                     const dotk::vector<Real> & old_steepest_descent_,
-                     const dotk::vector<Real> & old_trial_step_);
-Real daiYuan(const dotk::vector<Real> & new_steepest_descent_,
-             const dotk::vector<Real> & old_steepest_descent_,
-             const dotk::vector<Real> & old_trial_step_);
-Real conjugateDescent(const dotk::vector<Real> & new_steepest_descent_,
-                      const dotk::vector<Real> & old_steepest_descent_,
-                      const dotk::vector<Real> & old_trial_step_);
-Real liuStorey(const dotk::vector<Real> & new_steepest_descent_,
-               const dotk::vector<Real> & old_steepest_descent_,
-               const dotk::vector<Real> & old_trial_step_);
+Real fletcherReeves(const dotk::Vector<Real> & new_steepest_descent_, const dotk::Vector<Real> & old_steepest_descent_);
+Real polakRibiere(const dotk::Vector<Real> & new_steepest_descent_, const dotk::Vector<Real> & old_steepest_descent_);
+Real hestenesStiefel(const dotk::Vector<Real> & new_steepest_descent_,
+                     const dotk::Vector<Real> & old_steepest_descent_,
+                     const dotk::Vector<Real> & old_trial_step_);
+Real daiYuan(const dotk::Vector<Real> & new_steepest_descent_,
+             const dotk::Vector<Real> & old_steepest_descent_,
+             const dotk::Vector<Real> & old_trial_step_);
+Real conjugateDescent(const dotk::Vector<Real> & new_steepest_descent_,
+                      const dotk::Vector<Real> & old_steepest_descent_,
+                      const dotk::Vector<Real> & old_trial_step_);
+Real liuStorey(const dotk::Vector<Real> & new_steepest_descent_,
+               const dotk::Vector<Real> & old_steepest_descent_,
+               const dotk::Vector<Real> & old_trial_step_);
 
 }
 

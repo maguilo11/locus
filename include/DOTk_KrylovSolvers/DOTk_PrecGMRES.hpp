@@ -19,8 +19,8 @@ class DOTk_KrylovSolverDataMng;
 class DOTk_OptimizationDataMng;
 class DOTk_KrylovSolverStoppingCriterion;
 
-template<typename Type>
-class vector;
+template<typename ScalarType>
+class Vector;
 
 class DOTk_PrecGMRES : public dotk::DOTk_KrylovSolver
 {
@@ -32,27 +32,27 @@ public:
     virtual ~DOTk_PrecGMRES();
 
     void initialize
-    (const std::tr1::shared_ptr<dotk::vector<Real> > & rhs_vec_,
+    (const std::tr1::shared_ptr<dotk::Vector<Real> > & rhs_vec_,
      const std::tr1::shared_ptr<dotk::DOTk_KrylovSolverStoppingCriterion> & criterion_,
      const std::tr1::shared_ptr<dotk::DOTk_OptimizationDataMng> & opt_prob_mng_);
-    void gmres(const std::tr1::shared_ptr<dotk::vector<Real> > & rhs_vec_,
+    void gmres(const std::tr1::shared_ptr<dotk::Vector<Real> > & rhs_vec_,
                const std::tr1::shared_ptr<dotk::DOTk_KrylovSolverStoppingCriterion> & criterion_,
                const std::tr1::shared_ptr<dotk::DOTk_OptimizationDataMng> & opt_prob_mng_);
 
     virtual void setMaxNumKrylovSolverItr(size_t itr_);
     virtual const std::tr1::shared_ptr<dotk::DOTk_KrylovSolverDataMng> & getDataMng() const;
     virtual const std::tr1::shared_ptr<dotk::DOTk_LinearOperator> & getLinearOperator() const;
-    virtual const std::tr1::shared_ptr<dotk::vector<Real> > & getDescentDirection();
-    virtual void solve(const std::tr1::shared_ptr<dotk::vector<Real> > & rhs_vec_,
+    virtual const std::tr1::shared_ptr<dotk::Vector<Real> > & getDescentDirection();
+    virtual void solve(const std::tr1::shared_ptr<dotk::Vector<Real> > & rhs_vec_,
                        const std::tr1::shared_ptr<dotk::DOTk_KrylovSolverStoppingCriterion> & criterion_,
                        const std::tr1::shared_ptr<dotk::DOTk_OptimizationDataMng> & opt_prob_mng_);
 
 private:
     std::tr1::shared_ptr<dotk::DOTk_KrylovSolverDataMng> m_DataMng;
-    std::tr1::shared_ptr<dotk::vector<Real> > m_ProjectionOperatorTimesVec;
+    std::tr1::shared_ptr<dotk::Vector<Real> > m_ProjectionOperatorTimesVec;
 
 private:
-    void allocate(const std::tr1::shared_ptr<dotk::vector<Real> > vec_);
+    void allocate(const std::tr1::shared_ptr<dotk::Vector<Real> > vec_);
 
 private:
     DOTk_PrecGMRES(const dotk::DOTk_PrecGMRES &);

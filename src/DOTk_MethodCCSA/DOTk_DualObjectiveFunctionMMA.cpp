@@ -51,7 +51,7 @@ DOTk_DualObjectiveFunctionMMA::~DOTk_DualObjectiveFunctionMMA()
 {
 }
 
-Real DOTk_DualObjectiveFunctionMMA::value(const dotk::vector<Real> & dual_)
+Real DOTk_DualObjectiveFunctionMMA::value(const dotk::Vector<Real> & dual_)
 {
     // Evaluate dual problem objective function
     this->updateTrialControl(dual_);
@@ -84,7 +84,7 @@ Real DOTk_DualObjectiveFunctionMMA::value(const dotk::vector<Real> & dual_)
     return (output);
 }
 
-void DOTk_DualObjectiveFunctionMMA::gradient(const dotk::vector<Real> & dual_, dotk::vector<Real> & gradient_)
+void DOTk_DualObjectiveFunctionMMA::gradient(const dotk::Vector<Real> & dual_, dotk::Vector<Real> & gradient_)
 {
     size_t number_inequalities = dual_.size();
     size_t number_controls = m_TrialControl->size();
@@ -121,27 +121,27 @@ void DOTk_DualObjectiveFunctionMMA::setCurrentObjectiveFunctionValue(Real value_
     m_CurrentObjectiveFunctionValue = value_;
 }
 
-void DOTk_DualObjectiveFunctionMMA::setTrialControl(const std::tr1::shared_ptr<dotk::vector<Real> > & input_)
+void DOTk_DualObjectiveFunctionMMA::setTrialControl(const std::tr1::shared_ptr<dotk::Vector<Real> > & input_)
 {
     assert(input_->size() == m_TrialControl->size());
     m_TrialControl->copy(*input_);
 }
 
 void DOTk_DualObjectiveFunctionMMA::setCurrentInequalityConstraintResiduals
-(const std::tr1::shared_ptr<dotk::vector<Real> > & input_)
+(const std::tr1::shared_ptr<dotk::Vector<Real> > & input_)
 {
     assert(input_->size() == m_CurrentInequalityConstraintResiduals->size());
     m_CurrentInequalityConstraintResiduals->copy(*input_);
 }
 
-void DOTk_DualObjectiveFunctionMMA::gatherTrialControl(const std::tr1::shared_ptr<dotk::vector<Real> > & input_)
+void DOTk_DualObjectiveFunctionMMA::gatherTrialControl(const std::tr1::shared_ptr<dotk::Vector<Real> > & input_)
 {
     assert(input_->size() == m_TrialControl->size());
     input_->copy(*m_TrialControl);
 }
 
-void DOTk_DualObjectiveFunctionMMA::gatherMovingAsymptotes(const std::tr1::shared_ptr<dotk::vector<Real> > & lower_asymptote_,
-                                                           const std::tr1::shared_ptr<dotk::vector<Real> > & upper_asymptote_)
+void DOTk_DualObjectiveFunctionMMA::gatherMovingAsymptotes(const std::tr1::shared_ptr<dotk::Vector<Real> > & lower_asymptote_,
+                                                           const std::tr1::shared_ptr<dotk::Vector<Real> > & upper_asymptote_)
 {
     assert(lower_asymptote_->size() == m_LowerAsymptote->size());
     assert(upper_asymptote_->size() == m_UpperAsymptote->size());
@@ -149,8 +149,8 @@ void DOTk_DualObjectiveFunctionMMA::gatherMovingAsymptotes(const std::tr1::share
     upper_asymptote_->copy(*m_UpperAsymptote);
 }
 
-void DOTk_DualObjectiveFunctionMMA::gatherTrialControlBounds(const std::tr1::shared_ptr<dotk::vector<Real> > & lower_bound_,
-                                                             const std::tr1::shared_ptr<dotk::vector<Real> > & upper_bound_)
+void DOTk_DualObjectiveFunctionMMA::gatherTrialControlBounds(const std::tr1::shared_ptr<dotk::Vector<Real> > & lower_bound_,
+                                                             const std::tr1::shared_ptr<dotk::Vector<Real> > & upper_bound_)
 {
     assert(lower_bound_->size() == m_TrialControlLowerBound->size());
     assert(upper_bound_->size() == m_TrialControlUpperBound->size());
@@ -158,8 +158,8 @@ void DOTk_DualObjectiveFunctionMMA::gatherTrialControlBounds(const std::tr1::sha
     upper_bound_->copy(*m_TrialControlUpperBound);
 }
 
-void DOTk_DualObjectiveFunctionMMA::gatherObjectiveCoefficients(const std::tr1::shared_ptr<dotk::vector<Real> > & p_coefficients_,
-                                                                const std::tr1::shared_ptr<dotk::vector<Real> > & q_coefficients_,
+void DOTk_DualObjectiveFunctionMMA::gatherObjectiveCoefficients(const std::tr1::shared_ptr<dotk::Vector<Real> > & p_coefficients_,
+                                                                const std::tr1::shared_ptr<dotk::Vector<Real> > & q_coefficients_,
                                                                 Real & r_coefficients_)
 {
     assert(p_coefficients_->size() == m_ObjectiveCoefficientsP->size());
@@ -171,7 +171,7 @@ void DOTk_DualObjectiveFunctionMMA::gatherObjectiveCoefficients(const std::tr1::
 
 void DOTk_DualObjectiveFunctionMMA::gatherInequalityCoefficients(const std::tr1::shared_ptr<dotk::matrix<Real> > & p_coefficients_,
                                                                  const std::tr1::shared_ptr<dotk::matrix<Real> > & q_coefficients_,
-                                                                 const std::tr1::shared_ptr<dotk::vector<Real> > & r_coefficients_)
+                                                                 const std::tr1::shared_ptr<dotk::Vector<Real> > & r_coefficients_)
 {
     assert(p_coefficients_->size() == m_InequalityCoefficientsP->size());
     assert(q_coefficients_->size() == m_InequalityCoefficientsQ->size());
@@ -181,8 +181,8 @@ void DOTk_DualObjectiveFunctionMMA::gatherInequalityCoefficients(const std::tr1:
     r_coefficients_->copy(*m_InequalityCoefficientsR);
 }
 
-void DOTk_DualObjectiveFunctionMMA::updateMovingAsymptotes(const std::tr1::shared_ptr<dotk::vector<Real> > & current_control_,
-                                                           const std::tr1::shared_ptr<dotk::vector<Real> > & current_sigma_)
+void DOTk_DualObjectiveFunctionMMA::updateMovingAsymptotes(const std::tr1::shared_ptr<dotk::Vector<Real> > & current_control_,
+                                                           const std::tr1::shared_ptr<dotk::Vector<Real> > & current_sigma_)
 {
     m_LowerAsymptote->copy(*current_control_);
     m_LowerAsymptote->axpy(static_cast<Real>(-1), *current_sigma_);
@@ -192,8 +192,8 @@ void DOTk_DualObjectiveFunctionMMA::updateMovingAsymptotes(const std::tr1::share
 }
 
 void DOTk_DualObjectiveFunctionMMA::updateTrialControlBounds(const Real & scale_,
-                                                             const std::tr1::shared_ptr<dotk::vector<Real> > & current_control_,
-                                                             const std::tr1::shared_ptr<dotk::vector<Real> > & current_sigma_)
+                                                             const std::tr1::shared_ptr<dotk::Vector<Real> > & current_control_,
+                                                             const std::tr1::shared_ptr<dotk::Vector<Real> > & current_sigma_)
 {
     m_TrialControlLowerBound->copy(*current_control_);
     m_TrialControlLowerBound->axpy(-scale_, *current_sigma_);
@@ -203,8 +203,8 @@ void DOTk_DualObjectiveFunctionMMA::updateTrialControlBounds(const Real & scale_
 }
 
 void DOTk_DualObjectiveFunctionMMA::updateObjectiveCoefficientVectors(const Real & globalization_scaling_,
-                                                                      const std::tr1::shared_ptr<dotk::vector<Real> > & current_sigma_,
-                                                                      const std::tr1::shared_ptr<dotk::vector<Real> > & current_gradient_)
+                                                                      const std::tr1::shared_ptr<dotk::Vector<Real> > & current_sigma_,
+                                                                      const std::tr1::shared_ptr<dotk::Vector<Real> > & current_gradient_)
 {
     size_t number_primals = current_sigma_->size();
     m_ObjectiveCoefficientR = m_CurrentObjectiveFunctionValue;
@@ -222,8 +222,8 @@ void DOTk_DualObjectiveFunctionMMA::updateObjectiveCoefficientVectors(const Real
     }
 }
 
-void DOTk_DualObjectiveFunctionMMA::updateInequalityCoefficientVectors(const std::tr1::shared_ptr<dotk::vector<Real> > & globalization_scaling_,
-                                                                       const std::tr1::shared_ptr<dotk::vector<Real> > & current_sigma_,
+void DOTk_DualObjectiveFunctionMMA::updateInequalityCoefficientVectors(const std::tr1::shared_ptr<dotk::Vector<Real> > & globalization_scaling_,
+                                                                       const std::tr1::shared_ptr<dotk::Vector<Real> > & current_sigma_,
                                                                        const std::tr1::shared_ptr<dotk::matrix<Real> > & current_gradients_)
 {
     size_t number_primals = current_sigma_->size();
@@ -256,7 +256,7 @@ void DOTk_DualObjectiveFunctionMMA::initialize(const std::tr1::shared_ptr<dotk::
     m_InequalityCoefficientsD->copy(*data_mng_->m_InputInequalityCoefficientsD);
 }
 
-void DOTk_DualObjectiveFunctionMMA::updateTrialControl(const dotk::vector<Real> & dual_)
+void DOTk_DualObjectiveFunctionMMA::updateTrialControl(const dotk::Vector<Real> & dual_)
 {
     // Update primal variables based on the following expression:
     // \[ x(\lambda)=\frac{u_j^k\mathtt{b}^{1/2}+l_j^k\mathtt{a}^{1/2}}{(\mathtt{a}^{1/2}+\mathtt{b}^{1/2})} \],
@@ -283,7 +283,7 @@ void DOTk_DualObjectiveFunctionMMA::updateTrialControl(const dotk::vector<Real> 
     }
 }
 
-void DOTk_DualObjectiveFunctionMMA::updateTrialAuxiliaryVariables(const dotk::vector<Real> & dual_)
+void DOTk_DualObjectiveFunctionMMA::updateTrialAuxiliaryVariables(const dotk::Vector<Real> & dual_)
 {
     // Update auxiliary variables based on the following expression:
     // \[ y_i(\lambda)=\frac{\lambda_i-c_i}{2d_i} \]
@@ -305,7 +305,7 @@ void DOTk_DualObjectiveFunctionMMA::updateTrialAuxiliaryVariables(const dotk::ve
     m_TrialAuxiliaryVariableZ = std::max(m_TrialAuxiliaryVariableZ, 0.);
 }
 
-Real DOTk_DualObjectiveFunctionMMA::computeInequalityConstraintContribution(const dotk::vector<Real> & dual_)
+Real DOTk_DualObjectiveFunctionMMA::computeInequalityConstraintContribution(const dotk::Vector<Real> & dual_)
 {
     // Compute the following calculation:
     // \sum_{i=1}^{m}\left( c_iy_i + \frac{1}{2}d_iy_i^2 \right) - \lambda^{T}y - (\lambda^{T}a)z + \lambda^{T}r,

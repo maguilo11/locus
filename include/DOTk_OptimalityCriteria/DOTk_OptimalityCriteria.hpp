@@ -19,13 +19,13 @@ class DOTk_Primal;
 class DOTk_OptimalityCriteriaDataMng;
 class DOTk_OptimalityCriteriaRoutineMng;
 
-template<typename Type>
-class vector;
-template<typename Type>
+template<typename ScalarType>
+class Vector;
+template<typename ScalarType>
 class DOTk_ObjectiveFunction;
-template<typename Type>
+template<typename ScalarType>
 class DOTk_EqualityConstraint;
-template<typename Type>
+template<typename ScalarType>
 class DOTk_InequalityConstraint;
 
 class DOTk_OptimalityCriteria
@@ -55,8 +55,8 @@ public:
     bool printDiagnostics() const;
     void enableDiagnostics();
 
-    void gatherSolution(dotk::vector<Real> & data_) const;
-    void gatherGradient(dotk::vector<Real> & data_) const;
+    void gatherSolution(dotk::Vector<Real> & data_) const;
+    void gatherGradient(dotk::Vector<Real> & data_) const;
     void gatherOuputStream(std::ostringstream & output_);
 
     void getMin();

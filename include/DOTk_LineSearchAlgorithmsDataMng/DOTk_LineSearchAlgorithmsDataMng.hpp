@@ -13,8 +13,8 @@
 namespace dotk
 {
 
-template<class Type>
-class vector;
+template<typename Type>
+class Vector;
 
 class DOTk_Primal;
 class DOTk_FirstOrderOperator;
@@ -37,9 +37,9 @@ public:
     void setUserDefinedGradient();
     virtual void computeGradient();
     virtual Real evaluateObjective();
-    virtual Real evaluateObjective(const std::tr1::shared_ptr<dotk::vector<Real> > & input_);
-    virtual void computeGradient(const std::tr1::shared_ptr<dotk::vector<Real> > & input_,
-                                 const std::tr1::shared_ptr<dotk::vector<Real> > & gradient_);
+    virtual Real evaluateObjective(const std::tr1::shared_ptr<dotk::Vector<Real> > & input_);
+    virtual void computeGradient(const std::tr1::shared_ptr<dotk::Vector<Real> > & input_,
+                                 const std::tr1::shared_ptr<dotk::Vector<Real> > & gradient_);
     virtual const std::tr1::shared_ptr<dotk::DOTk_AssemblyManager> & getRoutinesMng() const;
 
 protected:

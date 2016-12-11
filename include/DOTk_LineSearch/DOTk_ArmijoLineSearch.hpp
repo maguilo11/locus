@@ -14,13 +14,14 @@ namespace dotk
 {
 
 class DOTk_OptimizationDataMng;
-template<class Type>
-class vector;
+
+template<typename ScalarType>
+class Vector;
 
 class DOTk_ArmijoLineSearch : public dotk::DOTk_LineSearch
 {
 public:
-    explicit DOTk_ArmijoLineSearch(const std::tr1::shared_ptr<dotk::vector<Real> > & vector_);
+    explicit DOTk_ArmijoLineSearch(const std::tr1::shared_ptr<dotk::Vector<Real> > & vector_);
     virtual ~DOTk_ArmijoLineSearch();
 
     virtual Real getConstant() const;
@@ -29,7 +30,7 @@ public:
 
 private:
     Real m_ArmijoRuleConstant;
-    std::tr1::shared_ptr<dotk::vector<Real> > m_TrialPrimal;
+    std::tr1::shared_ptr<dotk::Vector<Real> > m_TrialPrimal;
 
 private:
     // unimplemented

@@ -17,8 +17,8 @@ namespace dotk
 
 class DOTk_DataMngCCSA;
 
-template<typename Type>
-class vector;
+template<typename ScalarType>
+class Vector;
 
 namespace ccsa
 {
@@ -47,8 +47,8 @@ enum stopping_criterion_t
     NOT_CONVERGED = 10,
 };
 
-Real computeResidualNorm(const std::tr1::shared_ptr<dotk::vector<Real> > & primal_,
-                         const std::tr1::shared_ptr<dotk::vector<Real> > & dual_,
+Real computeResidualNorm(const std::tr1::shared_ptr<dotk::Vector<Real> > & primal_,
+                         const std::tr1::shared_ptr<dotk::Vector<Real> > & dual_,
                          const std::tr1::shared_ptr<dotk::DOTk_DataMngCCSA> & data_mng_);
 
 }

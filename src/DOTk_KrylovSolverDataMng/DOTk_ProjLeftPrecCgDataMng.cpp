@@ -34,12 +34,12 @@ DOTk_ProjLeftPrecCgDataMng::~DOTk_ProjLeftPrecCgDataMng()
 {
 }
 
-const std::tr1::shared_ptr<dotk::vector<Real> > & DOTk_ProjLeftPrecCgDataMng::getResidual(size_t index_) const
+const std::tr1::shared_ptr<dotk::Vector<Real> > & DOTk_ProjLeftPrecCgDataMng::getResidual(size_t index_) const
 {
     return (m_Residual[index_]);
 }
 
-const std::tr1::shared_ptr<dotk::vector<Real> > & DOTk_ProjLeftPrecCgDataMng::getLeftPrecTimesVector(size_t index_) const
+const std::tr1::shared_ptr<dotk::Vector<Real> > & DOTk_ProjLeftPrecCgDataMng::getLeftPrecTimesVector(size_t index_) const
 {
     return (m_LeftPrecTimesResidual[index_]);
 }
@@ -120,7 +120,7 @@ void DOTk_ProjLeftPrecCgDataMng::setAugmentedSystemPrecWithGmresSolver
     factory.buildAugmentedSystemPrecWithGmresSolver(primal_, m_LeftPreconditioner);
 }
 
-void DOTk_ProjLeftPrecCgDataMng::initialize(size_t max_num_itr_, const std::tr1::shared_ptr<dotk::vector<Real> > vector_)
+void DOTk_ProjLeftPrecCgDataMng::initialize(size_t max_num_itr_, const std::tr1::shared_ptr<dotk::Vector<Real> > vector_)
 {
     dotk::DOTk_KrylovSolverDataMng::setMaxNumSolverItr(max_num_itr_);
     dotk::DOTk_KrylovSolverDataMng::setSolverType(dotk::types::PROJECTED_PREC_CG);

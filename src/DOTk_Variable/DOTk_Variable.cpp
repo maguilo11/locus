@@ -8,6 +8,7 @@
 #include <sstream>
 #include <iostream>
 
+#include "vector.hpp"
 #include "DOTk_Variable.hpp"
 #include "DOTk_SerialArray.hpp"
 #include "DOTk_SerialVector.hpp"
@@ -23,7 +24,7 @@ DOTk_Variable::DOTk_Variable(dotk::types::variable_t type_) :
 {
 }
 
-DOTk_Variable::DOTk_Variable(dotk::types::variable_t type_, const dotk::vector<Real> & data_) :
+DOTk_Variable::DOTk_Variable(dotk::types::variable_t type_, const dotk::Vector<Real> & data_) :
         m_Type(type_),
         m_Data(data_.clone()),
         m_LowerBound(),
@@ -33,9 +34,9 @@ DOTk_Variable::DOTk_Variable(dotk::types::variable_t type_, const dotk::vector<R
 }
 
 DOTk_Variable::DOTk_Variable(dotk::types::variable_t type_,
-                             const dotk::vector<Real> & data_,
-                             const dotk::vector<Real> & lower_bound_,
-                             const dotk::vector<Real> & upper_bound_) :
+                             const dotk::Vector<Real> & data_,
+                             const dotk::Vector<Real> & lower_bound_,
+                             const dotk::Vector<Real> & upper_bound_) :
         m_Type(type_),
         m_Data(data_.clone()),
         m_LowerBound(lower_bound_.clone()),
@@ -58,7 +59,7 @@ dotk::types::variable_t DOTk_Variable::type() const
     return (m_Type);
 }
 
-const std::tr1::shared_ptr<dotk::vector<Real> > & DOTk_Variable::data() const
+const std::tr1::shared_ptr<dotk::Vector<Real> > & DOTk_Variable::data() const
 {
     return (m_Data);
 }
@@ -74,7 +75,7 @@ void DOTk_Variable::setLowerBound(Real value_)
     m_LowerBound->fill(value_);
 }
 
-void DOTk_Variable::setLowerBound(const dotk::vector<Real> & lower_bound_)
+void DOTk_Variable::setLowerBound(const dotk::Vector<Real> & lower_bound_)
 {
     this->checkData();
     if(m_LowerBound.use_count() == 0)
@@ -85,7 +86,7 @@ void DOTk_Variable::setLowerBound(const dotk::vector<Real> & lower_bound_)
     m_LowerBound->copy(lower_bound_);
 }
 
-const std::tr1::shared_ptr<dotk::vector<Real> > & DOTk_Variable::lowerBound() const
+const std::tr1::shared_ptr<dotk::Vector<Real> > & DOTk_Variable::lowerBound() const
 {
     return (m_LowerBound);
 }
@@ -101,7 +102,7 @@ void DOTk_Variable::setUpperBound(Real value_)
     m_UpperBound->fill(value_);
 }
 
-void DOTk_Variable::setUpperBound(const dotk::vector<Real> & upper_bound_)
+void DOTk_Variable::setUpperBound(const dotk::Vector<Real> & upper_bound_)
 {
     this->checkData();
     if(m_UpperBound.use_count() == 0)
@@ -112,12 +113,12 @@ void DOTk_Variable::setUpperBound(const dotk::vector<Real> & upper_bound_)
     m_UpperBound->copy(upper_bound_);
 }
 
-const std::tr1::shared_ptr<dotk::vector<Real> > & DOTk_Variable::upperBound() const
+const std::tr1::shared_ptr<dotk::Vector<Real> > & DOTk_Variable::upperBound() const
 {
     return (m_UpperBound);
 }
 
-void DOTk_Variable::allocate(const dotk::vector<Real> & input_)
+void DOTk_Variable::allocate(const dotk::Vector<Real> & input_)
 {
     m_Data = input_.clone();
 }
@@ -141,14 +142,14 @@ void DOTk_Variable::checkData()
     }
 }
 
-void DOTk_Variable::initialize(const dotk::vector<Real> & data_)
+void DOTk_Variable::initialize(const dotk::Vector<Real> & data_)
 {
     m_Data->copy(data_);
 }
 
-void DOTk_Variable::initialize(const dotk::vector<Real> & data_,
-                               const dotk::vector<Real> & lower_bound_,
-                               const dotk::vector<Real> & upper_bound_)
+void DOTk_Variable::initialize(const dotk::Vector<Real> & data_,
+                               const dotk::Vector<Real> & lower_bound_,
+                               const dotk::Vector<Real> & upper_bound_)
 {
     try
     {

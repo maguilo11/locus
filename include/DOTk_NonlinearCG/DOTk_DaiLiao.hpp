@@ -15,8 +15,8 @@ namespace dotk
 
 class DOTk_OptimizationDataMng;
 
-template<class Type>
-class vector;
+template<typename ScalarType>
+class Vector;
 
 class DOTk_DaiLiao : public dotk::DOTk_DescentDirection
 {
@@ -26,16 +26,16 @@ public:
 
     Real getConstant() const;
     void setConstant(Real value_);
-    Real computeScaleFactor(const std::tr1::shared_ptr<dotk::vector<Real> > & old_grad_,
-                            const std::tr1::shared_ptr<dotk::vector<Real> > & new_grad_,
-                            const std::tr1::shared_ptr<dotk::vector<Real> > & old_primal_,
-                            const std::tr1::shared_ptr<dotk::vector<Real> > & new_primal_,
-                            const std::tr1::shared_ptr<dotk::vector<Real> > & dir_);
-    void getDirection(const std::tr1::shared_ptr<dotk::vector<Real> > & old_grad_,
-                      const std::tr1::shared_ptr<dotk::vector<Real> > & new_grad_,
-                      const std::tr1::shared_ptr<dotk::vector<Real> > & old_primal_,
-                      const std::tr1::shared_ptr<dotk::vector<Real> > & new_primal_,
-                      const std::tr1::shared_ptr<dotk::vector<Real> > & dir_);
+    Real computeScaleFactor(const std::tr1::shared_ptr<dotk::Vector<Real> > & old_grad_,
+                            const std::tr1::shared_ptr<dotk::Vector<Real> > & new_grad_,
+                            const std::tr1::shared_ptr<dotk::Vector<Real> > & old_primal_,
+                            const std::tr1::shared_ptr<dotk::Vector<Real> > & new_primal_,
+                            const std::tr1::shared_ptr<dotk::Vector<Real> > & dir_);
+    void getDirection(const std::tr1::shared_ptr<dotk::Vector<Real> > & old_grad_,
+                      const std::tr1::shared_ptr<dotk::Vector<Real> > & new_grad_,
+                      const std::tr1::shared_ptr<dotk::Vector<Real> > & old_primal_,
+                      const std::tr1::shared_ptr<dotk::Vector<Real> > & new_primal_,
+                      const std::tr1::shared_ptr<dotk::Vector<Real> > & dir_);
     virtual void direction(const std::tr1::shared_ptr<dotk::DOTk_OptimizationDataMng> & mng_);
 
 private:

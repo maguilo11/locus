@@ -13,21 +13,21 @@
 namespace dotk
 {
 
-template<typename Type>
-class vector;
+template<typename ScalarType>
+class Vector;
 
 class DOTk_ZakharovObjective : public dotk::DOTk_ObjectiveFunction<Real>
 {
 public:
-    explicit DOTk_ZakharovObjective(const dotk::vector<Real> & input_);
+    explicit DOTk_ZakharovObjective(const dotk::Vector<Real> & input_);
     virtual ~DOTk_ZakharovObjective();
 
-    Real value(const dotk::vector<Real> & primal_);
-    void gradient(const dotk::vector<Real> & primal_, dotk::vector<Real> & output_);
-    void hessian(const dotk::vector<Real> & primal_, const dotk::vector<Real> & vector_, dotk::vector<Real> & output_);
+    Real value(const dotk::Vector<Real> & primal_);
+    void gradient(const dotk::Vector<Real> & primal_, dotk::Vector<Real> & output_);
+    void hessian(const dotk::Vector<Real> & primal_, const dotk::Vector<Real> & vector_, dotk::Vector<Real> & output_);
 
 private:
-    std::tr1::shared_ptr<dotk::vector<Real> > m_Data;
+    std::tr1::shared_ptr<dotk::Vector<Real> > m_Data;
 
 private:
     DOTk_ZakharovObjective(const dotk::DOTk_ZakharovObjective&);

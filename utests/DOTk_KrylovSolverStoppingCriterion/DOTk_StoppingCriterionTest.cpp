@@ -79,7 +79,7 @@ TEST(DOTk_KrylovSolverStoppingCriterion, DOTk_RelativeCriterion)
 
     // TEST 1: INITIAL CALCULATION, E.G. SOLVER ITERATION = 0
     Real tolerance = 1e-8;
-    std::tr1::shared_ptr<dotk::vector<Real> >
+    std::tr1::shared_ptr<dotk::Vector<Real> >
         vector(new dotk::DOTk_MultiVector<Real>(*primal->control(), *primal->dual()));
     solver->setSolverResidualNorm(0.2);
     EXPECT_NEAR(2e-5, tol.evaluate(solver.get(), vector), tolerance);

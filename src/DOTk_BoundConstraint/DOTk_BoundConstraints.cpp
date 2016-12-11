@@ -55,9 +55,9 @@ void DOTk_BoundConstraints::setMaxNumFeasibleIterations(size_t input_)
     m_MaxNumFeasibleIterations = input_;
 }
 
-bool DOTk_BoundConstraints::isDirectionFeasible(const dotk::vector<Real> & lower_bound_,
-                                                const dotk::vector<Real> & upper_bound_,
-                                                const dotk::vector<Real> & data_)
+bool DOTk_BoundConstraints::isDirectionFeasible(const dotk::Vector<Real> & lower_bound_,
+                                                const dotk::Vector<Real> & upper_bound_,
+                                                const dotk::Vector<Real> & data_)
 {
     size_t index = 0;
     bool feasible = true;
@@ -77,12 +77,12 @@ bool DOTk_BoundConstraints::isDirectionFeasible(const dotk::vector<Real> & lower
     return (feasible);
 }
 
-void DOTk_BoundConstraints::computeFeasibleDirection(const dotk::vector<Real> & lower_bound_,
-                                                     const dotk::vector<Real> & upper_bound_,
-                                                     const dotk::vector<Real> & current_variable_,
-                                                     const dotk::vector<Real> & current_trial_step_,
-                                                     dotk::vector<Real> & trial_variable_,
-                                                     dotk::vector<Real> & feasible_direction_)
+void DOTk_BoundConstraints::computeFeasibleDirection(const dotk::Vector<Real> & lower_bound_,
+                                                     const dotk::Vector<Real> & upper_bound_,
+                                                     const dotk::Vector<Real> & current_variable_,
+                                                     const dotk::Vector<Real> & current_trial_step_,
+                                                     dotk::Vector<Real> & trial_variable_,
+                                                     dotk::Vector<Real> & feasible_direction_)
 {
     Real step = 1.0;
     feasible_direction_.copy(current_trial_step_);
@@ -111,9 +111,9 @@ void DOTk_BoundConstraints::computeFeasibleDirection(const dotk::vector<Real> & 
     }
 }
 
-void DOTk_BoundConstraints::project(const dotk::vector<Real> & lower_bound_,
-                                    const dotk::vector<Real> & upper_bound_,
-                                    dotk::vector<Real> & variable_)
+void DOTk_BoundConstraints::project(const dotk::Vector<Real> & lower_bound_,
+                                    const dotk::Vector<Real> & upper_bound_,
+                                    dotk::Vector<Real> & variable_)
 {
     size_t number_variables = variable_.size();
     for(size_t index = 0; index < number_variables; ++ index)
@@ -123,8 +123,8 @@ void DOTk_BoundConstraints::project(const dotk::vector<Real> & lower_bound_,
     }
 }
 
-void DOTk_BoundConstraints::pruneActive(const dotk::vector<Real> & active_set_,
-                                        dotk::vector<Real> & direction_,
+void DOTk_BoundConstraints::pruneActive(const dotk::Vector<Real> & active_set_,
+                                        dotk::Vector<Real> & direction_,
                                         bool prune_)
 {
     if(prune_ == true)
@@ -137,18 +137,18 @@ void DOTk_BoundConstraints::pruneActive(const dotk::vector<Real> & active_set_,
     }
 }
 
-void DOTk_BoundConstraints::computeProjectedStep(const dotk::vector<Real> & trial_variables_,
-                                                 const dotk::vector<Real> & current_variables_,
-                                                 dotk::vector<Real> & projected_step_)
+void DOTk_BoundConstraints::computeProjectedStep(const dotk::Vector<Real> & trial_variables_,
+                                                 const dotk::Vector<Real> & current_variables_,
+                                                 dotk::Vector<Real> & projected_step_)
 {
     projected_step_.copy(trial_variables_);
     projected_step_.axpy(static_cast<Real>(-1), current_variables_);
 }
 
-void DOTk_BoundConstraints::computeProjectedGradient(const dotk::vector<Real> & trial_variable_,
-                                                     const dotk::vector<Real> & lower_bound_,
-                                                     const dotk::vector<Real> & upper_bound_,
-                                                     dotk::vector<Real> & gradient_)
+void DOTk_BoundConstraints::computeProjectedGradient(const dotk::Vector<Real> & trial_variable_,
+                                                     const dotk::Vector<Real> & lower_bound_,
+                                                     const dotk::Vector<Real> & upper_bound_,
+                                                     dotk::Vector<Real> & gradient_)
 {
     size_t number_variables = trial_variable_.size();
     for(size_t index = 0; index < number_variables; ++ index)
@@ -158,10 +158,10 @@ void DOTk_BoundConstraints::computeProjectedGradient(const dotk::vector<Real> & 
     }
 }
 
-void DOTk_BoundConstraints::projectActive(const dotk::vector<Real> & lower_bound_,
-                                          const dotk::vector<Real> & upper_bound_,
-                                          dotk::vector<Real> & variable_,
-                                          dotk::vector<Real> & active_set_)
+void DOTk_BoundConstraints::projectActive(const dotk::Vector<Real> & lower_bound_,
+                                          const dotk::Vector<Real> & upper_bound_,
+                                          dotk::Vector<Real> & variable_,
+                                          dotk::Vector<Real> & active_set_)
 {
     active_set_.fill(0.);
     size_t number_variables = variable_.size();
@@ -174,11 +174,11 @@ void DOTk_BoundConstraints::projectActive(const dotk::vector<Real> & lower_bound
     }
 }
 
-void DOTk_BoundConstraints::computeActiveAndInactiveSets(const dotk::vector<Real> & input_,
-                                                         const dotk::vector<Real> & lower_bound_,
-                                                         const dotk::vector<Real> & upper_bound_,
-                                                         dotk::vector<Real> & active_,
-                                                         dotk::vector<Real> & inactive_)
+void DOTk_BoundConstraints::computeActiveAndInactiveSets(const dotk::Vector<Real> & input_,
+                                                         const dotk::Vector<Real> & lower_bound_,
+                                                         const dotk::Vector<Real> & upper_bound_,
+                                                         dotk::Vector<Real> & active_,
+                                                         dotk::Vector<Real> & inactive_)
 {
     assert(input_.size() == inactive_.size());
     assert(active_.size() == inactive_.size());

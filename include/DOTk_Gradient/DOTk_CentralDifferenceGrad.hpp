@@ -16,25 +16,25 @@ namespace dotk
 class DOTk_OptimizationDataMng;
 class DOTk_AssemblyManager;
 
-template<class Type>
-class vector;
+template<typename ScalarType>
+class Vector;
 
 class DOTk_CentralDifferenceGrad : public dotk::DOTk_FirstOrderOperator
 {
 public:
-    explicit DOTk_CentralDifferenceGrad(const std::tr1::shared_ptr<dotk::vector<Real> > & vector_);
+    explicit DOTk_CentralDifferenceGrad(const std::tr1::shared_ptr<dotk::Vector<Real> > & vector_);
     virtual ~DOTk_CentralDifferenceGrad();
 
-    const std::tr1::shared_ptr<dotk::vector<Real> > & getFiniteDiffPerturbationVec() const;
-    virtual void setFiniteDiffPerturbationVec(const dotk::vector<Real> & input_);
+    const std::tr1::shared_ptr<dotk::Vector<Real> > & getFiniteDiffPerturbationVec() const;
+    virtual void setFiniteDiffPerturbationVec(const dotk::Vector<Real> & input_);
 
     void getGradient(const std::tr1::shared_ptr<dotk::DOTk_AssemblyManager> & interface_,
-                     const std::tr1::shared_ptr<dotk::vector<Real> > & primal_,
-                     const std::tr1::shared_ptr<dotk::vector<Real> > & grad_);
+                     const std::tr1::shared_ptr<dotk::Vector<Real> > & primal_,
+                     const std::tr1::shared_ptr<dotk::Vector<Real> > & grad_);
     virtual void gradient(const dotk::DOTk_OptimizationDataMng * const mng_);
 
 private:
-    std::tr1::shared_ptr<dotk::vector<Real> > m_FiniteDiffPerturbationVec;
+    std::tr1::shared_ptr<dotk::Vector<Real> > m_FiniteDiffPerturbationVec;
 
 private:
     DOTk_CentralDifferenceGrad(const dotk::DOTk_CentralDifferenceGrad &);

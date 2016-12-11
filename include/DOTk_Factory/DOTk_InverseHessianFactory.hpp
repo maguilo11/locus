@@ -17,6 +17,9 @@ namespace dotk
 
 class DOTk_SecondOrderOperator;
 
+template<typename ScalarType>
+class Vector;
+
 class DOTk_InverseHessianFactory
 {
 public:
@@ -30,22 +33,22 @@ public:
     dotk::types::invhessian_t getFactoryType() const;
 
     void buildLbfgsInvHessian(size_t secant_storage_,
-                              const std::tr1::shared_ptr<dotk::vector<Real> > & vector_,
+                              const std::tr1::shared_ptr<dotk::Vector<Real> > & vector_,
                               std::tr1::shared_ptr<dotk::DOTk_SecondOrderOperator> & operator_);
     void buildLdfpInvHessian(size_t secant_storage_,
-                             const std::tr1::shared_ptr<dotk::vector<Real> > & vector_,
+                             const std::tr1::shared_ptr<dotk::Vector<Real> > & vector_,
                              std::tr1::shared_ptr<dotk::DOTk_SecondOrderOperator> & operator_);
     void buildLsr1InvHessian(size_t secant_storage_,
-                             const std::tr1::shared_ptr<dotk::vector<Real> > & vector_,
+                             const std::tr1::shared_ptr<dotk::Vector<Real> > & vector_,
                              std::tr1::shared_ptr<dotk::DOTk_SecondOrderOperator> & operator_);
-    void buildSr1InvHessian(const std::tr1::shared_ptr<dotk::vector<Real> > & vector_,
+    void buildSr1InvHessian(const std::tr1::shared_ptr<dotk::Vector<Real> > & vector_,
                             std::tr1::shared_ptr<dotk::DOTk_SecondOrderOperator> & operator_);
-    void buildBfgsInvHessian(const std::tr1::shared_ptr<dotk::vector<Real> > & vector_,
+    void buildBfgsInvHessian(const std::tr1::shared_ptr<dotk::Vector<Real> > & vector_,
                              std::tr1::shared_ptr<dotk::DOTk_SecondOrderOperator> & operator_);
-    void buildBarzilaiBorweinInvHessian(const std::tr1::shared_ptr<dotk::vector<Real> > & vector_,
+    void buildBarzilaiBorweinInvHessian(const std::tr1::shared_ptr<dotk::Vector<Real> > & vector_,
                                         std::tr1::shared_ptr<dotk::DOTk_SecondOrderOperator> & operator_);
 
-    void build(const std::tr1::shared_ptr<dotk::vector<Real> > & vec_template_,
+    void build(const std::tr1::shared_ptr<dotk::Vector<Real> > & vec_template_,
                std::tr1::shared_ptr<dotk::DOTk_SecondOrderOperator> & operator_,
                size_t secant_storage_ = 0);
 

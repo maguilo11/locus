@@ -68,7 +68,7 @@ TEST(DOTk_ConjugateDescent, getDirection)
     EXPECT_EQ(dotk::types::CONJUGATE_DESCENT_NLCG, dir.getNonlinearCGType());
     dir.getDirection(mng.getOldGradient(), mng.getNewGradient(), mng.getTrialStep());
 
-    std::tr1::shared_ptr<dotk::vector<Real> > gold = dotk::gtest::allocateControl();
+    std::tr1::shared_ptr<dotk::Vector<Real> > gold = dotk::gtest::allocateControl();
     (*gold)[0] = -110.;
     (*gold)[1] = -264.;
     dotk::gtest::checkResults(*mng.getTrialStep(), *gold);
@@ -98,7 +98,7 @@ TEST(DOTk_ConjugateDescent, direction)
     EXPECT_EQ(dotk::types::CONJUGATE_DESCENT_NLCG, dir.getNonlinearCGType());
     dir.direction(mng);
 
-    std::tr1::shared_ptr<dotk::vector<Real> > gold = dotk::gtest::allocateControl();
+    std::tr1::shared_ptr<dotk::Vector<Real> > gold = dotk::gtest::allocateControl();
     (*gold)[0] = -110.;
     (*gold)[1] = -264.;
     dotk::gtest::checkResults(*mng->getTrialStep(), *gold);

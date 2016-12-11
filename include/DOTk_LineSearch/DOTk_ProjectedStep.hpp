@@ -18,8 +18,8 @@ class DOTk_LineSearch;
 class DOTk_BoundConstraints;
 class DOTk_OptimizationDataMng;
 
-template<class Type>
-class vector;
+template<typename ScalarType>
+class Vector;
 
 class DOTk_ProjectedStep : public dotk::DOTk_LineSearchStepMng
 {
@@ -45,9 +45,9 @@ public:
     void solveSubProblem(const std::tr1::shared_ptr<dotk::DOTk_OptimizationDataMng> & mng_);
 
 private:
-    std::tr1::shared_ptr<dotk::vector<Real> > m_WorkVector;
-    std::tr1::shared_ptr<dotk::vector<Real> > m_LowerBound;
-    std::tr1::shared_ptr<dotk::vector<Real> > m_UpperBound;
+    std::tr1::shared_ptr<dotk::Vector<Real> > m_WorkVector;
+    std::tr1::shared_ptr<dotk::Vector<Real> > m_LowerBound;
+    std::tr1::shared_ptr<dotk::Vector<Real> > m_UpperBound;
     std::tr1::shared_ptr<dotk::DOTk_LineSearch> m_LineSearch;
     std::tr1::shared_ptr<dotk::DOTk_BoundConstraints> m_BoundConstraint;
 

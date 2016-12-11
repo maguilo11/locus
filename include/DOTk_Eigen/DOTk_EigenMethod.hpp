@@ -13,9 +13,9 @@
 namespace dotk
 {
 
-template<typename Type>
-class vector;
-template<typename Type>
+template<typename ScalarType>
+class Vector;
+template<typename ScalarType>
 class matrix;
 
 class DOTk_EigenMethod
@@ -26,11 +26,11 @@ public:
 
     dotk::types::eigen_t type() const;
     virtual void solve(const std::tr1::shared_ptr<dotk::matrix<Real> > & input_,
-                       std::tr1::shared_ptr<dotk::vector<Real> > & eigenvalues_,
+                       std::tr1::shared_ptr<dotk::Vector<Real> > & eigenvalues_,
                        std::tr1::shared_ptr<dotk::matrix<Real> > & eigenvectors_);
     virtual void solve(const std::tr1::shared_ptr<dotk::matrix<Real> > & input_,
                        Real & eigenvalues_,
-                       std::tr1::shared_ptr<dotk::vector<Real> > & eigenvectors_);
+                       std::tr1::shared_ptr<dotk::Vector<Real> > & eigenvectors_);
 
 private:
     dotk::types::eigen_t m_EigenType;

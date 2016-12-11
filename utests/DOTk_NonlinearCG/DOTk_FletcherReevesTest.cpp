@@ -30,8 +30,8 @@ TEST(DOTk_FletcherReeves, setAndGetMinCosineAngleTol)
 
 TEST(DOTk_FletcherReeves, computeCosineAngle)
 {
-    std::tr1::shared_ptr<dotk::vector<Real> > gold_grad = dotk::gtest::allocateControl();
-    std::tr1::shared_ptr<dotk::vector<Real> > trial_step = gold_grad->clone();
+    std::tr1::shared_ptr<dotk::Vector<Real> > gold_grad = dotk::gtest::allocateControl();
+    std::tr1::shared_ptr<dotk::Vector<Real> > trial_step = gold_grad->clone();
     (*gold_grad)[0] = 1.;
     (*gold_grad)[1] = 2.;
     (*trial_step)[0] = 11.;
@@ -49,14 +49,14 @@ TEST(DOTk_FletcherReeves, computeCosineAngle)
 
 TEST(DOTk_FletcherReeves, steepestDescent)
 {
-    std::tr1::shared_ptr<dotk::vector<Real> > grad = dotk::gtest::allocateControl();
-    std::tr1::shared_ptr<dotk::vector<Real> > trial_step = grad->clone();
+    std::tr1::shared_ptr<dotk::Vector<Real> > grad = dotk::gtest::allocateControl();
+    std::tr1::shared_ptr<dotk::Vector<Real> > trial_step = grad->clone();
     (*grad)[0] = 1.;
     (*grad)[1] = 2.;
 
     dotk::DOTk_FletcherReeves dir;
     dir.steepestDescent(grad, trial_step);
-    std::tr1::shared_ptr<dotk::vector<Real> > gold = grad->clone();
+    std::tr1::shared_ptr<dotk::Vector<Real> > gold = grad->clone();
     (*gold)[0] = -1;
     (*gold)[1] = -2;
     dotk::gtest::checkResults(*trial_step, *gold);
@@ -117,7 +117,7 @@ TEST(DOTk_FletcherReeves, getDirection)
     EXPECT_EQ(dotk::types::FLETCHER_REEVES_NLCG, dir.getNonlinearCGType());
     dir.getDirection(mng.getOldGradient(), mng.getNewGradient(), mng.getTrialStep());
 
-    std::tr1::shared_ptr<dotk::vector<Real> > gold = dotk::gtest::allocateControl();
+    std::tr1::shared_ptr<dotk::Vector<Real> > gold = dotk::gtest::allocateControl();
     (*gold)[0] = -110.;
     (*gold)[1] = -264.;
     Real tol = 1e-8;
@@ -148,7 +148,7 @@ TEST(DOTk_FletcherReeves, direction)
 
     // TEST 1
     dir.direction(mng);
-    std::tr1::shared_ptr<dotk::vector<Real> > gold = dotk::gtest::allocateControl();
+    std::tr1::shared_ptr<dotk::Vector<Real> > gold = dotk::gtest::allocateControl();
     (*gold)[0] = -110.;
     (*gold)[1] = -264.;
     Real tol = 1e-8;

@@ -13,8 +13,8 @@
 namespace dotk
 {
 
-template<class Type>
-class vector;
+template<typename ScalarType>
+class Vector;
 
 namespace lp
 {
@@ -29,8 +29,8 @@ struct EqualityConstraintResidual
     }
 
     void operator()(const std::tr1::shared_ptr<dotk::DOTk_EqualityConstraint<Real> > & equality_,
-                    const std::tr1::shared_ptr<dotk::vector<Real> > & primal_,
-                    std::tr1::shared_ptr<dotk::vector<Real> > & output_) const
+                    const std::tr1::shared_ptr<dotk::Vector<Real> > & primal_,
+                    std::tr1::shared_ptr<dotk::Vector<Real> > & output_) const
     {
         equality_->residual(*primal_, *output_);
     }
@@ -51,9 +51,9 @@ public:
     }
 
     void operator()(const std::tr1::shared_ptr<dotk::DOTk_EqualityConstraint<Real> > & equality_,
-                    const std::tr1::shared_ptr< dotk::vector<Real> > & primal_,
-                    const std::tr1::shared_ptr< dotk::vector<Real> > & delta_primal_,
-                    std::tr1::shared_ptr< dotk::vector<Real> > & output_) const
+                    const std::tr1::shared_ptr< dotk::Vector<Real> > & primal_,
+                    const std::tr1::shared_ptr< dotk::Vector<Real> > & delta_primal_,
+                    std::tr1::shared_ptr< dotk::Vector<Real> > & output_) const
     {
         equality_->jacobian(*primal_, *delta_primal_, *output_);
     }
@@ -74,9 +74,9 @@ public:
     }
 
     void operator()(const std::tr1::shared_ptr<dotk::DOTk_EqualityConstraint<Real> > & operators_,
-                    const std::tr1::shared_ptr< dotk::vector<Real> > & primal_,
-                    const std::tr1::shared_ptr< dotk::vector<Real> > & dual_,
-                    std::tr1::shared_ptr< dotk::vector<Real> > & output_) const
+                    const std::tr1::shared_ptr< dotk::Vector<Real> > & primal_,
+                    const std::tr1::shared_ptr< dotk::Vector<Real> > & dual_,
+                    std::tr1::shared_ptr< dotk::Vector<Real> > & output_) const
     {
         operators_->adjointJacobian(*primal_, *dual_, *output_);
     }
@@ -97,10 +97,10 @@ public:
     }
 
     void operator()(const std::tr1::shared_ptr<dotk::DOTk_EqualityConstraint<Real> > & equality_,
-                    const std::tr1::shared_ptr< dotk::vector<Real> > & state_,
-                    const std::tr1::shared_ptr< dotk::vector<Real> > & dual_,
-                    const std::tr1::shared_ptr< dotk::vector<Real> > & delta_primal_,
-                    std::tr1::shared_ptr< dotk::vector<Real> > & output_) const
+                    const std::tr1::shared_ptr< dotk::Vector<Real> > & state_,
+                    const std::tr1::shared_ptr< dotk::Vector<Real> > & dual_,
+                    const std::tr1::shared_ptr< dotk::Vector<Real> > & delta_primal_,
+                    std::tr1::shared_ptr< dotk::Vector<Real> > & output_) const
     {
         equality_->hessian(*state_, *dual_, *delta_primal_, *output_);
     }

@@ -14,8 +14,8 @@
 namespace dotk
 {
 
-template<typename Type>
-DOTk_PrimalVector<Type>::DOTk_PrimalVector(const dotk::DOTk_Primal & primal_) :
+template<typename ScalarType>
+DOTk_PrimalVector<ScalarType>::DOTk_PrimalVector(const dotk::DOTk_Primal & primal_) :
         m_Size(0),
         m_State(),
         m_Control()
@@ -23,8 +23,8 @@ DOTk_PrimalVector<Type>::DOTk_PrimalVector(const dotk::DOTk_Primal & primal_) :
     this->initialize(primal_);
 }
 
-template<typename Type>
-DOTk_PrimalVector<Type>::DOTk_PrimalVector(const dotk::vector<Type> & control_) :
+template<typename ScalarType>
+DOTk_PrimalVector<ScalarType>::DOTk_PrimalVector(const dotk::Vector<ScalarType> & control_) :
         m_Size(control_.size()),
         m_State(),
         m_Control(control_.clone())
@@ -32,8 +32,8 @@ DOTk_PrimalVector<Type>::DOTk_PrimalVector(const dotk::vector<Type> & control_) 
     m_Control->copy(control_);
 }
 
-template<typename Type>
-DOTk_PrimalVector<Type>::DOTk_PrimalVector(const dotk::vector<Type> & control_, const dotk::vector<Type> & state_) :
+template<typename ScalarType>
+DOTk_PrimalVector<ScalarType>::DOTk_PrimalVector(const dotk::Vector<ScalarType> & control_, const dotk::Vector<ScalarType> & state_) :
         m_Size(control_.size() + state_.size()),
         m_State(state_.clone()),
         m_Control(control_.clone())
@@ -41,13 +41,13 @@ DOTk_PrimalVector<Type>::DOTk_PrimalVector(const dotk::vector<Type> & control_, 
     this->initialize(control_, state_);
 }
 
-template<typename Type>
-DOTk_PrimalVector<Type>::~DOTk_PrimalVector()
+template<typename ScalarType>
+DOTk_PrimalVector<ScalarType>::~DOTk_PrimalVector()
 {
 }
 
-template<typename Type>
-void DOTk_PrimalVector<Type>::scale(const Type & alpha_)
+template<typename ScalarType>
+void DOTk_PrimalVector<ScalarType>::scale(const ScalarType & alpha_)
 {
     m_Control->scale(alpha_);
     if(m_State.use_count() > 0)
@@ -56,8 +56,8 @@ void DOTk_PrimalVector<Type>::scale(const Type & alpha_)
     }
 }
 
-template<typename Type>
-void DOTk_PrimalVector<Type>::cwiseProd(const dotk::vector<Type> & input_)
+template<typename ScalarType>
+void DOTk_PrimalVector<ScalarType>::cwiseProd(const dotk::Vector<ScalarType> & input_)
 {
     m_Control->cwiseProd(*input_.control());
     if(m_State.use_count() > 0)
@@ -66,8 +66,8 @@ void DOTk_PrimalVector<Type>::cwiseProd(const dotk::vector<Type> & input_)
     }
 }
 
-template<typename Type>
-void DOTk_PrimalVector<Type>::axpy(const Type & alpha_, const dotk::vector<Type> & input_)
+template<typename ScalarType>
+void DOTk_PrimalVector<ScalarType>::axpy(const ScalarType & alpha_, const dotk::Vector<ScalarType> & input_)
 {
     m_Control->axpy(alpha_, *input_.control());
     if(m_State.use_count() > 0)
@@ -76,42 +76,42 @@ void DOTk_PrimalVector<Type>::axpy(const Type & alpha_, const dotk::vector<Type>
     }
 }
 
-template<typename Type>
-Type DOTk_PrimalVector<Type>::max() const
+template<typename ScalarType>
+ScalarType DOTk_PrimalVector<ScalarType>::max() const
 {
     if(m_State.use_count() > 0)
     {
-        Type state_max = m_State->max();
-        Type control_max = m_Control->max();
-        Type max_value = std::max(state_max, control_max);
+        ScalarType state_max = m_State->max();
+        ScalarType control_max = m_Control->max();
+        ScalarType max_value = std::max(state_max, control_max);
         return (max_value);
     }
     else
     {
-        Type max_value = m_Control->max();
+        ScalarType max_value = m_Control->max();
         return (max_value);
     }
 }
 
-template<typename Type>
-Type DOTk_PrimalVector<Type>::min() const
+template<typename ScalarType>
+ScalarType DOTk_PrimalVector<ScalarType>::min() const
 {
     if(m_State.use_count() > 0)
     {
-        Type state_min = m_State->min();
-        Type control_min = m_Control->min();
-        Type min_value = std::min(state_min, control_min);
+        ScalarType state_min = m_State->min();
+        ScalarType control_min = m_Control->min();
+        ScalarType min_value = std::min(state_min, control_min);
         return (min_value);
     }
     else
     {
-        Type min_value = m_Control->min();
+        ScalarType min_value = m_Control->min();
         return (min_value);
     }
 }
 
-template<typename Type>
-void DOTk_PrimalVector<Type>::abs()
+template<typename ScalarType>
+void DOTk_PrimalVector<ScalarType>::abs()
 {
     m_Control->abs();
     if(m_State.use_count() > 0)
@@ -120,10 +120,10 @@ void DOTk_PrimalVector<Type>::abs()
     }
 }
 
-template<typename Type>
-Type DOTk_PrimalVector<Type>::sum() const
+template<typename ScalarType>
+ScalarType DOTk_PrimalVector<ScalarType>::sum() const
 {
-    Type result = m_Control->sum();
+    ScalarType result = m_Control->sum();
     if(m_State.use_count() > 0)
     {
         result += m_State->sum();
@@ -131,10 +131,10 @@ Type DOTk_PrimalVector<Type>::sum() const
     return (result);
 }
 
-template<typename Type>
-Type DOTk_PrimalVector<Type>::dot(const dotk::vector<Type> & input_) const
+template<typename ScalarType>
+ScalarType DOTk_PrimalVector<ScalarType>::dot(const dotk::Vector<ScalarType> & input_) const
 {
-    Type result = m_Control->dot(*input_.control());
+    ScalarType result = m_Control->dot(*input_.control());
     if(m_State.use_count() > 0)
     {
         result += m_State->dot(*input_.state());
@@ -142,16 +142,16 @@ Type DOTk_PrimalVector<Type>::dot(const dotk::vector<Type> & input_) const
     return (result);
 }
 
-template<typename Type>
-Type DOTk_PrimalVector<Type>::norm() const
+template<typename ScalarType>
+ScalarType DOTk_PrimalVector<ScalarType>::norm() const
 {
-    Type result = this->dot(*this);
+    ScalarType result = this->dot(*this);
     result = std::pow(result, 0.5);
     return (result);
 }
 
-template<typename Type>
-void DOTk_PrimalVector<Type>::fill(const Type & value_)
+template<typename ScalarType>
+void DOTk_PrimalVector<ScalarType>::fill(const ScalarType & value_)
 {
     m_Control->fill(value_);
     if(m_State.use_count() > 0)
@@ -160,8 +160,8 @@ void DOTk_PrimalVector<Type>::fill(const Type & value_)
     }
 }
 
-template<typename Type>
-void DOTk_PrimalVector<Type>::copy(const dotk::vector<Type> & input_)
+template<typename ScalarType>
+void DOTk_PrimalVector<ScalarType>::copy(const dotk::Vector<ScalarType> & input_)
 {
     m_Control->copy(*input_.control());
     if(m_State.use_count() > 0)
@@ -170,8 +170,8 @@ void DOTk_PrimalVector<Type>::copy(const dotk::vector<Type> & input_)
     }
 }
 
-template<typename Type>
-void DOTk_PrimalVector<Type>::gather(Type* input_) const
+template<typename ScalarType>
+void DOTk_PrimalVector<ScalarType>::gather(ScalarType* input_) const
 {
     if(m_State.use_count() > 0)
     {
@@ -185,41 +185,41 @@ void DOTk_PrimalVector<Type>::gather(Type* input_) const
     }
 }
 
-template<typename Type>
-size_t DOTk_PrimalVector<Type>::size() const
+template<typename ScalarType>
+size_t DOTk_PrimalVector<ScalarType>::size() const
 {
     return (m_Size);
 }
 
-template<typename Type>
-std::tr1::shared_ptr<dotk::vector<Type> > DOTk_PrimalVector<Type>::clone() const
+template<typename ScalarType>
+std::tr1::shared_ptr<dotk::Vector<ScalarType> > DOTk_PrimalVector<ScalarType>::clone() const
 {
     if(m_State.use_count() > 0)
     {
-        std::tr1::shared_ptr<dotk::DOTk_PrimalVector<Type> > x(new dotk::DOTk_PrimalVector<Type>(*m_Control, *m_State));
+        std::tr1::shared_ptr<dotk::DOTk_PrimalVector<ScalarType> > x(new dotk::DOTk_PrimalVector<ScalarType>(*m_Control, *m_State));
         return (x);
     }
     else
     {
-        std::tr1::shared_ptr<dotk::DOTk_PrimalVector<Type> > x(new dotk::DOTk_PrimalVector<Type>(*m_Control));
+        std::tr1::shared_ptr<dotk::DOTk_PrimalVector<ScalarType> > x(new dotk::DOTk_PrimalVector<ScalarType>(*m_Control));
         return (x);
     }
 }
 
-template<typename Type>
-const std::tr1::shared_ptr<dotk::vector<Type> > & DOTk_PrimalVector<Type>::state() const
+template<typename ScalarType>
+const std::tr1::shared_ptr<dotk::Vector<ScalarType> > & DOTk_PrimalVector<ScalarType>::state() const
 {
     return (m_State);
 }
 
-template<typename Type>
-const std::tr1::shared_ptr<dotk::vector<Type> > & DOTk_PrimalVector<Type>::control() const
+template<typename ScalarType>
+const std::tr1::shared_ptr<dotk::Vector<ScalarType> > & DOTk_PrimalVector<ScalarType>::control() const
 {
     return (m_Control);
 }
 
-template<typename Type>
-Type & DOTk_PrimalVector<Type>::operator [](size_t index_)
+template<typename ScalarType>
+ScalarType & DOTk_PrimalVector<ScalarType>::operator [](size_t index_)
 {
     assert(index_ >= 0);
     assert(index_ < this->size());
@@ -235,8 +235,8 @@ Type & DOTk_PrimalVector<Type>::operator [](size_t index_)
     }
 }
 
-template<typename Type>
-const Type & DOTk_PrimalVector<Type>::operator [](size_t index_) const
+template<typename ScalarType>
+const ScalarType & DOTk_PrimalVector<ScalarType>::operator [](size_t index_) const
 {
     assert(index_ >= 0);
     assert(index_ < this->size());
@@ -252,8 +252,8 @@ const Type & DOTk_PrimalVector<Type>::operator [](size_t index_) const
     }
 }
 
-template<typename Type>
-void DOTk_PrimalVector<Type>::initialize(const dotk::DOTk_Primal & primal_)
+template<typename ScalarType>
+void DOTk_PrimalVector<ScalarType>::initialize(const dotk::DOTk_Primal & primal_)
 {
     m_Size = primal_.control()->size();
     m_Control = primal_.control()->clone();
@@ -266,8 +266,8 @@ void DOTk_PrimalVector<Type>::initialize(const dotk::DOTk_Primal & primal_)
     }
 }
 
-template<typename Type>
-void DOTk_PrimalVector<Type>::initialize(const dotk::vector<Type> & control_, const dotk::vector<Type> & state_)
+template<typename ScalarType>
+void DOTk_PrimalVector<ScalarType>::initialize(const dotk::Vector<ScalarType> & control_, const dotk::Vector<ScalarType> & state_)
 {
     m_State->copy(state_);
     m_Control->copy(control_);

@@ -27,8 +27,8 @@ DOTk_FeasibleDirection::~DOTk_FeasibleDirection()
 {
 }
 
-void DOTk_FeasibleDirection::getDirection(const std::tr1::shared_ptr<dotk::vector<Real> > & primal_,
-                                          const std::tr1::shared_ptr<dotk::vector<Real> > & feasible_dir_)
+void DOTk_FeasibleDirection::getDirection(const std::tr1::shared_ptr<dotk::Vector<Real> > & primal_,
+                                          const std::tr1::shared_ptr<dotk::Vector<Real> > & feasible_dir_)
 {
     Real factor = 1.;
     m_TrialPrimal->copy(*primal_);

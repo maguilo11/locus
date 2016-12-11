@@ -16,7 +16,7 @@
 namespace dotk
 {
 
-DOTk_LSR1InvHessian::DOTk_LSR1InvHessian(const std::tr1::shared_ptr<dotk::vector<Real> > & vector_,
+DOTk_LSR1InvHessian::DOTk_LSR1InvHessian(const std::tr1::shared_ptr<dotk::Vector<Real> > & vector_,
                                          size_t max_secant_storage_) :
         dotk::DOTk_SecondOrderOperator(max_secant_storage_),
         m_RhoStorage(new std::vector<Real>(max_secant_storage_, 0.)),
@@ -39,18 +39,18 @@ const std::tr1::shared_ptr<std::vector<Real> > & DOTk_LSR1InvHessian::getDeltaGr
     return (m_RhoStorage);
 }
 
-const std::tr1::shared_ptr<dotk::vector<Real> > & DOTk_LSR1InvHessian::getDeltaGradStorage(size_t at_) const
+const std::tr1::shared_ptr<dotk::Vector<Real> > & DOTk_LSR1InvHessian::getDeltaGradStorage(size_t at_) const
 {
     return (m_DeltaGradientStorage->basis(at_));
 }
 
-const std::tr1::shared_ptr<dotk::vector<Real> > & DOTk_LSR1InvHessian::getDeltaPrimalStorage(size_t at_) const
+const std::tr1::shared_ptr<dotk::Vector<Real> > & DOTk_LSR1InvHessian::getDeltaPrimalStorage(size_t at_) const
 {
     return (m_DeltaPrimalStorage->basis(at_));
 }
 
-void DOTk_LSR1InvHessian::unrollingSR1(const std::tr1::shared_ptr<dotk::vector<Real> > & vector_,
-                                       const std::tr1::shared_ptr<dotk::vector<Real> > & inv_hess_times_vector_)
+void DOTk_LSR1InvHessian::unrollingSR1(const std::tr1::shared_ptr<dotk::Vector<Real> > & vector_,
+                                       const std::tr1::shared_ptr<dotk::Vector<Real> > & inv_hess_times_vector_)
 {
     /// Memory efficient SR1 formula, use for limited memory SOL_Hessian approximations \n
     /// \n
@@ -92,8 +92,8 @@ void DOTk_LSR1InvHessian::unrollingSR1(const std::tr1::shared_ptr<dotk::vector<R
     }
 }
 
-void DOTk_LSR1InvHessian::getInvHessian(const std::tr1::shared_ptr<dotk::vector<Real> > & vector_,
-                                        const std::tr1::shared_ptr<dotk::vector<Real> > & inv_hess_times_vector_)
+void DOTk_LSR1InvHessian::getInvHessian(const std::tr1::shared_ptr<dotk::Vector<Real> > & vector_,
+                                        const std::tr1::shared_ptr<dotk::Vector<Real> > & inv_hess_times_vector_)
 {
     /// Limited memory Symmetric Rank-1 (LSR1) DOTk Hessian approximation method. \n
     /// The symmetric rank-1 updating formula satisfies the following secant equation: \n
@@ -104,11 +104,11 @@ void DOTk_LSR1InvHessian::getInvHessian(const std::tr1::shared_ptr<dotk::vector<
     /// \n
     /// In:  \n
     ///      vector_ = direction at the current iteration, unchanged on exist. \n
-    ///      (std::tr1::shared_ptr<dotk::vector<Real> >) \n
+    ///      (std::tr1::shared_ptr<dotk::Vector<Real> >) \n
     /// Out: \n
     ///      inv_hess_times_vector_ = inverse DOTk Hessian-vector product, i.e. application of the inverse DOTk Hessian \n
     ///      operator to the trial step. \n
-    ///      (std::tr1::shared_ptr<dotk::vector<Real> >) \n
+    ///      (std::tr1::shared_ptr<dotk::Vector<Real> >) \n
     ///
     inv_hess_times_vector_->copy(*vector_);
     bool is_secant_information_stored = dotk::DOTk_SecondOrderOperator::getNumUpdatesStored() <= 0 ? true: false;
@@ -128,8 +128,8 @@ void DOTk_LSR1InvHessian::getInvHessian(const std::tr1::shared_ptr<dotk::vector<
 }
 
 void DOTk_LSR1InvHessian::apply(const std::tr1::shared_ptr<dotk::DOTk_OptimizationDataMng> & mng_,
-                                const std::tr1::shared_ptr<dotk::vector<Real> > & vector_,
-                                const std::tr1::shared_ptr<dotk::vector<Real> > & matrix_times_vector_)
+                                const std::tr1::shared_ptr<dotk::Vector<Real> > & vector_,
+                                const std::tr1::shared_ptr<dotk::Vector<Real> > & matrix_times_vector_)
 {
     dotk::DOTk_SecondOrderOperator::computeDeltaPrimal(mng_->getNewPrimal(), mng_->getOldPrimal(), m_DeltaPrimal);
     dotk::DOTk_SecondOrderOperator::computeDeltaGradient(mng_->getNewGradient(),

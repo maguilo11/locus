@@ -80,7 +80,7 @@ TEST(SecondOrderOperator, getAndSetInvHessianType)
 
 TEST(SecondOrderOperator, updateSecantStorage)
 {
-    std::tr1::shared_ptr<dotk::vector<Real> > delta_grad = dotk::gtest::allocateData(2);
+    std::tr1::shared_ptr<dotk::Vector<Real> > delta_grad = dotk::gtest::allocateData(2);
     (*delta_grad)[0] = -1151;
     (*delta_grad)[1] = 250;
 
@@ -92,7 +92,7 @@ TEST(SecondOrderOperator, updateSecantStorage)
     // Test 1: SECANT STORAGE IS NOT FULL, STORE DATA INTO FIRST ENTRY
     dotk::DOTk_SecondOrderOperator hess(storage);
     hess.setUpdateSecondOrderOperator(true);
-    std::tr1::shared_ptr<dotk::vector<Real> > delta_primal = delta_grad->clone();
+    std::tr1::shared_ptr<dotk::Vector<Real> > delta_primal = delta_grad->clone();
     delta_primal->fill(-0.5);
     hess.updateSecantStorage(delta_primal, delta_grad, rho, dprimal_storage, dgrad_storage);
     EXPECT_EQ(1, hess.getNumUpdatesStored());
@@ -159,8 +159,8 @@ TEST(SecondOrderOperator, computeStatePerturbation)
     std::tr1::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
     std::tr1::shared_ptr<dotk::DOTk_LineSearchMngTypeULP> mng(new dotk::DOTk_LineSearchMngTypeULP(primal, objective));
 
-    std::tr1::shared_ptr<dotk::vector<Real> > grad = primal->control()->clone();
-    std::tr1::shared_ptr<dotk::vector<Real> > vector = primal->control()->clone();
+    std::tr1::shared_ptr<dotk::Vector<Real> > grad = primal->control()->clone();
+    std::tr1::shared_ptr<dotk::Vector<Real> > vector = primal->control()->clone();
 
     mng->getRoutinesMng()->gradient(vector, grad);
 
@@ -168,8 +168,8 @@ TEST(SecondOrderOperator, computeStatePerturbation)
     mng->getNewGradient()->copy(*grad);
 
     dotk::DOTk_SecondOrderOperator hess;
-    std::tr1::shared_ptr<dotk::vector<Real> > dgrad = primal->control()->clone();
-    std::tr1::shared_ptr<dotk::vector<Real> > dprimal = primal->control()->clone();
+    std::tr1::shared_ptr<dotk::Vector<Real> > dgrad = primal->control()->clone();
+    std::tr1::shared_ptr<dotk::Vector<Real> > dprimal = primal->control()->clone();
     hess.computeDeltaPrimal(mng->getNewPrimal(), mng->getOldPrimal(), dprimal);
     hess.computeDeltaGradient(mng->getNewGradient(), mng->getOldGradient(), dgrad);
 
@@ -187,9 +187,9 @@ TEST(SecondOrderOperator, getBarzilaiBorweinStep)
     dotk::DOTk_SecondOrderOperator hess;
     EXPECT_EQ(dotk::types::HESSIAN_DISABLED, hess.getHessianType());
 
-    std::tr1::shared_ptr<dotk::vector<Real> > dgrad = primal->control()->clone();
+    std::tr1::shared_ptr<dotk::Vector<Real> > dgrad = primal->control()->clone();
     dgrad->fill(2);
-    std::tr1::shared_ptr<dotk::vector<Real> > dprimal = primal->control()->clone();
+    std::tr1::shared_ptr<dotk::Vector<Real> > dprimal = primal->control()->clone();
     dprimal->fill(2);
     mng->getRoutinesMng()->gradient(dprimal, dgrad);
 
@@ -215,7 +215,7 @@ TEST(UserDefinedHessian, apply)
     mng->getTrialStep()->fill(1);
     hess.apply(mng, mng->getTrialStep(), mng->getMatrixTimesVector());
 
-    std::tr1::shared_ptr<dotk::vector<Real> > gold = primal->control()->clone();
+    std::tr1::shared_ptr<dotk::Vector<Real> > gold = primal->control()->clone();
     (*gold)[0] = 3202.;
     (*gold)[1] = -600.;
     dotk::gtest::checkResults(*mng->getMatrixTimesVector(), *gold);

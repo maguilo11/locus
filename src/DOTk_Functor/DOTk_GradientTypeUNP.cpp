@@ -30,7 +30,7 @@ DOTk_GradientTypeUNP::~DOTk_GradientTypeUNP()
 {
 }
 
-void DOTk_GradientTypeUNP::operator()(const dotk::vector<Real> & primal_, dotk::vector<Real> & gradient_)
+void DOTk_GradientTypeUNP::operator()(const dotk::Vector<Real> & primal_, dotk::Vector<Real> & gradient_)
 {
     // evaluate equality constraint
     m_State->fill(static_cast<Real>(0.0));
@@ -78,7 +78,7 @@ void DOTk_GradientTypeUNP::initialize(const std::tr1::shared_ptr<dotk::DOTk_Prim
 }
 
 void DOTk_GradientTypeUNP::allocate
-(dotk::types::variable_t type_, const std::tr1::shared_ptr<dotk::vector<Real> > & data_)
+(dotk::types::variable_t type_, const std::tr1::shared_ptr<dotk::Vector<Real> > & data_)
 {
     switch(type_)
     {

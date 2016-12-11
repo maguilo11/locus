@@ -13,8 +13,8 @@
 namespace dotk
 {
 
-template<typename Type>
-class vector;
+template<typename ScalarType>
+class Vector;
 
 class DOTk_LineSearchStepMng;
 class DOTk_SecondOrderOperator;
@@ -42,7 +42,7 @@ public:
     void getMin();
 
 private:
-    std::tr1::shared_ptr<dotk::vector<Real> > m_InvHessianTimesVector;
+    std::tr1::shared_ptr<dotk::Vector<Real> > m_InvHessianTimesVector;
 
     std::tr1::shared_ptr<dotk::DOTk_FirstOrderLineSearchAlgIO> m_IO;
     std::tr1::shared_ptr<dotk::DOTk_LineSearchStepMng> m_LineSearch;

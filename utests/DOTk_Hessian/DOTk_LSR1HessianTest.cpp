@@ -49,13 +49,13 @@ TEST(DOTk_LSR1Hessian, getHessian)
     (*hess.getDeltaGradStorage(2))[0] = 1.88600200593293;
     (*hess.getDeltaGradStorage(2))[1] = -2.941385892824783;
 
-    std::tr1::shared_ptr<dotk::vector<Real> > trial_step = primal->control()->clone();
+    std::tr1::shared_ptr<dotk::Vector<Real> > trial_step = primal->control()->clone();
     (*trial_step)[0] = 0.979448879095330;
     (*trial_step)[1] = -0.265611268123836;
-    std::tr1::shared_ptr<dotk::vector<Real> > Hess_times_vec = primal->control()->clone();
+    std::tr1::shared_ptr<dotk::Vector<Real> > Hess_times_vec = primal->control()->clone();
     hess.getHessian(trial_step, Hess_times_vec);
 
-    std::tr1::shared_ptr<dotk::vector<Real> > gold = primal->control()->clone();
+    std::tr1::shared_ptr<dotk::Vector<Real> > gold = primal->control()->clone();
     (*gold)[0] = -2.889509684974680;
     (*gold)[1] = 1.197517114591315;
     dotk::gtest::checkResults(*Hess_times_vec, *gold);

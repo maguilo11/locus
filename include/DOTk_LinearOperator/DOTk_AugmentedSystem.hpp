@@ -15,8 +15,8 @@ namespace dotk
 
 class DOTk_OptimizationDataMng;
 
-template<class Type>
-class vector;
+template<typename ScalarType>
+class Vector;
 
 class DOTk_AugmentedSystem: public dotk::DOTk_LinearOperator
 {
@@ -25,8 +25,8 @@ public:
     virtual ~DOTk_AugmentedSystem();
 
     virtual void apply(const std::tr1::shared_ptr<dotk::DOTk_OptimizationDataMng> & mng_,
-                       const std::tr1::shared_ptr<dotk::vector<Real> > & data_,
-                       const std::tr1::shared_ptr<dotk::vector<Real> > & output_);
+                       const std::tr1::shared_ptr<dotk::Vector<Real> > & data_,
+                       const std::tr1::shared_ptr<dotk::Vector<Real> > & output_);
 
 private:
     DOTk_AugmentedSystem(const dotk::DOTk_AugmentedSystem &);

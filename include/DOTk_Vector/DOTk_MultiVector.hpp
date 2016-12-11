@@ -15,74 +15,74 @@ namespace dotk
 
 class DOTk_Primal;
 
-template<typename Type>
-class DOTk_MultiVector: public dotk::vector<Type>
+template<typename ScalarType>
+class DOTk_MultiVector: public dotk::Vector<ScalarType>
 {
 public:
     explicit DOTk_MultiVector(const dotk::DOTk_Primal & primal_);
-    DOTk_MultiVector(const dotk::vector<Type> & control_,
-                     const dotk::vector<Type> & dual_);
-    DOTk_MultiVector(const dotk::vector<Type> & control_,
-                     const dotk::vector<Type> & state_,
-                     const dotk::vector<Type> & dual_);
+    DOTk_MultiVector(const dotk::Vector<ScalarType> & control_,
+                     const dotk::Vector<ScalarType> & dual_);
+    DOTk_MultiVector(const dotk::Vector<ScalarType> & control_,
+                     const dotk::Vector<ScalarType> & state_,
+                     const dotk::Vector<ScalarType> & dual_);
     virtual ~DOTk_MultiVector();
 
     // Scales a vector by a real constant.
-    virtual void scale(const Type & alpha_);
+    virtual void scale(const ScalarType & alpha_);
     // Component wise multiplication of two vectors.
-    virtual void cwiseProd(const dotk::vector<Type> & input_);
+    virtual void cwiseProd(const dotk::Vector<ScalarType> & input_);
     // Constant times a vector plus a vector.
-    virtual void axpy(const Type & alpha_, const dotk::vector<Type> & input_);
+    virtual void axpy(const ScalarType & alpha_, const dotk::Vector<ScalarType> & input_);
     // Returns the maximum element in a range.
-    virtual Type max() const;
+    virtual ScalarType max() const;
     // Returns the minimum element in a range.
-    virtual Type min() const;
+    virtual ScalarType min() const;
     // Computes the absolute value of each element in the container.
     virtual void abs();
     // Returns the sum of all the elements in the container.
-    virtual Type sum() const;
+    virtual ScalarType sum() const;
     // Returns the inner product of two vectors.
-    virtual Type dot(const dotk::vector<Type> & input_) const;
+    virtual ScalarType dot(const dotk::Vector<ScalarType> & input_) const;
     // Returns the euclidean norm of a vector.
-    virtual Type norm() const;
+    virtual ScalarType norm() const;
     // Assigns new contents to the vector, replacing its current contents, and not modifying its size.
-    virtual void fill(const Type & value_);
+    virtual void fill(const ScalarType & value_);
     // Copies the elements in the range [first,last) into the range beginning at result.
-    virtual void copy(const dotk::vector<Type> & input_);
+    virtual void copy(const dotk::Vector<ScalarType> & input_);
     // Gathers data from private member data of a group to one member.
-    virtual void gather(Type* input_) const;
+    virtual void gather(ScalarType* input_) const;
     // Returns the number of elements in the vector.
     virtual size_t size() const;
-    // Clones memory for an object of type dotk::DOTk_MultiVector
-    virtual std::tr1::shared_ptr<dotk::vector<Type> > clone() const;
+    // Clones memory for an object of ScalarType dotk::DOTk_MultiVector
+    virtual std::tr1::shared_ptr<dotk::Vector<ScalarType> > clone() const;
     // Operator overloads the square bracket operator
-    virtual Type & operator [](size_t index_);
+    virtual ScalarType & operator [](size_t index_);
     // Operator overloads the const square bracket operator
-    virtual const Type & operator [](size_t index_) const;
+    virtual const ScalarType & operator [](size_t index_) const;
     // Returns shared pointer to dual vector
-    virtual const std::tr1::shared_ptr<dotk::vector<Type> > & dual() const;
+    virtual const std::tr1::shared_ptr<dotk::Vector<ScalarType> > & dual() const;
     // Returns shared pointer to state vector
-    virtual const std::tr1::shared_ptr<dotk::vector<Type> > & state() const;
+    virtual const std::tr1::shared_ptr<dotk::Vector<ScalarType> > & state() const;
     // Returns shared pointer to control vector
-    virtual const std::tr1::shared_ptr<dotk::vector<Type> > & control() const;
+    virtual const std::tr1::shared_ptr<dotk::Vector<ScalarType> > & control() const;
 
 
 private:
     void initialize(const dotk::DOTk_Primal & primal_);
-    void initialize(const dotk::vector<Type> & control_, const dotk::vector<Type> & dual_);
-    void initialize(const dotk::vector<Type> & control_,
-                    const dotk::vector<Type> & state_,
-                    const dotk::vector<Type> & dual_);
+    void initialize(const dotk::Vector<ScalarType> & control_, const dotk::Vector<ScalarType> & dual_);
+    void initialize(const dotk::Vector<ScalarType> & control_,
+                    const dotk::Vector<ScalarType> & state_,
+                    const dotk::Vector<ScalarType> & dual_);
 
 private:
     size_t m_Size;
-    std::tr1::shared_ptr<dotk::vector<Type> > m_Dual;
-    std::tr1::shared_ptr<dotk::vector<Type> > m_State;
-    std::tr1::shared_ptr<dotk::vector<Type> > m_Control;
+    std::tr1::shared_ptr<dotk::Vector<ScalarType> > m_Dual;
+    std::tr1::shared_ptr<dotk::Vector<ScalarType> > m_State;
+    std::tr1::shared_ptr<dotk::Vector<ScalarType> > m_Control;
 
 private:
-    DOTk_MultiVector(const dotk::DOTk_MultiVector<Type> &);
-    dotk::DOTk_MultiVector<Type> & operator=(const dotk::DOTk_MultiVector<Type> & rhs_);
+    DOTk_MultiVector(const dotk::DOTk_MultiVector<ScalarType> &);
+    dotk::DOTk_MultiVector<ScalarType> & operator=(const dotk::DOTk_MultiVector<ScalarType> & rhs_);
 };
 
 }

@@ -15,31 +15,31 @@ namespace dotk
 
 class DOTk_OptimizationDataMng;
 
-template<class Type>
-class vector;
-template<class Type>
+template<typename ScalarType>
+class Vector;
+template<typename ScalarType>
 class matrix;
 
 class DOTk_LDFPHessian : public dotk::DOTk_SecondOrderOperator
 {
 public:
-    DOTk_LDFPHessian(const std::tr1::shared_ptr<dotk::vector<Real> > & vector_, size_t max_secant_storage_);
+    DOTk_LDFPHessian(const std::tr1::shared_ptr<dotk::Vector<Real> > & vector_, size_t max_secant_storage_);
     virtual ~DOTk_LDFPHessian();
 
-    const std::tr1::shared_ptr<dotk::vector<Real> > & getDeltaGradStorage(size_t at_) const;
-    const std::tr1::shared_ptr<dotk::vector<Real> > & getDeltaPrimalStorage(size_t at_) const;
+    const std::tr1::shared_ptr<dotk::Vector<Real> > & getDeltaGradStorage(size_t at_) const;
+    const std::tr1::shared_ptr<dotk::Vector<Real> > & getDeltaPrimalStorage(size_t at_) const;
 
-    void getHessian(const std::tr1::shared_ptr<dotk::vector<Real> > & vector_,
-                    const std::tr1::shared_ptr<dotk::vector<Real> > & hess_times_vec_);
+    void getHessian(const std::tr1::shared_ptr<dotk::Vector<Real> > & vector_,
+                    const std::tr1::shared_ptr<dotk::Vector<Real> > & hess_times_vec_);
     virtual void apply(const std::tr1::shared_ptr<dotk::DOTk_OptimizationDataMng> & mng_,
-                       const std::tr1::shared_ptr<dotk::vector<Real> > & vector_,
-                       const std::tr1::shared_ptr<dotk::vector<Real> > & matrix_times_vec_);
+                       const std::tr1::shared_ptr<dotk::Vector<Real> > & vector_,
+                       const std::tr1::shared_ptr<dotk::Vector<Real> > & matrix_times_vec_);
 
 private:
     std::vector<Real> m_Alpha;
     std::vector<Real> m_RhoStorage;
-    std::tr1::shared_ptr<dotk::vector<Real> > m_DeltaPrimal;
-    std::tr1::shared_ptr<dotk::vector<Real> > m_DeltaGradient;
+    std::tr1::shared_ptr<dotk::Vector<Real> > m_DeltaPrimal;
+    std::tr1::shared_ptr<dotk::Vector<Real> > m_DeltaGradient;
     std::tr1::shared_ptr<dotk::matrix<Real> > m_DeltaPrimalStorage;
     std::tr1::shared_ptr<dotk::matrix<Real> > m_DeltaGradientStorage;
 

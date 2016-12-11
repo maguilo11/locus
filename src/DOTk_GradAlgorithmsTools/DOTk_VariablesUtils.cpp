@@ -14,7 +14,7 @@
 namespace dotk
 {
 
-void printDual(const std::tr1::shared_ptr<dotk::vector<Real> > & dual_)
+void printDual(const std::tr1::shared_ptr<dotk::Vector<Real> > & dual_)
 {
     std::ofstream file("DOTk_dual_solution.out", std::ios::out | std::ios::trunc);
     for(size_t i = 0; i < dual_->size(); ++i)
@@ -24,7 +24,7 @@ void printDual(const std::tr1::shared_ptr<dotk::vector<Real> > & dual_)
     file.close();
 }
 
-void printState(const std::tr1::shared_ptr<dotk::vector<Real> > & state_)
+void printState(const std::tr1::shared_ptr<dotk::Vector<Real> > & state_)
 {
     std::ofstream file("DOTk_state_solution.out", std::ios::out | std::ios::trunc);
     for(size_t i = 0; i < state_->size(); ++i)
@@ -34,7 +34,7 @@ void printState(const std::tr1::shared_ptr<dotk::vector<Real> > & state_)
     file.close();
 }
 
-void printControl(const std::tr1::shared_ptr<dotk::vector<Real> > & control_)
+void printControl(const std::tr1::shared_ptr<dotk::Vector<Real> > & control_)
 {
     std::ofstream file("DOTk_control_solution.out", std::ios::out | std::ios::trunc);
     for(size_t i = 0; i < control_->size(); ++i)
@@ -44,7 +44,7 @@ void printControl(const std::tr1::shared_ptr<dotk::vector<Real> > & control_)
     file.close();
 }
 
-void printSolution(const std::tr1::shared_ptr<dotk::vector<Real> > & solution_)
+void printSolution(const std::tr1::shared_ptr<dotk::Vector<Real> > & solution_)
 {
     std::ofstream file("DOTk_solution.out", std::ios::out | std::ios::trunc);
     for(size_t i = 0; i < solution_->size(); ++i)

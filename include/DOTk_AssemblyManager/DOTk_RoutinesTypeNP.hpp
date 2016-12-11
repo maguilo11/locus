@@ -18,18 +18,18 @@ namespace dotk
 
 class DOTk_Primal;
 
-template<typename Type>
-class vector;
-template<typename Type>
+template<typename ScalarType>
+class Vector;
+template<typename ScalarType>
 class DOTk_ObjectiveFunction;
-template<typename Type>
+template<typename ScalarType>
 class DOTk_EqualityConstraint;
-template<typename Type>
+template<typename ScalarType>
 class DOTk_InequalityConstraint;
 
 class DOTk_RoutinesTypeNP : public dotk::DOTk_AssemblyManager
 {
-    // TYPE NP = Nonlinear Programming Assembly Manager
+    // TypeNP = Nonlinear Programming Assembly Manager
 public:
     DOTk_RoutinesTypeNP(const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_,
                         const std::tr1::shared_ptr<dotk::DOTk_ObjectiveFunction<Real> > & objective_,
@@ -37,23 +37,23 @@ public:
                         const std::vector<std::tr1::shared_ptr<dotk::DOTk_InequalityConstraint<Real> > > & inequality_);
     virtual ~DOTk_RoutinesTypeNP();
 
-    virtual Real objective(const std::tr1::shared_ptr<dotk::vector<Real> > & control_);
-    virtual void gradient(const std::tr1::shared_ptr<dotk::vector<Real> > & control_,
-                          const std::tr1::shared_ptr<dotk::vector<Real> > & gradient_);
+    virtual Real objective(const std::tr1::shared_ptr<dotk::Vector<Real> > & control_);
+    virtual void gradient(const std::tr1::shared_ptr<dotk::Vector<Real> > & control_,
+                          const std::tr1::shared_ptr<dotk::Vector<Real> > & gradient_);
     virtual Real inequalityBound(const size_t index_);
-    virtual Real inequalityValue(const size_t index_, const std::tr1::shared_ptr<dotk::vector<Real> > & control_);
+    virtual Real inequalityValue(const size_t index_, const std::tr1::shared_ptr<dotk::Vector<Real> > & control_);
     virtual void inequalityGradient(const size_t index_,
-                                    const std::tr1::shared_ptr<dotk::vector<Real> > & control_,
-                                    const std::tr1::shared_ptr<dotk::vector<Real> > & gradient_);
+                                    const std::tr1::shared_ptr<dotk::Vector<Real> > & control_,
+                                    const std::tr1::shared_ptr<dotk::Vector<Real> > & gradient_);
 
 private:
     void initialize(const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_);
 
 private:
-    std::tr1::shared_ptr<dotk::vector<Real> > m_State;
-    std::tr1::shared_ptr<dotk::vector<Real> > m_StateWorkVec;
-    std::tr1::shared_ptr<dotk::vector<Real> > m_ControlWorkVec;
-    std::tr1::shared_ptr<dotk::vector<Real> > m_EqualityConstraintDual;
+    std::tr1::shared_ptr<dotk::Vector<Real> > m_State;
+    std::tr1::shared_ptr<dotk::Vector<Real> > m_StateWorkVec;
+    std::tr1::shared_ptr<dotk::Vector<Real> > m_ControlWorkVec;
+    std::tr1::shared_ptr<dotk::Vector<Real> > m_EqualityConstraintDual;
 
     std::tr1::shared_ptr<dotk::DOTk_ObjectiveFunction<Real> > m_ObjectiveFunction;
     std::tr1::shared_ptr<dotk::DOTk_EqualityConstraint<Real> > m_EqualityConstraint;

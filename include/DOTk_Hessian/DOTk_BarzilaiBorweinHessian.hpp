@@ -15,28 +15,28 @@ namespace dotk
 
 class DOTk_OptimizationDataMng;
 
-template<class Type>
-class vector;
+template<typename ScalarType>
+class Vector;
 
 class DOTk_BarzilaiBorweinHessian : public dotk::DOTk_SecondOrderOperator
 {
 public:
-    explicit DOTk_BarzilaiBorweinHessian(const std::tr1::shared_ptr<dotk::vector<Real> > & vector_);
+    explicit DOTk_BarzilaiBorweinHessian(const std::tr1::shared_ptr<dotk::Vector<Real> > & vector_);
     virtual ~DOTk_BarzilaiBorweinHessian();
 
-    void computeDeltaPrimal(const std::tr1::shared_ptr<dotk::vector<Real> > & new_primal_,
-                            const std::tr1::shared_ptr<dotk::vector<Real> > & old_primal_);
-    void computeDeltaGradient(const std::tr1::shared_ptr<dotk::vector<Real> > & new_gradient_,
-                              const std::tr1::shared_ptr<dotk::vector<Real> > & old_gradient_);
-    void getHessian(const std::tr1::shared_ptr<dotk::vector<Real> > & vec_,
-                    const std::tr1::shared_ptr<dotk::vector<Real> > & mat_times_vec_);
+    void computeDeltaPrimal(const std::tr1::shared_ptr<dotk::Vector<Real> > & new_primal_,
+                            const std::tr1::shared_ptr<dotk::Vector<Real> > & old_primal_);
+    void computeDeltaGradient(const std::tr1::shared_ptr<dotk::Vector<Real> > & new_gradient_,
+                              const std::tr1::shared_ptr<dotk::Vector<Real> > & old_gradient_);
+    void getHessian(const std::tr1::shared_ptr<dotk::Vector<Real> > & vec_,
+                    const std::tr1::shared_ptr<dotk::Vector<Real> > & mat_times_vec_);
     virtual void apply(const std::tr1::shared_ptr<dotk::DOTk_OptimizationDataMng> & mng_,
-                       const std::tr1::shared_ptr<dotk::vector<Real> > & vec_,
-                       const std::tr1::shared_ptr<dotk::vector<Real> > & matrix_times_vec_);
+                       const std::tr1::shared_ptr<dotk::Vector<Real> > & vec_,
+                       const std::tr1::shared_ptr<dotk::Vector<Real> > & matrix_times_vec_);
 
 private:
-    std::tr1::shared_ptr<dotk::vector<Real> > m_DeltaPrimal;
-    std::tr1::shared_ptr<dotk::vector<Real> > m_DeltaGradient;
+    std::tr1::shared_ptr<dotk::Vector<Real> > m_DeltaPrimal;
+    std::tr1::shared_ptr<dotk::Vector<Real> > m_DeltaGradient;
 
 
 private:

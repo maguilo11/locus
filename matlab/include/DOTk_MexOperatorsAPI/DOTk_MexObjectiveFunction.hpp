@@ -15,47 +15,47 @@
 namespace dotk
 {
 
-template<typename Type>
-class vector;
+template<typename ScalarType>
+class Vector;
 
 class DOTk_MexArrayPtr;
 
-template<typename Type>
-class DOTk_MexObjectiveFunction : public DOTk_ObjectiveFunction<Type>
+template<typename ScalarType>
+class DOTk_MexObjectiveFunction : public DOTk_ObjectiveFunction<ScalarType>
 {
 public:
     DOTk_MexObjectiveFunction(const mxArray* operators_, const dotk::types::problem_t & type_);
     virtual ~DOTk_MexObjectiveFunction();
 
-    Type value(const dotk::vector<Type> & primal_);
-    void gradient(const dotk::vector<Type> & primal_, dotk::vector<Type> & output_);
-    void hessian(const dotk::vector<Type> & primal_,
-                 const dotk::vector<Type> & delta_primal_,
-                 dotk::vector<Type> & output_);
+    ScalarType value(const dotk::Vector<ScalarType> & primal_);
+    void gradient(const dotk::Vector<ScalarType> & primal_, dotk::Vector<ScalarType> & output_);
+    void hessian(const dotk::Vector<ScalarType> & primal_,
+                 const dotk::Vector<ScalarType> & delta_primal_,
+                 dotk::Vector<ScalarType> & output_);
 
-    Type value(const dotk::vector<Type> & state_, const dotk::vector<Type> & control_);
-    void partialDerivativeState(const dotk::vector<Type> & state_,
-                                const dotk::vector<Type> & control_,
-                                dotk::vector<Type> & output_);
-    void partialDerivativeControl(const dotk::vector<Type> & state_,
-                                  const dotk::vector<Type> & control_,
-                                  dotk::vector<Type> & output_);
-    void partialDerivativeStateState(const dotk::vector<Type> & state_,
-                                     const dotk::vector<Type> & control_,
-                                     const dotk::vector<Type> & vector_,
-                                     dotk::vector<Type> & output_);
-    void partialDerivativeStateControl(const dotk::vector<Type> & state_,
-                                       const dotk::vector<Type> & control_,
-                                       const dotk::vector<Type> & vector_,
-                                       dotk::vector<Type> & output_);
-    void partialDerivativeControlControl(const dotk::vector<Type> & state_,
-                                         const dotk::vector<Type> & control_,
-                                         const dotk::vector<Type> & vector_,
-                                         dotk::vector<Type> & output_);
-    void partialDerivativeControlState(const dotk::vector<Type> & state_,
-                                       const dotk::vector<Type> & control_,
-                                       const dotk::vector<Type> & vector_,
-                                       dotk::vector<Type> & output_);
+    ScalarType value(const dotk::Vector<ScalarType> & state_, const dotk::Vector<ScalarType> & control_);
+    void partialDerivativeState(const dotk::Vector<ScalarType> & state_,
+                                const dotk::Vector<ScalarType> & control_,
+                                dotk::Vector<ScalarType> & output_);
+    void partialDerivativeControl(const dotk::Vector<ScalarType> & state_,
+                                  const dotk::Vector<ScalarType> & control_,
+                                  dotk::Vector<ScalarType> & output_);
+    void partialDerivativeStateState(const dotk::Vector<ScalarType> & state_,
+                                     const dotk::Vector<ScalarType> & control_,
+                                     const dotk::Vector<ScalarType> & vector_,
+                                     dotk::Vector<ScalarType> & output_);
+    void partialDerivativeStateControl(const dotk::Vector<ScalarType> & state_,
+                                       const dotk::Vector<ScalarType> & control_,
+                                       const dotk::Vector<ScalarType> & vector_,
+                                       dotk::Vector<ScalarType> & output_);
+    void partialDerivativeControlControl(const dotk::Vector<ScalarType> & state_,
+                                         const dotk::Vector<ScalarType> & control_,
+                                         const dotk::Vector<ScalarType> & vector_,
+                                         dotk::Vector<ScalarType> & output_);
+    void partialDerivativeControlState(const dotk::Vector<ScalarType> & state_,
+                                       const dotk::Vector<ScalarType> & control_,
+                                       const dotk::Vector<ScalarType> & vector_,
+                                       dotk::Vector<ScalarType> & output_);
 
 private:
     void clear();
@@ -73,8 +73,8 @@ private:
     dotk::DOTk_MexArrayPtr m_SecondDerivativeControlControl;
 
 private:
-    DOTk_MexObjectiveFunction(const dotk::DOTk_MexObjectiveFunction<Type> &);
-    dotk::DOTk_MexObjectiveFunction<Type> & operator=(const dotk::DOTk_MexObjectiveFunction<Type> &);
+    DOTk_MexObjectiveFunction(const dotk::DOTk_MexObjectiveFunction<ScalarType> &);
+    dotk::DOTk_MexObjectiveFunction<ScalarType> & operator=(const dotk::DOTk_MexObjectiveFunction<ScalarType> &);
 };
 
 }

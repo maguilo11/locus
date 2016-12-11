@@ -105,7 +105,7 @@ void DOTk_MexGradientProjection::solveLinearProgrammingProblem(const mxArray* in
     std::tr1::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
     dotk::mex::buildControlContainer(input_[0], *primal);
 
-    std::tr1::shared_ptr< dotk::vector<double> > vector = primal->control()->clone();
+    std::tr1::shared_ptr< dotk::Vector<double> > vector = primal->control()->clone();
     dotk::mex::parseControlLowerBound(input_[0], *vector);
     primal->setControlLowerBound(*vector);
     vector->fill(0.);
@@ -141,7 +141,7 @@ void DOTk_MexGradientProjection::solveNonlinearProgrammingProblem(const mxArray*
     dotk::mex::buildDualContainer(input_[0], *primal);
     dotk::mex::buildControlContainer(input_[0], *primal);
 
-    std::tr1::shared_ptr< dotk::vector<double> > vector = primal->control()->clone();
+    std::tr1::shared_ptr< dotk::Vector<double> > vector = primal->control()->clone();
     dotk::mex::parseControlLowerBound(input_[0], *vector);
     primal->setControlLowerBound(*vector);
     vector->fill(0.);

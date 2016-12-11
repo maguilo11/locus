@@ -98,7 +98,7 @@ TEST(LineSearchMngTypeULP, setPrimal)
     primal->allocateSerialControlArray(ncontrols, 2);
     dotk::DOTk_LineSearchMngTypeULP mng(primal);
 
-    std::tr1::shared_ptr<dotk::vector<Real> > map = primal->control()->clone();
+    std::tr1::shared_ptr<dotk::Vector<Real> > map = primal->control()->clone();
     map->fill(2);
     mng.setOldPrimal(*map);
 
@@ -134,7 +134,7 @@ TEST(LineSearchMngTypeULP, setGradient)
     primal->allocateSerialControlArray(ncontrols, 2);
     dotk::DOTk_LineSearchMngTypeULP mng(primal);
 
-    std::tr1::shared_ptr<dotk::vector<Real> > map = primal->control()->clone();
+    std::tr1::shared_ptr<dotk::Vector<Real> > map = primal->control()->clone();
     map->fill(2);
     mng.setOldGradient(*map);
 
@@ -154,7 +154,7 @@ TEST(LineSearchMngTypeULP, objective)
     dotk::DOTk_LineSearchMngTypeULP mng(primal, objective);
 
     Real tol = 1e-8;
-    std::tr1::shared_ptr<dotk::vector<Real> > vector = primal->control()->clone();
+    std::tr1::shared_ptr<dotk::Vector<Real> > vector = primal->control()->clone();
     vector->fill(2);
     EXPECT_NEAR(401., mng.getRoutinesMng()->objective(vector), tol);
 }
@@ -167,9 +167,9 @@ TEST(LineSearchMngTypeULP, Fval_P)
     std::tr1::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
     dotk::DOTk_LineSearchMngTypeULP mng(primal, objective);
 
-    std::tr1::shared_ptr<dotk::vector<Real> > fval = primal->control()->clone();
-    std::tr1::shared_ptr<dotk::vector<Real> > vector = primal->control()->clone();
-    std::vector< std::tr1::shared_ptr<dotk::vector<Real> > > control(2, primal->control()->clone());
+    std::tr1::shared_ptr<dotk::Vector<Real> > fval = primal->control()->clone();
+    std::tr1::shared_ptr<dotk::Vector<Real> > vector = primal->control()->clone();
+    std::vector< std::tr1::shared_ptr<dotk::Vector<Real> > > control(2, primal->control()->clone());
     control[0]->copy(*primal->control());
     control[1]->copy(*primal->control());
     size_t numvars = 2;
@@ -187,8 +187,8 @@ TEST(LineSearchMngTypeULP, Grad)
     std::tr1::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
     dotk::DOTk_LineSearchMngTypeULP mng(primal, objective);
 
-    std::tr1::shared_ptr<dotk::vector<Real> > grad = primal->control()->clone();
-    std::tr1::shared_ptr<dotk::vector<Real> > vector = primal->control()->clone();
+    std::tr1::shared_ptr<dotk::Vector<Real> > grad = primal->control()->clone();
+    std::tr1::shared_ptr<dotk::Vector<Real> > vector = primal->control()->clone();
     vector->fill(2);
     mng.getRoutinesMng()->gradient(vector, grad);
 
@@ -206,9 +206,9 @@ TEST(LineSearchMngTypeULP, Hess)
     std::tr1::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
     dotk::DOTk_LineSearchMngTypeULP mng(primal, objective);
 
-    std::tr1::shared_ptr<dotk::vector<Real> > hess = primal->control()->clone();
-    std::tr1::shared_ptr<dotk::vector<Real> > vector = primal->control()->clone();
-    std::tr1::shared_ptr<dotk::vector<Real> > trial_step = primal->control()->clone();
+    std::tr1::shared_ptr<dotk::Vector<Real> > hess = primal->control()->clone();
+    std::tr1::shared_ptr<dotk::Vector<Real> > vector = primal->control()->clone();
+    std::tr1::shared_ptr<dotk::Vector<Real> > trial_step = primal->control()->clone();
 
     vector->fill(2);
     trial_step->fill(1);

@@ -34,13 +34,13 @@ TEST(DOTkPrimalTest, ConstructorOne)
     EXPECT_EQ(nstate, primal.state()->size());
     EXPECT_EQ(ncontrol, primal.control()->size());
 
-    std::tr1::shared_ptr<dotk::vector<Real> > dual = primal.dual()->clone();
+    std::tr1::shared_ptr<dotk::Vector<Real> > dual = primal.dual()->clone();
     dual->fill(1.);
     dotk::gtest::checkResults(*dual, *primal.dual());
-    std::tr1::shared_ptr<dotk::vector<Real> > state = primal.state()->clone();
+    std::tr1::shared_ptr<dotk::Vector<Real> > state = primal.state()->clone();
     state->fill(2.);
     dotk::gtest::checkResults(*state, *primal.state());
-    std::tr1::shared_ptr<dotk::vector<Real> > control = primal.control()->clone();
+    std::tr1::shared_ptr<dotk::Vector<Real> > control = primal.control()->clone();
     control->fill(3.);
     dotk::gtest::checkResults(*control, *primal.control());
 
@@ -196,10 +196,10 @@ TEST(DOTkOptimalityCriteriaDataMngTest, DefaultValues)
     EXPECT_NEAR(0., mng.getInequalityConstraintDualLowerBound(), tolerance);
     EXPECT_NEAR(1e4, mng.getInequalityConstraintDualUpperBound(), tolerance);
 
-    std::tr1::shared_ptr<dotk::vector<Real> > state = mng.getState().clone();
+    std::tr1::shared_ptr<dotk::Vector<Real> > state = mng.getState().clone();
     state->fill(0.);
     dotk::gtest::checkResults(*state, mng.getState());
-    std::tr1::shared_ptr<dotk::vector<Real> > control = mng.getNewControl().clone();
+    std::tr1::shared_ptr<dotk::Vector<Real> > control = mng.getNewControl().clone();
     control->fill(0.5);
     dotk::gtest::checkResults(*control, mng.getNewControl());
 

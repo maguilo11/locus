@@ -38,12 +38,12 @@ DOTk_ProjectedSteihaugTointPcg::~DOTk_ProjectedSteihaugTointPcg()
 {
 }
 
-const std::tr1::shared_ptr<dotk::vector<Real> > & DOTk_ProjectedSteihaugTointPcg::getActiveSet() const
+const std::tr1::shared_ptr<dotk::Vector<Real> > & DOTk_ProjectedSteihaugTointPcg::getActiveSet() const
 {
     return (m_ActiveSet);
 }
 
-const std::tr1::shared_ptr<dotk::vector<Real> > & DOTk_ProjectedSteihaugTointPcg::getInactiveSet() const
+const std::tr1::shared_ptr<dotk::Vector<Real> > & DOTk_ProjectedSteihaugTointPcg::getInactiveSet() const
 {
     return (m_InactiveSet);
 }
@@ -162,8 +162,8 @@ Real DOTk_ProjectedSteihaugTointPcg::step(const std::tr1::shared_ptr<dotk::DOTk_
 
 void DOTk_ProjectedSteihaugTointPcg::applyVectorToHessian(const std::tr1::shared_ptr<dotk::DOTk_OptimizationDataMng> & mng_,
                                                           const std::tr1::shared_ptr<dotk::DOTk_LinearOperator> & linear_operator_,
-                                                          const std::tr1::shared_ptr<dotk::vector<Real> > & vector_,
-                                                          std::tr1::shared_ptr<dotk::vector<Real> > & output_)
+                                                          const std::tr1::shared_ptr<dotk::Vector<Real> > & vector_,
+                                                          std::tr1::shared_ptr<dotk::Vector<Real> > & output_)
 {
     m_ActiveVector->copy(*vector_);
     m_ActiveVector->cwiseProd(*m_ActiveSet);
@@ -179,8 +179,8 @@ void DOTk_ProjectedSteihaugTointPcg::applyVectorToHessian(const std::tr1::shared
 
 void DOTk_ProjectedSteihaugTointPcg::applyVectorToPreconditioner(const std::tr1::shared_ptr<dotk::DOTk_OptimizationDataMng> & mng_,
                                                                  const std::tr1::shared_ptr<dotk::DOTk_Preconditioner> & preconditioner_,
-                                                                 const std::tr1::shared_ptr<dotk::vector<Real> > & vector_,
-                                                                 std::tr1::shared_ptr<dotk::vector<Real> > & output_)
+                                                                 const std::tr1::shared_ptr<dotk::Vector<Real> > & vector_,
+                                                                 std::tr1::shared_ptr<dotk::Vector<Real> > & output_)
 {
     m_ActiveVector->copy(*vector_);
     m_ActiveVector->cwiseProd(*m_ActiveSet);
@@ -196,8 +196,8 @@ void DOTk_ProjectedSteihaugTointPcg::applyVectorToPreconditioner(const std::tr1:
 
 void DOTk_ProjectedSteihaugTointPcg::applyVectorToInvPreconditioner(const std::tr1::shared_ptr<dotk::DOTk_OptimizationDataMng> & mng_,
                                                                     const std::tr1::shared_ptr<dotk::DOTk_Preconditioner> & preconditioner_,
-                                                                    const std::tr1::shared_ptr<dotk::vector<Real> > & vector_,
-                                                                    std::tr1::shared_ptr<dotk::vector<Real> > & output_)
+                                                                    const std::tr1::shared_ptr<dotk::Vector<Real> > & vector_,
+                                                                    std::tr1::shared_ptr<dotk::Vector<Real> > & output_)
 {
     m_ActiveVector->copy(*vector_);
     m_ActiveVector->cwiseProd(*m_ActiveSet);

@@ -5,6 +5,7 @@
  *      Author: Miguel A. Aguilo Valentin
  */
 
+#include "vector.hpp"
 #include "DOTk_Primal.hpp"
 #include "DOTk_TrustRegion.hpp"
 #include "DOTk_MultiVector.hpp"
@@ -82,168 +83,168 @@ Real DOTk_TrustRegionMngTypeELP::getOldObjectiveFunctionValue() const
     return (m_OldObjectiveFunction);
 }
 
-const std::tr1::shared_ptr<dotk::vector<Real> > & DOTk_TrustRegionMngTypeELP::getOldDual() const
+const std::tr1::shared_ptr<dotk::Vector<Real> > & DOTk_TrustRegionMngTypeELP::getOldDual() const
 {
     return (m_OldDual);
 }
 
-const std::tr1::shared_ptr<dotk::vector<Real> > & DOTk_TrustRegionMngTypeELP::getNewDual() const
+const std::tr1::shared_ptr<dotk::Vector<Real> > & DOTk_TrustRegionMngTypeELP::getNewDual() const
 {
     return (m_NewDual);
 }
 
-const std::tr1::shared_ptr<dotk::vector<Real> > & DOTk_TrustRegionMngTypeELP::getMatrixTimesVector() const
+const std::tr1::shared_ptr<dotk::Vector<Real> > & DOTk_TrustRegionMngTypeELP::getMatrixTimesVector() const
 {
     return (m_MatrixTimesVector);
 }
 
-void DOTk_TrustRegionMngTypeELP::setTrialStep(const dotk::vector<Real> & input_)
+void DOTk_TrustRegionMngTypeELP::setTrialStep(const dotk::Vector<Real> & input_)
 {
     m_TrialStep->copy(input_);
 }
 
-const std::tr1::shared_ptr<dotk::vector<Real> > & DOTk_TrustRegionMngTypeELP::getTrialStep() const
+const std::tr1::shared_ptr<dotk::Vector<Real> > & DOTk_TrustRegionMngTypeELP::getTrialStep() const
 {
     return (m_TrialStep);
 }
 
-void DOTk_TrustRegionMngTypeELP::setNewPrimal(const dotk::vector<Real> & input_)
+void DOTk_TrustRegionMngTypeELP::setNewPrimal(const dotk::Vector<Real> & input_)
 {
     m_NewPrimal->copy(input_);
 }
 
-void DOTk_TrustRegionMngTypeELP::setOldPrimal(const dotk::vector<Real> & input_)
+void DOTk_TrustRegionMngTypeELP::setOldPrimal(const dotk::Vector<Real> & input_)
 {
     m_OldPrimal->copy(input_);
 }
 
-const std::tr1::shared_ptr<dotk::vector<Real> > & DOTk_TrustRegionMngTypeELP::getNewPrimal() const
+const std::tr1::shared_ptr<dotk::Vector<Real> > & DOTk_TrustRegionMngTypeELP::getNewPrimal() const
 {
     return (m_NewPrimal);
 }
 
-const std::tr1::shared_ptr<dotk::vector<Real> > & DOTk_TrustRegionMngTypeELP::getOldPrimal() const
+const std::tr1::shared_ptr<dotk::Vector<Real> > & DOTk_TrustRegionMngTypeELP::getOldPrimal() const
 {
     return (m_OldPrimal);
 }
 
-void DOTk_TrustRegionMngTypeELP::setNewGradient(const dotk::vector<Real> & input_)
+void DOTk_TrustRegionMngTypeELP::setNewGradient(const dotk::Vector<Real> & input_)
 {
     m_NewGradient->copy(input_);
 }
 
-void DOTk_TrustRegionMngTypeELP::setOldGradient(const dotk::vector<Real> & input_)
+void DOTk_TrustRegionMngTypeELP::setOldGradient(const dotk::Vector<Real> & input_)
 {
     m_OldGradient->copy(input_);
 }
 
-const std::tr1::shared_ptr<dotk::vector<Real> > & DOTk_TrustRegionMngTypeELP::getNewGradient() const
+const std::tr1::shared_ptr<dotk::Vector<Real> > & DOTk_TrustRegionMngTypeELP::getNewGradient() const
 {
     return (m_NewGradient);
 }
 
-const std::tr1::shared_ptr<dotk::vector<Real> > & DOTk_TrustRegionMngTypeELP::getOldGradient() const
+const std::tr1::shared_ptr<dotk::Vector<Real> > & DOTk_TrustRegionMngTypeELP::getOldGradient() const
 {
     return (m_OldGradient);
 }
 
-const std::tr1::shared_ptr<dotk::vector<Real> > &
+const std::tr1::shared_ptr<dotk::Vector<Real> > &
 DOTk_TrustRegionMngTypeELP::getDeltaDual() const
 {
     return (m_DeltaDual);
 }
 
-const std::tr1::shared_ptr<dotk::vector<Real> > &
+const std::tr1::shared_ptr<dotk::Vector<Real> > &
 DOTk_TrustRegionMngTypeELP::getLinearizedEqConstraint() const
 {
     return (m_LinearizedEqConstraint);
 }
 
-const std::tr1::shared_ptr<dotk::vector<Real> > &
+const std::tr1::shared_ptr<dotk::Vector<Real> > &
 DOTk_TrustRegionMngTypeELP::getJacobianTimesTangentialStep() const
 {
     return (m_JacobianTimesTangentialStep);
 }
 
-const std::tr1::shared_ptr<dotk::vector<Real> > &
+const std::tr1::shared_ptr<dotk::Vector<Real> > &
 DOTk_TrustRegionMngTypeELP::getOldEqualityConstraintResidual() const
 {
     return (m_OldEqualityConstraint);
 }
 
-const std::tr1::shared_ptr<dotk::vector<Real> > &
+const std::tr1::shared_ptr<dotk::Vector<Real> > &
 DOTk_TrustRegionMngTypeELP::getNewEqualityConstraintResidual() const
 {
     return (m_NewEqualityConstraint);
 }
 
-const std::tr1::shared_ptr<dotk::vector<Real> > &
+const std::tr1::shared_ptr<dotk::Vector<Real> > &
 DOTk_TrustRegionMngTypeELP::getNormalStep() const
 {
     return (m_NormalStep);
 }
 
-const std::tr1::shared_ptr<dotk::vector<Real> > &
+const std::tr1::shared_ptr<dotk::Vector<Real> > &
 DOTk_TrustRegionMngTypeELP::getDeltaPrimal() const
 {
     return (m_DeltaPrimal);
 }
 
-const std::tr1::shared_ptr<dotk::vector<Real> > &
+const std::tr1::shared_ptr<dotk::Vector<Real> > &
 DOTk_TrustRegionMngTypeELP::getTangentialStep() const
 {
     return (m_TangentialStep);
 }
 
-const std::tr1::shared_ptr<dotk::vector<Real> > &
+const std::tr1::shared_ptr<dotk::Vector<Real> > &
 DOTk_TrustRegionMngTypeELP::getNormalCauchyStep() const
 {
     return (m_NormalCauchyStep);
 }
 
-const std::tr1::shared_ptr<dotk::vector<Real> > &
+const std::tr1::shared_ptr<dotk::Vector<Real> > &
 DOTk_TrustRegionMngTypeELP::getProjectedGradient() const
 {
     return (m_ProjectedGradient);
 }
 
-const std::tr1::shared_ptr<dotk::vector<Real> > &
+const std::tr1::shared_ptr<dotk::Vector<Real> > &
 DOTk_TrustRegionMngTypeELP::getHessTimesNormalStep() const
 {
     return (m_HessTimesNormalStep);
 }
 
-const std::tr1::shared_ptr<dotk::vector<Real> > &
+const std::tr1::shared_ptr<dotk::Vector<Real> > &
 DOTk_TrustRegionMngTypeELP::getTangentialStepResidual() const
 {
     return (m_TangentialStepResidual);
 }
 
-const std::tr1::shared_ptr<dotk::vector<Real> > &
+const std::tr1::shared_ptr<dotk::Vector<Real> > &
 DOTk_TrustRegionMngTypeELP::getProjTangentialCauchyStep() const
 {
     return (m_ProjectedTangentialCauchyStep);
 }
 
-const std::tr1::shared_ptr<dotk::vector<Real> > &
+const std::tr1::shared_ptr<dotk::Vector<Real> > &
 DOTk_TrustRegionMngTypeELP::getAugmentedSystemLeftHandSide() const
 {
     return (m_AugmentedSystemLeftHandSide);
 }
 
-const std::tr1::shared_ptr<dotk::vector<Real> > &
+const std::tr1::shared_ptr<dotk::Vector<Real> > &
 DOTk_TrustRegionMngTypeELP::getAugmentedSystemRightHandSide() const
 {
     return (m_AugmentedSystemRightHandSide);
 }
 
-const std::tr1::shared_ptr<dotk::vector<Real> > &
+const std::tr1::shared_ptr<dotk::Vector<Real> > &
 DOTk_TrustRegionMngTypeELP::getProjectedTangentialStep() const
 {
     return (m_ProjectedTangentialStep);
 }
 
-const std::tr1::shared_ptr<dotk::vector<Real> > &
+const std::tr1::shared_ptr<dotk::Vector<Real> > &
 DOTk_TrustRegionMngTypeELP::getTangentialSubProblemRhs() const
 {
     return (m_TangentialSubProblemRhs);
@@ -338,8 +339,8 @@ const std::tr1::shared_ptr<dotk::DOTk_AssemblyManager> & DOTk_TrustRegionMngType
 }
 
 Real DOTk_TrustRegionMngTypeELP::computeDoglegRoot(const Real & trust_region_radius_,
-                                                   const std::tr1::shared_ptr<dotk::vector<Real> > & x_,
-                                                   const std::tr1::shared_ptr<dotk::vector<Real> > & y_)
+                                                   const std::tr1::shared_ptr<dotk::Vector<Real> > & x_,
+                                                   const std::tr1::shared_ptr<dotk::Vector<Real> > & y_)
 {
     Real root = m_TrustRegion->computeDoglegRoot(trust_region_radius_, x_, y_);
     return (root);

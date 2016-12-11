@@ -17,8 +17,8 @@ class DOTk_Primal;
 class DOTk_LinearOperator;
 class DOTk_LeftPreconditioner;
 
-template<class T>
-class vector;
+template<typename ScalarType>
+class Vector;
 
 class DOTk_LeftPrecGenConjResDataMng : public dotk::DOTk_KrylovSolverDataMng
 {
@@ -37,10 +37,10 @@ public:
     void setBarzilaiBorweinSecantLeftPreconditioner();
 
     virtual const std::tr1::shared_ptr<dotk::DOTk_LeftPreconditioner> & getLeftPrec() const;
-    virtual const std::tr1::shared_ptr<dotk::vector<Real> > & getLeftPrecTimesVector() const;
+    virtual const std::tr1::shared_ptr<dotk::Vector<Real> > & getLeftPrecTimesVector() const;
 
 private:
-    std::tr1::shared_ptr<dotk::vector<Real> > m_LeftPrecTimesResidual;
+    std::tr1::shared_ptr<dotk::Vector<Real> > m_LeftPrecTimesResidual;
     std::tr1::shared_ptr<dotk::DOTk_LeftPreconditioner> m_LeftPreconditioner;
 
 private:

@@ -21,8 +21,8 @@ class DOTk_SteihaugTointSolver;
 class DOTk_OptimizationDataMng;
 class DOTk_SteihaugTointNewtonIO;
 
-template<typename Type>
-class vector;
+template<typename ScalarType>
+class Vector;
 
 class DOTk_KelleySachsStepMng: public dotk::DOTk_TrustRegionStepMng
 {
@@ -40,7 +40,7 @@ public:
     void setEpsilon(Real input_);
     Real getStationarityMeasure() const;
     Real getMidObejectiveFunctionValue() const;
-    const std::tr1::shared_ptr<dotk::vector<Real> > & getMidPrimal() const;
+    const std::tr1::shared_ptr<dotk::Vector<Real> > & getMidPrimal() const;
 
     virtual void setNumOptimizationItrDone(const size_t & input_);
     virtual void solveSubProblem(const std::tr1::shared_ptr<dotk::DOTk_OptimizationDataMng> & mng_,
@@ -70,17 +70,17 @@ private:
     std::tr1::shared_ptr<dotk::DOTk_Preconditioner> m_Preconditioner;
     std::tr1::shared_ptr<dotk::DOTk_BoundConstraints> m_BoundConstraint;
 
-    std::tr1::shared_ptr<dotk::vector<Real> > m_MidPrimal;
-    std::tr1::shared_ptr<dotk::vector<Real> > m_LowerBound;
-    std::tr1::shared_ptr<dotk::vector<Real> > m_UpperBound;
-    std::tr1::shared_ptr<dotk::vector<Real> > m_WorkVector;
-    std::tr1::shared_ptr<dotk::vector<Real> > m_LowerBoundLimit;
-    std::tr1::shared_ptr<dotk::vector<Real> > m_UpperBoundLimit;
-    std::tr1::shared_ptr<dotk::vector<Real> > m_InactiveGradient;
-    std::tr1::shared_ptr<dotk::vector<Real> > m_ProjectedTrialStep;
-    std::tr1::shared_ptr<dotk::vector<Real> > m_ProjectedCauchyStep;
-    std::tr1::shared_ptr<dotk::vector<Real> > m_ActiveProjectedTrialStep;
-    std::tr1::shared_ptr<dotk::vector<Real> > m_InactiveProjectedTrialStep;
+    std::tr1::shared_ptr<dotk::Vector<Real> > m_MidPrimal;
+    std::tr1::shared_ptr<dotk::Vector<Real> > m_LowerBound;
+    std::tr1::shared_ptr<dotk::Vector<Real> > m_UpperBound;
+    std::tr1::shared_ptr<dotk::Vector<Real> > m_WorkVector;
+    std::tr1::shared_ptr<dotk::Vector<Real> > m_LowerBoundLimit;
+    std::tr1::shared_ptr<dotk::Vector<Real> > m_UpperBoundLimit;
+    std::tr1::shared_ptr<dotk::Vector<Real> > m_InactiveGradient;
+    std::tr1::shared_ptr<dotk::Vector<Real> > m_ProjectedTrialStep;
+    std::tr1::shared_ptr<dotk::Vector<Real> > m_ProjectedCauchyStep;
+    std::tr1::shared_ptr<dotk::Vector<Real> > m_ActiveProjectedTrialStep;
+    std::tr1::shared_ptr<dotk::Vector<Real> > m_InactiveProjectedTrialStep;
 
 private:
     DOTk_KelleySachsStepMng(const dotk::DOTk_KelleySachsStepMng &);

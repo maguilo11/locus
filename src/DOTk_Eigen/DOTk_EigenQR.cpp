@@ -40,7 +40,7 @@ size_t DOTk_EigenQR::getMaxNumItr() const
 }
 
 void DOTk_EigenQR::solve(const std::tr1::shared_ptr<dotk::matrix<Real> > & matrix_,
-                         std::tr1::shared_ptr<dotk::vector<Real> > & eigenvalues_,
+                         std::tr1::shared_ptr<dotk::Vector<Real> > & eigenvalues_,
                          std::tr1::shared_ptr<dotk::matrix<Real> > & eigenvectors_)
 {
     this->initialize(matrix_);

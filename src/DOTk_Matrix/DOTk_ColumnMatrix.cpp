@@ -17,44 +17,44 @@ namespace dotk
 namespace serial
 {
 
-template<class Type>
-DOTk_ColumnMatrix<Type>::DOTk_ColumnMatrix(const dotk::vector<Type> & column_, size_t storage_size_) :
-        dotk::matrix<Type>(),
+template<typename ScalarType>
+DOTk_ColumnMatrix<ScalarType>::DOTk_ColumnMatrix(const dotk::Vector<ScalarType> & column_, size_t storage_size_) :
+        dotk::matrix<ScalarType>(),
         m_Size(column_.size() * storage_size_),
         m_NumRows(column_.size()),
         m_NumColumns(storage_size_),
-        m_MatrixData(new std::tr1::shared_ptr<dotk::vector<Type> >[storage_size_])
+        m_MatrixData(new std::tr1::shared_ptr<dotk::Vector<ScalarType> >[storage_size_])
 {
     this->initialize(column_);
 }
 
-template<class Type>
-DOTk_ColumnMatrix<Type>::~DOTk_ColumnMatrix()
+template<typename ScalarType>
+DOTk_ColumnMatrix<ScalarType>::~DOTk_ColumnMatrix()
 {
     this->clear();
 }
 
-template<class Type>
-size_t DOTk_ColumnMatrix<Type>::nrows() const
+template<typename ScalarType>
+size_t DOTk_ColumnMatrix<ScalarType>::nrows() const
 {
     return (m_NumRows);
 }
 
-template<class Type>
-size_t DOTk_ColumnMatrix<Type>::ncols() const
+template<typename ScalarType>
+size_t DOTk_ColumnMatrix<ScalarType>::ncols() const
 {
     return (m_NumColumns);
 }
 
-template<class Type>
-size_t DOTk_ColumnMatrix<Type>::size() const
+template<typename ScalarType>
+size_t DOTk_ColumnMatrix<ScalarType>::size() const
 {
     return (m_Size);
 }
 
-template<class Type>
-void DOTk_ColumnMatrix<Type>::copy(const size_t & index_,
-                                   const dotk::vector<Type> & input_,
+template<typename ScalarType>
+void DOTk_ColumnMatrix<ScalarType>::copy(const size_t & index_,
+                                   const dotk::Vector<ScalarType> & input_,
                                    bool column_major_copy_)
 {
     if(column_major_copy_ == false)
@@ -75,10 +75,10 @@ void DOTk_ColumnMatrix<Type>::copy(const size_t & index_,
     }
 }
 
-template<class Type>
-Type DOTk_ColumnMatrix<Type>::norm(const size_t & index_, bool column_major_norm_) const
+template<typename ScalarType>
+ScalarType DOTk_ColumnMatrix<ScalarType>::norm(const size_t & index_, bool column_major_norm_) const
 {
-    Type value = 0.;
+    ScalarType value = 0.;
     const size_t num_columns = this->ncols();
 
     if(column_major_norm_ == false)
@@ -98,10 +98,10 @@ Type DOTk_ColumnMatrix<Type>::norm(const size_t & index_, bool column_major_norm
     return (value);
 }
 
-template<class Type>
-void DOTk_ColumnMatrix<Type>::scale(const size_t & index_, const Type & alpha_, bool column_major_scale_)
+template<typename ScalarType>
+void DOTk_ColumnMatrix<ScalarType>::scale(const size_t & index_, const ScalarType & alpha_, bool column_major_scale_)
 {
-    Type value = 0.;
+    ScalarType value = 0.;
 
     if(column_major_scale_ == false)
     {
@@ -119,13 +119,13 @@ void DOTk_ColumnMatrix<Type>::scale(const size_t & index_, const Type & alpha_, 
     }
 }
 
-template<class Type>
-void DOTk_ColumnMatrix<Type>::axpy(const size_t & index_,
-                                    const Type & alpha_,
-                                    const dotk::vector<Type> & input_,
+template<typename ScalarType>
+void DOTk_ColumnMatrix<ScalarType>::axpy(const size_t & index_,
+                                    const ScalarType & alpha_,
+                                    const dotk::Vector<ScalarType> & input_,
                                     bool column_major_axpy_)
 {
-    Type value, scaled_value;
+    ScalarType value, scaled_value;
 
     if(column_major_axpy_ == false)
     {
@@ -148,12 +148,12 @@ void DOTk_ColumnMatrix<Type>::axpy(const size_t & index_,
     }
 }
 
-template<class Type>
-Type DOTk_ColumnMatrix<Type>::dot(const size_t & index_,
-                                  const dotk::vector<Type> & input_,
+template<typename ScalarType>
+ScalarType DOTk_ColumnMatrix<ScalarType>::dot(const size_t & index_,
+                                  const dotk::Vector<ScalarType> & input_,
                                   bool column_major_dot_) const
 {
-    Type result = 0.;
+    ScalarType result = 0.;
 
     if(column_major_dot_ == false)
     {
@@ -175,10 +175,10 @@ Type DOTk_ColumnMatrix<Type>::dot(const size_t & index_,
     return (result);
 }
 
-template<class Type>
-Type DOTk_ColumnMatrix<Type>::norm() const
+template<typename ScalarType>
+ScalarType DOTk_ColumnMatrix<ScalarType>::norm() const
 {
-    Type value = 0.;
+    ScalarType value = 0.;
 
     for(size_t column = 0; column < this->ncols(); ++ column)
     {
@@ -190,9 +190,9 @@ Type DOTk_ColumnMatrix<Type>::norm() const
     return (value);
 }
 
-template<class Type>
-void DOTk_ColumnMatrix<Type>::matVec(const dotk::vector<Type> & input_,
-                                     dotk::vector<Type> & output_,
+template<typename ScalarType>
+void DOTk_ColumnMatrix<ScalarType>::matVec(const dotk::Vector<ScalarType> & input_,
+                                     dotk::Vector<ScalarType> & output_,
                                      bool transpose_) const
 {
     output_.fill(0);
@@ -202,7 +202,7 @@ void DOTk_ColumnMatrix<Type>::matVec(const dotk::vector<Type> & input_,
         assert(this->nrows() == output_.size());
 
         size_t row, column;
-        Type value, value_to_add;
+        ScalarType value, value_to_add;
 
         for(column = 0; column < input_.size(); ++column)
         {
@@ -219,7 +219,7 @@ void DOTk_ColumnMatrix<Type>::matVec(const dotk::vector<Type> & input_,
         assert(this->nrows() == input_.size());
         assert(this->ncols() == output_.size());
 
-        Type sum, value;
+        ScalarType sum, value;
         size_t row, column;
 
         for(column = 0; column < output_.size(); ++ column)
@@ -235,11 +235,11 @@ void DOTk_ColumnMatrix<Type>::matVec(const dotk::vector<Type> & input_,
     }
 }
 
-template<class Type>
-void DOTk_ColumnMatrix<Type>::gemv(const Type & alpha_,
-                                   const dotk::vector<Type> & input_,
-                                   const Type & beta_,
-                                   dotk::vector<Type> & output_,
+template<typename ScalarType>
+void DOTk_ColumnMatrix<ScalarType>::gemv(const ScalarType & alpha_,
+                                   const dotk::Vector<ScalarType> & input_,
+                                   const ScalarType & beta_,
+                                   dotk::Vector<ScalarType> & output_,
                                    bool transpose_) const
 {
     if(transpose_ == false)
@@ -254,7 +254,7 @@ void DOTk_ColumnMatrix<Type>::gemv(const Type & alpha_,
         }
 
         size_t row, column;
-        Type value, value_to_add;
+        ScalarType value, value_to_add;
 
         for(column = 0; column < input_.size(); ++ column)
         {
@@ -272,7 +272,7 @@ void DOTk_ColumnMatrix<Type>::gemv(const Type & alpha_,
         assert(this->ncols() == output_.size());
 
         size_t row, column;
-        Type value, sum, beta_times_output;
+        ScalarType value, sum, beta_times_output;
 
         for(column = 0; column < output_.size(); ++ column)
         {
@@ -288,18 +288,18 @@ void DOTk_ColumnMatrix<Type>::gemv(const Type & alpha_,
     }
 }
 
-template<class Type>
-void DOTk_ColumnMatrix<Type>::gemm(const bool & transpose_A_,
+template<typename ScalarType>
+void DOTk_ColumnMatrix<ScalarType>::gemm(const bool & transpose_A_,
                                    const bool & transpose_B_,
-                                   const Type & alpha_,
-                                   const dotk::matrix<Type> & B_,
-                                   const Type & beta_,
-                                   dotk::matrix<Type> & C_) const
+                                   const ScalarType & alpha_,
+                                   const dotk::matrix<ScalarType> & B_,
+                                   const ScalarType & beta_,
+                                   dotk::matrix<ScalarType> & C_) const
 {
     // Quick return if possible
-    if(alpha_ == static_cast<Type>(0.))
+    if(alpha_ == static_cast<ScalarType>(0.))
     {
-        if(beta_ == static_cast<Type>(0.))
+        if(beta_ == static_cast<ScalarType>(0.))
         {
             C_.fill(0.);
         }
@@ -310,7 +310,7 @@ void DOTk_ColumnMatrix<Type>::gemm(const bool & transpose_A_,
         return;
     }
     // Scale Output Matrix if Necessary
-    if(beta_ != static_cast<Type>(0.))
+    if(beta_ != static_cast<ScalarType>(0.))
     {
         C_.scale(beta_);
     }
@@ -328,7 +328,7 @@ void DOTk_ColumnMatrix<Type>::gemm(const bool & transpose_A_,
             assert(C_.nrows() == this->nrows());
             assert(C_.ncols() == B_.ncols());
 
-            Type value = 0.;
+            ScalarType value = 0.;
             size_t i, j, k;
             size_t num_rows_A = this->nrows();
             size_t num_cols_A = this->ncols();
@@ -353,7 +353,7 @@ void DOTk_ColumnMatrix<Type>::gemm(const bool & transpose_A_,
             assert(C_.nrows() == this->ncols());
             assert(C_.ncols() == B_.ncols());
 
-            Type value = 0.;
+            ScalarType value = 0.;
             size_t i, j, k;
             size_t num_rows_A = this->nrows();
             size_t num_cols_A = this->ncols();
@@ -381,7 +381,7 @@ void DOTk_ColumnMatrix<Type>::gemm(const bool & transpose_A_,
             assert(C_.nrows() == this->nrows());
             assert(C_.ncols() == B_.nrows());
 
-            Type value = 0.;
+            ScalarType value = 0.;
             size_t i, j, k;
             size_t num_rows_A = this->nrows();
             size_t num_cols_A = this->ncols();
@@ -406,7 +406,7 @@ void DOTk_ColumnMatrix<Type>::gemm(const bool & transpose_A_,
             assert(C_.nrows() == this->ncols());
             assert(C_.ncols() == B_.nrows());
 
-            Type value = 0.;
+            ScalarType value = 0.;
             size_t i, j, k;
             size_t num_rows_A = this->nrows();
             size_t num_cols_A = this->ncols();
@@ -427,8 +427,8 @@ void DOTk_ColumnMatrix<Type>::gemm(const bool & transpose_A_,
     }
 }
 
-template<class Type>
-void DOTk_ColumnMatrix<Type>::scale(const Type & alpha_)
+template<typename ScalarType>
+void DOTk_ColumnMatrix<ScalarType>::scale(const ScalarType & alpha_)
 {
     for(size_t column = 0; column < this->ncols(); ++ column)
     {
@@ -436,8 +436,8 @@ void DOTk_ColumnMatrix<Type>::scale(const Type & alpha_)
     }
 }
 
-template<class Type>
-void DOTk_ColumnMatrix<Type>::fill(const Type & value_)
+template<typename ScalarType>
+void DOTk_ColumnMatrix<ScalarType>::fill(const ScalarType & value_)
 {
     for(size_t column = 0; column < this->ncols(); ++ column)
     {
@@ -445,8 +445,8 @@ void DOTk_ColumnMatrix<Type>::fill(const Type & value_)
     }
 }
 
-template<class Type>
-void DOTk_ColumnMatrix<Type>::copy(const dotk::matrix<Type> & input_)
+template<typename ScalarType>
+void DOTk_ColumnMatrix<ScalarType>::copy(const dotk::matrix<ScalarType> & input_)
 {
     assert(input_.size() == this->size());
     assert(input_.type() == this->type());
@@ -463,8 +463,8 @@ void DOTk_ColumnMatrix<Type>::copy(const dotk::matrix<Type> & input_)
     }
 }
 
-template<class Type>
-void DOTk_ColumnMatrix<Type>::copy(const size_t & num_inputs_, const Type* input_)
+template<typename ScalarType>
+void DOTk_ColumnMatrix<ScalarType>::copy(const size_t & num_inputs_, const ScalarType* input_)
 {
     assert(num_inputs_ == this->size());
 
@@ -481,8 +481,8 @@ void DOTk_ColumnMatrix<Type>::copy(const size_t & num_inputs_, const Type* input
     }
 }
 
-template<class Type>
-void DOTk_ColumnMatrix<Type>::gather(const size_t & dim_, Type* output_)
+template<typename ScalarType>
+void DOTk_ColumnMatrix<ScalarType>::gather(const size_t & dim_, ScalarType* output_)
 {
     assert(dim_ == this->size());
 
@@ -499,16 +499,16 @@ void DOTk_ColumnMatrix<Type>::gather(const size_t & dim_, Type* output_)
     }
 }
 
-template<class Type>
-void DOTk_ColumnMatrix<Type>::set(const size_t & row_index_, const size_t & column_index_, Type value_)
+template<typename ScalarType>
+void DOTk_ColumnMatrix<ScalarType>::set(const size_t & row_index_, const size_t & column_index_, ScalarType value_)
 {
     assert(row_index_ <= this->nrows() - 1u);
     assert(column_index_ <= this->ncols() - 1u);
     m_MatrixData[column_index_]->operator[](row_index_) = value_;
 }
 
-template<class Type>
-void DOTk_ColumnMatrix<Type>::identity()
+template<typename ScalarType>
+void DOTk_ColumnMatrix<ScalarType>::identity()
 {
     size_t diagonal_dim;
     if(this->ncols() <= this->nrows())
@@ -527,8 +527,8 @@ void DOTk_ColumnMatrix<Type>::identity()
     }
 }
 
-template<class Type>
-void DOTk_ColumnMatrix<Type>::diag(dotk::vector<Type> & input_) const
+template<typename ScalarType>
+void DOTk_ColumnMatrix<ScalarType>::diag(dotk::Vector<ScalarType> & input_) const
 {
 
     size_t diagonal_dim;
@@ -549,8 +549,8 @@ void DOTk_ColumnMatrix<Type>::diag(dotk::vector<Type> & input_) const
     }
 }
 
-template<class Type>
-void DOTk_ColumnMatrix<Type>::setDiag(const dotk::vector<Type> & input_, bool zero_matrix_entries_)
+template<typename ScalarType>
+void DOTk_ColumnMatrix<ScalarType>::setDiag(const dotk::Vector<ScalarType> & input_, bool zero_matrix_entries_)
 {
     size_t diagonal_dim;
     if(this->ncols() <= this->nrows())
@@ -575,8 +575,8 @@ void DOTk_ColumnMatrix<Type>::setDiag(const dotk::vector<Type> & input_, bool ze
     }
 }
 
-template<class Type>
-void DOTk_ColumnMatrix<Type>::scaleDiag(const Type & alpha_)
+template<typename ScalarType>
+void DOTk_ColumnMatrix<ScalarType>::scaleDiag(const ScalarType & alpha_)
 {
     size_t index, diagonal_dim;
     if(this->ncols() <= this->nrows())
@@ -588,7 +588,7 @@ void DOTk_ColumnMatrix<Type>::scaleDiag(const Type & alpha_)
         diagonal_dim = this->nrows();
     }
 
-    Type scaled_value = 0.;
+    ScalarType scaled_value = 0.;
     for(index = 0; index < diagonal_dim; ++index)
     {
         scaled_value = alpha_ * m_MatrixData[index]->operator[](index);
@@ -596,8 +596,8 @@ void DOTk_ColumnMatrix<Type>::scaleDiag(const Type & alpha_)
     }
 }
 
-template<class Type>
-Type DOTk_ColumnMatrix<Type>::trace() const
+template<typename ScalarType>
+ScalarType DOTk_ColumnMatrix<ScalarType>::trace() const
 {
     size_t index, diagonal_dim;
     if(this->ncols() <= this->nrows())
@@ -609,7 +609,7 @@ Type DOTk_ColumnMatrix<Type>::trace() const
         diagonal_dim = this->nrows();
     }
 
-    Type value = 0.;
+    ScalarType value = 0.;
     for(index = 0; index < diagonal_dim; ++index)
     {
         value += m_MatrixData[index]->operator[](index);
@@ -617,54 +617,54 @@ Type DOTk_ColumnMatrix<Type>::trace() const
     return (value);
 }
 
-template<class Type>
-size_t DOTk_ColumnMatrix<Type>::basisDimension() const
+template<typename ScalarType>
+size_t DOTk_ColumnMatrix<ScalarType>::basisDimension() const
 {
     return (m_NumColumns);
 }
 
-template<class Type>
-std::tr1::shared_ptr<dotk::vector<Type> > & DOTk_ColumnMatrix<Type>::basis(const size_t & index_)
+template<typename ScalarType>
+std::tr1::shared_ptr<dotk::Vector<ScalarType> > & DOTk_ColumnMatrix<ScalarType>::basis(const size_t & index_)
 {
     return (m_MatrixData[index_]);
 }
 
-template<class Type>
-Type & DOTk_ColumnMatrix<Type>::operator ()(const size_t & row_index_, const size_t & column_index_)
+template<typename ScalarType>
+ScalarType & DOTk_ColumnMatrix<ScalarType>::operator ()(const size_t & row_index_, const size_t & column_index_)
 {
     assert(row_index_ <= this->nrows() - 1u);
     assert(column_index_ <= this->ncols() - 1u);
     return (m_MatrixData[column_index_]->operator[](row_index_));
 }
 
-template<class Type>
-const Type & DOTk_ColumnMatrix<Type>::operator ()(const size_t & row_index_, const size_t & column_index_) const
+template<typename ScalarType>
+const ScalarType & DOTk_ColumnMatrix<ScalarType>::operator ()(const size_t & row_index_, const size_t & column_index_) const
 {
     assert(row_index_ <= this->nrows() - 1u);
     assert(column_index_ <= this->ncols() - 1u);
     return (m_MatrixData[column_index_]->operator[](row_index_));
 }
 
-template<class Type>
-std::tr1::shared_ptr<dotk::matrix<Type> > DOTk_ColumnMatrix<Type>::clone() const
+template<typename ScalarType>
+std::tr1::shared_ptr<dotk::matrix<ScalarType> > DOTk_ColumnMatrix<ScalarType>::clone() const
 {
 
     size_t basis_dim = this->basisDimension();
-    std::tr1::shared_ptr<dotk::vector<Type> > & basis_vector = m_MatrixData[0];
-    std::tr1::shared_ptr<dotk::serial::DOTk_ColumnMatrix<Type> >
-        matrix(new dotk::serial::DOTk_ColumnMatrix<Type>(*basis_vector, basis_dim));
+    std::tr1::shared_ptr<dotk::Vector<ScalarType> > & basis_vector = m_MatrixData[0];
+    std::tr1::shared_ptr<dotk::serial::DOTk_ColumnMatrix<ScalarType> >
+        matrix(new dotk::serial::DOTk_ColumnMatrix<ScalarType>(*basis_vector, basis_dim));
 
     return (matrix);
 }
 
-template<class Type>
-dotk::types::matrix_t DOTk_ColumnMatrix<Type>::type() const
+template<typename ScalarType>
+dotk::types::matrix_t DOTk_ColumnMatrix<ScalarType>::type() const
 {
     return (dotk::types::SERIAL_COLUMN_MATRIX);
 }
 
-template<class Type>
-void DOTk_ColumnMatrix<Type>::initialize(const dotk::vector<Type> & column_)
+template<typename ScalarType>
+void DOTk_ColumnMatrix<ScalarType>::initialize(const dotk::Vector<ScalarType> & column_)
 {
     for(size_t index = 0; index < this->ncols(); ++ index)
     {
@@ -672,8 +672,8 @@ void DOTk_ColumnMatrix<Type>::initialize(const dotk::vector<Type> & column_)
     }
 }
 
-template<class Type>
-void DOTk_ColumnMatrix<Type>::clear()
+template<typename ScalarType>
+void DOTk_ColumnMatrix<ScalarType>::clear()
 {
     delete[] m_MatrixData;
     m_MatrixData = NULL;

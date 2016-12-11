@@ -18,8 +18,8 @@ class DOTk_LeftPreconditioner;
 class DOTk_OptimizationDataMng;
 class DOTk_TangentialSubProblemCriterion;
 
-template<class Type>
-class vector;
+template<typename ScalarType>
+class Vector;
 
 class DOTk_AugmentedSystemLeftPrec: public dotk::DOTk_LeftPreconditioner
 {
@@ -43,8 +43,8 @@ public:
                                     size_t max_num_itr_ = 200);
 
     virtual void apply(const std::tr1::shared_ptr<dotk::DOTk_OptimizationDataMng> & mng_,
-                       const std::tr1::shared_ptr<dotk::vector<Real> > & vector_,
-                       const std::tr1::shared_ptr<dotk::vector<Real> > & output_);
+                       const std::tr1::shared_ptr<dotk::Vector<Real> > & vector_,
+                       const std::tr1::shared_ptr<dotk::Vector<Real> > & output_);
 
 private:
     void initialize(const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_);
@@ -54,7 +54,7 @@ private:
     std::tr1::shared_ptr<dotk::DOTk_AugmentedSystem> m_AugmentedSystem;
     std::tr1::shared_ptr<dotk::DOTk_TangentialSubProblemCriterion> m_Criterion;
 
-    std::tr1::shared_ptr<dotk::vector<Real> > m_RhsVector;
+    std::tr1::shared_ptr<dotk::Vector<Real> > m_RhsVector;
 
 private:
     DOTk_AugmentedSystemLeftPrec(const dotk::DOTk_AugmentedSystemLeftPrec &);

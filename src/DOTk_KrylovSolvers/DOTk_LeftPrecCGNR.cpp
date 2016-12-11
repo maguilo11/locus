@@ -58,12 +58,12 @@ const std::tr1::shared_ptr<dotk::DOTk_LinearOperator> & DOTk_LeftPrecCGNR::getLi
     return (m_DataMng->getLinearOperator());
 }
 
-const std::tr1::shared_ptr<dotk::vector<Real> > & DOTk_LeftPrecCGNR::getDescentDirection()
+const std::tr1::shared_ptr<dotk::Vector<Real> > & DOTk_LeftPrecCGNR::getDescentDirection()
 {
     return (m_ConjugateDirection);
 }
 
-void DOTk_LeftPrecCGNR::initialize(const std::tr1::shared_ptr<dotk::vector<Real> > & rhs_vec_,
+void DOTk_LeftPrecCGNR::initialize(const std::tr1::shared_ptr<dotk::Vector<Real> > & rhs_vec_,
                                    const std::tr1::shared_ptr<dotk::DOTk_KrylovSolverStoppingCriterion> & criterion_,
                                    const std::tr1::shared_ptr<dotk::DOTk_OptimizationDataMng> & opt_mng_)
 {
@@ -83,7 +83,7 @@ void DOTk_LeftPrecCGNR::initialize(const std::tr1::shared_ptr<dotk::vector<Real>
     dotk::DOTk_KrylovSolver::setInitialStoppingTolerance(stopping_tolerance);
 }
 
-void DOTk_LeftPrecCGNR::cgnr(const std::tr1::shared_ptr<dotk::vector<Real> > & rhs_vec_,
+void DOTk_LeftPrecCGNR::cgnr(const std::tr1::shared_ptr<dotk::Vector<Real> > & rhs_vec_,
                              const std::tr1::shared_ptr<dotk::DOTk_KrylovSolverStoppingCriterion> & criterion_,
                              const std::tr1::shared_ptr<dotk::DOTk_OptimizationDataMng> & opt_mng_)
 {
@@ -139,14 +139,14 @@ void DOTk_LeftPrecCGNR::cgnr(const std::tr1::shared_ptr<dotk::vector<Real> > & r
     }
 }
 
-void DOTk_LeftPrecCGNR::solve(const std::tr1::shared_ptr<dotk::vector<Real> > & rhs_vec_,
+void DOTk_LeftPrecCGNR::solve(const std::tr1::shared_ptr<dotk::Vector<Real> > & rhs_vec_,
                               const std::tr1::shared_ptr<dotk::DOTk_KrylovSolverStoppingCriterion> & criterion_,
                               const std::tr1::shared_ptr<dotk::DOTk_OptimizationDataMng> & opt_mng_)
 {
     this->cgnr(rhs_vec_, criterion_, opt_mng_);
 }
 
-void DOTk_LeftPrecCGNR::initialize(const std::tr1::shared_ptr<dotk::vector<Real> > vector_)
+void DOTk_LeftPrecCGNR::initialize(const std::tr1::shared_ptr<dotk::Vector<Real> > vector_)
 {
     m_AuxiliaryVector = vector_->clone();
     m_ConjugateDirection = vector_->clone();

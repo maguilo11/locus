@@ -51,7 +51,7 @@ void DOTk_DiagnosticsObjectiveTypeNP::checkPartialDerivativeControl(const dotk::
     m_OriginalField = vars.mControl->clone();
     m_OriginalField->copy(*vars.mControl);
 
-    std::tr1::shared_ptr<dotk::vector<Real> > delta_control = vars.mControl->clone();
+    std::tr1::shared_ptr<dotk::Vector<Real> > delta_control = vars.mControl->clone();
     dotk::gtools::generateRandomVector(delta_control);
 
     dotk::nlp::ObjectiveValue objective_function;
@@ -81,7 +81,7 @@ void DOTk_DiagnosticsObjectiveTypeNP::checkPartialDerivativeState(const dotk::DO
     m_OriginalField = vars.mState->clone();
     m_OriginalField->copy(*vars.mState);
 
-    std::tr1::shared_ptr<dotk::vector<Real> > delta_state = vars.mState->clone();
+    std::tr1::shared_ptr<dotk::Vector<Real> > delta_state = vars.mState->clone();
     dotk::gtools::generateRandomVector(delta_state);
 
     dotk::nlp::ObjectiveValue objective_function;
@@ -111,7 +111,7 @@ void DOTk_DiagnosticsObjectiveTypeNP::checkPartialDerivativeStateState(const dot
     m_OriginalField = vars.mState->clone();
     m_OriginalField->copy(*vars.mState);
 
-    std::tr1::shared_ptr<dotk::vector<Real> > delta_state = vars.mState->clone();
+    std::tr1::shared_ptr<dotk::Vector<Real> > delta_state = vars.mState->clone();
     dotk::gtools::generateRandomVector(delta_state);
 
     dotk::nlp::PartialDerivativeObjectiveState first_derivative;
@@ -144,7 +144,7 @@ void DOTk_DiagnosticsObjectiveTypeNP::checkPartialDerivativeStateControl(const d
     m_OriginalField = vars.mControl->clone();
     m_OriginalField->copy(*vars.mControl);
 
-    std::tr1::shared_ptr<dotk::vector<Real> > delta_control = vars.mControl->clone();
+    std::tr1::shared_ptr<dotk::Vector<Real> > delta_control = vars.mControl->clone();
     dotk::gtools::generateRandomVector(delta_control);
 
     dotk::nlp::PartialDerivativeObjectiveState first_derivative;
@@ -174,7 +174,7 @@ void DOTk_DiagnosticsObjectiveTypeNP::checkPartialDerivativeControlControl(const
     m_OriginalField = vars.mControl->clone();
     m_OriginalField->copy(*vars.mControl);
 
-    std::tr1::shared_ptr<dotk::vector<Real> > delta_control = vars.mControl->clone();
+    std::tr1::shared_ptr<dotk::Vector<Real> > delta_control = vars.mControl->clone();
     dotk::gtools::generateRandomVector(delta_control);
 
     dotk::nlp::PartialDerivativeObjectiveControl first_derivative;
@@ -207,7 +207,7 @@ void DOTk_DiagnosticsObjectiveTypeNP::checkPartialDerivativeControlState(const d
     m_OriginalField = vars.mState->clone();
     m_OriginalField->copy(*vars.mState);
 
-    std::tr1::shared_ptr<dotk::vector<Real> > delta_state = vars.mState->clone();
+    std::tr1::shared_ptr<dotk::Vector<Real> > delta_state = vars.mState->clone();
     dotk::gtools::generateRandomVector(delta_state);
 
     dotk::nlp::PartialDerivativeObjectiveControl first_derivative;
@@ -219,13 +219,13 @@ void DOTk_DiagnosticsObjectiveTypeNP::checkPartialDerivativeControlState(const d
 
 template<typename ScalarValuedFunction, typename ScalarValuedFunctionFirstDerivative>
 void DOTk_DiagnosticsObjectiveTypeNP::checkScalarValuedFunctionFirstDerivative(const std::tr1::shared_ptr<
-                                                                                       dotk::vector<Real> > & perturbation_vec_,
+                                                                                       dotk::Vector<Real> > & perturbation_vec_,
                                                                                const ScalarValuedFunction & function_,
                                                                                const ScalarValuedFunctionFirstDerivative & first_derivative_,
                                                                                dotk::nlp::variables & variables_)
 {
     dotk::types::variable_t codomain = dotk::DOTk_DerivativeDiagnosticsTool::getCodomain();
-    std::tr1::shared_ptr<dotk::vector<Real> > true_gradient = dotk::nlp::clone(variables_, codomain);
+    std::tr1::shared_ptr<dotk::Vector<Real> > true_gradient = dotk::nlp::clone(variables_, codomain);
     first_derivative_(m_ObjectiveFunction, variables_.mState, variables_.mControl, true_gradient);
     Real gradient_dot_direction = true_gradient->dot(*perturbation_vec_);
 
@@ -270,13 +270,13 @@ void DOTk_DiagnosticsObjectiveTypeNP::checkScalarValuedFunctionFirstDerivative(c
 
 template<typename ScalarValuedFunctionFirstDerivative, typename ScalarValuedFunctionSecondDerivative>
 void DOTk_DiagnosticsObjectiveTypeNP::checkScalarValuedFunctionSecondDerivative(const std::tr1::shared_ptr<
-                                                                                        dotk::vector<Real> > & perturbation_vec_,
+                                                                                        dotk::Vector<Real> > & perturbation_vec_,
                                                                                 const ScalarValuedFunctionFirstDerivative & first_derivative_,
                                                                                 const ScalarValuedFunctionSecondDerivative & second_derivative_,
                                                                                 dotk::nlp::variables & variables_)
 {
     dotk::types::variable_t codomain = dotk::DOTk_DerivativeDiagnosticsTool::getCodomain();
-    std::tr1::shared_ptr<dotk::vector<Real> > true_second_derivative_times_direction = dotk::nlp::clone(variables_,
+    std::tr1::shared_ptr<dotk::Vector<Real> > true_second_derivative_times_direction = dotk::nlp::clone(variables_,
                                                                                                         codomain);
     second_derivative_(m_ObjectiveFunction,
                        variables_.mState,
@@ -286,9 +286,9 @@ void DOTk_DiagnosticsObjectiveTypeNP::checkScalarValuedFunctionSecondDerivative(
 
     Real norm_true_second_derivative_times_direction = true_second_derivative_times_direction->norm();
 
-    std::tr1::shared_ptr<dotk::vector<Real> > finite_diff_second_derivative_times_direction =
+    std::tr1::shared_ptr<dotk::Vector<Real> > finite_diff_second_derivative_times_direction =
             dotk::nlp::clone(variables_, codomain);
-    std::tr1::shared_ptr<dotk::vector<Real> > first_derivative = dotk::nlp::clone(variables_, codomain);
+    std::tr1::shared_ptr<dotk::Vector<Real> > first_derivative = dotk::nlp::clone(variables_, codomain);
 
     Int superscript_lower_limit =
             dotk::DOTk_DerivativeDiagnosticsTool::getFiniteDifferenceDiagnosticsSuperScriptsLowerLimit();

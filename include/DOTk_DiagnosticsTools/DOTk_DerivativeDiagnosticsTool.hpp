@@ -16,8 +16,8 @@
 namespace dotk
 {
 
-template<typename Type>
-class vector;
+template<typename ScalarType>
+class Vector;
 
 class DOTk_DerivativeDiagnosticsTool
 {
@@ -42,10 +42,10 @@ public:
                                          const Real finite_difference_approximation_,
                                          const Real relative_difference_,
                                          const Real epsilon_);
-    bool checkDomainDimensions(const std::tr1::shared_ptr<dotk::vector<Real> > & field_,
+    bool checkDomainDimensions(const std::tr1::shared_ptr<dotk::Vector<Real> > & field_,
                                const std::string & function_name_,
                                std::ostringstream & output_msg_);
-    bool checkCodomainDimensions(const std::tr1::shared_ptr<dotk::vector<Real> > & field_,
+    bool checkCodomainDimensions(const std::tr1::shared_ptr<dotk::Vector<Real> > & field_,
                                  const std::string & function_name_,
                                  std::ostringstream & output_msg_);
 

@@ -96,7 +96,7 @@ void DOTk_DerivativeDiagnosticsTool::saveFiniteDifferenceDiagnostics(const Real 
             << std::setw(10) << ", Epsilon = " << epsilon_ << "\n";
 }
 
-bool DOTk_DerivativeDiagnosticsTool::checkDomainDimensions(const std::tr1::shared_ptr<dotk::vector<Real> > & field_,
+bool DOTk_DerivativeDiagnosticsTool::checkDomainDimensions(const std::tr1::shared_ptr<dotk::Vector<Real> > & field_,
                                                            const std::string & function_name_,
                                                            std::ostringstream & output_msg_)
 {
@@ -109,7 +109,7 @@ bool DOTk_DerivativeDiagnosticsTool::checkDomainDimensions(const std::tr1::share
     return (exit_function);
 }
 
-bool DOTk_DerivativeDiagnosticsTool::checkCodomainDimensions(const std::tr1::shared_ptr<dotk::vector<Real> > & field_,
+bool DOTk_DerivativeDiagnosticsTool::checkCodomainDimensions(const std::tr1::shared_ptr<dotk::Vector<Real> > & field_,
                                                              const std::string & function_name_,
                                                              std::ostringstream & output_msg_)
 {

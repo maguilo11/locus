@@ -110,10 +110,10 @@ dotk::types::solver_stop_criterion_t DOTk_SteihaugTointSolver::getStoppingCriter
     return (m_StoppingCriterion);
 }
 
-Real DOTk_SteihaugTointSolver::computeSteihaugTointStep(const std::tr1::shared_ptr<dotk::vector<Real> > & newton_step_,
-                                                        const std::tr1::shared_ptr<dotk::vector<Real> > & conjugate_dir_,
-                                                        const std::tr1::shared_ptr<dotk::vector<Real> > & prec_times_newton_step_,
-                                                        const std::tr1::shared_ptr<dotk::vector<Real> > & prec_times_conjugate_dir_)
+Real DOTk_SteihaugTointSolver::computeSteihaugTointStep(const std::tr1::shared_ptr<dotk::Vector<Real> > & newton_step_,
+                                                        const std::tr1::shared_ptr<dotk::Vector<Real> > & conjugate_dir_,
+                                                        const std::tr1::shared_ptr<dotk::Vector<Real> > & prec_times_newton_step_,
+                                                        const std::tr1::shared_ptr<dotk::Vector<Real> > & prec_times_conjugate_dir_)
 {
     // Dogleg trust region step
     Real newton_step_dot_prec_times_conjugate_dir = newton_step_->dot(*prec_times_conjugate_dir_);
@@ -185,13 +185,13 @@ bool DOTk_SteihaugTointSolver::toleranceSatisfied(const Real & norm_descent_dire
     return (tolerance_criterion_satisfied);
 }
 
-const std::tr1::shared_ptr<dotk::vector<Real> > & DOTk_SteihaugTointSolver::getActiveSet() const
+const std::tr1::shared_ptr<dotk::Vector<Real> > & DOTk_SteihaugTointSolver::getActiveSet() const
 {
     std::perror("\n**** Error in DOTk_SteihaugTointSolver::getActiveSet. Parent class function not defined. ABORT. ****\n");
     std::abort();
 }
 
-const std::tr1::shared_ptr<dotk::vector<Real> > & DOTk_SteihaugTointSolver::getInactiveSet() const
+const std::tr1::shared_ptr<dotk::Vector<Real> > & DOTk_SteihaugTointSolver::getInactiveSet() const
 {
     std::perror("\n**** Error in DOTk_SteihaugTointSolver::getInactiveSet. Parent class function not defined. ABORT. ****\n");
     std::abort();

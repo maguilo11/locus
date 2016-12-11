@@ -111,7 +111,7 @@ void DOTk_MexOptimalityCriteria::solve(const mxArray* input_[], mxArray* output_
     std::tr1::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
     dotk::mex::buildPrimalContainer(input_[0], *primal);
 
-    std::tr1::shared_ptr< dotk::vector<double> > vector = primal->control()->clone();
+    std::tr1::shared_ptr< dotk::Vector<double> > vector = primal->control()->clone();
     dotk::mex::parseControlLowerBound(input_[0], *vector);
     primal->setControlLowerBound(*vector);
 
@@ -161,7 +161,7 @@ void DOTk_MexOptimalityCriteria::setAlgorithmParameters(const mxArray* options_,
 }
 
 void DOTk_MexOptimalityCriteria::gatherOutputData(dotk::DOTk_OptimalityCriteria & algorithm_,
-                                                  dotk::vector<double> & solution_,
+                                                  dotk::Vector<double> & solution_,
                                                   mxArray* output_[])
 {
     // Create memory allocation for output struct

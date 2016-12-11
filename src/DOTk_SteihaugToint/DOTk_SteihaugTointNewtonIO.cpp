@@ -110,7 +110,7 @@ void DOTk_SteihaugTointNewtonIO::printInitialDiagnostics(const std::tr1::shared_
             << "\n" << std::flush;
 }
 
-void DOTk_SteihaugTointNewtonIO::printSolution(const std::tr1::shared_ptr<dotk::vector<Real> > & primal_)
+void DOTk_SteihaugTointNewtonIO::printSolution(const std::tr1::shared_ptr<dotk::Vector<Real> > & primal_)
 {
     if(this->getDisplayOption() == dotk::types::OFF)
     {
@@ -233,7 +233,7 @@ void DOTk_SteihaugTointNewtonIO::printSubProblemFirstItrDiagnostics(const std::t
 }
 
 void DOTk_SteihaugTointNewtonIO::printCurrentSolution
-(const std::tr1::shared_ptr<dotk::vector<Real> > & primal_)
+(const std::tr1::shared_ptr<dotk::Vector<Real> > & primal_)
 {
     if(this->getDisplayOption() == dotk::types::OFF)
     {

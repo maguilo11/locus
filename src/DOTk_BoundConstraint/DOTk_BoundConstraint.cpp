@@ -188,14 +188,14 @@ Real DOTk_BoundConstraint::getStep(const std::tr1::shared_ptr<dotk::DOTk_LineSea
     return (step);
 }
 
-const std::tr1::shared_ptr<dotk::vector<Real> > & DOTk_BoundConstraint::activeSet() const
+const std::tr1::shared_ptr<dotk::Vector<Real> > & DOTk_BoundConstraint::activeSet() const
 {
     return (m_ActiveSet);
 }
 
 void DOTk_BoundConstraint::computeScaledTrialStep(const std::tr1::shared_ptr<dotk::DOTk_LineSearch> & step_,
                                                   const std::tr1::shared_ptr<dotk::DOTk_OptimizationDataMng> & mng_,
-                                                  const std::tr1::shared_ptr<dotk::vector<Real> > & current_primal_)
+                                                  const std::tr1::shared_ptr<dotk::Vector<Real> > & current_primal_)
 {
     dotk::types::bound_step_t type = this->getStepType();
     switch(type)
@@ -223,9 +223,9 @@ void DOTk_BoundConstraint::computeScaledTrialStep(const std::tr1::shared_ptr<dot
     }
 }
 
-void DOTk_BoundConstraint::project(const std::tr1::shared_ptr<dotk::vector<Real> > & lower_bound_,
-                                   const std::tr1::shared_ptr<dotk::vector<Real> > & upper_bound_,
-                                   const std::tr1::shared_ptr<dotk::vector<Real> > & primal_)
+void DOTk_BoundConstraint::project(const std::tr1::shared_ptr<dotk::Vector<Real> > & lower_bound_,
+                                   const std::tr1::shared_ptr<dotk::Vector<Real> > & upper_bound_,
+                                   const std::tr1::shared_ptr<dotk::Vector<Real> > & primal_)
 {
     m_ActiveSet->fill(0);
     for(size_t index = 0; index < primal_->size(); ++index)
@@ -237,9 +237,9 @@ void DOTk_BoundConstraint::project(const std::tr1::shared_ptr<dotk::vector<Real>
     }
 }
 
-void DOTk_BoundConstraint::computeActiveSet(const std::tr1::shared_ptr<dotk::vector<Real> > & lower_bound_,
-                                            const std::tr1::shared_ptr<dotk::vector<Real> > & upper_bound_,
-                                            const std::tr1::shared_ptr<dotk::vector<Real> > & primal_)
+void DOTk_BoundConstraint::computeActiveSet(const std::tr1::shared_ptr<dotk::Vector<Real> > & lower_bound_,
+                                            const std::tr1::shared_ptr<dotk::Vector<Real> > & upper_bound_,
+                                            const std::tr1::shared_ptr<dotk::Vector<Real> > & primal_)
 {
     assert(m_ActiveSet->size() == primal_->size());
 
@@ -251,7 +251,7 @@ void DOTk_BoundConstraint::computeActiveSet(const std::tr1::shared_ptr<dotk::vec
     }
 }
 
-void DOTk_BoundConstraint::pruneActive(const std::tr1::shared_ptr<dotk::vector<Real> > & direction_)
+void DOTk_BoundConstraint::pruneActive(const std::tr1::shared_ptr<dotk::Vector<Real> > & direction_)
 {
     for(size_t index = 0; index < m_ActiveSet->size(); ++ index)
     {
@@ -260,9 +260,9 @@ void DOTk_BoundConstraint::pruneActive(const std::tr1::shared_ptr<dotk::vector<R
     }
 }
 
-bool DOTk_BoundConstraint::isFeasible(const std::tr1::shared_ptr<dotk::vector<Real> > & lower_bound_,
-                                      const std::tr1::shared_ptr<dotk::vector<Real> > & upper_bound_,
-                                      const std::tr1::shared_ptr<dotk::vector<Real> > & primal_)
+bool DOTk_BoundConstraint::isFeasible(const std::tr1::shared_ptr<dotk::Vector<Real> > & lower_bound_,
+                                      const std::tr1::shared_ptr<dotk::Vector<Real> > & upper_bound_,
+                                      const std::tr1::shared_ptr<dotk::Vector<Real> > & primal_)
 {
     size_t index = 0;
     bool is_stationary = true;

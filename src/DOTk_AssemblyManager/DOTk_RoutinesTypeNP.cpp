@@ -38,7 +38,7 @@ DOTk_RoutinesTypeNP::~DOTk_RoutinesTypeNP()
 {
 }
 
-Real DOTk_RoutinesTypeNP::objective(const std::tr1::shared_ptr<dotk::vector<Real> > & control_)
+Real DOTk_RoutinesTypeNP::objective(const std::tr1::shared_ptr<dotk::Vector<Real> > & control_)
 {
     m_State->fill(0.);
     m_StateWorkVec->fill(0.);
@@ -51,8 +51,8 @@ Real DOTk_RoutinesTypeNP::objective(const std::tr1::shared_ptr<dotk::vector<Real
     return (objective_function_value);
 }
 
-void DOTk_RoutinesTypeNP::gradient(const std::tr1::shared_ptr<dotk::vector<Real> > & control_,
-                                   const std::tr1::shared_ptr<dotk::vector<Real> > & gradient_)
+void DOTk_RoutinesTypeNP::gradient(const std::tr1::shared_ptr<dotk::Vector<Real> > & control_,
+                                   const std::tr1::shared_ptr<dotk::Vector<Real> > & gradient_)
 {
     m_StateWorkVec->fill(0.);
     m_ObjectiveFunction->partialDerivativeState(*m_State, *control_, *m_StateWorkVec);
@@ -88,15 +88,15 @@ Real DOTk_RoutinesTypeNP::inequalityBound(const size_t index_)
 }
 
 Real DOTk_RoutinesTypeNP::inequalityValue(const size_t index_,
-                                             const std::tr1::shared_ptr<dotk::vector<Real> > & control_)
+                                             const std::tr1::shared_ptr<dotk::Vector<Real> > & control_)
 {
     Real value = m_InequalityConstraint[index_]->value(*m_State, *control_);
     return (value);
 }
 
 void DOTk_RoutinesTypeNP::inequalityGradient(const size_t index_,
-                                             const std::tr1::shared_ptr<dotk::vector<Real> > & control_,
-                                             const std::tr1::shared_ptr<dotk::vector<Real> > & gradient_)
+                                             const std::tr1::shared_ptr<dotk::Vector<Real> > & control_,
+                                             const std::tr1::shared_ptr<dotk::Vector<Real> > & gradient_)
 {
     gradient_->fill(0.);
     m_InequalityConstraint[index_]->partialDerivativeControl(*m_State, *control_, *gradient_);

@@ -18,8 +18,8 @@ class DOTk_LinearOperator;
 class DOTk_LeftPreconditioner;
 class DOTk_OrthogonalProjection;
 
-template<class Type>
-class vector;
+template<typename ScalarType>
+class Vector;
 
 class DOTk_ProjLeftPrecCgDataMng : public dotk::DOTk_KrylovSolverDataMng
 {
@@ -29,8 +29,8 @@ public:
                                size_t max_num_itr_);
     virtual ~DOTk_ProjLeftPrecCgDataMng();
 
-    virtual const std::tr1::shared_ptr<dotk::vector<Real> > & getResidual(size_t index_) const;
-    virtual const std::tr1::shared_ptr<dotk::vector<Real> > & getLeftPrecTimesVector(size_t index_) const;
+    virtual const std::tr1::shared_ptr<dotk::Vector<Real> > & getResidual(size_t index_) const;
+    virtual const std::tr1::shared_ptr<dotk::Vector<Real> > & getLeftPrecTimesVector(size_t index_) const;
 
     const std::tr1::shared_ptr<dotk::DOTk_OrthogonalProjection> & getProjection() const;
     void setArnoldiProjection(const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_);
@@ -47,14 +47,14 @@ public:
     void setAugmentedSystemPrecWithGmresSolver(const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_);
 
 private:
-    void initialize(size_t max_num_itr_, const std::tr1::shared_ptr<dotk::vector<Real> > vector_);
+    void initialize(size_t max_num_itr_, const std::tr1::shared_ptr<dotk::Vector<Real> > vector_);
 
 private:
     std::tr1::shared_ptr<dotk::DOTk_OrthogonalProjection> m_ProjectionMethod;
     std::tr1::shared_ptr<dotk::DOTk_LeftPreconditioner> m_LeftPreconditioner;
 
-    std::vector<std::tr1::shared_ptr<dotk::vector<Real> > > m_Residual;
-    std::vector<std::tr1::shared_ptr<dotk::vector<Real> > > m_LeftPrecTimesResidual;
+    std::vector<std::tr1::shared_ptr<dotk::Vector<Real> > > m_Residual;
+    std::vector<std::tr1::shared_ptr<dotk::Vector<Real> > > m_LeftPrecTimesResidual;
 
 private:
     DOTk_ProjLeftPrecCgDataMng(const dotk::DOTk_ProjLeftPrecCgDataMng &);

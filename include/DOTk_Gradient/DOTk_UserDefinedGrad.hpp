@@ -16,8 +16,8 @@ namespace dotk
 class DOTk_AssemblyManager;
 class DOTk_OptimizationDataMng;
 
-template<class Type>
-class vector;
+template<typename ScalarType>
+class Vector;
 
 class DOTk_UserDefinedGrad : public dotk::DOTk_FirstOrderOperator
 {

@@ -56,7 +56,7 @@ void checkType(dotk::types::variable_t input_type_, dotk::types::variable_t prim
     }
 }
 
-void checkDataPtr(const std::tr1::shared_ptr<dotk::vector<Real> > & data_, std::ostringstream & data_type_)
+void checkDataPtr(const std::tr1::shared_ptr<dotk::Vector<Real> > & data_, std::ostringstream & data_type_)
 {
     try
     {

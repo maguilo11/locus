@@ -16,8 +16,8 @@ namespace dotk
 
 class DOTk_OptimizationDataMng;
 
-template<typename Type>
-class vector;
+template<typename ScalarType>
+class Vector;
 
 class DOTk_RightPreconditioner
 {
@@ -29,8 +29,8 @@ public:
     dotk::types::right_prec_t getRightPreconditionerType() const;
 
     virtual void apply(const std::tr1::shared_ptr<dotk::DOTk_OptimizationDataMng> & opt_prob_mng_,
-                       const std::tr1::shared_ptr<dotk::vector<Real> > & vec_,
-                       const std::tr1::shared_ptr<dotk::vector<Real> > & matrix_times_vec_);
+                       const std::tr1::shared_ptr<dotk::Vector<Real> > & vec_,
+                       const std::tr1::shared_ptr<dotk::Vector<Real> > & matrix_times_vec_);
 
 private:
     dotk::types::right_prec_t mRightPreconditionerType;

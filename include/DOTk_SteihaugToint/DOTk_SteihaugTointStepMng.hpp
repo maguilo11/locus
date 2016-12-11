@@ -20,8 +20,8 @@ class DOTk_SteihaugTointSolver;
 class DOTk_OptimizationDataMng;
 class DOTk_SteihaugTointNewtonIO;
 
-template<typename Type>
-class vector;
+template<typename ScalarType>
+class Vector;
 
 class DOTk_SteihaugTointStepMng : public dotk::DOTk_TrustRegionStepMng
 {
@@ -42,7 +42,7 @@ private:
     void updateDataManager(const std::tr1::shared_ptr<dotk::DOTk_OptimizationDataMng> & mng_);
 
 private:
-    std::tr1::shared_ptr<dotk::vector<Real> > m_CurrentPrimal;
+    std::tr1::shared_ptr<dotk::Vector<Real> > m_CurrentPrimal;
     std::tr1::shared_ptr<dotk::DOTk_LinearOperator> m_LinearOperator;
     std::tr1::shared_ptr<dotk::DOTk_Preconditioner> m_Preconditioner;
 

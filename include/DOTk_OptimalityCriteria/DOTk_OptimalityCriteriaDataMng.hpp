@@ -14,8 +14,8 @@
 namespace dotk
 {
 
-template<typename Type>
-class vector;
+template<typename ScalarType>
+class Vector;
 
 class DOTk_Primal;
 
@@ -57,13 +57,13 @@ public:
     size_t getMaxNumOptimizationItr() const;
     void setMaxNumOptimizationItr(size_t value_);
 
-    dotk::vector<Real> & getState() const;
-    dotk::vector<Real> & getOldControl() const;
-    dotk::vector<Real> & getNewControl() const;
-    dotk::vector<Real> & getControlLowerBound() const;
-    dotk::vector<Real> & getControlUpperBound() const;
-    dotk::vector<Real> & getObjectiveGradient() const;
-    dotk::vector<Real> & getInequalityGradient() const;
+    dotk::Vector<Real> & getState() const;
+    dotk::Vector<Real> & getOldControl() const;
+    dotk::Vector<Real> & getNewControl() const;
+    dotk::Vector<Real> & getControlLowerBound() const;
+    dotk::Vector<Real> & getControlUpperBound() const;
+    dotk::Vector<Real> & getObjectiveGradient() const;
+    dotk::Vector<Real> & getInequalityGradient() const;
 
 private:
     void initialize(const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_);
@@ -86,13 +86,13 @@ private:
 
     size_t m_MaxNumOptimizationItr;
 
-    std::tr1::shared_ptr<dotk::vector<Real> > m_State;
-    std::tr1::shared_ptr<dotk::vector<Real> > m_OldControl;
-    std::tr1::shared_ptr<dotk::vector<Real> > m_NewControl;
-    std::tr1::shared_ptr<dotk::vector<Real> > m_ControlLowerBound;
-    std::tr1::shared_ptr<dotk::vector<Real> > m_ControlUpperBound;
-    std::tr1::shared_ptr<dotk::vector<Real> > m_ObjectiveGradient;
-    std::tr1::shared_ptr<dotk::vector<Real> > m_InequalityGradient;
+    std::tr1::shared_ptr<dotk::Vector<Real> > m_State;
+    std::tr1::shared_ptr<dotk::Vector<Real> > m_OldControl;
+    std::tr1::shared_ptr<dotk::Vector<Real> > m_NewControl;
+    std::tr1::shared_ptr<dotk::Vector<Real> > m_ControlLowerBound;
+    std::tr1::shared_ptr<dotk::Vector<Real> > m_ControlUpperBound;
+    std::tr1::shared_ptr<dotk::Vector<Real> > m_ObjectiveGradient;
+    std::tr1::shared_ptr<dotk::Vector<Real> > m_InequalityGradient;
 
 private:
     DOTk_OptimalityCriteriaDataMng(const dotk::DOTk_OptimalityCriteriaDataMng &);

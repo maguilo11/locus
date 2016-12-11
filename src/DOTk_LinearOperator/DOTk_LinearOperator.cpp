@@ -40,8 +40,8 @@ void DOTk_LinearOperator::updateLimitedMemoryStorage(bool update_)
 }
 
 void DOTk_LinearOperator::apply(const std::tr1::shared_ptr<dotk::DOTk_OptimizationDataMng> & mng_,
-                                const std::tr1::shared_ptr<dotk::vector<Real> > & vector_,
-                                const std::tr1::shared_ptr<dotk::vector<Real> > & output_)
+                                const std::tr1::shared_ptr<dotk::Vector<Real> > & vector_,
+                                const std::tr1::shared_ptr<dotk::Vector<Real> > & output_)
 {
     output_->copy(*vector_);
 }

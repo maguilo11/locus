@@ -16,8 +16,8 @@ namespace dotk
 class DOTk_LinearOperator;
 class DOTk_OptimizationDataMng;
 
-template<class Type>
-class vector;
+template<typename ScalarType>
+class Vector;
 
 class DOTk_Daniels : public dotk::DOTk_DescentDirection
 {

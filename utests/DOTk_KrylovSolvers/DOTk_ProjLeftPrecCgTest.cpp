@@ -163,7 +163,7 @@ TEST(DOTk_ProjLeftPrecCgTest, ppcg)
     dotk::axpy(1, mng->getHessTimesNormalStep(), solver.getDataMng()->getResidual(0));
 
     solver.getDataMng()->getLeftPrec()->setParameter(dotk::types::TRUST_REGION_RADIUS, 1e4);
-    Real grad_dot_grad = mng->getNewGradient()->dot(*mng->getNewGradient());
+    long double grad_dot_grad = mng->getNewGradient()->dot(*mng->getNewGradient());
     Real grad_norm = std::sqrt(grad_dot_grad);
     solver.getDataMng()->getLeftPrec()->setParameter(dotk::types::NORM_GRADIENT, grad_norm);
 
@@ -172,7 +172,7 @@ TEST(DOTk_ProjLeftPrecCgTest, ppcg)
 
     solver.ppcg(solver.getDataMng()->getResidual(0), criterion, mng);
 
-    std::tr1::shared_ptr<dotk::vector<Real> > gold = primal->control()->clone();
+    std::tr1::shared_ptr<dotk::Vector<Real> > gold = primal->control()->clone();
     (*gold)[0] = 0.0196000125684081;
     (*gold)[1] = -0.0219737165126789;
     (*gold)[2] = 0.0361541754328155;

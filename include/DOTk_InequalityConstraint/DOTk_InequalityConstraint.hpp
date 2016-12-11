@@ -10,15 +10,16 @@
 
 #include <iostream>
 
+#include <vector.hpp>
 #include "DOTk_Types.hpp"
 
 namespace dotk
 {
 
-template<typename Type>
-class vector;
+template<typename ScalarType>
+class Vector;
 
-template<typename Type>
+template<typename ScalarType>
 class DOTk_InequalityConstraint
 {
 public:
@@ -29,55 +30,55 @@ public:
     {
     }
 
-    virtual Type bound()
+    virtual ScalarType bound()
     {
         std::perror("\nUnimplemented Function dotk::DOTk_InequalityConstraint::bound. ABORT.\n");
         std::abort();
         return (0.);
     }
-    virtual Type value(const dotk::vector<Type> & primal_)
+    virtual ScalarType value(const dotk::Vector<ScalarType> & primal_)
     {
         std::perror("\nUnimplemented Function dotk::DOTk_InequalityConstraint::value. ABORT.\n");
         std::abort();
         return (0.);
     }
-    virtual void gradient(const dotk::vector<Type> & primal_, dotk::vector<Type> & derivative_)
+    virtual void gradient(const dotk::Vector<ScalarType> & primal_, dotk::Vector<ScalarType> & derivative_)
     {
         std::perror("\nUnimplemented Function dotk::DOTk_InequalityConstraint::gradient. ABORT.\n");
         std::abort();
     }
-    virtual void hessian(const dotk::vector<Type> & primal_,
-                         const dotk::vector<Type> & delta_primal_,
-                         dotk::vector<Type> & derivative_)
+    virtual void hessian(const dotk::Vector<ScalarType> & primal_,
+                         const dotk::Vector<ScalarType> & delta_primal_,
+                         dotk::Vector<ScalarType> & derivative_)
     {
         std::perror("\nUnimplemented Function dotk::DOTk_InequalityConstraint::hessian. ABORT.\n");
         std::abort();
     }
 
-    virtual Type value(const dotk::vector<Type> & state_, const dotk::vector<Type> & control_)
+    virtual ScalarType value(const dotk::Vector<ScalarType> & state_, const dotk::Vector<ScalarType> & control_)
     {
         std::perror("\nUnimplemented Function dotk::DOTk_InequalityConstraint::value. ABORT.\n");
         std::abort();
         return (0.);
     }
-    virtual void partialDerivativeState(const dotk::vector<Type> & state_,
-                                        const dotk::vector<Type> & control_,
-                                        dotk::vector<Type> & derivative_)
+    virtual void partialDerivativeState(const dotk::Vector<ScalarType> & state_,
+                                        const dotk::Vector<ScalarType> & control_,
+                                        dotk::Vector<ScalarType> & derivative_)
     {
         std::perror("\nUnimplemented Function dotk::DOTk_InequalityConstraint::partialDerivativeState. ABORT.\n");
         std::abort();
     }
-    virtual void partialDerivativeControl(const dotk::vector<Type> & state_,
-                                          const dotk::vector<Type> & control_,
-                                          dotk::vector<Type> & derivative_)
+    virtual void partialDerivativeControl(const dotk::Vector<ScalarType> & state_,
+                                          const dotk::Vector<ScalarType> & control_,
+                                          dotk::Vector<ScalarType> & derivative_)
     {
         std::perror("\nUnimplemented Function dotk::DOTk_InequalityConstraint::partialDerivativeControl. ABORT.\n");
         std::abort();
     }
 
 private:
-    DOTk_InequalityConstraint(const dotk::DOTk_InequalityConstraint<Type> &);
-    dotk::DOTk_InequalityConstraint<Type> & operator=(const dotk::DOTk_InequalityConstraint<Type> &);
+    DOTk_InequalityConstraint(const dotk::DOTk_InequalityConstraint<ScalarType> &);
+    dotk::DOTk_InequalityConstraint<ScalarType> & operator=(const dotk::DOTk_InequalityConstraint<ScalarType> &);
 };
 
 }

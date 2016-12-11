@@ -15,7 +15,7 @@
 namespace dotk
 {
 
-DOTk_DFPHessian::DOTk_DFPHessian(const std::tr1::shared_ptr<dotk::vector<Real> > & vector_) :
+DOTk_DFPHessian::DOTk_DFPHessian(const std::tr1::shared_ptr<dotk::Vector<Real> > & vector_) :
         dotk::DOTk_SecondOrderOperator(),
         m_DeltaPrimal(vector_->clone()),
         m_DeltaGradient(vector_->clone()),
@@ -28,18 +28,18 @@ DOTk_DFPHessian::~DOTk_DFPHessian()
 {
 }
 
-const std::tr1::shared_ptr<dotk::vector<Real> > & DOTk_DFPHessian::getDeltaGrad() const
+const std::tr1::shared_ptr<dotk::Vector<Real> > & DOTk_DFPHessian::getDeltaGrad() const
 {
     return (m_DeltaGradient);
 }
 
-const std::tr1::shared_ptr<dotk::vector<Real> > & DOTk_DFPHessian::getDeltaPrimal() const
+const std::tr1::shared_ptr<dotk::Vector<Real> > & DOTk_DFPHessian::getDeltaPrimal() const
 {
     return (m_DeltaPrimal);
 }
 
-void DOTk_DFPHessian::getHessian(const std::tr1::shared_ptr<dotk::vector<Real> > & vec_,
-                                 const std::tr1::shared_ptr<dotk::vector<Real> > & hess_times_vec_)
+void DOTk_DFPHessian::getHessian(const std::tr1::shared_ptr<dotk::Vector<Real> > & vec_,
+                                 const std::tr1::shared_ptr<dotk::Vector<Real> > & hess_times_vec_)
 {
     hess_times_vec_->copy(*vec_);
     Real innr_deltaGrad_vector = m_DeltaGradient->dot(*vec_);
@@ -72,8 +72,8 @@ void DOTk_DFPHessian::getHessian(const std::tr1::shared_ptr<dotk::vector<Real> >
 }
 
 void DOTk_DFPHessian::apply(const std::tr1::shared_ptr<dotk::DOTk_OptimizationDataMng> & mng_,
-                            const std::tr1::shared_ptr<dotk::vector<Real> > & vec_,
-                            const std::tr1::shared_ptr<dotk::vector<Real> > & matrix_times_vec_)
+                            const std::tr1::shared_ptr<dotk::Vector<Real> > & vec_,
+                            const std::tr1::shared_ptr<dotk::Vector<Real> > & matrix_times_vec_)
 {
     dotk::DOTk_SecondOrderOperator::computeDeltaPrimal(mng_->getNewPrimal(), mng_->getOldPrimal(), m_DeltaPrimal);
     dotk::DOTk_SecondOrderOperator::computeDeltaGradient(mng_->getNewGradient(), mng_->getOldGradient(), m_DeltaGradient);

@@ -17,9 +17,6 @@ class DOTk_InexactTrustRegionSQP;
 class DOTk_TrustRegionMngTypeELP;
 class DOTk_InexactTrustRegionSqpSolverMng;
 
-template<class Type>
-class vector;
-
 class DOTk_InexactTrustRegionSqpIO
 {
 public:

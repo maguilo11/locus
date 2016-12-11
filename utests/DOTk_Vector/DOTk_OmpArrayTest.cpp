@@ -139,7 +139,7 @@ TEST(DOTk_OmpArrayTest, abs)
         printf("ABS WTime is %f\n", time);
     }
 
-    std::tr1::shared_ptr<dotk::vector<double> > gold = x.clone();
+    std::tr1::shared_ptr<dotk::Vector<double> > gold = x.clone();
     gold->fill(11.);
     dotk::gtest::checkResults(*gold, x, thread_count);
 }
@@ -172,7 +172,7 @@ TEST(DOTk_OmpArrayTest, scale)
         printf("WTime is %f\n", time);
     }
 
-    std::tr1::shared_ptr<dotk::vector<double> > gold = vector.clone();
+    std::tr1::shared_ptr<dotk::Vector<double> > gold = vector.clone();
     gold->fill(3.);
     dotk::gtest::checkResults(*gold, vector, thread_count);
 }
@@ -205,7 +205,7 @@ TEST(DOTk_OmpVectorTest, cwiseProd)
         printf("WTime is %f\n", time);
     }
 
-    std::tr1::shared_ptr<dotk::vector<double> > gold = x.clone();
+    std::tr1::shared_ptr<dotk::Vector<double> > gold = x.clone();
     gold->fill(4.);
     dotk::gtest::checkResults(*gold, x, thread_count);
 }
@@ -239,7 +239,7 @@ TEST(DOTk_OmpArrayTest, axpy)
         printf("WTime is %f\n", time);
     }
 
-    std::tr1::shared_ptr<dotk::vector<double> > gold = x.clone();
+    std::tr1::shared_ptr<dotk::Vector<double> > gold = x.clone();
     gold->fill(4.);
     dotk::gtest::checkResults(*gold, y, thread_count);
 }
@@ -370,7 +370,7 @@ TEST(DOTk_OmpArrayTest, copy)
         printf("WTime is %f\n", time);
     }
 
-    std::tr1::shared_ptr<dotk::vector<double> > gold = x.clone();
+    std::tr1::shared_ptr<dotk::Vector<double> > gold = x.clone();
     gold->fill(1.);
     dotk::gtest::checkResults(*gold, x, thread_count);
 }
@@ -404,7 +404,7 @@ TEST(DOTk_OmpArrayTest, gather)
         printf("WTime is %f\n", time);
     }
 
-    std::tr1::shared_ptr<dotk::vector<double> > gold = y.clone();
+    std::tr1::shared_ptr<dotk::Vector<double> > gold = y.clone();
     gold->fill(1.);
     dotk::gtest::checkResults(x, *gold, thread_count);
 }

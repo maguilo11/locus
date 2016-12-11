@@ -16,8 +16,8 @@ namespace dotk
 
 class DOTk_OptimizationDataMng;
 
-template<typename Type>
-class vector;
+template<typename ScalarType>
+class Vector;
 
 class DOTk_LinearOperator
 {
@@ -30,8 +30,8 @@ public:
     virtual void setNumOtimizationItrDone(size_t itr_);
     virtual void updateLimitedMemoryStorage(bool update_);
     virtual void apply(const std::tr1::shared_ptr<dotk::DOTk_OptimizationDataMng> & mng_,
-                       const std::tr1::shared_ptr<dotk::vector<Real> > & vector_,
-                       const std::tr1::shared_ptr<dotk::vector<Real> > & output_);
+                       const std::tr1::shared_ptr<dotk::Vector<Real> > & vector_,
+                       const std::tr1::shared_ptr<dotk::Vector<Real> > & output_);
 
 private:
     dotk::types::linear_operator_t m_LinearOperatorType;

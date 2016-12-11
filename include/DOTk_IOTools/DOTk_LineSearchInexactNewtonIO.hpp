@@ -17,9 +17,6 @@ class DOTk_KrylovSolver;
 class DOTk_LineSearchStepMng;
 class DOTk_LineSearchAlgorithmsDataMng;
 
-template<class Type>
-class vector;
-
 class DOTk_LineSearchInexactNewtonIO
 {
 public:

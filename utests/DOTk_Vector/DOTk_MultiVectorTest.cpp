@@ -189,7 +189,7 @@ TEST(DOTkMultiVariableVector, copy)
     dotk::StdArray<Real> control(num_controls, 2.);
     dotk::DOTk_MultiVector<Real> multi_vector(control, dual);
 
-    std::tr1::shared_ptr<dotk::vector<Real> > input = multi_vector.clone();
+    std::tr1::shared_ptr<dotk::Vector<Real> > input = multi_vector.clone();
     input->dual()->fill(-8);
     input->control()->fill(-16);
 
@@ -445,7 +445,7 @@ TEST(DOTkMultiVariableVector, copy2)
     dotk::StdArray<Real> control(num_controls, 2.);
     dotk::DOTk_MultiVector<Real> multi_vector(control, state, dual);
 
-    std::tr1::shared_ptr<dotk::vector<Real> > input = multi_vector.clone();
+    std::tr1::shared_ptr<dotk::Vector<Real> > input = multi_vector.clone();
     input->dual()->fill(-8);
     input->state()->fill(-2);
     input->control()->fill(-16);

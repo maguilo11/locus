@@ -24,13 +24,13 @@ Real DOTk_ObjectiveFunctionMmaTest::getConstant() const
     return (m_Constant);
 }
 
-Real DOTk_ObjectiveFunctionMmaTest::value(const dotk::vector<Real> & primal_)
+Real DOTk_ObjectiveFunctionMmaTest::value(const dotk::Vector<Real> & primal_)
 {
     Real value = this->getConstant() * primal_.sum();
     return (value);
 }
 
-void DOTk_ObjectiveFunctionMmaTest::gradient(const dotk::vector<Real> & primal_, dotk::vector<Real> & gradient_)
+void DOTk_ObjectiveFunctionMmaTest::gradient(const dotk::Vector<Real> & primal_, dotk::Vector<Real> & gradient_)
 {
     Real constant = this->getConstant();
     gradient_.fill(constant);

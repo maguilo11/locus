@@ -17,14 +17,14 @@
 namespace dotk
 {
 
-template<typename Type>
-class OmpArray : public dotk::vector<Type>
+template<typename ScalarType>
+class OmpArray : public dotk::Vector<ScalarType>
 {
 public:
-    OmpArray(int dim_, int num_threads_ = 1, Type value_ = 0.) :
+    OmpArray(int dim_, int num_threads_ = 1, ScalarType value_ = 0.) :
             m_NumDim(dim_),
             m_NumThreads(num_threads_),
-            m_Data(new Type[dim_])
+            m_Data(new ScalarType[dim_])
     {
         this->fill(value_);
     }
@@ -34,7 +34,7 @@ public:
         m_Data = nullptr;
     }
     // Scales a vector by a real constant.
-    void scale(const Type & alpha_)
+    void scale(const ScalarType & alpha_)
     {
         size_t index;
         size_t dim = this->size();
@@ -52,7 +52,7 @@ public:
         }
     }
     // Component wise multiplication of two vectors.
-    void cwiseProd(const dotk::vector<Type> & input_)
+    void cwiseProd(const dotk::Vector<ScalarType> & input_)
     {
         size_t index;
         size_t dim = this->size();
@@ -71,7 +71,7 @@ public:
         }
     }
     // Constant times a vector plus a vector.
-    void axpy(const Type & alpha_, const dotk::vector<Type> & input_)
+    void axpy(const ScalarType & alpha_, const dotk::Vector<ScalarType> & input_)
     {
         size_t index;
         size_t dim = this->size();
@@ -90,10 +90,10 @@ public:
         }
     }
     // Returns the maximum element in a range.
-    Type max() const
+    ScalarType max() const
     {
         size_t index;
-        Type max_value = 0;
+        ScalarType max_value = 0;
         size_t dim = this->size();
 
         int thread_count = this->threads();
@@ -113,10 +113,10 @@ public:
         return (max_value);
     }
     // Returns the minimum element in a range.
-    Type min() const
+    ScalarType min() const
     {
         size_t index;
-        Type min_value = 0.;
+        ScalarType min_value = 0.;
         size_t dim = this->size();
 
         int thread_count = this->threads();
@@ -151,14 +151,14 @@ public:
 # pragma omp for
         for(index = 0; index < dim; ++index)
         {
-            m_Data[index] = m_Data[index] < static_cast<Type>(0.) ? -(m_Data[index]): m_Data[index];
+            m_Data[index] = m_Data[index] < static_cast<ScalarType>(0.) ? -(m_Data[index]): m_Data[index];
         }
     }
     // Returns the sum of all the elements in the container.
-    Type sum() const
+    ScalarType sum() const
     {
         size_t index;
-        Type output = 0;
+        ScalarType output = 0;
         size_t dim = this->size();
 
         int thread_count = this->threads();
@@ -175,12 +175,12 @@ public:
         return (output);
     }
     // Returns the inner product of two vectors.
-    Type dot(const dotk::vector<Type> & input_) const
+    ScalarType dot(const dotk::Vector<ScalarType> & input_) const
     {
         size_t index;
         size_t dim = this->size();
         assert(dim == input_.size());
-        Type output = 0.;
+        ScalarType output = 0.;
 
         int thread_count = this->threads();
 # pragma omp parallel num_threads(thread_count) \
@@ -197,14 +197,14 @@ public:
         return (output);
     }
     // Returns the euclidean norm of a vector.
-    Type norm() const
+    ScalarType norm() const
     {
-        Type output = this->dot(*this);
+        ScalarType output = this->dot(*this);
         output = std::sqrt(output);
         return (output);
     }
     // Assigns new contents to the vector, replacing its current contents, and not modifying its size.
-    void fill(const Type & value_)
+    void fill(const ScalarType & value_)
     {
         size_t index;
         size_t dim = this->size();
@@ -222,7 +222,7 @@ public:
         }
     }
     // Copies the elements in the range [first,last) into the range beginning at result.
-    void copy(const dotk::vector<Type> & input_)
+    void copy(const dotk::Vector<ScalarType> & input_)
     {
         size_t index;
         size_t dim = this->size();
@@ -241,7 +241,7 @@ public:
         }
     }
     // Gathers data from private member data of a group to one member.
-    void gather(Type* input_) const
+    void gather(ScalarType* input_) const
     {
         size_t index;
         size_t dim = this->size();
@@ -263,21 +263,21 @@ public:
     {
         return (m_NumDim);
     }
-    // Clones memory for an object of type dotk::vector
-    std::tr1::shared_ptr<dotk::vector<Type> > clone() const
+    // Clones memory for an object of ScalarType dotk::Vector
+    std::tr1::shared_ptr<dotk::Vector<ScalarType> > clone() const
     {
         size_t dim = this->size();
         int thread_count = this->threads();
-        std::tr1::shared_ptr < dotk::OmpArray<Type> > output(new dotk::OmpArray<Type>(dim, thread_count, 0.));
+        std::tr1::shared_ptr < dotk::OmpArray<ScalarType> > output(new dotk::OmpArray<ScalarType>(dim, thread_count, 0.));
         return (output);
     }
     // Operator overloads the square bracket operator
-    Type & operator [](size_t index_)
+    ScalarType & operator [](size_t index_)
     {
         return (m_Data[index_]);
     }
     // Operator overloads the const square bracket operator
-    const Type & operator [](size_t index_) const
+    const ScalarType & operator [](size_t index_) const
     {
         return (m_Data[index_]);
     }
@@ -289,11 +289,11 @@ public:
 private:
     int m_NumDim;
     int m_NumThreads;
-    Type* m_Data;
+    ScalarType* m_Data;
 
 private:
-    OmpArray(const dotk::OmpArray<Type> &);
-    dotk::OmpArray<Type> & operator=(const dotk::OmpArray<Type> & rhs_);
+    OmpArray(const dotk::OmpArray<ScalarType> &);
+    dotk::OmpArray<ScalarType> & operator=(const dotk::OmpArray<ScalarType> & rhs_);
 };
 
 }

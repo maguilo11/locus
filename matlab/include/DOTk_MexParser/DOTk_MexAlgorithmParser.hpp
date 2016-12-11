@@ -16,8 +16,8 @@
 namespace dotk
 {
 
-template<typename Type>
-class vector;
+template<typename ScalarType>
+class Vector;
 
 namespace mex
 {
@@ -72,16 +72,16 @@ void parseHessianComputationMethod(const mxArray* options_, dotk::types::hessian
 void parseGradientComputationMethod(const mxArray* options_, dotk::types::gradient_t & output_);
 void parseBoundConstraintMethod(const mxArray* options_, dotk::types::constraint_method_t & output_);
 
-void parseDualData(const mxArray* options_, dotk::vector<double> & output_);
-void parseStateData(const mxArray* options_, dotk::vector<double> & output_);
-void parseControlData(const mxArray* options_, dotk::vector<double> & output_);
-void parseDualLowerBound(const mxArray* options_, dotk::vector<double> & output_);
-void parseDualUpperBound(const mxArray* options_, dotk::vector<double> & output_);
-void parseStateLowerBound(const mxArray* options_, dotk::vector<double> & output_);
-void parseStateUpperBound(const mxArray* options_, dotk::vector<double> & output_);
-void parseControlLowerBound(const mxArray* options_, dotk::vector<double> & output_);
-void parseControlUpperBound(const mxArray* options_, dotk::vector<double> & output_);
-void parseFiniteDifferencePerturbation(const mxArray* options_, dotk::vector<double> & output_);
+void parseDualData(const mxArray* options_, dotk::Vector<double> & output_);
+void parseStateData(const mxArray* options_, dotk::Vector<double> & output_);
+void parseControlData(const mxArray* options_, dotk::Vector<double> & output_);
+void parseDualLowerBound(const mxArray* options_, dotk::Vector<double> & output_);
+void parseDualUpperBound(const mxArray* options_, dotk::Vector<double> & output_);
+void parseStateLowerBound(const mxArray* options_, dotk::Vector<double> & output_);
+void parseStateUpperBound(const mxArray* options_, dotk::Vector<double> & output_);
+void parseControlLowerBound(const mxArray* options_, dotk::Vector<double> & output_);
+void parseControlUpperBound(const mxArray* options_, dotk::Vector<double> & output_);
+void parseFiniteDifferencePerturbation(const mxArray* options_, dotk::Vector<double> & output_);
 
 }
 

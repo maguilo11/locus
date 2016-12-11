@@ -24,8 +24,8 @@ DOTk_UserDefinedHessian::~DOTk_UserDefinedHessian()
 }
 
 void DOTk_UserDefinedHessian::apply(const std::tr1::shared_ptr<dotk::DOTk_OptimizationDataMng> & mng_,
-                                    const std::tr1::shared_ptr<dotk::vector<Real> > & vector_,
-                                    const std::tr1::shared_ptr<dotk::vector<Real> > & hessian_times_vector_)
+                                    const std::tr1::shared_ptr<dotk::Vector<Real> > & vector_,
+                                    const std::tr1::shared_ptr<dotk::Vector<Real> > & hessian_times_vector_)
 {
     mng_->getRoutinesMng()->hessian(mng_->getNewPrimal(), vector_, hessian_times_vector_);
 }

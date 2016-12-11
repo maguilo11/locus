@@ -21,9 +21,9 @@ DOTk_HestenesStiefel::~DOTk_HestenesStiefel()
 {
 }
 
-Real DOTk_HestenesStiefel::computeScaleFactor(const std::tr1::shared_ptr<dotk::vector<Real> > & old_grad_,
-                                              const std::tr1::shared_ptr<dotk::vector<Real> > & new_grad_,
-                                              const std::tr1::shared_ptr<dotk::vector<Real> > & dir_)
+Real DOTk_HestenesStiefel::computeScaleFactor(const std::tr1::shared_ptr<dotk::Vector<Real> > & old_grad_,
+                                              const std::tr1::shared_ptr<dotk::Vector<Real> > & new_grad_,
+                                              const std::tr1::shared_ptr<dotk::Vector<Real> > & dir_)
 {
     Real beta = (new_grad_->dot(*new_grad_) - new_grad_->dot(*old_grad_))
             / (new_grad_->dot(*dir_) - old_grad_->dot(*dir_));
@@ -32,9 +32,9 @@ Real DOTk_HestenesStiefel::computeScaleFactor(const std::tr1::shared_ptr<dotk::v
     return (beta);
 }
 
-void DOTk_HestenesStiefel::getDirection(const std::tr1::shared_ptr<dotk::vector<Real> > & old_grad_,
-                                        const std::tr1::shared_ptr<dotk::vector<Real> > & new_grad_,
-                                        const std::tr1::shared_ptr<dotk::vector<Real> > & dir_)
+void DOTk_HestenesStiefel::getDirection(const std::tr1::shared_ptr<dotk::Vector<Real> > & old_grad_,
+                                        const std::tr1::shared_ptr<dotk::Vector<Real> > & new_grad_,
+                                        const std::tr1::shared_ptr<dotk::Vector<Real> > & dir_)
 {
     Real beta = this->computeScaleFactor(old_grad_, new_grad_, dir_);
     dir_->scale(beta);

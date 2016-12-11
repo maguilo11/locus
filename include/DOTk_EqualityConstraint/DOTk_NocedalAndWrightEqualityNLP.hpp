@@ -13,8 +13,8 @@
 namespace dotk
 {
 
-template<typename Type>
-class vector;
+template<typename ScalarType>
+class Vector;
 
 class DOTk_NocedalAndWrightEqualityNLP : public dotk::DOTk_EqualityConstraint<Real>
 {
@@ -22,45 +22,45 @@ public:
     DOTk_NocedalAndWrightEqualityNLP();
     virtual ~DOTk_NocedalAndWrightEqualityNLP();
 
-    virtual void residual(const dotk::vector<Real> & state_,
-                          const dotk::vector<Real> & control_,
-                          dotk::vector<Real> & residual_);
-    virtual void partialDerivativeState(const dotk::vector<Real> & state_,
-                                        const dotk::vector<Real> & control_,
-                                        const dotk::vector<Real> & vector_,
-                                        dotk::vector<Real> & output_);
-    virtual void partialDerivativeControl(const dotk::vector<Real> & state_,
-                                          const dotk::vector<Real> & control_,
-                                          const dotk::vector<Real> & vector_,
-                                          dotk::vector<Real> & output_);
-    virtual void adjointPartialDerivativeState(const dotk::vector<Real> & state_,
-                                               const dotk::vector<Real> & control_,
-                                               const dotk::vector<Real> & dual_,
-                                               dotk::vector<Real> & output_);
-    virtual void adjointPartialDerivativeControl(const dotk::vector<Real> & state_,
-                                                 const dotk::vector<Real> & control_,
-                                                 const dotk::vector<Real> & dual_,
-                                                 dotk::vector<Real> & output_);
-    virtual void partialDerivativeStateState(const dotk::vector<Real> & state_,
-                                             const dotk::vector<Real> & control_,
-                                             const dotk::vector<Real> & dual_,
-                                             const dotk::vector<Real> & vector_,
-                                             dotk::vector<Real> & output_);
-    virtual void partialDerivativeStateControl(const dotk::vector<Real> & state_,
-                                               const dotk::vector<Real> & control_,
-                                               const dotk::vector<Real> & dual_,
-                                               const dotk::vector<Real> & vector_,
-                                               dotk::vector<Real> & output_);
-    virtual void partialDerivativeControlControl(const dotk::vector<Real> & state_,
-                                                 const dotk::vector<Real> & control_,
-                                                 const dotk::vector<Real> & dual_,
-                                                 const dotk::vector<Real> & vector_,
-                                                 dotk::vector<Real> & output_);
-    virtual void partialDerivativeControlState(const dotk::vector<Real> & state_,
-                                               const dotk::vector<Real> & control_,
-                                               const dotk::vector<Real> & dual_,
-                                               const dotk::vector<Real> & vector_,
-                                               dotk::vector<Real> & output_);
+    virtual void residual(const dotk::Vector<Real> & state_,
+                          const dotk::Vector<Real> & control_,
+                          dotk::Vector<Real> & residual_);
+    virtual void partialDerivativeState(const dotk::Vector<Real> & state_,
+                                        const dotk::Vector<Real> & control_,
+                                        const dotk::Vector<Real> & vector_,
+                                        dotk::Vector<Real> & output_);
+    virtual void partialDerivativeControl(const dotk::Vector<Real> & state_,
+                                          const dotk::Vector<Real> & control_,
+                                          const dotk::Vector<Real> & vector_,
+                                          dotk::Vector<Real> & output_);
+    virtual void adjointPartialDerivativeState(const dotk::Vector<Real> & state_,
+                                               const dotk::Vector<Real> & control_,
+                                               const dotk::Vector<Real> & dual_,
+                                               dotk::Vector<Real> & output_);
+    virtual void adjointPartialDerivativeControl(const dotk::Vector<Real> & state_,
+                                                 const dotk::Vector<Real> & control_,
+                                                 const dotk::Vector<Real> & dual_,
+                                                 dotk::Vector<Real> & output_);
+    virtual void partialDerivativeStateState(const dotk::Vector<Real> & state_,
+                                             const dotk::Vector<Real> & control_,
+                                             const dotk::Vector<Real> & dual_,
+                                             const dotk::Vector<Real> & vector_,
+                                             dotk::Vector<Real> & output_);
+    virtual void partialDerivativeStateControl(const dotk::Vector<Real> & state_,
+                                               const dotk::Vector<Real> & control_,
+                                               const dotk::Vector<Real> & dual_,
+                                               const dotk::Vector<Real> & vector_,
+                                               dotk::Vector<Real> & output_);
+    virtual void partialDerivativeControlControl(const dotk::Vector<Real> & state_,
+                                                 const dotk::Vector<Real> & control_,
+                                                 const dotk::Vector<Real> & dual_,
+                                                 const dotk::Vector<Real> & vector_,
+                                                 dotk::Vector<Real> & output_);
+    virtual void partialDerivativeControlState(const dotk::Vector<Real> & state_,
+                                               const dotk::Vector<Real> & control_,
+                                               const dotk::Vector<Real> & dual_,
+                                               const dotk::Vector<Real> & vector_,
+                                               dotk::Vector<Real> & output_);
 
 private:
     DOTk_NocedalAndWrightEqualityNLP(const dotk::DOTk_NocedalAndWrightEqualityNLP&);

@@ -13,8 +13,8 @@
 namespace dotk
 {
 
-template<typename Type>
-class vector;
+template<typename ScalarType>
+class Vector;
 
 class DOTk_NocedalAndWrightEquality : public dotk::DOTk_EqualityConstraint<Real>
 {
@@ -22,17 +22,17 @@ public:
     DOTk_NocedalAndWrightEquality();
     virtual ~DOTk_NocedalAndWrightEquality();
 
-    virtual void residual(const dotk::vector<Real> & primal_, dotk::vector<Real> & residual_);
-    virtual void jacobian(const dotk::vector<Real> & primal_,
-                          const dotk::vector<Real> & vector_,
-                          dotk::vector<Real> & output_);
-    virtual void adjointJacobian(const dotk::vector<Real> & primal_,
-                                 const dotk::vector<Real> & dual_,
-                                 dotk::vector<Real> & output_);
-    virtual void hessian(const dotk::vector<Real> & primal_,
-                         const dotk::vector<Real> & dual_,
-                         const dotk::vector<Real> & vector_,
-                         dotk::vector<Real> & output_);
+    virtual void residual(const dotk::Vector<Real> & primal_, dotk::Vector<Real> & residual_);
+    virtual void jacobian(const dotk::Vector<Real> & primal_,
+                          const dotk::Vector<Real> & vector_,
+                          dotk::Vector<Real> & output_);
+    virtual void adjointJacobian(const dotk::Vector<Real> & primal_,
+                                 const dotk::Vector<Real> & dual_,
+                                 dotk::Vector<Real> & output_);
+    virtual void hessian(const dotk::Vector<Real> & primal_,
+                         const dotk::Vector<Real> & dual_,
+                         const dotk::Vector<Real> & vector_,
+                         dotk::Vector<Real> & output_);
 
 private:
     DOTk_NocedalAndWrightEquality(const dotk::DOTk_NocedalAndWrightEquality&);

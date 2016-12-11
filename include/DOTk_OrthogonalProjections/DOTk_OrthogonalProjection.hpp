@@ -16,8 +16,8 @@ namespace dotk
 
 class DOTk_KrylovSolver;
 
-template<typename Type>
-class vector;
+template<typename ScalarType>
+class Vector;
 
 class DOTk_OrthogonalProjection
 {
@@ -33,15 +33,15 @@ public:
 
     virtual void setInitialResidual(Real value_);
     virtual Real getInitialResidual() const;
-    virtual const std::tr1::shared_ptr<dotk::vector<Real> > & getLinearOperatorTimesOrthoVector(size_t index_) const;
+    virtual const std::tr1::shared_ptr<dotk::Vector<Real> > & getLinearOperatorTimesOrthoVector(size_t index_) const;
     virtual void setLinearOperatorTimesOrthoVector(size_t index_,
-                                                   const std::tr1::shared_ptr<dotk::vector<Real> > & vec_);
+                                                   const std::tr1::shared_ptr<dotk::Vector<Real> > & vec_);
 
     virtual void clear() = 0;
-    virtual const std::tr1::shared_ptr<dotk::vector<Real> > & getOrthogonalVector(size_t i_) const = 0;
-    virtual void setOrthogonalVector(size_t index_, const std::tr1::shared_ptr<dotk::vector<Real> > & vec_) = 0;
+    virtual const std::tr1::shared_ptr<dotk::Vector<Real> > & getOrthogonalVector(size_t i_) const = 0;
+    virtual void setOrthogonalVector(size_t index_, const std::tr1::shared_ptr<dotk::Vector<Real> > & vec_) = 0;
     virtual void apply(const dotk::DOTk_KrylovSolver * const solver_,
-                       const std::tr1::shared_ptr<dotk::vector<Real> > & kernel_vector_) = 0;
+                       const std::tr1::shared_ptr<dotk::Vector<Real> > & kernel_vector_) = 0;
 
 private:
     Real mInitialResidual;

@@ -44,7 +44,7 @@ DOTk_PrecGMRES::~DOTk_PrecGMRES()
 {
 }
 
-void DOTk_PrecGMRES::initialize(const std::tr1::shared_ptr<dotk::vector<Real> > & rhs_vec_,
+void DOTk_PrecGMRES::initialize(const std::tr1::shared_ptr<dotk::Vector<Real> > & rhs_vec_,
                                 const std::tr1::shared_ptr<dotk::DOTk_KrylovSolverStoppingCriterion> & criterion_,
                                 const std::tr1::shared_ptr<dotk::DOTk_OptimizationDataMng> & opt_prob_mng_)
 {
@@ -67,7 +67,7 @@ void DOTk_PrecGMRES::initialize(const std::tr1::shared_ptr<dotk::vector<Real> > 
     dotk::DOTk_KrylovSolver::setInitialStoppingTolerance(stopping_tolerance);
 }
 
-void DOTk_PrecGMRES::gmres(const std::tr1::shared_ptr<dotk::vector<Real> > & rhs_vec_,
+void DOTk_PrecGMRES::gmres(const std::tr1::shared_ptr<dotk::Vector<Real> > & rhs_vec_,
                            const std::tr1::shared_ptr<dotk::DOTk_KrylovSolverStoppingCriterion> & criterion_,
                            const std::tr1::shared_ptr<dotk::DOTk_OptimizationDataMng> & opt_mng_)
 {
@@ -133,7 +133,7 @@ void DOTk_PrecGMRES::setMaxNumKrylovSolverItr(size_t itr_)
     m_DataMng->setMaxNumSolverItr(itr_);
 }
 
-void DOTk_PrecGMRES::solve(const std::tr1::shared_ptr<dotk::vector<Real> > & rhs_vec_,
+void DOTk_PrecGMRES::solve(const std::tr1::shared_ptr<dotk::Vector<Real> > & rhs_vec_,
                            const std::tr1::shared_ptr<dotk::DOTk_KrylovSolverStoppingCriterion> & criterion_,
                            const std::tr1::shared_ptr<dotk::DOTk_OptimizationDataMng> & opt_prob_mng_)
 {
@@ -150,12 +150,12 @@ const std::tr1::shared_ptr<dotk::DOTk_LinearOperator> & DOTk_PrecGMRES::getLinea
     return (m_DataMng->getLinearOperator());
 }
 
-const std::tr1::shared_ptr<dotk::vector<Real> > & DOTk_PrecGMRES::getDescentDirection()
+const std::tr1::shared_ptr<dotk::Vector<Real> > & DOTk_PrecGMRES::getDescentDirection()
 {
     return (m_ProjectionOperatorTimesVec);
 }
 
-void DOTk_PrecGMRES::allocate(const std::tr1::shared_ptr<dotk::vector<Real> > vec_)
+void DOTk_PrecGMRES::allocate(const std::tr1::shared_ptr<dotk::Vector<Real> > vec_)
 {
     m_ProjectionOperatorTimesVec = vec_->clone();
 }

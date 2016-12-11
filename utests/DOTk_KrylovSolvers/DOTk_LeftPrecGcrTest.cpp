@@ -33,7 +33,7 @@ TEST(DOTk_LeftPrecGCR, initialize)
     std::tr1::shared_ptr<dotk::DOTk_Hessian> hessian(new dotk::DOTk_Hessian);
 
     mng->computeGradient();
-    std::tr1::shared_ptr<dotk::vector<Real> > vec = primal->control()->clone();
+    std::tr1::shared_ptr<dotk::Vector<Real> > vec = primal->control()->clone();
     vec->copy(*mng->getNewGradient());
     vec->scale(-1);
     std::tr1::shared_ptr<dotk::DOTk_LeftPrecGenConjResDataMng> solver_mng(new dotk::DOTk_LeftPrecGenConjResDataMng(primal, hessian));
@@ -66,7 +66,7 @@ TEST(DOTk_LeftPrecGCR, pgcr)
     std::tr1::shared_ptr<dotk::DOTk_Hessian> hessian(new dotk::DOTk_Hessian);
 
     mng->computeGradient();
-    std::tr1::shared_ptr<dotk::vector<Real> > vec = primal->control()->clone();
+    std::tr1::shared_ptr<dotk::Vector<Real> > vec = primal->control()->clone();
     dotk::gtools::getSteepestDescent(mng->getNewGradient(), vec);
     std::tr1::shared_ptr<dotk::DOTk_LeftPrecGenConjResDataMng> solver_mng(new dotk::DOTk_LeftPrecGenConjResDataMng(primal, hessian));
     dotk::DOTk_LeftPrecGCR solver(solver_mng);
@@ -92,7 +92,7 @@ TEST(DOTk_LeftPrecGCR, solve)
     std::tr1::shared_ptr<dotk::DOTk_LeftPrecGenConjResDataMng> solver_mng(new dotk::DOTk_LeftPrecGenConjResDataMng(primal, hessian));
 
     mng->computeGradient();
-    std::tr1::shared_ptr<dotk::vector<Real> > vec = primal->control()->clone();
+    std::tr1::shared_ptr<dotk::Vector<Real> > vec = primal->control()->clone();
     dotk::gtools::getSteepestDescent(mng->getNewGradient(), vec);
     dotk::DOTk_LeftPrecGCR solver(solver_mng);
 

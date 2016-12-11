@@ -23,21 +23,21 @@ namespace DOTkLineSearchQuasiNewtonTest
 
 TEST(GradientBasedOptimizationTools, steepestDescent)
 {
-    std::tr1::shared_ptr<dotk::vector<Real> > grad = dotk::gtest::allocateControl();
-    std::tr1::shared_ptr<dotk::vector<Real> > step = grad->clone();
+    std::tr1::shared_ptr<dotk::Vector<Real> > grad = dotk::gtest::allocateControl();
+    std::tr1::shared_ptr<dotk::Vector<Real> > step = grad->clone();
     grad->fill(3);
 
     dotk::gtools::getSteepestDescent(grad, step);
 
-    std::tr1::shared_ptr<dotk::vector<Real> > gold = grad->clone();
+    std::tr1::shared_ptr<dotk::Vector<Real> > gold = grad->clone();
     gold->fill(-3);
     dotk::gtest::checkResults(*step, *gold);
 }
 
 TEST(GradientBasedOptimizationTools, computeCosineAngle)
 {
-    std::tr1::shared_ptr<dotk::vector<Real> > grad = dotk::gtest::allocateControl();
-    std::tr1::shared_ptr<dotk::vector<Real> > step = grad->clone();
+    std::tr1::shared_ptr<dotk::Vector<Real> > grad = dotk::gtest::allocateControl();
+    std::tr1::shared_ptr<dotk::Vector<Real> > step = grad->clone();
     (*grad)[0] = 1.;
     (*grad)[1] = 2.;
     (*step)[0] = 11.;
@@ -55,16 +55,16 @@ TEST(GradientBasedOptimizationTools, computeCosineAngle)
 
 TEST(GradientBasedOptimizationTools, checkDescentDirection)
 {
-    std::tr1::shared_ptr<dotk::vector<Real> > grad = dotk::gtest::allocateControl();
+    std::tr1::shared_ptr<dotk::Vector<Real> > grad = dotk::gtest::allocateControl();
     (*grad)[0] = 1.;
     (*grad)[1] = 2.;
-    std::tr1::shared_ptr<dotk::vector<Real> > step = grad->clone();
+    std::tr1::shared_ptr<dotk::Vector<Real> > step = grad->clone();
     (*step)[0] = 11.;
     (*step)[1] = -22.;
 
     // TEST 1: DESCENT DIRECTION IS VALID, DO NOT TAKE STEEPEST DESCENT
     dotk::gtools::checkDescentDirection(grad, step);
-    std::tr1::shared_ptr<dotk::vector<Real> > gold = grad->clone();
+    std::tr1::shared_ptr<dotk::Vector<Real> > gold = grad->clone();
     gold->copy(*step);
     dotk::gtest::checkResults(*step, *gold);
 

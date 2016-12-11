@@ -17,7 +17,7 @@
 namespace dotk
 {
 
-template<typename Type>
+template<typename ScalarType>
 class DOTk_ObjectiveFunction
 {
 public:
@@ -28,96 +28,96 @@ public:
     {
     }
 
-    virtual void value(const std::vector<std::tr1::shared_ptr<dotk::vector<Type> > > & primal_,
-                       const std::tr1::shared_ptr<dotk::vector<Type> > & fval_)
+    virtual void value(const std::vector<std::tr1::shared_ptr<dotk::Vector<ScalarType> > > & primal_,
+                       const std::tr1::shared_ptr<dotk::Vector<ScalarType> > & fval_)
     {
         std::perror("\n**** Calling Unimplemented Function DOTk_ObjectiveFunction::value(in, out). ABORT. ****\n");
         std::abort();
     }
-    virtual void value(const std::vector<std::tr1::shared_ptr<dotk::vector<Type> > > & primal_plus_epsilon_,
-                       const std::vector<std::tr1::shared_ptr<dotk::vector<Type> > > & primal_minus_epsilon_,
-                       const std::tr1::shared_ptr<dotk::vector<Type> > & value_plus_,
-                       const std::tr1::shared_ptr<dotk::vector<Type> > & value_minus_)
+    virtual void value(const std::vector<std::tr1::shared_ptr<dotk::Vector<ScalarType> > > & primal_plus_epsilon_,
+                       const std::vector<std::tr1::shared_ptr<dotk::Vector<ScalarType> > > & primal_minus_epsilon_,
+                       const std::tr1::shared_ptr<dotk::Vector<ScalarType> > & value_plus_,
+                       const std::tr1::shared_ptr<dotk::Vector<ScalarType> > & value_minus_)
     {
         std::perror("\n**** Calling Unimplemented Function DOTk_ObjectiveFunction::value(in, in, out, out). ABORT. ****\n");
         std::abort();
     }
 
-    virtual Type value(const dotk::vector<Type> & primal_)
+    virtual ScalarType value(const dotk::Vector<ScalarType> & primal_)
     {
         std::perror("\n**** Calling Unimplemented Function DOTk_ObjectiveFunction::value(in). ABORT. ****\n");
         std::abort();
         return (0.);
     }
-    virtual void gradient(const dotk::vector<Type> & primal_, dotk::vector<Type> & output_)
+    virtual void gradient(const dotk::Vector<ScalarType> & primal_, dotk::Vector<ScalarType> & output_)
     {
         std::perror("\n**** Calling Unimplemented Function DOTk_ObjectiveFunction::gradient. ABORT. ****\n");
         std::abort();
     }
-    virtual void hessian(const dotk::vector<Type> & primal_,
-                         const dotk::vector<Type> & vector_,
-                         dotk::vector<Type> & output_)
+    virtual void hessian(const dotk::Vector<ScalarType> & primal_,
+                         const dotk::Vector<ScalarType> & vector_,
+                         dotk::Vector<ScalarType> & output_)
     {
         std::perror("\n**** Calling Unimplemented Function DOTk_ObjectiveFunction::hessian. ABORT. ****\n");
         std::abort();
     }
 
-    virtual Type value(const dotk::vector<Type> & state_, const dotk::vector<Type> & control_)
+    virtual ScalarType value(const dotk::Vector<ScalarType> & state_, const dotk::Vector<ScalarType> & control_)
     {
         std::perror("\n**** Calling Unimplemented Function DOTk_ObjectiveFunction::value. ABORT. ****\n");
         std::abort();
         return (0.);
     }
-    virtual void partialDerivativeState(const dotk::vector<Type> & state_,
-                                        const dotk::vector<Type> & control_,
-                                        dotk::vector<Type> & output_)
+    virtual void partialDerivativeState(const dotk::Vector<ScalarType> & state_,
+                                        const dotk::Vector<ScalarType> & control_,
+                                        dotk::Vector<ScalarType> & output_)
     {
         std::perror("\n**** Calling Unimplemented Function DOTk_ObjectiveFunction::partialDerivativeState. ABORT. ****\n");
         std::abort();
     }
-    virtual void partialDerivativeControl(const dotk::vector<Type> & state_,
-                                          const dotk::vector<Type> & control_,
-                                          dotk::vector<Type> & output_)
+    virtual void partialDerivativeControl(const dotk::Vector<ScalarType> & state_,
+                                          const dotk::Vector<ScalarType> & control_,
+                                          dotk::Vector<ScalarType> & output_)
     {
         std::perror("\n**** Calling Unimplemented Function DOTk_ObjectiveFunction::partialDerivativeControl. ABORT. ****\n");
         std::abort();
     }
-    virtual void partialDerivativeStateState(const dotk::vector<Type> & state_,
-                                             const dotk::vector<Type> & control_,
-                                             const dotk::vector<Type> & vector_,
-                                             dotk::vector<Type> & output_)
+    virtual void partialDerivativeStateState(const dotk::Vector<ScalarType> & state_,
+                                             const dotk::Vector<ScalarType> & control_,
+                                             const dotk::Vector<ScalarType> & vector_,
+                                             dotk::Vector<ScalarType> & output_)
     {
         std::perror("\n**** Calling Unimplemented Function DOTk_ObjectiveFunction::partialDerivativeStateState. ABORT. ****\n");
         std::abort();
     }
-    virtual void partialDerivativeStateControl(const dotk::vector<Type> & state_,
-                                               const dotk::vector<Type> & control_,
-                                               const dotk::vector<Type> & vector_,
-                                               dotk::vector<Type> & output_)
+    virtual void partialDerivativeStateControl(const dotk::Vector<ScalarType> & state_,
+                                               const dotk::Vector<ScalarType> & control_,
+                                               const dotk::Vector<ScalarType> & vector_,
+                                               dotk::Vector<ScalarType> & output_)
     {
         std::perror("\n**** Calling Unimplemented Function DOTk_ObjectiveFunction::partialDerivativeStateControl. ABORT. ****\n");
         std::abort();
     }
-    virtual void partialDerivativeControlControl(const dotk::vector<Type> & state_,
-                                                 const dotk::vector<Type> & control_,
-                                                 const dotk::vector<Type> & vector_,
-                                                 dotk::vector<Type> & output_)
+    virtual void partialDerivativeControlControl(const dotk::Vector<ScalarType> & state_,
+                                                 const dotk::Vector<ScalarType> & control_,
+                                                 const dotk::Vector<ScalarType> & vector_,
+                                                 dotk::Vector<ScalarType> & output_)
     {
         std::perror("\n**** Calling Unimplemented Function DOTk_ObjectiveFunction::partialDerivativeControlControl. ABORT. ****\n");
         std::abort();
     }
-    virtual void partialDerivativeControlState(const dotk::vector<Type> & state_,
-                                               const dotk::vector<Type> & control_,
-                                               const dotk::vector<Type> & vector_,
-                                               dotk::vector<Type> & output_)
+    virtual void partialDerivativeControlState(const dotk::Vector<ScalarType> & state_,
+                                               const dotk::Vector<ScalarType> & control_,
+                                               const dotk::Vector<ScalarType> & vector_,
+                                               dotk::Vector<ScalarType> & output_)
     {
         std::perror("\n**** Calling Unimplemented Function DOTk_ObjectiveFunction::partialDerivativeControlState. ABORT. ****\n");
         std::abort();
     }
 
 private:
-    DOTk_ObjectiveFunction(const dotk::DOTk_ObjectiveFunction<Type> &);
-    dotk::DOTk_ObjectiveFunction<Type> & operator=(const dotk::DOTk_ObjectiveFunction<Type> &);
+    DOTk_ObjectiveFunction(const dotk::DOTk_ObjectiveFunction<ScalarType> &);
+    dotk::DOTk_ObjectiveFunction<ScalarType> & operator=(const dotk::DOTk_ObjectiveFunction<ScalarType> &);
 };
 
 }

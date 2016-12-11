@@ -13,8 +13,8 @@
 namespace dotk
 {
 
-template<class T>
-class vector;
+template<typename ScalarType>
+class Vector;
 
 namespace nlp
 {
@@ -22,7 +22,7 @@ namespace nlp
 struct variables
 {
 public:
-    variables(const dotk::vector<Real> & state_, const dotk::vector<Real> & control_) :
+    variables(const dotk::Vector<Real> & state_, const dotk::Vector<Real> & control_) :
             mDual(state_.clone()),
             mState(state_.clone()),
             mControl(control_.clone())
@@ -31,7 +31,7 @@ public:
         mState->copy(state_);
         mControl->copy(control_);
     }
-    variables(const dotk::vector<Real> & state_, const dotk::vector<Real> & control_, const dotk::vector<Real> & dual_) :
+    variables(const dotk::Vector<Real> & state_, const dotk::Vector<Real> & control_, const dotk::Vector<Real> & dual_) :
             mDual(dual_.clone()),
             mState(state_.clone()),
             mControl(control_.clone())
@@ -41,9 +41,9 @@ public:
         mControl->copy(control_);
     }
 
-    std::tr1::shared_ptr<dotk::vector<Real> > mDual;
-    std::tr1::shared_ptr<dotk::vector<Real> > mState;
-    std::tr1::shared_ptr<dotk::vector<Real> > mControl;
+    std::tr1::shared_ptr<dotk::Vector<Real> > mDual;
+    std::tr1::shared_ptr<dotk::Vector<Real> > mState;
+    std::tr1::shared_ptr<dotk::Vector<Real> > mControl;
 
 private:
     variables(const dotk::nlp::variables&);
@@ -51,12 +51,12 @@ private:
 
 };
 
-std::tr1::shared_ptr<dotk::vector<Real> > clone(dotk::nlp::variables & variables_, dotk::types::variable_t codomain_);
+std::tr1::shared_ptr<dotk::Vector<Real> > clone(dotk::nlp::variables & variables_, dotk::types::variable_t codomain_);
 
-void resetField(const dotk::vector<Real> & data_, dotk::nlp::variables & variables_, dotk::types::derivative_t type_);
+void resetField(const dotk::Vector<Real> & data_, dotk::nlp::variables & variables_, dotk::types::derivative_t type_);
 
 void perturbField(const Real epsilon_,
-                  const dotk::vector<Real> & direction_,
+                  const dotk::Vector<Real> & direction_,
                   dotk::nlp::variables & variables_,
                   dotk::types::derivative_t type_);
 

@@ -112,7 +112,7 @@ Real DOTk_SteihaugTointDataMng::evaluateObjective()
     return (value);
 }
 
-Real DOTk_SteihaugTointDataMng::evaluateObjective(const std::tr1::shared_ptr<dotk::vector<Real> > & input_)
+Real DOTk_SteihaugTointDataMng::evaluateObjective(const std::tr1::shared_ptr<dotk::Vector<Real> > & input_)
 {
     Real value = m_AssemblyMng->objective(input_);
     return (value);

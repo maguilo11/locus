@@ -20,8 +20,8 @@ class DOTk_LineSearchStepMng;
 class DOTk_LineSearchInexactNewtonIO;
 class DOTk_LineSearchAlgorithmsDataMng;
 
-template<class Type>
-class vector;
+template<typename ScalarType>
+class Vector;
 
 class DOTk_LineSearchInexactNewton : public dotk::DOTk_InexactNewtonAlgorithms
 {
@@ -52,7 +52,7 @@ private:
     void checkAlgorithmInputs();
 
 private:
-    std::tr1::shared_ptr<dotk::vector<Real> > m_SolverRhsVector;
+    std::tr1::shared_ptr<dotk::Vector<Real> > m_SolverRhsVector;
 
     std::tr1::shared_ptr<dotk::DOTk_KrylovSolver> m_KrylovSolver;
     std::tr1::shared_ptr<dotk::DOTk_LineSearchInexactNewtonIO> m_IO;

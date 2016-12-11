@@ -14,8 +14,8 @@
 namespace dotk
 {
 
-template<typename Type>
-class vector;
+template<typename ScalarType>
+class Vector;
 
 class DOTk_Preconditioner;
 class DOTk_LinearOperator;
@@ -46,15 +46,15 @@ public:
     void setStoppingCriterion(dotk::types::solver_stop_criterion_t input_);
     dotk::types::solver_stop_criterion_t getStoppingCriterion() const;
 
-    Real computeSteihaugTointStep(const std::tr1::shared_ptr<dotk::vector<Real> > & newton_step_,
-                                  const std::tr1::shared_ptr<dotk::vector<Real> > & conjugate_dir_,
-                                  const std::tr1::shared_ptr<dotk::vector<Real> > & prec_times_newton_step_,
-                                  const std::tr1::shared_ptr<dotk::vector<Real> > & prec_times_conjugate_dir_);
+    Real computeSteihaugTointStep(const std::tr1::shared_ptr<dotk::Vector<Real> > & newton_step_,
+                                  const std::tr1::shared_ptr<dotk::Vector<Real> > & conjugate_dir_,
+                                  const std::tr1::shared_ptr<dotk::Vector<Real> > & prec_times_newton_step_,
+                                  const std::tr1::shared_ptr<dotk::Vector<Real> > & prec_times_conjugate_dir_);
     bool invalidCurvatureDetected(const Real & input_);
     bool toleranceSatisfied(const Real & input_);
 
-    virtual const std::tr1::shared_ptr<dotk::vector<Real> > & getActiveSet() const;
-    virtual const std::tr1::shared_ptr<dotk::vector<Real> > & getInactiveSet() const;
+    virtual const std::tr1::shared_ptr<dotk::Vector<Real> > & getActiveSet() const;
+    virtual const std::tr1::shared_ptr<dotk::Vector<Real> > & getInactiveSet() const;
     virtual void solve(const std::tr1::shared_ptr<dotk::DOTk_Preconditioner> & preconditioner_,
                        const std::tr1::shared_ptr<dotk::DOTk_LinearOperator> & linear_operator_,
                        const std::tr1::shared_ptr<dotk::DOTk_OptimizationDataMng> & mng_) = 0;

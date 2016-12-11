@@ -45,7 +45,7 @@ private:
     void initialize(const mxArray* options_[]);
     void printOutputFile(dotk::DOTk_OptimalityCriteria & algorithm_);
     void gatherOutputData(dotk::DOTk_OptimalityCriteria & algorithm_,
-                          dotk::vector<double> & primal_,
+                          dotk::Vector<double> & primal_,
                           mxArray* output_[]);
     void setAlgorithmParameters(const mxArray* options_, dotk::DOTk_OptimalityCriteria & algorithm_);
 

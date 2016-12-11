@@ -207,7 +207,7 @@ void DOTk_MexNonlinearCG::solveTypeBoundLinearProgramming(const mxArray* input_[
     std::tr1::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
     dotk::mex::buildControlContainer(input_[0], *primal);
 
-    std::tr1::shared_ptr< dotk::vector<double> > bounds = primal->control()->clone();
+    std::tr1::shared_ptr< dotk::Vector<double> > bounds = primal->control()->clone();
     dotk::mex::parseControlLowerBound(input_[0], *bounds);
     primal->setControlLowerBound(*bounds);
 
@@ -261,7 +261,7 @@ void DOTk_MexNonlinearCG::solveTypeBoundNonlinearProgramming(const mxArray* inpu
     dotk::mex::buildDualContainer(input_[0], *primal);
     dotk::mex::buildControlContainer(input_[0], *primal);
 
-    std::tr1::shared_ptr< dotk::vector<double> > bounds = primal->control()->clone();
+    std::tr1::shared_ptr< dotk::Vector<double> > bounds = primal->control()->clone();
     dotk::mex::parseControlLowerBound(input_[0], *bounds);
     primal->setControlLowerBound(*bounds);
 

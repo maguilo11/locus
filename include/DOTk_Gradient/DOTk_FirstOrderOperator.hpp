@@ -17,8 +17,8 @@ namespace dotk
 
 class DOTk_OptimizationDataMng;
 
-template<typename Type>
-class vector;
+template<typename ScalarType>
+class Vector;
 
 class DOTk_FirstOrderOperator
 {
@@ -27,10 +27,10 @@ public:
     virtual ~DOTk_FirstOrderOperator();
 
     dotk::types::gradient_t type() const;
-    void checkGrad(const std::tr1::shared_ptr<dotk::vector<Real> > & old_gradient_,
-                   std::tr1::shared_ptr<dotk::vector<Real> > & new_gradient_);
+    void checkGrad(const std::tr1::shared_ptr<dotk::Vector<Real> > & old_gradient_,
+                   std::tr1::shared_ptr<dotk::Vector<Real> > & new_gradient_);
 
-    virtual void setFiniteDiffPerturbationVec(const dotk::vector<Real> & input_);
+    virtual void setFiniteDiffPerturbationVec(const dotk::Vector<Real> & input_);
     virtual void gradient(const dotk::DOTk_OptimizationDataMng * const mng_);
 
 private:

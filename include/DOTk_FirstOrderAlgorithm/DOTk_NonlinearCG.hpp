@@ -19,8 +19,8 @@ class DOTk_LineSearchStepMng;
 class DOTk_FirstOrderLineSearchAlgIO;
 class DOTk_LineSearchAlgorithmsDataMng;
 
-template<class Type>
-class vector;
+template<typename ScalarType>
+class Vector;
 
 class DOTk_NonlinearCG : public dotk::DOTk_FirstOrderAlgorithm
 {

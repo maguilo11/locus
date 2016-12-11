@@ -41,7 +41,7 @@ DOTk_LeftPrecCR::~DOTk_LeftPrecCR()
 {
 }
 
-void DOTk_LeftPrecCR::initialize(const std::tr1::shared_ptr<dotk::vector<Real> > & rhs_vec_,
+void DOTk_LeftPrecCR::initialize(const std::tr1::shared_ptr<dotk::Vector<Real> > & rhs_vec_,
                                  const std::tr1::shared_ptr<dotk::DOTk_KrylovSolverStoppingCriterion> & criterion_,
                                  const std::tr1::shared_ptr<dotk::DOTk_OptimizationDataMng> & opt_mng_)
 {
@@ -61,7 +61,7 @@ void DOTk_LeftPrecCR::initialize(const std::tr1::shared_ptr<dotk::vector<Real> >
     dotk::DOTk_KrylovSolver::setInitialStoppingTolerance(stopping_tolerance);
 }
 
-void DOTk_LeftPrecCR::pcr(const std::tr1::shared_ptr<dotk::vector<Real> > & rhs_vec_,
+void DOTk_LeftPrecCR::pcr(const std::tr1::shared_ptr<dotk::Vector<Real> > & rhs_vec_,
                           const std::tr1::shared_ptr<dotk::DOTk_KrylovSolverStoppingCriterion> & criterion_,
                           const std::tr1::shared_ptr<dotk::DOTk_OptimizationDataMng> & opt_mng_)
 {
@@ -131,19 +131,19 @@ const std::tr1::shared_ptr<dotk::DOTk_LinearOperator> & DOTk_LeftPrecCR::getLine
     return (m_DataMng->getLinearOperator());
 }
 
-const std::tr1::shared_ptr<dotk::vector<Real> > & DOTk_LeftPrecCR::getDescentDirection()
+const std::tr1::shared_ptr<dotk::Vector<Real> > & DOTk_LeftPrecCR::getDescentDirection()
 {
     return (mConjugateDirection);
 }
 
-void DOTk_LeftPrecCR::solve(const std::tr1::shared_ptr<dotk::vector<Real> > & rhs_vec_,
+void DOTk_LeftPrecCR::solve(const std::tr1::shared_ptr<dotk::Vector<Real> > & rhs_vec_,
                             const std::tr1::shared_ptr<dotk::DOTk_KrylovSolverStoppingCriterion> & criterion_,
                             const std::tr1::shared_ptr<dotk::DOTk_OptimizationDataMng> & opt_mng_)
 {
     this->pcr(rhs_vec_, criterion_, opt_mng_);
 }
 
-void DOTk_LeftPrecCR::initialize(const std::tr1::shared_ptr<dotk::vector<Real> > vec_)
+void DOTk_LeftPrecCR::initialize(const std::tr1::shared_ptr<dotk::Vector<Real> > vec_)
 {
     mConjugateDirection = vec_->clone();
     mLinearOperatorTimesRes = vec_->clone();

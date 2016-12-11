@@ -21,8 +21,8 @@ DOTk_FletcherReeves::~DOTk_FletcherReeves()
 {
 }
 
-Real DOTk_FletcherReeves::computeScaleFactor(const std::tr1::shared_ptr<dotk::vector<Real> > & old_grad_,
-                                             const std::tr1::shared_ptr<dotk::vector<Real> > & new_grad_)
+Real DOTk_FletcherReeves::computeScaleFactor(const std::tr1::shared_ptr<dotk::Vector<Real> > & old_grad_,
+                                             const std::tr1::shared_ptr<dotk::Vector<Real> > & new_grad_)
 {
     Real beta = new_grad_->dot(*new_grad_) /
             old_grad_->dot(*old_grad_);
@@ -30,9 +30,9 @@ Real DOTk_FletcherReeves::computeScaleFactor(const std::tr1::shared_ptr<dotk::ve
     return (beta);
 }
 
-void DOTk_FletcherReeves::getDirection(const std::tr1::shared_ptr<dotk::vector<Real> > & old_grad_,
-                                       const std::tr1::shared_ptr<dotk::vector<Real> > & new_grad_,
-                                       const std::tr1::shared_ptr<dotk::vector<Real> > & dir_)
+void DOTk_FletcherReeves::getDirection(const std::tr1::shared_ptr<dotk::Vector<Real> > & old_grad_,
+                                       const std::tr1::shared_ptr<dotk::Vector<Real> > & new_grad_,
+                                       const std::tr1::shared_ptr<dotk::Vector<Real> > & dir_)
 {
 
     Real beta = this->computeScaleFactor(old_grad_, new_grad_);

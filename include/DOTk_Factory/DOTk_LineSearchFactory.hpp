@@ -15,8 +15,9 @@ namespace dotk
 {
 
 class DOTk_LineSearch;
+
 template<typename Type>
-class vector;
+class Vector;
 
 class DOTk_LineSearchFactory
 {
@@ -28,16 +29,16 @@ public:
     void setFactoryType(dotk::types::line_search_t type_);
     dotk::types::line_search_t getFactoryType() const;
 
-    void buildArmijoLineSearch(const std::tr1::shared_ptr<dotk::vector<Real> > & vector_,
+    void buildArmijoLineSearch(const std::tr1::shared_ptr<dotk::Vector<Real> > & vector_,
                                std::tr1::shared_ptr<dotk::DOTk_LineSearch> & line_search_);
-    void buildGoldsteinLineSearch(const std::tr1::shared_ptr<dotk::vector<Real> > & vector_,
+    void buildGoldsteinLineSearch(const std::tr1::shared_ptr<dotk::Vector<Real> > & vector_,
                                   std::tr1::shared_ptr<dotk::DOTk_LineSearch> & line_search_);
-    void buildCubicLineSearch(const std::tr1::shared_ptr<dotk::vector<Real> > & vector_,
+    void buildCubicLineSearch(const std::tr1::shared_ptr<dotk::Vector<Real> > & vector_,
                               std::tr1::shared_ptr<dotk::DOTk_LineSearch> & line_search_);
-    void buildGoldenSectionLineSearch(const std::tr1::shared_ptr<dotk::vector<Real> > & vector_,
+    void buildGoldenSectionLineSearch(const std::tr1::shared_ptr<dotk::Vector<Real> > & vector_,
                                       std::tr1::shared_ptr<dotk::DOTk_LineSearch> & line_search_);
 
-    void build(const std::tr1::shared_ptr<dotk::vector<Real> > & vector_,
+    void build(const std::tr1::shared_ptr<dotk::Vector<Real> > & vector_,
                std::tr1::shared_ptr<dotk::DOTk_LineSearch> & line_search_) const;
 
 private:

@@ -20,7 +20,7 @@ namespace dotk
 
 DOTk_DiagnosticsInequalityTypeNP::DOTk_DiagnosticsInequalityTypeNP
 (const std::vector<std::tr1::shared_ptr<dotk::DOTk_InequalityConstraint<Real> > > & inequality_) :
-        dotk::DOTk_DerivativeDiagnosticsTool::DOTk_DerivativeDiagnosticsTool(),
+        dotk::DOTk_DerivativeDiagnosticsTool(),
         m_OriginalField(),
         m_InequalityConstraint(inequality_.begin(), inequality_.end())
 {
@@ -50,14 +50,14 @@ void DOTk_DiagnosticsInequalityTypeNP::checkPartialDerivativeControl(const dotk:
     m_OriginalField = vars.mControl->clone();
     m_OriginalField->copy(*vars.mControl);
 
-    std::tr1::shared_ptr<dotk::vector<Real> > perturbtation = vars.mControl->clone();
+    std::tr1::shared_ptr<dotk::Vector<Real> > perturbtation = vars.mControl->clone();
     dotk::gtools::generateRandomVector(perturbtation);
 
     dotk::nlp::InequalityConstraintEvaluate evaluate;
     dotk::nlp::InequalityConstraintFirstDerivativeWrtControl partial_derivative;
 
     dotk::types::variable_t codomain = dotk::DOTk_DerivativeDiagnosticsTool::getCodomain();
-    std::tr1::shared_ptr<dotk::vector<Real> > true_partial_derivative = dotk::nlp::clone(vars, codomain);
+    std::tr1::shared_ptr<dotk::Vector<Real> > true_partial_derivative = dotk::nlp::clone(vars, codomain);
 
     std::ostringstream message;
     const size_t num_inequality_constraints = m_InequalityConstraint.size();
@@ -96,14 +96,14 @@ void DOTk_DiagnosticsInequalityTypeNP::checkPartialDerivativeState(const dotk::D
     m_OriginalField = vars.mState->clone();
     m_OriginalField->copy(*vars.mState);
 
-    std::tr1::shared_ptr<dotk::vector<Real> > delta_state = vars.mState->clone();
+    std::tr1::shared_ptr<dotk::Vector<Real> > delta_state = vars.mState->clone();
     dotk::gtools::generateRandomVector(delta_state);
 
     dotk::nlp::InequalityConstraintEvaluate evaluate;
     dotk::nlp::InequalityConstraintFirstDerivativeWrtState partial_derivative;
 
     dotk::types::variable_t codomain = dotk::DOTk_DerivativeDiagnosticsTool::getCodomain();
-    std::tr1::shared_ptr<dotk::vector<Real> > true_partial_derivative = dotk::nlp::clone(vars, codomain);
+    std::tr1::shared_ptr<dotk::Vector<Real> > true_partial_derivative = dotk::nlp::clone(vars, codomain);
 
     std::ostringstream message;
     const size_t num_inequality_constraints = m_InequalityConstraint.size();
@@ -123,8 +123,8 @@ void DOTk_DiagnosticsInequalityTypeNP::checkPartialDerivativeState(const dotk::D
 
 template<typename ScalarValuedFunction>
 void DOTk_DiagnosticsInequalityTypeNP::checkScalarValuedFunctionFirstDerivative(const ScalarValuedFunction & function_,
-                                                                                const dotk::vector<Real> & perturbation_,
-                                                                                const dotk::vector<Real> & true_partial_derivative_,
+                                                                                const dotk::Vector<Real> & perturbation_,
+                                                                                const dotk::Vector<Real> & true_partial_derivative_,
                                                                                 dotk::nlp::variables & variables_,
                                                                                 std::tr1::shared_ptr<dotk::DOTk_InequalityConstraint<Real> > inequality_)
 {

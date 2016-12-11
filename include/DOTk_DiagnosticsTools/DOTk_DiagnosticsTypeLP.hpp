@@ -19,13 +19,13 @@ namespace dotk
 class DOTk_Dual;
 class DOTk_Variable;
 
-template<typename Type>
-class vector;
-template<typename Type>
+template<typename ScalarType>
+class Vector;
+template<typename ScalarType>
 class DOTk_ObjectiveFunction;
-template<typename Type>
+template<typename ScalarType>
 class DOTk_EqualityConstraint;
-template<typename Type>
+template<typename ScalarType>
 class DOTk_InequalityConstraint;
 
 class DOTk_DiagnosticsTypeLP : public dotk::DOTk_DerivativeDiagnosticsTool
@@ -52,33 +52,33 @@ public:
 
 private:
     template<typename Functor, typename DerivativeOperators>
-    void checkScalarValuedFunctionFirstDerivative(const std::tr1::shared_ptr<dotk::vector<Real> > & primal_,
-                                                  const std::tr1::shared_ptr<dotk::vector<Real> > & delta_primal_,
+    void checkScalarValuedFunctionFirstDerivative(const std::tr1::shared_ptr<dotk::Vector<Real> > & primal_,
+                                                  const std::tr1::shared_ptr<dotk::Vector<Real> > & delta_primal_,
                                                   const Functor & functor_,
                                                   const DerivativeOperators & operators_);
     template<typename Functor, typename DerivativeOperators>
-    void checkScalarValuedFunctionSecondDerivative(const std::tr1::shared_ptr<dotk::vector<Real> > & primal_,
-                                                   const std::tr1::shared_ptr<dotk::vector<Real> > & delta_primal_,
+    void checkScalarValuedFunctionSecondDerivative(const std::tr1::shared_ptr<dotk::Vector<Real> > & primal_,
+                                                   const std::tr1::shared_ptr<dotk::Vector<Real> > & delta_primal_,
                                                    const Functor & first_derivative_,
                                                    const DerivativeOperators & second_derivative_);
-    void checkVectorValuedFunctionFirstDerivative(const std::tr1::shared_ptr<dotk::vector<Real> > & delta_primal_,
+    void checkVectorValuedFunctionFirstDerivative(const std::tr1::shared_ptr<dotk::Vector<Real> > & delta_primal_,
                                                   const dotk::lp::EqualityConstraintResidual & function_,
                                                   const dotk::lp::EqualityConstraintFirstDerivative & first_derivative_,
-                                                  const std::tr1::shared_ptr<dotk::vector<Real> > & primal_);
-    Real checkAdjointFirstDerivativeVectorValuedFunction(const std::tr1::shared_ptr<dotk::vector<Real> > & delta_primal_,
+                                                  const std::tr1::shared_ptr<dotk::Vector<Real> > & primal_);
+    Real checkAdjointFirstDerivativeVectorValuedFunction(const std::tr1::shared_ptr<dotk::Vector<Real> > & delta_primal_,
                                                          const dotk::lp::EqualityConstraintFirstDerivative & first_derivative_,
                                                          const dotk::lp::EqualityConstraintAdjointFirstDerivative & adjoint_first_derivative_,
-                                                         const std::tr1::shared_ptr<dotk::vector<Real> > & primal_,
-                                                         const std::tr1::shared_ptr<dotk::vector<Real> > & dual_);
-    void checkSecondDerivativeVectorValuedFunction(const std::tr1::shared_ptr<dotk::vector<Real> > & delta_primal_,
+                                                         const std::tr1::shared_ptr<dotk::Vector<Real> > & primal_,
+                                                         const std::tr1::shared_ptr<dotk::Vector<Real> > & dual_);
+    void checkSecondDerivativeVectorValuedFunction(const std::tr1::shared_ptr<dotk::Vector<Real> > & delta_primal_,
                                                    const dotk::lp::EqualityConstraintAdjointFirstDerivative & adjoint_first_derivative_,
                                                    const dotk::lp::EqualityConstraintSecondDerivative & adjoint_second_derivative_,
-                                                   const std::tr1::shared_ptr<dotk::vector<Real> > & primal_,
-                                                   const std::tr1::shared_ptr<dotk::vector<Real> > & dual_);
+                                                   const std::tr1::shared_ptr<dotk::Vector<Real> > & primal_,
+                                                   const std::tr1::shared_ptr<dotk::Vector<Real> > & dual_);
 
 private:
-    std::tr1::shared_ptr<dotk::vector<Real> > m_TrueDerivative;
-    std::tr1::shared_ptr<dotk::vector<Real> > m_OriginalPrimal;
+    std::tr1::shared_ptr<dotk::Vector<Real> > m_TrueDerivative;
+    std::tr1::shared_ptr<dotk::Vector<Real> > m_OriginalPrimal;
 
     std::tr1::shared_ptr<dotk::DOTk_ObjectiveFunction<Real> > m_ObjectiveFunction;
     std::tr1::shared_ptr<dotk::DOTk_EqualityConstraint<Real> > m_EqualityConstraint;

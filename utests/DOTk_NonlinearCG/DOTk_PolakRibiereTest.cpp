@@ -135,7 +135,7 @@ TEST(DOTk_PolakRibiere, getDirection)
     dir.getDirection(mng.getOldGradient(), mng.getNewGradient(), mng.getTrialStep());
 
     Real tol = 1e-8;
-    std::tr1::shared_ptr<dotk::vector<Real> > gold = dotk::gtest::allocateControl();
+    std::tr1::shared_ptr<dotk::Vector<Real> > gold = dotk::gtest::allocateControl();
     (*gold)[0] = -103.4;
     (*gold)[1] = -250.8;
     dotk::gtest::checkResults(*mng.getTrialStep(), *gold);
@@ -165,7 +165,7 @@ TEST(DOTk_PolakRibiere, direction)
     EXPECT_EQ(dotk::types::POLAK_RIBIERE_NLCG, dir.getNonlinearCGType());
     dir.direction(mng);
 
-    std::tr1::shared_ptr<dotk::vector<Real> > gold = dotk::gtest::allocateControl();
+    std::tr1::shared_ptr<dotk::Vector<Real> > gold = dotk::gtest::allocateControl();
     (*gold)[0] = -103.4;
     (*gold)[1] = -250.8;
     Real tol = 1e-8;

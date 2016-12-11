@@ -5,6 +5,7 @@
  *      Author: Miguel A. Aguilo Valentin
  */
 
+#include "vector.hpp"
 #include "DOTk_Primal.hpp"
 #include "DOTk_MathUtils.hpp"
 #include "DOTk_MultiVector.hpp"
@@ -93,8 +94,8 @@ void DOTk_AugmentedSystemLeftPrec::setPrecGmresSolver(const std::tr1::shared_ptr
 }
 
 void DOTk_AugmentedSystemLeftPrec::apply(const std::tr1::shared_ptr<dotk::DOTk_OptimizationDataMng> & mng_,
-                                         const std::tr1::shared_ptr<dotk::vector<Real> > & vector_,
-                                         const std::tr1::shared_ptr<dotk::vector<Real> > & output_)
+                                         const std::tr1::shared_ptr<dotk::Vector<Real> > & vector_,
+                                         const std::tr1::shared_ptr<dotk::Vector<Real> > & output_)
 {
     Real norm_residual = dotk::norm(vector_);
     m_Criterion->set(dotk::types::NORM_RESIDUAL, norm_residual);

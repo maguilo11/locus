@@ -197,37 +197,37 @@ void DOTk_OptimalityCriteriaDataMng::setMaxNumOptimizationItr(size_t value_)
     m_MaxNumOptimizationItr = value_;
 }
 
-dotk::vector<Real> & DOTk_OptimalityCriteriaDataMng::getState() const
+dotk::Vector<Real> & DOTk_OptimalityCriteriaDataMng::getState() const
 {
     return (*m_State);
 }
 
-dotk::vector<Real> & DOTk_OptimalityCriteriaDataMng::getOldControl() const
+dotk::Vector<Real> & DOTk_OptimalityCriteriaDataMng::getOldControl() const
 {
     return (*m_OldControl);
 }
 
-dotk::vector<Real> & DOTk_OptimalityCriteriaDataMng::getNewControl() const
+dotk::Vector<Real> & DOTk_OptimalityCriteriaDataMng::getNewControl() const
 {
     return (*m_NewControl);
 }
 
-dotk::vector<Real> & DOTk_OptimalityCriteriaDataMng::getControlLowerBound() const
+dotk::Vector<Real> & DOTk_OptimalityCriteriaDataMng::getControlLowerBound() const
 {
     return (*m_ControlLowerBound);
 }
 
-dotk::vector<Real> & DOTk_OptimalityCriteriaDataMng::getControlUpperBound() const
+dotk::Vector<Real> & DOTk_OptimalityCriteriaDataMng::getControlUpperBound() const
 {
     return (*m_ControlUpperBound);
 }
 
-dotk::vector<Real> & DOTk_OptimalityCriteriaDataMng::getObjectiveGradient() const
+dotk::Vector<Real> & DOTk_OptimalityCriteriaDataMng::getObjectiveGradient() const
 {
     return (*m_ObjectiveGradient);
 }
 
-dotk::vector<Real> & DOTk_OptimalityCriteriaDataMng::getInequalityGradient() const
+dotk::Vector<Real> & DOTk_OptimalityCriteriaDataMng::getInequalityGradient() const
 {
     return (*m_InequalityGradient);
 }

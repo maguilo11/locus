@@ -97,7 +97,7 @@ TEST(Eigen, RayleighQuotientMethod)
 TEST(Eigen, QR)
 {
     size_t ncols = 4;
-    std::tr1::shared_ptr<dotk::vector<Real> > eigenvalues(new dotk::StdArray<Real>(ncols));
+    std::tr1::shared_ptr<dotk::Vector<Real> > eigenvalues(new dotk::StdArray<Real>(ncols));
     std::tr1::shared_ptr<dotk::matrix<Real> > matrix(new dotk::serial::DOTk_ColumnMatrix<Real>(*eigenvalues, ncols));
     std::tr1::shared_ptr<dotk::matrix<Real> > eigenvectors(new dotk::serial::DOTk_ColumnMatrix<Real>(*eigenvalues, ncols));
     // basis 1
@@ -175,7 +175,7 @@ TEST(Eigen, QR)
 TEST(Eigen, Power)
 {
     size_t nrows = 3;
-    std::tr1::shared_ptr<dotk::vector<Real> > eigenvector(new dotk::StdArray<Real>(nrows));
+    std::tr1::shared_ptr<dotk::Vector<Real> > eigenvector(new dotk::StdArray<Real>(nrows));
     std::tr1::shared_ptr<dotk::matrix<Real> > A(new dotk::serial::DOTk_DenseMatrix<Real>(nrows));
     // basis 1
     (*A)(0, 0) = 7.;
@@ -213,7 +213,7 @@ TEST(Eigen, Power)
 TEST(Eigen, RayleighQuotient)
 {
     size_t nrows = 3;
-    std::tr1::shared_ptr<dotk::vector<Real> > eigenvector(new dotk::StdArray<Real>(nrows));
+    std::tr1::shared_ptr<dotk::Vector<Real> > eigenvector(new dotk::StdArray<Real>(nrows));
     std::tr1::shared_ptr<dotk::matrix<Real> > A(new dotk::serial::DOTk_DenseMatrix<Real>(nrows));
     // basis 1
     (*A)(0, 0) = 7.;
@@ -251,7 +251,7 @@ TEST(Eigen, RayleighQuotient)
 TEST(Eigen, RayleighRitz)
 {
     size_t ncols = 4;
-    std::tr1::shared_ptr<dotk::vector<Real> > eigenvalues(new dotk::StdArray<Real>(ncols));
+    std::tr1::shared_ptr<dotk::Vector<Real> > eigenvalues(new dotk::StdArray<Real>(ncols));
     std::tr1::shared_ptr<dotk::matrix<Real> > matrix(new dotk::serial::DOTk_ColumnMatrix<Real>(*eigenvalues, ncols));
     std::tr1::shared_ptr<dotk::matrix<Real> > eigenvectors(new dotk::serial::DOTk_ColumnMatrix<Real>(*eigenvalues, ncols));
     // basis 1

@@ -14,14 +14,14 @@ namespace dotk
 namespace nlcg
 {
 
-Real fletcherReeves(const dotk::vector<Real> & new_steepest_descent_, const dotk::vector<Real> & old_steepest_descent_)
+Real fletcherReeves(const dotk::Vector<Real> & new_steepest_descent_, const dotk::Vector<Real> & old_steepest_descent_)
 {
     Real scaling = (new_steepest_descent_.dot(new_steepest_descent_))
             / (old_steepest_descent_.dot(old_steepest_descent_));
     return (scaling);
 }
 
-Real polakRibiere(const dotk::vector<Real> & new_steepest_descent_, const dotk::vector<Real> & old_steepest_descent_)
+Real polakRibiere(const dotk::Vector<Real> & new_steepest_descent_, const dotk::Vector<Real> & old_steepest_descent_)
 {
     Real numerator = new_steepest_descent_.dot(new_steepest_descent_)
             - new_steepest_descent_.dot(old_steepest_descent_);
@@ -30,9 +30,9 @@ Real polakRibiere(const dotk::vector<Real> & new_steepest_descent_, const dotk::
     return (scaling);
 }
 
-Real hestenesStiefel(const dotk::vector<Real> & new_steepest_descent_,
-                     const dotk::vector<Real> & old_steepest_descent_,
-                     const dotk::vector<Real> & old_trial_step_)
+Real hestenesStiefel(const dotk::Vector<Real> & new_steepest_descent_,
+                     const dotk::Vector<Real> & old_steepest_descent_,
+                     const dotk::Vector<Real> & old_trial_step_)
 {
     Real numerator = new_steepest_descent_.dot(new_steepest_descent_)
             - new_steepest_descent_.dot(old_steepest_descent_);
@@ -41,9 +41,9 @@ Real hestenesStiefel(const dotk::vector<Real> & new_steepest_descent_,
     return (scaling);
 }
 
-Real daiYuan(const dotk::vector<Real> & new_steepest_descent_,
-             const dotk::vector<Real> & old_steepest_descent_,
-             const dotk::vector<Real> & old_trial_step_)
+Real daiYuan(const dotk::Vector<Real> & new_steepest_descent_,
+             const dotk::Vector<Real> & old_steepest_descent_,
+             const dotk::Vector<Real> & old_trial_step_)
 {
     Real numerator = new_steepest_descent_.dot(new_steepest_descent_);
     Real denominator = old_trial_step_.dot(new_steepest_descent_) - old_trial_step_.dot(old_steepest_descent_);
@@ -51,9 +51,9 @@ Real daiYuan(const dotk::vector<Real> & new_steepest_descent_,
     return (scaling);
 }
 
-Real conjugateDescent(const dotk::vector<Real> & new_steepest_descent_,
-                      const dotk::vector<Real> & old_steepest_descent_,
-                      const dotk::vector<Real> & old_trial_step_)
+Real conjugateDescent(const dotk::Vector<Real> & new_steepest_descent_,
+                      const dotk::Vector<Real> & old_steepest_descent_,
+                      const dotk::Vector<Real> & old_trial_step_)
 {
     Real numerator = new_steepest_descent_.norm();
     Real denominator = old_trial_step_.dot(old_steepest_descent_);
@@ -61,9 +61,9 @@ Real conjugateDescent(const dotk::vector<Real> & new_steepest_descent_,
     return (scaling);
 }
 
-Real liuStorey(const dotk::vector<Real> & new_steepest_descent_,
-               const dotk::vector<Real> & old_steepest_descent_,
-               const dotk::vector<Real> & old_trial_step_)
+Real liuStorey(const dotk::Vector<Real> & new_steepest_descent_,
+               const dotk::Vector<Real> & old_steepest_descent_,
+               const dotk::Vector<Real> & old_trial_step_)
 {
     Real numerator = new_steepest_descent_.dot(new_steepest_descent_)
             - new_steepest_descent_.dot(old_steepest_descent_);

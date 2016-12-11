@@ -17,9 +17,9 @@ namespace dotk
 namespace serial
 {
 
-template<class Type>
-DOTk_UpperTriangularMatrix<Type>::DOTk_UpperTriangularMatrix(size_t num_rows_, Type value_) :
-        dotk::matrix<Type>(),
+template<typename ScalarType>
+DOTk_UpperTriangularMatrix<ScalarType>::DOTk_UpperTriangularMatrix(size_t num_rows_, ScalarType value_) :
+        dotk::matrix<ScalarType>(),
         m_Zero(0),
         m_Data(NULL),
         m_Size(0),
@@ -32,33 +32,33 @@ DOTk_UpperTriangularMatrix<Type>::DOTk_UpperTriangularMatrix(size_t num_rows_, T
     this->fill(value_);
 }
 
-template<class Type>
-DOTk_UpperTriangularMatrix<Type>::~DOTk_UpperTriangularMatrix()
+template<typename ScalarType>
+DOTk_UpperTriangularMatrix<ScalarType>::~DOTk_UpperTriangularMatrix()
 {
     this->clear();
 }
 
-template<class Type>
-size_t DOTk_UpperTriangularMatrix<Type>::nrows() const
+template<typename ScalarType>
+size_t DOTk_UpperTriangularMatrix<ScalarType>::nrows() const
 {
     return (m_NumRows);
 }
 
-template<class Type>
-size_t DOTk_UpperTriangularMatrix<Type>::ncols() const
+template<typename ScalarType>
+size_t DOTk_UpperTriangularMatrix<ScalarType>::ncols() const
 {
     return (m_NumCols);
 }
 
-template<class Type>
-size_t DOTk_UpperTriangularMatrix<Type>::size() const
+template<typename ScalarType>
+size_t DOTk_UpperTriangularMatrix<ScalarType>::size() const
 {
     return (m_Size);
 }
 
-template<class Type>
-void DOTk_UpperTriangularMatrix<Type>::copy(const size_t & index_,
-                                            const dotk::vector<Type> & input_,
+template<typename ScalarType>
+void DOTk_UpperTriangularMatrix<ScalarType>::copy(const size_t & index_,
+                                            const dotk::Vector<ScalarType> & input_,
                                             bool row_major_copy_)
 {
     if(row_major_copy_ == false)
@@ -89,10 +89,10 @@ void DOTk_UpperTriangularMatrix<Type>::copy(const size_t & index_,
     }
 }
 
-template<class Type>
-Type DOTk_UpperTriangularMatrix<Type>::norm(const size_t & index_, bool row_major_norm_) const
+template<typename ScalarType>
+ScalarType DOTk_UpperTriangularMatrix<ScalarType>::norm(const size_t & index_, bool row_major_norm_) const
 {
-    Type value = 0.;
+    ScalarType value = 0.;
 
     if(row_major_norm_ == false)
     {
@@ -121,12 +121,12 @@ Type DOTk_UpperTriangularMatrix<Type>::norm(const size_t & index_, bool row_majo
     return (value);
 }
 
-template<class Type>
-void DOTk_UpperTriangularMatrix<Type>::scale(const size_t & index_, const Type & alpha_, bool row_major_scale_)
+template<typename ScalarType>
+void DOTk_UpperTriangularMatrix<ScalarType>::scale(const size_t & index_, const ScalarType & alpha_, bool row_major_scale_)
 {
     if(row_major_scale_ == false)
     {
-        Type scaled_value;
+        ScalarType scaled_value;
         size_t num_rows = index_ + 1;
         size_t data_index, row_index;
 
@@ -139,7 +139,7 @@ void DOTk_UpperTriangularMatrix<Type>::scale(const size_t & index_, const Type &
     }
     else
     {
-        Type scaled_value;
+        ScalarType scaled_value;
         size_t data_index, col_index;
 
         for(col_index = 0; col_index < m_NumColumnCount[index_]; ++ col_index)
@@ -151,17 +151,17 @@ void DOTk_UpperTriangularMatrix<Type>::scale(const size_t & index_, const Type &
     }
 }
 
-template<class Type>
-void DOTk_UpperTriangularMatrix<Type>::axpy(const size_t & index_,
-                                            const Type & alpha_,
-                                            const dotk::vector<Type> & input_,
+template<typename ScalarType>
+void DOTk_UpperTriangularMatrix<ScalarType>::axpy(const size_t & index_,
+                                            const ScalarType & alpha_,
+                                            const dotk::Vector<ScalarType> & input_,
                                             bool row_major_axpy_)
 {
     if(row_major_axpy_ == false)
     {
         assert(this->nrows() == input_.size());
 
-        Type scaled_value, value;
+        ScalarType scaled_value, value;
         size_t num_rows = index_ + 1;
         size_t data_index, row_index;
 
@@ -178,7 +178,7 @@ void DOTk_UpperTriangularMatrix<Type>::axpy(const size_t & index_,
         const size_t num_columns = this->ncols();
         assert(num_columns == input_.size());
 
-        Type scaled_value, value;
+        ScalarType scaled_value, value;
         size_t input_index, data_index, col_index;
 
         for(col_index = 0; col_index < m_NumColumnCount[index_]; ++col_index)
@@ -192,12 +192,12 @@ void DOTk_UpperTriangularMatrix<Type>::axpy(const size_t & index_,
     }
 }
 
-template<class Type>
-Type DOTk_UpperTriangularMatrix<Type>::dot(const size_t & index_,
-                                           const dotk::vector<Type> & input_,
+template<typename ScalarType>
+ScalarType DOTk_UpperTriangularMatrix<ScalarType>::dot(const size_t & index_,
+                                           const dotk::Vector<ScalarType> & input_,
                                            bool row_major_dot_) const
 {
-    Type value = 0.;
+    ScalarType value = 0.;
 
     if(row_major_dot_ == false)
     {
@@ -229,10 +229,10 @@ Type DOTk_UpperTriangularMatrix<Type>::dot(const size_t & index_,
     return (value);
 }
 
-template<class Type>
-Type DOTk_UpperTriangularMatrix<Type>::norm() const
+template<typename ScalarType>
+ScalarType DOTk_UpperTriangularMatrix<ScalarType>::norm() const
 {
-    Type value = 0.;
+    ScalarType value = 0.;
     const size_t dim = this->size();
 
     for(size_t index = 0; index < dim; ++ index)
@@ -245,9 +245,9 @@ Type DOTk_UpperTriangularMatrix<Type>::norm() const
     return (value);
 }
 
-template<class Type>
-void DOTk_UpperTriangularMatrix<Type>::matVec(const dotk::vector<Type> & input_,
-                                              dotk::vector<Type> & output_,
+template<typename ScalarType>
+void DOTk_UpperTriangularMatrix<ScalarType>::matVec(const dotk::Vector<ScalarType> & input_,
+                                              dotk::Vector<ScalarType> & output_,
                                               bool transpose_) const
 {
     output_.fill(0);
@@ -259,7 +259,7 @@ void DOTk_UpperTriangularMatrix<Type>::matVec(const dotk::vector<Type> & input_,
         assert(ncols == input_.size());
         assert(nrows == output_.size());
 
-        Type sum, value;
+        ScalarType sum, value;
         size_t displacement, row_index, col_index, data_index, input_index;
 
         for(row_index = 0; row_index < output_.size(); ++ row_index)
@@ -281,7 +281,7 @@ void DOTk_UpperTriangularMatrix<Type>::matVec(const dotk::vector<Type> & input_,
         assert(nrows == input_.size());
         assert(ncols == output_.size());
 
-        Type input_value, value, value_to_add;
+        ScalarType input_value, value, value_to_add;
         size_t row_index, col_index, displacement, data_index, output_index;
 
         for(row_index = 0; row_index < input_.size(); ++ row_index)
@@ -300,11 +300,11 @@ void DOTk_UpperTriangularMatrix<Type>::matVec(const dotk::vector<Type> & input_,
     }
 }
 
-template<class Type>
-void DOTk_UpperTriangularMatrix<Type>::gemv(const Type & alpha_,
-                                            const dotk::vector<Type> & input_,
-                                            const Type & beta_,
-                                            dotk::vector<Type> & output_,
+template<typename ScalarType>
+void DOTk_UpperTriangularMatrix<ScalarType>::gemv(const ScalarType & alpha_,
+                                            const dotk::Vector<ScalarType> & input_,
+                                            const ScalarType & beta_,
+                                            dotk::Vector<ScalarType> & output_,
                                             bool transpose_) const
 {
     const size_t nrows = this->nrows();
@@ -315,7 +315,7 @@ void DOTk_UpperTriangularMatrix<Type>::gemv(const Type & alpha_,
         assert(ncols == input_.size());
         assert(nrows == output_.size());
 
-        Type sum, value, beta_times_output;
+        ScalarType sum, value, beta_times_output;
         size_t displacement, row_index, col_index, data_index, input_index;
 
         for(row_index = 0; row_index < output_.size(); ++ row_index)
@@ -338,7 +338,7 @@ void DOTk_UpperTriangularMatrix<Type>::gemv(const Type & alpha_,
         assert(nrows == input_.size());
         assert(ncols == output_.size());
 
-        Type scaled_value;
+        ScalarType scaled_value;
 
         for(size_t i = 0; i < output_.size(); ++ i)
         {
@@ -346,7 +346,7 @@ void DOTk_UpperTriangularMatrix<Type>::gemv(const Type & alpha_,
             output_[i] = scaled_value;
         }
 
-        Type input_value, value, value_to_add;
+        ScalarType input_value, value, value_to_add;
         size_t displacement, row_index, col_index, data_index, output_index;
 
         for(row_index = 0; row_index < input_.size(); ++ row_index)
@@ -365,19 +365,19 @@ void DOTk_UpperTriangularMatrix<Type>::gemv(const Type & alpha_,
     }
 }
 
-template<class Type>
-void DOTk_UpperTriangularMatrix<Type>::gemm(const bool & transpose_A_,
+template<typename ScalarType>
+void DOTk_UpperTriangularMatrix<ScalarType>::gemm(const bool & transpose_A_,
                                             const bool & transpose_B_,
-                                            const Type & alpha_,
-                                            const dotk::matrix<Type> & B_,
-                                            const Type & beta_,
-                                            dotk::matrix<Type> & C_) const
+                                            const ScalarType & alpha_,
+                                            const dotk::matrix<ScalarType> & B_,
+                                            const ScalarType & beta_,
+                                            dotk::matrix<ScalarType> & C_) const
 {
     // TODO: IMPLEMENT GENERAL MATRIX-MATRIX PRODUCT FOR UPPER TRIANGULAR MATRIX
 }
 
-template<class Type>
-void DOTk_UpperTriangularMatrix<Type>::scale(const Type & alpha_)
+template<typename ScalarType>
+void DOTk_UpperTriangularMatrix<ScalarType>::scale(const ScalarType & alpha_)
 {
     const size_t dim = this->size();
 
@@ -387,8 +387,8 @@ void DOTk_UpperTriangularMatrix<Type>::scale(const Type & alpha_)
     }
 }
 
-template<class Type>
-void DOTk_UpperTriangularMatrix<Type>::fill(const Type & value_)
+template<typename ScalarType>
+void DOTk_UpperTriangularMatrix<ScalarType>::fill(const ScalarType & value_)
 {
     const size_t dim = this->size();
 
@@ -398,8 +398,8 @@ void DOTk_UpperTriangularMatrix<Type>::fill(const Type & value_)
     }
 }
 
-template<class Type>
-void DOTk_UpperTriangularMatrix<Type>::copy(const dotk::matrix<Type> & input_)
+template<typename ScalarType>
+void DOTk_UpperTriangularMatrix<ScalarType>::copy(const dotk::matrix<ScalarType> & input_)
 {
     assert(input_.size() == this->size());
     assert(input_.type() == this->type());
@@ -416,8 +416,8 @@ void DOTk_UpperTriangularMatrix<Type>::copy(const dotk::matrix<Type> & input_)
     }
 }
 
-template<class Type>
-void DOTk_UpperTriangularMatrix<Type>::copy(const size_t & num_inputs_, const Type* input_)
+template<typename ScalarType>
+void DOTk_UpperTriangularMatrix<ScalarType>::copy(const size_t & num_inputs_, const ScalarType* input_)
 {
     assert(num_inputs_ == this->size());
 
@@ -427,8 +427,8 @@ void DOTk_UpperTriangularMatrix<Type>::copy(const size_t & num_inputs_, const Ty
     }
 }
 
-template<class Type>
-void DOTk_UpperTriangularMatrix<Type>::gather(const size_t & dim_, Type* output_)
+template<typename ScalarType>
+void DOTk_UpperTriangularMatrix<ScalarType>::gather(const size_t & dim_, ScalarType* output_)
 {
     const size_t dim = this->size();
     assert(dim == dim_);
@@ -439,8 +439,8 @@ void DOTk_UpperTriangularMatrix<Type>::gather(const size_t & dim_, Type* output_
     }
 }
 
-template<class Type>
-void DOTk_UpperTriangularMatrix<Type>::identity()
+template<typename ScalarType>
+void DOTk_UpperTriangularMatrix<ScalarType>::identity()
 {
     this->fill(0.);
     size_t data_index, row;
@@ -453,10 +453,10 @@ void DOTk_UpperTriangularMatrix<Type>::identity()
     }
 }
 
-template<class Type>
-void DOTk_UpperTriangularMatrix<Type>::shift(const Type & alpha_)
+template<typename ScalarType>
+void DOTk_UpperTriangularMatrix<ScalarType>::shift(const ScalarType & alpha_)
 {
-    Type shifted_value = 0.;
+    ScalarType shifted_value = 0.;
     size_t data_index, row;
     size_t num_rows = this->nrows();
 
@@ -468,8 +468,8 @@ void DOTk_UpperTriangularMatrix<Type>::shift(const Type & alpha_)
     }
 }
 
-template<class Type>
-void DOTk_UpperTriangularMatrix<Type>::diag(dotk::vector<Type> & input_) const
+template<typename ScalarType>
+void DOTk_UpperTriangularMatrix<ScalarType>::diag(dotk::Vector<ScalarType> & input_) const
 {
     size_t num_rows = this->nrows();
 
@@ -484,8 +484,8 @@ void DOTk_UpperTriangularMatrix<Type>::diag(dotk::vector<Type> & input_) const
     }
 }
 
-template<class Type>
-void DOTk_UpperTriangularMatrix<Type>::setDiag(const dotk::vector<Type> & input_, bool zero_elements_)
+template<typename ScalarType>
+void DOTk_UpperTriangularMatrix<ScalarType>::setDiag(const dotk::Vector<ScalarType> & input_, bool zero_elements_)
 {
     size_t num_rows = this->nrows();
 
@@ -505,10 +505,10 @@ void DOTk_UpperTriangularMatrix<Type>::setDiag(const dotk::vector<Type> & input_
     }
 }
 
-template<class Type>
-void DOTk_UpperTriangularMatrix<Type>::scaleDiag(const Type & alpha_)
+template<typename ScalarType>
+void DOTk_UpperTriangularMatrix<ScalarType>::scaleDiag(const ScalarType & alpha_)
 {
-    Type scaled_value = 0.;
+    ScalarType scaled_value = 0.;
     size_t data_index, row;
     size_t num_rows = this->nrows();
 
@@ -520,10 +520,10 @@ void DOTk_UpperTriangularMatrix<Type>::scaleDiag(const Type & alpha_)
     }
 }
 
-template<class Type>
-Type DOTk_UpperTriangularMatrix<Type>::trace() const
+template<typename ScalarType>
+ScalarType DOTk_UpperTriangularMatrix<ScalarType>::trace() const
 {
-    Type value = 0.;
+    ScalarType value = 0.;
     size_t data_index, row;
     size_t num_rows = this->nrows();
 
@@ -536,16 +536,16 @@ Type DOTk_UpperTriangularMatrix<Type>::trace() const
     return (value);
 }
 
-template<class Type>
-void DOTk_UpperTriangularMatrix<Type>::set(const size_t & row_index_, const size_t & column_index_, Type value_)
+template<typename ScalarType>
+void DOTk_UpperTriangularMatrix<ScalarType>::set(const size_t & row_index_, const size_t & column_index_, ScalarType value_)
 {
     assert(column_index_ >= row_index_);
     size_t index = m_Displacements[row_index_] + column_index_ - row_index_;
     m_Data[index] = value_;
 }
 
-template<class Type>
-Type & DOTk_UpperTriangularMatrix<Type>::operator ()(const size_t & row_index_, const size_t & column_index_)
+template<typename ScalarType>
+ScalarType & DOTk_UpperTriangularMatrix<ScalarType>::operator ()(const size_t & row_index_, const size_t & column_index_)
 {
     assert(row_index_ < this->nrows());
     assert(column_index_ < this->ncols());
@@ -560,8 +560,8 @@ Type & DOTk_UpperTriangularMatrix<Type>::operator ()(const size_t & row_index_, 
     }
 }
 
-template<class Type>
-const Type & DOTk_UpperTriangularMatrix<Type>::operator ()(const size_t & row_index_,
+template<typename ScalarType>
+const ScalarType & DOTk_UpperTriangularMatrix<ScalarType>::operator ()(const size_t & row_index_,
                                                            const size_t & column_index_) const
 {
     assert(row_index_ < this->nrows());
@@ -577,25 +577,25 @@ const Type & DOTk_UpperTriangularMatrix<Type>::operator ()(const size_t & row_in
     }
 }
 
-template<class Type>
-std::tr1::shared_ptr<dotk::matrix<Type> > DOTk_UpperTriangularMatrix<Type>::clone() const
+template<typename ScalarType>
+std::tr1::shared_ptr<dotk::matrix<ScalarType> > DOTk_UpperTriangularMatrix<ScalarType>::clone() const
 {
 
     size_t num_rows = this->nrows();
-    std::tr1::shared_ptr<dotk::serial::DOTk_UpperTriangularMatrix<Type> >
-        matrix(new dotk::serial::DOTk_UpperTriangularMatrix<Type>(num_rows));
+    std::tr1::shared_ptr<dotk::serial::DOTk_UpperTriangularMatrix<ScalarType> >
+        matrix(new dotk::serial::DOTk_UpperTriangularMatrix<ScalarType>(num_rows));
 
     return (matrix);
 }
 
-template<class Type>
-dotk::types::matrix_t DOTk_UpperTriangularMatrix<Type>::type() const
+template<typename ScalarType>
+dotk::types::matrix_t DOTk_UpperTriangularMatrix<ScalarType>::type() const
 {
     return (dotk::types::SERIAL_UPPER_TRI_MATRIX);
 }
 
-template<class Type>
-void DOTk_UpperTriangularMatrix<Type>::initialize()
+template<typename ScalarType>
+void DOTk_UpperTriangularMatrix<ScalarType>::initialize()
 {
     size_t num_rows = this->nrows();
     size_t num_columns = this->ncols();
@@ -608,11 +608,11 @@ void DOTk_UpperTriangularMatrix<Type>::initialize()
         m_Displacements[row] = m_Size;
         m_Size += num_cols_in_row;
     }
-    m_Data = new Type[m_Size];
+    m_Data = new ScalarType[m_Size];
 }
 
-template<class Type>
-void DOTk_UpperTriangularMatrix<Type>::clear()
+template<typename ScalarType>
+void DOTk_UpperTriangularMatrix<ScalarType>::clear()
 {
     delete[] m_Data;
     m_Data = NULL;

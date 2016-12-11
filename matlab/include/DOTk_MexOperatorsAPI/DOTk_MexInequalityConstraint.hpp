@@ -15,37 +15,37 @@
 namespace dotk
 {
 
-template<typename Type>
-class vector;
+template<typename ScalarType>
+class Vector;
 
 class DOTk_MexArrayPtr;
 
-template<typename Type>
-class DOTk_MexInequalityConstraint : public DOTk_InequalityConstraint<Type>
+template<typename ScalarType>
+class DOTk_MexInequalityConstraint : public DOTk_InequalityConstraint<ScalarType>
 {
 public:
     DOTk_MexInequalityConstraint(const mxArray* operators_, const dotk::types::problem_t & type_);
     virtual ~DOTk_MexInequalityConstraint();
 
     // Linear Programming API
-    Type bound(const size_t & index_);
-    Type value(const dotk::vector<Type> & primal_, const size_t & index_);
-    void gradient(const dotk::vector<Type> & primal_, const size_t & index_, dotk::vector<Type> & derivative_);
-    void hessian(const dotk::vector<Type> & primal_,
-                 const dotk::vector<Type> & delta_primal_,
+    ScalarType bound(const size_t & index_);
+    ScalarType value(const dotk::Vector<ScalarType> & primal_, const size_t & index_);
+    void gradient(const dotk::Vector<ScalarType> & primal_, const size_t & index_, dotk::Vector<ScalarType> & derivative_);
+    void hessian(const dotk::Vector<ScalarType> & primal_,
+                 const dotk::Vector<ScalarType> & delta_primal_,
                  const size_t & index_,
-                 dotk::vector<Type> & derivative_);
+                 dotk::Vector<ScalarType> & derivative_);
 
     // Nonlinear Programming API
-    Type value(const dotk::vector<Type> & state_, const dotk::vector<Type> & control_, const size_t & index_);
-    void partialDerivativeState(const dotk::vector<Type> & state_,
-                                const dotk::vector<Type> & control_,
+    ScalarType value(const dotk::Vector<ScalarType> & state_, const dotk::Vector<ScalarType> & control_, const size_t & index_);
+    void partialDerivativeState(const dotk::Vector<ScalarType> & state_,
+                                const dotk::Vector<ScalarType> & control_,
                                 const size_t & index_,
-                                dotk::vector<Type> & derivative_);
-    void partialDerivativeControl(const dotk::vector<Type> & state_,
-                                  const dotk::vector<Type> & control_,
+                                dotk::Vector<ScalarType> & derivative_);
+    void partialDerivativeControl(const dotk::Vector<ScalarType> & state_,
+                                  const dotk::Vector<ScalarType> & control_,
                                   const size_t & index_,
-                                  dotk::vector<Type> & derivative_);
+                                  dotk::Vector<ScalarType> & derivative_);
 
 private:
     void clear();
@@ -60,8 +60,8 @@ private:
     dotk::DOTk_MexArrayPtr m_FirstDerivativeWrtControl;
 
 private:
-    DOTk_MexInequalityConstraint(const dotk::DOTk_MexInequalityConstraint<Type> & rhs_);
-    dotk::DOTk_MexInequalityConstraint<Type> & operator=(const dotk::DOTk_MexInequalityConstraint<Type> & rhs_);
+    DOTk_MexInequalityConstraint(const dotk::DOTk_MexInequalityConstraint<ScalarType> & rhs_);
+    dotk::DOTk_MexInequalityConstraint<ScalarType> & operator=(const dotk::DOTk_MexInequalityConstraint<ScalarType> & rhs_);
 };
 
 }

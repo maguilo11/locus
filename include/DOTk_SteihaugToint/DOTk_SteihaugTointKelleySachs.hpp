@@ -20,8 +20,8 @@ class DOTk_OptimizationDataMng;
 class DOTk_SteihaugTointNewtonIO;
 class DOTk_ProjectedSteihaugTointPcg;
 
-template<typename Type>
-class vector;
+template<typename ScalarType>
+class Vector;
 
 class DOTk_SteihaugTointKelleySachs : public dotk::DOTk_SteihaugTointNewton
 {
@@ -50,7 +50,7 @@ private:
 private:
     size_t m_MaxNumUpdates;
     Real m_StationarityMeasure;
-    std::tr1::shared_ptr<dotk::vector<Real> > m_WorkVector;
+    std::tr1::shared_ptr<dotk::Vector<Real> > m_WorkVector;
 
     std::tr1::shared_ptr<dotk::DOTk_SteihaugTointNewtonIO> m_IO;
     std::tr1::shared_ptr<dotk::DOTk_KelleySachsStepMng> m_StepMng;

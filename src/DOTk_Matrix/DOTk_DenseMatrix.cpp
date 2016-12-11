@@ -17,42 +17,42 @@ namespace dotk
 namespace serial
 {
 
-template<class Type>
-DOTk_DenseMatrix<Type>::DOTk_DenseMatrix(size_t nrows_, Type value_) :
-        dotk::matrix<Type>(),
-        m_MatrixData(new Type[nrows_ * nrows_]), m_Size(nrows_ * nrows_),
+template<typename ScalarType>
+DOTk_DenseMatrix<ScalarType>::DOTk_DenseMatrix(size_t nrows_, ScalarType value_) :
+        dotk::matrix<ScalarType>(),
+        m_MatrixData(new ScalarType[nrows_ * nrows_]), m_Size(nrows_ * nrows_),
         m_NumRows(nrows_),
         m_NumCols(nrows_)
         {
             this->fill(value_);
         }
 
-template<class Type>
-DOTk_DenseMatrix<Type>::~DOTk_DenseMatrix()
+template<typename ScalarType>
+DOTk_DenseMatrix<ScalarType>::~DOTk_DenseMatrix()
 {
     this->clear();
 }
 
-template<class Type>
-size_t DOTk_DenseMatrix<Type>::nrows() const
+template<typename ScalarType>
+size_t DOTk_DenseMatrix<ScalarType>::nrows() const
 {
     return (m_NumRows);
 }
 
-template<class Type>
-size_t DOTk_DenseMatrix<Type>::ncols() const
+template<typename ScalarType>
+size_t DOTk_DenseMatrix<ScalarType>::ncols() const
 {
     return (m_NumCols);
 }
 
-template<class Type>
-size_t DOTk_DenseMatrix<Type>::size() const
+template<typename ScalarType>
+size_t DOTk_DenseMatrix<ScalarType>::size() const
 {
     return (m_Size);
 }
 
-template<class Type>
-void DOTk_DenseMatrix<Type>::copy(const size_t & index_, const dotk::vector<Type> & input_, bool row_major_copy_)
+template<typename ScalarType>
+void DOTk_DenseMatrix<ScalarType>::copy(const size_t & index_, const dotk::Vector<ScalarType> & input_, bool row_major_copy_)
 {
     if(row_major_copy_ == false)
     {
@@ -82,10 +82,10 @@ void DOTk_DenseMatrix<Type>::copy(const size_t & index_, const dotk::vector<Type
     }
 }
 
-template<class Type>
-Type DOTk_DenseMatrix<Type>::norm(const size_t & index_, bool row_major_norm_) const
+template<typename ScalarType>
+ScalarType DOTk_DenseMatrix<ScalarType>::norm(const size_t & index_, bool row_major_norm_) const
 {
-    Type value = 0.;
+    ScalarType value = 0.;
 
     if(row_major_norm_ == false)
     {
@@ -115,8 +115,8 @@ Type DOTk_DenseMatrix<Type>::norm(const size_t & index_, bool row_major_norm_) c
     return (value);
 }
 
-template<class Type>
-void DOTk_DenseMatrix<Type>::scale(const size_t & index_, const Type & alpha_, bool row_major_scale_)
+template<typename ScalarType>
+void DOTk_DenseMatrix<ScalarType>::scale(const size_t & index_, const ScalarType & alpha_, bool row_major_scale_)
 {
     if(row_major_scale_ == false)
     {
@@ -142,10 +142,10 @@ void DOTk_DenseMatrix<Type>::scale(const size_t & index_, const Type & alpha_, b
     }
 }
 
-template<class Type>
-void DOTk_DenseMatrix<Type>::axpy(const size_t & index_,
-                                  const Type & alpha_,
-                                  const dotk::vector<Type> & input_,
+template<typename ScalarType>
+void DOTk_DenseMatrix<ScalarType>::axpy(const size_t & index_,
+                                  const ScalarType & alpha_,
+                                  const dotk::Vector<ScalarType> & input_,
                                   bool row_major_axpy_)
 {
     if(row_major_axpy_ == false)
@@ -176,12 +176,12 @@ void DOTk_DenseMatrix<Type>::axpy(const size_t & index_,
     }
 }
 
-template<class Type>
-Type DOTk_DenseMatrix<Type>::dot(const size_t & index_,
-                                 const dotk::vector<Type> & input_,
+template<typename ScalarType>
+ScalarType DOTk_DenseMatrix<ScalarType>::dot(const size_t & index_,
+                                 const dotk::Vector<ScalarType> & input_,
                                  bool row_major_dot_) const
 {
-    Type value = 0.;
+    ScalarType value = 0.;
 
     if(row_major_dot_ == false)
     {
@@ -213,10 +213,10 @@ Type DOTk_DenseMatrix<Type>::dot(const size_t & index_,
     return (value);
 }
 
-template<class Type>
-Type DOTk_DenseMatrix<Type>::norm() const
+template<typename ScalarType>
+ScalarType DOTk_DenseMatrix<ScalarType>::norm() const
 {
-    Type value = 0.;
+    ScalarType value = 0.;
 
     for(size_t index = 0; index < this->size(); ++index)
     {
@@ -228,10 +228,10 @@ Type DOTk_DenseMatrix<Type>::norm() const
     return (value);
 }
 
-template<class Type>
-Type DOTk_DenseMatrix<Type>::trace() const
+template<typename ScalarType>
+ScalarType DOTk_DenseMatrix<ScalarType>::trace() const
 {
-    Type value = 0.;
+    ScalarType value = 0.;
     const size_t nrows = this->nrows();
     const size_t ncols = this->ncols();
 
@@ -244,8 +244,8 @@ Type DOTk_DenseMatrix<Type>::trace() const
     return (value);
 }
 
-template<class Type>
-void DOTk_DenseMatrix<Type>::matVec(const dotk::vector<Type> & input_, dotk::vector<Type> & output_, bool transpose_) const
+template<typename ScalarType>
+void DOTk_DenseMatrix<ScalarType>::matVec(const dotk::Vector<ScalarType> & input_, dotk::Vector<ScalarType> & output_, bool transpose_) const
 {
     output_.fill(0);
     const size_t num_rows = this->nrows();
@@ -258,11 +258,11 @@ void DOTk_DenseMatrix<Type>::matVec(const dotk::vector<Type> & input_, dotk::vec
 
         for(size_t row = 0; row < num_rows; ++row)
         {
-            Type row_sum = 0.;
+            ScalarType row_sum = 0.;
             for(size_t col = 0; col < num_columns; ++col)
             {
                 size_t index = (num_columns * row) + col;
-                const Type value = m_MatrixData[index] * input_[col];
+                const ScalarType value = m_MatrixData[index] * input_[col];
                 row_sum += value;
             }
             output_[row] = row_sum;
@@ -278,25 +278,25 @@ void DOTk_DenseMatrix<Type>::matVec(const dotk::vector<Type> & input_, dotk::vec
             for(size_t col = 0; col < num_columns; ++col)
             {
                 size_t index = (num_columns * row) + col;
-                const Type value = m_MatrixData[index] * input_[row];
-                const Type value_to_add = output_[col] + value;
+                const ScalarType value = m_MatrixData[index] * input_[row];
+                const ScalarType value_to_add = output_[col] + value;
                 output_[col] = value_to_add;
             }
         }
     }
 }
 
-template<class Type>
-void DOTk_DenseMatrix<Type>::gemv(const Type & alpha_,
-                                  const dotk::vector<Type> & input_,
-                                  const Type & beta_,
-                                  dotk::vector<Type> & output_,
+template<typename ScalarType>
+void DOTk_DenseMatrix<ScalarType>::gemv(const ScalarType & alpha_,
+                                  const dotk::Vector<ScalarType> & input_,
+                                  const ScalarType & beta_,
+                                  dotk::Vector<ScalarType> & output_,
                                   bool transpose_) const
 {
     // Quick return if possible
-    if(alpha_ == static_cast<Type>(0.))
+    if(alpha_ == static_cast<ScalarType>(0.))
     {
-        if(beta_ == static_cast<Type>(0.))
+        if(beta_ == static_cast<ScalarType>(0.))
         {
             output_.fill(0.);
         }
@@ -316,14 +316,14 @@ void DOTk_DenseMatrix<Type>::gemv(const Type & alpha_,
 
         for(size_t row = 0; row < num_rows; ++row)
         {
-            Type scaled_row_sum = 0.;
+            ScalarType scaled_row_sum = 0.;
             for(size_t col = 0; col < num_cols; ++col)
             {
                 const size_t index = (num_cols * row) + col;
-                const Type value = m_MatrixData[index] * input_[col];
+                const ScalarType value = m_MatrixData[index] * input_[col];
                 scaled_row_sum += alpha_ * value;
             }
-            const Type beta_times_output = beta_ * output_[row];
+            const ScalarType beta_times_output = beta_ * output_[row];
             output_[row] = scaled_row_sum + beta_times_output;
         }
     }
@@ -346,26 +346,26 @@ void DOTk_DenseMatrix<Type>::gemv(const Type & alpha_,
             for(size_t col = 0; col < num_cols; ++col)
             {
                 size_t index = (num_cols * row) + col;
-                const Type value = alpha_ * m_MatrixData[index] * input_[row];
-                const Type value_to_add = output_[col] + value;
+                const ScalarType value = alpha_ * m_MatrixData[index] * input_[row];
+                const ScalarType value_to_add = output_[col] + value;
                 output_[col] = value_to_add;
             }
         }
     }
 }
 
-template<class Type>
-void DOTk_DenseMatrix<Type>::gemm(const bool & transpose_A_,
+template<typename ScalarType>
+void DOTk_DenseMatrix<ScalarType>::gemm(const bool & transpose_A_,
                                   const bool & transpose_B_,
-                                  const Type & alpha_,
-                                  const dotk::matrix<Type> & B_,
-                                  const Type & beta_,
-                                  dotk::matrix<Type> & C_) const
+                                  const ScalarType & alpha_,
+                                  const dotk::matrix<ScalarType> & B_,
+                                  const ScalarType & beta_,
+                                  dotk::matrix<ScalarType> & C_) const
 {
     // Quick return if possible
-    if(alpha_ == static_cast<Type>(0.))
+    if(alpha_ == static_cast<ScalarType>(0.))
     {
-        if(beta_ == static_cast<Type>(0.))
+        if(beta_ == static_cast<ScalarType>(0.))
         {
             C_.fill(0.);
         }
@@ -376,7 +376,7 @@ void DOTk_DenseMatrix<Type>::gemm(const bool & transpose_A_,
         return;
     }
     // Scale Output Matrix if Necessary
-    if(beta_ != static_cast<Type>(0.))
+    if(beta_ != static_cast<ScalarType>(0.))
     {
         C_.scale(beta_);
     }
@@ -394,7 +394,7 @@ void DOTk_DenseMatrix<Type>::gemm(const bool & transpose_A_,
             assert(C_.nrows() == this->nrows());
             assert(C_.ncols() == B_.ncols());
 
-            Type value = 0.;
+            ScalarType value = 0.;
             size_t i, j, k, index;
             size_t num_rows_A = this->nrows();
             size_t num_cols_A = this->ncols();
@@ -420,7 +420,7 @@ void DOTk_DenseMatrix<Type>::gemm(const bool & transpose_A_,
             assert(C_.nrows() == this->ncols());
             assert(C_.ncols() == B_.ncols());
 
-            Type value = 0.;
+            ScalarType value = 0.;
             size_t i, j, k, index;
             size_t num_rows_A = this->nrows();
             size_t num_cols_A = this->ncols();
@@ -449,7 +449,7 @@ void DOTk_DenseMatrix<Type>::gemm(const bool & transpose_A_,
             assert(C_.nrows() == this->nrows());
             assert(C_.ncols() == B_.nrows());
 
-            Type value = 0.;
+            ScalarType value = 0.;
             size_t i, j, k, index;
             size_t num_rows_A = this->nrows();
             size_t num_cols_A = this->ncols();
@@ -475,7 +475,7 @@ void DOTk_DenseMatrix<Type>::gemm(const bool & transpose_A_,
             assert(C_.nrows() == this->ncols());
             assert(C_.ncols() == B_.nrows());
 
-            Type value = 0.;
+            ScalarType value = 0.;
             size_t i, j, k, index;
             size_t num_rows_A = this->nrows();
             size_t num_cols_A = this->ncols();
@@ -497,8 +497,8 @@ void DOTk_DenseMatrix<Type>::gemm(const bool & transpose_A_,
     }
 }
 
-template<class Type>
-void DOTk_DenseMatrix<Type>::shift(const Type & alpha_)
+template<typename ScalarType>
+void DOTk_DenseMatrix<ScalarType>::shift(const ScalarType & alpha_)
 {
     const size_t nrows = this->nrows();
     const size_t ncols = this->ncols();
@@ -510,8 +510,8 @@ void DOTk_DenseMatrix<Type>::shift(const Type & alpha_)
     }
 }
 
-template<class Type>
-void DOTk_DenseMatrix<Type>::scale(const Type & alpha_)
+template<typename ScalarType>
+void DOTk_DenseMatrix<ScalarType>::scale(const ScalarType & alpha_)
 {
     const size_t nrows = this->nrows();
     const size_t ncols = this->ncols();
@@ -523,8 +523,8 @@ void DOTk_DenseMatrix<Type>::scale(const Type & alpha_)
     }
 }
 
-template<class Type>
-void DOTk_DenseMatrix<Type>::diag(dotk::vector<Type> & input_) const
+template<typename ScalarType>
+void DOTk_DenseMatrix<ScalarType>::diag(dotk::Vector<ScalarType> & input_) const
 {
     const size_t num_rows = this->nrows();
     const size_t num_cols = this->ncols();
@@ -539,8 +539,8 @@ void DOTk_DenseMatrix<Type>::diag(dotk::vector<Type> & input_) const
     }
 }
 
-template<class Type>
-void DOTk_DenseMatrix<Type>::setDiag(const dotk::vector<Type> & input_, bool zero_elements_)
+template<typename ScalarType>
+void DOTk_DenseMatrix<ScalarType>::setDiag(const dotk::Vector<ScalarType> & input_, bool zero_elements_)
 {
     if(zero_elements_ == true)
     {
@@ -560,8 +560,8 @@ void DOTk_DenseMatrix<Type>::setDiag(const dotk::vector<Type> & input_, bool zer
     }
 }
 
-template<class Type>
-void DOTk_DenseMatrix<Type>::scaleDiag(const Type & alpha_)
+template<typename ScalarType>
+void DOTk_DenseMatrix<ScalarType>::scaleDiag(const ScalarType & alpha_)
 {
     const size_t nrows = this->nrows();
     const size_t ncols = this->ncols();
@@ -573,8 +573,8 @@ void DOTk_DenseMatrix<Type>::scaleDiag(const Type & alpha_)
     }
 }
 
-template<class Type>
-void DOTk_DenseMatrix<Type>::fill(const Type & value_)
+template<typename ScalarType>
+void DOTk_DenseMatrix<ScalarType>::fill(const ScalarType & value_)
 {
     const size_t nrows = this->nrows();
     const size_t ncols = this->ncols();
@@ -586,8 +586,8 @@ void DOTk_DenseMatrix<Type>::fill(const Type & value_)
     }
 }
 
-template<class Type>
-void DOTk_DenseMatrix<Type>::copy(const dotk::matrix<Type> & input_)
+template<typename ScalarType>
+void DOTk_DenseMatrix<ScalarType>::copy(const dotk::matrix<ScalarType> & input_)
 {
     assert(input_.size() == this->size());
     assert(input_.nrows() == this->nrows());
@@ -607,8 +607,8 @@ void DOTk_DenseMatrix<Type>::copy(const dotk::matrix<Type> & input_)
     }
 }
 
-template<class Type>
-void DOTk_DenseMatrix<Type>::copy(const size_t & num_inputs_, const Type* input_)
+template<typename ScalarType>
+void DOTk_DenseMatrix<ScalarType>::copy(const size_t & num_inputs_, const ScalarType* input_)
 {
     assert(num_inputs_ == this->size());
 
@@ -618,8 +618,8 @@ void DOTk_DenseMatrix<Type>::copy(const size_t & num_inputs_, const Type* input_
     }
 }
 
-template<class Type>
-void DOTk_DenseMatrix<Type>::gather(const size_t & dim_, Type* output_)
+template<typename ScalarType>
+void DOTk_DenseMatrix<ScalarType>::gather(const size_t & dim_, ScalarType* output_)
 {
     const size_t dim = this->nrows() * this->ncols();
 
@@ -631,8 +631,8 @@ void DOTk_DenseMatrix<Type>::gather(const size_t & dim_, Type* output_)
     }
 }
 
-template<class Type>
-void DOTk_DenseMatrix<Type>::identity()
+template<typename ScalarType>
+void DOTk_DenseMatrix<ScalarType>::identity()
 {
     size_t row;
     for(row = 0; row < this->nrows(); ++row)
@@ -642,8 +642,8 @@ void DOTk_DenseMatrix<Type>::identity()
     }
 }
 
-template<class Type>
-void DOTk_DenseMatrix<Type>::set(const size_t & row_index_, const size_t & column_index_, Type value_)
+template<typename ScalarType>
+void DOTk_DenseMatrix<ScalarType>::set(const size_t & row_index_, const size_t & column_index_, ScalarType value_)
 {
     assert(row_index_ <= this->nrows() - 1u);
     assert(column_index_ <= this->ncols() - 1u);
@@ -651,17 +651,17 @@ void DOTk_DenseMatrix<Type>::set(const size_t & row_index_, const size_t & colum
     m_MatrixData[index] = value_;
 }
 
-template<class Type>
-std::tr1::shared_ptr<dotk::matrix<Type> > DOTk_DenseMatrix<Type>::clone() const
+template<typename ScalarType>
+std::tr1::shared_ptr<dotk::matrix<ScalarType> > DOTk_DenseMatrix<ScalarType>::clone() const
 {
     size_t num_rows = this->nrows();
-    std::tr1::shared_ptr<dotk::serial::DOTk_DenseMatrix<Type> >
-        matrix(new dotk::serial::DOTk_DenseMatrix<Type>(num_rows, 0.));
+    std::tr1::shared_ptr<dotk::serial::DOTk_DenseMatrix<ScalarType> >
+        matrix(new dotk::serial::DOTk_DenseMatrix<ScalarType>(num_rows, 0.));
     return (matrix);
 }
 
-template<class Type>
-Type & DOTk_DenseMatrix<Type>::operator()(const size_t & row_index_, const size_t & column_index_)
+template<typename ScalarType>
+ScalarType & DOTk_DenseMatrix<ScalarType>::operator()(const size_t & row_index_, const size_t & column_index_)
 {
     assert(row_index_ <= this->nrows() - 1u);
     assert(column_index_ <= this->ncols() - 1u);
@@ -669,8 +669,8 @@ Type & DOTk_DenseMatrix<Type>::operator()(const size_t & row_index_, const size_
     return (m_MatrixData[index]);
 }
 
-template<class Type>
-const Type & DOTk_DenseMatrix<Type>::operator()(const size_t & row_index_, const size_t & column_index_) const
+template<typename ScalarType>
+const ScalarType & DOTk_DenseMatrix<ScalarType>::operator()(const size_t & row_index_, const size_t & column_index_) const
 {
     assert(row_index_ <= this->nrows() - 1u);
     assert(column_index_ <= this->ncols() - 1u);
@@ -678,14 +678,14 @@ const Type & DOTk_DenseMatrix<Type>::operator()(const size_t & row_index_, const
     return (m_MatrixData[index]);
 }
 
-template<class Type>
-dotk::types::matrix_t DOTk_DenseMatrix<Type>::type() const
+template<typename ScalarType>
+dotk::types::matrix_t DOTk_DenseMatrix<ScalarType>::type() const
 {
     return (dotk::types::SERIAL_DENSE_MATRIX);
 }
 
-template<class Type>
-void DOTk_DenseMatrix<Type>::clear()
+template<typename ScalarType>
+void DOTk_DenseMatrix<ScalarType>::clear()
 {
     delete[] m_MatrixData;
     m_MatrixData = NULL;

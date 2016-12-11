@@ -19,8 +19,8 @@ class DOTk_Dual;
 class DOTk_State;
 class DOTk_Control;
 
-template <typename Type>
-class vector;
+template<typename ScalarType>
+class Vector;
 
 class DOTk_Primal
 {
@@ -28,9 +28,9 @@ public:
     DOTk_Primal();
     ~DOTk_Primal();
 
-    const std::tr1::shared_ptr<dotk::vector<Real> > & dual() const;
-    const std::tr1::shared_ptr<dotk::vector<Real> > & state() const;
-    const std::tr1::shared_ptr<dotk::vector<Real> > & control() const;
+    const std::tr1::shared_ptr<dotk::Vector<Real> > & dual() const;
+    const std::tr1::shared_ptr<dotk::Vector<Real> > & state() const;
+    const std::tr1::shared_ptr<dotk::Vector<Real> > & control() const;
 
     const std::tr1::shared_ptr<dotk::DOTk_Dual> & dualStruc() const;
     const std::tr1::shared_ptr<dotk::DOTk_State> & stateStruc() const;
@@ -41,40 +41,40 @@ public:
     size_t getControlBasisSize() const;
     dotk::types::variable_t type() const;
 
-    const std::tr1::shared_ptr<dotk::vector<Real> > & getDualLowerBound() const;
-    const std::tr1::shared_ptr<dotk::vector<Real> > & getDualUpperBound() const;
-    const std::tr1::shared_ptr<dotk::vector<Real> > & getStateLowerBound() const;
-    const std::tr1::shared_ptr<dotk::vector<Real> > & getStateUpperBound() const;
-    const std::tr1::shared_ptr<dotk::vector<Real> > & getControlLowerBound() const;
-    const std::tr1::shared_ptr<dotk::vector<Real> > & getControlUpperBound() const;
+    const std::tr1::shared_ptr<dotk::Vector<Real> > & getDualLowerBound() const;
+    const std::tr1::shared_ptr<dotk::Vector<Real> > & getDualUpperBound() const;
+    const std::tr1::shared_ptr<dotk::Vector<Real> > & getStateLowerBound() const;
+    const std::tr1::shared_ptr<dotk::Vector<Real> > & getStateUpperBound() const;
+    const std::tr1::shared_ptr<dotk::Vector<Real> > & getControlLowerBound() const;
+    const std::tr1::shared_ptr<dotk::Vector<Real> > & getControlUpperBound() const;
 
     void setDualBasisSize(size_t size_);
     void setDualLowerBound(Real value_);
     void setDualUpperBound(Real value_);
-    void setDualLowerBound(const dotk::vector<Real> & lower_bound_);
-    void setDualUpperBound(const dotk::vector<Real> & upper_bound_);
+    void setDualLowerBound(const dotk::Vector<Real> & lower_bound_);
+    void setDualUpperBound(const dotk::Vector<Real> & upper_bound_);
 
     void setStateBasisSize(size_t size_);
     void setStateLowerBound(Real value_);
     void setStateUpperBound(Real value_);
-    void setStateLowerBound(const dotk::vector<Real> & lower_bound_);
-    void setStateUpperBound(const dotk::vector<Real> & upper_bound_);
+    void setStateLowerBound(const dotk::Vector<Real> & lower_bound_);
+    void setStateUpperBound(const dotk::Vector<Real> & upper_bound_);
 
     void setControlBasisSize(size_t size_);
     void setControlLowerBound(Real value_);
     void setControlUpperBound(Real value_);
-    void setControlLowerBound(const dotk::vector<Real> & lower_bound_);
-    void setControlUpperBound(const dotk::vector<Real> & upper_bound_);
+    void setControlLowerBound(const dotk::Vector<Real> & lower_bound_);
+    void setControlUpperBound(const dotk::Vector<Real> & upper_bound_);
 
-    void allocateUserDefinedDual(const dotk::vector<Real> & dual_);
+    void allocateUserDefinedDual(const dotk::Vector<Real> & dual_);
     void allocateSerialDualArray(size_t size_, Real value_ = 0.);
     void allocateSerialDualVector(size_t size_, Real value_ = 0.);
 
-    void allocateUserDefinedState(const dotk::vector<Real> & state_);
+    void allocateUserDefinedState(const dotk::Vector<Real> & state_);
     void allocateSerialStateArray(size_t size_, Real value_ = 0.);
     void allocateSerialStateVector(size_t size_, Real value_ = 0.);
 
-    void allocateUserDefinedControl(const dotk::vector<Real> & control_);
+    void allocateUserDefinedControl(const dotk::Vector<Real> & control_);
     void allocateSerialControlArray(size_t size_, Real value_ = 0.);
     void allocateSerialControlVector(size_t size_, Real value_ = 0.);
 

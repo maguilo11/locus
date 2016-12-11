@@ -16,11 +16,11 @@
 namespace dotk
 {
 
-template<typename Type>
-class vector;
-template<typename Type>
+template<typename ScalarType>
+class Vector;
+template<typename ScalarType>
 class DOTk_ObjectiveFunction;
-template<typename Type>
+template<typename ScalarType>
 class DOTk_InequalityConstraint;
 
 class DOTk_RoutinesTypeLP : public dotk::DOTk_AssemblyManager
@@ -30,14 +30,14 @@ public:
                         const std::vector<std::tr1::shared_ptr<dotk::DOTk_InequalityConstraint<Real> > > & inequality_);
     virtual ~DOTk_RoutinesTypeLP();
 
-    virtual Real objective(const std::tr1::shared_ptr<dotk::vector<Real> > & control_);
-    virtual void gradient(const std::tr1::shared_ptr<dotk::vector<Real> > & control_,
-                          const std::tr1::shared_ptr<dotk::vector<Real> > & gradient_);
+    virtual Real objective(const std::tr1::shared_ptr<dotk::Vector<Real> > & control_);
+    virtual void gradient(const std::tr1::shared_ptr<dotk::Vector<Real> > & control_,
+                          const std::tr1::shared_ptr<dotk::Vector<Real> > & gradient_);
     virtual Real inequalityBound(const size_t index_);
-    virtual Real inequalityValue(const size_t index_, const std::tr1::shared_ptr<dotk::vector<Real> > & control_);
+    virtual Real inequalityValue(const size_t index_, const std::tr1::shared_ptr<dotk::Vector<Real> > & control_);
     virtual void inequalityGradient(const size_t index_,
-                                    const std::tr1::shared_ptr<dotk::vector<Real> > & control_,
-                                    const std::tr1::shared_ptr<dotk::vector<Real> > & gradient_);
+                                    const std::tr1::shared_ptr<dotk::Vector<Real> > & control_,
+                                    const std::tr1::shared_ptr<dotk::Vector<Real> > & gradient_);
 
 private:
     std::tr1::shared_ptr<dotk::DOTk_ObjectiveFunction<Real> > m_ObjectiveFunction;

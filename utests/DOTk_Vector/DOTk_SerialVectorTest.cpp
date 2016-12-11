@@ -55,7 +55,7 @@ TEST(DOTk_SerialVectorTest, abs)
 
     vector.abs();
 
-    std::tr1::shared_ptr<dotk::vector<double> > gold = vector.clone();
+    std::tr1::shared_ptr<dotk::Vector<double> > gold = vector.clone();
     gold->fill(13.);
     int thread_count = 4;
     dotk::gtest::checkResults(*gold, vector, thread_count);
@@ -69,7 +69,7 @@ TEST(DOTk_SerialVectorTest, scale)
 
     vector.scale(3.);
 
-    std::tr1::shared_ptr<dotk::vector<double> > gold = vector.clone();
+    std::tr1::shared_ptr<dotk::Vector<double> > gold = vector.clone();
     gold->fill(3.);
     int thread_count = 4;
     dotk::gtest::checkResults(*gold, vector, thread_count);
@@ -83,7 +83,7 @@ TEST(DOTk_SerialVectorTest, cwiseProd)
 
     x.cwiseProd(y);
 
-    std::tr1::shared_ptr<dotk::vector<double> > gold = x.clone();
+    std::tr1::shared_ptr<dotk::Vector<double> > gold = x.clone();
     gold->fill(4.);
     int thread_count = 4;
     dotk::gtest::checkResults(*gold, x, thread_count);
@@ -97,7 +97,7 @@ TEST(DOTk_SerialVectorTest, axpy)
 
     y.axpy(3., x);
 
-    std::tr1::shared_ptr<dotk::vector<double> > gold = x.clone();
+    std::tr1::shared_ptr<dotk::Vector<double> > gold = x.clone();
     gold->fill(4.);
     int thread_count = 4;
     dotk::gtest::checkResults(*gold, y, thread_count);
@@ -141,11 +141,11 @@ TEST(DOTk_SerialVectorTest, copy)
 {
     int dim = 1e4;
     dotk::StdVector<double> vector(dim, 1.);
-    std::tr1::shared_ptr<dotk::vector<double> > y = vector.clone();
+    std::tr1::shared_ptr<dotk::Vector<double> > y = vector.clone();
 
     y->copy(vector);
 
-    std::tr1::shared_ptr<dotk::vector<double> > gold = vector.clone();
+    std::tr1::shared_ptr<dotk::Vector<double> > gold = vector.clone();
     gold->fill(1.);
     int thread_count = 4;
     dotk::gtest::checkResults(*gold, *y, thread_count);
@@ -159,7 +159,7 @@ TEST(DOTk_SerialVectorTest, gather)
 
     vector.gather(y.data());
 
-    std::tr1::shared_ptr<dotk::vector<double> > gold = vector.clone();
+    std::tr1::shared_ptr<dotk::Vector<double> > gold = vector.clone();
     gold->fill(1.);
     int thread_count = 4;
     dotk::gtest::checkResults(y.size(), y.data(), *gold, thread_count);

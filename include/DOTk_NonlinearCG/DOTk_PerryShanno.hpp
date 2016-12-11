@@ -15,8 +15,8 @@ namespace dotk
 
 class DOTk_OptimizationDataMng;
 
-template<class Type>
-class vector;
+template<typename ScalarType>
+class Vector;
 
 class DOTk_PerryShanno : public dotk::DOTk_DescentDirection
 {
@@ -30,21 +30,21 @@ public:
     Real getThetaScaleFactor() const;
     void setLowerBoundLimit(Real value_);
     Real getLowerBoundLimit() const;
-    Real computeAlphaScaleFactor(const std::tr1::shared_ptr<dotk::vector<Real> > & old_grad_,
-                                 const std::tr1::shared_ptr<dotk::vector<Real> > & new_grad_,
-                                 const std::tr1::shared_ptr<dotk::vector<Real> > & dir_);
-    Real computeThetaScaleFactor(const std::tr1::shared_ptr<dotk::vector<Real> > & old_grad_,
-                                 const std::tr1::shared_ptr<dotk::vector<Real> > & new_grad_,
-                                 const std::tr1::shared_ptr<dotk::vector<Real> > & old_primal_,
-                                 const std::tr1::shared_ptr<dotk::vector<Real> > & new_primal_);
-    Real computeScaleFactor(const std::tr1::shared_ptr<dotk::vector<Real> > & old_grad_,
-                            const std::tr1::shared_ptr<dotk::vector<Real> > & new_grad_,
-                            const std::tr1::shared_ptr<dotk::vector<Real> > & dir_);
-    void getDirection(const std::tr1::shared_ptr<dotk::vector<Real> > & old_grad_,
-                      const std::tr1::shared_ptr<dotk::vector<Real> > & new_grad_,
-                      const std::tr1::shared_ptr<dotk::vector<Real> > & old_primal_,
-                      const std::tr1::shared_ptr<dotk::vector<Real> > & new_primal_,
-                      const std::tr1::shared_ptr<dotk::vector<Real> > & dir_);
+    Real computeAlphaScaleFactor(const std::tr1::shared_ptr<dotk::Vector<Real> > & old_grad_,
+                                 const std::tr1::shared_ptr<dotk::Vector<Real> > & new_grad_,
+                                 const std::tr1::shared_ptr<dotk::Vector<Real> > & dir_);
+    Real computeThetaScaleFactor(const std::tr1::shared_ptr<dotk::Vector<Real> > & old_grad_,
+                                 const std::tr1::shared_ptr<dotk::Vector<Real> > & new_grad_,
+                                 const std::tr1::shared_ptr<dotk::Vector<Real> > & old_primal_,
+                                 const std::tr1::shared_ptr<dotk::Vector<Real> > & new_primal_);
+    Real computeScaleFactor(const std::tr1::shared_ptr<dotk::Vector<Real> > & old_grad_,
+                            const std::tr1::shared_ptr<dotk::Vector<Real> > & new_grad_,
+                            const std::tr1::shared_ptr<dotk::Vector<Real> > & dir_);
+    void getDirection(const std::tr1::shared_ptr<dotk::Vector<Real> > & old_grad_,
+                      const std::tr1::shared_ptr<dotk::Vector<Real> > & new_grad_,
+                      const std::tr1::shared_ptr<dotk::Vector<Real> > & old_primal_,
+                      const std::tr1::shared_ptr<dotk::Vector<Real> > & new_primal_,
+                      const std::tr1::shared_ptr<dotk::Vector<Real> > & dir_);
     void direction(const std::tr1::shared_ptr<dotk::DOTk_OptimizationDataMng> & mng_);
 
 private:

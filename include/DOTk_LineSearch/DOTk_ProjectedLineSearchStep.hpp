@@ -18,8 +18,8 @@ class DOTk_LineSearch;
 class DOTk_BoundConstraint;
 class DOTk_OptimizationDataMng;
 
-template<class Type>
-class vector;
+template<typename ScalarType>
+class Vector;
 
 class DOTk_ProjectedLineSearchStep : public dotk::DOTk_LineSearchStepMng
 {

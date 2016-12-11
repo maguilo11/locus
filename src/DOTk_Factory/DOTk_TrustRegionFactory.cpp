@@ -60,13 +60,13 @@ void DOTk_TrustRegionFactory::buildDoglegTrustRegion
 }
 
 void DOTk_TrustRegionFactory::buildDoubleDoglegTrustRegion
-(const std::tr1::shared_ptr<dotk::vector<Real> > & vector_,
+(const std::tr1::shared_ptr<dotk::Vector<Real> > & vector_,
  std::tr1::shared_ptr<dotk::DOTk_TrustRegion> & trust_region_method_)
 {
     trust_region_method_.reset(new dotk::DOTk_DoubleDoglegTrustRegion(vector_));
 }
 
-void DOTk_TrustRegionFactory::build(const std::tr1::shared_ptr<dotk::vector<Real> > & vector_,
+void DOTk_TrustRegionFactory::build(const std::tr1::shared_ptr<dotk::Vector<Real> > & vector_,
                                     std::tr1::shared_ptr<dotk::DOTk_TrustRegion> & trust_region_step_)
 {
     switch(this->getTrustRegionType())

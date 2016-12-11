@@ -14,9 +14,6 @@ namespace dotk
 class DOTk_LineSearchStepMng;
 class DOTk_LineSearchAlgorithmsDataMng;
 
-template<class Type>
-class vector;
-
 class DOTk_FirstOrderLineSearchAlgIO
 {
 public:

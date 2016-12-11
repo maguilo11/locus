@@ -112,7 +112,7 @@ Real DOTk_KelleySachsStepMng::getMidObejectiveFunctionValue() const
     return (m_MidObjectiveFunctionValue);
 }
 
-const std::tr1::shared_ptr<dotk::vector<Real> > & DOTk_KelleySachsStepMng::getMidPrimal() const
+const std::tr1::shared_ptr<dotk::Vector<Real> > & DOTk_KelleySachsStepMng::getMidPrimal() const
 {
     return (m_MidPrimal);
 }

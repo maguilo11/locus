@@ -88,7 +88,7 @@ void DOTk_MexMMA::solveLinearProgrammingProblem(const mxArray* input_[], mxArray
     dotk::mex::buildDualContainer(input_[0], *primal);
     dotk::mex::buildControlContainer(input_[0], *primal);
 
-    std::tr1::shared_ptr< dotk::vector<double> > vector = primal->control()->clone();
+    std::tr1::shared_ptr< dotk::Vector<double> > vector = primal->control()->clone();
     dotk::mex::parseControlLowerBound(input_[0], *vector);
     primal->setControlLowerBound(*vector);
     vector->fill(0.);
@@ -125,7 +125,7 @@ void DOTk_MexMMA::solveNonlinearProgrammingProblem(const mxArray* input_[], mxAr
     dotk::mex::buildStateContainer(input_[0], *primal);
     dotk::mex::buildPrimalContainer(input_[0], *primal);
 
-    std::tr1::shared_ptr< dotk::vector<double> > vector = primal->control()->clone();
+    std::tr1::shared_ptr< dotk::Vector<double> > vector = primal->control()->clone();
     dotk::mex::parseControlLowerBound(input_[0], *vector);
     primal->setControlLowerBound(*vector);
     vector->fill(0.);

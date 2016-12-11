@@ -93,8 +93,8 @@ void DOTk_LeftPreconditioner::setPrecGmresSolver(const std::tr1::shared_ptr<dotk
 }
 
 void DOTk_LeftPreconditioner::apply(const std::tr1::shared_ptr<dotk::DOTk_OptimizationDataMng> & mng_,
-                                    const std::tr1::shared_ptr<dotk::vector<Real> > & vec_,
-                                    const std::tr1::shared_ptr<dotk::vector<Real> > & matrix_times_vec_)
+                                    const std::tr1::shared_ptr<dotk::Vector<Real> > & vec_,
+                                    const std::tr1::shared_ptr<dotk::Vector<Real> > & matrix_times_vec_)
 {
     matrix_times_vec_->copy(*vec_);
 }

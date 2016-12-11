@@ -20,7 +20,7 @@ DOTk_BealeObjective::~DOTk_BealeObjective()
 {
 }
 
-Real DOTk_BealeObjective::value(const dotk::vector<Real> & primal_)
+Real DOTk_BealeObjective::value(const dotk::Vector<Real> & primal_)
 {
     Real f1 = static_cast<Real>(1.5) - primal_[0] * (1.0 - primal_[1]);
     Real f2 = static_cast<Real>(2.25) - primal_[0] * (static_cast<Real>(1.0) - std::pow(primal_[1], 2.));
@@ -31,7 +31,7 @@ Real DOTk_BealeObjective::value(const dotk::vector<Real> & primal_)
     return (value);
 }
 
-void DOTk_BealeObjective::gradient(const dotk::vector<Real> & primal_, dotk::vector<Real> & derivative_)
+void DOTk_BealeObjective::gradient(const dotk::Vector<Real> & primal_, dotk::Vector<Real> & derivative_)
 {
     Real f1 = static_cast<Real>(1.5) - primal_[0] * (static_cast<Real>(1.0) - primal_[1]);
     Real f2 = static_cast<Real>(2.25) - primal_[0] * (static_cast<Real>(1.0) - pow(primal_[1], 2.));
@@ -50,9 +50,9 @@ void DOTk_BealeObjective::gradient(const dotk::vector<Real> & primal_, dotk::vec
             + static_cast<Real>(2.0) * df3dy * f3;
 }
 
-void DOTk_BealeObjective::hessian(const dotk::vector<Real> & primal_,
-                                  const dotk::vector<Real> & delta_primal_,
-                                  dotk::vector<Real> & hessian_times_delta_primal_)
+void DOTk_BealeObjective::hessian(const dotk::Vector<Real> & primal_,
+                                  const dotk::Vector<Real> & delta_primal_,
+                                  dotk::Vector<Real> & hessian_times_delta_primal_)
 {
     Real f1 = static_cast<Real>(1.5) - primal_[0] * (static_cast<Real>(1.0) - primal_[1]);
     Real f2 = static_cast<Real>(2.25) - primal_[0] * (static_cast<Real>(1.0) - std::pow(primal_[1], 2.));

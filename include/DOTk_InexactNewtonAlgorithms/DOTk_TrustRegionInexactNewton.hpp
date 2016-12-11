@@ -20,8 +20,8 @@ class DOTk_KrylovSolverDataMng;
 class DOTk_TrustRegionInexactNewtonIO;
 class DOTk_TrustRegionAlgorithmsDataMng;
 
-template<class Type>
-class vector;
+template<typename ScalarType>
+class Vector;
 
 class DOTk_TrustRegionInexactNewton : public dotk::DOTk_InexactNewtonAlgorithms
 {
@@ -75,8 +75,8 @@ private:
     std::tr1::shared_ptr<dotk::DOTk_LinearOperator> m_LinearOperator;
     std::tr1::shared_ptr<dotk::DOTk_TrustRegionAlgorithmsDataMng> m_DataMng;
 
-    std::tr1::shared_ptr<dotk::vector<Real> > m_WorkVector;
-    std::tr1::shared_ptr<dotk::vector<Real> > m_HessTimesTrialStep;
+    std::tr1::shared_ptr<dotk::Vector<Real> > m_WorkVector;
+    std::tr1::shared_ptr<dotk::Vector<Real> > m_HessTimesTrialStep;
 
 private:
     DOTk_TrustRegionInexactNewton(const dotk::DOTk_TrustRegionInexactNewton&);

@@ -94,7 +94,7 @@ private:
     size_t m_MaxNumQuasiNormalProblemItr;
     size_t m_MaxNumTangentialSubProblemItr;
 
-    std::tr1::shared_ptr<dotk::vector<Real> > m_DualWorkVector;
+    std::tr1::shared_ptr<dotk::Vector<Real> > m_DualWorkVector;
     std::tr1::shared_ptr<dotk::DOTk_KrylovSolver> m_DualProbSolver;
     std::tr1::shared_ptr<dotk::DOTk_KrylovSolver> m_TangentialProbSolver;
     std::tr1::shared_ptr<dotk::DOTk_KrylovSolver> m_QuasiNormalProbSolver;

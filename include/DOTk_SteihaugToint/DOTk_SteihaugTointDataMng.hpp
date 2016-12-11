@@ -17,11 +17,11 @@ class DOTk_Primal;
 class DOTk_FirstOrderOperator;
 class DOTk_AssemblyManager;
 
-template<typename Type>
-class vector;
-template<typename Type>
+template<typename ScalarType>
+class Vector;
+template<typename ScalarType>
 class DOTk_ObjectiveFunction;
-template<typename Type>
+template<typename ScalarType>
 class DOTk_EqualityConstraint;
 
 class DOTk_SteihaugTointDataMng : public dotk::DOTk_OptimizationDataMng
@@ -44,7 +44,7 @@ public:
 
     virtual void computeGradient();
     virtual Real evaluateObjective();
-    virtual Real evaluateObjective(const std::tr1::shared_ptr<dotk::vector<Real> > & input_);
+    virtual Real evaluateObjective(const std::tr1::shared_ptr<dotk::Vector<Real> > & input_);
     virtual size_t getObjectiveFunctionEvaluationCounter() const;
     virtual const std::tr1::shared_ptr<dotk::DOTk_Primal> & getPrimalStruc() const;
     virtual const std::tr1::shared_ptr<dotk::DOTk_AssemblyManager> & getRoutinesMng() const;

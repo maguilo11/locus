@@ -16,7 +16,7 @@
 namespace dotk
 {
 
-DOTk_LDFPHessian::DOTk_LDFPHessian(const std::tr1::shared_ptr<dotk::vector<Real> > & vector_,
+DOTk_LDFPHessian::DOTk_LDFPHessian(const std::tr1::shared_ptr<dotk::Vector<Real> > & vector_,
                                    size_t max_secant_storage_) :
         dotk::DOTk_SecondOrderOperator(max_secant_storage_),
         m_Alpha(max_secant_storage_, 0.),
@@ -33,18 +33,18 @@ DOTk_LDFPHessian::~DOTk_LDFPHessian()
 {
 }
 
-const std::tr1::shared_ptr<dotk::vector<Real> > & DOTk_LDFPHessian::getDeltaGradStorage(size_t at_) const
+const std::tr1::shared_ptr<dotk::Vector<Real> > & DOTk_LDFPHessian::getDeltaGradStorage(size_t at_) const
 {
     return (m_DeltaGradientStorage->basis(at_));
 }
 
-const std::tr1::shared_ptr<dotk::vector<Real> > & DOTk_LDFPHessian::getDeltaPrimalStorage(size_t at_) const
+const std::tr1::shared_ptr<dotk::Vector<Real> > & DOTk_LDFPHessian::getDeltaPrimalStorage(size_t at_) const
 {
     return (m_DeltaPrimalStorage->basis(at_));
 }
 
-void DOTk_LDFPHessian::getHessian(const std::tr1::shared_ptr<dotk::vector<Real> > & vector_,
-                                  const std::tr1::shared_ptr<dotk::vector<Real> > & hess_times_vec_)
+void DOTk_LDFPHessian::getHessian(const std::tr1::shared_ptr<dotk::Vector<Real> > & vector_,
+                                  const std::tr1::shared_ptr<dotk::Vector<Real> > & hess_times_vec_)
 {
     Int storage_size = dotk::DOTk_SecondOrderOperator::getNumUpdatesStored() - 1;
     m_Alpha.assign(m_Alpha.size(), 0.);
@@ -69,8 +69,8 @@ void DOTk_LDFPHessian::getHessian(const std::tr1::shared_ptr<dotk::vector<Real> 
 }
 
 void DOTk_LDFPHessian::apply(const std::tr1::shared_ptr<dotk::DOTk_OptimizationDataMng> & mng_,
-                             const std::tr1::shared_ptr<dotk::vector<Real> > & vector_,
-                             const std::tr1::shared_ptr<dotk::vector<Real> > & matrix_times_vec_)
+                             const std::tr1::shared_ptr<dotk::Vector<Real> > & vector_,
+                             const std::tr1::shared_ptr<dotk::Vector<Real> > & matrix_times_vec_)
 {
     dotk::DOTk_SecondOrderOperator::computeDeltaPrimal(mng_->getNewPrimal(), mng_->getOldPrimal(), m_DeltaPrimal);
     dotk::DOTk_SecondOrderOperator::computeDeltaGradient(mng_->getNewGradient(), mng_->getOldGradient(), m_DeltaGradient);

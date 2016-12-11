@@ -26,15 +26,15 @@ DOTk_GmresTestMatrix::~DOTk_GmresTestMatrix()
 {
 }
 
-void DOTk_GmresTestMatrix::apply(const std::tr1::shared_ptr<dotk::vector<Real> > & vector_,
-                                 const std::tr1::shared_ptr<dotk::vector<Real> > & matrix_times_vector_)
+void DOTk_GmresTestMatrix::apply(const std::tr1::shared_ptr<dotk::Vector<Real> > & vector_,
+                                 const std::tr1::shared_ptr<dotk::Vector<Real> > & matrix_times_vector_)
 {
     m_Matrix->matVec(*vector_, *matrix_times_vector_);
 }
 
 void DOTk_GmresTestMatrix::apply(const std::tr1::shared_ptr<dotk::DOTk_OptimizationDataMng> & mng_,
-                                 const std::tr1::shared_ptr<dotk::vector<Real> > & vector_,
-                                 const std::tr1::shared_ptr<dotk::vector<Real> > & matrix_times_vector_)
+                                 const std::tr1::shared_ptr<dotk::Vector<Real> > & vector_,
+                                 const std::tr1::shared_ptr<dotk::Vector<Real> > & matrix_times_vector_)
 {
     m_Matrix->matVec(*vector_, *matrix_times_vector_);
 }
@@ -42,7 +42,7 @@ void DOTk_GmresTestMatrix::apply(const std::tr1::shared_ptr<dotk::DOTk_Optimizat
 void DOTk_GmresTestMatrix::allocate(const std::tr1::shared_ptr<dotk::DOTk_MultiVector<Real> > & vector_)
 {
     // SET BLOCK CONTROL-CONTROL
-    std::tr1::shared_ptr<dotk::vector<Real> > dummy = vector_->clone();
+    std::tr1::shared_ptr<dotk::Vector<Real> > dummy = vector_->clone();
     (*dummy->control())[0] = 0.218959186328090;
     (*dummy->control())[1] = 0.934692895940828;
     m_Matrix->basis(0)->control()->copy(*dummy->control());

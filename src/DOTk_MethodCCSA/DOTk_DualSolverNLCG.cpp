@@ -138,7 +138,7 @@ void DOTk_DualSolverNLCG::reset()
     m_DataMng->reset();
 }
 void DOTk_DualSolverNLCG::solve(const std::tr1::shared_ptr<dotk::DOTk_ObjectiveFunction<Real> > & objective_,
-                                const std::tr1::shared_ptr<dotk::vector<Real> > & solution_)
+                                const std::tr1::shared_ptr<dotk::Vector<Real> > & solution_)
 {
     m_DataMng->m_NewDual->copy(*solution_);
     m_DataMng->m_NewObjectiveFunctionValue = objective_->value(*m_DataMng->m_NewDual);

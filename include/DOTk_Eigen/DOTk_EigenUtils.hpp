@@ -13,20 +13,20 @@
 namespace dotk
 {
 
-template<typename Type>
-class vector;
-template<typename Type>
+template<typename ScalarType>
+class Vector;
+template<typename ScalarType>
 class matrix;
 
 namespace eigen
 {
 
 Real rayleighQuotientMethod(const dotk::matrix<Real> & matrix_,
-                            dotk::vector<Real> & eigenvector_,
+                            dotk::Vector<Real> & eigenvector_,
                             size_t max_num_itr_ = 10,
                             Real relative_difference_tolerance_ = 1e-6);
 Real powerMethod(const dotk::matrix<Real> & matrix_,
-                 dotk::vector<Real> & eigenvector_,
+                 dotk::Vector<Real> & eigenvector_,
                  size_t max_num_itr_ = 10,
                  Real relative_difference_tolerance_ = 1e-6);
 

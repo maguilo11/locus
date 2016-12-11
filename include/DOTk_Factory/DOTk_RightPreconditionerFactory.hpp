@@ -17,8 +17,8 @@ namespace dotk
 
 class DOTk_RightPreconditioner;
 
-template<typename Type>
-class vector;
+template<typename ScalarType>
+class Vector;
 
 class DOTk_RightPreconditionerFactory
 {
@@ -31,7 +31,7 @@ public:
     void setFactoryType(dotk::types::right_prec_t type_);
     dotk::types::right_prec_t getFactoryType() const;
 
-    void build(const std::tr1::shared_ptr<dotk::vector<Real> > & vec_template_,
+    void build(const std::tr1::shared_ptr<dotk::Vector<Real> > & vec_template_,
                std::tr1::shared_ptr<dotk::DOTk_RightPreconditioner> & right_prec_);
 
 private:

@@ -151,7 +151,7 @@ void DOTk_DataMngCCSA::initializeAuxiliaryVariables()
     Real max_a_coeff_value = m_InputInequalityCoefficientsA->max();
     if(max_a_coeff_value > static_cast<Real>(0))
     {
-        std::tr1::shared_ptr<dotk::vector<Real> > initial_candidates_for_auxiliary_vars_z =
+        std::tr1::shared_ptr<dotk::Vector<Real> > initial_candidates_for_auxiliary_vars_z =
                 m_InputInequalityCoefficientsA->clone();
         for(size_t index = 0; index < m_NumInequalityConstraints; ++index)
         {
@@ -183,15 +183,15 @@ void DOTk_DataMngCCSA::initializeAuxiliaryVariables()
     }
 }
 
-Real DOTk_DataMngCCSA::evaluateObjectiveFunction(const std::tr1::shared_ptr<dotk::vector<Real> > & primal_)
+Real DOTk_DataMngCCSA::evaluateObjectiveFunction(const std::tr1::shared_ptr<dotk::Vector<Real> > & primal_)
 {
     Real value = m_AssemblyMng->objective(primal_);
     return (value);
 }
 
-void DOTk_DataMngCCSA::evaluateInequalityConstraints(const std::tr1::shared_ptr<dotk::vector<Real> > & control_,
-                                                     const std::tr1::shared_ptr<dotk::vector<Real> > & residual_,
-                                                     const std::tr1::shared_ptr<dotk::vector<Real> > & feasibility_measure_)
+void DOTk_DataMngCCSA::evaluateInequalityConstraints(const std::tr1::shared_ptr<dotk::Vector<Real> > & control_,
+                                                     const std::tr1::shared_ptr<dotk::Vector<Real> > & residual_,
+                                                     const std::tr1::shared_ptr<dotk::Vector<Real> > & feasibility_measure_)
 {
     for(size_t index = 0; index < m_NumInequalityConstraints; ++index)
     {

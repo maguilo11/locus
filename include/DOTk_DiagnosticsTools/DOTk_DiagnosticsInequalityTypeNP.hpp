@@ -20,8 +20,8 @@ namespace dotk
 class DOTk_State;
 class DOTk_Control;
 
-template<typename Type>
-class vector;
+template<typename ScalarType>
+class Vector;
 
 class DOTk_DiagnosticsInequalityTypeNP : public dotk::DOTk_DerivativeDiagnosticsTool
 {
@@ -39,13 +39,13 @@ public:
 private:
     template<typename ScalarValuedFunction>
     void checkScalarValuedFunctionFirstDerivative(const ScalarValuedFunction & function_,
-                                                  const dotk::vector<Real> & perturbation_,
-                                                  const dotk::vector<Real> & true_partial_derivative_,
+                                                  const dotk::Vector<Real> & perturbation_,
+                                                  const dotk::Vector<Real> & true_partial_derivative_,
                                                   dotk::nlp::variables & variables_,
                                                   std::tr1::shared_ptr<dotk::DOTk_InequalityConstraint<Real> > inequality_);
 
 private:
-    std::tr1::shared_ptr<dotk::vector<Real> > m_OriginalField;
+    std::tr1::shared_ptr<dotk::Vector<Real> > m_OriginalField;
     std::vector<std::tr1::shared_ptr<dotk::DOTk_InequalityConstraint<Real> > > m_InequalityConstraint;
 
 private:

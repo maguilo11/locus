@@ -54,12 +54,12 @@ const std::tr1::shared_ptr<dotk::DOTk_LinearOperator> & DOTk_LeftPrecCG::getLine
     return (m_DataMng->getLinearOperator());
 }
 
-const std::tr1::shared_ptr<dotk::vector<Real> > & DOTk_LeftPrecCG::getDescentDirection()
+const std::tr1::shared_ptr<dotk::Vector<Real> > & DOTk_LeftPrecCG::getDescentDirection()
 {
     return (m_ConjugateDirection);
 }
 
-void DOTk_LeftPrecCG::initialize(const std::tr1::shared_ptr<dotk::vector<Real> > & rhs_vec_,
+void DOTk_LeftPrecCG::initialize(const std::tr1::shared_ptr<dotk::Vector<Real> > & rhs_vec_,
                                  const std::tr1::shared_ptr<dotk::DOTk_KrylovSolverStoppingCriterion> & criterion_,
                                  const std::tr1::shared_ptr<dotk::DOTk_OptimizationDataMng> & opt_mng_)
 {
@@ -78,7 +78,7 @@ void DOTk_LeftPrecCG::initialize(const std::tr1::shared_ptr<dotk::vector<Real> >
     dotk::DOTk_KrylovSolver::setInitialStoppingTolerance(stopping_tolerance);
 }
 
-void DOTk_LeftPrecCG::pcg(const std::tr1::shared_ptr<dotk::vector<Real> > & rhs_vec_,
+void DOTk_LeftPrecCG::pcg(const std::tr1::shared_ptr<dotk::Vector<Real> > & rhs_vec_,
                           const std::tr1::shared_ptr<dotk::DOTk_KrylovSolverStoppingCriterion> & criterion_,
                           const std::tr1::shared_ptr<dotk::DOTk_OptimizationDataMng> & opt_mng_)
 {
@@ -131,7 +131,7 @@ void DOTk_LeftPrecCG::pcg(const std::tr1::shared_ptr<dotk::vector<Real> > & rhs_
     }
 }
 
-void DOTk_LeftPrecCG::solve(const std::tr1::shared_ptr<dotk::vector<Real> > & rhs_vec_,
+void DOTk_LeftPrecCG::solve(const std::tr1::shared_ptr<dotk::Vector<Real> > & rhs_vec_,
                             const std::tr1::shared_ptr<dotk::DOTk_KrylovSolverStoppingCriterion> & criterion_,
                             const std::tr1::shared_ptr<dotk::DOTk_OptimizationDataMng> & opt_mng_)
 {

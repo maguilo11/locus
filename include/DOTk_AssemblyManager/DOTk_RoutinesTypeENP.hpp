@@ -15,11 +15,11 @@ namespace dotk
 
 class DOTk_Primal;
 
-template<class Type>
-class vector;
-template<class Type>
+template<class ScalarType>
+class Vector;
+template<class ScalarType>
 class DOTk_ObjectiveFunction;
-template<class Type>
+template<class ScalarType>
 class DOTk_EqualityConstraint;
 
 class DOTk_RoutinesTypeENP: public dotk::DOTk_AssemblyManager
@@ -30,30 +30,30 @@ public:
                          const std::tr1::shared_ptr<dotk::DOTk_EqualityConstraint<Real> >& equality_);
     virtual ~DOTk_RoutinesTypeENP();
 
-    Real objective(const std::tr1::shared_ptr<dotk::vector<Real> > & primal_);
-    void equalityConstraint(const std::tr1::shared_ptr<dotk::vector<Real> > & primal_,
-                            const std::tr1::shared_ptr<dotk::vector<Real> > & output_);
-    void gradient(const std::tr1::shared_ptr<dotk::vector<Real> > & primal_,
-                  const std::tr1::shared_ptr<dotk::vector<Real> > & dual_,
-                  const std::tr1::shared_ptr<dotk::vector<Real> > & output_);
-    void jacobian(const std::tr1::shared_ptr<dotk::vector<Real> > & primal_,
-                  const std::tr1::shared_ptr<dotk::vector<Real> > & delta_primal_,
-                  const std::tr1::shared_ptr<dotk::vector<Real> > & output_);
-    void adjointJacobian(const std::tr1::shared_ptr<dotk::vector<Real> > & primal_,
-                         const std::tr1::shared_ptr<dotk::vector<Real> > & dual_,
-                         const std::tr1::shared_ptr<dotk::vector<Real> > & output_);
-    void hessian(const std::tr1::shared_ptr<dotk::vector<Real> > & primal_,
-                 const std::tr1::shared_ptr<dotk::vector<Real> > & dual_,
-                 const std::tr1::shared_ptr<dotk::vector<Real> > & delta_primal_,
-                 const std::tr1::shared_ptr<dotk::vector<Real> > & output_);
+    Real objective(const std::tr1::shared_ptr<dotk::Vector<Real> > & primal_);
+    void equalityConstraint(const std::tr1::shared_ptr<dotk::Vector<Real> > & primal_,
+                            const std::tr1::shared_ptr<dotk::Vector<Real> > & output_);
+    void gradient(const std::tr1::shared_ptr<dotk::Vector<Real> > & primal_,
+                  const std::tr1::shared_ptr<dotk::Vector<Real> > & dual_,
+                  const std::tr1::shared_ptr<dotk::Vector<Real> > & output_);
+    void jacobian(const std::tr1::shared_ptr<dotk::Vector<Real> > & primal_,
+                  const std::tr1::shared_ptr<dotk::Vector<Real> > & delta_primal_,
+                  const std::tr1::shared_ptr<dotk::Vector<Real> > & output_);
+    void adjointJacobian(const std::tr1::shared_ptr<dotk::Vector<Real> > & primal_,
+                         const std::tr1::shared_ptr<dotk::Vector<Real> > & dual_,
+                         const std::tr1::shared_ptr<dotk::Vector<Real> > & output_);
+    void hessian(const std::tr1::shared_ptr<dotk::Vector<Real> > & primal_,
+                 const std::tr1::shared_ptr<dotk::Vector<Real> > & dual_,
+                 const std::tr1::shared_ptr<dotk::Vector<Real> > & delta_primal_,
+                 const std::tr1::shared_ptr<dotk::Vector<Real> > & output_);
 
 private:
     void initialize(const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_);
-    void allocate(dotk::types::variable_t type_, const std::tr1::shared_ptr<dotk::vector<Real> > & data_);
+    void allocate(dotk::types::variable_t type_, const std::tr1::shared_ptr<dotk::Vector<Real> > & data_);
 
 private:
-    std::tr1::shared_ptr<dotk::vector<Real> > m_StateWorkVector;
-    std::tr1::shared_ptr<dotk::vector<Real> > m_ControlWorkVector;
+    std::tr1::shared_ptr<dotk::Vector<Real> > m_StateWorkVector;
+    std::tr1::shared_ptr<dotk::Vector<Real> > m_ControlWorkVector;
 
     std::tr1::shared_ptr<dotk::DOTk_ObjectiveFunction<Real> > m_ObjectiveFunction;
     std::tr1::shared_ptr<dotk::DOTk_EqualityConstraint<Real> > m_EqualityConstraint;

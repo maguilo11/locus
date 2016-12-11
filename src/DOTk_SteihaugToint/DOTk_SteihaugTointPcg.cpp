@@ -102,7 +102,7 @@ void DOTk_SteihaugTointPcg::solve(const std::tr1::shared_ptr<dotk::DOTk_Precondi
     mng_->getTrialStep()->copy(*m_NewtonStep);
 }
 
-void DOTk_SteihaugTointPcg::computeStoppingTolerance(const std::tr1::shared_ptr<dotk::vector<Real> > & gradient_)
+void DOTk_SteihaugTointPcg::computeStoppingTolerance(const std::tr1::shared_ptr<dotk::Vector<Real> > & gradient_)
 {
     Real relative_tolerance = this->getRelativeTolerance();
     Real relative_tolerance_exponential = this->getRelativeToleranceExponential();

@@ -18,8 +18,8 @@ namespace dotk
 class DOTk_State;
 class DOTk_Control;
 
-template<typename Type>
-class vector;
+template<typename ScalarType>
+class Vector;
 
 class DOTk_DiagnosticsObjectiveTypeNP : public dotk::DOTk_DerivativeDiagnosticsTool
 {
@@ -48,18 +48,18 @@ public:
 
 private:
     template<typename ScalarValuedFunction, typename ScalarValuedFunctionFirstDerivative>
-    void checkScalarValuedFunctionFirstDerivative(const std::tr1::shared_ptr<dotk::vector<Real> > & perturbation_vec_,
+    void checkScalarValuedFunctionFirstDerivative(const std::tr1::shared_ptr<dotk::Vector<Real> > & perturbation_vec_,
                                                   const ScalarValuedFunction & function_,
                                                   const ScalarValuedFunctionFirstDerivative & first_derivative_,
                                                   dotk::nlp::variables & variables_);
     template<typename ScalarValuedFunctionFirstDerivative, typename ScalarValuedFunctionSecondDerivative>
-    void checkScalarValuedFunctionSecondDerivative(const std::tr1::shared_ptr<dotk::vector<Real> > & perturbation_vec_,
+    void checkScalarValuedFunctionSecondDerivative(const std::tr1::shared_ptr<dotk::Vector<Real> > & perturbation_vec_,
                                                    const ScalarValuedFunctionFirstDerivative & first_derivative_,
                                                    const ScalarValuedFunctionSecondDerivative & second_derivative_,
                                                    dotk::nlp::variables & variables_);
 
 private:
-    std::tr1::shared_ptr<dotk::vector<Real> > m_OriginalField;
+    std::tr1::shared_ptr<dotk::Vector<Real> > m_OriginalField;
     std::tr1::shared_ptr<dotk::DOTk_ObjectiveFunction<Real> > m_ObjectiveFunction;
 
 private:

@@ -7,11 +7,11 @@
 
 #include "vector.hpp"
 #include "DOTk_Primal.hpp"
+#include "DOTk_RoutinesTypeULP.hpp"
 #include "DOTk_ObjectiveFunction.hpp"
 #include "DOTk_FirstOrderOperator.hpp"
-#include "DOTk_FirstOrderOperatorFactory.hpp"
 #include "DOTk_LineSearchMngTypeULP.hpp"
-#include "DOTk_RoutinesTypeULP.hpp"
+#include "DOTk_FirstOrderOperatorFactory.hpp"
 
 namespace dotk
 {

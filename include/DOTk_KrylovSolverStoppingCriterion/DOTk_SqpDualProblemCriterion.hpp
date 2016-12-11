@@ -15,8 +15,8 @@ namespace dotk
 
 class DOTk_KrylovSolver;
 
-template<typename Type>
-class vector;
+template<typename ScalarType>
+class Vector;
 
 class DOTk_SqpDualProblemCriterion : public dotk::DOTk_KrylovSolverStoppingCriterion
 {
@@ -25,7 +25,7 @@ public:
     virtual ~DOTk_SqpDualProblemCriterion();
 
     virtual Real evaluate(const dotk::DOTk_KrylovSolver * const solver_,
-                          const std::tr1::shared_ptr<dotk::vector<Real> > & kernel_vector_);
+                          const std::tr1::shared_ptr<dotk::Vector<Real> > & kernel_vector_);
 
     void setDualTolerance(Real tolerance_);
     Real getDualTolerance() const;

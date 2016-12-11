@@ -13,9 +13,9 @@
 namespace dotk
 {
 
-template<class Type>
-class vector;
-template<class Type>
+template<class ScalarType>
+class Vector;
+template<class ScalarType>
 class DOTk_ObjectiveFunction;
 
 class DOTk_RoutinesTypeULP: public dotk::DOTk_AssemblyManager
@@ -24,18 +24,18 @@ public:
     DOTk_RoutinesTypeULP(const std::tr1::shared_ptr<dotk::DOTk_ObjectiveFunction<Real> >& objective_);
     virtual ~DOTk_RoutinesTypeULP();
 
-    Real objective(const std::tr1::shared_ptr<dotk::vector<Real> > & primal_);
-    void objective(const std::vector<std::tr1::shared_ptr<dotk::vector<Real> > > & primal_,
-                   const std::tr1::shared_ptr<dotk::vector<Real> > & values_);
-    void objective(const std::vector<std::tr1::shared_ptr<dotk::vector<Real> > > & primal_plus_,
-                   const std::vector<std::tr1::shared_ptr<dotk::vector<Real> > > & primal_minus_,
-                   const std::tr1::shared_ptr<dotk::vector<Real> > & values_plus_,
-                   const std::tr1::shared_ptr<dotk::vector<Real> > & values_minus_);
-    void gradient(const std::tr1::shared_ptr<dotk::vector<Real> > & primal_,
-                  const std::tr1::shared_ptr<dotk::vector<Real> > & gradient_);
-    void hessian(const std::tr1::shared_ptr<dotk::vector<Real> > & primal_,
-                 const std::tr1::shared_ptr<dotk::vector<Real> > & trial_step_,
-                 const std::tr1::shared_ptr<dotk::vector<Real> > & Hess_times_vector_);
+    Real objective(const std::tr1::shared_ptr<dotk::Vector<Real> > & primal_);
+    void objective(const std::vector<std::tr1::shared_ptr<dotk::Vector<Real> > > & primal_,
+                   const std::tr1::shared_ptr<dotk::Vector<Real> > & values_);
+    void objective(const std::vector<std::tr1::shared_ptr<dotk::Vector<Real> > > & primal_plus_,
+                   const std::vector<std::tr1::shared_ptr<dotk::Vector<Real> > > & primal_minus_,
+                   const std::tr1::shared_ptr<dotk::Vector<Real> > & values_plus_,
+                   const std::tr1::shared_ptr<dotk::Vector<Real> > & values_minus_);
+    void gradient(const std::tr1::shared_ptr<dotk::Vector<Real> > & primal_,
+                  const std::tr1::shared_ptr<dotk::Vector<Real> > & gradient_);
+    void hessian(const std::tr1::shared_ptr<dotk::Vector<Real> > & primal_,
+                 const std::tr1::shared_ptr<dotk::Vector<Real> > & trial_step_,
+                 const std::tr1::shared_ptr<dotk::Vector<Real> > & Hess_times_vector_);
 
 private:
     std::tr1::shared_ptr<dotk::DOTk_ObjectiveFunction<Real> > m_ObjectiveFunction;

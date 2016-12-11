@@ -15,11 +15,11 @@ namespace dotk
 
 class DOTk_Primal;
 
-template<class Type>
-class vector;
-template<class Type>
+template<typename ScalarType>
+class Vector;
+template<typename ScalarType>
 class DOTk_ObjectiveFunction;
-template<class Type>
+template<typename ScalarType>
 class DOTk_EqualityConstraint;
 
 class DOTk_LineSearchMngTypeUNP : public dotk::DOTk_LineSearchAlgorithmsDataMng

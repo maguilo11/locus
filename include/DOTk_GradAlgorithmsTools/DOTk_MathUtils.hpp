@@ -16,16 +16,16 @@
 namespace dotk
 {
 
-template<typename Type>
-class vector;
+template<typename ScalarType>
+class Vector;
 
-Real norm(const std::tr1::shared_ptr<dotk::vector<Real> > & input_);
-void copy(const std::tr1::shared_ptr<dotk::vector<Real> > & input_,
-          const std::tr1::shared_ptr<dotk::vector<Real> > & output_);
-void scale(const Real & alpha_, const std::tr1::shared_ptr<dotk::vector<Real> > & output_);
+Real norm(const std::tr1::shared_ptr<dotk::Vector<Real> > & input_);
+void copy(const std::tr1::shared_ptr<dotk::Vector<Real> > & input_,
+          const std::tr1::shared_ptr<dotk::Vector<Real> > & output_);
+void scale(const Real & alpha_, const std::tr1::shared_ptr<dotk::Vector<Real> > & output_);
 void axpy(const Real & alpha_,
-          const std::tr1::shared_ptr<dotk::vector<Real> > & input_,
-          const std::tr1::shared_ptr<dotk::vector<Real> > & output_);
+          const std::tr1::shared_ptr<dotk::Vector<Real> > & input_,
+          const std::tr1::shared_ptr<dotk::Vector<Real> > & output_);
 
 Real frobeniusNorm(const std::vector< std::vector<Real> > & matrix_);
 void givens(const Real & a_, const Real & b_, Real & cosine_, Real & sine_);

@@ -17,6 +17,9 @@ namespace dotk
 
 class DOTk_TrustRegion;
 
+template<typename ScalarType>
+class Vector;
+
 class DOTk_TrustRegionFactory
 {
 public:
@@ -30,9 +33,9 @@ public:
 
     void buildCauchyTrustRegion(std::tr1::shared_ptr<dotk::DOTk_TrustRegion> & trust_region_method_);
     void buildDoglegTrustRegion(std::tr1::shared_ptr<dotk::DOTk_TrustRegion> & trust_region_method_);
-    void buildDoubleDoglegTrustRegion(const std::tr1::shared_ptr<dotk::vector<Real> > & vector_,
+    void buildDoubleDoglegTrustRegion(const std::tr1::shared_ptr<dotk::Vector<Real> > & vector_,
                                       std::tr1::shared_ptr<dotk::DOTk_TrustRegion> & trust_region_method_);
-    void build(const std::tr1::shared_ptr<dotk::vector<Real> > & vector_,
+    void build(const std::tr1::shared_ptr<dotk::Vector<Real> > & vector_,
                std::tr1::shared_ptr<dotk::DOTk_TrustRegion> & trust_region_step_);
 
 private:

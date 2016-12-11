@@ -16,30 +16,30 @@ namespace dotk
 class DOTk_SecondOrderOperator;
 class DOTk_OptimizationDataMng;
 
-template<class Type>
-class vector;
+template<typename ScalarType>
+class Vector;
 
 class DOTK_SecantLeftPreconditioner: public dotk::DOTk_LeftPreconditioner
 {
 public:
-    DOTK_SecantLeftPreconditioner(const std::tr1::shared_ptr<dotk::vector<Real> > & vector_,
+    DOTK_SecantLeftPreconditioner(const std::tr1::shared_ptr<dotk::Vector<Real> > & vector_,
                                   dotk::types::invhessian_t type_,
                                   size_t secant_storage_ = 0);
     virtual ~DOTK_SecantLeftPreconditioner();
 
     dotk::types::invhessian_t getSecantLeftPrecType() const;
 
-    void setSr1Preconditioner(const std::tr1::shared_ptr<dotk::vector<Real> > & vector_);
-    void setBfgsPreconditioner(const std::tr1::shared_ptr<dotk::vector<Real> > & vector_);
-    void setBarzilaiBorweinPreconditioner(const std::tr1::shared_ptr<dotk::vector<Real> > & vector_);
-    void setLbfgsPreconditioner(const std::tr1::shared_ptr<dotk::vector<Real> > & vector_, size_t secant_storage_);
-    void setLdfpPreconditioner(const std::tr1::shared_ptr<dotk::vector<Real> > & vector_, size_t secant_storage_);
-    void setLsr1Preconditioner(const std::tr1::shared_ptr<dotk::vector<Real> > & vector_, size_t secant_storage_);
+    void setSr1Preconditioner(const std::tr1::shared_ptr<dotk::Vector<Real> > & vector_);
+    void setBfgsPreconditioner(const std::tr1::shared_ptr<dotk::Vector<Real> > & vector_);
+    void setBarzilaiBorweinPreconditioner(const std::tr1::shared_ptr<dotk::Vector<Real> > & vector_);
+    void setLbfgsPreconditioner(const std::tr1::shared_ptr<dotk::Vector<Real> > & vector_, size_t secant_storage_);
+    void setLdfpPreconditioner(const std::tr1::shared_ptr<dotk::Vector<Real> > & vector_, size_t secant_storage_);
+    void setLsr1Preconditioner(const std::tr1::shared_ptr<dotk::Vector<Real> > & vector_, size_t secant_storage_);
 
     virtual void setNumOptimizationItrDone(size_t itr_);
     virtual void apply(const std::tr1::shared_ptr<dotk::DOTk_OptimizationDataMng> & opt_prob_mng_,
-                       const std::tr1::shared_ptr<dotk::vector<Real> > & vec_,
-                       const std::tr1::shared_ptr<dotk::vector<Real> > & matrix_times_vec_);
+                       const std::tr1::shared_ptr<dotk::Vector<Real> > & vec_,
+                       const std::tr1::shared_ptr<dotk::Vector<Real> > & matrix_times_vec_);
 
 private:
     void setSecantLeftPrecType(dotk::types::invhessian_t type_);

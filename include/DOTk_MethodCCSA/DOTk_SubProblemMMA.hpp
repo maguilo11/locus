@@ -18,8 +18,8 @@ class DOTk_DualSolverCCSA;
 class DOTk_BoundConstraints;
 class DOTk_DualObjectiveFunctionMMA;
 
-template<typename Type>
-class vector;
+template<typename ScalarType>
+class Vector;
 
 class DOTk_SubProblemMMA : public dotk::DOTk_SubProblemCCSA
 {
@@ -36,7 +36,7 @@ public:
 
 private:
     Real m_ObjectiveFunctionRho;
-    std::tr1::shared_ptr<dotk::vector<Real> > m_InequalityConstraintRho;
+    std::tr1::shared_ptr<dotk::Vector<Real> > m_InequalityConstraintRho;
 
     std::tr1::shared_ptr<dotk::DOTk_BoundConstraints> m_Bounds;
     std::tr1::shared_ptr<dotk::DOTk_DualSolverCCSA> m_DualSolver;

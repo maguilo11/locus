@@ -33,7 +33,7 @@ TEST(DOTk_LBFGSHessian, getDeltaPrimalStorage)
     (*hess.getDeltaPrimalStorage(0))[0] = 1.164953510500657;
     (*hess.getDeltaPrimalStorage(0))[1] = 0.626839082632431;
 
-    std::tr1::shared_ptr<dotk::vector<Real> > gold = primal->control()->clone();
+    std::tr1::shared_ptr<dotk::Vector<Real> > gold = primal->control()->clone();
     (*gold)[0] = 1.164953510500657;
     (*gold)[1] = 0.626839082632431;
     dotk::gtest::checkResults(*hess.getDeltaPrimalStorage(0), *gold);
@@ -52,7 +52,7 @@ TEST(DOTk_LBFGSHessian, getDeltaGradStorage)
     (*hess.getDeltaGradStorage(0))[0] = 0.059059777981351;
     (*hess.getDeltaGradStorage(0))[1] = 1.79707178369482;
 
-    std::tr1::shared_ptr<dotk::vector<Real> > gold = primal->control()->clone();
+    std::tr1::shared_ptr<dotk::Vector<Real> > gold = primal->control()->clone();
     (*gold)[0] = 0.059059777981351;
     (*gold)[1] = 1.79707178369482;
     dotk::gtest::checkResults(*hess.getDeltaGradStorage(0), *gold);
@@ -113,12 +113,12 @@ TEST(DOTk_LBFGSHessian, getHessian)
         (*hess.getDeltaGradPrimalInnerProductStorage())[j] =
                 hess.getDeltaGradStorage(j)->dot(*hess.getDeltaPrimalStorage(j));
     }
-    std::tr1::shared_ptr<dotk::vector<Real> > trial_step = primal->control()->clone();
+    std::tr1::shared_ptr<dotk::Vector<Real> > trial_step = primal->control()->clone();
     trial_step->fill(1.);
-    std::tr1::shared_ptr<dotk::vector<Real> > Hess_times_vec = primal->control()->clone();
+    std::tr1::shared_ptr<dotk::Vector<Real> > Hess_times_vec = primal->control()->clone();
     hess.getHessian(trial_step, Hess_times_vec);
 
-    std::tr1::shared_ptr<dotk::vector<Real> > gold = primal->control()->clone();
+    std::tr1::shared_ptr<dotk::Vector<Real> > gold = primal->control()->clone();
     (*gold)[0] = 18.562869970651185;
     (*gold)[1] = 8.888762989742279;
     dotk::gtest::checkResults(*Hess_times_vec, *gold);

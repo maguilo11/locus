@@ -19,16 +19,16 @@ namespace dotk
 
 class DOTk_MexArrayPtr;
 
-template<typename Type>
-class vector;
+template<typename ScalarType>
+class Vector;
 
 namespace mex
 {
 
 void handleException(mxArray* err_, std::string msg_);
 size_t getMexArrayDim(const dotk::DOTk_MexArrayPtr & ptr_);
-void setDOTkData(const dotk::DOTk_MexArrayPtr & ptr_, dotk::vector<double> & data_);
-void copyData(size_t input_dim_, double* input_, dotk::vector<double> & output_);
+void setDOTkData(const dotk::DOTk_MexArrayPtr & ptr_, dotk::Vector<double> & data_);
+void copyData(size_t input_dim_, double* input_, dotk::Vector<double> & output_);
 
 dotk::types::problem_t getProblemType(const dotk::DOTk_MexArrayPtr & ptr_);
 dotk::types::container_t getContainerType(const dotk::DOTk_MexArrayPtr & ptr_);

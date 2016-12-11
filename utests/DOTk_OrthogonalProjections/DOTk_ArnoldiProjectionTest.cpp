@@ -52,7 +52,7 @@ TEST(DOTk_ArnoldiProjection, setAndGetOrthogonalVector)
     primal->allocateSerialControlArray(ncontrols);
     dotk::DOTk_ArnoldiProjection projection(primal, krylov_subspace_dim);
 
-    std::tr1::shared_ptr<dotk::vector<Real> > orthogonal_vector = primal->control()->clone();
+    std::tr1::shared_ptr<dotk::Vector<Real> > orthogonal_vector = primal->control()->clone();
     projection.setOrthogonalVector(0, orthogonal_vector);
     dotk::gtest::checkResults(*orthogonal_vector, *projection.getOrthogonalVector(0));
     projection.setOrthogonalVector(1, orthogonal_vector);
@@ -69,7 +69,7 @@ TEST(DOTk_ArnoldiProjection, arnoldi)
     primal->allocateSerialControlArray(ncontrols, 0);
     dotk::DOTk_ArnoldiProjection projection(primal, krylov_subspace_dim);
 
-    std::tr1::shared_ptr<dotk::vector<Real> >
+    std::tr1::shared_ptr<dotk::Vector<Real> >
         ortho_vector(new dotk::DOTk_MultiVector<Real>(*primal->control(), *primal->dual()));
     (*ortho_vector->dual())[0] = 0.443285802300365;
     (*ortho_vector->dual())[1] = 0.380162139476383;
@@ -85,7 +85,7 @@ TEST(DOTk_ArnoldiProjection, arnoldi)
     projection.arnoldi(orthogonal_vector_index, ortho_vector);
 
     // RESULTS
-    std::tr1::shared_ptr<dotk::vector<Real> > gold = ortho_vector->clone();
+    std::tr1::shared_ptr<dotk::Vector<Real> > gold = ortho_vector->clone();
     (*gold->dual())[0] = 0.43667601435716247;
     (*gold->dual())[1] = 0.37449358182591613;
     (*gold->control())[0] = 0.59160664484427306;

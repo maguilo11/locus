@@ -37,7 +37,7 @@ TEST(DOTk_LDFPHessian, apply)
     control[1] = 3.;
     mng->setNewPrimal(control);
 
-    std::tr1::shared_ptr<dotk::vector<Real> > grad = primal->control()->clone();
+    std::tr1::shared_ptr<dotk::Vector<Real> > grad = primal->control()->clone();
     mng->getRoutinesMng()->gradient(mng->getOldPrimal(), grad);
     mng->setOldGradient(*grad);
     mng->getRoutinesMng()->gradient(mng->getNewPrimal(), grad);
@@ -46,7 +46,7 @@ TEST(DOTk_LDFPHessian, apply)
     mng->getTrialStep()->scale(-1.);
     hess.apply(mng, mng->getTrialStep(), mng->getMatrixTimesVector());
 
-    std::tr1::shared_ptr<dotk::vector<Real> > gold = primal->control()->clone();
+    std::tr1::shared_ptr<dotk::Vector<Real> > gold = primal->control()->clone();
     (*gold)[0] = 1681800.0937109494;
     (*gold)[1] = -559799.90628905024;
     dotk::gtest::checkResults(*mng->getMatrixTimesVector(), *gold);

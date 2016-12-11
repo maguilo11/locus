@@ -15,15 +15,15 @@
 namespace dotk
 {
 
-template<typename Type>
-class vector;
+template<typename ScalarType>
+class Vector;
 
 class DOTk_OptimizationDataMng;
 
 class DOTk_HagerZhangLineSearch : public dotk::DOTk_LineSearch
 {
 public:
-    explicit DOTk_HagerZhangLineSearch(const std::tr1::shared_ptr<dotk::vector<Real> > & vector_);
+    explicit DOTk_HagerZhangLineSearch(const std::tr1::shared_ptr<dotk::Vector<Real> > & vector_);
     virtual ~DOTk_HagerZhangLineSearch();
 
     void setMaxShrinkIntervalIterations(size_t value_);
@@ -41,27 +41,27 @@ public:
     void setStepInterval(dotk::types::bound_t type_, Real value_);
     Real getStepInterval(dotk::types::bound_t type_);
 
-    Real secantStep(const std::tr1::shared_ptr<dotk::vector<Real> > & trial_step_,
-                    const std::tr1::shared_ptr<dotk::vector<Real> > & primal_old_,
-                    const std::tr1::shared_ptr<dotk::vector<Real> > & primal_new_,
-                    const std::tr1::shared_ptr<dotk::vector<Real> > & gradient_new_,
+    Real secantStep(const std::tr1::shared_ptr<dotk::Vector<Real> > & trial_step_,
+                    const std::tr1::shared_ptr<dotk::Vector<Real> > & primal_old_,
+                    const std::tr1::shared_ptr<dotk::Vector<Real> > & primal_new_,
+                    const std::tr1::shared_ptr<dotk::Vector<Real> > & gradient_new_,
                     const std::tr1::shared_ptr<dotk::DOTk_OptimizationDataMng> & mng_);
-    void doubleSecantStep(const std::tr1::shared_ptr<dotk::vector<Real> > & trial_step_,
-                          const std::tr1::shared_ptr<dotk::vector<Real> > & primal_old_,
-                          const std::tr1::shared_ptr<dotk::vector<Real> > & primal_new_,
-                          const std::tr1::shared_ptr<dotk::vector<Real> > & gradient_new_,
+    void doubleSecantStep(const std::tr1::shared_ptr<dotk::Vector<Real> > & trial_step_,
+                          const std::tr1::shared_ptr<dotk::Vector<Real> > & primal_old_,
+                          const std::tr1::shared_ptr<dotk::Vector<Real> > & primal_new_,
+                          const std::tr1::shared_ptr<dotk::Vector<Real> > & gradient_new_,
                           const std::tr1::shared_ptr<dotk::DOTk_OptimizationDataMng> & mng_);
     void updateInterval(const Real & step_,
-                        const std::tr1::shared_ptr<dotk::vector<Real> > & trial_step_,
-                        const std::tr1::shared_ptr<dotk::vector<Real> > & primal_old_,
-                        const std::tr1::shared_ptr<dotk::vector<Real> > & primal_new_,
-                        const std::tr1::shared_ptr<dotk::vector<Real> > & gradient_new_,
+                        const std::tr1::shared_ptr<dotk::Vector<Real> > & trial_step_,
+                        const std::tr1::shared_ptr<dotk::Vector<Real> > & primal_old_,
+                        const std::tr1::shared_ptr<dotk::Vector<Real> > & primal_new_,
+                        const std::tr1::shared_ptr<dotk::Vector<Real> > & gradient_new_,
                         const std::tr1::shared_ptr<dotk::DOTk_OptimizationDataMng> & mng_);
     void shrinkInterval(const Real & step_,
-                        const std::tr1::shared_ptr<dotk::vector<Real> > & trial_step_,
-                        const std::tr1::shared_ptr<dotk::vector<Real> > & primal_old_,
-                        const std::tr1::shared_ptr<dotk::vector<Real> > & primal_new_,
-                        const std::tr1::shared_ptr<dotk::vector<Real> > & gradient_new_,
+                        const std::tr1::shared_ptr<dotk::Vector<Real> > & trial_step_,
+                        const std::tr1::shared_ptr<dotk::Vector<Real> > & primal_old_,
+                        const std::tr1::shared_ptr<dotk::Vector<Real> > & primal_new_,
+                        const std::tr1::shared_ptr<dotk::Vector<Real> > & gradient_new_,
                         const std::tr1::shared_ptr<dotk::DOTk_OptimizationDataMng> & mng_);
 
     virtual void step(const std::tr1::shared_ptr<dotk::DOTk_OptimizationDataMng> & mng_);

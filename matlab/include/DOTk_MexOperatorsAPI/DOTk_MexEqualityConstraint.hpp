@@ -17,74 +17,77 @@ namespace dotk
 
 class DOTk_MexArrayPtr;
 
-template<typename Type>
-class DOTk_MexEqualityConstraint : public DOTk_EqualityConstraint<Type>
+template<typename ScalarType>
+class Vector;
+
+template<typename ScalarType>
+class DOTk_MexEqualityConstraint : public DOTk_EqualityConstraint<ScalarType>
 {
 public:
     DOTk_MexEqualityConstraint(const mxArray* operators_, const dotk::types::problem_t & type_);
     virtual ~DOTk_MexEqualityConstraint();
 
-    virtual void residual(const dotk::vector<Type> & primal_, dotk::vector<Type> & output_);
-    virtual void jacobian(const dotk::vector<Type> & primal_,
-                          const dotk::vector<Type> & vector_,
-                          dotk::vector<Type> & jacobian_times_vector_);
-    virtual void adjointJacobian(const dotk::vector<Type> & primal_,
-                                 const dotk::vector<Type> & dual_,
-                                 dotk::vector<Type> & output_);
-    virtual void hessian(const dotk::vector<Type> & primal_,
-                         const dotk::vector<Type> & dual_,
-                         const dotk::vector<Type> & vector_,
-                         dotk::vector<Type> & output_);
+    virtual void residual(const dotk::Vector<ScalarType> & primal_, dotk::Vector<ScalarType> & output_);
+    virtual void jacobian(const dotk::Vector<ScalarType> & primal_,
+                          const dotk::Vector<ScalarType> & vector_,
+                          dotk::Vector<ScalarType> & jacobian_times_vector_);
+    virtual void adjointJacobian(const dotk::Vector<ScalarType> & primal_,
+                                 const dotk::Vector<ScalarType> & dual_,
+                                 dotk::Vector<ScalarType> & output_);
+    virtual void hessian(const dotk::Vector<ScalarType> & primal_,
+                         const dotk::Vector<ScalarType> & dual_,
+                         const dotk::Vector<ScalarType> & vector_,
+                         dotk::Vector<ScalarType> & output_);
 
 
-    virtual void solve(const dotk::vector<Type> & control_, dotk::vector<Type> & output_);
-    virtual void applyInverseJacobianState(const dotk::vector<Type> & state_,
-                                              const dotk::vector<Type> & control_,
-                                              const dotk::vector<Type> & rhs_,
-                                              dotk::vector<Type> & output_);
-    virtual void applyAdjointInverseJacobianState(const dotk::vector<Type> & state_,
-                                                  const dotk::vector<Type> & control_,
-                                                  const dotk::vector<Type> & rhs_,
-                                                  dotk::vector<Type> & output_);
-    virtual void residual(const dotk::vector<Type> & state_,
-                          const dotk::vector<Type> & control_,
-                          dotk::vector<Type> & output_);
-    virtual void partialDerivativeState(const dotk::vector<Type> & state_,
-                                        const dotk::vector<Type> & control_,
-                                        const dotk::vector<Type> & vector_,
-                                        dotk::vector<Type> & output_);
-    virtual void partialDerivativeControl(const dotk::vector<Type> & state_,
-                                          const dotk::vector<Type> & control_,
-                                          const dotk::vector<Type> & vector_,
-                                          dotk::vector<Type> & output_);
-    virtual void adjointPartialDerivativeState(const dotk::vector<Type> & state_,
-                                               const dotk::vector<Type> & control_,
-                                               const dotk::vector<Type> & dual_,
-                                               dotk::vector<Type> & output_);
-    virtual void adjointPartialDerivativeControl(const dotk::vector<Type> & state_,
-                                                 const dotk::vector<Type> & control_,
-                                                 const dotk::vector<Type> & dual_,
-                                                 dotk::vector<Type> & output_);
-    virtual void partialDerivativeStateState(const dotk::vector<Type> & state_,
-                                             const dotk::vector<Type> & control_,
-                                             const dotk::vector<Type> & dual_,
-                                             const dotk::vector<Type> & vector_,
-                                             dotk::vector<Type> & output_);
-    virtual void partialDerivativeStateControl(const dotk::vector<Type> & state_,
-                                               const dotk::vector<Type> & control_,
-                                               const dotk::vector<Type> & dual_,
-                                               const dotk::vector<Type> & vector_,
-                                               dotk::vector<Type> & output_);
-    virtual void partialDerivativeControlControl(const dotk::vector<Type> & state_,
-                                                 const dotk::vector<Type> & control_,
-                                                 const dotk::vector<Type> & dual_,
-                                                 const dotk::vector<Type> & vector_,
-                                                 dotk::vector<Type> & output_);
-    virtual void partialDerivativeControlState(const dotk::vector<Type> & state_,
-                                               const dotk::vector<Type> & control_,
-                                               const dotk::vector<Type> & dual_,
-                                               const dotk::vector<Type> & vector_,
-                                               dotk::vector<Type> & output_);
+    virtual void solve(const dotk::Vector<ScalarType> & control_, dotk::Vector<ScalarType> & output_);
+    virtual void applyInverseJacobianState(const dotk::Vector<ScalarType> & state_,
+                                              const dotk::Vector<ScalarType> & control_,
+                                              const dotk::Vector<ScalarType> & rhs_,
+                                              dotk::Vector<ScalarType> & output_);
+    virtual void applyAdjointInverseJacobianState(const dotk::Vector<ScalarType> & state_,
+                                                  const dotk::Vector<ScalarType> & control_,
+                                                  const dotk::Vector<ScalarType> & rhs_,
+                                                  dotk::Vector<ScalarType> & output_);
+    virtual void residual(const dotk::Vector<ScalarType> & state_,
+                          const dotk::Vector<ScalarType> & control_,
+                          dotk::Vector<ScalarType> & output_);
+    virtual void partialDerivativeState(const dotk::Vector<ScalarType> & state_,
+                                        const dotk::Vector<ScalarType> & control_,
+                                        const dotk::Vector<ScalarType> & vector_,
+                                        dotk::Vector<ScalarType> & output_);
+    virtual void partialDerivativeControl(const dotk::Vector<ScalarType> & state_,
+                                          const dotk::Vector<ScalarType> & control_,
+                                          const dotk::Vector<ScalarType> & vector_,
+                                          dotk::Vector<ScalarType> & output_);
+    virtual void adjointPartialDerivativeState(const dotk::Vector<ScalarType> & state_,
+                                               const dotk::Vector<ScalarType> & control_,
+                                               const dotk::Vector<ScalarType> & dual_,
+                                               dotk::Vector<ScalarType> & output_);
+    virtual void adjointPartialDerivativeControl(const dotk::Vector<ScalarType> & state_,
+                                                 const dotk::Vector<ScalarType> & control_,
+                                                 const dotk::Vector<ScalarType> & dual_,
+                                                 dotk::Vector<ScalarType> & output_);
+    virtual void partialDerivativeStateState(const dotk::Vector<ScalarType> & state_,
+                                             const dotk::Vector<ScalarType> & control_,
+                                             const dotk::Vector<ScalarType> & dual_,
+                                             const dotk::Vector<ScalarType> & vector_,
+                                             dotk::Vector<ScalarType> & output_);
+    virtual void partialDerivativeStateControl(const dotk::Vector<ScalarType> & state_,
+                                               const dotk::Vector<ScalarType> & control_,
+                                               const dotk::Vector<ScalarType> & dual_,
+                                               const dotk::Vector<ScalarType> & vector_,
+                                               dotk::Vector<ScalarType> & output_);
+    virtual void partialDerivativeControlControl(const dotk::Vector<ScalarType> & state_,
+                                                 const dotk::Vector<ScalarType> & control_,
+                                                 const dotk::Vector<ScalarType> & dual_,
+                                                 const dotk::Vector<ScalarType> & vector_,
+                                                 dotk::Vector<ScalarType> & output_);
+    virtual void partialDerivativeControlState(const dotk::Vector<ScalarType> & state_,
+                                               const dotk::Vector<ScalarType> & control_,
+                                               const dotk::Vector<ScalarType> & dual_,
+                                               const dotk::Vector<ScalarType> & vector_,
+                                               dotk::Vector<ScalarType> & output_);
 
 private:
     void clear();
@@ -108,8 +111,8 @@ private:
     dotk::DOTk_MexArrayPtr m_ApplyAdjointInverseJacobianState;
 
 private:
-    DOTk_MexEqualityConstraint(const dotk::DOTk_MexEqualityConstraint<Type> &);
-    dotk::DOTk_MexEqualityConstraint<Type> & operator=(const dotk::DOTk_MexEqualityConstraint<Type> &);
+    DOTk_MexEqualityConstraint(const dotk::DOTk_MexEqualityConstraint<ScalarType> &);
+    dotk::DOTk_MexEqualityConstraint<ScalarType> & operator=(const dotk::DOTk_MexEqualityConstraint<ScalarType> &);
 };
 
 }

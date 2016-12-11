@@ -18,8 +18,8 @@ namespace dotk
 
 class DOTk_KrylovSolver;
 
-template<typename Type>
-class vector;
+template<typename ScalarType>
+class Vector;
 
 class DOTk_KrylovSolverStoppingCriterion
 {
@@ -33,7 +33,7 @@ public:
     Real get(dotk::types::stopping_criterion_param_t type_) const;
 
     virtual Real evaluate(const dotk::DOTk_KrylovSolver* const solver_,
-                          const std::tr1::shared_ptr<dotk::vector<Real> > & kernel_vector_) = 0;
+                          const std::tr1::shared_ptr<dotk::Vector<Real> > & kernel_vector_) = 0;
 
 private:
     dotk::types::stopping_criterion_t m_Type;

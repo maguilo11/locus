@@ -44,7 +44,7 @@ TEST(SR1Hessian, apply)
     // ODD CASE
     hess.setNumOptimizationItrDone(3);
     hess.apply(mng, mng->getTrialStep(), mng->getMatrixTimesVector());
-    std::tr1::shared_ptr<dotk::vector<Real> > gold = primal->control()->clone();
+    std::tr1::shared_ptr<dotk::Vector<Real> > gold = primal->control()->clone();
     (*gold)[0] = 1280800;
     (*gold)[1] = -640400;
     dotk::gtest::checkResults(*mng->getMatrixTimesVector(), *gold);
@@ -76,7 +76,7 @@ TEST(SR1Hessian, getDeltaPrimal)
     hess.getDeltaPrimal()->copy(*mng.getNewPrimal());
     hess.getDeltaPrimal()->axpy(-1.0, *mng.getOldPrimal());
 
-    std::tr1::shared_ptr<dotk::vector<Real> > gold = primal->control()->clone();
+    std::tr1::shared_ptr<dotk::Vector<Real> > gold = primal->control()->clone();
     (*gold)[0] = -1.;
     (*gold)[1] = 1.;
     dotk::gtest::checkResults(*(hess.getDeltaPrimal()), *(gold));
@@ -106,7 +106,7 @@ TEST(SR1Hessian, getDeltaGrad)
     hess.getDeltaGrad()->copy(*mng.getNewGradient());
     hess.getDeltaGrad()->axpy(-1.0, *mng.getOldGradient());
 
-    std::tr1::shared_ptr<dotk::vector<Real> > gold = primal->control()->clone();
+    std::tr1::shared_ptr<dotk::Vector<Real> > gold = primal->control()->clone();
     (*gold)[0] = -2402.;
     (*gold)[1] = 800.;
 
@@ -146,7 +146,7 @@ TEST(SR1Hessian, getHessian)
     // EVEN CASE
     hess.getHessian(mng->getTrialStep(), mng->getMatrixTimesVector());
 
-    std::tr1::shared_ptr<dotk::vector<Real> > gold = primal->control()->clone();
+    std::tr1::shared_ptr<dotk::Vector<Real> > gold = primal->control()->clone();
     (*gold)[0] = 1601400.1249219237;
     (*gold)[1] = -800700.06246096187;
     dotk::gtest::checkResults(*mng->getMatrixTimesVector(), *gold);

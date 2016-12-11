@@ -21,7 +21,7 @@ DOTk_Rosenbrock::~DOTk_Rosenbrock()
 {
 }
 
-Real DOTk_Rosenbrock::value(const dotk::vector<Real> & primal_)
+Real DOTk_Rosenbrock::value(const dotk::Vector<Real> & primal_)
 {
     Real value;
     value = static_cast<Real>(100.) * std::pow((primal_[1] - primal_[0] * primal_[0]), static_cast<Real>(2.))
@@ -30,8 +30,8 @@ Real DOTk_Rosenbrock::value(const dotk::vector<Real> & primal_)
     return (value);
 }
 
-void DOTk_Rosenbrock::value(const std::vector<std::tr1::shared_ptr<dotk::vector<Real> > > & primal_,
-                            const std::tr1::shared_ptr<dotk::vector<Real> > & fval_)
+void DOTk_Rosenbrock::value(const std::vector<std::tr1::shared_ptr<dotk::Vector<Real> > > & primal_,
+                            const std::tr1::shared_ptr<dotk::Vector<Real> > & fval_)
 {
     size_t number_controls = fval_->size();
     for(size_t index = 0; index < number_controls; ++ index)
@@ -40,10 +40,10 @@ void DOTk_Rosenbrock::value(const std::vector<std::tr1::shared_ptr<dotk::vector<
     }
 }
 
-void DOTk_Rosenbrock::value(const std::vector<std::tr1::shared_ptr<dotk::vector<Real> > > & primal_plus_,
-                            const std::vector<std::tr1::shared_ptr<dotk::vector<Real> > > & primal_minus_,
-                            const std::tr1::shared_ptr<dotk::vector<Real> > & values_plus_,
-                            const std::tr1::shared_ptr<dotk::vector<Real> > & values_minus_)
+void DOTk_Rosenbrock::value(const std::vector<std::tr1::shared_ptr<dotk::Vector<Real> > > & primal_plus_,
+                            const std::vector<std::tr1::shared_ptr<dotk::Vector<Real> > > & primal_minus_,
+                            const std::tr1::shared_ptr<dotk::Vector<Real> > & values_plus_,
+                            const std::tr1::shared_ptr<dotk::Vector<Real> > & values_minus_)
 {
     size_t number_controls = values_plus_->size();
     for(size_t index = 0; index < number_controls; ++ index)
@@ -56,16 +56,16 @@ void DOTk_Rosenbrock::value(const std::vector<std::tr1::shared_ptr<dotk::vector<
     }
 }
 
-void DOTk_Rosenbrock::gradient(const dotk::vector<Real> & primal_, dotk::vector<Real> & gradient_)
+void DOTk_Rosenbrock::gradient(const dotk::Vector<Real> & primal_, dotk::Vector<Real> & gradient_)
 {
     gradient_[0] = static_cast<Real>(-400.) * (primal_[1] - std::pow(primal_[0], 2.)) * primal_[0]
             + static_cast<Real>(2.) * primal_[0] - static_cast<Real>(2.);
     gradient_[1] = static_cast<Real>(200.) * (primal_[1] - std::pow(primal_[0], static_cast<Real>(2.)));
 }
 
-void DOTk_Rosenbrock::hessian(const dotk::vector<Real> & primal_,
-                              const dotk::vector<Real> & vector_,
-                              dotk::vector<Real> & output_)
+void DOTk_Rosenbrock::hessian(const dotk::Vector<Real> & primal_,
+                              const dotk::Vector<Real> & vector_,
+                              dotk::Vector<Real> & output_)
 {
     output_[0] = ((static_cast<Real>(2.)
             - static_cast<Real>(400.) * (primal_[1] - std::pow(primal_[0], static_cast<Real>(2.)))

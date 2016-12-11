@@ -16,9 +16,9 @@ namespace dotk
 
 class DOTk_OrthogonalFactorization;
 
-template<typename Type>
-class vector;
-template<typename Type>
+template<typename ScalarType>
+class Vector;
+template<typename ScalarType>
 class matrix;
 
 class DOTk_EigenQR : public dotk::DOTk_EigenMethod
@@ -31,7 +31,7 @@ public:
     void setMaxNumItr(size_t itr_);
     size_t getMaxNumItr() const;
     virtual void solve(const std::tr1::shared_ptr<dotk::matrix<Real> > & matrix_,
-                       std::tr1::shared_ptr<dotk::vector<Real> > & eigenvalues_,
+                       std::tr1::shared_ptr<dotk::Vector<Real> > & eigenvalues_,
                        std::tr1::shared_ptr<dotk::matrix<Real> > & eigenvectors_);
 
 private:

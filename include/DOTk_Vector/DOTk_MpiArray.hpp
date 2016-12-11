@@ -19,11 +19,11 @@
 namespace dotk
 {
 
-template<typename Type>
-class MpiArray : public dotk::vector<Type>
+template<typename ScalarType>
+class MpiArray : public dotk::Vector<ScalarType>
 {
 public:
-    MpiArray(int global_dim_, Type value_ = 0.) :
+    MpiArray(int global_dim_, ScalarType value_ = 0.) :
             m_LocalDim(0),
             m_GlobalDim(global_dim_),
             m_Comm(MPI_COMM_WORLD),
@@ -34,7 +34,7 @@ public:
         this->allocate(global_dim_);
         this->fill(value_);
     }
-    MpiArray(MPI_Comm comm_, int global_dim_, Type value_ = 0.) :
+    MpiArray(MPI_Comm comm_, int global_dim_, ScalarType value_ = 0.) :
             m_LocalDim(0),
             m_GlobalDim(global_dim_),
             m_Comm(comm_),
@@ -55,7 +55,7 @@ public:
         m_Data = nullptr;
     }
     // Scales a vector by a real constant.
-    void scale(const Type & alpha_)
+    void scale(const ScalarType & alpha_)
     {
         size_t dim = this->size();
         for(size_t index = 0; index < dim; ++index)
@@ -64,7 +64,7 @@ public:
         }
     }
     // Component wise multiplication of two vectors.
-    void cwiseProd(const dotk::vector<Type> & input_)
+    void cwiseProd(const dotk::Vector<ScalarType> & input_)
     {
         size_t dim = this->size();
         assert(dim == input_.size());
@@ -74,7 +74,7 @@ public:
         }
     }
     // Constant times a vector plus a vector.
-    void axpy(const Type & alpha_, const dotk::vector<Type> & input_)
+    void axpy(const ScalarType & alpha_, const dotk::Vector<ScalarType> & input_)
     {
         size_t dim = this->size();
         assert(dim == input_.size());
@@ -84,22 +84,22 @@ public:
         }
     }
     // Returns the maximum element in a range.
-    Type max() const
+    ScalarType max() const
     {
-        Type global_max = 0.;
+        ScalarType global_max = 0.;
         size_t dim = this->size();
-        Type local_max = *std::max_element(m_Data, m_Data + dim);
-        MPI_Datatype data_type = dotk::parallel::mpiDataType(typeid(Type));
+        ScalarType local_max = *std::max_element(m_Data, m_Data + dim);
+        MPI_Datatype data_type = dotk::parallel::mpiDataType(typeid(ScalarType));
         MPI_Allreduce(&local_max, &global_max, 1, data_type, MPI_MAX, m_Comm);
         return (global_max);
     }
     // Returns the minimum element in a range.
-    Type min() const
+    ScalarType min() const
     {
-        Type global_min = 0.;
+        ScalarType global_min = 0.;
         size_t dim = this->size();
-        Type local_min = *std::min_element(m_Data, m_Data + dim);
-        MPI_Datatype data_type = dotk::parallel::mpiDataType(typeid(Type));
+        ScalarType local_min = *std::min_element(m_Data, m_Data + dim);
+        MPI_Datatype data_type = dotk::parallel::mpiDataType(typeid(ScalarType));
         MPI_Allreduce(&local_min, &global_min, 1, data_type, MPI_MIN, m_Comm);
         return (global_min);
     }
@@ -109,31 +109,31 @@ public:
         size_t dim = this->size();
         for(size_t index = 0; index < dim; ++index)
         {
-            m_Data[index] = m_Data[index] < static_cast<Type>(0.) ? -(m_Data[index]) : m_Data[index];
+            m_Data[index] = m_Data[index] < static_cast<ScalarType>(0.) ? -(m_Data[index]) : m_Data[index];
         }
     }
     // Returns the sum of all the elements in the container.
-    Type sum() const
+    ScalarType sum() const
     {
-        Type local_sum = 0.;
+        ScalarType local_sum = 0.;
         size_t dim = this->size();
-        MPI_Datatype data_type = dotk::parallel::mpiDataType(typeid(Type));
+        MPI_Datatype data_type = dotk::parallel::mpiDataType(typeid(ScalarType));
         for(size_t index = 0; index < dim; ++index)
         {
             local_sum += m_Data[index];
         }
-        Type global_sum = 0.;
+        ScalarType global_sum = 0.;
         MPI_Allreduce(&local_sum, &global_sum, 1, data_type, MPI_SUM, m_Comm);
         return (global_sum);
     }
     // Returns the inner product of two vectors.
-    Type dot(const dotk::vector<Type> & input_) const
+    ScalarType dot(const dotk::Vector<ScalarType> & input_) const
     {
-        Type global_inner_product = 0.;
-        Type local_inner_product = 0.;
+        ScalarType global_inner_product = 0.;
+        ScalarType local_inner_product = 0.;
         size_t dim = this->size();
         assert(dim == input_.size());
-        MPI_Datatype data_type = dotk::parallel::mpiDataType(typeid(Type));
+        MPI_Datatype data_type = dotk::parallel::mpiDataType(typeid(ScalarType));
         for(size_t index = 0; index < dim; ++index)
         {
             local_inner_product += m_Data[index] * input_[index];
@@ -142,14 +142,14 @@ public:
         return (global_inner_product);
     }
     // Returns the euclidean norm of a vector.
-    Type norm() const
+    ScalarType norm() const
     {
-        Type output = this->dot(*this);
+        ScalarType output = this->dot(*this);
         output = std::sqrt(output);
         return (output);
     }
     // Assigns new contents to the vector, replacing its current contents, and not modifying its size.
-    void fill(const Type & value_)
+    void fill(const ScalarType & value_)
     {
         size_t dim = this->size();
         for(size_t index = 0; index < dim; ++index)
@@ -158,7 +158,7 @@ public:
         }
     }
     // Copies the elements in the range [first,last) into the range beginning at result.
-    void copy(const dotk::vector<Type> & input_)
+    void copy(const dotk::Vector<ScalarType> & input_)
     {
         size_t dim = this->size();
         assert(dim == input_.size());
@@ -168,13 +168,13 @@ public:
         }
     }
     // Gathers data from private member data of a group to one member.
-    void gather(Type* input_) const
+    void gather(ScalarType* input_) const
     {
         int my_rank;
         MPI_Comm_rank(m_Comm, &my_rank);
 
         size_t local_dim = this->size();
-        Type* temp = new Type[local_dim];
+        ScalarType* temp = new ScalarType[local_dim];
         for(size_t i = 0; i < local_dim; ++i)
         {
             temp[i] = m_Data[i];
@@ -183,13 +183,13 @@ public:
         if(my_rank == 0)
         {
             int root = 0;
-            MPI_Datatype data_type = dotk::parallel::mpiDataType(typeid(Type));
+            MPI_Datatype data_type = dotk::parallel::mpiDataType(typeid(ScalarType));
             MPI_Gatherv(temp, local_dim, data_type, input_, m_LocalCounts, m_Displacements, data_type, root, m_Comm);
         }
         else
         {
             int root = 0;
-            MPI_Datatype data_type = dotk::parallel::mpiDataType(typeid(Type));
+            MPI_Datatype data_type = dotk::parallel::mpiDataType(typeid(ScalarType));
             MPI_Gatherv(temp, local_dim, data_type, nullptr, m_LocalCounts, m_Displacements, data_type, root, m_Comm);
         }
 
@@ -201,19 +201,19 @@ public:
     {
         return (m_LocalDim);
     }
-    // Clones memory for an object of type dotk::vector<T>
-    std::tr1::shared_ptr<dotk::vector<Type> > clone() const
+    // Clones memory for an object of ScalarType dotk::Vector<T>
+    std::tr1::shared_ptr<dotk::Vector<ScalarType> > clone() const
     {
-        std::tr1::shared_ptr< dotk::MpiArray<Type> > output(new dotk::MpiArray<Type>(m_Comm, m_GlobalDim));
+        std::tr1::shared_ptr< dotk::MpiArray<ScalarType> > output(new dotk::MpiArray<ScalarType>(m_Comm, m_GlobalDim));
         return (output);
     }
     // Operator overloads the square bracket operator
-    Type & operator [](size_t index_)
+    ScalarType & operator [](size_t index_)
     {
         return (m_Data[index_]);
     }
     // Operator overloads the const square bracket operator
-    const Type & operator [](size_t index_) const
+    const ScalarType & operator [](size_t index_) const
     {
         return (m_Data[index_]);
     }
@@ -238,14 +238,14 @@ private:
         int my_rank;
         MPI_Comm_rank(m_Comm, &my_rank);
 
-        Type* temp = nullptr;
+        ScalarType* temp = nullptr;
         if(my_rank == 0)
         {
             int root = 0;
-            temp = new Type[global_dim_];
+            temp = new ScalarType[global_dim_];
             m_LocalDim = m_LocalCounts[my_rank];
-            m_Data = new Type[m_LocalDim];
-            MPI_Datatype data_type = dotk::parallel::mpiDataType(typeid(Type));
+            m_Data = new ScalarType[m_LocalDim];
+            MPI_Datatype data_type = dotk::parallel::mpiDataType(typeid(ScalarType));
             MPI_Scatterv(temp, m_LocalCounts, m_Displacements, data_type, m_Data, m_LocalDim, data_type, root, m_Comm);
 
             delete[] temp;
@@ -255,8 +255,8 @@ private:
         {
             int root = 0;
             m_LocalDim = m_LocalCounts[my_rank];
-            m_Data = new Type[m_LocalDim];
-            MPI_Datatype data_type = dotk::parallel::mpiDataType(typeid(Type));
+            m_Data = new ScalarType[m_LocalDim];
+            MPI_Datatype data_type = dotk::parallel::mpiDataType(typeid(ScalarType));
             MPI_Scatterv(temp, m_LocalCounts, m_Displacements, data_type, m_Data, m_LocalDim, data_type, root, m_Comm);
         }
     }
@@ -265,13 +265,13 @@ private:
     int m_LocalDim;
     int m_GlobalDim;
     MPI_Comm m_Comm;
-    Type* m_Data;
+    ScalarType* m_Data;
     int* m_LocalCounts;
     int* m_Displacements;
 
 private:
-    MpiArray(const dotk::MpiArray<Type> &);
-    dotk::MpiArray<Type> & operator=(const dotk::MpiArray<Type> & rhs_);
+    MpiArray(const dotk::MpiArray<ScalarType> &);
+    dotk::MpiArray<ScalarType> & operator=(const dotk::MpiArray<ScalarType> & rhs_);
 };
 
 }

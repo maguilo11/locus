@@ -26,15 +26,15 @@ dotk::types::functor_t DOTk_Functor::getFunctorType() const
     return (m_FunctorType);
 }
 
-void DOTk_Functor::operator()(const dotk::vector<Real> & control_, dotk::vector<Real> & output_)
+void DOTk_Functor::operator()(const dotk::Vector<Real> & control_, dotk::Vector<Real> & output_)
 {
     return;
 }
 
-void DOTk_Functor::operator()(const dotk::vector<Real> & state_,
-                              const dotk::vector<Real> & control_,
-                              const dotk::vector<Real> & dual_,
-                              dotk::vector<Real> & output_)
+void DOTk_Functor::operator()(const dotk::Vector<Real> & state_,
+                              const dotk::Vector<Real> & control_,
+                              const dotk::Vector<Real> & dual_,
+                              dotk::Vector<Real> & output_)
 {
     return;
 }

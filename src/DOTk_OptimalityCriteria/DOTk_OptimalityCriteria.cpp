@@ -127,12 +127,12 @@ void DOTk_OptimalityCriteria::setInequalityConstraintDualUpperBound(Real value_)
     m_DataMng->setInequalityConstraintDualUpperBound(upper_bound);
 }
 
-void DOTk_OptimalityCriteria::gatherSolution(dotk::vector<Real> & data_) const
+void DOTk_OptimalityCriteria::gatherSolution(dotk::Vector<Real> & data_) const
 {
     data_.copy(m_DataMng->getNewControl());
 }
 
-void DOTk_OptimalityCriteria::gatherGradient(dotk::vector<Real> & data_) const
+void DOTk_OptimalityCriteria::gatherGradient(dotk::Vector<Real> & data_) const
 {
     data_.copy(m_DataMng->getObjectiveGradient());
 }
@@ -235,7 +235,7 @@ void DOTk_OptimalityCriteria::updateControl()
         Real old_control = (m_DataMng->getOldControl())[index];
         value = -(m_DataMng->getObjectiveGradient())[index]
                 / (multiplier * (m_DataMng->getInequalityGradient())[index]);
-        Real fabs_value = std::fabs(value);
+        Real fabs_value = std::abs(value);
         Real sign_value = copysign(1.0, value);
         value = old_control * sign_value * std::pow(fabs_value, damping);
         new_control = old_control + move_limit;

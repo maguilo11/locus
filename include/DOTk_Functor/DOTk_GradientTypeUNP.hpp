@@ -17,8 +17,8 @@ namespace dotk
 
 class DOTk_Primal;
 
-template<class Type>
-class vector;
+template<typename ScalarType>
+class Vector;
 
 class DOTk_GradientTypeUNP : public DOTk_Functor
 {
@@ -28,17 +28,17 @@ public:
                          const std::tr1::shared_ptr<dotk::DOTk_EqualityConstraint<Real> > & equality_);
     virtual ~DOTk_GradientTypeUNP();
 
-    virtual void operator()(const dotk::vector<Real> & control_, dotk::vector<Real> & gradient_);
+    virtual void operator()(const dotk::Vector<Real> & control_, dotk::Vector<Real> & gradient_);
 
 private:
     void initialize(const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_);
-    void allocate(dotk::types::variable_t type_, const std::tr1::shared_ptr<dotk::vector<Real> > & data_);
+    void allocate(dotk::types::variable_t type_, const std::tr1::shared_ptr<dotk::Vector<Real> > & data_);
 
 private:
-    std::tr1::shared_ptr<dotk::vector<Real> > m_Dual;
-    std::tr1::shared_ptr<dotk::vector<Real> > m_State;
-    std::tr1::shared_ptr<dotk::vector<Real> > m_StateWorkVec;
-    std::tr1::shared_ptr<dotk::vector<Real> > m_ControlWorkVec;
+    std::tr1::shared_ptr<dotk::Vector<Real> > m_Dual;
+    std::tr1::shared_ptr<dotk::Vector<Real> > m_State;
+    std::tr1::shared_ptr<dotk::Vector<Real> > m_StateWorkVec;
+    std::tr1::shared_ptr<dotk::Vector<Real> > m_ControlWorkVec;
 
     std::tr1::shared_ptr<dotk::DOTk_ObjectiveFunction<Real> > m_ObjectiveFunction;
     std::tr1::shared_ptr<dotk::DOTk_EqualityConstraint<Real> > m_EqualityContraint;

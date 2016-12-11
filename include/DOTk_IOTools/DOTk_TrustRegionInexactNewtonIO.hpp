@@ -17,9 +17,6 @@ class DOTk_KrylovSolver;
 class DOTk_TrustRegionInexactNewton;
 class DOTk_TrustRegionAlgorithmsDataMng;
 
-template<class Type>
-class vector;
-
 class DOTk_TrustRegionInexactNewtonIO
 {
 public:

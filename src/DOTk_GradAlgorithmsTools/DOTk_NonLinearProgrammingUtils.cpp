@@ -17,10 +17,10 @@ namespace dotk
 namespace nlp
 {
 
-std::tr1::shared_ptr<dotk::vector<Real> > clone(dotk::nlp::variables & variables_,
+std::tr1::shared_ptr<dotk::Vector<Real> > clone(dotk::nlp::variables & variables_,
                                                 dotk::types::variable_t codomain_)
 {
-    std::tr1::shared_ptr<dotk::vector<Real> > output;
+    std::tr1::shared_ptr<dotk::Vector<Real> > output;
     switch(codomain_)
     {
         case dotk::types::STATE:
@@ -55,7 +55,7 @@ std::tr1::shared_ptr<dotk::vector<Real> > clone(dotk::nlp::variables & variables
     return (output);
 }
 
-void resetField(const dotk::vector<Real> & data_, dotk::nlp::variables & variables_, dotk::types::derivative_t type_)
+void resetField(const dotk::Vector<Real> & data_, dotk::nlp::variables & variables_, dotk::types::derivative_t type_)
 {
     switch(type_)
     {
@@ -81,7 +81,7 @@ void resetField(const dotk::vector<Real> & data_, dotk::nlp::variables & variabl
 }
 
 void perturbField(const Real epsilon_,
-                  const dotk::vector<Real> & direction_,
+                  const dotk::Vector<Real> & direction_,
                   dotk::nlp::variables & variables_,
                   dotk::types::derivative_t type_)
 {

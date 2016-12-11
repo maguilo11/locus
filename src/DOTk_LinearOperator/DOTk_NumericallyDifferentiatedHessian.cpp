@@ -91,18 +91,18 @@ void NumericallyDifferentiatedHessian::setThirdOrderBackwardDifference(const std
     m_NumericalDifferentiation->setEpsilon(epsilon_);
 }
 
-void NumericallyDifferentiatedHessian::apply(const std::tr1::shared_ptr<dotk::vector<Real> > & primal_,
-                                             const std::tr1::shared_ptr<dotk::vector<Real> > & gradient_,
-                                             const std::tr1::shared_ptr<dotk::vector<Real> > & vector_,
-                                             const std::tr1::shared_ptr<dotk::vector<Real> > & output_)
+void NumericallyDifferentiatedHessian::apply(const std::tr1::shared_ptr<dotk::Vector<Real> > & primal_,
+                                             const std::tr1::shared_ptr<dotk::Vector<Real> > & gradient_,
+                                             const std::tr1::shared_ptr<dotk::Vector<Real> > & vector_,
+                                             const std::tr1::shared_ptr<dotk::Vector<Real> > & output_)
 {
     output_->fill(0);
     m_NumericalDifferentiation->differentiate(m_GradientFunctor, *primal_, *vector_, *gradient_, *output_);
 }
 
 void NumericallyDifferentiatedHessian::apply(const std::tr1::shared_ptr<dotk::DOTk_OptimizationDataMng> & mng_,
-                                             const std::tr1::shared_ptr<dotk::vector<Real> > & vector_,
-                                             const std::tr1::shared_ptr<dotk::vector<Real> > & output_)
+                                             const std::tr1::shared_ptr<dotk::Vector<Real> > & vector_,
+                                             const std::tr1::shared_ptr<dotk::Vector<Real> > & output_)
 {
     output_->fill(0);
     m_NumericalDifferentiation->differentiate(m_GradientFunctor,

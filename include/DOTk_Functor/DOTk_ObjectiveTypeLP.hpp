@@ -13,8 +13,8 @@
 namespace dotk
 {
 
-template<class Type>
-class vector;
+template<typename ScalarType>
+class Vector;
 
 namespace lp
 {
@@ -30,7 +30,7 @@ public:
     }
 
     Real operator()(const std::tr1::shared_ptr<dotk::DOTk_ObjectiveFunction<Real> > & operators_,
-                    const std::tr1::shared_ptr<dotk::vector<Real> > & primal_) const
+                    const std::tr1::shared_ptr<dotk::Vector<Real> > & primal_) const
     {
         Real objective_function_value = operators_->value(*primal_);
         return (objective_function_value);
@@ -57,8 +57,8 @@ public:
         return (m_Codomain);
     }
     void operator()(const std::tr1::shared_ptr<dotk::DOTk_ObjectiveFunction<Real> > & operators_,
-                    const std::tr1::shared_ptr<dotk::vector<Real> > & primal_,
-                    std::tr1::shared_ptr<dotk::vector<Real> > & output_) const
+                    const std::tr1::shared_ptr<dotk::Vector<Real> > & primal_,
+                    std::tr1::shared_ptr<dotk::Vector<Real> > & output_) const
     {
         operators_->gradient(*primal_, *output_);
     }
@@ -87,9 +87,9 @@ public:
         return (m_Codomain);
     }
     void operator()(const std::tr1::shared_ptr<dotk::DOTk_ObjectiveFunction<Real> > & operators_,
-                    const std::tr1::shared_ptr<dotk::vector<Real> > & primal_,
-                    const std::tr1::shared_ptr<dotk::vector<Real> > & delta_primal_,
-                    std::tr1::shared_ptr<dotk::vector<Real> > & output_) const
+                    const std::tr1::shared_ptr<dotk::Vector<Real> > & primal_,
+                    const std::tr1::shared_ptr<dotk::Vector<Real> > & delta_primal_,
+                    std::tr1::shared_ptr<dotk::Vector<Real> > & output_) const
     {
         operators_->hessian(*primal_, *delta_primal_, *output_);
     }

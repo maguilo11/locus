@@ -20,7 +20,7 @@ DOTk_NocedalAndWrightEquality::~DOTk_NocedalAndWrightEquality()
 {
 }
 
-void DOTk_NocedalAndWrightEquality::residual(const dotk::vector<Real> & primal_, dotk::vector<Real> & output_)
+void DOTk_NocedalAndWrightEquality::residual(const dotk::Vector<Real> & primal_, dotk::Vector<Real> & output_)
 {
     // C1 = u1^2 + u2^2 + u3^2 + u4^2 + u5^2 - 10
     output_[0] = pow(primal_[0], static_cast<Real>(2.)) + pow(primal_[1], static_cast<Real>(2.))
@@ -33,9 +33,9 @@ void DOTk_NocedalAndWrightEquality::residual(const dotk::vector<Real> & primal_,
             + static_cast<Real>(1.);
 }
 
-void DOTk_NocedalAndWrightEquality::jacobian(const dotk::vector<Real> & primal_,
-                                             const dotk::vector<Real> & vector_,
-                                             dotk::vector<Real> & output_)
+void DOTk_NocedalAndWrightEquality::jacobian(const dotk::Vector<Real> & primal_,
+                                             const dotk::Vector<Real> & vector_,
+                                             dotk::Vector<Real> & output_)
 {
     // |  2*u1    2*u2   2*u3   2*u4   2*u5 |
     // |   0       u3     u2   -5*u5  -5*u4 |
@@ -49,9 +49,9 @@ void DOTk_NocedalAndWrightEquality::jacobian(const dotk::vector<Real> & primal_,
             + static_cast<Real>(3.) * pow(primal_[1], static_cast<Real>(2.)) * vector_[1];
 }
 
-void DOTk_NocedalAndWrightEquality::adjointJacobian(const dotk::vector<Real> & primal_,
-                                                    const dotk::vector<Real> & dual_,
-                                                    dotk::vector<Real> & output_)
+void DOTk_NocedalAndWrightEquality::adjointJacobian(const dotk::Vector<Real> & primal_,
+                                                    const dotk::Vector<Real> & dual_,
+                                                    dotk::Vector<Real> & output_)
 {
     // | 2*u1    0    3*u1^2 |
     // | 2*u2    u3   3*u2^2 |
@@ -67,10 +67,10 @@ void DOTk_NocedalAndWrightEquality::adjointJacobian(const dotk::vector<Real> & p
     output_[4] = static_cast<Real>(2.) * primal_[4] * dual_[0] - static_cast<Real>(5.) * primal_[3] * dual_[1];
 }
 
-void DOTk_NocedalAndWrightEquality::hessian(const dotk::vector<Real> & primal_,
-                                            const dotk::vector<Real> & dual_,
-                                            const dotk::vector<Real> & vector_,
-                                            dotk::vector<Real> & output_)
+void DOTk_NocedalAndWrightEquality::hessian(const dotk::Vector<Real> & primal_,
+                                            const dotk::Vector<Real> & dual_,
+                                            const dotk::Vector<Real> & vector_,
+                                            dotk::Vector<Real> & output_)
 {
     const Real du1 = vector_[0];
     const Real du2 = vector_[1];

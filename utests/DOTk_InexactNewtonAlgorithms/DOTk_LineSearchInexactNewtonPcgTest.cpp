@@ -243,7 +243,7 @@ TEST(DOTk_LineSearchInexactNewtonPCG, getMin_UsrDefGrad_UsrDefHess_ArmijoLS_NoPr
 
     EXPECT_EQ(dotk::types::OBJECTIVE_FUNC_TOL_SATISFIED, alg.getStoppingCriterion());
     EXPECT_EQ(15, alg.getNumItrDone());
-    std::tr1::shared_ptr<dotk::vector<Real> > gold = primal->control()->clone();
+    std::tr1::shared_ptr<dotk::Vector<Real> > gold = primal->control()->clone();
     gold->fill(1);
     dotk::gtest::checkResults(*mng->getNewPrimal(), *gold, 1e-7);
 }
@@ -267,7 +267,7 @@ TEST(DOTk_LineSearchInexactNewtonPCG, getMin_UsrDefGrad_UsrDefHess_GoldsteinLS_N
 
     EXPECT_EQ(dotk::types::OBJECTIVE_FUNC_TOL_SATISFIED, alg.getStoppingCriterion());
     EXPECT_EQ(15, alg.getNumItrDone());
-    std::tr1::shared_ptr<dotk::vector<Real> > gold = primal->control()->clone();
+    std::tr1::shared_ptr<dotk::Vector<Real> > gold = primal->control()->clone();
     gold->fill(1);
     dotk::gtest::checkResults(*mng->getNewPrimal(), *gold, 1e-6);
 }
@@ -282,7 +282,7 @@ TEST(DOTk_LineSearchInexactNewtonPCG, getMin_UsrDefGrad_UsrDefHess_CubicLS_NoPre
     std::tr1::shared_ptr<dotk::DOTk_LineSearchStep> step(new dotk::DOTk_LineSearchStep(primal));
     std::tr1::shared_ptr<dotk::DOTk_LineSearchMngTypeULP> mng(new dotk::DOTk_LineSearchMngTypeULP(primal, objective));
     std::tr1::shared_ptr<dotk::DOTk_Hessian> hessian(new dotk::DOTk_Hessian);
-    std::tr1::shared_ptr<dotk::vector<Real> > gold = primal->control()->clone();
+    std::tr1::shared_ptr<dotk::Vector<Real> > gold = primal->control()->clone();
 
     mng->setUserDefinedGradient();
     dotk::DOTk_LineSearchInexactNewton alg(hessian, step, mng);
@@ -315,7 +315,7 @@ TEST(DOTk_LineSearchInexactNewtonPCG, getMin_UsrDefGrad_DFPHess_ArmijoLS_NoPrec)
 
     EXPECT_EQ(dotk::types::OBJECTIVE_FUNC_TOL_SATISFIED, alg.getStoppingCriterion());
     EXPECT_EQ(32, alg.getNumItrDone());
-    std::tr1::shared_ptr<dotk::vector<Real> > gold = primal->control()->clone();
+    std::tr1::shared_ptr<dotk::Vector<Real> > gold = primal->control()->clone();
     gold->fill(1);
     dotk::gtest::checkResults(*mng->getNewPrimal(), *gold, 1e-5);
 }
@@ -330,7 +330,7 @@ TEST(DOTk_LineSearchInexactNewtonPCG, getMin_UsrDefGrad_DFPHess_GoldsteinLS_NoPr
     std::tr1::shared_ptr<dotk::DOTk_LineSearchStep> step(new dotk::DOTk_LineSearchStep(primal));
     std::tr1::shared_ptr<dotk::DOTk_LineSearchMngTypeULP> mng(new dotk::DOTk_LineSearchMngTypeULP(primal, objective));
     std::tr1::shared_ptr<dotk::DOTk_Hessian> hessian(new dotk::DOTk_Hessian);
-    std::tr1::shared_ptr<dotk::vector<Real> > gold = primal->control()->clone();
+    std::tr1::shared_ptr<dotk::Vector<Real> > gold = primal->control()->clone();
 
     step->setGoldsteinLineSearch(primal);
     mng->setUserDefinedGradient();
@@ -355,7 +355,7 @@ TEST(DOTk_LineSearchInexactNewtonPCG, getMin_UsrDefGrad_DFPHess_CubicLS_NoPrec)
     std::tr1::shared_ptr<dotk::DOTk_LineSearchStep> step(new dotk::DOTk_LineSearchStep(primal));
     std::tr1::shared_ptr<dotk::DOTk_LineSearchMngTypeULP> mng(new dotk::DOTk_LineSearchMngTypeULP(primal, objective));
     std::tr1::shared_ptr<dotk::DOTk_Hessian> hessian(new dotk::DOTk_Hessian);
-    std::tr1::shared_ptr<dotk::vector<Real> > gold = primal->control()->clone();
+    std::tr1::shared_ptr<dotk::Vector<Real> > gold = primal->control()->clone();
 
     mng->setUserDefinedGradient();
     hessian->setDfpHessian(primal->control());
@@ -379,7 +379,7 @@ TEST(DOTk_LineSearchInexactNewtonPCG, getMin_UsrDefGrad_BBHess_ArmijoLS_NoPrec)
     std::tr1::shared_ptr<dotk::DOTk_LineSearchStep> step(new dotk::DOTk_LineSearchStep(primal));
     std::tr1::shared_ptr<dotk::DOTk_LineSearchMngTypeULP> mng(new dotk::DOTk_LineSearchMngTypeULP(primal, objective));
     std::tr1::shared_ptr<dotk::DOTk_Hessian> hessian(new dotk::DOTk_Hessian);
-    std::tr1::shared_ptr<dotk::vector<Real> > gold = primal->control()->clone();
+    std::tr1::shared_ptr<dotk::Vector<Real> > gold = primal->control()->clone();
 
     step->setArmijoLineSearch(primal);
     mng->setUserDefinedGradient();
@@ -404,7 +404,7 @@ TEST(DOTk_LineSearchInexactNewtonPCG, getMin_UsrDefGrad_BBHess_GoldsteinLS_NoPre
     std::tr1::shared_ptr<dotk::DOTk_LineSearchStep> step(new dotk::DOTk_LineSearchStep(primal));
     std::tr1::shared_ptr<dotk::DOTk_LineSearchMngTypeULP> mng(new dotk::DOTk_LineSearchMngTypeULP(primal, objective));
     std::tr1::shared_ptr<dotk::DOTk_Hessian> hessian(new dotk::DOTk_Hessian);
-    std::tr1::shared_ptr<dotk::vector<Real> > gold = primal->control()->clone();
+    std::tr1::shared_ptr<dotk::Vector<Real> > gold = primal->control()->clone();
 
     step->setGoldsteinLineSearch(primal);
     mng->setUserDefinedGradient();
@@ -429,7 +429,7 @@ TEST(DOTk_LineSearchInexactNewtonPCG, getMin_UsrDefGrad_BBHess_CubicLS_NoPrec)
     std::tr1::shared_ptr<dotk::DOTk_LineSearchStep> step(new dotk::DOTk_LineSearchStep(primal));
     std::tr1::shared_ptr<dotk::DOTk_LineSearchMngTypeULP> mng(new dotk::DOTk_LineSearchMngTypeULP(primal, objective));
     std::tr1::shared_ptr<dotk::DOTk_Hessian> hessian(new dotk::DOTk_Hessian);
-    std::tr1::shared_ptr<dotk::vector<Real> > gold = primal->control()->clone();
+    std::tr1::shared_ptr<dotk::Vector<Real> > gold = primal->control()->clone();
 
     mng->setUserDefinedGradient();
     hessian->setBarzilaiBorweinHessian(primal->control());
@@ -453,7 +453,7 @@ TEST(DOTk_LineSearchInexactNewtonPCG, getMin_UsrDefGrad_SR1Hess_ArmijoLS_NoPrec)
     std::tr1::shared_ptr<dotk::DOTk_LineSearchStep> step(new dotk::DOTk_LineSearchStep(primal));
     std::tr1::shared_ptr<dotk::DOTk_LineSearchMngTypeULP> mng(new dotk::DOTk_LineSearchMngTypeULP(primal, objective));
     std::tr1::shared_ptr<dotk::DOTk_Hessian> hessian(new dotk::DOTk_Hessian);
-    std::tr1::shared_ptr<dotk::vector<Real> > gold = primal->control()->clone();
+    std::tr1::shared_ptr<dotk::Vector<Real> > gold = primal->control()->clone();
 
     step->setArmijoLineSearch(primal);
     mng->setUserDefinedGradient();
@@ -478,7 +478,7 @@ TEST(DOTk_LineSearchInexactNewtonPCG, getMin_UsrDefGrad_SR1Hess_GoldsteinLS_NoPr
     std::tr1::shared_ptr<dotk::DOTk_LineSearchStep> step(new dotk::DOTk_LineSearchStep(primal));
     std::tr1::shared_ptr<dotk::DOTk_LineSearchMngTypeULP> mng(new dotk::DOTk_LineSearchMngTypeULP(primal, objective));
     std::tr1::shared_ptr<dotk::DOTk_Hessian> hessian(new dotk::DOTk_Hessian);
-    std::tr1::shared_ptr<dotk::vector<Real> > gold = primal->control()->clone();
+    std::tr1::shared_ptr<dotk::Vector<Real> > gold = primal->control()->clone();
 
     step->setGoldsteinLineSearch(primal);
     mng->setUserDefinedGradient();
@@ -503,7 +503,7 @@ TEST(DOTk_LineSearchInexactNewtonPCG, getMin_UsrDefGrad_SR1Hess_CubicLS_NoPrec)
     std::tr1::shared_ptr<dotk::DOTk_LineSearchStep> step(new dotk::DOTk_LineSearchStep(primal));
     std::tr1::shared_ptr<dotk::DOTk_LineSearchMngTypeULP> mng(new dotk::DOTk_LineSearchMngTypeULP(primal, objective));
     std::tr1::shared_ptr<dotk::DOTk_Hessian> hessian(new dotk::DOTk_Hessian);
-    std::tr1::shared_ptr<dotk::vector<Real> > gold = primal->control()->clone();
+    std::tr1::shared_ptr<dotk::Vector<Real> > gold = primal->control()->clone();
 
     mng->setUserDefinedGradient();
     hessian->setSr1Hessian(primal->control());
@@ -527,7 +527,7 @@ TEST(DOTk_LineSearchInexactNewtonPCG, getMin_UsrDefGrad_LBFGSHess_CubicLS_NoPrec
     std::tr1::shared_ptr<dotk::DOTk_LineSearchStep> step(new dotk::DOTk_LineSearchStep(primal));
     std::tr1::shared_ptr<dotk::DOTk_LineSearchMngTypeULP> mng(new dotk::DOTk_LineSearchMngTypeULP(primal, objective));
     std::tr1::shared_ptr<dotk::DOTk_Hessian> hessian(new dotk::DOTk_Hessian);
-    std::tr1::shared_ptr<dotk::vector<Real> > gold = primal->control()->clone();
+    std::tr1::shared_ptr<dotk::Vector<Real> > gold = primal->control()->clone();
 
     mng->setUserDefinedGradient();
     size_t secant_storage = 6;
@@ -552,7 +552,7 @@ TEST(DOTk_LineSearchInexactNewtonPCG, getMin_UsrDefGrad_LDFPHess_CubicLS_NoPrec)
     std::tr1::shared_ptr<dotk::DOTk_LineSearchStep> step(new dotk::DOTk_LineSearchStep(primal));
     std::tr1::shared_ptr<dotk::DOTk_LineSearchMngTypeULP> mng(new dotk::DOTk_LineSearchMngTypeULP(primal, objective));
     std::tr1::shared_ptr<dotk::DOTk_Hessian> hessian(new dotk::DOTk_Hessian);
-    std::tr1::shared_ptr<dotk::vector<Real> > gold = primal->control()->clone();
+    std::tr1::shared_ptr<dotk::Vector<Real> > gold = primal->control()->clone();
 
     mng->setUserDefinedGradient();
     size_t secant_storage = 6;

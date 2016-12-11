@@ -18,9 +18,9 @@ class DOTk_Primal;
 class DOTk_KrylovSolver;
 class DOTk_DirectSolver;
 
-template<typename Type>
-class vector;
-template<typename Type>
+template<typename ScalarType>
+class Vector;
+template<typename ScalarType>
 class matrix;
 
 class DOTk_ArnoldiProjection: public dotk::DOTk_OrthogonalProjection
@@ -33,14 +33,14 @@ public:
     virtual Real getInitialResidual() const;
 
     virtual void clear();
-    virtual const std::tr1::shared_ptr<dotk::vector<Real> > & getOrthogonalVector(size_t index_) const;
-    virtual void setOrthogonalVector(size_t index_, const std::tr1::shared_ptr<dotk::vector<Real> > & vec_);
+    virtual const std::tr1::shared_ptr<dotk::Vector<Real> > & getOrthogonalVector(size_t index_) const;
+    virtual void setOrthogonalVector(size_t index_, const std::tr1::shared_ptr<dotk::Vector<Real> > & vec_);
     virtual void apply(const dotk::DOTk_KrylovSolver * const solver_,
-                       const std::tr1::shared_ptr<dotk::vector<Real> > & kernel_vector_);
+                       const std::tr1::shared_ptr<dotk::Vector<Real> > & kernel_vector_);
 
     void updateHessenbergMatrix(size_t current_itr_,
-                                const std::tr1::shared_ptr<dotk::vector<Real> > & left_prec_times_vec_);
-    void arnoldi(size_t ortho_vector_index_, const std::tr1::shared_ptr<dotk::vector<Real> > & kernel_vector_);
+                                const std::tr1::shared_ptr<dotk::Vector<Real> > & left_prec_times_vec_);
+    void arnoldi(size_t ortho_vector_index_, const std::tr1::shared_ptr<dotk::Vector<Real> > & kernel_vector_);
     void applyGivensRotationsToHessenbergMatrix(int current_itr_);
 
 private:
@@ -50,7 +50,7 @@ private:
     std::vector<Real> m_NormAppxProjectedResidualStorage;
     std::tr1::shared_ptr<dotk::DOTk_DirectSolver> m_DirectSolver;
     std::tr1::shared_ptr<dotk::matrix<Real> > m_HessenbergMatrix;
-    std::vector<std::tr1::shared_ptr<dotk::vector<Real> > > m_OrthogonalBasis;
+    std::vector<std::tr1::shared_ptr<dotk::Vector<Real> > > m_OrthogonalBasis;
 
 private:
     void initialize(const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_);

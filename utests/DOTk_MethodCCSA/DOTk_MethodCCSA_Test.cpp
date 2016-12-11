@@ -396,10 +396,10 @@ TEST(DOTk_RoutinesTypeLP, gcmma)
     primal.allocateSerialControlArray(nvars, 1.);
     EXPECT_NEAR(0.312, assembly.objective(primal.control()), tolerance);
 
-    std::tr1::shared_ptr<dotk::vector<Real> > gradient = primal.control()->clone();
+    std::tr1::shared_ptr<dotk::Vector<Real> > gradient = primal.control()->clone();
     assembly.gradient(primal.control(), gradient);
 
-    std::tr1::shared_ptr<dotk::vector<Real> > gold = primal.control()->clone();
+    std::tr1::shared_ptr<dotk::Vector<Real> > gold = primal.control()->clone();
     (*gold)[0] = 0.0624;
     (*gold)[1] = 0.0624;
     (*gold)[2] = 0.0624;
@@ -441,7 +441,7 @@ TEST(DOTk_DataMngCCSA, computeFunctionGradients)
     EXPECT_EQ(1, mng.getGradientEvaluationCounter());
     EXPECT_EQ(1, mng.getInequalityConstraintGradientCounter());
 
-    std::tr1::shared_ptr<dotk::vector<Real> > gold = primal->control()->clone();
+    std::tr1::shared_ptr<dotk::Vector<Real> > gold = primal->control()->clone();
     (*gold)[0] = 0.0624;
     (*gold)[1] = 0.0624;
     (*gold)[2] = 0.0624;
@@ -455,8 +455,6 @@ TEST(DOTk_DataMngCCSA, computeFunctionGradients)
     (*gold)[3] = -21;
     (*gold)[4] = -3;
     dotk::gtest::checkResults(*mng.m_CurrentInequalityGradients->basis(0), *gold);
-
-    Real tolerance = 1e-8;
 }
 
 TEST(DOTk_DataMngCCSA, evaluateFunctionValues)
@@ -503,8 +501,8 @@ TEST(DOTk_DataMngCCSA, evaluateInequalityConstraint)
     std::vector<std::tr1::shared_ptr<dotk::DOTk_InequalityConstraint<Real> > > inequality(1, shared_ptr);
     dotk::DOTk_DataMngCCSA mng(primal, objective, inequality);
 
-    std::tr1::shared_ptr<dotk::vector<Real> > residual = primal->dual()->clone();
-    std::tr1::shared_ptr<dotk::vector<Real> > feasibility_measure = primal->dual()->clone();
+    std::tr1::shared_ptr<dotk::Vector<Real> > residual = primal->dual()->clone();
+    std::tr1::shared_ptr<dotk::Vector<Real> > feasibility_measure = primal->dual()->clone();
     mng.evaluateInequalityConstraints(primal->control(), residual, feasibility_measure);
 
     Real tolerance = 1e-8;
@@ -531,11 +529,11 @@ TEST(DOTk_DualObjectiveFunctionMMA, updateMovingAsymptotes)
 
     mng->m_CurrentSigma->fill(0.1);
     dual_objective.updateMovingAsymptotes(mng->m_CurrentControl, mng->m_CurrentSigma);
-    std::tr1::shared_ptr<dotk::vector<Real> > lower_asymptote = primal->control()->clone();
-    std::tr1::shared_ptr<dotk::vector<Real> > upper_asymptote = primal->control()->clone();
+    std::tr1::shared_ptr<dotk::Vector<Real> > lower_asymptote = primal->control()->clone();
+    std::tr1::shared_ptr<dotk::Vector<Real> > upper_asymptote = primal->control()->clone();
     dual_objective.gatherMovingAsymptotes(lower_asymptote, upper_asymptote);
 
-    std::tr1::shared_ptr<dotk::vector<Real> > gold = primal->control()->clone();
+    std::tr1::shared_ptr<dotk::Vector<Real> > gold = primal->control()->clone();
     gold->fill(0.9);
     dotk::gtest::checkResults(*lower_asymptote, *gold);
     gold->fill(1.1);
@@ -561,11 +559,11 @@ TEST(DOTk_DualObjectiveFunctionMMA, updateTrialControlBounds)
 
     mng->m_CurrentSigma->fill(0.1);
     dual_objective.updateTrialControlBounds(0.5, mng->m_CurrentControl, mng->m_CurrentSigma);
-    std::tr1::shared_ptr<dotk::vector<Real> > trial_control_lower_bound = primal->control()->clone();
-    std::tr1::shared_ptr<dotk::vector<Real> > trial_control_upper_bound = primal->control()->clone();
+    std::tr1::shared_ptr<dotk::Vector<Real> > trial_control_lower_bound = primal->control()->clone();
+    std::tr1::shared_ptr<dotk::Vector<Real> > trial_control_upper_bound = primal->control()->clone();
     dual_objective.gatherTrialControlBounds(trial_control_lower_bound, trial_control_upper_bound);
 
-    std::tr1::shared_ptr<dotk::vector<Real> > gold = primal->control()->clone();
+    std::tr1::shared_ptr<dotk::Vector<Real> > gold = primal->control()->clone();
     gold->fill(0.95);
     dotk::gtest::checkResults(*trial_control_lower_bound, *gold);
     gold->fill(1.05);
@@ -596,11 +594,11 @@ TEST(DOTk_DualObjectiveFunctionMMA, updateObjectiveCoefficientVectors)
                                                      mng->m_CurrentObjectiveGradient);
 
     Real r_coefficient = 0;
-    std::tr1::shared_ptr<dotk::vector<Real> > p_coefficients = mng->m_CurrentSigma->clone();
-    std::tr1::shared_ptr<dotk::vector<Real> > q_coefficients = p_coefficients->clone();
+    std::tr1::shared_ptr<dotk::Vector<Real> > p_coefficients = mng->m_CurrentSigma->clone();
+    std::tr1::shared_ptr<dotk::Vector<Real> > q_coefficients = p_coefficients->clone();
     dual_objective.gatherObjectiveCoefficients(p_coefficients, q_coefficients, r_coefficient);
 
-    std::tr1::shared_ptr<dotk::vector<Real> > gold = primal->control()->clone();
+    std::tr1::shared_ptr<dotk::Vector<Real> > gold = primal->control()->clone();
     gold->fill(0.0225);
     dotk::gtest::checkResults(*gold, *p_coefficients);
     gold->fill(0.0125);
@@ -630,7 +628,7 @@ TEST(DOTk_DualObjectiveFunctionMMA, updateInequalityCoefficientVectors)
     (*mng->m_CurrentInequalityGradients->basis(0))[0] = 2.;
     dotk::DOTk_DualObjectiveFunctionMMA dual_objective(mng);
 
-    std::tr1::shared_ptr<dotk::vector<Real> > globalization_scale = primal->dual()->clone();
+    std::tr1::shared_ptr<dotk::Vector<Real> > globalization_scale = primal->dual()->clone();
     globalization_scale->fill(0.5);
     dual_objective.updateInequalityCoefficientVectors(globalization_scale,
                                                       mng->m_CurrentSigma,
@@ -638,17 +636,17 @@ TEST(DOTk_DualObjectiveFunctionMMA, updateInequalityCoefficientVectors)
 
     std::tr1::shared_ptr<dotk::matrix<Real> > p_coefficients = mng->m_CurrentInequalityGradients->clone();
     std::tr1::shared_ptr<dotk::matrix<Real> > q_coefficients = p_coefficients->clone();
-    std::tr1::shared_ptr<dotk::vector<Real> > r_coefficients = primal->dual()->clone();
+    std::tr1::shared_ptr<dotk::Vector<Real> > r_coefficients = primal->dual()->clone();
     dual_objective.gatherInequalityCoefficients(p_coefficients, q_coefficients, r_coefficients);
 
-    std::tr1::shared_ptr<dotk::vector<Real> > gold1 = primal->control()->clone();
+    std::tr1::shared_ptr<dotk::Vector<Real> > gold1 = primal->control()->clone();
     gold1->fill(0.0225);
     (*gold1)[0] = 0.0325;
     dotk::gtest::checkResults(*gold1, *p_coefficients->basis(0));
     gold1->fill(0.0125);
     dotk::gtest::checkResults(*gold1, *q_coefficients->basis(0));
 
-    std::tr1::shared_ptr<dotk::vector<Real> > gold2 = primal->dual()->clone();
+    std::tr1::shared_ptr<dotk::Vector<Real> > gold2 = primal->dual()->clone();
     gold2->fill(-1.85);
     dotk::gtest::checkResults(*gold2, *r_coefficients);
 }
@@ -674,7 +672,7 @@ TEST(DOTk_DualObjectiveFunctionMMA, evaluate)
     (*mng->m_CurrentInequalityGradients)(0, 0) = 2.;
     dotk::DOTk_DualObjectiveFunctionMMA dual_objective(mng);
 
-    std::tr1::shared_ptr<dotk::vector<Real> > residual = primal->dual()->clone();
+    std::tr1::shared_ptr<dotk::Vector<Real> > residual = primal->dual()->clone();
     residual->fill(0.2);
     dual_objective.setCurrentObjectiveFunctionValue(0.1);
     dual_objective.setCurrentInequalityConstraintResiduals(residual);
@@ -686,7 +684,7 @@ TEST(DOTk_DualObjectiveFunctionMMA, evaluate)
                                                      mng->m_CurrentSigma,
                                                      mng->m_CurrentObjectiveGradient);
 
-    std::tr1::shared_ptr<dotk::vector<Real> > inequality_globalization_scale = primal->dual()->clone();
+    std::tr1::shared_ptr<dotk::Vector<Real> > inequality_globalization_scale = primal->dual()->clone();
     inequality_globalization_scale->fill(0.5);
     dual_objective.updateInequalityCoefficientVectors(inequality_globalization_scale,
                                                       mng->m_CurrentSigma,
@@ -697,7 +695,7 @@ TEST(DOTk_DualObjectiveFunctionMMA, evaluate)
     EXPECT_NEAR(-0.21245071085, value, tolerance);
 
     dual_objective.gatherTrialControl(mng->m_WorkVector);
-    std::tr1::shared_ptr<dotk::vector<Real> > gold = primal->control()->clone();
+    std::tr1::shared_ptr<dotk::Vector<Real> > gold = primal->control()->clone();
     (*gold)[0] = 0.980539949569856;
     (*gold)[1] = 0.985410196624969;
     (*gold)[2] = 0.985410196624969;
@@ -727,7 +725,7 @@ TEST(DOTk_DualObjectiveFunctionMMA, gradient)
     (*mng->m_CurrentInequalityGradients)(0, 0) = 2.;
     dotk::DOTk_DualObjectiveFunctionMMA dual_objective(mng);
 
-    std::tr1::shared_ptr<dotk::vector<Real> > residual = primal->dual()->clone();
+    std::tr1::shared_ptr<dotk::Vector<Real> > residual = primal->dual()->clone();
     residual->fill(0.2);
     dual_objective.setCurrentObjectiveFunctionValue(0.1);
     dual_objective.setCurrentInequalityConstraintResiduals(residual);
@@ -739,11 +737,11 @@ TEST(DOTk_DualObjectiveFunctionMMA, gradient)
                                                      mng->m_CurrentSigma,
                                                      mng->m_CurrentObjectiveGradient);
 
-    std::tr1::shared_ptr<dotk::vector<Real> > work = primal->dual()->clone();
+    std::tr1::shared_ptr<dotk::Vector<Real> > work = primal->dual()->clone();
     work->fill(0.5);
     dual_objective.updateInequalityCoefficientVectors(work, mng->m_CurrentSigma, mng->m_CurrentInequalityGradients);
 
-    std::tr1::shared_ptr<dotk::vector<Real> > trial_control = mng->m_CurrentSigma->clone();
+    std::tr1::shared_ptr<dotk::Vector<Real> > trial_control = mng->m_CurrentSigma->clone();
     (*trial_control)[0] = 0.980539949569856;
     (*trial_control)[1] = 0.985410196624969;
     (*trial_control)[2] = 0.985410196624969;
@@ -751,10 +749,10 @@ TEST(DOTk_DualObjectiveFunctionMMA, gradient)
     (*trial_control)[4] = 0.985410196624969;
     dual_objective.setTrialControl(trial_control);
 
-    std::tr1::shared_ptr<dotk::vector<Real> > gradient = primal->dual()->clone();
+    std::tr1::shared_ptr<dotk::Vector<Real> > gradient = primal->dual()->clone();
     dual_objective.gradient(*mng->m_Dual, *gradient);
 
-    std::tr1::shared_ptr<dotk::vector<Real> > gold = gradient->clone();
+    std::tr1::shared_ptr<dotk::Vector<Real> > gold = gradient->clone();
     (*gold)[0] = -0.14808035198;
 
     dotk::gtest::checkResults(*gradient, *gold);
@@ -835,7 +833,7 @@ TEST(DOTk_DualSolverNLCG, solve)
     mng->m_CurrentInequalityResiduals->fill(0.2);
     std::tr1::shared_ptr<dotk::DOTk_DualObjectiveFunctionMMA> dual_objective(new dotk::DOTk_DualObjectiveFunctionMMA(mng));
 
-    std::tr1::shared_ptr<dotk::vector<Real> > work = mng->m_Dual->clone();
+    std::tr1::shared_ptr<dotk::Vector<Real> > work = mng->m_Dual->clone();
     work->fill(0.2);
     dual_objective->setCurrentObjectiveFunctionValue(0.1);
     dual_objective->setCurrentInequalityConstraintResiduals(work);
@@ -924,11 +922,11 @@ TEST(DOTk_SubProblemGCMMA, solve)
 
     sub_problem.solve(mng);
 
-    std::tr1::shared_ptr<dotk::vector<Real> > gold1 = mng->m_Dual->clone();
+    std::tr1::shared_ptr<dotk::Vector<Real> > gold1 = mng->m_Dual->clone();
     gold1->fill(1112.2374766);
     dotk::gtest::checkResults(*mng->m_Dual, *gold1);
 
-    std::tr1::shared_ptr<dotk::vector<Real> > gold2 = mng->m_CurrentControl->clone();
+    std::tr1::shared_ptr<dotk::Vector<Real> > gold2 = mng->m_CurrentControl->clone();
     gold2->fill(1.);
     dotk::gtest::checkResults(*mng->m_CurrentControl, *gold2);
 }
@@ -961,7 +959,7 @@ TEST(DOTk_AlgorithmCCSA, solve_GCMMA_POLAK_RIBIERE)
     EXPECT_NEAR(1.3399567957, mng->m_CurrentObjectiveFunctionValue, tolerance);
     EXPECT_NEAR(-6.866958023e-7, (*mng->m_CurrentInequalityResiduals)[0], tolerance);
 
-    std::tr1::shared_ptr<dotk::vector<Real> > gold = mng->m_CurrentControl->clone();
+    std::tr1::shared_ptr<dotk::Vector<Real> > gold = mng->m_CurrentControl->clone();
     (*gold)[0] = 6.016287053522432;
     (*gold)[1] = 5.3096539954232265;
     (*gold)[2] = 4.4954886342217941;
@@ -999,7 +997,7 @@ TEST(DOTk_AlgorithmCCSA, solve_GCMMA_FLETCHER_REEVES)
     EXPECT_NEAR(1.3399556592, mng->m_CurrentObjectiveFunctionValue, tolerance);
     EXPECT_NEAR(1.72710027657e-6, (*mng->m_CurrentInequalityResiduals)[0], tolerance);
 
-    std::tr1::shared_ptr<dotk::vector<Real> > gold = mng->m_CurrentControl->clone();
+    std::tr1::shared_ptr<dotk::Vector<Real> > gold = mng->m_CurrentControl->clone();
     (*gold)[0] = 6.015693551244798;
     (*gold)[1] = 5.30958525991438;
     (*gold)[2] = 4.4952182677445149;
@@ -1037,7 +1035,7 @@ TEST(DOTk_AlgorithmCCSA, solve_GCMMA_DAI_YUAN)
     EXPECT_NEAR(1.3399564044, mng->m_CurrentObjectiveFunctionValue, tolerance);
     EXPECT_NEAR(2.29338057433e-8, (*mng->m_CurrentInequalityResiduals)[0], tolerance);
 
-    std::tr1::shared_ptr<dotk::vector<Real> > gold = mng->m_CurrentControl->clone();
+    std::tr1::shared_ptr<dotk::Vector<Real> > gold = mng->m_CurrentControl->clone();
     (*gold)[0] = 6.015752285;
     (*gold)[1] = 5.309502472;
     (*gold)[2] = 4.495089604;
@@ -1075,7 +1073,7 @@ TEST(DOTk_AlgorithmCCSA, solve_GCMMA_HESTENES_STIEFEL)
     EXPECT_NEAR(1.33995640349, mng->m_CurrentObjectiveFunctionValue, tolerance);
     EXPECT_NEAR(2.86183319264e-8, (*mng->m_CurrentInequalityResiduals)[0], tolerance);
 
-    std::tr1::shared_ptr<dotk::vector<Real> > gold = mng->m_CurrentControl->clone();
+    std::tr1::shared_ptr<dotk::Vector<Real> > gold = mng->m_CurrentControl->clone();
     (*gold)[0] = 6.015743553;
     (*gold)[1] = 5.309507776;
     (*gold)[2] = 4.495102284;
@@ -1113,7 +1111,7 @@ TEST(DOTk_AlgorithmCCSA, solve_GCMMA_CONJUGATE_DESCENT)
     EXPECT_NEAR(1.33995660855, mng->m_CurrentObjectiveFunctionValue, tolerance);
     EXPECT_NEAR(-4.26152497734e-8, (*mng->m_CurrentInequalityResiduals)[0], tolerance);
 
-    std::tr1::shared_ptr<dotk::vector<Real> > gold = mng->m_CurrentControl->clone();
+    std::tr1::shared_ptr<dotk::Vector<Real> > gold = mng->m_CurrentControl->clone();
     (*gold)[0] = 6.0158710431;
     (*gold)[1] = 5.3099054573;
     (*gold)[2] = 4.4959970968;
@@ -1151,7 +1149,7 @@ TEST(DOTk_AlgorithmCCSA, solve_GCMMA_LIU_STOREY)
     EXPECT_NEAR(1.3399567959, mng->m_CurrentObjectiveFunctionValue, tolerance);
     EXPECT_NEAR(-6.870411412e-7, (*mng->m_CurrentInequalityResiduals)[0], tolerance);
 
-    std::tr1::shared_ptr<dotk::vector<Real> > gold = mng->m_CurrentControl->clone();
+    std::tr1::shared_ptr<dotk::Vector<Real> > gold = mng->m_CurrentControl->clone();
     (*gold)[0] = 6.0162869366;
     (*gold)[1] = 5.3096540580;
     (*gold)[2] = 4.4954887341;
@@ -1189,7 +1187,7 @@ TEST(DOTk_AlgorithmCCSA, solve_MMA_ConjugateDescent)
     EXPECT_NEAR(1.33997913608, mng->m_CurrentObjectiveFunctionValue, tolerance);
     EXPECT_NEAR(-5.08261684745e-5, (*mng->m_CurrentInequalityResiduals)[0], tolerance);
 
-    std::tr1::shared_ptr<dotk::vector<Real> > gold = mng->m_CurrentControl->clone();
+    std::tr1::shared_ptr<dotk::Vector<Real> > gold = mng->m_CurrentControl->clone();
     (*gold)[0] = 6.01532392933;
     (*gold)[1] = 5.30900262735;
     (*gold)[2] = 4.49447525851;
@@ -1227,7 +1225,7 @@ TEST(DOTk_AlgorithmCCSA, solve_MMA_DaiYuan)
     EXPECT_NEAR(1.3399732863, mng->m_CurrentObjectiveFunctionValue, tolerance);
     EXPECT_NEAR(-3.773019762e-5, (*mng->m_CurrentInequalityResiduals)[0], tolerance);
 
-    std::tr1::shared_ptr<dotk::vector<Real> > gold = mng->m_CurrentControl->clone();
+    std::tr1::shared_ptr<dotk::Vector<Real> > gold = mng->m_CurrentControl->clone();
     (*gold)[0] = 6.0151966393;
     (*gold)[1] = 5.3096300483;
     (*gold)[2] = 4.4952059704;
@@ -1265,7 +1263,7 @@ TEST(DOTk_AlgorithmCCSA, solve_MMA_LIU_STOREY)
     EXPECT_NEAR(1.339956430, mng->m_CurrentObjectiveFunctionValue, tolerance);
     EXPECT_NEAR(2.5781232704e-9, (*mng->m_CurrentInequalityResiduals)[0], tolerance);
 
-    std::tr1::shared_ptr<dotk::vector<Real> > gold = mng->m_CurrentControl->clone();
+    std::tr1::shared_ptr<dotk::Vector<Real> > gold = mng->m_CurrentControl->clone();
     (*gold)[0] = 6.01523880535;
     (*gold)[1] = 5.30876116579;
     (*gold)[2] = 4.49426749121;
@@ -1303,7 +1301,7 @@ TEST(DOTk_AlgorithmCCSA, solve_MMA_FletcherReeves)
     EXPECT_NEAR(1.339956432, mng->m_CurrentObjectiveFunctionValue, tolerance);
     EXPECT_NEAR(-1.234440649e-8, (*mng->m_CurrentInequalityResiduals)[0], tolerance);
 
-    std::tr1::shared_ptr<dotk::vector<Real> > gold = mng->m_CurrentControl->clone();
+    std::tr1::shared_ptr<dotk::Vector<Real> > gold = mng->m_CurrentControl->clone();
     (*gold)[0] = 6.0152634849;
     (*gold)[1] = 5.3087762636;
     (*gold)[2] = 4.4942687299;
@@ -1341,7 +1339,7 @@ TEST(DOTk_AlgorithmCCSA, solve_MMA_HestenesStiefel)
     EXPECT_NEAR(1.3399558642, mng->m_CurrentObjectiveFunctionValue, tolerance);
     EXPECT_NEAR(1.2592072382e-6, (*mng->m_CurrentInequalityResiduals)[0], tolerance);
 
-    std::tr1::shared_ptr<dotk::vector<Real> > gold = mng->m_CurrentControl->clone();
+    std::tr1::shared_ptr<dotk::Vector<Real> > gold = mng->m_CurrentControl->clone();
     (*gold)[0] = 6.0152623266;
     (*gold)[1] = 5.3087750620;
     (*gold)[2] = 4.4942658653;
@@ -1379,7 +1377,7 @@ TEST(DOTk_AlgorithmCCSA, solve_MMA_PolakRibiere)
     EXPECT_NEAR(1.33995639388, mng->m_CurrentObjectiveFunctionValue, tolerance);
     EXPECT_NEAR(8.3386932692e-8, (*mng->m_CurrentInequalityResiduals)[0], tolerance);
 
-    std::tr1::shared_ptr<dotk::vector<Real> > gold = mng->m_CurrentControl->clone();
+    std::tr1::shared_ptr<dotk::Vector<Real> > gold = mng->m_CurrentControl->clone();
     (*gold)[0] = 6.0152391513;
     (*gold)[1] = 5.3087612741;
     (*gold)[2] = 4.4942672453;

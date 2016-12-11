@@ -76,7 +76,7 @@ size_t getMexArrayDim(const dotk::DOTk_MexArrayPtr & ptr_)
     return(dim);
 }
 
-void setDOTkData(const dotk::DOTk_MexArrayPtr & ptr_, dotk::vector<double> & data_)
+void setDOTkData(const dotk::DOTk_MexArrayPtr & ptr_, dotk::Vector<double> & data_)
 {
     size_t data_dim = data_.size();
     size_t mex_array_dim = dotk::mex::getMexArrayDim(ptr_);
@@ -90,7 +90,7 @@ void setDOTkData(const dotk::DOTk_MexArrayPtr & ptr_, dotk::vector<double> & dat
     dotk::mex::copyData(mex_array_dim, mxGetPr(ptr_.get()), data_);
 }
 
-void copyData(size_t input_dim_, double* input_, dotk::vector<double> & output_)
+void copyData(size_t input_dim_, double* input_, dotk::Vector<double> & output_)
 {
     if(input_dim_ != output_.size())
     {

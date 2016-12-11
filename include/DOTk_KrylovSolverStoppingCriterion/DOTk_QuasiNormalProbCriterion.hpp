@@ -15,8 +15,8 @@ namespace dotk
 
 class DOTk_KrylovSolver;
 
-template<typename Type>
-class vector;
+template<typename ScalarType>
+class Vector;
 
 class DOTk_QuasiNormalProbCriterion: public dotk::DOTk_KrylovSolverStoppingCriterion
 {
@@ -32,7 +32,7 @@ public:
     void setTrustRegionRadiusPenaltyParameter(Real penalty_);
 
     virtual Real evaluate(const dotk::DOTk_KrylovSolver* const solver_,
-                          const std::tr1::shared_ptr<dotk::vector<Real> > & kernel_vector_);
+                          const std::tr1::shared_ptr<dotk::Vector<Real> > & kernel_vector_);
 
 private:
     void initialize();

@@ -15,13 +15,14 @@ namespace dotk
 {
 
 class DOTk_OptimizationDataMng;
-template<class Type>
-class vector;
+
+template<typename ScalarType>
+class Vector;
 
 class DOTk_BacktrackingCubicInterpolation : public dotk::DOTk_LineSearch
 {
 public:
-    explicit DOTk_BacktrackingCubicInterpolation(const std::tr1::shared_ptr<dotk::vector<Real> > & vector_);
+    explicit DOTk_BacktrackingCubicInterpolation(const std::tr1::shared_ptr<dotk::Vector<Real> > & vector_);
     virtual ~DOTk_BacktrackingCubicInterpolation();
 
     virtual Real getConstant() const;
@@ -36,7 +37,7 @@ private:
 
 private:
     Real m_ArmijoRuleConstant;
-    std::tr1::shared_ptr<dotk::vector<Real> > m_TrialPrimal;
+    std::tr1::shared_ptr<dotk::Vector<Real> > m_TrialPrimal;
 
 private:
     // unimplemented

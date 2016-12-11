@@ -974,8 +974,6 @@ TEST(UpperTriangularMatrix, Identity)
     EXPECT_EQ(nrows, matrix.ncols());
     EXPECT_EQ(dotk::types::SERIAL_UPPER_TRI_MATRIX, matrix.type());
 
-    Real gold[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21};
-
     Real start = 0.;
     int my_rank;
     MPI_Comm_rank(MPI_COMM_WORLD, &my_rank);

@@ -19,8 +19,8 @@ class DOTk_TrustRegionStepMng;
 class DOTk_SteihaugTointSolver;
 class DOTk_OptimizationDataMng;
 
-template<typename Type>
-class vector;
+template<typename ScalarType>
+class Vector;
 
 class DOTk_SteihaugTointNewtonIO
 {
@@ -40,7 +40,7 @@ public:
     void closeFile();
 
     void printInitialDiagnostics(const std::tr1::shared_ptr<dotk::DOTk_OptimizationDataMng> & data_mng_);
-    void printSolution(const std::tr1::shared_ptr<dotk::vector<Real> > & primal_);
+    void printSolution(const std::tr1::shared_ptr<dotk::Vector<Real> > & primal_);
     void printConvergedDiagnostics(const std::tr1::shared_ptr<dotk::DOTk_OptimizationDataMng> & data_mng_,
                                    const std::tr1::shared_ptr<dotk::DOTk_SteihaugTointSolver> & solver_,
                                    const dotk::DOTk_TrustRegionStepMng * const step_mng_);
@@ -56,7 +56,7 @@ private:
     void printSubProblemFirstItrDiagnostics(const std::tr1::shared_ptr<dotk::DOTk_OptimizationDataMng> & data_mng_,
                                             const std::tr1::shared_ptr<dotk::DOTk_SteihaugTointSolver> & solver_,
                                             const dotk::DOTk_TrustRegionStepMng * const step_mng_);
-    void printCurrentSolution(const std::tr1::shared_ptr<dotk::vector<Real> > & primal_);
+    void printCurrentSolution(const std::tr1::shared_ptr<dotk::Vector<Real> > & primal_);
 
 private:
     size_t m_NumOptimizationItrDone;

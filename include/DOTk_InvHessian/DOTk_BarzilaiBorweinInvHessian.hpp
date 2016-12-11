@@ -15,26 +15,26 @@ namespace dotk
 
 class DOTk_OptimizationDataMng;
 
-template<class Type>
-class vector;
+template<typename ScalarType>
+class Vector;
 
 class DOTk_BarzilaiBorweinInvHessian : public dotk::DOTk_SecondOrderOperator
 {
 public:
-    explicit DOTk_BarzilaiBorweinInvHessian(const std::tr1::shared_ptr<dotk::vector<Real> > & vector_);
+    explicit DOTk_BarzilaiBorweinInvHessian(const std::tr1::shared_ptr<dotk::Vector<Real> > & vector_);
     virtual ~DOTk_BarzilaiBorweinInvHessian();
 
-    const std::tr1::shared_ptr<dotk::vector<Real> > & getDeltaGrad() const;
-    const std::tr1::shared_ptr<dotk::vector<Real> > & getDeltaPrimal() const;
-    void getInvHessian(const std::tr1::shared_ptr<dotk::vector<Real> > & vector_,
-                       const std::tr1::shared_ptr<dotk::vector<Real> > & inv_hess_times_vector_);
+    const std::tr1::shared_ptr<dotk::Vector<Real> > & getDeltaGrad() const;
+    const std::tr1::shared_ptr<dotk::Vector<Real> > & getDeltaPrimal() const;
+    void getInvHessian(const std::tr1::shared_ptr<dotk::Vector<Real> > & vector_,
+                       const std::tr1::shared_ptr<dotk::Vector<Real> > & inv_hess_times_vector_);
     virtual void apply(const std::tr1::shared_ptr<dotk::DOTk_OptimizationDataMng> & mng_,
-                       const std::tr1::shared_ptr<dotk::vector<Real> > & vector_,
-                       const std::tr1::shared_ptr<dotk::vector<Real> > & matrix_times_vector_);
+                       const std::tr1::shared_ptr<dotk::Vector<Real> > & vector_,
+                       const std::tr1::shared_ptr<dotk::Vector<Real> > & matrix_times_vector_);
 
 private:
-    std::tr1::shared_ptr<dotk::vector<Real> > m_DeltaPrimal;
-    std::tr1::shared_ptr<dotk::vector<Real> > m_DeltaGradient;
+    std::tr1::shared_ptr<dotk::Vector<Real> > m_DeltaPrimal;
+    std::tr1::shared_ptr<dotk::Vector<Real> > m_DeltaGradient;
 
 private:
     DOTk_BarzilaiBorweinInvHessian(const dotk::DOTk_BarzilaiBorweinInvHessian &);

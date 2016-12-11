@@ -13,8 +13,8 @@
 namespace dotk
 {
 
-template<typename Type>
-DOTk_MexObjectiveFunction<Type>::DOTk_MexObjectiveFunction(const mxArray* operators_,
+template<typename ScalarType>
+DOTk_MexObjectiveFunction<ScalarType>::DOTk_MexObjectiveFunction(const mxArray* operators_,
                                                            const dotk::types::problem_t & type_) :
         m_Value(NULL),
         m_FirstDerivative(NULL),
@@ -29,14 +29,14 @@ DOTk_MexObjectiveFunction<Type>::DOTk_MexObjectiveFunction(const mxArray* operat
     this->initialize(operators_, type_);
 }
 
-template<typename Type>
-DOTk_MexObjectiveFunction<Type>::~DOTk_MexObjectiveFunction()
+template<typename ScalarType>
+DOTk_MexObjectiveFunction<ScalarType>::~DOTk_MexObjectiveFunction()
 {
     this->clear();
 }
 
-template<typename Type>
-Type DOTk_MexObjectiveFunction<Type>::value(const dotk::vector<Type> & primal_)
+template<typename ScalarType>
+ScalarType DOTk_MexObjectiveFunction<ScalarType>::value(const dotk::Vector<ScalarType> & primal_)
 {
     dotk::DOTk_MexArrayPtr primal(mxCreateDoubleMatrix(primal_.size(), 1, mxREAL));
     primal_.gather(mxGetPr(primal.get()));
@@ -54,8 +54,8 @@ Type DOTk_MexObjectiveFunction<Type>::value(const dotk::vector<Type> & primal_)
     return (alpha);
 }
 
-template<typename Type>
-void DOTk_MexObjectiveFunction<Type>::gradient(const dotk::vector<Type> & primal_, dotk::vector<Type> & output_)
+template<typename ScalarType>
+void DOTk_MexObjectiveFunction<ScalarType>::gradient(const dotk::Vector<ScalarType> & primal_, dotk::Vector<ScalarType> & output_)
 {
     dotk::DOTk_MexArrayPtr primal(mxCreateDoubleMatrix(primal_.size(), 1, mxREAL));
     primal_.gather(mxGetPr(primal.get()));
@@ -71,10 +71,10 @@ void DOTk_MexObjectiveFunction<Type>::gradient(const dotk::vector<Type> & primal
     primal.release();
 }
 
-template<typename Type>
-void DOTk_MexObjectiveFunction<Type>::hessian(const dotk::vector<Type> & primal_,
-                                              const dotk::vector<Type> & delta_primal_,
-                                              dotk::vector<Type> & output_)
+template<typename ScalarType>
+void DOTk_MexObjectiveFunction<ScalarType>::hessian(const dotk::Vector<ScalarType> & primal_,
+                                              const dotk::Vector<ScalarType> & delta_primal_,
+                                              dotk::Vector<ScalarType> & output_)
 {
     dotk::DOTk_MexArrayPtr primal(mxCreateDoubleMatrix(primal_.size(), 1, mxREAL));
     primal_.gather(mxGetPr(primal.get()));
@@ -94,8 +94,8 @@ void DOTk_MexObjectiveFunction<Type>::hessian(const dotk::vector<Type> & primal_
     delta_primal.release();
 }
 
-template<typename Type>
-Type DOTk_MexObjectiveFunction<Type>::value(const dotk::vector<Type> & state_, const dotk::vector<Type> & control_)
+template<typename ScalarType>
+ScalarType DOTk_MexObjectiveFunction<ScalarType>::value(const dotk::Vector<ScalarType> & state_, const dotk::Vector<ScalarType> & control_)
 {
     dotk::DOTk_MexArrayPtr state(mxCreateDoubleMatrix(state_.size(), 1, mxREAL));
     state_.gather(mxGetPr(state.get()));
@@ -117,10 +117,10 @@ Type DOTk_MexObjectiveFunction<Type>::value(const dotk::vector<Type> & state_, c
     return (value);
 }
 
-template<typename Type>
-void DOTk_MexObjectiveFunction<Type>::partialDerivativeState(const dotk::vector<Type> & state_,
-                                                             const dotk::vector<Type> & control_,
-                                                             dotk::vector<Type> & output_)
+template<typename ScalarType>
+void DOTk_MexObjectiveFunction<ScalarType>::partialDerivativeState(const dotk::Vector<ScalarType> & state_,
+                                                             const dotk::Vector<ScalarType> & control_,
+                                                             dotk::Vector<ScalarType> & output_)
 {
     dotk::DOTk_MexArrayPtr state(mxCreateDoubleMatrix(state_.size(), 1, mxREAL));
     state_.gather(mxGetPr(state.get()));
@@ -140,10 +140,10 @@ void DOTk_MexObjectiveFunction<Type>::partialDerivativeState(const dotk::vector<
     control.release();
 }
 
-template<typename Type>
-void DOTk_MexObjectiveFunction<Type>::partialDerivativeControl(const dotk::vector<Type> & state_,
-                                                               const dotk::vector<Type> & control_,
-                                                               dotk::vector<Type> & output_)
+template<typename ScalarType>
+void DOTk_MexObjectiveFunction<ScalarType>::partialDerivativeControl(const dotk::Vector<ScalarType> & state_,
+                                                               const dotk::Vector<ScalarType> & control_,
+                                                               dotk::Vector<ScalarType> & output_)
 {
     dotk::DOTk_MexArrayPtr state(mxCreateDoubleMatrix(state_.size(), 1, mxREAL));
     state_.gather(mxGetPr(state.get()));
@@ -163,11 +163,11 @@ void DOTk_MexObjectiveFunction<Type>::partialDerivativeControl(const dotk::vecto
     control.release();
 }
 
-template<typename Type>
-void DOTk_MexObjectiveFunction<Type>::partialDerivativeStateState(const dotk::vector<Type> & state_,
-                                                                  const dotk::vector<Type> & control_,
-                                                                  const dotk::vector<Type> & vector_,
-                                                                  dotk::vector<Type> & output_)
+template<typename ScalarType>
+void DOTk_MexObjectiveFunction<ScalarType>::partialDerivativeStateState(const dotk::Vector<ScalarType> & state_,
+                                                                  const dotk::Vector<ScalarType> & control_,
+                                                                  const dotk::Vector<ScalarType> & vector_,
+                                                                  dotk::Vector<ScalarType> & output_)
 {
     dotk::DOTk_MexArrayPtr state(mxCreateDoubleMatrix(state_.size(), 1, mxREAL));
     state_.gather(mxGetPr(state.get()));
@@ -191,11 +191,11 @@ void DOTk_MexObjectiveFunction<Type>::partialDerivativeStateState(const dotk::ve
     delta_state.release();
 }
 
-template<typename Type>
-void DOTk_MexObjectiveFunction<Type>::partialDerivativeStateControl(const dotk::vector<Type> & state_,
-                                                                    const dotk::vector<Type> & control_,
-                                                                    const dotk::vector<Type> & vector_,
-                                                                    dotk::vector<Type> & output_)
+template<typename ScalarType>
+void DOTk_MexObjectiveFunction<ScalarType>::partialDerivativeStateControl(const dotk::Vector<ScalarType> & state_,
+                                                                    const dotk::Vector<ScalarType> & control_,
+                                                                    const dotk::Vector<ScalarType> & vector_,
+                                                                    dotk::Vector<ScalarType> & output_)
 {
     dotk::DOTk_MexArrayPtr state(mxCreateDoubleMatrix(state_.size(), 1, mxREAL));
     state_.gather(mxGetPr(state.get()));
@@ -220,11 +220,11 @@ void DOTk_MexObjectiveFunction<Type>::partialDerivativeStateControl(const dotk::
     delta_control.release();
 }
 
-template<typename Type>
-void DOTk_MexObjectiveFunction<Type>::partialDerivativeControlState(const dotk::vector<Type> & state_,
-                                                                    const dotk::vector<Type> & control_,
-                                                                    const dotk::vector<Type> & vector_,
-                                                                    dotk::vector<Type> & output_)
+template<typename ScalarType>
+void DOTk_MexObjectiveFunction<ScalarType>::partialDerivativeControlState(const dotk::Vector<ScalarType> & state_,
+                                                                    const dotk::Vector<ScalarType> & control_,
+                                                                    const dotk::Vector<ScalarType> & vector_,
+                                                                    dotk::Vector<ScalarType> & output_)
 {
     dotk::DOTk_MexArrayPtr state(mxCreateDoubleMatrix(state_.size(), 1, mxREAL));
     state_.gather(mxGetPr(state.get()));
@@ -249,11 +249,11 @@ void DOTk_MexObjectiveFunction<Type>::partialDerivativeControlState(const dotk::
     delta_state.release();
 }
 
-template<typename Type>
-void DOTk_MexObjectiveFunction<Type>::partialDerivativeControlControl(const dotk::vector<Type> & state_,
-                                                                      const dotk::vector<Type> & control_,
-                                                                      const dotk::vector<Type> & vector_,
-                                                                      dotk::vector<Type> & output_)
+template<typename ScalarType>
+void DOTk_MexObjectiveFunction<ScalarType>::partialDerivativeControlControl(const dotk::Vector<ScalarType> & state_,
+                                                                      const dotk::Vector<ScalarType> & control_,
+                                                                      const dotk::Vector<ScalarType> & vector_,
+                                                                      dotk::Vector<ScalarType> & output_)
 {
     dotk::DOTk_MexArrayPtr state(mxCreateDoubleMatrix(state_.size(), 1, mxREAL));
     state_.gather(mxGetPr(state.get()));
@@ -278,8 +278,8 @@ void DOTk_MexObjectiveFunction<Type>::partialDerivativeControlControl(const dotk
     delta_control.release();
 }
 
-template<typename Type>
-void DOTk_MexObjectiveFunction<Type>::clear()
+template<typename ScalarType>
+void DOTk_MexObjectiveFunction<ScalarType>::clear()
 {
     m_Value.release();
     m_FirstDerivative.release();
@@ -292,8 +292,8 @@ void DOTk_MexObjectiveFunction<Type>::clear()
     m_SecondDerivativeControlControl.release();
 }
 
-template<typename Type>
-void DOTk_MexObjectiveFunction<Type>::initialize(const mxArray* operators_, const dotk::types::problem_t & type_)
+template<typename ScalarType>
+void DOTk_MexObjectiveFunction<ScalarType>::initialize(const mxArray* operators_, const dotk::types::problem_t & type_)
 {
     m_Value.reset(mxDuplicateArray(mxGetField(operators_, 0, "value")));
     switch(type_)
@@ -334,7 +334,7 @@ void DOTk_MexObjectiveFunction<Type>::initialize(const mxArray* operators_, cons
         case dotk::types::PROBLEM_TYPE_UNDEFINED:
         default:
         {
-            std::string err("\nERROR: Invalid Problem Type in Call to DOTk_MexObjectiveFunction<T>::initialize\n");
+            std::string err("\nERROR: Invalid Problem ScalarType in Call to DOTk_MexObjectiveFunction<T>::initialize\n");
             mexErrMsgTxt(err.c_str());
             break;
         }

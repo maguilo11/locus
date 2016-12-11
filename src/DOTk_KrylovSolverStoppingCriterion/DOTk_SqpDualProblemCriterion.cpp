@@ -31,7 +31,7 @@ DOTk_SqpDualProblemCriterion::~DOTk_SqpDualProblemCriterion()
 }
 
 Real DOTk_SqpDualProblemCriterion::evaluate(const dotk::DOTk_KrylovSolver * const solver_,
-                                            const std::tr1::shared_ptr<dotk::vector<Real> > & kernel_vector_)
+                                            const std::tr1::shared_ptr<dotk::Vector<Real> > & kernel_vector_)
 {
     size_t num_solver_itrs_done = solver_->getNumSolverItrDone();
     if(num_solver_itrs_done == 0)

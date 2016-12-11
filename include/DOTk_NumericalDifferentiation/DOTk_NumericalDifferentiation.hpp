@@ -16,8 +16,8 @@ namespace dotk
 
 class DOTk_Functor;
 
-template<typename Type>
-class vector;
+template<typename ScalarType>
+class Vector;
 
 class DOTk_NumericalDifferentiation
 {
@@ -30,10 +30,10 @@ public:
     dotk::types::numerical_integration_t type() const;
 
     virtual void differentiate(const std::tr1::shared_ptr<dotk::DOTk_Functor> & operator_,
-                               const dotk::vector<Real> & primal_,
-                               const dotk::vector<Real> & direction_,
-                               const dotk::vector<Real> & first_derivative_,
-                               dotk::vector<Real> & second_derivative_) = 0;
+                               const dotk::Vector<Real> & primal_,
+                               const dotk::Vector<Real> & direction_,
+                               const dotk::Vector<Real> & first_derivative_,
+                               dotk::Vector<Real> & second_derivative_) = 0;
 
 private:
     Real m_Epsilon;

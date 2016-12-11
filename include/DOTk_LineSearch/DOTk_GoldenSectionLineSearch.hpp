@@ -15,13 +15,14 @@ namespace dotk
 {
 
 class DOTk_OptimizationDataMng;
-template<typename Type>
-class vector;
+
+template<typename ScalarType>
+class Vector;
 
 class DOTk_GoldenSectionLineSearch : public dotk::DOTk_LineSearch
 {
 public:
-    explicit DOTk_GoldenSectionLineSearch(const std::tr1::shared_ptr<dotk::vector<Real> > & vector_);
+    explicit DOTk_GoldenSectionLineSearch(const std::tr1::shared_ptr<dotk::Vector<Real> > & vector_);
     virtual ~DOTk_GoldenSectionLineSearch();
 
     virtual void step(const std::tr1::shared_ptr<dotk::DOTk_OptimizationDataMng> & mng_);
@@ -32,7 +33,7 @@ private:
 private:
     std::vector<Real> m_Step;
     std::vector<Real> m_ObjectiveFuncVal;
-    std::tr1::shared_ptr<dotk::vector<Real> > m_TrialPrimal;
+    std::tr1::shared_ptr<dotk::Vector<Real> > m_TrialPrimal;
 
 private:
     // unimplemented

@@ -23,7 +23,7 @@ DOTk_RoutinesTypeULP::~DOTk_RoutinesTypeULP()
 {
 }
 
-Real DOTk_RoutinesTypeULP::objective(const std::tr1::shared_ptr<dotk::vector<Real> > & primal_)
+Real DOTk_RoutinesTypeULP::objective(const std::tr1::shared_ptr<dotk::Vector<Real> > & primal_)
 {
     /// DOTk interface: Objective function interface. \n
     /// In: \n
@@ -39,8 +39,8 @@ Real DOTk_RoutinesTypeULP::objective(const std::tr1::shared_ptr<dotk::vector<Rea
     return (objective_func_val);
 }
 
-void DOTk_RoutinesTypeULP::objective(const std::vector<std::tr1::shared_ptr<dotk::vector<Real> > > & primal_,
-                                     const std::tr1::shared_ptr<dotk::vector<Real> > & values_)
+void DOTk_RoutinesTypeULP::objective(const std::vector<std::tr1::shared_ptr<dotk::Vector<Real> > > & primal_,
+                                     const std::tr1::shared_ptr<dotk::Vector<Real> > & values_)
 {
     /// DOTk interface: Objective function parallel interface. \n
     /// In: \n
@@ -54,30 +54,30 @@ void DOTk_RoutinesTypeULP::objective(const std::vector<std::tr1::shared_ptr<dotk
     dotk::DOTk_AssemblyManager::updateObjectiveFunctionEvaluationCounter();
 }
 
-void DOTk_RoutinesTypeULP::objective(const std::vector<std::tr1::shared_ptr<dotk::vector<Real> > > & primal_plus_,
-                                     const std::vector<std::tr1::shared_ptr<dotk::vector<Real> > > & primal_minus_,
-                                     const std::tr1::shared_ptr<dotk::vector<Real> > & values_plus_,
-                                     const std::tr1::shared_ptr<dotk::vector<Real> > & values_minus_)
+void DOTk_RoutinesTypeULP::objective(const std::vector<std::tr1::shared_ptr<dotk::Vector<Real> > > & primal_plus_,
+                                     const std::vector<std::tr1::shared_ptr<dotk::Vector<Real> > > & primal_minus_,
+                                     const std::tr1::shared_ptr<dotk::Vector<Real> > & values_plus_,
+                                     const std::tr1::shared_ptr<dotk::Vector<Real> > & values_minus_)
 {
     /// DOTk interface: Interface to parallel central difference interface. This routine is used when a parallel central
     ///                 difference scheme is applied to compute the gradient operator. \n
     /// In: \n
     ///     vars_plus_ = forward perturbed state vector, unchanged on exist. \n
-    ///       (std::vector< std::map<dotk::types::variable_t, std::tr1::shared_ptr< dotk::vector<Real> > > >) \n
+    ///       (std::vector< std::map<dotk::types::variable_t, std::tr1::shared_ptr< dotk::Vector<Real> > > >) \n
     ///     vars_minus_ = backward perturbed state vector, unchanged on exist. \n
-    ///       (std::vector< std::map<dotk::types::variable_t, std::tr1::shared_ptr< dotk::vector<Real> > > >) \n
+    ///       (std::vector< std::map<dotk::types::variable_t, std::tr1::shared_ptr< dotk::Vector<Real> > > >) \n
     /// In/Out: \n
     ///     fval_plus_ = place holder for the evaluation of the objective function for each forward perturbed state vector. \n
-    ///       (std::map<dotk::types::variable_t, std::tr1::shared_ptr< dotk::vector<Real> > >) \n
+    ///       (std::map<dotk::types::variable_t, std::tr1::shared_ptr< dotk::Vector<Real> > >) \n
     ///     fval_minus_ = place holder for the evaluation of the objective function for each backward perturbed state vector. \n
-    ///       (std::map<dotk::types::variable_t, std::tr1::shared_ptr< dotk::vector<Real> > >) \n
+    ///       (std::map<dotk::types::variable_t, std::tr1::shared_ptr< dotk::Vector<Real> > >) \n
     ///
     m_ObjectiveFunction->value(primal_plus_, primal_minus_, values_plus_, values_minus_);
     dotk::DOTk_AssemblyManager::updateObjectiveFunctionEvaluationCounter();
 }
 
-void DOTk_RoutinesTypeULP::gradient(const std::tr1::shared_ptr<dotk::vector<Real> > & primal_,
-                                    const std::tr1::shared_ptr<dotk::vector<Real> > & gradient_)
+void DOTk_RoutinesTypeULP::gradient(const std::tr1::shared_ptr<dotk::Vector<Real> > & primal_,
+                                    const std::tr1::shared_ptr<dotk::Vector<Real> > & gradient_)
 {
     /// Reduced space interface: Assemble the reduced space gradient operator. \n
     /// In: \n
@@ -92,9 +92,9 @@ void DOTk_RoutinesTypeULP::gradient(const std::tr1::shared_ptr<dotk::vector<Real
     dotk::DOTk_AssemblyManager::updateGradientEvaluationCounter();
 }
 
-void DOTk_RoutinesTypeULP::hessian(const std::tr1::shared_ptr<dotk::vector<Real> > & primal_,
-                                   const std::tr1::shared_ptr<dotk::vector<Real> > & trial_step_,
-                                   const std::tr1::shared_ptr<dotk::vector<Real> > & Hess_times_vector_)
+void DOTk_RoutinesTypeULP::hessian(const std::tr1::shared_ptr<dotk::Vector<Real> > & primal_,
+                                   const std::tr1::shared_ptr<dotk::Vector<Real> > & trial_step_,
+                                   const std::tr1::shared_ptr<dotk::Vector<Real> > & Hess_times_vector_)
 {
     /// Reduced space interface: Assemble the reduced space gradient operator. \n
     /// In: \n

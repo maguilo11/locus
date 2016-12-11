@@ -521,7 +521,7 @@ void parseSetInitialTrustRegionRadiusToNormGradFlag(const mxArray* options_, boo
     ptr.release();
 }
 
-void parseDualData(const mxArray* options_, dotk::vector<double> & output_)
+void parseDualData(const mxArray* options_, dotk::Vector<double> & output_)
 {
     if(mxIsEmpty(mxGetField(options_, 0, "Dual")) == true)
     {
@@ -536,7 +536,7 @@ void parseDualData(const mxArray* options_, dotk::vector<double> & output_)
     data.release();
 }
 
-void parseStateData(const mxArray* options_, dotk::vector<double> & output_)
+void parseStateData(const mxArray* options_, dotk::Vector<double> & output_)
 {
     if(mxIsEmpty(mxGetField(options_, 0, "State")) == true)
     {
@@ -551,7 +551,7 @@ void parseStateData(const mxArray* options_, dotk::vector<double> & output_)
     data.release();
 }
 
-void parseControlData(const mxArray* options_, dotk::vector<double> & output_)
+void parseControlData(const mxArray* options_, dotk::Vector<double> & output_)
 {
     if(mxIsEmpty(mxGetField(options_, 0, "Control")) == true)
     {
@@ -706,7 +706,7 @@ void parseBoundConstraintMethod(const mxArray* options_, dotk::types::constraint
     method.release();
 }
 
-void parseDualLowerBound(const mxArray* options_, dotk::vector<double> & output_)
+void parseDualLowerBound(const mxArray* options_, dotk::Vector<double> & output_)
 {
     if(mxIsEmpty(mxGetField(options_, 0, "DualLowerBounds")) == true)
     {
@@ -720,7 +720,7 @@ void parseDualLowerBound(const mxArray* options_, dotk::vector<double> & output_
     data.release();
 }
 
-void parseDualUpperBound(const mxArray* options_, dotk::vector<double> & output_)
+void parseDualUpperBound(const mxArray* options_, dotk::Vector<double> & output_)
 {
     if(mxIsEmpty(mxGetField(options_, 0, "DualUpperBounds")) == true)
     {
@@ -733,7 +733,7 @@ void parseDualUpperBound(const mxArray* options_, dotk::vector<double> & output_
     data.release();
 }
 
-void parseStateLowerBound(const mxArray* options_, dotk::vector<double> & output_)
+void parseStateLowerBound(const mxArray* options_, dotk::Vector<double> & output_)
 {
     if(mxIsEmpty(mxGetField(options_, 0, "StateLowerBounds")) == true)
     {
@@ -746,7 +746,7 @@ void parseStateLowerBound(const mxArray* options_, dotk::vector<double> & output
     data.release();
 }
 
-void parseStateUpperBound(const mxArray* options_, dotk::vector<double> & output_)
+void parseStateUpperBound(const mxArray* options_, dotk::Vector<double> & output_)
 {
     if(mxIsEmpty(mxGetField(options_, 0, "StateUpperBounds")) == true)
     {
@@ -759,7 +759,7 @@ void parseStateUpperBound(const mxArray* options_, dotk::vector<double> & output
     data.release();
 }
 
-void parseControlLowerBound(const mxArray* options_, dotk::vector<double> & output_)
+void parseControlLowerBound(const mxArray* options_, dotk::Vector<double> & output_)
 {
     if(mxIsEmpty(mxGetField(options_, 0, "ControlLowerBounds")) == true)
     {
@@ -772,7 +772,7 @@ void parseControlLowerBound(const mxArray* options_, dotk::vector<double> & outp
     data.release();
 }
 
-void parseControlUpperBound(const mxArray* options_, dotk::vector<double> & output_)
+void parseControlUpperBound(const mxArray* options_, dotk::Vector<double> & output_)
 {
     if(mxIsEmpty(mxGetField(options_, 0, "ControlUpperBounds")) == true)
     {
@@ -785,7 +785,7 @@ void parseControlUpperBound(const mxArray* options_, dotk::vector<double> & outp
     data.release();
 }
 
-void parseFiniteDifferencePerturbation(const mxArray* options_, dotk::vector<double> & output_)
+void parseFiniteDifferencePerturbation(const mxArray* options_, dotk::Vector<double> & output_)
 {
     if(mxIsEmpty(mxGetField(options_, 0, "FiniteDifferencePerturbations")) == true)
     {

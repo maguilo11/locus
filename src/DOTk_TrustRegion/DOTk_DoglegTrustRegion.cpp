@@ -23,10 +23,10 @@ DOTk_DoglegTrustRegion::~DOTk_DoglegTrustRegion()
 {
 }
 
-void DOTk_DoglegTrustRegion::dogleg(const std::tr1::shared_ptr<dotk::vector<Real> > & grad_,
-                                    const std::tr1::shared_ptr<dotk::vector<Real> > & matrix_times_grad_,
-                                    const std::tr1::shared_ptr<dotk::vector<Real> > & cauchy_step_,
-                                    const std::tr1::shared_ptr<dotk::vector<Real> > & newton_step_)
+void DOTk_DoglegTrustRegion::dogleg(const std::tr1::shared_ptr<dotk::Vector<Real> > & grad_,
+                                    const std::tr1::shared_ptr<dotk::Vector<Real> > & matrix_times_grad_,
+                                    const std::tr1::shared_ptr<dotk::Vector<Real> > & cauchy_step_,
+                                    const std::tr1::shared_ptr<dotk::Vector<Real> > & newton_step_)
 {
     Real current_trust_region_radius = dotk::DOTk_TrustRegion::getTrustRegionRadius();
     Real grad_dot_newton_step = grad_->dot(*newton_step_);
@@ -65,8 +65,8 @@ void DOTk_DoglegTrustRegion::dogleg(const std::tr1::shared_ptr<dotk::vector<Real
 }
 
 void DOTk_DoglegTrustRegion::step(const dotk::DOTk_OptimizationDataMng * const mng_,
-                                  const std::tr1::shared_ptr<dotk::vector<Real> > & cauchy_direction_,
-                                  const std::tr1::shared_ptr<dotk::vector<Real> > & scaled_direction_)
+                                  const std::tr1::shared_ptr<dotk::Vector<Real> > & cauchy_direction_,
+                                  const std::tr1::shared_ptr<dotk::Vector<Real> > & scaled_direction_)
 {
     this->dogleg(mng_->getNewGradient(), mng_->getMatrixTimesVector(), cauchy_direction_, scaled_direction_);
 }

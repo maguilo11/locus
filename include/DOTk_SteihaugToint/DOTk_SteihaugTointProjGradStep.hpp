@@ -22,8 +22,8 @@ class DOTk_SteihaugTointSolver;
 class DOTk_SteihaugTointNewtonIO;
 class DOTk_OptimizationDataMng;
 
-template<typename Type>
-class vector;
+template<typename ScalarType>
+class Vector;
 
 class DOTk_SteihaugTointProjGradStep : public dotk::DOTk_TrustRegionStepMng
 {
@@ -64,13 +64,13 @@ private:
     std::tr1::shared_ptr<dotk::DOTk_Preconditioner> m_Preconditioner;
     std::tr1::shared_ptr<dotk::DOTk_BoundConstraints> m_BoundConstraint;
 
-    std::tr1::shared_ptr<dotk::vector<Real> > m_ActiveSet;
-    std::tr1::shared_ptr<dotk::vector<Real> > m_LowerBound;
-    std::tr1::shared_ptr<dotk::vector<Real> > m_UpperBound;
-    std::tr1::shared_ptr<dotk::vector<Real> > m_WorkVector;
-    std::tr1::shared_ptr<dotk::vector<Real> > m_CurrentPrimal;
-    std::tr1::shared_ptr<dotk::vector<Real> > m_ProjectedTrialStep;
-    std::tr1::shared_ptr<dotk::vector<Real> > m_ProjectedCauchyStep;
+    std::tr1::shared_ptr<dotk::Vector<Real> > m_ActiveSet;
+    std::tr1::shared_ptr<dotk::Vector<Real> > m_LowerBound;
+    std::tr1::shared_ptr<dotk::Vector<Real> > m_UpperBound;
+    std::tr1::shared_ptr<dotk::Vector<Real> > m_WorkVector;
+    std::tr1::shared_ptr<dotk::Vector<Real> > m_CurrentPrimal;
+    std::tr1::shared_ptr<dotk::Vector<Real> > m_ProjectedTrialStep;
+    std::tr1::shared_ptr<dotk::Vector<Real> > m_ProjectedCauchyStep;
 
 private:
     DOTk_SteihaugTointProjGradStep(const dotk::DOTk_SteihaugTointProjGradStep &);

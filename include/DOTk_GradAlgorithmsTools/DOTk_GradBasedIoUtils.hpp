@@ -15,8 +15,8 @@ namespace dotk
 
 class DOTk_OptimizationDataMng;
 
-template<class Type>
-class vector;
+template<typename ScalarType>
+class Vector;
 
 namespace ioUtils
 {
@@ -25,7 +25,7 @@ bool printMessage(std::ostringstream & msg_);
 void getLicenseMessage(std::ostringstream & msg_);
 void checkType(dotk::types::variable_t input_type_, dotk::types::variable_t primal_type_);
 void getSolverExitCriterion(dotk::types::solver_stop_criterion_t type_, std::ostringstream & criterion_);
-void checkDataPtr(const std::tr1::shared_ptr<dotk::vector<Real> > & data_, std::ostringstream & data_type_);
+void checkDataPtr(const std::tr1::shared_ptr<dotk::Vector<Real> > & data_, std::ostringstream & data_type_);
 
 }
 

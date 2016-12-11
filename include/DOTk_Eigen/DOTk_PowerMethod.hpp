@@ -14,9 +14,9 @@
 namespace dotk
 {
 
-template<typename Type>
-class vector;
-template<typename Type>
+template<typename ScalarType>
+class Vector;
+template<typename ScalarType>
 class matrix;
 
 class DOTk_PowerMethod : public dotk::DOTk_EigenMethod
@@ -31,7 +31,7 @@ public:
     void setRelativeDifferenceTolerance(Real tol_);
     virtual void solve(const std::tr1::shared_ptr<dotk::matrix<Real> > & matrix_,
                        Real & eigenvalues_,
-                       std::tr1::shared_ptr<dotk::vector<Real> > & eigenvectors_);
+                       std::tr1::shared_ptr<dotk::Vector<Real> > & eigenvectors_);
 
 private:
     size_t m_MaxNumItr;

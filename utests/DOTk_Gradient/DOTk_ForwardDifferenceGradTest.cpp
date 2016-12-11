@@ -30,7 +30,7 @@ TEST(ForwardDifferenceGrad, getFiniteDiffPerturbationVec)
     dotk::DOTk_ForwardDifferenceGrad grad(mng.getNewGradient());
 
     EXPECT_EQ(2, grad.getFiniteDiffPerturbationVec()->size());
-    std::tr1::shared_ptr<dotk::vector<Real> > gold = primal->control()->clone();
+    std::tr1::shared_ptr<dotk::Vector<Real> > gold = primal->control()->clone();
     gold->fill(1e-6);
     dotk::gtest::checkResults(*grad.getFiniteDiffPerturbationVec(), *gold);
 }
@@ -69,7 +69,7 @@ TEST(ForwardDifferenceGrad, gradient)
     mng.setNewObjectiveFunctionValue(objective_function_value);
     grad.gradient(&mng);
 
-    std::tr1::shared_ptr<dotk::vector<Real> > gold = primal->control()->clone();
+    std::tr1::shared_ptr<dotk::Vector<Real> > gold = primal->control()->clone();
     (*gold)[0] = 1602.;
     (*gold)[1] = -400.;
     dotk::gtest::checkResults(*mng.getNewGradient(), *gold, 1e-2);
@@ -89,7 +89,7 @@ TEST(ForwardDifferenceGrad, getGradient)
     Real fval = mng.getRoutinesMng()->objective(mng.getNewPrimal());
     grad.getGradient(fval, mng.getRoutinesMng(), mng.getNewPrimal(), mng.getNewGradient());
 
-    std::tr1::shared_ptr<dotk::vector<Real> > gold = primal->control()->clone();
+    std::tr1::shared_ptr<dotk::Vector<Real> > gold = primal->control()->clone();
     (*gold)[0] = 1602.;
     (*gold)[1] = -400.;
     dotk::gtest::checkResults(*mng.getNewGradient(), *gold, 1e-2);

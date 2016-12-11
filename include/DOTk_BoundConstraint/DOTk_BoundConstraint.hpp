@@ -13,8 +13,8 @@
 namespace dotk
 {
 
-template<class Type>
-class vector;
+template<class ScalarType>
+class Vector;
 
 class DOTk_Primal;
 class DOTk_LineSearch;
@@ -54,20 +54,20 @@ public:
                        const std::tr1::shared_ptr<dotk::DOTk_OptimizationDataMng> & mng_);
     Real getMinReductionStep(const std::tr1::shared_ptr<dotk::DOTk_OptimizationDataMng> & mng_);
 
-    const std::tr1::shared_ptr<dotk::vector<Real> > & activeSet() const;
-    void project(const std::tr1::shared_ptr<dotk::vector<Real> > & lwr_bound_,
-                 const std::tr1::shared_ptr<dotk::vector<Real> > & upr_bound_,
-                 const std::tr1::shared_ptr<dotk::vector<Real> > & primal_);
-    bool isFeasible(const std::tr1::shared_ptr<dotk::vector<Real> > & lower_bound_,
-                    const std::tr1::shared_ptr<dotk::vector<Real> > & upper_bound_,
-                    const std::tr1::shared_ptr<dotk::vector<Real> > & primal_);
-    void pruneActive(const std::tr1::shared_ptr<dotk::vector<Real> > & direction_);
-    void computeActiveSet(const std::tr1::shared_ptr<dotk::vector<Real> > & lower_bound_,
-                          const std::tr1::shared_ptr<dotk::vector<Real> > & upper_bound_,
-                          const std::tr1::shared_ptr<dotk::vector<Real> > & primal_);
+    const std::tr1::shared_ptr<dotk::Vector<Real> > & activeSet() const;
+    void project(const std::tr1::shared_ptr<dotk::Vector<Real> > & lwr_bound_,
+                 const std::tr1::shared_ptr<dotk::Vector<Real> > & upr_bound_,
+                 const std::tr1::shared_ptr<dotk::Vector<Real> > & primal_);
+    bool isFeasible(const std::tr1::shared_ptr<dotk::Vector<Real> > & lower_bound_,
+                    const std::tr1::shared_ptr<dotk::Vector<Real> > & upper_bound_,
+                    const std::tr1::shared_ptr<dotk::Vector<Real> > & primal_);
+    void pruneActive(const std::tr1::shared_ptr<dotk::Vector<Real> > & direction_);
+    void computeActiveSet(const std::tr1::shared_ptr<dotk::Vector<Real> > & lower_bound_,
+                          const std::tr1::shared_ptr<dotk::Vector<Real> > & upper_bound_,
+                          const std::tr1::shared_ptr<dotk::Vector<Real> > & primal_);
     void computeScaledTrialStep(const std::tr1::shared_ptr<dotk::DOTk_LineSearch> & step_,
                                 const std::tr1::shared_ptr<dotk::DOTk_OptimizationDataMng> & mng_,
-                                const std::tr1::shared_ptr<dotk::vector<Real> > & primal_);
+                                const std::tr1::shared_ptr<dotk::Vector<Real> > & primal_);
 
     virtual void constraint(const std::tr1::shared_ptr<dotk::DOTk_LineSearch> & step_,
                             const std::tr1::shared_ptr<dotk::DOTk_OptimizationDataMng> & mng_){}
@@ -84,7 +84,7 @@ private:
     dotk::types::bound_step_t m_StepType;
     dotk::types::constraint_method_t m_Type;
 
-    std::tr1::shared_ptr<dotk::vector<Real> > m_ActiveSet;
+    std::tr1::shared_ptr<dotk::Vector<Real> > m_ActiveSet;
 
 private:
     DOTk_BoundConstraint(const dotk::DOTk_BoundConstraint &);

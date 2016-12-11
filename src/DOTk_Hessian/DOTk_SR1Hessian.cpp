@@ -15,7 +15,7 @@
 namespace dotk
 {
 
-DOTk_SR1Hessian::DOTk_SR1Hessian(const std::tr1::shared_ptr<dotk::vector<Real> > & vector_) :
+DOTk_SR1Hessian::DOTk_SR1Hessian(const std::tr1::shared_ptr<dotk::Vector<Real> > & vector_) :
         dotk::DOTk_SecondOrderOperator(),
         m_DeltaPrimal(vector_->clone()),
         m_DeltaGradient(vector_->clone()),
@@ -28,18 +28,18 @@ DOTk_SR1Hessian::~DOTk_SR1Hessian()
 {
 }
 
-const std::tr1::shared_ptr<dotk::vector<Real> > & DOTk_SR1Hessian::getDeltaGrad() const
+const std::tr1::shared_ptr<dotk::Vector<Real> > & DOTk_SR1Hessian::getDeltaGrad() const
 {
     return (m_DeltaGradient);
 }
 
-const std::tr1::shared_ptr<dotk::vector<Real> > & DOTk_SR1Hessian::getDeltaPrimal() const
+const std::tr1::shared_ptr<dotk::Vector<Real> > & DOTk_SR1Hessian::getDeltaPrimal() const
 {
     return (m_DeltaPrimal);
 }
 
-void DOTk_SR1Hessian::getHessian(const std::tr1::shared_ptr<dotk::vector<Real> > & vector_,
-                                 const std::tr1::shared_ptr<dotk::vector<Real> > & hess_times_vector_)
+void DOTk_SR1Hessian::getHessian(const std::tr1::shared_ptr<dotk::Vector<Real> > & vector_,
+                                 const std::tr1::shared_ptr<dotk::Vector<Real> > & hess_times_vector_)
 {
     hess_times_vector_->copy(*vector_);
     Real dgrad_dot_dprimal = m_DeltaGradient->dot(*m_DeltaPrimal);
@@ -74,8 +74,8 @@ void DOTk_SR1Hessian::getHessian(const std::tr1::shared_ptr<dotk::vector<Real> >
 }
 
 void DOTk_SR1Hessian::apply(const std::tr1::shared_ptr<dotk::DOTk_OptimizationDataMng> & mng_,
-                            const std::tr1::shared_ptr<dotk::vector<Real> > & vector_,
-                            const std::tr1::shared_ptr<dotk::vector<Real> > & matrix_times_vector_)
+                            const std::tr1::shared_ptr<dotk::Vector<Real> > & vector_,
+                            const std::tr1::shared_ptr<dotk::Vector<Real> > & matrix_times_vector_)
 {
     dotk::DOTk_SecondOrderOperator::computeDeltaPrimal(mng_->getNewPrimal(), mng_->getOldPrimal(), m_DeltaPrimal);
     dotk::DOTk_SecondOrderOperator::computeDeltaGradient(mng_->getNewGradient(), mng_->getOldGradient(), m_DeltaGradient);

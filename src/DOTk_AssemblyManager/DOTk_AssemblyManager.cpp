@@ -135,87 +135,87 @@ void DOTk_AssemblyManager::updateAdjointInverseJacobianStateCounter()
     m_AdjointInverseJacobianStateCounter++;
 }
 
-Real DOTk_AssemblyManager::objective(const std::tr1::shared_ptr<dotk::vector<Real> > & primal_)
+Real DOTk_AssemblyManager::objective(const std::tr1::shared_ptr<dotk::Vector<Real> > & primal_)
 {
     std::string msg(" CALLING UNIMPLEMENTED DOTk_AssemblyManager::objective **** ");
     std::cerr << " **** ERROR MESSAGE: " << msg.c_str() << std::flush;
     std::abort();
 }
 
-void DOTk_AssemblyManager::objective(const std::vector<std::tr1::shared_ptr<dotk::vector<Real> > > & primal_,
-                                     const std::tr1::shared_ptr<dotk::vector<Real> > & output_)
+void DOTk_AssemblyManager::objective(const std::vector<std::tr1::shared_ptr<dotk::Vector<Real> > > & primal_,
+                                     const std::tr1::shared_ptr<dotk::Vector<Real> > & output_)
 {
     std::string msg(" CALLING UNIMPLEMENTED DOTk_AssemblyManager::objective **** ");
     std::cerr << " **** ERROR MESSAGE: " << msg.c_str() << std::flush;
     std::abort();
 }
 
-void DOTk_AssemblyManager::objective(const std::vector<std::tr1::shared_ptr<dotk::vector<Real> > > & primal_plus_,
-                                     const std::vector<std::tr1::shared_ptr<dotk::vector<Real> > > & primal_minus_,
-                                     const std::tr1::shared_ptr<dotk::vector<Real> > & fval_plus_,
-                                     const std::tr1::shared_ptr<dotk::vector<Real> > & fval_minus_)
+void DOTk_AssemblyManager::objective(const std::vector<std::tr1::shared_ptr<dotk::Vector<Real> > > & primal_plus_,
+                                     const std::vector<std::tr1::shared_ptr<dotk::Vector<Real> > > & primal_minus_,
+                                     const std::tr1::shared_ptr<dotk::Vector<Real> > & fval_plus_,
+                                     const std::tr1::shared_ptr<dotk::Vector<Real> > & fval_minus_)
 {
     std::string msg(" CALLING UNIMPLEMENTED DOTk_AssemblyManager::objective **** ");
     std::cerr << " **** ERROR MESSAGE: " << msg.c_str() << std::flush;
     std::abort();
 }
 
-void DOTk_AssemblyManager::gradient(const std::tr1::shared_ptr<dotk::vector<Real> > & primal_,
-                                    const std::tr1::shared_ptr<dotk::vector<Real> > & output_)
+void DOTk_AssemblyManager::gradient(const std::tr1::shared_ptr<dotk::Vector<Real> > & primal_,
+                                    const std::tr1::shared_ptr<dotk::Vector<Real> > & output_)
 {
     std::string msg(" CALLING UNIMPLEMENTED DOTk_AssemblyManager::gradient **** ");
     std::cerr << " **** ERROR MESSAGE: " << msg.c_str() << std::flush;
     std::abort();
 }
 
-void DOTk_AssemblyManager::gradient(const std::tr1::shared_ptr<dotk::vector<Real> > & primal_,
-                                    const std::tr1::shared_ptr<dotk::vector<Real> > & dual_,
-                                    const std::tr1::shared_ptr<dotk::vector<Real> > & output_)
+void DOTk_AssemblyManager::gradient(const std::tr1::shared_ptr<dotk::Vector<Real> > & primal_,
+                                    const std::tr1::shared_ptr<dotk::Vector<Real> > & dual_,
+                                    const std::tr1::shared_ptr<dotk::Vector<Real> > & output_)
 {
     std::string msg(" CALLING UNIMPLEMENTED DOTk_AssemblyManager::gradient **** ");
     std::cerr << " **** ERROR MESSAGE: " << msg.c_str() << std::flush;
     std::abort();
 }
 
-void DOTk_AssemblyManager::hessian(const std::tr1::shared_ptr<dotk::vector<Real> > & primal_,
-                                   const std::tr1::shared_ptr<dotk::vector<Real> > & vector_,
-                                   const std::tr1::shared_ptr<dotk::vector<Real> > & output_)
+void DOTk_AssemblyManager::hessian(const std::tr1::shared_ptr<dotk::Vector<Real> > & primal_,
+                                   const std::tr1::shared_ptr<dotk::Vector<Real> > & vector_,
+                                   const std::tr1::shared_ptr<dotk::Vector<Real> > & output_)
 {
     std::string msg(" CALLING UNIMPLEMENTED DOTk_AssemblyManager::hessian **** ");
     std::cerr << " **** ERROR MESSAGE: " << msg.c_str() << std::flush;
     std::abort();
 }
 
-void DOTk_AssemblyManager::hessian(const std::tr1::shared_ptr<dotk::vector<Real> > & primal_,
-                                   const std::tr1::shared_ptr<dotk::vector<Real> > & dual_,
-                                   const std::tr1::shared_ptr<dotk::vector<Real> > & delta_primal_,
-                                   const std::tr1::shared_ptr<dotk::vector<Real> > & output_)
+void DOTk_AssemblyManager::hessian(const std::tr1::shared_ptr<dotk::Vector<Real> > & primal_,
+                                   const std::tr1::shared_ptr<dotk::Vector<Real> > & dual_,
+                                   const std::tr1::shared_ptr<dotk::Vector<Real> > & delta_primal_,
+                                   const std::tr1::shared_ptr<dotk::Vector<Real> > & output_)
 {
     std::string msg(" CALLING UNIMPLEMENTED DOTk_AssemblyManager::hessian **** ");
     std::cerr << " **** ERROR MESSAGE: " << msg.c_str() << std::flush;
     std::abort();
 }
 
-void DOTk_AssemblyManager::equalityConstraint(const std::tr1::shared_ptr<dotk::vector<Real> > & primal_,
-                                              const std::tr1::shared_ptr<dotk::vector<Real> > & output_)
+void DOTk_AssemblyManager::equalityConstraint(const std::tr1::shared_ptr<dotk::Vector<Real> > & primal_,
+                                              const std::tr1::shared_ptr<dotk::Vector<Real> > & output_)
 {
     std::string msg(" CALLING UNIMPLEMENTED DOTk_AssemblyManager::equalityConstraint **** ");
     std::cerr << " **** ERROR MESSAGE: " << msg.c_str() << std::flush;
     std::abort();
 }
 
-void DOTk_AssemblyManager::jacobian(const std::tr1::shared_ptr<dotk::vector<Real> > & primal_,
-                                    const std::tr1::shared_ptr<dotk::vector<Real> > & delta_primal_,
-                                    const std::tr1::shared_ptr<dotk::vector<Real> > & output_)
+void DOTk_AssemblyManager::jacobian(const std::tr1::shared_ptr<dotk::Vector<Real> > & primal_,
+                                    const std::tr1::shared_ptr<dotk::Vector<Real> > & delta_primal_,
+                                    const std::tr1::shared_ptr<dotk::Vector<Real> > & output_)
 {
     std::string msg(" CALLING UNIMPLEMENTED DOTk_AssemblyManager::jacobian **** ");
     std::cerr << " **** ERROR MESSAGE: " << msg.c_str() << std::flush;
     std::abort();
 }
 
-void DOTk_AssemblyManager::adjointJacobian(const std::tr1::shared_ptr<dotk::vector<Real> > & primal_,
-                                           const std::tr1::shared_ptr<dotk::vector<Real> > & dual_,
-                                           const std::tr1::shared_ptr<dotk::vector<Real> > & output_)
+void DOTk_AssemblyManager::adjointJacobian(const std::tr1::shared_ptr<dotk::Vector<Real> > & primal_,
+                                           const std::tr1::shared_ptr<dotk::Vector<Real> > & dual_,
+                                           const std::tr1::shared_ptr<dotk::Vector<Real> > & output_)
 {
     std::string msg(" CALLING UNIMPLEMENTED DOTk_AssemblyManager::adjointJacobian **** ");
     std::cerr << " **** ERROR MESSAGE: " << msg.c_str() << std::flush;
@@ -230,7 +230,7 @@ Real DOTk_AssemblyManager::inequalityBound(const size_t index_)
 }
 
 Real DOTk_AssemblyManager::inequalityValue(const size_t index_,
-                                           const std::tr1::shared_ptr<dotk::vector<Real> > & control_)
+                                           const std::tr1::shared_ptr<dotk::Vector<Real> > & control_)
 {
     std::string msg(" CALLING UNIMPLEMENTED DOTk_AssemblyManager::inequalityValue **** ");
     std::cerr << " **** ERROR MESSAGE: " << msg.c_str() << std::flush;
@@ -238,8 +238,8 @@ Real DOTk_AssemblyManager::inequalityValue(const size_t index_,
 }
 
 void DOTk_AssemblyManager::inequalityGradient(const size_t index_,
-                                              const std::tr1::shared_ptr<dotk::vector<Real> > & control_,
-                                              const std::tr1::shared_ptr<dotk::vector<Real> > & gradient_)
+                                              const std::tr1::shared_ptr<dotk::Vector<Real> > & control_,
+                                              const std::tr1::shared_ptr<dotk::Vector<Real> > & gradient_)
 {
     std::string msg(" CALLING UNIMPLEMENTED DOTk_AssemblyManager::inequalityGradient **** ");
     std::cerr << " **** ERROR MESSAGE: " << msg.c_str() << std::flush;

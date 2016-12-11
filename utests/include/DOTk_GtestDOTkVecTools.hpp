@@ -15,21 +15,21 @@ namespace dotk
 
 class DOTk_Variable;
 
-template<class Type>
-class vector;
+template<typename ScalarType>
+class Vector;
 
 namespace gtest
 {
 
-std::tr1::shared_ptr<dotk::vector<Real> > allocateControl();
-std::tr1::shared_ptr<dotk::vector<Real> > allocateData(size_t num_entries_, Real value_ = 0);
+std::tr1::shared_ptr<dotk::Vector<Real> > allocateControl();
+std::tr1::shared_ptr<dotk::Vector<Real> > allocateData(size_t num_entries_, Real value_ = 0);
 
 void checkResults(const std::vector<Real> & results_, const std::vector<Real> & gold_, Real tol_ = 1e-8);
-void checkResults(const dotk::vector<Real> & results_, const dotk::vector<Real> & gold_, Real tol_ = 1e-8);
-void checkResults(const dotk::vector<Real> & gold_, const dotk::vector<Real> & results_, int thread_count_, Real tol_ = 1e-8);
+void checkResults(const dotk::Vector<Real> & results_, const dotk::Vector<Real> & gold_, Real tol_ = 1e-8);
+void checkResults(const dotk::Vector<Real> & gold_, const dotk::Vector<Real> & results_, int thread_count_, Real tol_ = 1e-8);
 void checkResults(const size_t & num_gold_values,
                   const Real* gold_,
-                  const dotk::vector<Real> & results_,
+                  const dotk::Vector<Real> & results_,
                   int thread_count_ = 1,
                   Real tol_ = 1e-8);
 void checkResults(const size_t & num_gold_values,

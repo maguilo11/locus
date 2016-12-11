@@ -15,9 +15,9 @@ namespace dotk
 
 class DOTk_Primal;
 
-template<class Type>
+template<typename ScalarType>
 class matrix;
-template<class Type>
+template<typename ScalarType>
 class DOTk_ObjectiveFunction;
 
 class DOTk_LineSearchMngTypeULP : public dotk::DOTk_LineSearchAlgorithmsDataMng
