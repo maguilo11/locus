@@ -6,6 +6,8 @@ clc;
 global GLB_INVP;
 
 %%%%%%%%%%%%%%%%%%%%%%%%%% Paths to dependencies %%%%%%%%%%%%%%%%%%%%%%%%%%
+addpath ./source/new/;
+addpath ./source/new/interface/;
 addpath /Users/miguelaguilo/locus/intrelab;
 addpath /Users/miguelaguilo/locus/femlab/mesh_tools/;
 addpath /Users/miguelaguilo/Research/femlab/utilities/;
