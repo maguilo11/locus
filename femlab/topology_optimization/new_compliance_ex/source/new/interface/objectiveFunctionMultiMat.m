@@ -1,4 +1,4 @@
-function [Operators] = objectiveFunction()
+function [Operators] = objectiveFunctionMultiMat
 Operators.evaluate=@(state,control)evaluate(state,control);
 Operators.firstDerivativeWrtState=...
     @(state,control)firstDerivativeWrtState(state,control);

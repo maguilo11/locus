@@ -1,4 +1,4 @@
-function [struc] = driverTOPT(mesh_file)
+function [struc] = driverTOPT(mesh_file,multi_material)
 
 % Limit on volume
 VolumeFraction = 0.4;
@@ -13,6 +13,7 @@ gamma = 1e-2;
 % generate problem-specific constant quantities
 input.neumann = false;
 input.mesh_file = mesh_file;
+input.multi_material = multi_material;
 rhs_fn=@(struc)generateNodalForce(struc);
 [struc] = generateParams(input, rhs_fn);
 

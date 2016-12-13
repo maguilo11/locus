@@ -15,6 +15,7 @@ addpath /Users/miguelaguilo/locus/femlab/algorithm/gcmma/;
 %%%%%%%%%%%%%%%%%%%%%%%%%% Paths to dependencies %%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Problem setup %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+multi_material = true;
 problem_t = 'compliance';
 objective = objectiveFunction;
 equality = equalityConstraint;
@@ -34,7 +35,7 @@ switch problem_t
         control_upper_bound = 1e1.*ones(number_controls,1);
     case 'compliance'
         mesh_file = '/Users/miguelaguilo/locus/femlab/mesh_tools/data/lbracket_2D_quad.exo';
-        [GLB_INVP] = driverTOPT(mesh_file);
+        [GLB_INVP] = driverTOPT(mesh_file,multi_material);
         inequality.number_inequalities = 1;
         number_controls = GLB_INVP.nVertGrid;
         one = ones(GLB_INVP.nVertGrid,1);
@@ -52,8 +53,8 @@ end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Problem setup %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % Solve nonlinear programming problem with GCMMA
-tol = 5e-6;
-max_outer_itr = 100;
+tol = 1e-6;
+max_outer_itr = 50;
 a_coefficients = zeros(1+inequality.number_inequalities,1);
 a_coefficients(1) = 1;
 d_coefficients = ones(inequality.number_inequalities,1);

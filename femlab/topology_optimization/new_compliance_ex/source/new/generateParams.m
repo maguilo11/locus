@@ -48,7 +48,8 @@ set(0, 'defaultaxesfontsize',12,'defaultaxeslinewidth',0.7,...
 
 %%%%%%%%%%% Generate problem specific data.
 struc.neumann = input.neumann;
-[struc] = generateProblemSpecs(struc);
+struc.multi_material = input.multi_material;
+[struc] = setMaterialProperties(struc);
 [struc] = generateProbSpecificData(struc);
 
 %%%%%%%%%%% Generate the right hand sides and dirichlet boundary data
