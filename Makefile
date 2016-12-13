@@ -16,7 +16,7 @@ CXXFLAGS=-fopenmp -O3 -Wall -g -std=c++11
 
 # C++ include directory
 #CXX_INCLUDE = /usr/include/c++/4.2.1/
-CXX_INCLUDE = /usr/local/Cellar/gcc/4.9.2_1/include/c++/4.9.2/
+CXX_INCLUDE=/usr/local/Cellar/gcc/4.9.2_1/include/c++/4.9.2/
 
 # Set DOTk source and include directories
 DOTk_SOURCE_DIR = $(DOTk_INSTALL_DIR)src/

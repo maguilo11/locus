@@ -6,12 +6,10 @@ clc;
 global GLB_INVP;
 
 %%%%%%%%%%%%%%%%%%%%%%%%%% Paths to dependencies %%%%%%%%%%%%%%%%%%%%%%%%%%
-addpath ./src/nova/;
-addpath ./src/nova/interface/;
-addpath /Users/miguelaguilo/Research/intrelab;
-addpath /Users/miguelaguilo/Research/femlab/mesh/
-addpath /Users/miguelaguilo/Research/femlab/tools/;
-addpath /Users/miguelaguilo/Research/femlab/algorithm/gcmma/;
+addpath /Users/miguelaguilo/locus/intrelab;
+addpath /Users/miguelaguilo/locus/femlab/mesh_tools/;
+addpath /Users/miguelaguilo/Research/femlab/utilities/;
+addpath /Users/miguelaguilo/locus/femlab/algorithm/gcmma/;
 %%%%%%%%%%%%%%%%%%%%%%%%%% Paths to dependencies %%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Problem setup %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -33,7 +31,7 @@ switch problem_t
         control_lower_bound = 1e-3.*ones(number_controls,1);
         control_upper_bound = 1e1.*ones(number_controls,1);
     case 'compliance'
-        mesh_file = '/Users/miguelaguilo/Research/femlab/mesh/data/lbracket_2D_quad.exo';
+        mesh_file = '/Users/miguelaguilo/locus/femlab/mesh_tools/data/lbracket_2D_quad.exo';
         [GLB_INVP] = driverTOPT(mesh_file);
         inequality.number_inequalities = 1;
         number_controls = GLB_INVP.nVertGrid;
@@ -52,7 +50,7 @@ end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Problem setup %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % Solve nonlinear programming problem with GCMMA
-tol = 1e-5;
+tol = 5e-6;
 max_outer_itr = 100;
 a_coefficients = zeros(1+inequality.number_inequalities,1);
 a_coefficients(1) = 1;

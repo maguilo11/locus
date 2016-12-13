@@ -4,7 +4,7 @@ DOTK_INSTALL_DIR=/Users/miguelaguilo/locus/
 # Set MEX compiler (MEX) and corresponding flags (MEXFLAGS)
 MEXFLAGS=
 MEX=/Applications/MATLAB_R2015a.app/bin/mex 
-CXX=/usr/local/Cellar/gcc/4.9.2_1/bin/g++-4.9
+CXX=/usr/local/bin/mpicxx
 
 # C++ include directory
 CXX_HEADERS=/usr/local/Cellar/gcc/4.9.2_1/include/c++/4.9.2/
@@ -25,8 +25,8 @@ ALL_INCLUDE_DIR=-I$(CXX_HEADERS) -I$(MEX_HEADERS) -I$(MEX_INCLUDE_DIR) -I$(MEX_P
 	-I$(DOTk_MATRIX_SRC) -I$(DOTk_OC) -I$(DOTk_QR) -I$(DOTk_STEIHAUG_TOINT) -I$(DOTk_INCLUDE_DIR) 
 
 # Set GNU compiler options
-CXXOPTIMFLAGS=-O3
-CXXFLAGS=$(ALL_INCLUDE_DIR) -g -fopenmp -fPIC -Wall -std=c++11
+CXXOPTIMFLAGS='-O3'
+CXXFLAGS='-std=c++11 -Wall -fopenmp'
 
 # Set MEX source directory (MEX_SOURCE_DIR), MEX include directory (MEX_INCLUDE_DIR), objects output directory (MEX_OBJECT_DIR), 
 # and executables output directory (EXEDIR)
@@ -1552,8 +1552,9 @@ MEX_SECND_DIGNSTCS_TYPENLP=$(MEX_OBJECT_DIR)mexDOTkCheckSecondDerivativeTypeNLP.
 	$(MEX_OBJECT_DIR)DOTk_State.o \
 	$(MEX_OBJECT_DIR)DOTk_Dual.o
 
-.C.o:
-	$(MEX) -largeArrays CXX=$(CXX) CXXFLAGS=$(CXXFLAGS) CXXOPTIMFLAGS=$(CXXOPTIMFLAGS) -outdir $(MEX_OBJECT_DIR) -c $@ $<
+.cpp.o:
+ 
+	$(MEX) -largeArrayDims -outdir $(MEX_OBJECT_DIR) CXX=$(CXX) CXXFLAGS=$(CXXFLAGS) $(ALL_INCLUDE_DIR) CXXOPTIMFLAGS=$(CXXOPTIMFLAGS) -c $@ $<
 
 locus: $(DOTK_OBJS)
 
@@ -1582,7 +1583,7 @@ all:
 	mkdir obj 
 	mkdir exe
 	make -f Makefile locus
-	make -f Makefile m
+	make -f Makefile MEX
 	
 clean:
 	$(RM) -rf $(MEX_OBJECT_DIR) $(EXEDIR)
