@@ -1,7 +1,5 @@
 function [struc] = driverTOPT(mesh_file,multi_material)
 
-% Limit on volume
-VolumeFraction = 0.4;
 % Density model
 model_t = 'simp';
 
@@ -21,7 +19,6 @@ rhs_fn=@(struc)generateNodalForce(struc);
 struc.reg = reg;
 struc.beta = beta;
 struc.gamma = gamma;
-struc.VolumeFraction = VolumeFraction;
 struc.model_t = model_t;
 % Normalization factors
 struc.theta = 1;

@@ -8,10 +8,10 @@ global GLB_INVP;
 %%%%%%%%%%%%%%%%%%%%%%%%%% Paths to dependencies %%%%%%%%%%%%%%%%%%%%%%%%%%
 addpath ./src/nova/;
 addpath ./src/nova/interface/;
-addpath /Users/miguelaguilo/Research/intrelab;
-addpath /Users/miguelaguilo/Research/femlab/mesh/
-addpath /Users/miguelaguilo/Research/femlab/tools/;
-addpath /Users/miguelaguilo/Research/femlab/algorithm/gcmma/;
+addpath /Users/miguelaguilo/locus/intrelab/;
+addpath /Users/miguelaguilo/locus/femlab/mesh_tools/;
+addpath /Users/miguelaguilo/Research/femlab/utilities/;
+addpath /Users/miguelaguilo/locus/femlab/algorithm/gcmma/;
 %%%%%%%%%%%%%%%%%%%%%%%%%% Paths to dependencies %%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Operators %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -22,7 +22,7 @@ inequality = inequalityConstraint;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Operators %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %%%%%%%%%%%%%%%%%%%%%%%%% Read exodus file (mesh) %%%%%%%%%%%%%%%%%%%%%%%%%
-mesh_file = '/Users/miguelaguilo/Research/femlab/mesh/data/lbracket_2D_quad3.exo';
+mesh_file = '/Users/miguelaguilo/locus/femlab/mesh_tools/data/lbracket_2D_quad.exo';
 %%%%%%%%%%%%%%%%%%%%%%%%% Read exodus file (mesh) %%%%%%%%%%%%%%%%%%%%%%%%%
 
 %%%%%%%%%%%%%%%%%%%%%%%%%% Physics problem setup %%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -64,7 +64,9 @@ else
 end
 
 end
-
+%
+%%%%%%%%%%%%%%%%%%%%%%%%% FINITE DIFFERENCE CHECK %%%%%%%%%%%%%%%%%%%%%%%%%
+%
 function [error] = checkGradient(objective,equality,control)
 
 rng(1);

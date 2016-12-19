@@ -83,7 +83,7 @@ while(iteration <= max_outer_itr)
         norm(control_minus_one-primal(1:number_controls));
     objective_stagnation = abs(Fold - function_values(1));
     grad_norm = norm(function_grad(active_set~=1,1))  / initial_grad_norm;
-    show(GLB_INVP.mesh.t, GLB_INVP.mesh.p, primal(1:number_controls));
+    %show(GLB_INVP.mesh.t, GLB_INVP.mesh.p, primal(1:GLB_INVP.nVertGrid));
     if(stop == true)
         why = 'residual';
         break;

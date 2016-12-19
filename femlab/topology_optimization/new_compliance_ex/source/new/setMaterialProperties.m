@@ -1,33 +1,34 @@
 function [struc] = setMaterialProperties(struc)
 
-% Set material properties
 if(struc.multi_material==false)
+    % Set material properties
     E = 1;
     nu = 0.3;
-    stiffness_bound = 1e-9;
     %
+    struc.num_materials = 1;
+    struc.min_stiffness = 1e-9;
     struc.B = E / (3*(1 - (2*nu)));  % bulk modulus
     struc.G = E / (2*(1+nu));          % shear modulus
     struc.G = struc.G*ones(struc.nVertGrid,1);
     struc.B = struc.B*ones(struc.nVertGrid,1);
-    struc.Bmin = stiffness_bound * struc.B;
-    struc.Gmin = stiffness_bound * struc.G;
+    % Limit on material volume
+    struc.VolumeFraction = 0.4;
 else
-    E = [0.8; 0.6];
+    % Set material properties
+    E = [0.9; 0.2];
     nu = [0.3; 0.25];
     G = E ./ (2.*(1+nu));          % shear modulus
     B = E ./ (3.*(1 - (2*nu)));    % bulk modulus
-    stiffness_bound = [1e-9;1e-9];
+    struc.num_materials = length(E);
+    struc.min_stiffness = [1e-9;1e-9];
     struc.G = ones(struc.nVertGrid,size(E,1));
     struc.B = ones(struc.nVertGrid,size(E,1));
-    struc.Gmin = ones(struc.nVertGrid,size(E,1));
-    struc.Bmin = ones(struc.nVertGrid,size(E,1));
-    for index=1:length(E)
+    for index=1:struc.num_materials
         struc.G(:,index) = G(index)*struc.G(:,index);
-        struc.Gmin(:,index) = stiffness_bound(index)*struc.G(:,index);
         struc.B(:,index) = B(index)*struc.B(:,index);
-        struc.Bmin(:,index) = stiffness_bound(index)*struc.B(:,index);
     end
+    % Limit on material volume
+    struc.VolumeFraction = 0.4;
 end
 
 end

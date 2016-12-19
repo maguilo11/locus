@@ -36,16 +36,19 @@ nVertGrid = GLB_INVP.nVertGrid;
 state = zeros(spaceDim*nVertGrid,1);
 
 %%%%%%%%%%% Penalized Cell Stiffness Matrices
-pow = GLB_INVP.SimpPenalty;
-control_at_dof = control( GLB_INVP.mesh.t');
-PenalizedStiffMatPerCell = zeros(size(GLB_INVP.CellStifsnessMat));
-for cell=1:GLB_INVP.numCells
-    penalty = ...
-        sum(GLB_INVP.CellMassMatrices(:,:,cell) * control_at_dof(:,cell)) ...
-        / GLB_INVP.ElemVolume(cell);
-    penalty = penalty^pow;
-    PenalizedStiffMatPerCell(:,:,cell) = GLB_INVP.MinCellStifsnessMat(:,:,cell) + ...
-        (penalty * (GLB_INVP.CellStifsnessMat(:,:,cell) - GLB_INVP.MinCellStifsnessMat(:,:,cell)));
+nodal_controls = GLB_INVP.InterpolationRule.transform(control);
+PenalizedStiffMatPerCell = ...
+    zeros(GLB_INVP.numDof, GLB_INVP.numDof, GLB_INVP.numCells);
+for material_index=1:GLB_INVP.num_materials
+    for cell=1:GLB_INVP.numCells
+        material_penalty = ...
+            GLB_INVP.PenaltyModel.evaluate(material_index,cell,nodal_controls);
+        interpolatio_rule_panalty = ...
+            GLB_INVP.InterpolationRule.evaluate(material_index,cell,nodal_controls);
+        scale_factor = interpolatio_rule_panalty * material_penalty;
+        PenalizedStiffMatPerCell(:,:,cell) = PenalizedStiffMatPerCell(:,:,cell) + ...
+            (scale_factor .* GLB_INVP.CellStifsnessMat(:,:,cell,material_index));
+    end
 end
 
 %%%%%%%%%%% build global deviatoric stiffness matrix
@@ -78,16 +81,18 @@ nVertGrid = GLB_INVP.nVertGrid;
 output = zeros(spaceDim*nVertGrid,1);
 
 %%%%%%%%%%% Penalized Cell Stiffness Matrices
-pow = GLB_INVP.SimpPenalty;
-control_at_dof = control( GLB_INVP.mesh.t');
+nodal_controls = GLB_INVP.InterpolationRule.transform(control);
 PenalizedStiffMatPerCell = zeros(size(GLB_INVP.CellStifsnessMat));
-for cell=1:GLB_INVP.numCells
-    penalty = ...
-        sum(GLB_INVP.CellMassMatrices(:,:,cell) * control_at_dof(:,cell)) ...
-        / GLB_INVP.ElemVolume(cell);
-    penalty = penalty^pow;
-    PenalizedStiffMatPerCell(:,:,cell) = GLB_INVP.MinCellStifsnessMat(:,:,cell) + ...
-        (penalty * (GLB_INVP.CellStifsnessMat(:,:,cell) - GLB_INVP.MinCellStifsnessMat(:,:,cell)));
+for material_index=1:GLB_INVP.num_materials
+    for cell=1:GLB_INVP.numCells
+        material_penalty = ...
+            GLB_INVP.PenaltyModel.evaluate(material_index,cell,nodal_controls);
+        interpolatio_rule_panalty = ...
+            GLB_INVP.InterpolationRule.evaluate(material_index,cell,nodal_controls);
+        scale_factor = interpolatio_rule_panalty * material_penalty;
+        PenalizedStiffMatPerCell(:,:,cell) = PenalizedStiffMatPerCell(:,:,cell) + ...
+            (scale_factor .* GLB_INVP.CellStifsnessMat(:,:,cell,material_index));
+    end
 end
 
 %%%%%%%%%%% build global deviatoric stiffness matrix
@@ -108,20 +113,19 @@ global GLB_INVP;
 spaceDim  = GLB_INVP.spaceDim;
 nVertGrid = GLB_INVP.nVertGrid;
 
-%%%%%%%%%%% Initialization of lhs (i.e. solution) vector.
-dual = zeros(spaceDim*nVertGrid,1);
-
 %%%%%%%%%%% Penalized Cell Stiffness Matrices
-pow = GLB_INVP.SimpPenalty;
-control_at_dof = control( GLB_INVP.mesh.t');
+nodal_controls = GLB_INVP.InterpolationRule.transform(control);
 PenalizedStiffMatPerCell = zeros(size(GLB_INVP.CellStifsnessMat));
-for cell=1:GLB_INVP.numCells
-    penalty = ...
-        sum(GLB_INVP.CellMassMatrices(:,:,cell) * control_at_dof(:,cell)) ...
-        / GLB_INVP.ElemVolume(cell);
-    penalty = penalty^pow;
-    PenalizedStiffMatPerCell(:,:,cell) = GLB_INVP.MinCellStifsnessMat(:,:,cell) + ...
-        (penalty * (GLB_INVP.CellStifsnessMat(:,:,cell) - GLB_INVP.MinCellStifsnessMat(:,:,cell)));
+for material_index=1:GLB_INVP.num_materials
+    for cell=1:GLB_INVP.numCells
+        material_penalty = ...
+            GLB_INVP.PenaltyModel.evaluate(material_index,cell,nodal_controls);
+        interpolatio_rule_panalty = ...
+            GLB_INVP.InterpolationRule.evaluate(material_index,cell,nodal_controls);
+        scale_factor = interpolatio_rule_panalty * material_penalty;
+        PenalizedStiffMatPerCell(:,:,cell) = PenalizedStiffMatPerCell(:,:,cell) + ...
+            (scale_factor .* GLB_INVP.CellStifsnessMat(:,:,cell,material_index));
+    end
 end
 
 %%%%%%%%%%% build global deviatoric stiffness matrix
@@ -130,6 +134,7 @@ StiffMat = ...
 K = sparse(GLB_INVP.iIdxDof, GLB_INVP.jIdxDof, StiffMat);
 
 %%%%%%%%%%% Solve
+dual = zeros(spaceDim*nVertGrid,1);
 dual(GLB_INVP.FreeDof) = K(GLB_INVP.FreeDof,GLB_INVP.FreeDof) ...
     \ rhs(GLB_INVP.FreeDof);
 
@@ -142,16 +147,18 @@ function [output] = residual(state,control)
 global GLB_INVP;
 
 %%%%%%%%%%% Penalized Cell Stiffness Matrices
-pow = GLB_INVP.SimpPenalty;
-control_at_dof = control( GLB_INVP.mesh.t');
+nodal_controls = GLB_INVP.InterpolationRule.transform(control);
 PenalizedStiffMatPerCell = zeros(size(GLB_INVP.CellStifsnessMat));
-for cell=1:GLB_INVP.numCells
-    penalty = ...
-        sum(GLB_INVP.CellMassMatrices(:,:,cell) * control_at_dof(:,cell)) ...
-        / GLB_INVP.ElemVolume(cell);
-    penalty = penalty^pow;
-    PenalizedStiffMatPerCell(:,:,cell) = GLB_INVP.MinCellStifsnessMat(:,:,cell) + ...
-        (penalty * (GLB_INVP.CellStifsnessMat(:,:,cell) - GLB_INVP.MinCellStifsnessMat(:,:,cell)));
+for material_index=1:GLB_INVP.num_materials
+    for cell=1:GLB_INVP.numCells
+        material_penalty = ...
+            GLB_INVP.PenaltyModel.evaluate(material_index,cell,nodal_controls);
+        interpolatio_rule_panalty = ...
+            GLB_INVP.InterpolationRule.evaluate(material_index,cell,nodal_controls);
+        scale_factor = interpolatio_rule_panalty * material_penalty;
+        PenalizedStiffMatPerCell(:,:,cell) = PenalizedStiffMatPerCell(:,:,cell) + ...
+            (scale_factor .* GLB_INVP.CellStifsnessMat(:,:,cell,material_index));
+    end
 end
 
 %%%%%%%%%%% build global deviatoric stiffness matrix
@@ -170,16 +177,18 @@ function [output] = firstDerivativeWrtState(state,control,dstate)
 global GLB_INVP;
 
 %%%%%%%%%%% Penalized Cell Stiffness Matrices
-pow = GLB_INVP.SimpPenalty;
-control_at_dof = control( GLB_INVP.mesh.t');
+nodal_controls = GLB_INVP.InterpolationRule.transform(control);
 PenalizedStiffMatPerCell = zeros(size(GLB_INVP.CellStifsnessMat));
-for cell=1:GLB_INVP.numCells
-    penalty = ...
-        sum(GLB_INVP.CellMassMatrices(:,:,cell) * control_at_dof(:,cell)) ...
-        / GLB_INVP.ElemVolume(cell);
-    penalty = penalty^pow;
-    PenalizedStiffMatPerCell(:,:,cell) = GLB_INVP.MinCellStifsnessMat(:,:,cell) + ...
-        (penalty * (GLB_INVP.CellStifsnessMat(:,:,cell) - GLB_INVP.MinCellStifsnessMat(:,:,cell)));
+for material_index=1:GLB_INVP.num_materials
+    for cell=1:GLB_INVP.numCells
+        material_penalty = ...
+            GLB_INVP.PenaltyModel.evaluate(material_index,cell,nodal_controls);
+        interpolatio_rule_panalty = ...
+            GLB_INVP.InterpolationRule.evaluate(material_index,cell,nodal_controls);
+        scale_factor = interpolatio_rule_panalty * material_penalty;
+        PenalizedStiffMatPerCell(:,:,cell) = PenalizedStiffMatPerCell(:,:,cell) + ...
+            (scale_factor .* GLB_INVP.CellStifsnessMat(:,:,cell,material_index));
+    end
 end
 
 %%%%%%%%%%% build global deviatoric stiffness matrix
@@ -197,20 +206,23 @@ function [output] = firstDerivativeWrtControl(state,control,dcontrol)
 
 global GLB_INVP;
 
-%%%%%%%%%%% Compute Penalty Parameters
-pow = GLB_INVP.SimpPenalty;
-control_at_dof = control( GLB_INVP.mesh.t');
-dcontrol_at_dof = dcontrol(GLB_INVP.mesh.t');
-PenalizedStiffMatPerCell = GLB_INVP.CellStifsnessMat - GLB_INVP.MinCellStifsnessMat;
-for cell=1:GLB_INVP.numCells
-    penalty = ...
-        sum(GLB_INVP.CellMassMatrices(:,:,cell) * control_at_dof(:,cell)) ...
-        / GLB_INVP.ElemVolume(cell);
-    penalty = pow * penalty^(pow-1);
-    factor = (1/GLB_INVP.ElemVolume(cell)) * ...
-        sum(GLB_INVP.CellMassMatrices(:,:,cell) * dcontrol_at_dof(:,cell));
-    PenalizedStiffMatPerCell(:,:,cell) = penalty * factor * ...
-        PenalizedStiffMatPerCell(:,:,cell);
+%%%%%%%%%%% Compute penalized sensitivities
+nodal_controls = GLB_INVP.InterpolationRule.transform(control);
+nodal_dcontrols = GLB_INVP.InterpolationRule.transform(dcontrol);
+PenalizedStiffMatPerCell = zeros(size(GLB_INVP.CellStifsnessMat));
+for material_index=1:GLB_INVP.num_materials
+    for cell=1:GLB_INVP.numCells
+        material_penalty = ...
+            GLB_INVP.PenaltyModel.sensitivity(material_index,cell,nodal_controls);
+        scale_factor = sum(GLB_INVP.CellMassMatrices(:,:,cell) * ...
+            nodal_dcontrols(:,cell,material_index));
+        cell_stiffness_matrix = ...
+            GLB_INVP.InterpolationRule.sensitivity(material_index,cell,nodal_controls);
+        cell_stiffness_matrix = (material_penalty * scale_factor) .* ...
+            cell_stiffness_matrix;
+        PenalizedStiffMatPerCell(:,:,cell) = cell_stiffness_matrix + ...
+            PenalizedStiffMatPerCell(:,:,cell);
+    end
 end
 
 %%%%%%%%%%% Assemble compliance term gradient
@@ -228,16 +240,18 @@ function [output] = adjointFirstDerivativeWrtState(state,control,dual)
 global GLB_INVP;
 
 %%%%%%%%%%% Penalized Cell Stiffness Matrices
-pow = GLB_INVP.SimpPenalty;
-control_at_dof = control( GLB_INVP.mesh.t');
+nodal_controls = GLB_INVP.InterpolationRule.transform(control);
 PenalizedStiffMatPerCell = zeros(size(GLB_INVP.CellStifsnessMat));
-for cell=1:GLB_INVP.numCells
-    penalty = ...
-        sum(GLB_INVP.CellMassMatrices(:,:,cell)*control_at_dof(:,cell)) ...
-        / GLB_INVP.ElemVolume(cell);
-    penalty = penalty^pow;
-    PenalizedStiffMatPerCell(:,:,cell) = GLB_INVP.MinCellStifsnessMat(:,:,cell) + ...
-        (penalty * (GLB_INVP.CellStifsnessMat(:,:,cell) - GLB_INVP.MinCellStifsnessMat(:,:,cell)));
+for material_index=1:GLB_INVP.num_materials
+    for cell=1:GLB_INVP.numCells
+        material_penalty = ...
+            GLB_INVP.PenaltyModel.evaluate(material_index,cell,nodal_controls);
+        interpolatio_rule_panalty = ...
+            GLB_INVP.InterpolationRule.evaluate(material_index,cell,nodal_controls);
+        scale_factor = interpolatio_rule_panalty * material_penalty;
+        PenalizedStiffMatPerCell(:,:,cell) = PenalizedStiffMatPerCell(:,:,cell) + ...
+            (scale_factor .* GLB_INVP.CellStifsnessMat(:,:,cell,material_index));
+    end
 end
 
 %%%%%%%%%%% build global deviatoric stiffness matrix
@@ -256,20 +270,18 @@ function [output] = adjointFirstDerivativeWrtControl(state,control,dual)
 global GLB_INVP;
 
 %%%%%%%%%%% Compute Penalty Parameters
-pow = GLB_INVP.SimpPenalty;
-dual_at_dof = dual(GLB_INVP.mesh.dof);
-state_at_dof = state(GLB_INVP.mesh.dof);
-control_at_dof = control( GLB_INVP.mesh.t');
+nodal_duals = dual(GLB_INVP.mesh.dof);
+nodal_states = state(GLB_INVP.mesh.dof);
+nodal_controls = control( GLB_INVP.mesh.t');
 PenalizedMassMatPerCell = GLB_INVP.CellMassMatrices;
 for cell=1:GLB_INVP.numCells
-    penalty = ...
-        sum(GLB_INVP.CellMassMatrices(:,:,cell) * control_at_dof(:,cell)) ...
-        / GLB_INVP.ElemVolume(cell);
-    penalty = pow * penalty^(pow-1);
-    factor = dual_at_dof(:,cell)' * ( penalty .* (GLB_INVP.CellStifsnessMat(:,:,cell) ...
-        - GLB_INVP.MinCellStifsnessMat(:,:,cell)) ) * state_at_dof(:,cell);
-    PenalizedMassMatPerCell(:,:,cell) = factor * ...
-        (1/GLB_INVP.ElemVolume(cell)) * PenalizedMassMatPerCell(:,:,cell);
+    material_penalty = ...
+        GLB_INVP.PenaltyModel.sensitivity(material_index,cell,nodal_controls);
+    scale_factor = nodal_duals(:,cell)' * ...
+        ( material_penalty .* GLB_INVP.CellStifsnessMat(:,:,cell) ) ...
+        * nodal_states(:,cell);
+    PenalizedMassMatPerCell(:,:,cell) = ...
+        scale_factor * PenalizedMassMatPerCell(:,:,cell);
 end
 
 %%%%%%%%%%% Assemble compliance term gradient
@@ -294,18 +306,13 @@ function [output] = secondDerivativeWrtStateControl(state,control,dual,dcontrol)
 global GLB_INVP;
 
 %%%%%%%%%%% Compute Penalty Parameters
-pow = GLB_INVP.SimpPenalty;
-control_at_dof = control( GLB_INVP.mesh.t');
-dcontrol_at_dof = dcontrol(GLB_INVP.mesh.t');
-PenalizedStiffMatPerCell = GLB_INVP.CellStifsnessMat - GLB_INVP.MinCellStifsnessMat;
+nodal_controls = control( GLB_INVP.mesh.t');
+nodal_dcontrols = dcontrol(GLB_INVP.mesh.t');
+PenalizedStiffMatPerCell = GLB_INVP.CellStifsnessMat ;
 for cell=1:GLB_INVP.numCells
-    penalty = ...
-        sum(GLB_INVP.CellMassMatrices(:,:,cell) * control_at_dof(:,cell)) ...
-        / GLB_INVP.ElemVolume(cell);
-    penalty = pow * penalty^(pow-1);
-    factor = (1/GLB_INVP.ElemVolume(cell)) * ...
-        sum(GLB_INVP.CellMassMatrices(:,:,cell) * dcontrol_at_dof(:,cell));
-    PenalizedStiffMatPerCell(:,:,cell) = penalty * factor * ...
+    penalty = GLB_INVP.PenaltyModel.sensitivity(material_index,cell,nodal_controls);
+    scale_factor = sum(GLB_INVP.CellMassMatrices(:,:,cell) * nodal_dcontrols(:,cell));
+    PenalizedStiffMatPerCell(:,:,cell) = penalty * scale_factor * ...
         PenalizedStiffMatPerCell(:,:,cell);
 end
 
@@ -324,20 +331,18 @@ function [output] = secondDerivativeWrtControlState(state,control,dual,dstate)
 global GLB_INVP;
 
 %%%%%%%%%%% Compute Penalty Parameters
-pow = GLB_INVP.SimpPenalty;
-dual_at_dof = dual(GLB_INVP.mesh.dof);
-dstate_at_dof = dstate(GLB_INVP.mesh.dof);
-control_at_dof = control( GLB_INVP.mesh.t');
+nodal_duals = dual(GLB_INVP.mesh.dof);
+nodal_dstates = dstate(GLB_INVP.mesh.dof);
+nodal_controls = control( GLB_INVP.mesh.t');
 PenalizedMassMatPerCell = GLB_INVP.CellMassMatrices;
 for cell=1:GLB_INVP.numCells
-    penalty = ...
-        sum(GLB_INVP.CellMassMatrices(:,:,cell) * control_at_dof(:,cell)) ...
-        / GLB_INVP.ElemVolume(cell);
-    penalty = pow * penalty^(pow-1);
-    factor = dual_at_dof(:,cell)' * ( penalty .* (GLB_INVP.CellStifsnessMat(:,:,cell) ...
-        - GLB_INVP.MinCellStifsnessMat(:,:,cell)) ) * dstate_at_dof(:,cell);
-    PenalizedMassMatPerCell(:,:,cell) = factor * ...
-        (1/GLB_INVP.ElemVolume(cell)) * PenalizedMassMatPerCell(:,:,cell);
+    material_penalty = ...
+        GLB_INVP.PenaltyModel.sensitivity(material_index,cell,nodal_controls);
+    scale_factor = nodal_duals(:,cell)' * ...
+        ( material_penalty .* GLB_INVP.CellStifsnessMat(:,:,cell) ) ...
+        * nodal_dstates(:,cell);
+    PenalizedMassMatPerCell(:,:,cell) = ...
+        scale_factor * PenalizedMassMatPerCell(:,:,cell);
 end
 
 %%%%%%%%%%% Assemble compliance term gradient
@@ -356,20 +361,22 @@ global GLB_INVP;
 
 %%%%%%%%%%% Compute Penalty Parameters
 pow = GLB_INVP.SimpPenalty;
-dual_at_dof = dual(GLB_INVP.mesh.dof);
-state_at_dof = state(GLB_INVP.mesh.dof);
-control_at_dof = control( GLB_INVP.mesh.t');
-dcontrol_at_dof = dcontrol( GLB_INVP.mesh.t');
+min_stiffness = GLB_INVP.min_stiffness;
+nodal_duals = dual(GLB_INVP.mesh.dof);
+nodal_states = state(GLB_INVP.mesh.dof);
+nodal_controls = control( GLB_INVP.mesh.t');
+nodal_dcontrols = dcontrol( GLB_INVP.mesh.t');
 PenalizedMassMatPerCell = GLB_INVP.CellMassMatrices;
 for cell=1:GLB_INVP.numCells
     penalty = ...
-        sum(GLB_INVP.CellMassMatrices(:,:,cell) * control_at_dof(:,cell)) ...
+        sum(GLB_INVP.CellMassMatrices(:,:,cell) * nodal_controls(:,cell)) ...
         / GLB_INVP.ElemVolume(cell);
-    penalty = pow * (pow-1) * penalty^(pow-2);
-    factor_one = dual_at_dof(:,cell)' * ( penalty * (( GLB_INVP.CellStifsnessMat(:,:,cell) ...
-        - GLB_INVP.MinCellStifsnessMat(:,:,cell) ) * state_at_dof(:,cell)) );
+    penalty = pow * (pow-1) * (1 - min_stiffness) * penalty^(pow-2);
+    factor_one = nodal_duals(:,cell)' * ...
+        ( penalty .* GLB_INVP.CellStifsnessMat(:,:,cell) ) ...
+        * nodal_states(:,cell) ;
     factor_two = (1/GLB_INVP.ElemVolume(cell)) * ...
-        sum(GLB_INVP.CellMassMatrices(:,:,cell) * dcontrol_at_dof(:,cell));
+        sum(GLB_INVP.CellMassMatrices(:,:,cell) * nodal_dcontrols(:,cell));
     PenalizedMassMatPerCell(:,:,cell) = factor_one * factor_two * ...
         (1/GLB_INVP.ElemVolume(cell)) * PenalizedMassMatPerCell(:,:,cell);
 end
