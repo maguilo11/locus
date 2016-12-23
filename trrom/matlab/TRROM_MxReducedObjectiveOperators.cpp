@@ -125,7 +125,7 @@ void MxReducedObjectiveOperators::partialDerivativeState(const trrom::Vector<dou
     // Set output for partial derivative of the objective function with respect to the state variables
     assert(static_cast<size_t>(output_.size()) == mxGetNumberOfElements(mx_output[0]));
     trrom::MxVector & output = dynamic_cast<trrom::MxVector &>(output_);
-    trrom::mx::setMxArray(mx_output[0], output.array());
+    output.setMxArray(mx_output[0]);
 }
 
 void MxReducedObjectiveOperators::partialDerivativeControl(const trrom::Vector<double> & state_,
@@ -148,7 +148,7 @@ void MxReducedObjectiveOperators::partialDerivativeControl(const trrom::Vector<d
     // Set output for partial derivative of the objective function with respect to the state variables
     assert(static_cast<size_t>(output_.size()) == mxGetNumberOfElements(mx_output[0]));
     trrom::MxVector & output = dynamic_cast<trrom::MxVector &>(output_);
-    trrom::mx::setMxArray(mx_output[0], output.array());
+    output.setMxArray(mx_output[0]);
 }
 
 void MxReducedObjectiveOperators::partialDerivativeControlState(const trrom::Vector<double> & state_,
@@ -174,7 +174,7 @@ void MxReducedObjectiveOperators::partialDerivativeControlState(const trrom::Vec
     // Set output for the mixed partial derivative of the objective function with respect to the control and state variables
     assert(static_cast<size_t>(output_.size()) == mxGetNumberOfElements(mx_output[0]));
     trrom::MxVector & output = dynamic_cast<trrom::MxVector &>(output_);
-    trrom::mx::setMxArray(mx_output[0], output.array());
+    output.setMxArray(mx_output[0]);
 }
 
 void MxReducedObjectiveOperators::partialDerivativeControlControl(const trrom::Vector<double> & state_,
@@ -200,7 +200,7 @@ void MxReducedObjectiveOperators::partialDerivativeControlControl(const trrom::V
     // Set output for second order partial derivative of the objective function with respect to the control variables
     assert(static_cast<size_t>(output_.size()) == mxGetNumberOfElements(mx_output[0]));
     trrom::MxVector & output = dynamic_cast<trrom::MxVector &>(output_);
-    trrom::mx::setMxArray(mx_output[0], output.array());
+    output.setMxArray(mx_output[0]);
 }
 
 void MxReducedObjectiveOperators::partialDerivativeStateState(const trrom::Vector<double> & state_,
@@ -226,7 +226,7 @@ void MxReducedObjectiveOperators::partialDerivativeStateState(const trrom::Vecto
     // Set output for second order partial derivative of the objective function with respect to the control variables
     assert(static_cast<size_t>(output_.size()) == mxGetNumberOfElements(mx_output[0]));
     trrom::MxVector & output = dynamic_cast<trrom::MxVector &>(output_);
-    trrom::mx::setMxArray(mx_output[0], output.array());
+    output.setMxArray(mx_output[0]);
 }
 
 void MxReducedObjectiveOperators::partialDerivativeStateControl(const trrom::Vector<double> & state_,
@@ -252,7 +252,7 @@ void MxReducedObjectiveOperators::partialDerivativeStateControl(const trrom::Vec
     // Set output for second order partial derivative of the objective function with respect to the control variables
     assert(static_cast<size_t>(output_.size()) == mxGetNumberOfElements(mx_output[0]));
     trrom::MxVector & output = dynamic_cast<trrom::MxVector &>(output_);
-    trrom::mx::setMxArray(mx_output[0], output.array());
+    output.setMxArray(mx_output[0]);
 }
 
 }

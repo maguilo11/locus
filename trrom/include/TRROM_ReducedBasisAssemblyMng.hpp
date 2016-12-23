@@ -27,8 +27,8 @@ class ReducedBasisAssemblyMng : public trrom::AssemblyManager
 public:
     ReducedBasisAssemblyMng(const std::tr1::shared_ptr<trrom::ReducedBasisData> & data_,
                             const std::tr1::shared_ptr<trrom::ReducedBasisInterface> & interface_,
-                            const std::tr1::shared_ptr<trrom::ReducedBasisPDE> & pde_,
-                            const std::tr1::shared_ptr<trrom::ReducedBasisObjective> & objective_);
+                            const std::tr1::shared_ptr<trrom::ReducedBasisObjective> & objective_,
+                            const std::tr1::shared_ptr<trrom::ReducedBasisPDE> & partial_differential_equation_);
     virtual ~ReducedBasisAssemblyMng();
 
     void updateLowFidelityModel();

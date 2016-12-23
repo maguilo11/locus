@@ -17,7 +17,8 @@ CXXFLAGS=-I$(HOME)include -I$(CXXINCL) -I$(MEXINC) -g -fPIC -Wall -std=c++11
 OBJDIR=obj/
 EXEDIR=exe/
 
-OBJS=$(HOME)matlab/TRROM_MxVector.o \
+OBJS=$(HOME)matlab/TRROM_MxDriver.o \
+	$(HOME)matlab/TRROM_MxVector.o \
 	$(HOME)matlab/TRROM_MxMatrix.o \
 	$(HOME)matlab/TRROM_MxVectorTest.o \
 	$(HOME)matlab/TRROM_MxMatrixTest.o \
@@ -27,6 +28,7 @@ OBJS=$(HOME)matlab/TRROM_MxVector.o \
 	$(HOME)matlab/TRROM_MxSingularValueDecomposition.o \
 	$(HOME)matlab/TRROM_MxOrthogonalDecomposition.o \
 	$(HOME)matlab/TRROM_MxOrthogonalDecompositionTest.o \
+	$(HOME)matlab/TRROM_MxReducedBasisObjective.o \
 	$(HOME)matlab/TRROM_MxReducedObjectiveOperators.o \
 	$(HOME)matlab/TRROM_MxReducedObjectiveOperatorsTest.o \
 	$(HOME)matlab/TRROM_MxInequalityOperators.o \
@@ -40,6 +42,8 @@ OBJS=$(HOME)matlab/TRROM_MxVector.o \
 	$(HOME)matlab/TRROM_MxLinearAlgebraFactory.o \
 	$(HOME)matlab/TRROM_MxLinearAlgebraFactoryTest.o \
 	$(HOME)matlab/TRROM_MxDiscreteEmpiricalInterpolationTest.o \
+	$(HOME)matlab/TRROM_MxParsingUtilities.o \
+	$(HOME)matlab/TRROM_MxTrustRegionReducedOrderModelTypeB.o \
 	$(HOME)src/TRROM_Data.o \
 	$(HOME)src/TRROM_Dual.o \
 	$(HOME)src/TRROM_State.o \

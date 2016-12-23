@@ -18,8 +18,8 @@ namespace trrom
 
 ReducedBasisAssemblyMng::ReducedBasisAssemblyMng(const std::tr1::shared_ptr<trrom::ReducedBasisData> & data_,
                                                  const std::tr1::shared_ptr<trrom::ReducedBasisInterface> & interface_,
-                                                 const std::tr1::shared_ptr<trrom::ReducedBasisPDE> & pde_,
-                                                 const std::tr1::shared_ptr<trrom::ReducedBasisObjective> & objective_) :
+                                                 const std::tr1::shared_ptr<trrom::ReducedBasisObjective> & objective_,
+                                                 const std::tr1::shared_ptr<trrom::ReducedBasisPDE> & partial_differential_equation_) :
         m_UseFullNewtonHessian(true),
         m_HessianCounter(0),
         m_GradientCounter(0),
@@ -39,7 +39,7 @@ ReducedBasisAssemblyMng::ReducedBasisAssemblyMng(const std::tr1::shared_ptr<trro
         m_HessWorkVec(data_->state()->create()),
         m_StateWorkVec(data_->state()->create()),
         m_ControlWorkVec(data_->control()->create()),
-        m_PDE(pde_),
+        m_PDE(partial_differential_equation_),
         m_Objective(objective_),
         m_ReducedBasisInterface(interface_)
 {
@@ -175,9 +175,16 @@ double ReducedBasisAssemblyMng::objective(const std::tr1::shared_ptr<trrom::Vect
         this->solveHighFidelityProblem(*control_);
     }
 
-    double value = m_Objective->value(*m_State, *control_, tolerance_, inexactness_violated_);
+    double value = m_Objective->value(*m_State, *control_);
     this->updateObjectiveCounter();
 
+    // check objective inexactness tolerance
+    inexactness_violated_ = false;
+    double objective_error = m_Objective->evaluateObjectiveInexactness(*m_State, *control_);
+    if(objective_error > tolerance_)
+    {
+        inexactness_violated_ = true;
+    }
     return (value);
 }
 
@@ -210,8 +217,13 @@ void ReducedBasisAssemblyMng::gradient(const std::tr1::shared_ptr<trrom::Vector<
     gradient_->update(1., *m_ControlWorkVec, 1.);
     this->updateGradientCounter();
 
-    // Check gradient inexactness tolerance
-    inexactness_violated_ = m_Objective->checkGradientInexactness(*m_State, *control_, *gradient_, tolerance_);
+    // check gradient inexactness tolerance
+    inexactness_violated_ = false;
+    double gradient_error = m_Objective->evaluateGradientInexactness(*m_State, *control_);
+    if(gradient_error > tolerance_)
+    {
+        inexactness_violated_ = true;
+    }
 }
 
 void ReducedBasisAssemblyMng::hessian(const std::tr1::shared_ptr<trrom::Vector<double> > & control_,
