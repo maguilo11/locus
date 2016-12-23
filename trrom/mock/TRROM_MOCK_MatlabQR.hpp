@@ -23,10 +23,10 @@ public:
     MatlabQR();
     virtual ~MatlabQR();
 
-    virtual trrom::types::ortho_factorization_t type() const;
-    virtual void factorize(const trrom::Matrix<double> & input_,
-                           trrom::Matrix<double> & Q_,
-                           trrom::Matrix<double> & R_);
+    trrom::types::ortho_factorization_t type() const;
+    void factorize(const std::tr1::shared_ptr<trrom::Matrix<double> > & input_,
+                   std::tr1::shared_ptr<trrom::Matrix<double> > & Q_,
+                   std::tr1::shared_ptr<trrom::Matrix<double> > & R_);
 
 private:
     MatlabQR(const mock::MatlabQR &);
