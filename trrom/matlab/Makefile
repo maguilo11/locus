@@ -70,6 +70,7 @@ MATTEST=$(HOME)matlab/TRROM_MxMatrixTest.o \
 
 SVDTEST=$(HOME)matlab/TRROM_MxSpectralDecompositionTest.o \
 	$(HOME)matlab/TRROM_MxSingularValueDecomposition.o \
+	$(HOME)matlab/TRROM_MxLinearAlgebraFactory.o \
 	$(HOME)matlab/TRROM_MxMatrix.o \
 	$(HOME)matlab/TRROM_MxVector.o
 	
@@ -106,6 +107,7 @@ BRANDFACTEST=$(HOME)matlab/TRROM_MxBrandMatrixFactoryTest.o \
 BRANDALGOEST=$(HOME)matlab/TRROM_MxLowRankSVDTest.o \
 	$(HOME)matlab/TRROM_MxSingularValueDecomposition.o \
 	$(HOME)matlab/TRROM_MxOrthogonalDecomposition.o \
+	$(HOME)matlab/TRROM_MxLinearAlgebraFactory.o \
 	$(HOME)matlab/TRROM_MxBrandMatrixFactory.o \
 	$(HOME)matlab/TRROM_MxBrandLowRankSVD.o \
 	$(HOME)matlab/TRROM_MxMatrix.o \
