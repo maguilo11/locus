@@ -15,6 +15,7 @@ namespace trrom
 
 class BrandLowRankSVD;
 class MxBrandMatrixFactory;
+class MxLinearAlgebraFactory;
 class MxOrthogonalDecomposition;
 class MxSingularValueDecomposition;
 
@@ -56,7 +57,8 @@ public:
 
 private:
     std::tr1::shared_ptr<trrom::BrandLowRankSVD> m_Algorithm;
-    std::tr1::shared_ptr<trrom::MxBrandMatrixFactory> m_MatrixFactory;
+    std::tr1::shared_ptr<trrom::MxBrandMatrixFactory> m_BrandFactory;
+    std::tr1::shared_ptr<trrom::MxLinearAlgebraFactory> m_AlgebraFactory;
     std::tr1::shared_ptr<trrom::MxSingularValueDecomposition> m_SpectralMethod;
     std::tr1::shared_ptr<trrom::MxOrthogonalDecomposition> m_OrthoFactorization;
 

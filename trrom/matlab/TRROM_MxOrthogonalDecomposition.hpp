@@ -15,6 +15,7 @@ namespace trrom
 
 template<typename ScalarType>
 class Matrix;
+
 class MxMatrix;
 
 class MxOrthogonalDecomposition : public trrom::OrthogonalFactorization
@@ -43,7 +44,9 @@ public:
      *    \param Out
      *          R_: n-by-n upper triangular matrix
      **/
-    void factorize(const trrom::Matrix<double> & input_, trrom::Matrix<double> & Q_, trrom::Matrix<double> & R_);
+    void factorize(const std::tr1::shared_ptr<trrom::Matrix<double> > & input_,
+                   std::tr1::shared_ptr<trrom::Matrix<double> > & Q_,
+                   std::tr1::shared_ptr<trrom::Matrix<double> > & R_);
 
     //! Returns permutation matrix
     const trrom::MxMatrix & getPermutationData() const;

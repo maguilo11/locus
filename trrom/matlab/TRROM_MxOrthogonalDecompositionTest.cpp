@@ -23,19 +23,17 @@ void mexFunction(int nOutput, mxArray* pOutput[], int nInput, const mxArray* pIn
         mexErrMsgTxt(error.c_str());
     }
 
+    std::tr1::shared_ptr<trrom::Matrix<double> > Q;
+    std::tr1::shared_ptr<trrom::Matrix<double> > R;
     std::tr1::shared_ptr<trrom::MxMatrix> A(new trrom::MxMatrix(pInput[0]));
-    int num_rows = A->getNumRows();
-    int num_columns = A->getNumCols();
-    std::tr1::shared_ptr<trrom::Matrix<double> > Q(new trrom::MxMatrix(num_rows, num_columns));
-    std::tr1::shared_ptr<trrom::Matrix<double> > R(new trrom::MxMatrix(num_columns, num_columns));
 
     trrom::MxOrthogonalDecomposition qr;
-    qr.factorize(*A, *Q, *R);
+    qr.factorize(A, Q, R);
 
     // **** ASSERT UNITARY MATRIX Q ****
     msg.assign("unitary matrix Q");
-    num_rows = Q->getNumRows();
-    num_columns = Q->getNumCols();
+    int num_rows = Q->getNumRows();
+    int num_columns = Q->getNumCols();
     trrom::MxMatrix Q_gold(num_rows, num_columns);
     Q_gold(0,0) = -0.109108945117996; Q_gold(0,1) = 0.354649682807595; Q_gold(0,2) = 0.782508045057500;
     Q_gold(1,0) = -0.327326835353989; Q_gold(1,1) = -0.591082804679325; Q_gold(1,2) = 0.541736338885961;

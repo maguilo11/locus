@@ -10,6 +10,7 @@
 #include "TRROM_BrandLowRankSVD.hpp"
 #include "TRROM_MxBrandLowRankSVD.hpp"
 #include "TRROM_MxBrandMatrixFactory.hpp"
+#include "TRROM_MxLinearAlgebraFactory.hpp"
 #include "TRROM_MxOrthogonalDecomposition.hpp"
 #include "TRROM_MxSingularValueDecomposition.hpp"
 
@@ -18,11 +19,12 @@ namespace trrom
 
 MxBrandLowRankSVD::MxBrandLowRankSVD() :
         m_Algorithm(),
-        m_MatrixFactory(new trrom::MxBrandMatrixFactory),
+        m_BrandFactory(new trrom::MxBrandMatrixFactory),
+        m_AlgebraFactory(new trrom::MxLinearAlgebraFactory),
         m_SpectralMethod(new trrom::MxSingularValueDecomposition),
         m_OrthoFactorization(new trrom::MxOrthogonalDecomposition)
 {
-    m_Algorithm.reset(new trrom::BrandLowRankSVD(m_MatrixFactory, m_SpectralMethod, m_OrthoFactorization));
+    m_Algorithm.reset(new trrom::BrandLowRankSVD(m_BrandFactory, m_AlgebraFactory, m_SpectralMethod, m_OrthoFactorization));
 }
 
 MxBrandLowRankSVD::~MxBrandLowRankSVD()

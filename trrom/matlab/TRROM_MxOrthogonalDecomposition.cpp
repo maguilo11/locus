@@ -28,11 +28,11 @@ trrom::types::ortho_factorization_t MxOrthogonalDecomposition::type() const
     return (trrom::types::MATLAB_QR);
 }
 
-void MxOrthogonalDecomposition::factorize(const trrom::Matrix<double> & input_,
-                                          trrom::Matrix<double> & Q_,
-                                          trrom::Matrix<double> & R_)
+void MxOrthogonalDecomposition::factorize(const std::tr1::shared_ptr<trrom::Matrix<double> > & input_,
+                                          std::tr1::shared_ptr<trrom::Matrix<double> > & Q_,
+                                          std::tr1::shared_ptr<trrom::Matrix<double> > & R_)
 {
-    const trrom::MxMatrix & input = dynamic_cast<const trrom::MxMatrix &>(input_);
+    const trrom::MxMatrix & input = dynamic_cast<const trrom::MxMatrix &>(*input_);
 
     // Perform orthogonal-triangular decomposition with column pivoting
     mxArray* mex_output[3];
@@ -48,18 +48,24 @@ void MxOrthogonalDecomposition::factorize(const trrom::Matrix<double> & input_,
     mxDestroyArray(mx_economy_size_flag);
 
     // Copy m-by-n unitary matrix Q output from Matlab into TRROM matrix data structure
-    trrom::MxMatrix & Q_matrix = dynamic_cast<trrom::MxMatrix &>(Q_);
-    trrom::mx::setMxArray(mex_output[0], Q_matrix.array());
+    int num_rows = mxGetM(mex_output[0]);
+    int num_columns = mxGetN(mex_output[0]);
+    Q_.reset(new trrom::MxMatrix(num_rows, num_columns));
+    trrom::MxMatrix & Q_matrix = dynamic_cast<trrom::MxMatrix &>(*Q_);
+    Q_matrix.setMxArray(mex_output[0]);
 
     // Copy n-by-n upper triangular matrix R output from Matlab into TRROM matrix data structure
-    trrom::MxMatrix & R_matrix = dynamic_cast<trrom::MxMatrix &>(R_);
-    trrom::mx::setMxArray(mex_output[1], R_matrix.array());
+    num_rows = mxGetM(mex_output[1]);
+    num_columns = mxGetN(mex_output[1]);
+    R_.reset(new trrom::MxMatrix(num_rows, num_columns));
+    trrom::MxMatrix & R_matrix = dynamic_cast<trrom::MxMatrix &>(*R_);
+    R_matrix.setMxArray(mex_output[1]);
 
     // Copy permutation matrix output from Matlab into TRROM matrix data structure
-    int num_rows = mxGetM(mex_output[2]);
-    int num_columns = mxGetN(mex_output[2]);
+    num_rows = mxGetM(mex_output[2]);
+    num_columns = mxGetN(mex_output[2]);
     m_PermutationData.reset(new trrom::MxMatrix(num_rows, num_columns));
-    trrom::mx::setMxArray(mex_output[2], m_PermutationData->array());
+    m_PermutationData->setMxArray(mex_output[2]);
 }
 
 const trrom::MxMatrix & MxOrthogonalDecomposition::getPermutationData() const
