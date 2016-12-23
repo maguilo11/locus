@@ -11,6 +11,7 @@
 #include "TRROM_Basis.hpp"
 #include "TRROM_Rosenbrock.hpp"
 #include "TRROM_SerialVector.hpp"
+#include "TRROM_MOCK_Factory.hpp"
 #include "TRROM_ReducedBasis.hpp"
 #include "TRROM_ReducedHessian.hpp"
 #include "TRROM_ReducedBasisPDE.hpp"
@@ -18,7 +19,7 @@
 #include "TRROM_AssemblyMngTypeLP.hpp"
 #include "TRROM_KelleySachsStepMng.hpp"
 #include "TRROM_ModifiedGramSchmidt.hpp"
-#include "TRROM_SteihaugTointDataMng.hpp"
+#include "TRROM_InexactNewtonDataMng.hpp"
 #include "TRROM_SpectralDecompositionMng.hpp"
 
 namespace SimpleTest
@@ -400,42 +401,44 @@ TEST(Basis, gemm3)
 
 TEST(ModifiedGramSchmidt, factorize)
 {
-    int numRows = 4;
-    int getNumCols = 4;
-    trrom::SerialVector<double> x(numRows);
-    trrom::Basis<double> A(x, getNumCols);
-    trrom::Basis<double> Q(x, getNumCols);
-    trrom::Basis<double> R(x, getNumCols);
+    int num_rows = 4;
+    int num_columns = 4;
+    trrom::SerialVector<double> x(num_rows);
+    std::tr1::shared_ptr<trrom::Matrix<double> > A(new trrom::Basis<double>(x, num_columns));
 
     // basis 1
-    A.replaceGlobalValue(0, 0, 10.);
-    A.replaceGlobalValue(1, 0, -1.);
-    A.replaceGlobalValue(2, 0, 2.);
-    A.replaceGlobalValue(3, 0, 0.);
+    A->replaceGlobalValue(0, 0, 10.);
+    A->replaceGlobalValue(1, 0, -1.);
+    A->replaceGlobalValue(2, 0, 2.);
+    A->replaceGlobalValue(3, 0, 0.);
     // basis 2
-    A.replaceGlobalValue(0, 1, -1.);
-    A.replaceGlobalValue(1, 1, 11.);
-    A.replaceGlobalValue(2, 1, -1.);
-    A.replaceGlobalValue(3, 1, 3.);
+    A->replaceGlobalValue(0, 1, -1.);
+    A->replaceGlobalValue(1, 1, 11.);
+    A->replaceGlobalValue(2, 1, -1.);
+    A->replaceGlobalValue(3, 1, 3.);
     // basis 3
-    A.replaceGlobalValue(0, 2, 2.);
-    A.replaceGlobalValue(1, 2, -1.);
-    A.replaceGlobalValue(2, 2, 10.);
-    A.replaceGlobalValue(3, 2, -1.);
+    A->replaceGlobalValue(0, 2, 2.);
+    A->replaceGlobalValue(1, 2, -1.);
+    A->replaceGlobalValue(2, 2, 10.);
+    A->replaceGlobalValue(3, 2, -1.);
     // basis 4
-    A.replaceGlobalValue(0, 3, 0.);
-    A.replaceGlobalValue(1, 3, 3.);
-    A.replaceGlobalValue(2, 3, -1.);
-    A.replaceGlobalValue(3, 3, 8.);
+    A->replaceGlobalValue(0, 3, 0.);
+    A->replaceGlobalValue(1, 3, 3.);
+    A->replaceGlobalValue(2, 3, -1.);
+    A->replaceGlobalValue(3, 3, 8.);
 
-    trrom::ModifiedGramSchmidt method;
+    std::tr1::shared_ptr<trrom::mock::Factory> factory(new trrom::mock::Factory);
+    trrom::ModifiedGramSchmidt method(factory);
     EXPECT_EQ(trrom::types::MODIFIED_GRAM_SCHMIDT_QR, method.type());
+
+    std::tr1::shared_ptr<trrom::Matrix<double> > Q;
+    std::tr1::shared_ptr<trrom::Matrix<double> > R;
     method.factorize(A, Q, R);
 
     // Check Q^t * Q = I
-    trrom::Basis<double> I(x, getNumCols);
-    Q.gemm(true, false, 1., Q, 0., I);
-    trrom::Basis<double> mgold(x, getNumCols);
+    trrom::Basis<double> I(x, num_columns);
+    Q->gemm(true, false, 1., *Q, 0., I);
+    trrom::Basis<double> mgold(x, num_columns);
     mgold.replaceGlobalValue(0, 0, 1.);
     mgold.replaceGlobalValue(1, 1, 1.);
     mgold.replaceGlobalValue(2, 2, 1.);
@@ -443,8 +446,8 @@ TEST(ModifiedGramSchmidt, factorize)
     trrom::test::checkResults(mgold, I);
 
     // Check Q * R = A
-    trrom::Basis<double> Ao(x, getNumCols);
-    Q.gemm(false, false, 1., R, 0., Ao);
+    trrom::Basis<double> Ao(x, num_columns);
+    Q->gemm(false, false, 1., *R, 0., Ao);
     mgold.fill(0);
     mgold.replaceGlobalValue(0, 0, 10);
     mgold.replaceGlobalValue(1, 0, -1);
@@ -465,55 +468,55 @@ TEST(ModifiedGramSchmidt, factorize)
     trrom::test::checkResults(mgold, Ao);
 
     // Q basis 1
-    trrom::SerialVector<double> gold(getNumCols);
+    trrom::SerialVector<double> gold(num_columns);
     gold[0] = 0.975900072948533;
     gold[1] = -0.097590007294853;
     gold[2] = 0.195180014589707;
     gold[3] = 0.;
-    trrom::test::checkResults(gold, *Q.vector(0));
+    trrom::test::checkResults(gold, *Q->vector(0));
     // Q basis 2
     gold[0] = 0.105653526929161;
     gold[1] = 0.956798339870484;
     gold[2] = -0.049868464710564;
     gold[3] = 0.266246887861486;
-    trrom::test::checkResults(gold, *Q.vector(1));
+    trrom::test::checkResults(gold, *Q->vector(1));
     // Q basis 3
     gold[0] = -0.186345111169031;
     gold[1] = 0.089227790175070;
     gold[2] = 0.976339450932690;
     gold[3] = -0.063837117387371;
-    trrom::test::checkResults(gold, *Q.vector(2));
+    trrom::test::checkResults(gold, *Q->vector(2));
     // Q basis 4
     gold[0] = -0.041615855270295;
     gold[1] = -0.258943099459612;
     gold[2] = 0.078607726621668;
     gold[3] = 0.961788655135703;
-    trrom::test::checkResults(gold, *Q.vector(3));
+    trrom::test::checkResults(gold, *Q->vector(3));
 
     // R column 1
     gold[0] = 10.2469507659596;
     gold[1] = 0.;
     gold[2] = 0.;
     gold[3] = 0.;
-    trrom::test::checkResults(gold, *R.vector(0));
+    trrom::test::checkResults(gold, *R->vector(0));
     // R column 2
     gold[0] = -2.244570167781625;
     gold[1] = 11.267737339941178;
     gold[2] = 0.;
     gold[3] = 0.;
-    trrom::test::checkResults(gold, *R.vector(1));
+    trrom::test::checkResults(gold, *R->vector(1));
     // R column 3
     gold[0] = 4.001190299088986;
     gold[1] = -1.510422820979288;
     gold[2] = 9.365313614201140;
     gold[3] = 0.;
-    trrom::test::checkResults(gold, *R.vector(2));
+    trrom::test::checkResults(gold, *R->vector(2));
     // R column 4
     gold[0] = -0.487950036474267;
     gold[1] = 5.050238587213904;
     gold[2] = -1.219353019506445;
     gold[3] = 6.838872216085120;
-    trrom::test::checkResults(gold, *R.vector(3));
+    trrom::test::checkResults(gold, *R->vector(3));
 }
 
 TEST(ReducedBasis, pod)

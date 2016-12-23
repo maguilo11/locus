@@ -13,14 +13,14 @@
 #include "TRROM_Circle.hpp"
 #include "TRROM_Rosenbrock.hpp"
 #include "TRROM_SerialArray.hpp"
-#include "TRROM_KelleySachs.hpp"
 #include "TRROM_ReducedHessian.hpp"
 #include "TRROM_AssemblyMngTypeLP.hpp"
+#include "TRROM_TrustRegionNewton.hpp"
 #include "TRROM_KelleySachsStepMng.hpp"
-#include "TRROM_SteihaugTointDataMng.hpp"
+#include "TRROM_InexactNewtonDataMng.hpp"
 #include "TRROM_AugmentedLagrangianTypeLP.hpp"
 #include "TRROM_AugmentedLagrangianDataMng.hpp"
-#include "TRROM_KelleySachsAugmentedLagrangian.hpp"
+#include "TRROM_TrustRegionAugmentedLagrangian.hpp"
 
 namespace TrromAugmentedLagrangianTest
 {
@@ -37,11 +37,11 @@ TEST(AlgorithmKelleySachs, getMin_UsrDefGrad_UsrDefHess_Rosenbrock)
     std::tr1::shared_ptr<trrom::Rosenbrock> objective(new trrom::Rosenbrock);
     std::tr1::shared_ptr<trrom::ReducedHessian> hessian(new trrom::ReducedHessian);
     std::tr1::shared_ptr<trrom::AssemblyMngTypeLP> manager(new trrom::AssemblyMngTypeLP(objective));
-    std::tr1::shared_ptr<trrom::SteihaugTointDataMng> data_mng(new trrom::SteihaugTointDataMng(data, manager));
+    std::tr1::shared_ptr<trrom::InexactNewtonDataMng> data_mng(new trrom::InexactNewtonDataMng(data, manager));
 
     EXPECT_EQ(trrom::types::REDUCED_HESSIAN, hessian->type());
     std::tr1::shared_ptr<trrom::KelleySachsStepMng> step_mng(new trrom::KelleySachsStepMng(data, hessian));
-    trrom::KelleySachs algorithm(data, data_mng, step_mng);
+    trrom::TrustRegionNewton algorithm(data, step_mng, data_mng);
     algorithm.getMin();
 
     EXPECT_EQ(trrom::types::ACTUAL_REDUCTION_TOL_SATISFIED, algorithm.getStoppingCriterion());
@@ -73,7 +73,7 @@ TEST(KelleySachsAugmentedLagrangian, getMin_UsrDefGrad_UsrDefHess_Circle)
 
     std::tr1::shared_ptr<trrom::ReducedHessian> hessian(new trrom::ReducedHessian);
     std::tr1::shared_ptr<trrom::KelleySachsStepMng> step_mng(new trrom::KelleySachsStepMng(data, hessian));
-    trrom::KelleySachsAugmentedLagrangian algorithm(data, data_mng, step_mng);
+    trrom::TrustRegionAugmentedLagrangian algorithm(data, step_mng, data_mng);
     algorithm.getMin();
 
     EXPECT_EQ(trrom::types::OPTIMALITY_AND_FEASIBILITY_SATISFIED, algorithm.getStoppingCriterion());
