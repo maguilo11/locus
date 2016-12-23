@@ -1,5 +1,5 @@
 /*
- * TRROM_TrustRegionKelleySachs.cpp
+ * TRROM_TrustRegionNewtonBase.cpp
  *
  *  Created on: Sep 5, 2016
  *      Author: Miguel A. Aguilo Valentin
@@ -12,12 +12,12 @@
 #include "TRROM_BoundConstraints.hpp"
 #include "TRROM_KelleySachsStepMng.hpp"
 #include "TRROM_OptimizationDataMng.hpp"
-#include "TRROM_TrustRegionKelleySachs.hpp"
+#include "TRROM_TrustRegionNewtonBase.hpp"
 
 namespace trrom
 {
 
-TrustRegionKelleySachs::TrustRegionKelleySachs(const std::tr1::shared_ptr<trrom::Data> & data_) :
+TrustRegionNewtonBase::TrustRegionNewtonBase(const std::tr1::shared_ptr<trrom::Data> & data_) :
         m_MaxNumUpdates(10),
         m_MaxNumOptimizationItr(100),
         m_NumOptimizationItrDone(0),
@@ -35,106 +35,106 @@ TrustRegionKelleySachs::TrustRegionKelleySachs(const std::tr1::shared_ptr<trrom:
 {
 }
 
-TrustRegionKelleySachs::~TrustRegionKelleySachs()
+TrustRegionNewtonBase::~TrustRegionNewtonBase()
 {
 }
 
-void TrustRegionKelleySachs::setGradientTolerance(double input_)
+void TrustRegionNewtonBase::setGradientTolerance(double input_)
 {
     m_GradientTolerance = input_;
 }
 
-double TrustRegionKelleySachs::getGradientTolerance() const
+double TrustRegionNewtonBase::getGradientTolerance() const
 {
     return (m_GradientTolerance);
 }
 
-void TrustRegionKelleySachs::setTrialStepTolerance(double input_)
+void TrustRegionNewtonBase::setTrialStepTolerance(double input_)
 {
     m_TrialStepTolerance = input_;
 }
 
-double TrustRegionKelleySachs::getTrialStepTolerance() const
+double TrustRegionNewtonBase::getTrialStepTolerance() const
 {
     return (m_TrialStepTolerance);
 }
 
-void TrustRegionKelleySachs::setObjectiveTolerance(double input_)
+void TrustRegionNewtonBase::setObjectiveTolerance(double input_)
 {
     m_ObjectiveTolerance = input_;
 }
 
-double TrustRegionKelleySachs::getObjectiveTolerance() const
+double TrustRegionNewtonBase::getObjectiveTolerance() const
 {
     return (m_ObjectiveTolerance);
 }
 
-void TrustRegionKelleySachs::setStagnationTolerance(double input_)
+void TrustRegionNewtonBase::setStagnationTolerance(double input_)
 {
     m_StagnationTolerance = input_;
 }
 
-double TrustRegionKelleySachs::getStagnationTolerance() const
+double TrustRegionNewtonBase::getStagnationTolerance() const
 {
     return (m_StagnationTolerance);
 }
 
-void TrustRegionKelleySachs::setActualReductionTolerance(double input_)
+void TrustRegionNewtonBase::setActualReductionTolerance(double input_)
 {
     m_ActualReductionTolerance = input_;
 }
 
-double TrustRegionKelleySachs::getActualReductionTolerance() const
+double TrustRegionNewtonBase::getActualReductionTolerance() const
 {
     return (m_ActualReductionTolerance);
 }
 
-double TrustRegionKelleySachs::getStationarityMeasure() const
+double TrustRegionNewtonBase::getStationarityMeasure() const
 {
     return (m_StationarityMeasure);
 }
 
-void TrustRegionKelleySachs::setMaxNumUpdates(int input_)
+void TrustRegionNewtonBase::setMaxNumUpdates(int input_)
 {
     m_MaxNumUpdates = input_;
 }
 
-int TrustRegionKelleySachs::getMaxNumUpdates() const
+int TrustRegionNewtonBase::getMaxNumUpdates() const
 {
     return (m_MaxNumUpdates);
 }
 
-void TrustRegionKelleySachs::setNumOptimizationItrDone(int input_)
+void TrustRegionNewtonBase::setNumOptimizationItrDone(int input_)
 {
     m_NumOptimizationItrDone = input_;
 }
 
-int TrustRegionKelleySachs::getNumOptimizationItrDone() const
+int TrustRegionNewtonBase::getNumOptimizationItrDone() const
 {
     return (m_NumOptimizationItrDone);
 }
 
-void TrustRegionKelleySachs::setMaxNumOptimizationItr(int input_)
+void TrustRegionNewtonBase::setMaxNumOptimizationItr(int input_)
 {
     m_MaxNumOptimizationItr = input_;
 }
 
-int TrustRegionKelleySachs::getMaxNumOptimizationItr() const
+int TrustRegionNewtonBase::getMaxNumOptimizationItr() const
 {
     return (m_MaxNumOptimizationItr);
 }
 
-void TrustRegionKelleySachs::setStoppingCriterion(trrom::types::stop_criterion_t input_)
+void TrustRegionNewtonBase::setStoppingCriterion(trrom::types::stop_criterion_t input_)
 {
     m_StoppingCriterion = input_;
 }
 
-trrom::types::stop_criterion_t TrustRegionKelleySachs::getStoppingCriterion() const
+trrom::types::stop_criterion_t TrustRegionNewtonBase::getStoppingCriterion() const
 {
     return (m_StoppingCriterion);
 }
 
-bool TrustRegionKelleySachs::updatePrimal(const std::tr1::shared_ptr<trrom::KelleySachsStepMng> & step_,
+bool TrustRegionNewtonBase::updatePrimal(const std::tr1::shared_ptr<trrom::KelleySachsStepMng> & step_,
                                           const std::tr1::shared_ptr<trrom::OptimizationDataMng> & data_,
                                           const std::tr1::shared_ptr<trrom::Vector<double> > & mid_gradient_)
 {
@@ -190,7 +190,7 @@ bool TrustRegionKelleySachs::updatePrimal(const std::tr1::shared_ptr<trrom::Kell
     return (primal_updated);
 }
 
-void TrustRegionKelleySachs::updateDataManager(const std::tr1::shared_ptr<trrom::KelleySachsStepMng> & step_,
+void TrustRegionNewtonBase::updateDataManager(const std::tr1::shared_ptr<trrom::KelleySachsStepMng> & step_,
                                                const std::tr1::shared_ptr<trrom::OptimizationDataMng> & data_,
                                                const std::tr1::shared_ptr<trrom::Vector<double> > & mid_gradient_,
                                                const std::tr1::shared_ptr<trrom::Vector<double> > & inactive_set_)
@@ -224,7 +224,7 @@ void TrustRegionKelleySachs::updateDataManager(const std::tr1::shared_ptr<trrom:
     data_->setGradientInexactnessTolerance(gradient_inexactness_tolerance);
 }
 
-bool TrustRegionKelleySachs::checkStoppingCriteria(const std::tr1::shared_ptr<trrom::KelleySachsStepMng> & step_,
+bool TrustRegionNewtonBase::checkStoppingCriteria(const std::tr1::shared_ptr<trrom::KelleySachsStepMng> & step_,
                                                    const std::tr1::shared_ptr<trrom::OptimizationDataMng> & data_)
 {
     double actual_reduction = step_->getActualReduction();
@@ -275,7 +275,7 @@ bool TrustRegionKelleySachs::checkStoppingCriteria(const std::tr1::shared_ptr<tr
     return (optimization_algorithm_converged);
 }
 
-void TrustRegionKelleySachs::computeStationarityMeasure(const std::tr1::shared_ptr<trrom::OptimizationDataMng> & data_,
+void TrustRegionNewtonBase::computeStationarityMeasure(const std::tr1::shared_ptr<trrom::OptimizationDataMng> & data_,
                                                         const std::tr1::shared_ptr<trrom::Vector<double> > & inactive_set_)
 {
     m_WorkVector->update(1., *data_->getNewPrimal(), 0.);
@@ -289,7 +289,7 @@ void TrustRegionKelleySachs::computeStationarityMeasure(const std::tr1::shared_p
     data_->setNormTrialStep(m_StationarityMeasure);
 }
 
-void TrustRegionKelleySachs::resetCurrentStateToPreviousState(const std::tr1::shared_ptr<trrom::OptimizationDataMng> & data_)
+void TrustRegionNewtonBase::resetCurrentStateToPreviousState(const std::tr1::shared_ptr<trrom::OptimizationDataMng> & data_)
 {
     data_->getNewPrimal()->update(1., *data_->getOldPrimal(), 0.);
     data_->getNewGradient()->update(1., *data_->getOldGradient(), 0.);

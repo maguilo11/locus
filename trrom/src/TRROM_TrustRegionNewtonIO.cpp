@@ -1,5 +1,5 @@
 /*
- * TRROM_SteihaugTointNewtonIO.cpp
+ * TRROM_TrustRegionNewtonIO.cpp
  *
  *  Created on: Sep 5, 2015
  *      Author: Miguel A. Aguilo Valentin
@@ -10,15 +10,15 @@
 
 #include "TRROM_Vector.hpp"
 #include "TRROM_VariablesUtils.hpp"
-#include "TRROM_SteihaugTointSolver.hpp"
 #include "TRROM_TrustRegionStepMng.hpp"
+#include "TRROM_SteihaugTointSolver.hpp"
 #include "TRROM_OptimizationDataMng.hpp"
-#include "TRROM_SteihaugTointNewtonIO.hpp"
+#include "TRROM_TrustRegionNewtonIO.hpp"
 
 namespace trrom
 {
 
-SteihaugTointNewtonIO::SteihaugTointNewtonIO() :
+TrustRegionNewtonIO::TrustRegionNewtonIO() :
         m_NumOptimizationItrDone(0),
         m_DiagnosticsFile(),
         m_DisplayType(trrom::types::OFF)
@@ -26,41 +26,41 @@ SteihaugTointNewtonIO::SteihaugTointNewtonIO() :
 {
 }
 
-SteihaugTointNewtonIO::~SteihaugTointNewtonIO()
+TrustRegionNewtonIO::~TrustRegionNewtonIO()
 {
 }
 
-void SteihaugTointNewtonIO::setNumOptimizationItrDone(int itr_)
+void TrustRegionNewtonIO::setNumOptimizationItrDone(int itr_)
 {
     m_NumOptimizationItrDone = itr_;
 }
 
-int SteihaugTointNewtonIO::getNumOptimizationItrDone() const
+int TrustRegionNewtonIO::getNumOptimizationItrDone() const
 {
     return (m_NumOptimizationItrDone);
 }
 
-void SteihaugTointNewtonIO::printOutputPerIteration()
+void TrustRegionNewtonIO::printOutputPerIteration()
 {
     m_DisplayType = trrom::types::ITERATION;
 }
 
-void SteihaugTointNewtonIO::printOutputFinalIteration()
+void TrustRegionNewtonIO::printOutputFinalIteration()
 {
     m_DisplayType = trrom::types::FINAL;
 }
 
-void SteihaugTointNewtonIO::setDisplayOption(trrom::types::display_t option_)
+void TrustRegionNewtonIO::setDisplayOption(trrom::types::display_t option_)
 {
     m_DisplayType = option_;
 }
 
-trrom::types::display_t SteihaugTointNewtonIO::getDisplayOption() const
+trrom::types::display_t TrustRegionNewtonIO::getDisplayOption() const
 {
     return (m_DisplayType);
 }
 
-void SteihaugTointNewtonIO::openFile(const std::string & name_)
+void TrustRegionNewtonIO::openFile(const std::string & name_)
 {
     if(this->getDisplayOption() == trrom::types::OFF)
     {
@@ -69,7 +69,7 @@ void SteihaugTointNewtonIO::openFile(const std::string & name_)
     m_DiagnosticsFile.open(name_.c_str(), std::ios::out | std::ios::trunc);
 }
 
-void SteihaugTointNewtonIO::closeFile()
+void TrustRegionNewtonIO::closeFile()
 {
     if(this->getDisplayOption() == trrom::types::OFF)
     {
@@ -78,7 +78,7 @@ void SteihaugTointNewtonIO::closeFile()
     m_DiagnosticsFile.close();
 }
 
-void SteihaugTointNewtonIO::printInitialDiagnostics(const std::tr1::shared_ptr<trrom::OptimizationDataMng> & data_mng_)
+void TrustRegionNewtonIO::printInitialDiagnostics(const std::tr1::shared_ptr<trrom::OptimizationDataMng> & data_mng_)
 {
     if(this->getDisplayOption() == trrom::types::OFF)
     {
@@ -101,7 +101,7 @@ void SteihaugTointNewtonIO::printInitialDiagnostics(const std::tr1::shared_ptr<t
             << std::flush;
 }
 
-void SteihaugTointNewtonIO::printSolution(const std::tr1::shared_ptr<trrom::Vector<double> > & primal_)
+void TrustRegionNewtonIO::printSolution(const std::tr1::shared_ptr<trrom::Vector<double> > & primal_)
 {
     if(this->getDisplayOption() == trrom::types::OFF)
     {
@@ -110,14 +110,14 @@ void SteihaugTointNewtonIO::printSolution(const std::tr1::shared_ptr<trrom::Vect
     trrom::printSolution(primal_);
 }
 
-void SteihaugTointNewtonIO::printConvergedDiagnostics(const std::tr1::shared_ptr<trrom::OptimizationDataMng> & data_mng_,
+void TrustRegionNewtonIO::printConvergedDiagnostics(const std::tr1::shared_ptr<trrom::OptimizationDataMng> & data_mng_,
                                                       const std::tr1::shared_ptr<trrom::SteihaugTointSolver> & solver_,
                                                       const trrom::TrustRegionStepMng * const step_mng_)
 {
     this->printSubProblemFirstItrDiagnostics(data_mng_, solver_, step_mng_);
 }
 
-void SteihaugTointNewtonIO::printTrustRegionSubProblemDiagnostics(const std::tr1::shared_ptr<trrom::OptimizationDataMng> & data_mng_,
+void TrustRegionNewtonIO::printTrustRegionSubProblemDiagnostics(const std::tr1::shared_ptr<trrom::OptimizationDataMng> & data_mng_,
                                                                   const std::tr1::shared_ptr<trrom::SteihaugTointSolver> & solver_,
                                                                   const trrom::TrustRegionStepMng * const step_mng_)
 {
@@ -139,7 +139,7 @@ void SteihaugTointNewtonIO::printTrustRegionSubProblemDiagnostics(const std::tr1
     }
 }
 
-void SteihaugTointNewtonIO::printHeader()
+void TrustRegionNewtonIO::printHeader()
 {
     m_DiagnosticsFile << std::setw(10) << std::right << "Iteration" << std::setw(12) << std::right << "Func-count"
             << std::setw(12) << std::right << "F(x)" << std::setw(12) << std::right << "norm(G)" << std::setw(12)
@@ -148,7 +148,7 @@ void SteihaugTointNewtonIO::printHeader()
             << std::setw(13) << std::right << "Ratio" << std::setw(12) << std::right << "Krylov-Itr" << std::setw(14)
             << std::right << "Krylov-Res" << std::setw(15) << std::right << "Krylov-Exit" << "\n" << std::flush;
 }
-void SteihaugTointNewtonIO::printSubProblemDiagnostics(const std::tr1::shared_ptr<trrom::OptimizationDataMng> & data_mng_,
+void TrustRegionNewtonIO::printSubProblemDiagnostics(const std::tr1::shared_ptr<trrom::OptimizationDataMng> & data_mng_,
                                                        const std::tr1::shared_ptr<trrom::SteihaugTointSolver> & solver_,
                                                        const trrom::TrustRegionStepMng * const step_mng_)
 {
@@ -171,7 +171,7 @@ void SteihaugTointNewtonIO::printSubProblemDiagnostics(const std::tr1::shared_pt
             << std::flush;
 }
 
-void SteihaugTointNewtonIO::printSubProblemFirstItrDiagnostics(const std::tr1::shared_ptr<trrom::OptimizationDataMng> & data_mng_,
+void TrustRegionNewtonIO::printSubProblemFirstItrDiagnostics(const std::tr1::shared_ptr<trrom::OptimizationDataMng> & data_mng_,
                                                                const std::tr1::shared_ptr<trrom::SteihaugTointSolver> & solver_,
                                                                const trrom::TrustRegionStepMng * const step_mng_)
 {
@@ -202,7 +202,7 @@ void SteihaugTointNewtonIO::printSubProblemFirstItrDiagnostics(const std::tr1::s
             << "\n" << std::flush;
 }
 
-void SteihaugTointNewtonIO::printCurrentSolution(const std::tr1::shared_ptr<trrom::Vector<double> > & primal_)
+void TrustRegionNewtonIO::printCurrentSolution(const std::tr1::shared_ptr<trrom::Vector<double> > & primal_)
 {
     if(this->getDisplayOption() == trrom::types::OFF)
     {
@@ -214,7 +214,7 @@ void SteihaugTointNewtonIO::printCurrentSolution(const std::tr1::shared_ptr<trro
     }
 }
 
-void SteihaugTointNewtonIO::getSolverExitCriterion(trrom::types::solver_stop_criterion_t type_,
+void TrustRegionNewtonIO::getSolverExitCriterion(trrom::types::solver_stop_criterion_t type_,
                                                    std::ostringstream & criterion_)
 {
     switch(type_)

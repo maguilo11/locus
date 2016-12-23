@@ -1,5 +1,5 @@
 /*
- * TRROM_KelleySachsReducedBasis.cpp
+ * TRROM_TrustRegionReducedBasis.cpp
  *
  *  Created on: Sep 5, 2016
  *      Author: Miguel A. Aguilo Valentin
@@ -11,38 +11,38 @@
 #include "TRROM_Vector.hpp"
 #include "TRROM_ReducedBasisData.hpp"
 #include "TRROM_KelleySachsStepMng.hpp"
-#include "TRROM_ReducedBasisDataMng.hpp"
-#include "TRROM_SteihaugTointNewtonIO.hpp"
-#include "TRROM_KelleySachsReducedBasis.hpp"
+#include "TRROM_TrustRegionNewtonIO.hpp"
+#include "TRROM_TrustRegionReducedBasis.hpp"
 #include "TRROM_ProjectedSteihaugTointPcg.hpp"
+#include "TRROM_ReducedBasisNewtonDataMng.hpp"
 
 namespace trrom
 {
 
-KelleySachsReducedBasis::KelleySachsReducedBasis(const std::tr1::shared_ptr<trrom::ReducedBasisData> & data_,
-                                                 const std::tr1::shared_ptr<trrom::ReducedBasisDataMng> & data_mng_,
-                                                 const std::tr1::shared_ptr<trrom::KelleySachsStepMng> & step_mng) :
-        trrom::TrustRegionKelleySachs(data_),
+TrustRegionReducedBasis::TrustRegionReducedBasis(const std::tr1::shared_ptr<trrom::ReducedBasisData> & data_,
+                                                 const std::tr1::shared_ptr<trrom::KelleySachsStepMng> & step_mng,
+                                                 const std::tr1::shared_ptr<trrom::ReducedBasisNewtonDataMng> & data_mng_) :
+        trrom::TrustRegionNewtonBase(data_),
         m_MidGradient(data_->control()->create()),
-        m_IO(new trrom::SteihaugTointNewtonIO),
+        m_IO(new trrom::TrustRegionNewtonIO),
         m_StepMng(step_mng),
-        m_DataMng(data_mng_),
-        m_Solver(new trrom::ProjectedSteihaugTointPcg(data_))
+        m_Solver(new trrom::ProjectedSteihaugTointPcg(data_)),
+        m_DataMng(data_mng_)
 {
 }
 
-KelleySachsReducedBasis::~KelleySachsReducedBasis()
+TrustRegionReducedBasis::~TrustRegionReducedBasis()
 {
 }
 
-void KelleySachsReducedBasis::setMaxNumSolverItr(int input_)
+void TrustRegionReducedBasis::setMaxNumSolverItr(int input_)
 {
     m_Solver->setMaxNumItr(input_);
 }
 
-void KelleySachsReducedBasis::getMin()
+void TrustRegionReducedBasis::getMin()
 {
-    std::string name("KelleySachsReducedBasisDiagnostics.out");
+    std::string name("TrustRegionReducedOrderModelDiagnostics.out");
     m_IO->openFile(name);
 
     double new_objective_value = m_DataMng->evaluateObjective();
@@ -56,7 +56,7 @@ void KelleySachsReducedBasis::getMin()
     {
         m_StepMng->setTrustRegionRadius(norm_gradient);
     }
-    trrom::TrustRegionKelleySachs::computeStationarityMeasure(m_DataMng, m_Solver->getInactiveSet());
+    trrom::TrustRegionNewtonBase::computeStationarityMeasure(m_DataMng, m_Solver->getInactiveSet());
 
     m_IO->printInitialDiagnostics(m_DataMng);
 
@@ -65,7 +65,7 @@ void KelleySachsReducedBasis::getMin()
     {
         this->updateNumOptimizationItrDone(itr);
         // Compute adaptive constants to ensure superlinear convergence
-        double measure = trrom::TrustRegionKelleySachs::getStationarityMeasure();
+        double measure = trrom::TrustRegionNewtonBase::getStationarityMeasure();
         double value = std::pow(measure, static_cast<double>(0.75));
         double epsilon = std::min(static_cast<double>(1e-3), value);
         m_StepMng->setEpsilon(epsilon);
@@ -77,7 +77,7 @@ void KelleySachsReducedBasis::getMin()
         // Compute new midpoint gradient
         m_DataMng->computeGradient(m_StepMng->getMidPrimal(), m_MidGradient);
         // Update current primal and gradient information
-        trrom::TrustRegionKelleySachs::updateDataManager(m_StepMng,
+        trrom::TrustRegionNewtonBase::updateDataManager(m_StepMng,
                                                          m_DataMng,
                                                          m_MidGradient,
                                                          m_Solver->getInactiveSet());
@@ -86,13 +86,13 @@ void KelleySachsReducedBasis::getMin()
         {
             m_DataMng->updateLowFidelityModel();
         }
-        if(trrom::TrustRegionKelleySachs::checkStoppingCriteria(m_StepMng, m_DataMng) == true)
+        if(trrom::TrustRegionNewtonBase::checkStoppingCriteria(m_StepMng, m_DataMng) == true)
         {
             m_IO->printConvergedDiagnostics(m_DataMng, m_Solver, m_StepMng.get());
             break;
         }
         // Update stationarity measure
-        trrom::TrustRegionKelleySachs::computeStationarityMeasure(m_DataMng, m_Solver->getInactiveSet());
+        trrom::TrustRegionNewtonBase::computeStationarityMeasure(m_DataMng, m_Solver->getInactiveSet());
         ++itr;
     }
 
@@ -100,18 +100,19 @@ void KelleySachsReducedBasis::getMin()
     m_IO->closeFile();
 }
 
-void KelleySachsReducedBasis::printDiagnostics()
+void TrustRegionReducedBasis::printDiagnostics()
 {
     m_IO->setDisplayOption(trrom::types::FINAL);
 }
 
-void KelleySachsReducedBasis::updateNumOptimizationItrDone(const int & input_)
+void TrustRegionReducedBasis::updateNumOptimizationItrDone(const int & input_)
 {
+    m_DataMng->setIterationCounter(input_);
     m_IO->setNumOptimizationItrDone(input_);
-    trrom::TrustRegionKelleySachs::setNumOptimizationItrDone(input_);
+    trrom::TrustRegionNewtonBase::setNumOptimizationItrDone(input_);
 }
 
-void KelleySachsReducedBasis::solveSubProblem()
+void TrustRegionReducedBasis::solveSubProblem()
 {
     bool trial_control_computed = false;
     while(trial_control_computed == false)
@@ -125,7 +126,7 @@ void KelleySachsReducedBasis::solveSubProblem()
             m_DataMng->fidelity(trrom::types::HIGH_FIDELITY);
             m_DataMng->evaluateObjective();
             m_DataMng->computeGradient();
-            double trust_region_radius = m_StepMng->getTrustRegionReduction() * m_StepMng->getTrustRegionRadius();
+            double trust_region_radius = m_StepMng->getTrustRegionContraction() * m_StepMng->getTrustRegionRadius();
             m_StepMng->setTrustRegionRadius(trust_region_radius);
         }
     }

@@ -1,5 +1,5 @@
 /*
- * TRROM_SteihaugTointDataMng.cpp
+ * TRROM_InexactNewtonDataMng.cpp
  *
  *  Created on: Sep 5, 2015
  *      Author: Miguel A. Aguilo Valentin
@@ -8,12 +8,12 @@
 #include "TRROM_Data.hpp"
 #include "TRROM_Vector.hpp"
 #include "TRROM_AssemblyManager.hpp"
-#include "TRROM_SteihaugTointDataMng.hpp"
+#include "TRROM_InexactNewtonDataMng.hpp"
 
 namespace trrom
 {
 
-SteihaugTointDataMng::SteihaugTointDataMng(const std::tr1::shared_ptr<trrom::Data> & data_,
+InexactNewtonDataMng::InexactNewtonDataMng(const std::tr1::shared_ptr<trrom::Data> & data_,
                                            const std::tr1::shared_ptr<trrom::AssemblyManager> & manager_) :
         trrom::OptimizationDataMng(data_),
         m_Data(data_),
@@ -21,18 +21,18 @@ SteihaugTointDataMng::SteihaugTointDataMng(const std::tr1::shared_ptr<trrom::Dat
 {
 }
 
-SteihaugTointDataMng::~SteihaugTointDataMng()
+InexactNewtonDataMng::~InexactNewtonDataMng()
 {
 }
 
-void SteihaugTointDataMng::computeGradient()
+void InexactNewtonDataMng::computeGradient()
 {
     bool gradient_inexactness_tol_exceeded = false;
     double tolerance = this->getGradientInexactnessTolerance();
     m_AssemblyMng->gradient(this->getNewPrimal(), this->getNewGradient(), tolerance, gradient_inexactness_tol_exceeded);
 }
 
-void SteihaugTointDataMng::computeGradient(const std::tr1::shared_ptr<trrom::Vector<double> > & input_,
+void InexactNewtonDataMng::computeGradient(const std::tr1::shared_ptr<trrom::Vector<double> > & input_,
                                            const std::tr1::shared_ptr<trrom::Vector<double> > & output_)
 {
     bool gradient_inexactness_tol_exceeded = false;
@@ -40,7 +40,7 @@ void SteihaugTointDataMng::computeGradient(const std::tr1::shared_ptr<trrom::Vec
     m_AssemblyMng->gradient(input_, output_, tolerance, gradient_inexactness_tol_exceeded);
 }
 
-double SteihaugTointDataMng::evaluateObjective()
+double InexactNewtonDataMng::evaluateObjective()
 {
     bool objective_inexactness_tolerance_exceeded = false;
     double tolerance = this->getObjectiveInexactnessTolerance();
@@ -49,7 +49,7 @@ double SteihaugTointDataMng::evaluateObjective()
     return (value);
 }
 
-double SteihaugTointDataMng::evaluateObjective(const std::tr1::shared_ptr<trrom::Vector<double> > & input_)
+double InexactNewtonDataMng::evaluateObjective(const std::tr1::shared_ptr<trrom::Vector<double> > & input_)
 {
     bool objective_inexactness_tolerance_exceeded = false;
     double tolerance = this->getObjectiveInexactnessTolerance();
@@ -58,7 +58,7 @@ double SteihaugTointDataMng::evaluateObjective(const std::tr1::shared_ptr<trrom:
     return (value);
 }
 
-void SteihaugTointDataMng::applyVectorToHessian(const std::tr1::shared_ptr<trrom::Vector<double> > & input_,
+void InexactNewtonDataMng::applyVectorToHessian(const std::tr1::shared_ptr<trrom::Vector<double> > & input_,
                                                 const std::tr1::shared_ptr<trrom::Vector<double> > & output_)
 {
     bool inexactness_violated = false;
@@ -66,12 +66,12 @@ void SteihaugTointDataMng::applyVectorToHessian(const std::tr1::shared_ptr<trrom
     m_AssemblyMng->hessian(this->getNewPrimal(), input_, output_, tolerance, inexactness_violated);
 }
 
-int SteihaugTointDataMng::getObjectiveFunctionEvaluationCounter() const
+int InexactNewtonDataMng::getObjectiveFunctionEvaluationCounter() const
 {
     return (m_AssemblyMng->getObjectiveCounter());
 }
 
-const std::tr1::shared_ptr<trrom::Data> & SteihaugTointDataMng::getData() const
+const std::tr1::shared_ptr<trrom::Data> & InexactNewtonDataMng::getData() const
 {
     return (m_Data);
 }

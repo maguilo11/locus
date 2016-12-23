@@ -1,5 +1,5 @@
 /*
- * TRROM_KelleySachsAugmentedLagrangian.cpp
+ * TRROM_TrustRegionAugmentedLagrangian.cpp
  *
  *  Created on: Sep 5, 2016
  *      Author: Miguel A. Aguilo Valentin
@@ -11,48 +11,48 @@
 #include "TRROM_Data.hpp"
 #include "TRROM_Vector.hpp"
 #include "TRROM_KelleySachsStepMng.hpp"
-#include "TRROM_SteihaugTointNewtonIO.hpp"
+#include "TRROM_TrustRegionNewtonIO.hpp"
 #include "TRROM_ProjectedSteihaugTointPcg.hpp"
 #include "TRROM_AugmentedLagrangianDataMng.hpp"
-#include "TRROM_KelleySachsAugmentedLagrangian.hpp"
+#include "TRROM_TrustRegionAugmentedLagrangian.hpp"
 
 namespace trrom
 {
 
-KelleySachsAugmentedLagrangian::KelleySachsAugmentedLagrangian
+TrustRegionAugmentedLagrangian::TrustRegionAugmentedLagrangian
 (const std::tr1::shared_ptr<trrom::Data> & data_,
- const std::tr1::shared_ptr<trrom::AugmentedLagrangianDataMng> & data_mng_,
- const std::tr1::shared_ptr<trrom::KelleySachsStepMng> & step_mng) :
-        trrom::TrustRegionKelleySachs(data_),
+ const std::tr1::shared_ptr<trrom::KelleySachsStepMng> & step_mng,
+ const std::tr1::shared_ptr<trrom::AugmentedLagrangianDataMng> & data_mng_) :
+        trrom::TrustRegionNewtonBase(data_),
         m_Gamma(1e-3),
         m_OptimalityTolerance(1e-3),
         m_FeasibilityTolerance(1e-3),
-        m_WorkVector(data_->control()->create()),
+        m_Vector(data_->control()->create()),
         m_MidGradient(data_->control()->create()),
-        m_IO(new trrom::SteihaugTointNewtonIO),
+        m_IO(new trrom::TrustRegionNewtonIO),
         m_StepMng(step_mng),
         m_Solver(new trrom::ProjectedSteihaugTointPcg(data_)),
         m_DataMng(data_mng_)
 {
 }
 
-KelleySachsAugmentedLagrangian::~KelleySachsAugmentedLagrangian()
+TrustRegionAugmentedLagrangian::~TrustRegionAugmentedLagrangian()
 {
 }
 
-void KelleySachsAugmentedLagrangian::setOptimalityTolerance(double input_)
+void TrustRegionAugmentedLagrangian::setOptimalityTolerance(double input_)
 {
     m_OptimalityTolerance = input_;
 }
 
-void KelleySachsAugmentedLagrangian::setFeasibilityTolerance(double input_)
+void TrustRegionAugmentedLagrangian::setFeasibilityTolerance(double input_)
 {
     m_FeasibilityTolerance = input_;
 }
 
-void KelleySachsAugmentedLagrangian::getMin()
+void TrustRegionAugmentedLagrangian::getMin()
 {
-    std::string name("KelleySachsAugmentedLagrangianDiagnostics.out");
+    std::string name("TrustRegionAugmentedLagrangianDiagnostics.out");
     m_IO->openFile(name);
 
     double new_objective_value = m_DataMng->evaluateObjective();
@@ -67,7 +67,7 @@ void KelleySachsAugmentedLagrangian::getMin()
     {
         m_StepMng->setTrustRegionRadius(norm_gradient);
     }
-    trrom::TrustRegionKelleySachs::computeStationarityMeasure(m_DataMng, m_Solver->getInactiveSet());
+    trrom::TrustRegionNewtonBase::computeStationarityMeasure(m_DataMng, m_Solver->getInactiveSet());
     m_IO->printInitialDiagnostics(m_DataMng);
 
     int itr = 1;
@@ -75,7 +75,7 @@ void KelleySachsAugmentedLagrangian::getMin()
     {
         this->updateNumOptimizationItrDone(itr);
         // Compute adaptive constants to ensure superlinear convergence
-        double measure = trrom::TrustRegionKelleySachs::getStationarityMeasure();
+        double measure = trrom::TrustRegionNewtonBase::getStationarityMeasure();
         double value = std::pow(measure, static_cast<double>(0.75));
         double epsilon = std::min(static_cast<double>(1e-3), value);
         m_StepMng->setEpsilon(epsilon);
@@ -96,26 +96,26 @@ void KelleySachsAugmentedLagrangian::getMin()
             break;
         }
         // Update stationarity measure
-        trrom::TrustRegionKelleySachs::computeStationarityMeasure(m_DataMng, m_Solver->getInactiveSet());
-        ++ itr;
+        trrom::TrustRegionNewtonBase::computeStationarityMeasure(m_DataMng, m_Solver->getInactiveSet());
+        ++itr;
     }
 
     m_IO->printSolution(m_DataMng->getNewPrimal());
     m_IO->closeFile();
 }
 
-void KelleySachsAugmentedLagrangian::printDiagnostics()
+void TrustRegionAugmentedLagrangian::printDiagnostics()
 {
     m_IO->setDisplayOption(trrom::types::FINAL);
 }
 
-void KelleySachsAugmentedLagrangian::updateNumOptimizationItrDone(const int & input_)
+void TrustRegionAugmentedLagrangian::updateNumOptimizationItrDone(const int & input_)
 {
     m_IO->setNumOptimizationItrDone(input_);
-    trrom::TrustRegionKelleySachs::setNumOptimizationItrDone(input_);
+    trrom::TrustRegionNewtonBase::setNumOptimizationItrDone(input_);
 }
 
-void KelleySachsAugmentedLagrangian::updateDataManager()
+void TrustRegionAugmentedLagrangian::updateDataManager()
 {
     // set new objective function value
     double current_objective_value = m_DataMng->getNewObjectiveFunctionValue();
@@ -124,7 +124,7 @@ void KelleySachsAugmentedLagrangian::updateDataManager()
     m_DataMng->getOldPrimal()->update(1., *m_DataMng->getNewPrimal(), 0.);
     m_DataMng->getOldGradient()->update(1., *m_DataMng->getNewGradient(), 0.);
 
-    if(trrom::TrustRegionKelleySachs::updatePrimal(m_StepMng, m_DataMng, m_MidGradient) == true)
+    if(trrom::TrustRegionNewtonBase::updatePrimal(m_StepMng, m_DataMng, m_MidGradient) == true)
     {
         // update new gradient and inequality constraint values since primal was
         // successfully updated; else, keep mid gradient and thus mid primal
@@ -137,14 +137,14 @@ void KelleySachsAugmentedLagrangian::updateDataManager()
     }
 
     // Compute stagnation measure
-    m_WorkVector->update(1., *m_DataMng->getOldPrimal(), 0.);
-    m_WorkVector->update(-1., *m_DataMng->getNewPrimal(), 1.);
-    double stagnation_measure = m_WorkVector->norm();
+    m_Vector->update(1., *m_DataMng->getOldPrimal(), 0.);
+    m_Vector->update(-1., *m_DataMng->getNewPrimal(), 1.);
+    double stagnation_measure = m_Vector->norm();
     m_DataMng->setStagnationMeasure(stagnation_measure);
     // compute norm of projected gradient
-    m_WorkVector->update(1., *m_DataMng->getNewGradient(), 0.);
-    m_WorkVector->elementWiseMultiplication(*m_Solver->getInactiveSet());
-    double norm_proj_gradient = m_WorkVector->norm();
+    m_Vector->update(1., *m_DataMng->getNewGradient(), 0.);
+    m_Vector->elementWiseMultiplication(*m_Solver->getInactiveSet());
+    double norm_proj_gradient = m_Vector->norm();
     m_DataMng->setNormNewGradient(norm_proj_gradient);
     // compute gradient inexactness bound
     m_StepMng->updateGradientInexactnessTolerance(norm_proj_gradient);
@@ -152,7 +152,7 @@ void KelleySachsAugmentedLagrangian::updateDataManager()
     m_DataMng->setGradientInexactnessTolerance(gradient_inexactness_tolerance);
 }
 
-bool KelleySachsAugmentedLagrangian::checkStoppingCriteria()
+bool TrustRegionAugmentedLagrangian::checkStoppingCriteria()
 {
     bool stop = false;
     double condition = m_Gamma * m_DataMng->getPenalty();
@@ -173,13 +173,13 @@ bool KelleySachsAugmentedLagrangian::checkStoppingCriteria()
     {
         double optimality_measure = m_DataMng->getNormLagrangianGradient();
         double feasibility_measure = m_DataMng->getNormInequalityConstraints();
-        int iteration_count = trrom::TrustRegionKelleySachs::getNumOptimizationItrDone();
+        int iteration_count = trrom::TrustRegionNewtonBase::getNumOptimizationItrDone();
         if((optimality_measure < m_OptimalityTolerance) && (feasibility_measure < m_FeasibilityTolerance))
         {
             this->setStoppingCriterion(trrom::types::OPTIMALITY_AND_FEASIBILITY_SATISFIED);
             stop = true;
         }
-        else if(iteration_count >= trrom::TrustRegionKelleySachs::getMaxNumOptimizationItr())
+        else if(iteration_count >= trrom::TrustRegionNewtonBase::getMaxNumOptimizationItr())
         {
             stop = true;
             this->setStoppingCriterion(trrom::types::MAX_NUM_ITR_REACHED);
@@ -189,7 +189,7 @@ bool KelleySachsAugmentedLagrangian::checkStoppingCriteria()
     return (stop);
 }
 
-bool KelleySachsAugmentedLagrangian::checkPrimaryStoppingCriteria()
+bool TrustRegionAugmentedLagrangian::checkPrimaryStoppingCriteria()
 {
     bool stop = false;
     if(this->checkNaN() == true)
@@ -231,7 +231,7 @@ bool KelleySachsAugmentedLagrangian::checkPrimaryStoppingCriteria()
     return (stop);
 }
 
-bool KelleySachsAugmentedLagrangian::checkNaN()
+bool TrustRegionAugmentedLagrangian::checkNaN()
 {
     bool nan_value_detected = false;
     double norm_proj_gradient = m_DataMng->getNormNewGradient();

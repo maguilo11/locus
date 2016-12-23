@@ -16,8 +16,8 @@ TrustRegionStepMng::TrustRegionStepMng() :
         m_PredictedReduction(0),
         m_MinTrustRegionRadius(1e-4),
         m_MaxTrustRegionRadius(1e4),
-        m_TrustRegionReduction(0.5),
         m_TrustRegionExpansion(2.),
+        m_TrustRegionContraction(0.5),
         m_MinCosineAngleTolerance(1e-2),
         m_TrustRegionRadiusScaling(1.),
         m_GradientInexactnessTolerance(0),
@@ -48,14 +48,14 @@ double TrustRegionStepMng::getTrustRegionRadius() const
     return (m_TrustRegionRadius);
 }
 
-void TrustRegionStepMng::setTrustRegionReduction(double input_)
+void TrustRegionStepMng::setTrustRegionContraction(double input_)
 {
-    m_TrustRegionReduction = input_;
+    m_TrustRegionContraction = input_;
 }
 
-double TrustRegionStepMng::getTrustRegionReduction() const
+double TrustRegionStepMng::getTrustRegionContraction() const
 {
-    return (m_TrustRegionReduction);
+    return (m_TrustRegionContraction);
 }
 
 void TrustRegionStepMng::setTrustRegionExpansion(double input_)

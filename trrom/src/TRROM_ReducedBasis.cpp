@@ -28,7 +28,7 @@ int energy(const double & threshold_, const trrom::Vector<double> & singular_val
     {
         // Check if energy threshold is violated, i.e. \sum_{i=1}^{index}\Sigma_i > \epsilon
         cumulative_energy += singular_values_[index];
-        // TODO: reduction needed here? maybe?
+        // TODO: reduced needed here
         double energy = cumulative_energy / total_energy;
         if(energy > threshold_)
         {
@@ -48,7 +48,7 @@ void properOrthogonalDecomposition(const trrom::Vector<double> & singular_values
     assert(singular_values_.size() == left_singular_vectors_.getNumCols());
 
     int num_basis_vectors = basis_.getNumCols();
-    for(int index = 0; index < num_basis_vectors; ++ index)
+    for(int index = 0; index < num_basis_vectors; ++index)
     {
         // Compute i-th basis vector: \Phi(:,i) = \alpha\mathbf{U}\Psi(:,i), where \alpha = \frac{1}{\sqrt(\Sigma_i)}
         basis_.insert(*snapshots_.vector(index), index);

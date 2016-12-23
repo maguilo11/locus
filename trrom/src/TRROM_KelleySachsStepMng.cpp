@@ -17,7 +17,7 @@
 #include "TRROM_KelleySachsStepMng.hpp"
 #include "TRROM_SteihaugTointSolver.hpp"
 #include "TRROM_OptimizationDataMng.hpp"
-#include "TRROM_SteihaugTointNewtonIO.hpp"
+#include "TRROM_TrustRegionNewtonIO.hpp"
 
 namespace trrom
 {
@@ -122,7 +122,7 @@ const std::tr1::shared_ptr<trrom::Vector<double> > & KelleySachsStepMng::getMidP
 
 bool KelleySachsStepMng::solveSubProblem(const std::tr1::shared_ptr<trrom::OptimizationDataMng> & mng_,
                                          const std::tr1::shared_ptr<trrom::SteihaugTointSolver> & solver_,
-                                         const std::tr1::shared_ptr<trrom::SteihaugTointNewtonIO> & io_)
+                                         const std::tr1::shared_ptr<trrom::TrustRegionNewtonIO> & io_)
 {
     m_TrustRegionRadiusFlag = false;
     bool trial_control_accepted = true;
@@ -234,13 +234,13 @@ bool KelleySachsStepMng::updateTrustRegionRadius(const std::tr1::shared_ptr<trro
     double actual_reduction_lower_bound = this->computeActualReductionLowerBound(mng_);
     if(actual_reduction >= actual_reduction_lower_bound)
     {
-        current_trust_region_radius = trrom::TrustRegionStepMng::getTrustRegionReduction()
+        current_trust_region_radius = trrom::TrustRegionStepMng::getTrustRegionContraction()
                 * current_trust_region_radius;
         m_TrustRegionRadiusFlag = true;
     }
     else if(actual_over_pred_red < actual_over_pred_lower_bound)
     {
-        current_trust_region_radius = trrom::TrustRegionStepMng::getTrustRegionReduction()
+        current_trust_region_radius = trrom::TrustRegionStepMng::getTrustRegionContraction()
                 * current_trust_region_radius;
         m_TrustRegionRadiusFlag = true;
     }
