@@ -17,25 +17,26 @@ GTEST_SRC = /Users/miguelaguilo/Software/gtest_mybuild_clang++/CMakeFiles/gtest.
 
 # Set object files directory
 OBJS = $(SRC)TRROM_DiscreteEmpiricalInterpolation.o \
-	$(SRC)TRROM_KelleySachsAugmentedLagrangian.o \
+	$(SRC)TRROM_TrustRegionAugmentedLagrangian.o \
 	$(SRC)TRROM_AugmentedLagrangianDataMng.o \
 	$(SRC)TRROM_ProjectedSteihaugTointPcg.o \
 	$(SRC)TRROM_AugmentedLagrangianTypeLP.o \
 	$(SRC)TRROM_AugmentedLagrangianTypeNP.o \
+	$(SRC)TRROM_ReducedBasisNewtonDataMng.o \
 	$(SRC)TRROM_SpectralDecompositionMng.o \
 	$(SRC)TRROM_ReducedSpaceAssemblyMng.o \
 	$(SRC)TRROM_ReducedBasisAssemblyMng.o \
-	$(SRC)TRROM_KelleySachsReducedBasis.o \
-	$(SRC)TRROM_TrustRegionKelleySachs.o \
+	$(SRC)TRROM_TrustRegionReducedBasis.o \
+	$(SRC)TRROM_TrustRegionNewtonBase.o \
 	$(SRC)TRROM_ReducedBasisInterface.o \
-	$(SRC)TRROM_SteihaugTointNewtonIO.o \
-	$(SRC)TRROM_SteihaugTointDataMng.o \
+	$(SRC)TRROM_InexactNewtonDataMng.o \
+	$(SRC)TRROM_TrustRegionNewtonIO.o \
 	$(SRC)TRROM_OptimizationDataMng.o \
 	$(SRC)TRROM_SteihaugTointSolver.o \
 	$(SRC)TRROM_ModifiedGramSchmidt.o \
-	$(SRC)TRROM_ReducedBasisDataMng.o \
 	$(SRC)TRROM_KelleySachsStepMng.o \
 	$(SRC)TRROM_TrustRegionStepMng.o \
+	$(SRC)TRROM_TrustRegionNewton.o \
 	$(SRC)TRROM_AssemblyMngTypeLP.o \
 	$(SRC)TRROM_ReducedBasisData.o \
 	$(SRC)TRROM_BoundConstraints.o \
@@ -45,7 +46,6 @@ OBJS = $(SRC)TRROM_DiscreteEmpiricalInterpolation.o \
 	$(SRC)TRROM_Preconditioner.o \
 	$(SRC)TRROM_VariablesUtils.o \
 	$(SRC)TRROM_ReducedBasis.o \
-	$(SRC)TRROM_KelleySachs.o \
 	$(SRC)TRROM_Rosenbrock.o \
 	$(SRC)TRROM_Variable.o \
 	$(SRC)TRROM_Control.o \
@@ -63,7 +63,8 @@ UTEST = $(GTEST_SRC)gtest-all.cc.o \
 	$(TEST)TRROM_SimpleTest.o
 	
 MOCKFILES =$(MOCK)TRROM_MOCK_SVD.o \
-	$(MOCK)TRROM_MOCK_MatlabQR.o
+	$(MOCK)TRROM_MOCK_MatlabQR.o \
+	$(MOCK)TRROM_MOCK_Factory.o
 
 .cpp.o:
 	$(CXX) $(CXXFLAGS) -I$(CXX_INCLUDE) -I$(GTEST_INCLUDE_DIR) -I$(MOCK) -I$(INC) -I$(SRC) \
