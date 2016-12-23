@@ -145,7 +145,7 @@ void MxTrustRegionReducedOrderModelTypeB::solveOptimizationProblem(const std::tr
 
     // Set reduced basis assembly manager: handles objective, gradient, and Hessian evaluations
     std::tr1::shared_ptr<trrom::ReducedBasisObjective> objective;
-    trrom::mx::parseReducedObjectiveFunction(inputs_[1], objective);
+    trrom::mx::parseReducedBasisObjectiveFunction(inputs_[1], objective);
     std::tr1::shared_ptr<trrom::ReducedBasisPDE> partial_differential_equation;
     trrom::mx::parseReducedBasisPartialDifferentialEquation(inputs_[1], partial_differential_equation);
     std::tr1::shared_ptr<trrom::ReducedBasisAssemblyMng>

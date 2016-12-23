@@ -299,7 +299,7 @@ void parseControlUpperBound(const mxArray* input_, trrom::MxVector & output_)
     mxDestroyArray(value);
 }
 
-void parseReducedObjectiveFunction(const mxArray* input_, std::tr1::shared_ptr<trrom::ReducedBasisObjective> & output_)
+void parseReducedBasisObjectiveFunction(const mxArray* input_, std::tr1::shared_ptr<trrom::ReducedBasisObjective> & output_)
 {
     if(mxGetField(input_, 0, "ObjectiveFunction") == NULL)
     {

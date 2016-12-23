@@ -206,14 +206,14 @@ void parseControlLowerBound(const mxArray* input_, trrom::MxVector & output_);
  **/
 void parseControlUpperBound(const mxArray* input_, trrom::MxVector & output_);
 /*!
- * Parses functor to objective function operators' interface.
+ * Parses functor to reduced basis objective function operators' interface.
  * Parameters:
  *    \param In
  *          input_: const MEX array pointer
  *    \param Out
  *          output_: functor to operators' interface
  **/
-void parseReducedObjectiveFunction(const mxArray* input_, std::tr1::shared_ptr<trrom::ReducedBasisObjective> & output_);
+void parseReducedBasisObjectiveFunction(const mxArray* input_, std::tr1::shared_ptr<trrom::ReducedBasisObjective> & output_);
 /*!
  * Parses functor to reduced basis partial differential equation (PDE) operators' interface.
  * Parameters:
