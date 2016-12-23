@@ -14,6 +14,7 @@ namespace trrom
 {
 
 class BrandMatrixFactory;
+class LinearAlgebraFactory;
 class SpectralDecomposition;
 class OrthogonalFactorization;
 
@@ -37,7 +38,8 @@ public:
      *          ortho_: instance to a derived class from trrom::OrthogonalFactorization
      * \return Reference to BrandLowRankSVD.
      **/
-    BrandLowRankSVD(const std::tr1::shared_ptr<trrom::BrandMatrixFactory> & factory_,
+    BrandLowRankSVD(const std::tr1::shared_ptr<trrom::BrandMatrixFactory> & brand_factory_,
+                    const std::tr1::shared_ptr<trrom::LinearAlgebraFactory> & algebra_factory_,
                     const std::tr1::shared_ptr<trrom::SpectralDecomposition> & svd_,
                     const std::tr1::shared_ptr<trrom::OrthogonalFactorization> & ortho_);
     //! BrandLowRankSVD destructor.
@@ -62,8 +64,9 @@ public:
                std::tr1::shared_ptr<trrom::Matrix<double> > & right_singular_vectors_);
 
 private:
-    std::tr1::shared_ptr<trrom::BrandMatrixFactory> m_MatrixFactory;
+    std::tr1::shared_ptr<trrom::BrandMatrixFactory> m_BrandFactory;
     std::tr1::shared_ptr<trrom::SpectralDecomposition> m_SpectralMethod;
+    std::tr1::shared_ptr<trrom::LinearAlgebraFactory> m_LinearAlgebraFactory;
     std::tr1::shared_ptr<trrom::OrthogonalFactorization> m_OrthoFactorization;
 
 private:

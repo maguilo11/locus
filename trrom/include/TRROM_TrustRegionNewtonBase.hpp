@@ -1,12 +1,12 @@
 /*
- * TRROM_TrustRegionKelleySachs.hpp
+ * TRROM_TrustRegionNewtonBase.hpp
  *
  *  Created on: Sep 5, 2016
  *      Author: Miguel A. Aguilo Valentin
  */
 
-#ifndef TRROM_TRUSTREGIONKELLEYSACHS_HPP_
-#define TRROM_TRUSTREGIONKELLEYSACHS_HPP_
+#ifndef TRROM_TRUSTREGIONNEWTONBASE_HPP_
+#define TRROM_TRUSTREGIONNEWTONBASE_HPP_
 
 namespace trrom
 {
@@ -19,11 +19,11 @@ class OptimizationDataMng;
 template<typename ScalarType>
 class Vector;
 
-class TrustRegionKelleySachs
+class TrustRegionNewtonBase
 {
 public:
-    explicit TrustRegionKelleySachs(const std::tr1::shared_ptr<trrom::Data> & data_);
-    virtual ~TrustRegionKelleySachs();
+    explicit TrustRegionNewtonBase(const std::tr1::shared_ptr<trrom::Data> & data_);
+    virtual ~TrustRegionNewtonBase();
 
     void setGradientTolerance(double input_);
     double getGradientTolerance() const;
@@ -81,8 +81,8 @@ private:
     std::tr1::shared_ptr<trrom::BoundConstraints> m_BoundConstraint;
 
 private:
-    TrustRegionKelleySachs(const trrom::TrustRegionKelleySachs &);
-    trrom::TrustRegionKelleySachs & operator=(const trrom::TrustRegionKelleySachs & rhs_);
+    TrustRegionNewtonBase(const trrom::TrustRegionNewtonBase &);
+    trrom::TrustRegionNewtonBase & operator=(const trrom::TrustRegionNewtonBase & rhs_);
 };
 
 }

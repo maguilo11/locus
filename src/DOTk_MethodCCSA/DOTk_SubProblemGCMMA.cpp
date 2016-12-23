@@ -188,6 +188,7 @@ void DOTk_SubProblemGCMMA::updateObjectiveGlobalizationScalingParameters(const s
                         * ((*m_DeltaControl)[index] * (*m_DeltaControl)[index]));
         v_function_evaluation += numerator / denominator;
     }
+    // TODO: reduction operation needed here!
     w_function_evaluation = static_cast<Real>(0.5)*w_function_evaluation;
     v_function_evaluation = data_mng_->m_CurrentObjectiveFunctionValue + v_function_evaluation;
 

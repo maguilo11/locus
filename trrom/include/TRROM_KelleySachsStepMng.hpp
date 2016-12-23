@@ -19,7 +19,7 @@ class Preconditioner;
 class BoundConstraints;
 class SteihaugTointSolver;
 class OptimizationDataMng;
-class SteihaugTointNewtonIO;
+class TrustRegionNewtonIO;
 
 template<typename ScalarType>
 class Vector;
@@ -44,7 +44,7 @@ public:
 
     bool solveSubProblem(const std::tr1::shared_ptr<trrom::OptimizationDataMng> & mng_,
                          const std::tr1::shared_ptr<trrom::SteihaugTointSolver> & solver_,
-                         const std::tr1::shared_ptr<trrom::SteihaugTointNewtonIO> & io_);
+                         const std::tr1::shared_ptr<trrom::TrustRegionNewtonIO> & io_);
 
 private:
     void bounds(const std::tr1::shared_ptr<trrom::Data> & data_);

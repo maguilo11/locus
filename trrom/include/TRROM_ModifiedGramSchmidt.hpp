@@ -12,14 +12,21 @@
 namespace trrom
 {
 
+class LinearAlgebraFactory;
+
 class ModifiedGramSchmidt : public trrom::OrthogonalFactorization
 {
 public:
-    ModifiedGramSchmidt();
+    explicit ModifiedGramSchmidt(const std::tr1::shared_ptr<trrom::LinearAlgebraFactory> & factory_);
     virtual ~ModifiedGramSchmidt();
 
     trrom::types::ortho_factorization_t type() const;
-    virtual void factorize(const trrom::Matrix<double> & input_, trrom::Matrix<double> & Q_, trrom::Matrix<double> & R_);
+    void factorize(const std::tr1::shared_ptr<trrom::Matrix<double> > & input_,
+                   std::tr1::shared_ptr<trrom::Matrix<double> > & Q_,
+                   std::tr1::shared_ptr<trrom::Matrix<double> > & R_);
+
+private:
+    std::tr1::shared_ptr<trrom::LinearAlgebraFactory> m_Factory;
 
 private:
     ModifiedGramSchmidt(const trrom::ModifiedGramSchmidt &);

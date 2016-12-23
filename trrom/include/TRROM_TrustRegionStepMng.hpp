@@ -15,7 +15,7 @@ namespace trrom
 
 class SteihaugTointSolver;
 class OptimizationDataMng;
-class SteihaugTointNewtonIO;
+class TrustRegionNewtonIO;
 
 class TrustRegionStepMng
 {
@@ -25,8 +25,8 @@ public:
 
     void setTrustRegionRadius(double input_);
     double getTrustRegionRadius() const;
-    void setTrustRegionReduction(double input_);
-    double getTrustRegionReduction() const;
+    void setTrustRegionContraction(double input_);
+    double getTrustRegionContraction() const;
     void setTrustRegionExpansion(double input_);
     double getTrustRegionExpansion() const;
     void setMinTrustRegionRadius(double input_);
@@ -73,7 +73,7 @@ public:
 
     virtual bool solveSubProblem(const std::tr1::shared_ptr<trrom::OptimizationDataMng> & mng_,
                                  const std::tr1::shared_ptr<trrom::SteihaugTointSolver> & solver_,
-                                 const std::tr1::shared_ptr<trrom::SteihaugTointNewtonIO> & io_) = 0;
+                                 const std::tr1::shared_ptr<trrom::TrustRegionNewtonIO> & io_) = 0;
 
 private:
     double m_ActualReduction;
@@ -81,8 +81,8 @@ private:
     double m_PredictedReduction;
     double m_MinTrustRegionRadius;
     double m_MaxTrustRegionRadius;
-    double m_TrustRegionReduction;
     double m_TrustRegionExpansion;
+    double m_TrustRegionContraction;
     double m_MinCosineAngleTolerance;
     double m_TrustRegionRadiusScaling;
     double m_GradientInexactnessTolerance;

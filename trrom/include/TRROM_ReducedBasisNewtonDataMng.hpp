@@ -1,12 +1,12 @@
 /*
- * TRROM_ReducedBasisDataMng.hpp
+ * TRROM_ReducedBasisNewtonDataMng.hpp
  *
  *  Created on: Sep 5, 2016
  *      Author: Miguel A. Aguilo Valentin
  */
 
-#ifndef TRROM_REDUCEDBASISDATAMNG_HPP_
-#define TRROM_REDUCEDBASISDATAMNG_HPP_
+#ifndef TRROM_REDUCEDBASISNEWTONDATAMNG_HPP_
+#define TRROM_REDUCEDBASISNEWTONDATAMNG_HPP_
 
 #include "TRROM_OptimizationDataMng.hpp"
 
@@ -19,12 +19,12 @@ class ReducedBasisAssemblyMng;
 template<typename ScalarType>
 class Vector;
 
-class ReducedBasisDataMng : public trrom::OptimizationDataMng
+class ReducedBasisNewtonDataMng : public trrom::OptimizationDataMng
 {
 public:
-    ReducedBasisDataMng(const std::tr1::shared_ptr<trrom::ReducedBasisData> & data_,
-                        const std::tr1::shared_ptr<trrom::ReducedBasisAssemblyMng> & manager_);
-    virtual ~ReducedBasisDataMng();
+    ReducedBasisNewtonDataMng(const std::tr1::shared_ptr<trrom::ReducedBasisData> & data_,
+                              const std::tr1::shared_ptr<trrom::ReducedBasisAssemblyMng> & manager_);
+    virtual ~ReducedBasisNewtonDataMng();
 
     int getObjectiveFunctionEvaluationCounter() const;
 
@@ -44,10 +44,10 @@ private:
     std::tr1::shared_ptr<trrom::ReducedBasisAssemblyMng> m_AssemblyMng;
 
 private:
-    ReducedBasisDataMng(const trrom::ReducedBasisDataMng &);
-    trrom::ReducedBasisDataMng & operator=(const trrom::ReducedBasisDataMng &);
+    ReducedBasisNewtonDataMng(const trrom::ReducedBasisNewtonDataMng &);
+    trrom::ReducedBasisNewtonDataMng & operator=(const trrom::ReducedBasisNewtonDataMng &);
 };
 
 }
 
-#endif /* TRROM_REDUCEDBASISDATAMNG_HPP_ */
+#endif /* TRROM_REDUCEDBASISNEWTONDATAMNG_HPP_ */

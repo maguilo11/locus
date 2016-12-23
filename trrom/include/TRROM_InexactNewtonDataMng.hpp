@@ -1,12 +1,12 @@
 /*
- * SteihaugTointDataMng.hpp
+ * TRROM_InexactNewtonDataMng.hpp
  *
  *  Created on: Sep 5, 2015
  *      Author: Miguel A. Aguilo Valentin
  */
 
-#ifndef TRROM_STEIHAUGTOINTDATAMNG_HPP_
-#define TRROM_STEIHAUGTOINTDATAMNG_HPP_
+#ifndef TRROM_INEXACTNEWTONDATAMNG_HPP_
+#define TRROM_INEXACTNEWTONDATAMNG_HPP_
 
 #include "TRROM_OptimizationDataMng.hpp"
 
@@ -19,12 +19,12 @@ class AssemblyManager;
 template<typename ScalarType>
 class Vector;
 
-class SteihaugTointDataMng : public trrom::OptimizationDataMng
+class InexactNewtonDataMng : public trrom::OptimizationDataMng
 {
 public:
-    SteihaugTointDataMng(const std::tr1::shared_ptr<trrom::Data> & data_,
+    InexactNewtonDataMng(const std::tr1::shared_ptr<trrom::Data> & data_,
                          const std::tr1::shared_ptr<trrom::AssemblyManager> & manager_);
-    virtual ~SteihaugTointDataMng();
+    virtual ~InexactNewtonDataMng();
 
     double evaluateObjective();
     double evaluateObjective(const std::tr1::shared_ptr<trrom::Vector<double> > & input_);
@@ -44,10 +44,10 @@ private:
     std::tr1::shared_ptr<trrom::AssemblyManager> m_AssemblyMng;
 
 private:
-    SteihaugTointDataMng(const trrom::SteihaugTointDataMng &);
-    trrom::SteihaugTointDataMng & operator=(const trrom::SteihaugTointDataMng & rhs_);
+    InexactNewtonDataMng(const trrom::InexactNewtonDataMng &);
+    trrom::InexactNewtonDataMng & operator=(const trrom::InexactNewtonDataMng & rhs_);
 };
 
 }
 
-#endif /* TRROM_STEIHAUGTOINTDATAMNG_HPP_ */
+#endif /* TRROM_INEXACTNEWTONDATAMNG_HPP_ */

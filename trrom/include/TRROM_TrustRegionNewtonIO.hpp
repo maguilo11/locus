@@ -1,12 +1,12 @@
 /*
- * TRROM_SteihaugTointNewtonIO.hpp
+ * TRROM_TrustRegionNewtonIO.hpp
  *
  *  Created on: Sep 5, 2015
  *      Author: Miguel A. Aguilo Valentin
  */
 
-#ifndef TRROM_STEIHAUGTOINTNEWTONIO_HPP_
-#define TRROM_STEIHAUGTOINTNEWTONIO_HPP_
+#ifndef TRROM_TRUSTREGIONNEWTONIO_HPP_
+#define TRROM_TRUSTREGIONNEWTONIO_HPP_
 
 #include <string>
 #include <fstream>
@@ -23,11 +23,11 @@ class OptimizationDataMng;
 template<typename ScalarType>
 class Vector;
 
-class SteihaugTointNewtonIO
+class TrustRegionNewtonIO
 {
 public:
-    SteihaugTointNewtonIO();
-    ~SteihaugTointNewtonIO();
+    TrustRegionNewtonIO();
+    ~TrustRegionNewtonIO();
 
     void setNumOptimizationItrDone(int itr_);
     int getNumOptimizationItrDone() const;
@@ -66,10 +66,10 @@ private:
     trrom::types::display_t m_DisplayType;
 
 private:
-    SteihaugTointNewtonIO(const trrom::SteihaugTointNewtonIO &);
-    trrom::SteihaugTointNewtonIO & operator=(const trrom::SteihaugTointNewtonIO & rhs_);
+    TrustRegionNewtonIO(const trrom::TrustRegionNewtonIO &);
+    trrom::TrustRegionNewtonIO & operator=(const trrom::TrustRegionNewtonIO & rhs_);
 };
 
 }
 
-#endif /* TRROM_STEIHAUGTOINTNEWTONIO_HPP_ */
+#endif /* TRROM_TRUSTREGIONNEWTONIO_HPP_ */
