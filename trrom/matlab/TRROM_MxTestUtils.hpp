@@ -27,6 +27,7 @@ inline void assert_test(const std::string & test_name_, bool assertion_)
 {
     if(assertion_ == false)
     {
+
         mexPrintf("TEST NAME: %s <<FAIL>>\n", test_name_.c_str());
     }
     else

@@ -5,6 +5,8 @@
  *      Author: Miguel A. Aguilo Valentin
  */
 
+#include <cassert>
+
 #include "TRROM_ReducedHessian.hpp"
 #include "TRROM_ReducedBasisData.hpp"
 #include "TRROM_KelleySachsStepMng.hpp"
@@ -14,14 +16,13 @@
 #include "TRROM_SpectralDecompositionMng.hpp"
 #include "TRROM_ReducedBasisNewtonDataMng.hpp"
 
-
 #include "TRROM_MxVector.hpp"
 #include "TRROM_MxDirectSolver.hpp"
 #include "TRROM_MxBrandLowRankSVD.hpp"
 #include "TRROM_MxReducedBasisPDE.hpp"
-#include "TRROM_MxParsingUtilities.hpp"
+#include "TRROM_MxParserUtilities.hpp"
 #include "TRROM_MxLinearAlgebraFactory.hpp"
-#include "TRROM_MxReducedObjectiveOperators.hpp"
+#include "TRROM_MxReducedBasisObjective.hpp"
 #include "TRROM_MxSingularValueDecomposition.hpp"
 #include "TRROM_MxTrustRegionReducedOrderModelTypeB.hpp"
 
@@ -85,12 +86,18 @@ void MxTrustRegionReducedOrderModelTypeB::solve(const mxArray* inputs_[], mxArra
     data->allocateState(states);
     data->allocateControl(controls);
 
-    // Set lower and upper bounds on controls
-    trrom::MxVector lower_bounds(num_controls);
-    trrom::mx::parseControlLowerBound(inputs_[0], lower_bounds);
+    // Set lower bounds on controls
+    mxArray* mx_lower_bound = trrom::mx::parseControlLowerBound(inputs_[0]);
+    trrom::MxVector lower_bounds(mx_lower_bound);
+    mxDestroyArray(mx_lower_bound);
+    assert(lower_bounds.size() == num_controls);
     data->setControlLowerBound(lower_bounds);
-    trrom::MxVector upper_bounds(num_controls);
-    trrom::mx::parseControlUpperBound(inputs_[0], upper_bounds);
+
+    // Set upper bounds on controls
+    mxArray* mx_upper_bound = trrom::mx::parseControlLowerBound(inputs_[0]);
+    trrom::MxVector upper_bounds(mx_upper_bound);
+    mxDestroyArray(mx_upper_bound);
+    assert(upper_bounds.size() == num_controls);
     data->setControlUpperBound(upper_bounds);
 
     // Solve optimization problem
@@ -143,13 +150,17 @@ void MxTrustRegionReducedOrderModelTypeB::solveOptimizationProblem(const std::tr
     std::tr1::shared_ptr<trrom::ReducedBasisInterface>
         reduced_basis_interface(new trrom::ReducedBasisInterface(data_, solver, linear_algebra_factory, spectral_decomposition_mng));
 
-    // Set reduced basis assembly manager: handles objective, gradient, and Hessian evaluations
-    std::tr1::shared_ptr<trrom::ReducedBasisObjective> objective;
-    trrom::mx::parseReducedBasisObjectiveFunction(inputs_[1], objective);
-    std::tr1::shared_ptr<trrom::ReducedBasisPDE> partial_differential_equation;
-    trrom::mx::parseReducedBasisPartialDifferentialEquation(inputs_[1], partial_differential_equation);
+    // Set objective and partial differential equation (PDE) operators manager
+    mxArray* mx_objective = trrom::mx::parseReducedBasisObjectiveFunction(inputs_[1]);
+    std::tr1::shared_ptr<trrom::ReducedBasisObjective> objective(new trrom::MxReducedBasisObjective(mx_objective));
+    mxDestroyArray(mx_objective);
+    mxArray* mx_pde = trrom::mx::parseReducedBasisPartialDifferentialEquation(inputs_[1]);
+    std::tr1::shared_ptr<trrom::ReducedBasisPDE> pde(new trrom::MxReducedBasisPDE(mx_pde));
+    mxDestroyArray(mx_pde);
+
+    // Set reduced basis assembly manager: Handles objective, gradient, and Hessian evaluations
     std::tr1::shared_ptr<trrom::ReducedBasisAssemblyMng>
-        assembly_manager(new trrom::ReducedBasisAssemblyMng(data_, reduced_basis_interface, objective, partial_differential_equation));
+        assembly_manager(new trrom::ReducedBasisAssemblyMng(data_, reduced_basis_interface, objective, pde));
 
     // Set optimization algorithm data
     std::tr1::shared_ptr<trrom::ReducedHessian> hessian(new trrom::ReducedHessian);

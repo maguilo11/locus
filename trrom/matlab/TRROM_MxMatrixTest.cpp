@@ -19,7 +19,7 @@ void mexFunction(int nOutput, mxArray* pOutput[], int nInput, const mxArray* pIn
     mexPrintf("%s", msg.c_str());
     if( !(nInput == 0 && nOutput == 0) )
     {
-        std::string error("\nTEST DOES NOT TAKE INPUT AND OUTPUT AGUMENTS\n");
+        std::string error("\nTEST DOES NOT TAKE INPUT AND OUTPUT ARGUMENTS\n");
         mexErrMsgTxt(error.c_str());
     }
 

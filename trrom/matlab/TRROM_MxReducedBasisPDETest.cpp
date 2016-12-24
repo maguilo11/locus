@@ -19,7 +19,7 @@ void mexFunction(int nOutput, mxArray* pOutput[], int nInput, const mxArray* pIn
     mexPrintf("%s", msg.c_str());
     if(!(nInput == 1 && nOutput == 0))
     {
-        std::string error("\nINCORRECT NUMBER OF INPUT AND OUTPUT AGUMENTS. FUNCTION TAKES ONE INPUT AND RETURNS NO OUTPUT.\n");
+        std::string error("\nINCORRECT NUMBER OF INPUT AND OUTPUT ARGUMENTS. FUNCTION TAKES ONE INPUT AND RETURNS NO OUTPUT.\n");
         mexErrMsgTxt(error.c_str());
     }
 

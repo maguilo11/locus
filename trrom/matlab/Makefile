@@ -42,7 +42,8 @@ OBJS=$(HOME)matlab/TRROM_MxDriver.o \
 	$(HOME)matlab/TRROM_MxLinearAlgebraFactory.o \
 	$(HOME)matlab/TRROM_MxLinearAlgebraFactoryTest.o \
 	$(HOME)matlab/TRROM_MxDiscreteEmpiricalInterpolationTest.o \
-	$(HOME)matlab/TRROM_MxParsingUtilities.o \
+	$(HOME)matlab/TRROM_MxParserTest.o \
+	$(HOME)matlab/TRROM_MxParserUtilities.o \
 	$(HOME)matlab/TRROM_MxTrustRegionReducedOrderModelTypeB.o \
 	$(HOME)src/TRROM_Data.o \
 	$(HOME)src/TRROM_Dual.o \
@@ -92,10 +93,14 @@ DEIMTEST=$(HOME)matlab/TRROM_MxDiscreteEmpiricalInterpolationTest.o \
 	$(HOME)matlab/TRROM_MxMatrix.o \
 	$(HOME)matlab/TRROM_MxVector.o \
 	$(HOME)src/TRROM_DiscreteEmpiricalInterpolation.o
-
+	
 ORTHOTEST=$(HOME)matlab/TRROM_MxOrthogonalDecompositionTest.o \
 	$(HOME)matlab/TRROM_MxOrthogonalDecomposition.o \
 	$(HOME)matlab/TRROM_MxMatrix.o \
+	$(HOME)matlab/TRROM_MxVector.o
+
+PARSERTEST=$(HOME)matlab/TRROM_MxParserTest.o \
+	$(HOME)matlab/TRROM_MxParserUtilities.o \
 	$(HOME)matlab/TRROM_MxVector.o
 	
 SOLVERTEST=$(HOME)matlab/TRROM_MxDirectSolverTest.o \
@@ -137,6 +142,7 @@ MX:
 	$(MEX) CXX=$(CXX) CXXOPTIMFLAGS=$(CXXOPTIMFLAGS) LD=$(CXX) $(MEXFLAG) -outdir $(EXEDIR) $(INQTEST)
 	$(MEX) CXX=$(CXX) CXXOPTIMFLAGS=$(CXXOPTIMFLAGS) LD=$(CXX) $(MEXFLAG) -outdir $(EXEDIR) $(DEIMTEST)
 	$(MEX) CXX=$(CXX) CXXOPTIMFLAGS=$(CXXOPTIMFLAGS) LD=$(CXX) $(MEXFLAG) -outdir $(EXEDIR) $(ORTHOTEST)
+	$(MEX) CXX=$(CXX) CXXOPTIMFLAGS=$(CXXOPTIMFLAGS) LD=$(CXX) $(MEXFLAG) -outdir $(EXEDIR) $(PARSERTEST)
 	$(MEX) CXX=$(CXX) CXXOPTIMFLAGS=$(CXXOPTIMFLAGS) LD=$(CXX) $(MEXFLAG) -outdir $(EXEDIR) $(SOLVERTEST)
 	$(MEX) CXX=$(CXX) CXXOPTIMFLAGS=$(CXXOPTIMFLAGS) LD=$(CXX) $(MEXFLAG) -outdir $(EXEDIR) $(BRANDFACTEST)
 	$(MEX) CXX=$(CXX) CXXOPTIMFLAGS=$(CXXOPTIMFLAGS) LD=$(CXX) $(MEXFLAG) -outdir $(EXEDIR) $(BRANDALGOEST)

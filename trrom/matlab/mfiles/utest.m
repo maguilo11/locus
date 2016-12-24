@@ -33,4 +33,7 @@ TRROM_MxLowRankSVDTest;
 TRROM_MxDiscreteEmpiricalInterpolationTest;
 %% TEST LINEAR ALGEBRA FACTORY MEX INTERFACE
 TRROM_MxLinearAlgebraFactoryTest;
+%% TEST MEX TRROM PARSER
+[data,default] = mockInputFile;
+TRROM_MxParserTest(data,default);
 end

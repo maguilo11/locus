@@ -1,12 +1,12 @@
 /*
- * TRROM_MxParsingUtilities.hpp
+ * TRROM_MxParserUtilities.hpp
  *
  *  Created on: Dec 23, 2016
  *      Author: Miguel A. Aguilo Valentin
  */
 
-#ifndef TRROM_MXPARSINGUTILITIES_HPP_
-#define TRROM_MXPARSINGUTILITIES_HPP_
+#ifndef TRROM_MXPARSERUTILITIES_HPP_
+#define TRROM_MXPARSERUTILITIES_HPP_
 
 #include <mex.h>
 #include <tr1/memory>
@@ -14,14 +14,10 @@
 namespace trrom
 {
 
-class MxVector;
-class ReducedBasisPDE;
-class ReducedBasisObjective;
-
 namespace mx
 {
 
-//! @name Integer free functions
+//! @name Free functions that return integer type
 //@{
 /*!
  * Parses the length of the array of dual variables.
@@ -79,7 +75,7 @@ int parseMaxNumberSubProblemIterations(const mxArray* input_);
 int parseMaxNumberOuterIterations(const mxArray* input_);
 //@}
 
-//! @name Scalar free functions
+//! @name Free functions that return scalar type
 //@{
 /*!
  * Parses the lower bound on the trust region radius.
@@ -185,47 +181,43 @@ double parseObjectiveTolerance(const mxArray* input_);
 double parseStagnationTolerance(const mxArray* input_);
 //@}
 
-//! @name Void free functions
+//! @name Free functions that return mxArray pointer type
 //@{
 /*!
  * Parses the lower bounds on the control variables.
  * Parameters:
  *    \param In
  *          input_: const MEX array pointer
- *    \param Out
- *          output_: MxVector of upper bounds
+ * \return MEX array pointer with lower bounds.
  **/
-void parseControlLowerBound(const mxArray* input_, trrom::MxVector & output_);
+mxArray* parseControlLowerBound(const mxArray* input_);
 /*!
  * Parses the upper bounds on the control variables.
  * Parameters:
  *    \param In
  *          input_: const MEX array pointer
- *    \param Out
- *          output_: MxVector of upper bounds
+ * \return MEX array pointer with upper bounds.
  **/
-void parseControlUpperBound(const mxArray* input_, trrom::MxVector & output_);
+mxArray* parseControlUpperBound(const mxArray* input_);
 /*!
  * Parses functor to reduced basis objective function operators' interface.
  * Parameters:
  *    \param In
  *          input_: const MEX array pointer
- *    \param Out
- *          output_: functor to operators' interface
+ * \return MEX array pointer with upper bounds.
  **/
-void parseReducedBasisObjectiveFunction(const mxArray* input_, std::tr1::shared_ptr<trrom::ReducedBasisObjective> & output_);
+mxArray* parseReducedBasisObjectiveFunction(const mxArray* input_);
 /*!
  * Parses functor to reduced basis partial differential equation (PDE) operators' interface.
  * Parameters:
  *    \param In
  *          input_: const MEX array pointer
- *    \param Out
- *          output_: functor to operators' interface
+ * \return MEX array pointer with upper bounds.
  **/
-void parseReducedBasisPartialDifferentialEquation(const mxArray* input_, std::tr1::shared_ptr<trrom::ReducedBasisPDE> & output_);
-
+mxArray* parseReducedBasisPartialDifferentialEquation(const mxArray* input_);
+//@}
 }
 
 }
 
-#endif /* TRROM_MXPARSINGUTILITIES_HPP_ */
+#endif /* TRROM_MXPARSERUTILITIES_HPP_ */
