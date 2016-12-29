@@ -5,25 +5,22 @@
  *      Author: Miguel A. Aguilo Valentin
  */
 
-
 #include "vector.hpp"
-#include "DOTk_Primal.hpp"
 #include "DOTk_Functor.hpp"
 #include "DOTk_BackwardFiniteDifference.hpp"
 
 namespace dotk
 {
 
-DOTk_BackwardFiniteDifference::DOTk_BackwardFiniteDifference(const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_) :
+DOTk_BackwardFiniteDifference::DOTk_BackwardFiniteDifference(const dotk::Vector<Real> & primal_) :
         dotk::DOTk_NumericalDifferentiation(dotk::types::numerical_integration_t::BACKWARD_FINITE_DIFF),
-        m_PrimalOriginal(primal_->control()->clone())
+        m_PrimalOriginal(primal_.clone())
 {
 }
 
-DOTk_BackwardFiniteDifference::DOTk_BackwardFiniteDifference(const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_,
-                                                             Real epsilon_) :
+DOTk_BackwardFiniteDifference::DOTk_BackwardFiniteDifference(const dotk::Vector<Real> & primal_, Real epsilon_) :
         dotk::DOTk_NumericalDifferentiation(dotk::types::numerical_integration_t::BACKWARD_FINITE_DIFF, epsilon_),
-        m_PrimalOriginal(primal_->control()->clone())
+        m_PrimalOriginal(primal_.clone())
 {
 }
 

@@ -5,12 +5,15 @@
  *      Author: Miguel A. Aguilo Valentin
  */
 
-#include "DOTk_RoutinesTypeUNP.hpp"
+#include <cstdio>
+#include <cstdlib>
+#include <sstream>
 
 #include "vector.hpp"
 #include "DOTk_Primal.hpp"
-#include "DOTk_EqualityConstraint.hpp"
+#include "DOTk_RoutinesTypeUNP.hpp"
 #include "DOTk_ObjectiveFunction.hpp"
+#include "DOTk_EqualityConstraint.hpp"
 
 namespace dotk
 {
@@ -178,13 +181,15 @@ void DOTk_RoutinesTypeUNP::computeHessianTimesVector(const dotk::Vector<Real> & 
 
 void DOTk_RoutinesTypeUNP::initialize(const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_)
 {
-    if(primal_->dual().use_count() > 0)
+    if(primal_->state().use_count() > 0)
     {
-        this->allocate(dotk::types::DUAL, primal_->dual());
+        this->allocate(dotk::types::STATE, primal_->state());
     }
     else
     {
-        std::perror("\n**** Error in DOTk_RoutinesTypeUNP::initialize. User did not define dual data. ABORT. ****\n");
+        std::ostringstream msg;
+        msg << "\n**** ERROR IN: " << __FILE__ << ", LINE: " << __LINE__ << ", -> STATE vector is NULL. ****\n";
+        std::perror(msg.str().c_str());
         std::abort();
     }
     if(primal_->control().use_count() > 0)
@@ -193,7 +198,9 @@ void DOTk_RoutinesTypeUNP::initialize(const std::tr1::shared_ptr<dotk::DOTk_Prim
     }
     else
     {
-        std::perror("\n**** Error in DOTk_RoutinesTypeUNP::initialize. User did not define control data. ABORT. ****\n");
+        std::ostringstream msg;
+        msg << "\n**** ERROR IN: " << __FILE__ << ", LINE: " << __LINE__ << ", -> CONTROL vector is NULL. ****\n";
+        std::perror(msg.str().c_str());
         std::abort();
     }
 }
@@ -207,7 +214,7 @@ void DOTk_RoutinesTypeUNP::allocate(dotk::types::variable_t type_, const std::tr
             m_ControlWorkVec = data_->clone();
             break;
         }
-        case dotk::types::DUAL:
+        case dotk::types::STATE:
         {
             m_Dual = data_->clone();
             m_State = data_->clone();
@@ -217,13 +224,14 @@ void DOTk_RoutinesTypeUNP::allocate(dotk::types::variable_t type_, const std::tr
             m_HessCalcWorkVec = data_->clone();
             break;
         }
-        case dotk::types::STATE:
+        case dotk::types::DUAL:
         case dotk::types::PRIMAL:
         case dotk::types::UNDEFINED_VARIABLE:
         {
-            std::perror("\n**** Error in DOTk_RoutinesTypeUNP::allocate. User did not define control data. ABORT. ****\n");
+            std::ostringstream msg;
+            msg << "\n**** ERROR IN: " << __FILE__ << ", LINE: " << __LINE__ << ", -> CONTROL OR STATE data is NULL. ****\n";
+            std::perror(msg.str().c_str());
             std::abort();
-            break;
         }
     }
 }

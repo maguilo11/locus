@@ -18,76 +18,71 @@
 namespace dotk
 {
 
-NumericallyDifferentiatedHessian::NumericallyDifferentiatedHessian(const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_,
-                                                                   const std::tr1::shared_ptr<dotk::DOTk_ObjectiveFunction<Real> > & objective_) :
+NumericallyDifferentiatedHessian::NumericallyDifferentiatedHessian
+(const std::tr1::shared_ptr<dotk::DOTk_Primal> & input_, const std::tr1::shared_ptr<dotk::DOTk_ObjectiveFunction<Real> > & objective_) :
         dotk::DOTk_LinearOperator(dotk::types::HESSIAN_MATRIX),
         m_GradientFunctor(new dotk::DOTk_GradientTypeULP(objective_)),
         m_NumericalDifferentiation()
 {
     dotk::DOTk_NumericalDifferentiatonFactory factory;
-    factory.buildBackwardDifferenceHessian(primal_, m_NumericalDifferentiation);
+    factory.buildBackwardDifferenceHessian(*input_->control(), m_NumericalDifferentiation);
 }
 
-NumericallyDifferentiatedHessian::NumericallyDifferentiatedHessian(const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_,
-                                                                   const std::tr1::shared_ptr<dotk::DOTk_ObjectiveFunction<Real> > & objective_,
-                                                                   const std::tr1::shared_ptr<dotk::DOTk_EqualityConstraint<Real> > & equality_) :
+NumericallyDifferentiatedHessian::NumericallyDifferentiatedHessian
+(const std::tr1::shared_ptr<dotk::DOTk_Primal> & input_,
+ const std::tr1::shared_ptr<dotk::DOTk_ObjectiveFunction<Real> > & objective_,
+ const std::tr1::shared_ptr<dotk::DOTk_EqualityConstraint<Real> > & equality_) :
         dotk::DOTk_LinearOperator(dotk::types::HESSIAN_MATRIX),
-        m_GradientFunctor(new dotk::DOTk_GradientTypeUNP(primal_, objective_, equality_)),
+        m_GradientFunctor(new dotk::DOTk_GradientTypeUNP(input_, objective_, equality_)),
         m_NumericalDifferentiation()
 {
     dotk::DOTk_NumericalDifferentiatonFactory factory;
-    factory.buildBackwardDifferenceHessian(primal_, m_NumericalDifferentiation);
+    factory.buildBackwardDifferenceHessian(*input_->control(), m_NumericalDifferentiation);
 }
 
 NumericallyDifferentiatedHessian::~NumericallyDifferentiatedHessian()
 {
 }
 
-void NumericallyDifferentiatedHessian::setForwardDifference(const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_,
-                                                            Real epsilon_)
+void NumericallyDifferentiatedHessian::setForwardDifference(const dotk::Vector<Real> & input_, Real epsilon_)
 {
     dotk::DOTk_NumericalDifferentiatonFactory factory;
-    factory.buildForwardDifferenceHessian(primal_, m_NumericalDifferentiation);
+    factory.buildForwardDifferenceHessian(input_, m_NumericalDifferentiation);
     m_NumericalDifferentiation->setEpsilon(epsilon_);
 }
 
-void NumericallyDifferentiatedHessian::setBackwardDifference(const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_,
-                                                             Real epsilon_)
+void NumericallyDifferentiatedHessian::setBackwardDifference(const dotk::Vector<Real> & input_, Real epsilon_)
 {
     dotk::DOTk_NumericalDifferentiatonFactory factory;
-    factory.buildBackwardDifferenceHessian(primal_, m_NumericalDifferentiation);
+    factory.buildBackwardDifferenceHessian(input_, m_NumericalDifferentiation);
     m_NumericalDifferentiation->setEpsilon(epsilon_);
 }
 
-void NumericallyDifferentiatedHessian::setCentralDifference(const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_,
-                                                            Real epsilon_)
+void NumericallyDifferentiatedHessian::setCentralDifference(const dotk::Vector<Real> & input_, Real epsilon_)
 {
     dotk::DOTk_NumericalDifferentiatonFactory factory;
-    factory.buildCentralDifferenceHessian(primal_, m_NumericalDifferentiation);
+    factory.buildCentralDifferenceHessian(input_, m_NumericalDifferentiation);
     m_NumericalDifferentiation->setEpsilon(epsilon_);
 }
 
-void NumericallyDifferentiatedHessian::setSecondOrderForwardDifference(const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_,
-                                                                       Real epsilon_)
+void NumericallyDifferentiatedHessian::setSecondOrderForwardDifference(const dotk::Vector<Real> & input_, Real epsilon_)
 {
     dotk::DOTk_NumericalDifferentiatonFactory factory;
-    factory.buildSecondOrderForwardDifferenceHessian(primal_, m_NumericalDifferentiation);
+    factory.buildSecondOrderForwardDifferenceHessian(input_, m_NumericalDifferentiation);
     m_NumericalDifferentiation->setEpsilon(epsilon_);
 }
 
-void NumericallyDifferentiatedHessian::setThirdOrderForwardDifference(const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_,
-                                                                      Real epsilon_)
+void NumericallyDifferentiatedHessian::setThirdOrderForwardDifference(const dotk::Vector<Real> & input_, Real epsilon_)
 {
     dotk::DOTk_NumericalDifferentiatonFactory factory;
-    factory.buildThirdOrderForwardDifferenceHessian(primal_, m_NumericalDifferentiation);
+    factory.buildThirdOrderForwardDifferenceHessian(input_, m_NumericalDifferentiation);
     m_NumericalDifferentiation->setEpsilon(epsilon_);
 }
 
-void NumericallyDifferentiatedHessian::setThirdOrderBackwardDifference(const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_,
-                                                                       Real epsilon_)
+void NumericallyDifferentiatedHessian::setThirdOrderBackwardDifference(const dotk::Vector<Real> & input_, Real epsilon_)
 {
     dotk::DOTk_NumericalDifferentiatonFactory factory;
-    factory.buildThirdOrderBackwardDifferenceHessian(primal_, m_NumericalDifferentiation);
+    factory.buildThirdOrderBackwardDifferenceHessian(input_, m_NumericalDifferentiation);
     m_NumericalDifferentiation->setEpsilon(epsilon_);
 }
 
@@ -112,7 +107,13 @@ void NumericallyDifferentiatedHessian::apply(const std::tr1::shared_ptr<dotk::DO
                                               *output_);
 }
 
-void NumericallyDifferentiatedHessian::setNumOtimizationItrDone(size_t itr_){return;}
-void NumericallyDifferentiatedHessian::updateLimitedMemoryStorage(bool update_){return;}
+void NumericallyDifferentiatedHessian::setNumOtimizationItrDone(size_t itr_)
+{
+    return;
+}
+void NumericallyDifferentiatedHessian::updateLimitedMemoryStorage(bool update_)
+{
+    return;
+}
 
 }

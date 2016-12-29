@@ -16,15 +16,15 @@
 namespace dotk
 {
 
-DOTk_LDFPHessian::DOTk_LDFPHessian(const std::tr1::shared_ptr<dotk::Vector<Real> > & vector_,
+DOTk_LDFPHessian::DOTk_LDFPHessian(const dotk::Vector<Real> & vector_,
                                    size_t max_secant_storage_) :
         dotk::DOTk_SecondOrderOperator(max_secant_storage_),
         m_Alpha(max_secant_storage_, 0.),
         m_RhoStorage(max_secant_storage_, 0.),
-        m_DeltaPrimal(vector_->clone()),
-        m_DeltaGradient(vector_->clone()),
-        m_DeltaPrimalStorage(new dotk::serial::DOTk_RowMatrix<Real>(*vector_, max_secant_storage_)),
-        m_DeltaGradientStorage(new dotk::serial::DOTk_RowMatrix<Real>(*vector_, max_secant_storage_))
+        m_DeltaPrimal(vector_.clone()),
+        m_DeltaGradient(vector_.clone()),
+        m_DeltaPrimalStorage(new dotk::serial::DOTk_RowMatrix<Real>(vector_, max_secant_storage_)),
+        m_DeltaGradientStorage(new dotk::serial::DOTk_RowMatrix<Real>(vector_, max_secant_storage_))
 {
     dotk::DOTk_SecondOrderOperator::setHessianType(dotk::types::LDFP_HESS);
 }

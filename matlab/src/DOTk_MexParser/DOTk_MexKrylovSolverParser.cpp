@@ -7,8 +7,7 @@
 
 #include <mex.h>
 #include <string>
-
-#include "DOTk_MexArrayPtr.hpp"
+#include <sstream>
 #include "DOTk_MexKrylovSolverParser.hpp"
 
 namespace dotk
@@ -17,9 +16,9 @@ namespace dotk
 namespace mex
 {
 
-dotk::types::krylov_solver_t getKrylovSolverMethod(dotk::DOTk_MexArrayPtr & ptr_)
+dotk::types::krylov_solver_t getKrylovSolverMethod(const mxArray* input_)
 {
-    std::string method(mxArrayToString(ptr_.get()));
+    std::string method(mxArrayToString(input_));
     dotk::types::krylov_solver_t type = dotk::types::KRYLOV_SOLVER_DISABLED;
 
     if(method.compare("PCG") == 0)
@@ -65,86 +64,108 @@ dotk::types::krylov_solver_t getKrylovSolverMethod(dotk::DOTk_MexArrayPtr & ptr_
     else
     {
         type = dotk::types::LEFT_PREC_CG;
-        std::string msg(" DOTk/MEX WARNING: Invalid Krylov Solver Method. Default = CONJUGATE GRADIENT. \n");
-        mexWarnMsgTxt(msg.c_str());
+        std::ostringstream msg;
+        msg << "\nWARNING IN: " << __FILE__ << ", LINE: " << __LINE__
+                << ", -> KrylovSolverMethod keyword is misspelled. KrylovSolverMethod set to PCG.\n";
+        mexWarnMsgTxt(msg.str().c_str());
     }
 
     return (type);
 }
 
-void parseMaxNumKrylovSolverItr(const mxArray* options_, size_t & output_)
+size_t parseMaxNumKrylovSolverItr(const mxArray* input_)
 {
-    if(mxIsEmpty(mxGetField(options_, 0, "MaxNumKrylovSolverItr")) == true)
+    size_t output = 200;
+    if(mxGetField(input_, 0, "MaxNumKrylovSolverItr") == nullptr)
     {
-        output_ = 200;
-        std::string msg(" DOTk/MEX WARNING: MaxNumKrylovSolverItr is NOT Defined. Default = 200. \n");
-        mexWarnMsgTxt(msg.c_str());
-        return;
+        std::ostringstream msg;
+        msg << "\nWARNING IN: " << __FILE__ << ", LINE: " << __LINE__
+                << ", -> MaxNumKrylovSolverItr keyword is NULL. MaxNumKrylovSolverItr set to 10.\n";
+        mexWarnMsgTxt(msg.str().c_str());
     }
-    dotk::DOTk_MexArrayPtr iterations;
-    iterations.reset(mxDuplicateArray(mxGetField(options_, 0, "MaxNumKrylovSolverItr")));
-    output_ = static_cast<size_t>(mxGetScalar(iterations.get()));
-    iterations.release();
+    else
+    {
+        mxArray* value = mxDuplicateArray(mxGetField(input_, 0, "MaxNumKrylovSolverItr"));
+        output = static_cast<size_t>(mxGetScalar(value));
+        mxDestroyArray(value);
+    }
+    return (output);
 }
 
-void parseKrylovSolverFixTolerance(const mxArray* options_, double & output_)
+double parseKrylovSolverFixTolerance(const mxArray* input_)
 {
-    if(mxIsEmpty(mxGetField(options_, 0, "FixTolerance")) == true)
+    double output = 1e-8;
+    if(mxGetField(input_, 0, "FixTolerance") == nullptr)
     {
-        output_ = 1e-8;
-        std::string msg(" DOTk/MEX WARNING: FixTolerance is NOT Defined. Default = 1e-8. \n");
-        mexWarnMsgTxt(msg.c_str());
-        return;
+        std::ostringstream msg;
+        msg << "\nWARNING IN: " << __FILE__ << ", LINE: " << __LINE__
+                << ", -> FixTolerance keyword is NULL. FixTolerance set to 1e-8.\n";
+        mexWarnMsgTxt(msg.str().c_str());
     }
-    dotk::DOTk_MexArrayPtr tolerance;
-    tolerance.reset(mxDuplicateArray(mxGetField(options_, 0, "FixTolerance")));
-    output_ = mxGetScalar(tolerance.get());
-    tolerance.release();
+    else
+    {
+        mxArray* value = mxDuplicateArray(mxGetField(input_, 0, "FixTolerance"));
+        output = mxGetScalar(value);
+        mxDestroyArray(value);
+    }
+    return (output);
 }
 
-void parseRelativeToleranceExponential(const mxArray* options_, double & output_)
+double parseRelativeToleranceExponential(const mxArray* input_)
 {
-    if(mxIsEmpty(mxGetField(options_, 0, "RelativeToleranceExponential")) == true)
+    double output = 0.5;
+    if(mxGetField(input_, 0, "RelativeToleranceExponential") == nullptr)
     {
-        output_ = 0.5;
-        std::string msg(" DOTk/MEX WARNING: RelativeToleranceExponential is NOT Defined. Default = 0.5. \n");
-        mexWarnMsgTxt(msg.c_str());
-        return;
+        std::ostringstream msg;
+        msg << "\nWARNING IN: " << __FILE__ << ", LINE: " << __LINE__
+                << ", -> RelativeToleranceExponential keyword is NULL. RelativeToleranceExponential set to 0.5.\n";
+        mexWarnMsgTxt(msg.str().c_str());
     }
-    dotk::DOTk_MexArrayPtr exponential;
-    exponential.reset(mxDuplicateArray(mxGetField(options_, 0, "RelativeToleranceExponential")));
-    output_ = mxGetScalar(exponential.get());
-    exponential.release();
+    else
+    {
+        mxArray* value = mxDuplicateArray(mxGetField(input_, 0, "RelativeToleranceExponential"));
+        output = mxGetScalar(value);
+        mxDestroyArray(value);
+    }
+    return (output);
 }
 
-void parseKrylovSolverRelativeTolerance(const mxArray* options_, double & output_)
+double parseKrylovSolverRelativeTolerance(const mxArray* input_)
 {
-    if(mxIsEmpty(mxGetField(options_, 0, "RelativeTolerance")) == true)
+    double output = 1e-2;
+    if(mxGetField(input_, 0, "RelativeTolerance") == nullptr)
     {
-        output_ = 1e-2;
-        std::string msg(" DOTk/MEX WARNING: RelativeTolerance is NOT Defined. Default = 1e-2. \n");
-        mexWarnMsgTxt(msg.c_str());
-        return;
+        std::ostringstream msg;
+        msg << "\nWARNING IN: " << __FILE__ << ", LINE: " << __LINE__
+                << ", -> RelativeTolerance keyword is NULL. RelativeTolerance set to 1e-2.\n";
+        mexWarnMsgTxt(msg.str().c_str());
     }
-    dotk::DOTk_MexArrayPtr tolerance;
-    tolerance.reset(mxDuplicateArray(mxGetField(options_, 0, "RelativeTolerance")));
-    output_ = mxGetScalar(tolerance.get());
-    tolerance.release();
+    else
+    {
+        mxArray* value = mxDuplicateArray(mxGetField(input_, 0, "RelativeTolerance"));
+        output = mxGetScalar(value);
+        mxDestroyArray(value);
+    }
+    return (output);
 }
 
-void parseKrylovSolverMethod(const mxArray* options_, dotk::types::krylov_solver_t & output_)
+dotk::types::krylov_solver_t parseKrylovSolverMethod(const mxArray* input_)
 {
-    if(mxIsEmpty(mxGetField(options_, 0, "KrylovSolverMethod")) == true)
+    dotk::types::krylov_solver_t output = dotk::types::LEFT_PREC_CG;
+    if(mxGetField(input_, 0, "KrylovSolverMethod") == nullptr)
     {
-        output_ = dotk::types::LEFT_PREC_CG;
-        std::string msg(" DOTk/MEX WARNING: KrylovSolverMethod is NOT Defined. Default = CONJUGATE GRADIENT. \n");
-        mexWarnMsgTxt(msg.c_str());
-        return;
+        std::ostringstream msg;
+        msg << "\nWARNING IN: " << __FILE__ << ", LINE: " << __LINE__
+                << ", -> KrylovSolverMethod keyword is NULL. KrylovSolverMethod set to PCG.\n";
+        mexWarnMsgTxt(msg.str().c_str());
     }
-    dotk::DOTk_MexArrayPtr type;
-    type.reset(mxDuplicateArray(mxGetField(options_, 0, "KrylovSolverMethod")));
-    output_ = dotk::mex::getKrylovSolverMethod(type);
-    type.release();
+    else
+    {
+        mxArray* value = mxDuplicateArray(mxGetField(input_, 0, "KrylovSolverMethod"));
+        output = dotk::mex::getKrylovSolverMethod(value);
+        mxDestroyArray(value);
+    }
+    return (output);
 }
 
 }

@@ -36,19 +36,19 @@ public:
     void buildFullSpaceHessian(std::tr1::shared_ptr<dotk::DOTk_SecondOrderOperator> & operator_);
     void buildReducedSpaceHessian(std::tr1::shared_ptr<dotk::DOTk_SecondOrderOperator> & operator_);
     void buildLbfgsHessian(size_t secant_storage_,
-                           const std::tr1::shared_ptr<dotk::Vector<Real> > & vector_,
+                           const dotk::Vector<Real> & vector_,
                            std::tr1::shared_ptr<dotk::DOTk_SecondOrderOperator> & operator_);
     void buildLdfpHessian(size_t secant_storage_,
-                          const std::tr1::shared_ptr<dotk::Vector<Real> > & vector_,
+                          const dotk::Vector<Real> & vector_,
                           std::tr1::shared_ptr<dotk::DOTk_SecondOrderOperator> & operator_);
     void buildLsr1Hessian(size_t secant_storage_,
-                          const std::tr1::shared_ptr<dotk::Vector<Real> > & vector_,
+                          const dotk::Vector<Real> & vector_,
                           std::tr1::shared_ptr<dotk::DOTk_SecondOrderOperator> & operator_);
-    void buildSr1Hessian(const std::tr1::shared_ptr<dotk::Vector<Real> > & vector_,
+    void buildSr1Hessian(const dotk::Vector<Real> & vector_,
                          std::tr1::shared_ptr<dotk::DOTk_SecondOrderOperator> & operator_);
-    void buildDfpHessian(const std::tr1::shared_ptr<dotk::Vector<Real> > & vector_,
+    void buildDfpHessian(const dotk::Vector<Real> & vector_,
                          std::tr1::shared_ptr<dotk::DOTk_SecondOrderOperator> & operator_);
-    void buildBarzilaiBorweinHessian(const std::tr1::shared_ptr<dotk::Vector<Real> > & vector_,
+    void buildBarzilaiBorweinHessian(const dotk::Vector<Real> & vector_,
                                      std::tr1::shared_ptr<dotk::DOTk_SecondOrderOperator> & operator_);
 
     void build(const dotk::DOTk_OptimizationDataMng * const mng_,

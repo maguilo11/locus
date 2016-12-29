@@ -8,22 +8,18 @@
 #include <sstream>
 #include <tr1/memory>
 
-#include "vector.hpp"
+#include "DOTk_MexVector.hpp"
+#include "DOTk_MexAlgorithmParser.hpp"
+#include "DOTk_MexObjectiveFunction.hpp"
+#include "DOTk_MexDiagnosticsTypeLP.hpp"
+#include "DOTk_MexEqualityConstraint.hpp"
+#include "DOTk_MexDiagnosticsTypeNLP.hpp"
+#include "DOTk_MexInequalityConstraint.hpp"
+
 #include "DOTk_Dual.hpp"
 #include "DOTk_State.hpp"
 #include "DOTk_Control.hpp"
-#include "DOTk_MexArrayPtr.hpp"
 #include "DOTk_DiagnosticsTypeLP.hpp"
-#include "DOTk_MexAlgorithmParser.hpp"
-#include "DOTk_MexContainerFactory.hpp"
-#include "DOTk_MexObjectiveFunction.cpp"
-#include "DOTk_MexObjectiveFunction.hpp"
-#include "DOTk_MexDiagnosticsTypeLP.hpp"
-#include "DOTk_MexEqualityConstraint.cpp"
-#include "DOTk_MexEqualityConstraint.hpp"
-#include "DOTk_MexDiagnosticsTypeNLP.hpp"
-#include "DOTk_MexInequalityConstraint.cpp"
-#include "DOTk_MexInequalityConstraint.hpp"
 #include "DOTk_DiagnosticsEqualityTypeNP.hpp"
 #include "DOTk_DiagnosticsObjectiveTypeNP.hpp"
 #include "DOTk_DiagnosticsInequalityTypeNP.hpp"
@@ -42,9 +38,9 @@ DOTk_MexDiagnosticsTypeNLP::~DOTk_MexDiagnosticsTypeNLP()
 
 void DOTk_MexDiagnosticsTypeNLP::checkFirstDerivative(const mxArray* input_[])
 {
-    dotk::types::problem_t type = DOTk_MexDiagnostics::getProblemType();
+    dotk::types::problem_t problem_type = DOTk_MexDiagnostics::getProblemType();
 
-    switch(type)
+    switch(problem_type)
     {
         case dotk::types::TYPE_UNLP:
         {
@@ -80,8 +76,10 @@ void DOTk_MexDiagnosticsTypeNLP::checkFirstDerivative(const mxArray* input_[])
         case dotk::types::PROBLEM_TYPE_UNDEFINED:
         default:
         {
-            std::string msg(" DOTk/MEX ERROR: Invalid Nonlinear Programming Problem Type. See Users' Manual. \n");
-            mexErrMsgTxt(msg.c_str());
+            std::ostringstream msg;
+            msg << "\nWARNING IN: " << __FILE__ << ", LINE: " << __LINE__
+                    << ", -> UNDEFINED PROBLEM TYPE. SEE USERS' MANUAL FOR VALID OPTIONS.\n";
+            mexWarnMsgTxt(msg.str().c_str());
             break;
         }
     }
@@ -89,9 +87,8 @@ void DOTk_MexDiagnosticsTypeNLP::checkFirstDerivative(const mxArray* input_[])
 
 void DOTk_MexDiagnosticsTypeNLP::checkSecondDerivative(const mxArray* input_[])
 {
-    dotk::types::problem_t type = DOTk_MexDiagnostics::getProblemType();
-
-    switch(type)
+    dotk::types::problem_t problem_type = DOTk_MexDiagnostics::getProblemType();
+    switch(problem_type)
     {
         case dotk::types::TYPE_UNLP:
         {
@@ -127,8 +124,10 @@ void DOTk_MexDiagnosticsTypeNLP::checkSecondDerivative(const mxArray* input_[])
         case dotk::types::PROBLEM_TYPE_UNDEFINED:
         default:
         {
-            std::string msg(" DOTk/MEX ERROR: Invalid Nonlinear Programming Problem Type. See Users' Manual. \n");
-            mexErrMsgTxt(msg.c_str());
+            std::ostringstream msg;
+            msg << "\nWARNING IN: " << __FILE__ << ", LINE: " << __LINE__
+                    << ", -> UNDEFINED PROBLEM TYPE. SEE USERS' MANUAL FOR VALID OPTIONS.\n";
+            mexWarnMsgTxt(msg.str().c_str());
             break;
         }
     }
@@ -174,24 +173,27 @@ void DOTk_MexDiagnosticsTypeNLP::checkSecondDerivativeTypeCNLP(const mxArray* in
 
 void DOTk_MexDiagnosticsTypeNLP::checkObjectiveFunctionFirstDerivative(const mxArray* input_[])
 {
-    dotk::types::problem_t type = DOTk_MexDiagnostics::getProblemType();
+    dotk::types::problem_t problem_type = DOTk_MexDiagnostics::getProblemType();
 
-    dotk::DOTk_MexArrayPtr objective_ptr;
-    dotk::mex::parseObjectiveFunction(input_[1], objective_ptr);
-    std::tr1::shared_ptr<dotk::DOTk_MexObjectiveFunction<double> >
-        objective(new dotk::DOTk_MexObjectiveFunction<double>(objective_ptr.get(), type));
+    mxArray* mx_objective = dotk::mex::parseObjectiveFunction(input_[1]);
+    std::tr1::shared_ptr<dotk::DOTk_MexObjectiveFunction>
+        objective(new dotk::DOTk_MexObjectiveFunction(mx_objective, problem_type));
+    mxDestroyArray(mx_objective);
 
     dotk::DOTk_DiagnosticsObjectiveTypeNP diagnostics(objective);
     int lower_super_subscript = DOTk_MexDiagnostics::getLowerSuperScript();
     int upper_super_subscript = DOTk_MexDiagnostics::getUpperSuperScript();
     diagnostics.setFiniteDifferenceDiagnosticsSuperScripts(lower_super_subscript, upper_super_subscript);
 
-    std::ostringstream msg;
-    dotk::DOTk_State state;
-    dotk::mex::buildStateContainer(input_[0], state);
-    dotk::DOTk_Control control;
-    dotk::mex::buildControlContainer(input_[0], control);
+    size_t num_states = dotk::mex::parseNumberStates(input_[0]);
+    dotk::MexVector mx_states(num_states, 0.);
+    dotk::DOTk_State state(mx_states);
 
+    size_t num_controls = dotk::mex::parseNumberControls(input_[0]);
+    dotk::MexVector mx_control(num_controls, 0.);
+    dotk::DOTk_Control control(mx_control);
+
+    std::ostringstream msg;
     mexPrintf("\n **** Check Objective Function First Derivative W.R.T. State **** \n");
     diagnostics.checkPartialDerivativeState(state, control, msg);
     mexPrintf(msg.str().c_str());
@@ -200,30 +202,31 @@ void DOTk_MexDiagnosticsTypeNLP::checkObjectiveFunctionFirstDerivative(const mxA
     mexPrintf("\n **** Check Objective Function First Derivative W.R.T. Control **** \n");
     diagnostics.checkPartialDerivativeControl(state, control, msg);
     mexPrintf(msg.str().c_str());
-
-    objective_ptr.release();
 }
 
 void DOTk_MexDiagnosticsTypeNLP::checkObjectiveFunctionSecondDerivative(const mxArray* input_[])
 {
-    dotk::types::problem_t type = DOTk_MexDiagnostics::getProblemType();
+    dotk::types::problem_t problem_type = DOTk_MexDiagnostics::getProblemType();
 
-    dotk::DOTk_MexArrayPtr objective_ptr;
-    dotk::mex::parseObjectiveFunction(input_[1], objective_ptr);
-    std::tr1::shared_ptr<dotk::DOTk_MexObjectiveFunction<double> >
-        objective(new dotk::DOTk_MexObjectiveFunction<double>(objective_ptr.get(), type));
+    mxArray* mx_objective = dotk::mex::parseObjectiveFunction(input_[1]);
+    std::tr1::shared_ptr<dotk::DOTk_MexObjectiveFunction>
+        objective(new dotk::DOTk_MexObjectiveFunction(mx_objective, problem_type));
+    mxDestroyArray(mx_objective);
 
     dotk::DOTk_DiagnosticsObjectiveTypeNP diagnostics(objective);
     int lower_super_subscript = DOTk_MexDiagnostics::getLowerSuperScript();
     int upper_super_subscript = DOTk_MexDiagnostics::getUpperSuperScript();
     diagnostics.setFiniteDifferenceDiagnosticsSuperScripts(lower_super_subscript, upper_super_subscript);
 
-    std::ostringstream msg;
-    dotk::DOTk_State state;
-    dotk::mex::buildStateContainer(input_[0], state);
-    dotk::DOTk_Control control;
-    dotk::mex::buildControlContainer(input_[0], control);
+    size_t num_states = dotk::mex::parseNumberStates(input_[0]);
+    dotk::MexVector mx_states(num_states, 0.);
+    dotk::DOTk_State state(mx_states);
 
+    size_t num_controls = dotk::mex::parseNumberControls(input_[0]);
+    dotk::MexVector mx_control(num_controls, 0.);
+    dotk::DOTk_Control control(mx_control);
+
+    std::ostringstream msg;
     mexPrintf("\n **** Check Objective Function Second Derivative W.R.T. State-State **** \n");
     diagnostics.checkPartialDerivativeStateState(state, control, msg);
     mexPrintf(msg.str().c_str());
@@ -242,25 +245,28 @@ void DOTk_MexDiagnosticsTypeNLP::checkObjectiveFunctionSecondDerivative(const mx
     mexPrintf("\n **** Check Objective Function Second Derivative W.R.T. Control-Control **** \n");
     diagnostics.checkPartialDerivativeControlControl(state, control, msg);
     mexPrintf(msg.str().c_str());
-
-    objective_ptr.release();
 }
 
 void DOTk_MexDiagnosticsTypeNLP::checkEqualityConstraintFirstDerivative(const mxArray* input_[])
 {
-    dotk::types::problem_t type = DOTk_MexDiagnostics::getProblemType();
+    dotk::types::problem_t problem_type = DOTk_MexDiagnostics::getProblemType();
 
-    dotk::DOTk_MexArrayPtr equality_ptr;
-    dotk::mex::parseEqualityConstraint(input_[1], equality_ptr);
-    std::tr1::shared_ptr<dotk::DOTk_MexEqualityConstraint<double> >
-        equality(new dotk::DOTk_MexEqualityConstraint<double>(equality_ptr.get(), type));
+    mxArray* mx_equality = dotk::mex::parseObjectiveFunction(input_[1]);
+    std::tr1::shared_ptr<dotk::DOTk_MexEqualityConstraint>
+    equality(new dotk::DOTk_MexEqualityConstraint(mx_equality, problem_type));
+    mxDestroyArray(mx_equality);
 
-    dotk::DOTk_Dual dual;
-    dotk::mex::buildDualContainer(input_[0], dual);
-    dotk::DOTk_State state;
-    dotk::mex::buildStateContainer(input_[0], state);
-    dotk::DOTk_Control control;
-    dotk::mex::buildControlContainer(input_[0], control);
+    size_t num_duals = dotk::mex::parseNumberDuals(input_[0]);
+    dotk::MexVector mx_dual(num_duals, 0.);
+    dotk::DOTk_Dual dual(mx_dual);
+
+    size_t num_states = dotk::mex::parseNumberStates(input_[0]);
+    dotk::MexVector mx_states(num_states, 0.);
+    dotk::DOTk_State state(mx_states);
+
+    size_t num_controls = dotk::mex::parseNumberControls(input_[0]);
+    dotk::MexVector mx_control(num_controls, 0.);
+    dotk::DOTk_Control control(mx_control);
 
     dotk::DOTk_DiagnosticsEqualityTypeNP diagnostics(equality);
     int lower_super_subscript = DOTk_MexDiagnostics::getLowerSuperScript();
@@ -286,25 +292,28 @@ void DOTk_MexDiagnosticsTypeNLP::checkEqualityConstraintFirstDerivative(const mx
     mexPrintf("\n **** Check Equality Constraint Adjoint First Derivative W.R.T. Control **** \n");
     diagnostics.checkAdjointPartialDerivativeControl(state, control, dual, msg);
     mexPrintf(msg.str().c_str());
-
-    equality_ptr.release();
 }
 
 void DOTk_MexDiagnosticsTypeNLP::checkEqualityConstraintSecondDerivative(const mxArray* input_[])
 {
-    dotk::types::problem_t type = DOTk_MexDiagnostics::getProblemType();
+    dotk::types::problem_t problem_type = DOTk_MexDiagnostics::getProblemType();
 
-    dotk::DOTk_MexArrayPtr equality_ptr;
-    dotk::mex::parseEqualityConstraint(input_[1], equality_ptr);
-    std::tr1::shared_ptr<dotk::DOTk_MexEqualityConstraint<double> >
-        equality(new dotk::DOTk_MexEqualityConstraint<double>(equality_ptr.get(), type));
+    mxArray* mx_equality = dotk::mex::parseObjectiveFunction(input_[1]);
+    std::tr1::shared_ptr<dotk::DOTk_MexEqualityConstraint>
+    equality(new dotk::DOTk_MexEqualityConstraint(mx_equality, problem_type));
+    mxDestroyArray(mx_equality);
 
-    dotk::DOTk_Dual dual;
-    dotk::mex::buildDualContainer(input_[0], dual);
-    dotk::DOTk_State state;
-    dotk::mex::buildStateContainer(input_[0], state);
-    dotk::DOTk_Control control;
-    dotk::mex::buildControlContainer(input_[0], control);
+    size_t num_duals = dotk::mex::parseNumberDuals(input_[0]);
+    dotk::MexVector mx_dual(num_duals, 0.);
+    dotk::DOTk_Dual dual(mx_dual);
+
+    size_t num_states = dotk::mex::parseNumberStates(input_[0]);
+    dotk::MexVector mx_states(num_states, 0.);
+    dotk::DOTk_State state(mx_states);
+
+    size_t num_controls = dotk::mex::parseNumberControls(input_[0]);
+    dotk::MexVector mx_control(num_controls, 0.);
+    dotk::DOTk_Control control(mx_control);
 
     dotk::DOTk_DiagnosticsEqualityTypeNP diagnostics(equality);
     int lower_super_subscript = DOTk_MexDiagnostics::getLowerSuperScript();
@@ -330,27 +339,27 @@ void DOTk_MexDiagnosticsTypeNLP::checkEqualityConstraintSecondDerivative(const m
     mexPrintf("\n **** Check Equality Constraint Second Derivative W.R.T. Control-Control **** \n");
     diagnostics.checkAdjointPartialDerivativeControlControl(state, control, dual, msg);
     mexPrintf(msg.str().c_str());
-
-    equality_ptr.release();
 }
 
 void DOTk_MexDiagnosticsTypeNLP::checkInequalityConstraintFirstDerivative(const mxArray* input_[])
 {
-    dotk::types::problem_t type = DOTk_MexDiagnostics::getProblemType();
+    dotk::types::problem_t problem_type = DOTk_MexDiagnostics::getProblemType();
 
-    dotk::DOTk_MexArrayPtr matlab_ptr;
-    dotk::mex::parseInequalityConstraint(input_[1], matlab_ptr);
-    std::tr1::shared_ptr<dotk::DOTk_MexInequalityConstraint<double> >
-        shared_ptr(new dotk::DOTk_MexInequalityConstraint<double>(matlab_ptr.get(), type));
-    std::vector<std::tr1::shared_ptr<dotk::DOTk_InequalityConstraint<double> > > inequalities(1, shared_ptr);
+    mxArray* mx_inequality = dotk::mex::parseInequalityConstraint(input_[1]);
+    std::tr1::shared_ptr<dotk::DOTk_MexInequalityConstraint >
+        inequality(new dotk::DOTk_MexInequalityConstraint(mx_inequality, problem_type));
+    std::vector<std::tr1::shared_ptr<dotk::DOTk_InequalityConstraint<double> > > inequality_vector(1, inequality);
+    mxDestroyArray(mx_inequality);
 
-    dotk::DOTk_State state;
-    dotk::mex::buildStateContainer(input_[0], state);
+    size_t num_states = dotk::mex::parseNumberStates(input_[0]);
+    dotk::MexVector mx_states(num_states, 0.);
+    dotk::DOTk_State state(mx_states);
 
-    dotk::DOTk_Control control;
-    dotk::mex::buildControlContainer(input_[0], control);
+    size_t num_controls = dotk::mex::parseNumberControls(input_[0]);
+    dotk::MexVector mx_control(num_controls, 0.);
+    dotk::DOTk_Control control(mx_control);
 
-    dotk::DOTk_DiagnosticsInequalityTypeNP diagnostics(inequalities);
+    dotk::DOTk_DiagnosticsInequalityTypeNP diagnostics(inequality_vector);
     int lower_super_subscript = DOTk_MexDiagnostics::getLowerSuperScript();
     int upper_super_subscript = DOTk_MexDiagnostics::getUpperSuperScript();
     diagnostics.setFiniteDifferenceDiagnosticsSuperScripts(lower_super_subscript, upper_super_subscript);
@@ -364,8 +373,6 @@ void DOTk_MexDiagnosticsTypeNLP::checkInequalityConstraintFirstDerivative(const 
     mexPrintf("\n **** Check Inequality Constraint First Derivative W.R.T. Control **** \n");
     diagnostics.checkPartialDerivativeControl(state, control, msg);
     mexPrintf(msg.str().c_str());
-
-    matlab_ptr.release();
 }
 
 void DOTk_MexDiagnosticsTypeNLP::checkInequalityConstraintSecondDerivative(const mxArray* input_[])

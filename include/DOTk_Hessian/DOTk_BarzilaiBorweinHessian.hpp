@@ -21,7 +21,7 @@ class Vector;
 class DOTk_BarzilaiBorweinHessian : public dotk::DOTk_SecondOrderOperator
 {
 public:
-    explicit DOTk_BarzilaiBorweinHessian(const std::tr1::shared_ptr<dotk::Vector<Real> > & vector_);
+    explicit DOTk_BarzilaiBorweinHessian(const dotk::Vector<Real> & vector_);
     virtual ~DOTk_BarzilaiBorweinHessian();
 
     void computeDeltaPrimal(const std::tr1::shared_ptr<dotk::Vector<Real> > & new_primal_,

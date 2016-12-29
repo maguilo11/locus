@@ -184,35 +184,35 @@ double parseStagnationTolerance(const mxArray* input_);
 //! @name Free functions that return mxArray pointer type
 //@{
 /*!
- * Parses the lower bounds on the control variables.
+ * Parses lower bounds on control variables.
  * Parameters:
  *    \param In
  *          input_: const MEX array pointer
- * \return MEX array pointer with lower bounds.
+ * \return MEX array pointer to control lower bounds.
  **/
 mxArray* parseControlLowerBound(const mxArray* input_);
 /*!
- * Parses the upper bounds on the control variables.
+ * Parses upper bounds on control variables.
  * Parameters:
  *    \param In
  *          input_: const MEX array pointer
- * \return MEX array pointer with upper bounds.
+ * \return MEX array pointer to control upper bounds.
  **/
 mxArray* parseControlUpperBound(const mxArray* input_);
 /*!
- * Parses functor to reduced basis objective function operators' interface.
+ * Parses functor to reduced basis objective function interface.
  * Parameters:
  *    \param In
  *          input_: const MEX array pointer
- * \return MEX array pointer with upper bounds.
+ * \return MEX array pointer to objective function interface.
  **/
 mxArray* parseReducedBasisObjectiveFunction(const mxArray* input_);
 /*!
- * Parses functor to reduced basis partial differential equation (PDE) operators' interface.
+ * Parses functor to reduced basis partial differential equation (PDE) interface.
  * Parameters:
  *    \param In
  *          input_: const MEX array pointer
- * \return MEX array pointer with upper bounds.
+ * \return MEX array pointer to PDE interface.
  **/
 mxArray* parseReducedBasisPartialDifferentialEquation(const mxArray* input_);
 //@}

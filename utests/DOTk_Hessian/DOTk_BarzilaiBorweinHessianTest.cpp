@@ -42,7 +42,7 @@ TEST(DOTk_BarzilaiBorweinHessian, getHessian)
     trial_step->fill(1);
     std::tr1::shared_ptr<dotk::Vector<Real> > hess_times_vec = primal->control()->clone();
 
-    dotk::DOTk_BarzilaiBorweinHessian hess(hess_times_vec);
+    dotk::DOTk_BarzilaiBorweinHessian hess(*hess_times_vec);
     EXPECT_EQ(dotk::types::BARZILAIBORWEIN_HESS, hess.getHessianType());
     hess.computeDeltaPrimal(mng->getNewPrimal(), mng->getOldPrimal());
     hess.computeDeltaGradient(mng->getNewGradient(), mng->getOldGradient());

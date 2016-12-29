@@ -6,8 +6,7 @@
  */
 
 #include <mex.h>
-#include <string>
-
+#include <sstream>
 #include "DOTk_MexParseAlgorithmTypeSQP.hpp"
 
 namespace dotk
@@ -16,220 +15,310 @@ namespace dotk
 namespace mex
 {
 
-void parseSqpMaxNumDualProblemItr(const mxArray* options_, size_t & output_)
+size_t parseSqpMaxNumDualProblemItr(const mxArray* input_)
 {
-    if(mxIsEmpty(mxGetField(options_, 0, "MaxNumDualProblemItr")) == true)
+    size_t output = 200;
+    if(mxGetField(input_, 0, "MaxNumDualProblemItr") == nullptr)
     {
-        output_ = 200;
-        std::string msg(" DOTk/MEX ERROR: MaxNumDualProblemItr is NOT Defined. Default = 200. \n");
-        mexWarnMsgTxt(msg.c_str());
-        return;
+        std::ostringstream msg;
+        msg << "\nWARNING IN: " << __FILE__ << ", LINE: " << __LINE__
+                << ", -> MaxNumDualProblemItr keyword is NULL. MaxNumDualProblemItr set to 200.\n";
+        mexWarnMsgTxt(msg.str().c_str());
     }
-    dotk::DOTk_MexArrayPtr itr;
-    itr.reset(mxDuplicateArray(mxGetField(options_, 0, "MaxNumDualProblemItr")));
-    output_ = static_cast<size_t>(mxGetScalar(itr.get()));
-    itr.release();
+    else
+    {
+        mxArray* value = mxDuplicateArray(mxGetField(input_, 0, "MaxNumTrustRegionSubProblemItr"));
+        output = static_cast<size_t>(mxGetScalar(value));
+        mxDestroyArray(value);
+    }
+    return (output);
 }
 
-void parseSqpMaxNumTangentialProblemItr(const mxArray* options_, size_t & output_)
+size_t parseSqpMaxNumTangentialProblemItr(const mxArray* input_)
 {
-    if(mxIsEmpty(mxGetField(options_, 0, "MaxNumTangentialProblemItr")) == true)
+    size_t output = 200;
+    if(mxGetField(input_, 0, "MaxNumTangentialProblemItr") == nullptr)
     {
-        output_ = 200;
-        std::string msg(" DOTk/MEX ERROR: MaxNumTangentialProblemItr is NOT Defined. Default = 200. \n");
-        mexWarnMsgTxt(msg.c_str());
-        return;
+        std::ostringstream msg;
+        msg << "\nWARNING IN: " << __FILE__ << ", LINE: " << __LINE__
+                << ", -> MaxNumTangentialProblemItr keyword is NULL. MaxNumTangentialProblemItr set to 200.\n";
+        mexWarnMsgTxt(msg.str().c_str());
     }
-    dotk::DOTk_MexArrayPtr itr;
-    itr.reset(mxDuplicateArray(mxGetField(options_, 0, "MaxNumTangentialProblemItr")));
-    output_ = static_cast<size_t>(mxGetScalar(itr.get()));
-    itr.release();
+    else
+    {
+        mxArray* value = mxDuplicateArray(mxGetField(input_, 0, "MaxNumTangentialProblemItr"));
+        output = static_cast<size_t>(mxGetScalar(value));
+        mxDestroyArray(value);
+    }
+    return (output);
 }
 
-void parseSqpMaxNumQuasiNormalProblemItr(const mxArray* options_, size_t & output_)
+size_t parseSqpMaxNumQuasiNormalProblemItr(const mxArray* input_)
 {
-    if(mxIsEmpty(mxGetField(options_, 0, "MaxNumQuasiNormalProblemItr")) == true)
+    size_t output = 200;
+    if(mxGetField(input_, 0, "MaxNumQuasiNormalProblemItr") == nullptr)
     {
-        output_ = 200;
-        std::string msg(" DOTk/MEX ERROR: MaxNumQuasiNormalProblemItr is NOT Defined. Default = 200. \n");
-        mexWarnMsgTxt(msg.c_str());
-        return;
+        std::ostringstream msg;
+        msg << "\nWARNING IN: " << __FILE__ << ", LINE: " << __LINE__
+                << ", -> MaxNumQuasiNormalProblemItr keyword is NULL. MaxNumQuasiNormalProblemItr set to 200.\n";
+        mexWarnMsgTxt(msg.str().c_str());
     }
-    dotk::DOTk_MexArrayPtr itr;
-    itr.reset(mxDuplicateArray(mxGetField(options_, 0, "MaxNumQuasiNormalProblemItr")));
-    output_ = static_cast<size_t>(mxGetScalar(itr.get()));
-    itr.release();
+    else
+    {
+        mxArray* value = mxDuplicateArray(mxGetField(input_, 0, "MaxNumQuasiNormalProblemItr"));
+        output = static_cast<size_t>(mxGetScalar(value));
+        mxDestroyArray(value);
+    }
+    return (output);
 }
 
-void parseSqpMaxNumTangentialSubProblemItr(const mxArray* options_, size_t & output_)
+size_t parseSqpMaxNumTangentialSubProblemItr(const mxArray* input_)
 {
-    if(mxIsEmpty(mxGetField(options_, 0, "MaxNumTangentialSubProblemItr")) == true)
+    size_t output = 200;
+    if(mxGetField(input_, 0, "MaxNumTangentialSubProblemItr") == nullptr)
     {
-        output_ = 200;
-        std::string msg(" DOTk/MEX ERROR: MaxNumTangentialSubProblemItr is NOT Defined. Default = 200. \n");
-        mexWarnMsgTxt(msg.c_str());
-        return;
+        std::ostringstream msg;
+        msg << "\nWARNING IN: " << __FILE__ << ", LINE: " << __LINE__
+                << ", -> MaxNumTangentialSubProblemItr keyword is NULL. MaxNumTangentialSubProblemItr set to 200.\n";
+        mexWarnMsgTxt(msg.str().c_str());
     }
-    dotk::DOTk_MexArrayPtr itr;
-    itr.reset(mxDuplicateArray(mxGetField(options_, 0, "MaxNumTangentialSubProblemItr")));
-    output_ = static_cast<size_t>(mxGetScalar(itr.get()));
-    itr.release();
+    else
+    {
+        mxArray* value = mxDuplicateArray(mxGetField(input_, 0, "MaxNumTangentialSubProblemItr"));
+        output = static_cast<size_t>(mxGetScalar(value));
+        mxDestroyArray(value);
+    }
+    return (output);
 }
 
-void parseTangentialTolerance(const mxArray* options_, double & output_)
+double parseTangentialTolerance(const mxArray* input_)
 {
-    if(mxIsEmpty(mxGetField(options_, 0, "TangentialTolerance")) == true)
+    double output = 1e-4;
+    if(mxGetField(input_, 0, "TangentialTolerance") == nullptr)
     {
-        output_ = 1e-4;
-        return;
+        std::ostringstream msg;
+        msg << "\nWARNING IN: " << __FILE__ << ", LINE: " << __LINE__
+                << ", -> TangentialTolerance keyword is NULL. TangentialTolerance set to 1e-4.\n";
+        mexWarnMsgTxt(msg.str().c_str());
     }
-    dotk::DOTk_MexArrayPtr ptr;
-    ptr.reset(mxDuplicateArray(mxGetField(options_, 0, "TangentialTolerance")));
-    output_ = mxGetScalar(ptr.get());
-    ptr.release();
+    else
+    {
+        mxArray* value = mxDuplicateArray(mxGetField(input_, 0, "TangentialTolerance"));
+        output = mxGetScalar(value);
+        mxDestroyArray(value);
+    }
+    return (output);
 }
 
-void parseDualProblemTolerance(const mxArray* options_, double & output_)
+double parseDualProblemTolerance(const mxArray* input_)
 {
-    if(mxIsEmpty(mxGetField(options_, 0, "DualProblemTolerance")) == true)
+    double output = 1e-4;
+    if(mxGetField(input_, 0, "DualProblemTolerance") == nullptr)
     {
-        output_ = 1e-4;
-        return;
+        std::ostringstream msg;
+        msg << "\nWARNING IN: " << __FILE__ << ", LINE: " << __LINE__
+                << ", -> DualProblemTolerance keyword is NULL. DualProblemTolerance set to 1e-4.\n";
+        mexWarnMsgTxt(msg.str().c_str());
     }
-    dotk::DOTk_MexArrayPtr ptr;
-    ptr.reset(mxDuplicateArray(mxGetField(options_, 0, "DualProblemTolerance")));
-    output_ = mxGetScalar(ptr.get());
-    ptr.release();
+    else
+    {
+        mxArray* value = mxDuplicateArray(mxGetField(input_, 0, "DualProblemTolerance"));
+        output = mxGetScalar(value);
+        mxDestroyArray(value);
+    }
+    return (output);
 }
 
-void parseDualDotGradientTolerance(const mxArray* options_, double & output_)
+double parseDualDotGradientTolerance(const mxArray* input_)
 {
-    if(mxIsEmpty(mxGetField(options_, 0, "DualDotGradientTolerance")) == true)
+    double output = 1e-4;
+    if(mxGetField(input_, 0, "DualDotGradientTolerance") == nullptr)
     {
-        output_ = 1e4;
-        return;
+        std::ostringstream msg;
+        msg << "\nWARNING IN: " << __FILE__ << ", LINE: " << __LINE__
+                << ", -> DualDotGradientTolerance keyword is NULL. DualDotGradientTolerance set to 1e-4.\n";
+        mexWarnMsgTxt(msg.str().c_str());
     }
-    dotk::DOTk_MexArrayPtr ptr;
-    ptr.reset(mxDuplicateArray(mxGetField(options_, 0, "DualDotGradientTolerance")));
-    output_ = mxGetScalar(ptr.get());
-    ptr.release();
+    else
+    {
+        mxArray* value = mxDuplicateArray(mxGetField(input_, 0, "DualDotGradientTolerance"));
+        output = mxGetScalar(value);
+        mxDestroyArray(value);
+    }
+    return (output);
 }
 
-void parseToleranceContractionFactor(const mxArray* options_, double & output_)
+double parseToleranceContractionFactor(const mxArray* input_)
 {
-    if(mxIsEmpty(mxGetField(options_, 0, "ToleranceContractionFactor")) == true)
+    double output = 1e-1;
+    if(mxGetField(input_, 0, "ToleranceContractionFactor") == nullptr)
     {
-        output_ = 1e-1;
-        return;
+        std::ostringstream msg;
+        msg << "\nWARNING IN: " << __FILE__ << ", LINE: " << __LINE__
+                << ", -> ToleranceContractionFactor keyword is NULL. ToleranceContractionFactor set to 1e-1.\n";
+        mexWarnMsgTxt(msg.str().c_str());
     }
-    dotk::DOTk_MexArrayPtr ptr;
-    ptr.reset(mxDuplicateArray(mxGetField(options_, 0, "ToleranceContractionFactor")));
-    output_ = mxGetScalar(ptr.get());
-    ptr.release();
+    else
+    {
+        mxArray* value = mxDuplicateArray(mxGetField(input_, 0, "ToleranceContractionFactor"));
+        output = mxGetScalar(value);
+        mxDestroyArray(value);
+    }
+    return (output);
 }
 
-void parsePredictedReductionParameter(const mxArray* options_, double & output_)
+double parsePredictedReductionParameter(const mxArray* input_)
 {
-    if(mxIsEmpty(mxGetField(options_, 0, "PredictedReductionParameter")) == true)
+    double output = 1e-8;
+    if(mxGetField(input_, 0, "PredictedReductionParameter") == nullptr)
     {
-        output_ = 1e-8;
-        return;
+        std::ostringstream msg;
+        msg << "\nWARNING IN: " << __FILE__ << ", LINE: " << __LINE__
+                << ", -> PredictedReductionParameter keyword is NULL. PredictedReductionParameter set to 1e-8.\n";
+        mexWarnMsgTxt(msg.str().c_str());
     }
-    dotk::DOTk_MexArrayPtr ptr;
-    ptr.reset(mxDuplicateArray(mxGetField(options_, 0, "PredictedReductionParameter")));
-    output_ = mxGetScalar(ptr.get());
-    ptr.release();
+    else
+    {
+        mxArray* value = mxDuplicateArray(mxGetField(input_, 0, "PredictedReductionParameter"));
+        output = mxGetScalar(value);
+        mxDestroyArray(value);
+    }
+    return (output);
 }
 
-void parseMeritFunctionPenaltyParameter(const mxArray* options_, double & output_)
+double parseMeritFunctionPenaltyParameter(const mxArray* input_)
 {
-    if(mxIsEmpty(mxGetField(options_, 0, "MeritFunctionPenaltyParameter")) == true)
+    double output = 1;
+    if(mxGetField(input_, 0, "MeritFunctionPenaltyParameter") == nullptr)
     {
-        output_ = 1.;
-        return;
+        std::ostringstream msg;
+        msg << "\nWARNING IN: " << __FILE__ << ", LINE: " << __LINE__
+                << ", -> MeritFunctionPenaltyParameter keyword is NULL. MeritFunctionPenaltyParameter set to 1.\n";
+        mexWarnMsgTxt(msg.str().c_str());
     }
-    dotk::DOTk_MexArrayPtr ptr;
-    ptr.reset(mxDuplicateArray(mxGetField(options_, 0, "MeritFunctionPenaltyParameter")));
-    output_ = mxGetScalar(ptr.get());
-    ptr.release();
+    else
+    {
+        mxArray* value = mxDuplicateArray(mxGetField(input_, 0, "MeritFunctionPenaltyParameter"));
+        output = mxGetScalar(value);
+        mxDestroyArray(value);
+    }
+    return (output);
 }
 
-void parseQuasiNormalProblemRelativeTolerance(const mxArray* options_, double & output_)
+double parseQuasiNormalProblemRelativeTolerance(const mxArray* input_)
 {
-    if(mxIsEmpty(mxGetField(options_, 0, "QuasiNormalProblemRelativeTolerance")) == true)
+    double output = 1e-4;
+    if(mxGetField(input_, 0, "QuasiNormalProblemRelativeTolerance") == nullptr)
     {
-        output_ = 1e-4;
-        return;
+        std::ostringstream msg;
+        msg << "\nWARNING IN: " << __FILE__ << ", LINE: " << __LINE__
+                << ", -> QuasiNormalProblemRelativeTolerance keyword is NULL. QuasiNormalProblemRelativeTolerance set to 1e-4.\n";
+        mexWarnMsgTxt(msg.str().c_str());
     }
-    dotk::DOTk_MexArrayPtr ptr;
-    ptr.reset(mxDuplicateArray(mxGetField(options_, 0, "QuasiNormalProblemRelativeTolerance")));
-    output_ = mxGetScalar(ptr.get());
-    ptr.release();
+    else
+    {
+        mxArray* value = mxDuplicateArray(mxGetField(input_, 0, "QuasiNormalProblemRelativeTolerance"));
+        output = mxGetScalar(value);
+        mxDestroyArray(value);
+    }
+    return (output);
 }
 
-void parseTangentialToleranceContractionFactor(const mxArray* options_, double & output_)
+double parseTangentialToleranceContractionFactor(const mxArray* input_)
 {
-    if(mxIsEmpty(mxGetField(options_, 0, "TangentialToleranceContractionFactor")) == true)
+    double output = 1e-3;
+    if(mxGetField(input_, 0, "TangentialToleranceContractionFactor") == nullptr)
     {
-        output_ = 1e-3;
-        return;
+        std::ostringstream msg;
+        msg << "\nWARNING IN: " << __FILE__ << ", LINE: " << __LINE__
+                << ", -> TangentialToleranceContractionFactor keyword is NULL. TangentialToleranceContractionFactor set to 1e-3.\n";
+        mexWarnMsgTxt(msg.str().c_str());
     }
-    dotk::DOTk_MexArrayPtr ptr;
-    ptr.reset(mxDuplicateArray(mxGetField(options_, 0, "TangentialToleranceContractionFactor")));
-    output_ = mxGetScalar(ptr.get());
-    ptr.release();
+    else
+    {
+        mxArray* value = mxDuplicateArray(mxGetField(input_, 0, "TangentialToleranceContractionFactor"));
+        output = mxGetScalar(value);
+        mxDestroyArray(value);
+    }
+    return (output);
 }
 
-void parseActualOverPredictedReductionTolerance(const mxArray* options_, double & output_)
+double parseActualOverPredictedReductionTolerance(const mxArray* input_)
 {
-    if(mxIsEmpty(mxGetField(options_, 0, "ActualOverPredictedReductionTolerance")) == true)
+    double output = 1e-8;
+    if(mxGetField(input_, 0, "ActualOverPredictedReductionTolerance") == nullptr)
     {
-        output_ = 1e-8;
-        return;
+        std::ostringstream msg;
+        msg << "\nWARNING IN: " << __FILE__ << ", LINE: " << __LINE__
+                << ", -> ActualOverPredictedReductionTolerance keyword is NULL. ActualOverPredictedReductionTolerance set to 1e-8.\n";
+        mexWarnMsgTxt(msg.str().c_str());
     }
-    dotk::DOTk_MexArrayPtr ptr;
-    ptr.reset(mxDuplicateArray(mxGetField(options_, 0, "ActualOverPredictedReductionTolerance")));
-    output_ = mxGetScalar(ptr.get());
-    ptr.release();
+    else
+    {
+        mxArray* value = mxDuplicateArray(mxGetField(input_, 0, "ActualOverPredictedReductionTolerance"));
+        output = mxGetScalar(value);
+        mxDestroyArray(value);
+    }
+    return (output);
 }
 
-void parseMaxEffectiveTangentialOverTrialStepRatio(const mxArray* options_, double & output_)
+double parseMaxEffectiveTangentialOverTrialStepRatio(const mxArray* input_)
 {
-    if(mxIsEmpty(mxGetField(options_, 0, "MaxEffectiveTangentialOverTrialStepRatio")) == true)
+    double output = 2;
+    if(mxGetField(input_, 0, "MaxEffectiveTangentialOverTrialStepRatio") == nullptr)
     {
-        output_ = 2.;
-        return;
+        std::ostringstream msg;
+        msg << "\nWARNING IN: " << __FILE__ << ", LINE: " << __LINE__
+                << ", -> MaxEffectiveTangentialOverTrialStepRatio keyword is NULL. MaxEffectiveTangentialOverTrialStepRatio set to 2.\n";
+        mexWarnMsgTxt(msg.str().c_str());
     }
-    dotk::DOTk_MexArrayPtr ptr;
-    ptr.reset(mxDuplicateArray(mxGetField(options_, 0, "MaxEffectiveTangentialOverTrialStepRatio")));
-    output_ = mxGetScalar(ptr.get());
-    ptr.release();
+    else
+    {
+        mxArray* value = mxDuplicateArray(mxGetField(input_, 0, "MaxEffectiveTangentialOverTrialStepRatio"));
+        output = mxGetScalar(value);
+        mxDestroyArray(value);
+    }
+    return (output);
 }
 
-void parseTangentialSubProbLeftPrecProjectionTolerance(const mxArray* options_, double & output_)
+double parseTangentialSubProbLeftPrecProjectionTolerance(const mxArray* input_)
 {
-    if(mxIsEmpty(mxGetField(options_, 0, "TangentialSubProbLeftPrecProjectionTolerance")) == true)
+    double output = 1e-4;
+    if(mxGetField(input_, 0, "TangentialSubProbLeftPrecProjectionTolerance") == nullptr)
     {
-        output_ = 1e-4;
-        return;
+        std::ostringstream msg;
+        msg << "\nWARNING IN: " << __FILE__ << ", LINE: " << __LINE__
+                << ", -> TangentialSubProbLeftPrecProjectionTolerance keyword is NULL."
+                << " TangentialSubProbLeftPrecProjectionTolerance set to 1e-4.\n";
+        mexWarnMsgTxt(msg.str().c_str());
     }
-    dotk::DOTk_MexArrayPtr ptr;
-    ptr.reset(mxDuplicateArray(mxGetField(options_, 0, "TangentialSubProbLeftPrecProjectionTolerance")));
-    output_ = mxGetScalar(ptr.get());
-    ptr.release();
+    else
+    {
+        mxArray* value = mxDuplicateArray(mxGetField(input_, 0, "TangentialSubProbLeftPrecProjectionTolerance"));
+        output = mxGetScalar(value);
+        mxDestroyArray(value);
+    }
+    return (output);
 }
 
-void parseQuasiNormalProblemTrustRegionRadiusPenaltyParameter(const mxArray* options_, double & output_)
+double parseQuasiNormalProblemTrustRegionRadiusPenaltyParameter(const mxArray* input_)
 {
-    if(mxIsEmpty(mxGetField(options_, 0, "QuasiNormalProblemTrustRegionRadiusPenaltyParameter")) == true)
+    double output = 0.8;
+    if(mxGetField(input_, 0, "QuasiNormalProblemTrustRegionRadiusPenaltyParameter") == nullptr)
     {
-        output_ = 0.8;
-        return;
+        std::ostringstream msg;
+        msg << "\nWARNING IN: " << __FILE__ << ", LINE: " << __LINE__
+                << ", -> QuasiNormalProblemTrustRegionRadiusPenaltyParameter keyword is NULL."
+                << " QuasiNormalProblemTrustRegionRadiusPenaltyParameter set to 0.8.\n";
+        mexWarnMsgTxt(msg.str().c_str());
     }
-    dotk::DOTk_MexArrayPtr ptr;
-    ptr.reset(mxDuplicateArray(mxGetField(options_, 0, "QuasiNormalProblemTrustRegionRadiusPenaltyParameter")));
-    output_ = mxGetScalar(ptr.get());
-    ptr.release();
+    else
+    {
+        mxArray* value = mxDuplicateArray(mxGetField(input_, 0, "QuasiNormalProblemTrustRegionRadiusPenaltyParameter"));
+        output = mxGetScalar(value);
+        mxDestroyArray(value);
+    }
+    return (output);
 }
 
 }

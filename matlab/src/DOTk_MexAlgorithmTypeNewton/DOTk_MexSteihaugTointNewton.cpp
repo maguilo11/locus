@@ -7,11 +7,12 @@
 
 #include <cmath>
 
-#include "vector.hpp"
-#include "DOTk_MexAlgorithmParser.hpp"
 #include "DOTk_TrustRegionStepMng.hpp"
 #include "DOTk_SteihaugTointNewton.hpp"
 #include "DOTk_OptimizationDataMng.hpp"
+
+#include "DOTk_MexVector.hpp"
+#include "DOTk_MexAlgorithmParser.hpp"
 #include "DOTk_MexSteihaugTointNewton.hpp"
 #include "DOTk_MexFactoriesAlgorithmTypeGB.cpp"
 #include "DOTk_MexFactoriesAlgorithmTypeGB.hpp"
@@ -114,21 +115,21 @@ bool DOTk_MexSteihaugTointNewton::isInitialTrustRegionRadiusSetToNormGrad() cons
 
 void DOTk_MexSteihaugTointNewton::initialize(const mxArray* options_[])
 {
-    dotk::mex::parseMaxNumAlgorithmItr(options_[0], m_MaxNumOptItr);
-    dotk::mex::parseGradientTolerance(options_[0], m_GradientTolerance);
-    dotk::mex::parseTrialStepTolerance(options_[0], m_TrialStepTolerance);
-    dotk::mex::parseOptimalityTolerance(options_[0], m_ObjectiveTolerance);
-    dotk::mex::parseActualReductionTolerance(options_[0], m_ActualReductionTolerance);
+    m_TrialStepTolerance = dotk::mex::parseStepTolerance(options_[0]);
+    m_MaxNumOptItr = dotk::mex::parseMaxNumOuterIterations(options_[0]);
+    m_GradientTolerance = dotk::mex::parseGradientTolerance(options_[0]);
+    m_ObjectiveTolerance = dotk::mex::parseObjectiveTolerance(options_[0]);
+    m_ActualReductionTolerance = dotk::mex::parseActualReductionTolerance(options_[0]);
 
-    dotk::mex::parseMaxTrustRegionRadius(options_[0], m_MaxTrustRegionRadius);
-    dotk::mex::parseInitialTrustRegionRadius(options_[0], m_InitialTrustRegionRadius);
-    dotk::mex::parseTrustRegionExpansionFactor(options_[0], m_TrustRegionExpansionFactor);
-    dotk::mex::parseTrustRegionContractionFactor(options_[0], m_TrustRegionContractionFactor);
-    dotk::mex::parseMaxNumTrustRegionSubProblemItr(options_[0], m_MaxNumSubProblemItr);
-    dotk::mex::parseMinActualOverPredictedReductionRatio(options_[0], m_ActualOverPredictedReductionLowerBound);
-    dotk::mex::parseMaxActualOverPredictedReductionRatio(options_[0], m_ActualOverPredictedReductionUpperBound);
-    dotk::mex::parseMidActualOverPredictedReductionRatio(options_[0], m_ActualOverPredictedReductionMiddleBound);
-    dotk::mex::parseSetInitialTrustRegionRadiusToNormGradFlag(options_[0], m_SetInitialTrustRegionRadiusToNormGrad);
+    m_MaxTrustRegionRadius = dotk::mex::parseMaxTrustRegionRadius(options_[0]);
+    m_InitialTrustRegionRadius = dotk::mex::parseInitialTrustRegionRadius(options_[0]);
+    m_TrustRegionExpansionFactor = dotk::mex::parseTrustRegionExpansionFactor(options_[0]);
+    m_TrustRegionContractionFactor = dotk::mex::parseTrustRegionContractionFactor(options_[0]);
+    m_MaxNumSubProblemItr = dotk::mex::parseMaxNumTrustRegionSubProblemItr(options_[0]);
+    m_ActualOverPredictedReductionLowerBound = dotk::mex::parseMinActualOverPredictedReductionRatio(options_[0]);
+    m_ActualOverPredictedReductionUpperBound = dotk::mex::parseMaxActualOverPredictedReductionRatio(options_[0]);
+    m_ActualOverPredictedReductionMiddleBound = dotk::mex::parseMidActualOverPredictedReductionRatio(options_[0]);
+    m_SetInitialTrustRegionRadiusToNormGrad = dotk::mex::parseSetInitialTrustRegionRadiusToNormGradFlag(options_[0]);
 }
 
 void DOTk_MexSteihaugTointNewton::setAlgorithmParameters(dotk::DOTk_SteihaugTointNewton & algorithm_)
@@ -171,44 +172,40 @@ void DOTk_MexSteihaugTointNewton::setTrustRegionStepParameters(const std::tr1::s
 void DOTk_MexSteihaugTointNewton::gatherOutputData(const dotk::DOTk_SteihaugTointNewton & algorithm_,
                                                    const dotk::DOTk_OptimizationDataMng & mng_,
                                                    const dotk::DOTk_TrustRegionStepMng & step_,
-                                                   mxArray* output_[])
+                                                   mxArray* outputs_[])
 {
     // Create memory allocation for output struct
     const char *field_names[6] =
-        { "Iterations", "ObjectiveFunctionValue", "ActualReduction", "NormGradient", "NormTrialStep", "Control"};
-    output_[0] = mxCreateStructMatrix(1, 1, 6, field_names);
+        { "Iterations", "ObjectiveFunctionValue", "ActualReduction", "NormGradient", "NormStep", "Control"};
+    outputs_[0] = mxCreateStructMatrix(1, 1, 6, field_names);
 
-    dotk::DOTk_MexArrayPtr itr(mxCreateNumericMatrix_730(1, 1, mxINDEX_CLASS, mxREAL));
-    static_cast<size_t*>(mxGetData(itr.get()))[0] = algorithm_.getNumOptimizationItrDone();
-    mxSetField(output_[0], 0, "Iterations", itr.get());
+    /* NOTE: mxSetField does not create a copy of the data allocated. Thus,
+     * mxDestroyArray cannot be called. Furthermore, MEX array data (e.g.
+     * control, gradient, etc.) should be duplicated since the data in the
+     * manager will be deallocated at the end. */
+    mxArray* mx_number_iterations = mxCreateNumericMatrix(1, 1, mxINDEX_CLASS, mxREAL);
+    static_cast<size_t*>(mxGetData(mx_number_iterations))[0] = algorithm_.getNumOptimizationItrDone();
+    mxSetField(outputs_[0], 0, "Iterations", mx_number_iterations);
 
-    dotk::DOTk_MexArrayPtr objective_function_value(mxCreateDoubleMatrix(1, 1, mxREAL));
-    mxGetPr(objective_function_value.get())[0] = mng_.getNewObjectiveFunctionValue();
-    mxSetField(output_[0], 0, "ObjectiveFunctionValue", objective_function_value.get());
+    double value = mng_.getNewObjectiveFunctionValue();
+    mxArray* mx_objective_function_value = mxCreateDoubleScalar(value);
+    mxSetField(outputs_[0], 0, "ObjectiveFunctionValue", mx_objective_function_value);
 
-    dotk::DOTk_MexArrayPtr actual_reduction(mxCreateDoubleMatrix(1, 1, mxREAL));
-    mxGetPr(actual_reduction.get())[0] = std::abs(step_.getActualReduction());
-    mxSetField(output_[0], 0, "ActualReduction", actual_reduction.get());
+    value = step_.getActualReduction();
+    mxArray* mx_actual_reduction = mxCreateDoubleScalar(value);
+    mxSetField(outputs_[0], 0, "ActualReduction", mx_actual_reduction);
 
-    dotk::DOTk_MexArrayPtr norm_gradient(mxCreateDoubleMatrix(1, 1, mxREAL));
-    mxGetPr(norm_gradient.get())[0] = mng_.getNormNewGradient();
-    mxSetField(output_[0], 0, "NormGradient", norm_gradient.get());
+    value = mng_.getNormNewGradient();
+    mxArray* mx_norm_gradient = mxCreateDoubleScalar(value);
+    mxSetField(outputs_[0], 0, "NormGradient", mx_norm_gradient);
 
-    dotk::DOTk_MexArrayPtr norm_trial_step(mxCreateDoubleMatrix(1, 1, mxREAL));
-    mxGetPr(norm_trial_step.get())[0] = mng_.getNormTrialStep();
-    mxSetField(output_[0], 0, "NormTrialStep", norm_trial_step.get());
+    value = mng_.getNormTrialStep();
+    mxArray* norm_trial_step = mxCreateDoubleScalar(value);
+    mxSetField(outputs_[0], 0, "NormStep", norm_trial_step);
 
-    size_t num_controls = mng_.getNewPrimal()->size();
-    dotk::DOTk_MexArrayPtr primal(mxCreateDoubleMatrix(num_controls, 1, mxREAL));
-    mng_.getNewPrimal()->gather(mxGetPr(primal.get()));
-    mxSetField(output_[0], 0, "Control", primal.get());
-
-    itr.release();
-    objective_function_value.release();
-    actual_reduction.release();
-    norm_gradient.release();
-    norm_trial_step.release();
-    primal.release();
+    dotk::MexVector & control = dynamic_cast<dotk::MexVector &>(*mng_.getNewPrimal());
+    mxArray* mx_control = mxDuplicateArray(control.array());
+    mxSetField(outputs_[0], 0, "Control", mx_control);
 }
 
 }

@@ -173,19 +173,6 @@ void DOTk_MultiVector<ScalarType>::fill(const ScalarType & value_)
 }
 
 template<typename ScalarType>
-void DOTk_MultiVector<ScalarType>::gather(ScalarType* input_) const
-{
-    m_Control->gather(input_);
-    size_t stride = m_Control->size();
-    if(m_State.use_count() > 0)
-    {
-        m_State->gather(input_ + stride);
-        stride += m_State->size();
-    }
-    m_Dual->gather(input_ + stride);
-}
-
-template<typename ScalarType>
 size_t DOTk_MultiVector<ScalarType>::size() const
 {
     return (m_Size);

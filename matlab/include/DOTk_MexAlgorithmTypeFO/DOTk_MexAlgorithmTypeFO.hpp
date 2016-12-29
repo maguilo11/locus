@@ -17,7 +17,6 @@ namespace dotk
 {
 
 class DOTk_Primal;
-class DOTk_MexArrayPtr;
 class DOTk_LineSearchStepMng;
 class DOTk_FirstOrderAlgorithm;
 class DOTk_ProjectedLineSearchStep;
@@ -37,7 +36,7 @@ public:
     size_t getMaxNumAlgorithmItr() const;
     double getGradientTolerance() const;
     double getTrialStepTolerance() const;
-    double getOptimalityTolerance() const;
+    double getObjectiveTolerance() const;
 
     size_t getMaxNumLineSearchItr() const;
     double getLineSearchContractionFactor() const;
@@ -46,7 +45,7 @@ public:
     dotk::types::problem_t getProblemType() const;
     dotk::types::line_search_t getLineSearchMethod() const;
 
-    void setLineSearchMethodParameters(dotk::DOTk_LineSearchStepMng & mng_);
+    void setLineSearchStepMng(dotk::DOTk_LineSearchStepMng & mng_);
     void gatherOutputData(const dotk::DOTk_FirstOrderAlgorithm & algorithm_,
                           const dotk::DOTk_LineSearchAlgorithmsDataMng & mng_,
                           mxArray* output_[]);
@@ -67,7 +66,7 @@ private:
 
     double m_GradientTolerance;
     double m_TrialStepTolerance;
-    double m_OptimalityTolerance;
+    double m_ObjectiveTolerance;
     double m_LineSearchContractionFactor;
     double m_LineSearchStagnationTolerance;
 

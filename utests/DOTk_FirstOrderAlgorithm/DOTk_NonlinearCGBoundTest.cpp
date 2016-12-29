@@ -43,7 +43,7 @@ TEST(NonlinearCGBound, ProjectedStep_FletcherReeves_CubicLS)
 
     primal->control()->fill(1.);
     dotk::gtest::checkResults(*mng->getNewPrimal(), *primal->control(), 1e-6);
-    EXPECT_EQ(61, nlcg.getNumItrDone());
+    EXPECT_EQ(61u, nlcg.getNumItrDone());
     EXPECT_EQ(dotk::types::OBJECTIVE_FUNC_TOL_SATISFIED, nlcg.getStoppingCriterion());
 }
 
@@ -94,7 +94,7 @@ TEST(NonlinearCGBound, ProjectedStep_HestenesStiefel_CubicLS)
 
     primal->control()->fill(1.);
     dotk::gtest::checkResults(*mng->getNewPrimal(), *primal->control(), 1e-6);
-    EXPECT_EQ(33, nlcg.getNumItrDone());
+    EXPECT_EQ(33u, nlcg.getNumItrDone());
     EXPECT_EQ(dotk::types::OBJECTIVE_FUNC_TOL_SATISFIED, nlcg.getStoppingCriterion());
 }
 
@@ -119,7 +119,7 @@ TEST(NonlinearCGBound, ProjectedStep_ConjugateDescent_CubicLS)
 
     primal->control()->fill(1.);
     dotk::gtest::checkResults(*mng->getNewPrimal(), *primal->control(), 5e-6);
-    EXPECT_EQ(135, nlcg.getNumItrDone());
+    EXPECT_EQ(135u, nlcg.getNumItrDone());
     EXPECT_EQ(dotk::types::OBJECTIVE_FUNC_TOL_SATISFIED, nlcg.getStoppingCriterion());
 }
 
@@ -144,7 +144,7 @@ TEST(NonlinearCGBound, ProjectedStep_HagerZhang_CubicLS)
 
     primal->control()->fill(1.);
     dotk::gtest::checkResults(*mng->getNewPrimal(), *primal->control(), 1e-6);
-    EXPECT_EQ(29, nlcg.getNumItrDone());
+    EXPECT_EQ(29u, nlcg.getNumItrDone());
     EXPECT_EQ(dotk::types::OBJECTIVE_FUNC_TOL_SATISFIED, nlcg.getStoppingCriterion());
 }
 
@@ -274,7 +274,7 @@ TEST(NonlinearCGBound, ProjectedStep_LiuStorey_CubicLS)
 
     primal->control()->fill(1.);
     dotk::gtest::checkResults(*mng->getNewPrimal(), *primal->control(), 1e-6);
-    EXPECT_EQ(46, nlcg.getNumItrDone());
+    EXPECT_EQ(46u, nlcg.getNumItrDone());
     EXPECT_EQ(dotk::types::OBJECTIVE_FUNC_TOL_SATISFIED, nlcg.getStoppingCriterion());
 }
 
@@ -302,7 +302,7 @@ TEST(NonlinearCGBound, HestenesStiefel_UsrDefGrad_ArmijoLS_ProjectionFeasibleDir
 
     primal->control()->fill(1.);
     dotk::gtest::checkResults(*mng->getNewPrimal(), *primal->control(), 1e-7);
-    EXPECT_EQ(91, nlcg.getNumItrDone());
+    EXPECT_EQ(91u, nlcg.getNumItrDone());
     EXPECT_EQ(dotk::types::OBJECTIVE_FUNC_TOL_SATISFIED, nlcg.getStoppingCriterion());
 }
 
@@ -329,7 +329,7 @@ TEST(NonlinearCGBound, PolakRibiere_UsrDefGrad_ArmijoLS_ProjectionFeasibleDir)
 
     primal->control()->fill(1.);
     dotk::gtest::checkResults(*mng->getNewPrimal(), *primal->control(), 1e-5);
-    EXPECT_EQ(1970, nlcg.getNumItrDone());
+    EXPECT_EQ(1970u, nlcg.getNumItrDone());
     EXPECT_EQ(dotk::types::OBJECTIVE_FUNC_TOL_SATISFIED, nlcg.getStoppingCriterion());
 }
 
@@ -463,7 +463,7 @@ TEST(NonlinearCGBound, PerryShanno_UsrDefGrad_ArmijoLS_ProjectedFeasibleDir)
     primal->control()->fill(1.);
 
     dotk::gtest::checkResults(*mng->getNewPrimal(), *primal->control(), 1e-5);
-    EXPECT_EQ(29, nlcg.getNumItrDone());
+    EXPECT_EQ(29u, nlcg.getNumItrDone());
     EXPECT_EQ(dotk::types::OBJECTIVE_FUNC_TOL_SATISFIED, nlcg.getStoppingCriterion());
 }
 
@@ -479,7 +479,7 @@ TEST(NonlinearCGBound, PerryShanno_GradFD_ArmijoLS_ProjectedFeasibleDir)
     std::tr1::shared_ptr<dotk::DOTk_LineSearchMngTypeULP> mng(new dotk::DOTk_LineSearchMngTypeULP(primal, objective));
 
     primal->control()->fill(5e-9);
-    mng->setForwardFiniteDiffGradient(primal);
+    mng->setForwardFiniteDiffGradient(*primal->control());
     step->setArmijoLineSearch(primal, 0.25);
     step->setProjectionAlongFeasibleDirConstraint(primal);
     step->setArmijoBoundConstraintMethodStep();
@@ -490,7 +490,7 @@ TEST(NonlinearCGBound, PerryShanno_GradFD_ArmijoLS_ProjectedFeasibleDir)
     primal->control()->fill(1.);
 
     dotk::gtest::checkResults(*mng->getNewPrimal(), *primal->control(), 1e-5);
-    EXPECT_EQ(41, nlcg.getNumItrDone());
+    EXPECT_EQ(41u, nlcg.getNumItrDone());
     EXPECT_EQ(dotk::types::OBJECTIVE_FUNC_TOL_SATISFIED, nlcg.getStoppingCriterion());
 }
 
@@ -506,7 +506,7 @@ TEST(NonlinearCGBound, PerryShanno_GradPrllFD_ArmijoLS_ProjectedFeasibleDir)
     std::tr1::shared_ptr<dotk::DOTk_LineSearchMngTypeULP> mng(new dotk::DOTk_LineSearchMngTypeULP(primal, objective));
 
     primal->control()->fill(5e-9);
-    mng->setParallelForwardFiniteDiffGradient(primal);
+    mng->setParallelForwardFiniteDiffGradient(*primal->control());
     step->setArmijoLineSearch(primal, 0.25);
     step->setProjectionAlongFeasibleDirConstraint(primal);
     step->setArmijoBoundConstraintMethodStep();
@@ -517,7 +517,7 @@ TEST(NonlinearCGBound, PerryShanno_GradPrllFD_ArmijoLS_ProjectedFeasibleDir)
     primal->control()->fill(1.);
 
     dotk::gtest::checkResults(*mng->getNewPrimal(), *primal->control(), 1e-5);
-    EXPECT_EQ(41, nlcg.getNumItrDone());
+    EXPECT_EQ(41u, nlcg.getNumItrDone());
     EXPECT_EQ(dotk::types::OBJECTIVE_FUNC_TOL_SATISFIED, nlcg.getStoppingCriterion());
 }
 
@@ -533,7 +533,7 @@ TEST(NonlinearCGBound, PerryShanno_GradBD_ArmijoLS_ProjectedFeasibleDir)
     std::tr1::shared_ptr<dotk::DOTk_LineSearchMngTypeULP> mng(new dotk::DOTk_LineSearchMngTypeULP(primal, objective));
 
     primal->control()->fill(5e-9);
-    mng->setBackwardFiniteDiffGradient(primal);
+    mng->setBackwardFiniteDiffGradient(*primal->control());
     step->setArmijoLineSearch(primal, 0.25);
     step->setProjectionAlongFeasibleDirConstraint(primal);
     step->setArmijoBoundConstraintMethodStep();
@@ -544,7 +544,7 @@ TEST(NonlinearCGBound, PerryShanno_GradBD_ArmijoLS_ProjectedFeasibleDir)
     primal->control()->fill(1.);
 
     dotk::gtest::checkResults(*mng->getNewPrimal(), *primal->control(), 1e-5);
-    EXPECT_EQ(39, nlcg.getNumItrDone());
+    EXPECT_EQ(39u, nlcg.getNumItrDone());
     EXPECT_EQ(dotk::types::OBJECTIVE_FUNC_TOL_SATISFIED, nlcg.getStoppingCriterion());
 }
 
@@ -560,7 +560,7 @@ TEST(NonlinearCGBound, PerryShanno_GradPrllBD_ArmijoLS_ProjectedFeasibleDir)
     std::tr1::shared_ptr<dotk::DOTk_LineSearchMngTypeULP> mng(new dotk::DOTk_LineSearchMngTypeULP(primal, objective));
 
     primal->control()->fill(5e-9);
-    mng->setParallelBackwardFiniteDiffGradient(primal);
+    mng->setParallelBackwardFiniteDiffGradient(*primal->control());
     step->setArmijoLineSearch(primal, 0.25);
     step->setProjectionAlongFeasibleDirConstraint(primal);
     step->setArmijoBoundConstraintMethodStep();
@@ -571,7 +571,7 @@ TEST(NonlinearCGBound, PerryShanno_GradPrllBD_ArmijoLS_ProjectedFeasibleDir)
     primal->control()->fill(1.);
 
     dotk::gtest::checkResults(*mng->getNewPrimal(), *primal->control(), 1e-5);
-    EXPECT_EQ(39, nlcg.getNumItrDone());
+    EXPECT_EQ(39u, nlcg.getNumItrDone());
     EXPECT_EQ(dotk::types::OBJECTIVE_FUNC_TOL_SATISFIED, nlcg.getStoppingCriterion());
 }
 
@@ -587,7 +587,7 @@ TEST(NonlinearCGBound, PerryShanno_GradCD_ArmijoLS_ProjectedFeasibleDir)
     std::tr1::shared_ptr<dotk::DOTk_LineSearchMngTypeULP> mng(new dotk::DOTk_LineSearchMngTypeULP(primal, objective));
 
     primal->control()->fill(5e-9);
-    mng->setCentralFiniteDiffGradient(primal);
+    mng->setCentralFiniteDiffGradient(*primal->control());
     step->setArmijoLineSearch(primal, 0.25);
     step->setProjectionAlongFeasibleDirConstraint(primal);
     step->setArmijoBoundConstraintMethodStep();
@@ -598,7 +598,7 @@ TEST(NonlinearCGBound, PerryShanno_GradCD_ArmijoLS_ProjectedFeasibleDir)
     primal->control()->fill(1.);
 
     dotk::gtest::checkResults(*mng->getNewPrimal(), *primal->control(), 1e-5);
-    EXPECT_EQ(29, nlcg.getNumItrDone());
+    EXPECT_EQ(29u, nlcg.getNumItrDone());
     EXPECT_EQ(dotk::types::OBJECTIVE_FUNC_TOL_SATISFIED, nlcg.getStoppingCriterion());
 }
 
@@ -614,7 +614,7 @@ TEST(NonlinearCGBound, PerryShanno_GradPrllCD_ArmijoLS_ProjectedFeasibleDir)
     std::tr1::shared_ptr<dotk::DOTk_LineSearchMngTypeULP> mng(new dotk::DOTk_LineSearchMngTypeULP(primal, objective));
 
     primal->control()->fill(5e-9);
-    mng->setParallelCentralFiniteDiffGradient(primal);
+    mng->setParallelCentralFiniteDiffGradient(*primal->control());
     step->setArmijoLineSearch(primal, 0.25);
     step->setProjectionAlongFeasibleDirConstraint(primal);
     step->setArmijoBoundConstraintMethodStep();
@@ -625,7 +625,7 @@ TEST(NonlinearCGBound, PerryShanno_GradPrllCD_ArmijoLS_ProjectedFeasibleDir)
     primal->control()->fill(1.);
 
     dotk::gtest::checkResults(*mng->getNewPrimal(), *primal->control(), 1e-5);
-    EXPECT_EQ(29, nlcg.getNumItrDone());
+    EXPECT_EQ(29u, nlcg.getNumItrDone());
     EXPECT_EQ(dotk::types::OBJECTIVE_FUNC_TOL_SATISFIED, nlcg.getStoppingCriterion());
 }
 
@@ -652,7 +652,7 @@ TEST(NonlinearCGBound, LiuStorey_UsrDefGrad_ArmijoLS_ProjectedFeasibleDir)
 
     primal->control()->fill(1.);
     dotk::gtest::checkResults(*mng->getNewPrimal(), *primal->control(), 1e-5);
-    EXPECT_EQ(141, nlcg.getNumItrDone());
+    EXPECT_EQ(141u, nlcg.getNumItrDone());
     EXPECT_EQ(dotk::types::OBJECTIVE_FUNC_TOL_SATISFIED, nlcg.getStoppingCriterion());
 }
 

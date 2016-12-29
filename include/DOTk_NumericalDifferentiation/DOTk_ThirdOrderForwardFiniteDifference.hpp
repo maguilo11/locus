@@ -13,7 +13,6 @@
 namespace dotk
 {
 
-class DOTk_Primal;
 class DOTk_Functor;
 
 template<typename ScalarType>
@@ -22,8 +21,8 @@ class Vector;
 class DOTk_ThirdOrderForwardFiniteDifference : public dotk::DOTk_NumericalDifferentiation
 {
 public:
-    explicit DOTk_ThirdOrderForwardFiniteDifference(const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_);
-    DOTk_ThirdOrderForwardFiniteDifference(const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_, Real epsilon_);
+    explicit DOTk_ThirdOrderForwardFiniteDifference(const dotk::Vector<Real> & input_);
+    DOTk_ThirdOrderForwardFiniteDifference(const dotk::Vector<Real> & input_, Real epsilon_);
     virtual ~DOTk_ThirdOrderForwardFiniteDifference();
 
     virtual void differentiate(const std::tr1::shared_ptr<dotk::DOTk_Functor> & functor_,

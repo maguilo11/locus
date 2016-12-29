@@ -34,17 +34,17 @@ namespace DOTkFirstOrderAlgorithmTest
 TEST(FirstOrderAlgorithm, setAndGetMaxNumItr)
 {
     dotk::DOTk_FirstOrderAlgorithm alg;
-    EXPECT_EQ(5000, alg.getMaxNumItr());
+    EXPECT_EQ(5000u, alg.getMaxNumItr());
     alg.setMaxNumItr(10);
-    EXPECT_EQ(10, alg.getMaxNumItr());
+    EXPECT_EQ(10u, alg.getMaxNumItr());
 }
 
 TEST(FirstOrderAlgorithm, setAndGetNumItrDone)
 {
     dotk::DOTk_FirstOrderAlgorithm alg;
-    EXPECT_EQ(0, alg.getNumItrDone());
+    EXPECT_EQ(0u, alg.getNumItrDone());
     alg.setNumItrDone(11);
-    EXPECT_EQ(11, alg.getNumItrDone());
+    EXPECT_EQ(11u, alg.getNumItrDone());
 }
 
 TEST(FirstOrderAlgorithm, setAndGetObjectiveFuncTol)

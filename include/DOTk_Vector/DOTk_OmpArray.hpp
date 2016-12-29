@@ -238,24 +238,6 @@ public:
             m_Data[index] = value_;
         }
     }
-    // Gathers data from private member data of a group to one member.
-    void gather(ScalarType* input_) const
-    {
-        size_t index;
-        size_t dim = this->size();
-
-        int thread_count = this->threads();
-# pragma omp parallel num_threads(thread_count) \
-    default( none ) \
-    shared ( dim, input_ ) \
-    private ( index )
-
-# pragma omp for
-        for(index = 0; index < dim; ++ index)
-        {
-            input_[index] = m_Data[index];
-        }
-    }
     // Returns the number of elements in the vector.
     size_t size() const
     {

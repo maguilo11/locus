@@ -7,8 +7,7 @@
 
 #include <mex.h>
 #include <string>
-
-#include "DOTk_MexArrayPtr.hpp"
+#include <sstream>
 #include "DOTk_MexFiniteDiffNumIntgParser.hpp"
 
 namespace dotk
@@ -17,11 +16,10 @@ namespace dotk
 namespace mex
 {
 
-dotk::types::numerical_integration_t getFiniteDiffNumIntgMethod(dotk::DOTk_MexArrayPtr & ptr_)
+dotk::types::numerical_integration_t getFiniteDiffNumIntgMethod(const mxArray* input_)
 {
-    std::string method(mxArrayToString(ptr_.get()));
-    dotk::types::numerical_integration_t type = dotk::types::NUM_INTG_DISABLED;
-
+    std::string method(mxArrayToString(input_));
+    dotk::types::numerical_integration_t type = dotk::types::FORWARD_FINITE_DIFF;
     if(method.compare("FORWARD_DIFFERENCE") == 0)
     {
         mexPrintf(" FiniteDiffNumericalIntgMethod = FORWARD DIFFERENCE \n");
@@ -54,42 +52,52 @@ dotk::types::numerical_integration_t getFiniteDiffNumIntgMethod(dotk::DOTk_MexAr
     }
     else
     {
-        type = dotk::types::FORWARD_FINITE_DIFF;
-        std::string msg(" DOTk/MEX WARNING: Invalid Finite Difference Numerical Integration Method. Default = FORWARD DIFFERENCE. \n");
-        mexWarnMsgTxt(msg.c_str());
+        std::ostringstream msg;
+        msg << "\nWARNING IN: " << __FILE__ << ", LINE: " << __LINE__
+                << ", -> NumericalDifferentiationMethod keyword is misspelled."
+                << " NumericalDifferentiationMethod set to FORWARD FINITE DIFFERENCE.\n";
+        mexWarnMsgTxt(msg.str().c_str());
     }
-
     return (type);
 }
 
-void parseNumericalDifferentiationEpsilon(const mxArray* options_, double & output_)
+double parseNumericalDifferentiationEpsilon(const mxArray* input_)
 {
-    if(mxIsEmpty(mxGetField(options_, 0, "NumericalDifferentiationEpsilon")) == true)
+    double output = 1e-6;
+    if(mxGetField(input_, 0, "NumericalDifferentiationEpsilon") == nullptr)
     {
-        output_ = 1e-6;
-        std::string msg(" DOTk/MEX WARNING: NumericalDifferentiationEpsilon is NOT Defined. Default = 1e-6. \n");
-        mexWarnMsgTxt(msg.c_str());
-        return;
+        std::ostringstream msg;
+        msg << "\nWARNING IN: " << __FILE__ << ", LINE: " << __LINE__
+                << ", -> NumericalDifferentiationEpsilon keyword is NULL. NumericalDifferentiationEpsilon set to 1e-6.\n";
+        mexWarnMsgTxt(msg.str().c_str());
     }
-    dotk::DOTk_MexArrayPtr iterations;
-    iterations.reset(mxDuplicateArray(mxGetField(options_, 0, "NumericalDifferentiationEpsilon")));
-    output_ = mxGetScalar(iterations.get());
-    iterations.release();
+    else
+    {
+        mxArray* value = mxDuplicateArray(mxGetField(input_, 0, "NumericalDifferentiationEpsilon"));
+        output = mxGetScalar(value);
+        mxDestroyArray(value);
+    }
+    return (output);
 }
 
-void parseNumericalDifferentiationMethod(const mxArray* options_, dotk::types::numerical_integration_t & output_)
+dotk::types::numerical_integration_t parseNumericalDifferentiationMethod(const mxArray* input_)
 {
-    if(mxIsEmpty(mxGetField(options_, 0, "NumericalDifferentiationMethod")) == true)
+    dotk::types::numerical_integration_t output = dotk::types::FORWARD_FINITE_DIFF;
+    if(mxGetField(input_, 0, "NumericalDifferentiationMethod") == nullptr)
     {
-        output_ = dotk::types::FORWARD_FINITE_DIFF;
-        std::string msg(" DOTk/MEX WARNING: NumericalDifferentiationMethod is NOT Defined. Default = FORWARD DIFFERENCE. \n");
-        mexWarnMsgTxt(msg.c_str());
-        return;
+        std::ostringstream msg;
+        msg << "\nWARNING IN: " << __FILE__ << ", LINE: " << __LINE__
+                << ", -> NumericalDifferentiationMethod keyword is NULL."
+                << " NumericalDifferentiationMethod set to FORWARD FINITE DIFFERENCE.\n";
+        mexWarnMsgTxt(msg.str().c_str());
     }
-    dotk::DOTk_MexArrayPtr type;
-    type.reset(mxDuplicateArray(mxGetField(options_, 0, "NumericalDifferentiationMethod")));
-    output_ = dotk::mex::getFiniteDiffNumIntgMethod(type);
-    type.release();
+    else
+    {
+        mxArray* value = mxDuplicateArray(mxGetField(input_, 0, "NumericalDifferentiationMethod"));
+        output = dotk::mex::getFiniteDiffNumIntgMethod(value);
+        mxDestroyArray(value);
+    }
+    return (output);
 }
 
 }

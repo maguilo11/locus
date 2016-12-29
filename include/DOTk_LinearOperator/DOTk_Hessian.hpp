@@ -30,12 +30,12 @@ public:
 
     void setFullSpaceHessian();
     void setReducedSpaceHessian();
-    void setSr1Hessian(const std::tr1::shared_ptr<dotk::Vector<Real> > & vector_);
-    void setDfpHessian(const std::tr1::shared_ptr<dotk::Vector<Real> > & vector_);
-    void setBarzilaiBorweinHessian(const std::tr1::shared_ptr<dotk::Vector<Real> > & vector_);
-    void setLbfgsHessian(const std::tr1::shared_ptr<dotk::Vector<Real> > & vector_, size_t secant_storage_ = 2);
-    void setLdfpHessian(const std::tr1::shared_ptr<dotk::Vector<Real> > & vector_, size_t secant_storage_ = 2);
-    void setLsr1Hessian(const std::tr1::shared_ptr<dotk::Vector<Real> > & vector_, size_t secant_storage_ = 2);
+    void setSr1Hessian(const dotk::Vector<Real> & vector_);
+    void setDfpHessian(const dotk::Vector<Real> & vector_);
+    void setBarzilaiBorweinHessian(const dotk::Vector<Real> & vector_);
+    void setLbfgsHessian(const dotk::Vector<Real> & vector_, size_t secant_storage_ = 2);
+    void setLdfpHessian(const dotk::Vector<Real> & vector_, size_t secant_storage_ = 2);
+    void setLsr1Hessian(const dotk::Vector<Real> & vector_, size_t secant_storage_ = 2);
 
     virtual void setNumOtimizationItrDone(size_t itr_);
     virtual void updateLimitedMemoryStorage(bool update_);

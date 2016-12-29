@@ -13,7 +13,6 @@
 namespace dotk
 {
 
-class DOTk_Primal;
 class DOTk_Functor;
 
 template<typename ScalarType>
@@ -22,8 +21,8 @@ class Vector;
 class DOTk_BackwardFiniteDifference : public dotk::DOTk_NumericalDifferentiation
 {
 public:
-    explicit DOTk_BackwardFiniteDifference(const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_);
-    DOTk_BackwardFiniteDifference(const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_, Real epsilon_);
+    explicit DOTk_BackwardFiniteDifference(const dotk::Vector<Real> & primal_);
+    DOTk_BackwardFiniteDifference(const dotk::Vector<Real> & primal_, Real epsilon_);
     virtual ~DOTk_BackwardFiniteDifference();
 
     void differentiate(const std::tr1::shared_ptr<dotk::DOTk_Functor> & functor_,

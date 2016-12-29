@@ -137,7 +137,9 @@ void DOTk_Variable::checkData()
 {
     if(m_Data.use_count() < 1)
     {
-        std::perror("\n**** ERROR MESSAGE: DOTk_Variable::checkData() -> User did not allocate data for this dotk::Variable. ABORT ****\n");
+        std::ostringstream msg;
+        msg << "\n**** ERROR IN: " << __FILE__ << ", LINE: " << __LINE__ << ", -> DATA is NULL, ABORT. ****\n";
+        std::perror(msg.str().c_str());
         std::abort();
     }
 }
@@ -158,7 +160,8 @@ void DOTk_Variable::initialize(const dotk::Vector<Real> & data_,
         if(lower_bound_size != data_size)
         {
             std::ostringstream msg;
-            msg << "DOTk ERROR: DIMENSION MISMATCH BETWEEN LOWER BOUND AND DATA CONTAINERS."
+            msg << "ERROR IN: " << __FILE__ << ", LINE: " << __LINE__
+                    << ", -> DIMENSION MISMATCH BETWEEN LOWER BOUND AND DATA CONTAINERS."
                     << " DATA CONTAINER DIMENSION IS EQUAL TO " << data_size
                     << " AND LOWER BOUND CONTAINER DIMENSION IS EQUAL TO " << lower_bound_size << ": ABORT\n\n";
             throw msg.str().c_str();
@@ -168,7 +171,8 @@ void DOTk_Variable::initialize(const dotk::Vector<Real> & data_,
         if(upper_bound_size != data_size)
         {
             std::ostringstream msg;
-            msg << "DOTk ERROR: DIMENSION MISMATCH BETWEEN UPPER BOUND AND DATA CONTAINERS."
+            msg << "ERROR IN: " << __FILE__ << ", LINE: " << __LINE__
+                    << ", -> DIMENSION MISMATCH BETWEEN UPPER BOUND AND DATA CONTAINERS."
                     << " DATA CONTAINER DIMENSION IS EQUAL TO " << data_size
                     << " AND UPPER BOUND CONTAINER DIMENSION IS EQUAL TO " << upper_bound_size << ": ABORT\n\n";
             throw msg.str().c_str();
@@ -179,8 +183,9 @@ void DOTk_Variable::initialize(const dotk::Vector<Real> & data_,
             if(lower_bound_[i] > upper_bound_[i])
             {
                 std::ostringstream msg;
-                msg << "DOTk ERROR: LOWER BOUND AT INDEX " << i << " EXCEEDS UPPER BOUND WITH VALUE " << lower_bound_[i]
-                        << ". UPPER BOUND AT INDEX " << i << " HAS A VALUE OF " << upper_bound_[i] << ": ABORT\n\n";
+                msg << "ERROR IN: " << __FILE__ << ", LINE:" << __LINE__ << ", -> LOWER BOUND AT INDEX " << i
+                        << " EXCEEDS UPPER BOUND WITH VALUE " << lower_bound_[i] << ". UPPER BOUND AT INDEX " << i
+                        << " HAS A VALUE OF " << upper_bound_[i] << ": ABORT\n\n";
                 throw msg.str().c_str();
             }
         }

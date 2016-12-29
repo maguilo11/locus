@@ -18,16 +18,15 @@
 namespace dotk
 {
 
-DOTk_LBFGSHessian::DOTk_LBFGSHessian(const std::tr1::shared_ptr<dotk::Vector<Real> > & vector_,
-                                     size_t max_secant_storage_) :
+DOTk_LBFGSHessian::DOTk_LBFGSHessian(const dotk::Vector<Real> & vector_, size_t max_secant_storage_) :
         dotk::DOTk_SecondOrderOperator(max_secant_storage_),
         m_RhoStorage(new std::vector<Real>(max_secant_storage_, 0.)),
-        m_DeltaPrimal(vector_->clone()),
-        m_DeltaGradient(vector_->clone()),
-        m_MatrixA(new dotk::serial::DOTk_RowMatrix<Real>(*vector_, max_secant_storage_)),
-        m_MatrixB(new dotk::serial::DOTk_RowMatrix<Real>(*vector_, max_secant_storage_)),
-        m_DeltaPrimalStorage(new dotk::serial::DOTk_RowMatrix<Real>(*vector_, max_secant_storage_)),
-        m_DeltaGradientStorage(new dotk::serial::DOTk_RowMatrix<Real>(*vector_, max_secant_storage_))
+        m_DeltaPrimal(vector_.clone()),
+        m_DeltaGradient(vector_.clone()),
+        m_MatrixA(new dotk::serial::DOTk_RowMatrix<Real>(vector_, max_secant_storage_)),
+        m_MatrixB(new dotk::serial::DOTk_RowMatrix<Real>(vector_, max_secant_storage_)),
+        m_DeltaPrimalStorage(new dotk::serial::DOTk_RowMatrix<Real>(vector_, max_secant_storage_)),
+        m_DeltaGradientStorage(new dotk::serial::DOTk_RowMatrix<Real>(vector_, max_secant_storage_))
 {
     dotk::DOTk_SecondOrderOperator::setHessianType(dotk::types::LBFGS_HESS);
 }

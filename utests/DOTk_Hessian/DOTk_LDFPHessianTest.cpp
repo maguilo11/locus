@@ -28,7 +28,7 @@ TEST(DOTk_LDFPHessian, apply)
     std::tr1::shared_ptr<dotk::DOTk_LineSearchMngTypeULP> mng(new dotk::DOTk_LineSearchMngTypeULP(primal, objective));
 
     size_t secant_storage = 2;
-    dotk::DOTk_LDFPHessian hess(mng->getMatrixTimesVector(), secant_storage);
+    dotk::DOTk_LDFPHessian hess(*mng->getMatrixTimesVector(), secant_storage);
     EXPECT_EQ(dotk::types::LDFP_HESS, hess.getHessianType());
 
     dotk::StdVector<Real> control(2, 2.);

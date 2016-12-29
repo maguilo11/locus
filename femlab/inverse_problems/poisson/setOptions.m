@@ -158,27 +158,34 @@ end
 function [Options] = setMMA(Inputs, Options)
 Options = setProblem(Inputs, Options);
 Options = setGeneralOptions(Options);
-Options = setAsymptoteUpdateRule(Options);
 Options = setGradientComputationMethod(Options);
+% Set Moving Asmptotes Parameters
+Options.AsymptotesLowerBoundScaling = 0.1;
+Options.AsymptotesUpperBoundScaling = 10;
+Options.AsymptotesExpansionParameter = 1.2;
+Options.AsymptotesContractionParameter = 0.4;
 % Set MMA Dual Solver Options
 Options.MaxNumDualProblemItr = 25;
-Options.DualSolver = 'HESTENES_STIEFEL';
-Options.DualProbLineSearchMethod = 'CUBIC_INTRP';
-Options.MaxNumLineSearchItr = 25;
-Options.LineSearchStagnationTolerance = 1e-6;
-Options.LineSearchContractionFactor = 0.5;
+Options.DualSolverType = 'NLCG';
+Options.NonlinearCG_Type = 'POLAK_RIBIERE';
+Options.LineSearchStepLowerBound = 1e-3;
+Options.LineSearchStepUpperBound = 0.5;
 Options.DualProbBoundConstraintMethod = 'FEASIBLE_DIR';
-Options.MaxNumFeasibleItr = 50;
-Options.BoundConstraintStepSize = 0.5;
+Options.DualSolverStepTolerance = 1e-8;
+Options.DualSolverGradientTolerance = 1e-8;
+Options.DualObjectiveStagnationTolerance = 1e-8;
+Options.DualObjectiveRelaxationParameter = 1e-6;
+Options.DualObjectiveControlBoundsScaling = 0.5;
 Options.BoundConstraintContractionFactor = 0.5;
 % Dual Variable Options
 Options.Dual = 1e-2 * ones(1,Inputs.NumberDuals);
 Options.DualLowerBounds = 1e-10 * ones(1,Inputs.NumberDuals);
 Options.DualUpperBounds = 1e0 * ones(1,Inputs.NumberDuals);
 % Set MMA Options
+Options.MaxNumberSubProblemIterations = 10;
 Options.FeasibilityTolerance = 1e-4;
-Options.OptimalityProximityTolerance = 1e-2;
-Options.ExpectedOptimalObjectiveFunctionValue = 0.;
+Options.SubProblemStagnationTolerance = 1e-6;
+Options.SubProblemResidualTolerance = 1e-8;
 end
 
 function [Options] = setInexactSQP(Inputs, Options)
@@ -301,12 +308,12 @@ end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 function [Options] = setGeneralOptions(Options)
-Options.MaxNumAlgorithmItr = 100;
-Options.GradientTolerance = 5e-9;
-Options.TrialStepTolerance = 5e-9;
-Options.OptimalityTolerance = 1e-10;
-Options.FeasibilityTolerance = 1e-10;
-Options.ActualReductionTolerance = 1e-18;
+Options.MaxNumOuterIterations = 50;
+Options.StepTolerance = 1e-12;
+Options.GradientTolerance = 1e-12;
+Options.ObjectiveTolerance = 1e-12;
+Options.FeasibilityTolerance = 1e-12;
+Options.ActualReductionTolerance = 1e-12;
 end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -339,12 +346,15 @@ end
 function [Options] = setConstraintMethod(Options)
 % Bound Constraint Options
 %   1. FEASIBLE_DIR
-%   2. PROJECTION_ALONG_FEASIBLE_DIR
+%   2. ARMIJO_RULE_ALONG_FEASIBLE_DIR
+%   3. PROJECTION_ALONG_FEASIBLE_DIR
+%   4. ARMIJO_PROJECTION_ALONG_FEASIBLE_DIR
+%   5. PROJECTION_ALONG_ARC
+%   6. ARMIJO_RULE_ALONG_PROJECTED_ARC
 Options.BoundConstraintMethod = 'PROJECTION_ALONG_FEASIBLE_DIR';
 % General bound constraint method options
 Options.MaxNumFeasibleItr = 2;
-Options.BoundConstraintStepSize = 0.5;
-Options.BoundConstraintContractionFactor = 0.5;
+Options.FeasibleStepContractionFactor = 0.5;
 end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -358,16 +368,15 @@ function [Options] = setTrustRegionMethod(Options)
 %   3. DOUBLE_DOGLEG
 Options.TrustRegionMethod = 'DOUBLE_DOGLEG';
 % General trust region options
-Options.MaxTrustRegionRadius = 1e3;
+Options.MaxTrustRegionRadius = 1e2;
 Options.MinTrustRegionRadius = 1e-4;
 Options.InitialTrustRegionRadius = 1e3;
-Options.TrustRegionExpansionFactor = 2; %2 = PEM
-Options.TrustRegionContractionFactor = 0.25;
-Options.MaxNumTrustRegionSubProblemItr = 3;
+Options.TrustRegionExpansionFactor = 2;
+Options.TrustRegionContractionFactor = 0.5;
+Options.MaxNumTrustRegionSubProblemItr = 10;
 Options.MinActualOverPredictedReductionRatio = 0.1;
 Options.MidActualOverPredictedReductionRatio = 0.25;
 Options.MaxActualOverPredictedReductionRatio = 0.75;
-Options.SetInitialTrustRegionRadiusToNormGrad = 'true';
 end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -461,7 +470,7 @@ function [Options] = setNonLinearCGMethod(Options)
 %  10. LIU_STOREY
 %  11. DANIELS
 Options.NonlinearCgMethod = 'PERRY_SHANNO';
-if (strcmp(Options.NonlinearCgMethod,'DANIELS'))
+if (strcmp(Options.NonlinearCgMethod,'POLAK_RIBIERE'))
     Options = setNumericalDifferentiationMethod(Options);
 end
 end
@@ -482,8 +491,7 @@ function [Options] = setKrylovSolver(Options)
 Options.KrylovSolverMethod = 'PCG';
 Options.FixTolerance = 1e0;
 Options.RelativeTolerance = 1e0;
-Options.MaxNumKrylovSolverItr = 100;
-Options.RelativeToleranceExponential = 0.5;
+Options.MaxNumKrylovSolverItr = 200;
 end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -500,38 +508,6 @@ function [Options] = setNumericalDifferentiationMethod(Options)
 %   6. THIRD_ORDER_BACKWARD_DIFFERENCE
 Options.NumericalIntegrationMethod = 'CENTRAL_DIFFERENCE';
 Options.NumericalIntegrationEpsilon = 1e-7;
-end
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%                     MMA ASYMPTOTE UPDATE RULE OPTIONS                   %
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-function [Options] = setAsymptoteUpdateRule(Options)
-% Preconditioner Types:
-%   1. FIXED_RULE
-%   2. DYNAMIC_RULE
-%   3. PRIMAL_SCALING_RULE
-Options.AsymptoteUpdateRule = 'PRIMAL_SCALING_RULE';
-
-switch Options.AsymptoteUpdateRule
-    case 'FIXED_RULE'
-        Options.LowerMoveLimitPenalty = 0.1;
-        Options.UpperMoveLimitPenalty = 0.9;
-        Options.FixedAsymptoteRulePenalty = 1.;
-    case 'DYNAMIC_RULE'
-        Options.LowerMoveLimitPenalty = 0.1;
-        Options.UpperMoveLimitPenalty = 0.9;
-        Options.DynamicAsymptoteRulePenalty = 0.7;
-    case 'PRIMAL_SCALING_RULE'
-        Options.PrimalScalingRulePenalty = 0.125;
-        Options.UpperMoveLimitPrimalScaling = 2;
-        Options.LowerMoveLimitPrimalScaling = 0.5;
-        Options.UpperMoveLimitAsymptoteScaling = 0.99;
-        Options.LowerMoveLimitAsymptoteScaling = 1.01;
-    otherwise
-        error(' Invalid MMA Asymptote Update Rule. See Users Manual. ');
-end
-
 end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -163,33 +163,6 @@ public:
             m_Data[index] = value_;
         }
     }
-    // Gathers data from private member data of a group to one member.
-    void gather(ScalarType* input_) const
-    {
-        int my_rank;
-        MPI_Comm_rank(m_Comm, &my_rank);
-        size_t local_dim = this->size();
-        ScalarType* temp = new ScalarType[local_dim];
-        for(size_t i = 0; i < local_dim; ++i)
-        {
-            temp[i] = m_Data[i];
-        }
-
-        if(my_rank == 0)
-        {
-            int root = 0;
-            MPI_Datatype data_type = dotk::parallel::mpiDataType(typeid(ScalarType));
-            MPI_Gatherv(temp, local_dim, data_type, input_, m_LocalCounts, m_Displacements, data_type, root, m_Comm);
-        }
-        else
-        {
-            int root = 0;
-            MPI_Datatype data_type = dotk::parallel::mpiDataType(typeid(ScalarType));
-            MPI_Gatherv(temp, local_dim, data_type, nullptr, m_LocalCounts, m_Displacements, data_type, root, m_Comm);
-        }
-        delete[] temp;
-        temp = nullptr;
-    }
     // Returns the number of elements in the vector.
     size_t size() const
     {

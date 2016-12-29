@@ -163,21 +163,6 @@ void DOTk_PrimalVector<ScalarType>::fill(const ScalarType & value_)
 }
 
 template<typename ScalarType>
-void DOTk_PrimalVector<ScalarType>::gather(ScalarType* input_) const
-{
-    if(m_State.use_count() > 0)
-    {
-        m_Control->gather(input_);
-        size_t stride = m_Control->size();
-        m_State->gather(input_ + stride);
-    }
-    else
-    {
-        m_Control->gather(input_);
-    }
-}
-
-template<typename ScalarType>
 size_t DOTk_PrimalVector<ScalarType>::size() const
 {
     return (m_Size);

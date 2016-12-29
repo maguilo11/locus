@@ -5,297 +5,263 @@
  *      Author: Miguel A. Aguilo Valentin
  */
 
-#include "vector.hpp"
-#include "DOTk_MexArrayPtr.hpp"
+#include <sstream>
+#include <cassert>
+
+#include "DOTk_MexVector.hpp"
 #include "DOTk_MexApiUtilities.hpp"
 #include "DOTk_MexObjectiveFunction.hpp"
 
 namespace dotk
 {
 
-template<typename ScalarType>
-DOTk_MexObjectiveFunction<ScalarType>::DOTk_MexObjectiveFunction(const mxArray* operators_,
-                                                           const dotk::types::problem_t & type_) :
-        m_Value(NULL),
-        m_FirstDerivative(NULL),
-        m_SecondDerivative(NULL),
-        m_FirstDerivativeState(NULL),
-        m_FirstDerivativeControl(NULL),
-        m_SecondDerivativeStateState(NULL),
-        m_SecondDerivativeStateControl(NULL),
-        m_SecondDerivativeControlState(NULL),
-        m_SecondDerivativeControlControl(NULL)
+DOTk_MexObjectiveFunction::DOTk_MexObjectiveFunction(const mxArray* operators_, const dotk::types::problem_t & type_) :
+        m_Value(nullptr),
+        m_Gradient(nullptr),
+        m_Hessian(nullptr),
+        m_PartialDerivativeState(nullptr),
+        m_PartialDerivativeControl(nullptr),
+        m_PartialDerivativeStateState(nullptr),
+        m_PartialDerivativeStateControl(nullptr),
+        m_PartialDerivativeControlState(nullptr),
+        m_PartialDerivativeControlControl(nullptr)
 {
     this->initialize(operators_, type_);
 }
 
-template<typename ScalarType>
-DOTk_MexObjectiveFunction<ScalarType>::~DOTk_MexObjectiveFunction()
+DOTk_MexObjectiveFunction::~DOTk_MexObjectiveFunction()
 {
     this->clear();
 }
 
-template<typename ScalarType>
-ScalarType DOTk_MexObjectiveFunction<ScalarType>::value(const dotk::Vector<ScalarType> & primal_)
+double DOTk_MexObjectiveFunction::value(const dotk::Vector<double> & control_)
 {
-    dotk::DOTk_MexArrayPtr primal(mxCreateDoubleMatrix(primal_.size(), 1, mxREAL));
-    primal_.gather(mxGetPr(primal.get()));
+    const dotk::MexVector & control = dynamic_cast<const dotk::MexVector &>(control_);
+    mxArray* mx_control = const_cast<mxArray*>(control.array());
 
-    mxArray* input[2] =
-        { m_Value.get(), primal.get() };
-    mxArray* output[1];
+    mxArray* mx_output[1];
+    mxArray* mx_input[2] = { m_Value, mx_control };
+    mxArray* error = mexCallMATLABWithTrapWithObject(1, mx_output, 2, mx_input, "feval");
+    std::ostringstream msg;
+    msg << "\nERROR IN: " << __FILE__ << ", LINE: " << __LINE__ << ", -> Error while calling value.\n";
+    dotk::mex::handleException(error, msg.str());
 
-    mxArray* err = mexCallMATLABWithTrap(1, output, 2, input, "feval");
-    dotk::mex::handleException(err, "ERROR: Invalid Call to DOTk_MexObjectiveFunction<T>::value(control)");
-    double alpha = mxGetScalar(output[0]);
-
-    primal.release();
-
-    return (alpha);
+    assert(1u == mxGetNumberOfElements(mx_output[0]));
+    double output = mxGetScalar(mx_output[0]);
+    return (output);
 }
 
-template<typename ScalarType>
-void DOTk_MexObjectiveFunction<ScalarType>::gradient(const dotk::Vector<ScalarType> & primal_, dotk::Vector<ScalarType> & output_)
+void DOTk_MexObjectiveFunction::gradient(const dotk::Vector<double> & control_, dotk::Vector<double> & output_)
 {
-    dotk::DOTk_MexArrayPtr primal(mxCreateDoubleMatrix(primal_.size(), 1, mxREAL));
-    primal_.gather(mxGetPr(primal.get()));
+    const dotk::MexVector & control = dynamic_cast<const dotk::MexVector &>(control_);
+    mxArray* mx_control = const_cast<mxArray*>(control.array());
 
-    mxArray* input[2] =
-        { m_FirstDerivative.get(), primal.get() };
-    mxArray* output[1];
+    mxArray* mx_output[1];
+    mxArray* mx_input[2] = { m_Gradient, mx_control };
+    mxArray* error = mexCallMATLABWithTrapWithObject(1, mx_output, 2, mx_input, "feval");
+    std::ostringstream msg;
+    msg << "\nERROR IN: " << __FILE__ << ", LINE: " << __LINE__ << ", -> Error while calling gradient.\n";
+    dotk::mex::handleException(error, msg.str());
 
-    mxArray* err = mexCallMATLABWithTrap(1, output, 2, input, "feval");
-    dotk::mex::handleException(err, "ERROR: Invalid Call to DOTk_MexObjectiveFunction<T>::gradient");
-    dotk::mex::copyData(primal_.size(), mxGetPr(output[0]), output_);
-
-    primal.release();
+    assert(output_.size() == mxGetNumberOfElements(mx_output[0]));
+    dotk::MexVector & output = dynamic_cast<dotk::MexVector &>(output_);
+    output.setMxArray(mx_output[0]);
 }
 
-template<typename ScalarType>
-void DOTk_MexObjectiveFunction<ScalarType>::hessian(const dotk::Vector<ScalarType> & primal_,
-                                              const dotk::Vector<ScalarType> & delta_primal_,
-                                              dotk::Vector<ScalarType> & output_)
+void DOTk_MexObjectiveFunction::hessian(const dotk::Vector<double> & control_,
+                                        const dotk::Vector<double> & vector_,
+                                        dotk::Vector<double> & output_)
 {
-    dotk::DOTk_MexArrayPtr primal(mxCreateDoubleMatrix(primal_.size(), 1, mxREAL));
-    primal_.gather(mxGetPr(primal.get()));
+    const dotk::MexVector & control = dynamic_cast<const dotk::MexVector &>(control_);
+    mxArray* mx_control = const_cast<mxArray*>(control.array());
+    const dotk::MexVector & vector = dynamic_cast<const dotk::MexVector &>(vector_);
+    mxArray* mx_vector = const_cast<mxArray*>(vector.array());
 
-    dotk::DOTk_MexArrayPtr delta_primal(mxCreateDoubleMatrix(delta_primal_.size(), 1, mxREAL));
-    delta_primal_.gather(mxGetPr(delta_primal.get()));
+    mxArray* mx_output[1];
+    mxArray* mx_input[3] = { m_Hessian, mx_control, mx_vector };
+    mxArray* error = mexCallMATLABWithTrapWithObject(1, mx_output, 3, mx_input, "feval");
+    std::ostringstream msg;
+    msg << "\nERROR IN: " << __FILE__ << ", LINE: " << __LINE__ << ", -> Error while calling hessian.\n";
+    dotk::mex::handleException(error, msg.str());
 
-    mxArray* input[3] =
-        { m_SecondDerivative.get(), primal.get(), delta_primal.get() };
-    mxArray* output[1];
-
-    mxArray* err = mexCallMATLABWithTrap(1, output, 3, input, "feval");
-    dotk::mex::handleException(err, "ERROR: Invalid Call to DOTk_MexObjectiveFunction<T>::hessian");
-    dotk::mex::copyData(primal_.size(), mxGetPr(output[0]), output_);
-
-    primal.release();
-    delta_primal.release();
+    assert(output_.size() == mxGetNumberOfElements(mx_output[0]));
+    dotk::MexVector & output = dynamic_cast<dotk::MexVector &>(output_);
+    output.setMxArray(mx_output[0]);
 }
 
-template<typename ScalarType>
-ScalarType DOTk_MexObjectiveFunction<ScalarType>::value(const dotk::Vector<ScalarType> & state_, const dotk::Vector<ScalarType> & control_)
+double DOTk_MexObjectiveFunction::value(const dotk::Vector<double> & state_, const dotk::Vector<double> & control_)
 {
-    dotk::DOTk_MexArrayPtr state(mxCreateDoubleMatrix(state_.size(), 1, mxREAL));
-    state_.gather(mxGetPr(state.get()));
+    const dotk::MexVector & state = dynamic_cast<const dotk::MexVector &>(state_);
+    mxArray* mx_state = const_cast<mxArray*>(state.array());
+    const dotk::MexVector & control = dynamic_cast<const dotk::MexVector &>(control_);
+    mxArray* mx_control = const_cast<mxArray*>(control.array());
 
-    dotk::DOTk_MexArrayPtr control(mxCreateDoubleMatrix(control_.size(), 1, mxREAL));
-    control_.gather(mxGetPr(control.get()));
+    mxArray* mx_output[1];
+    mxArray* mx_input[3] = { m_Value, mx_state, mx_control };
+    mxArray* error = mexCallMATLABWithTrapWithObject(1, mx_output, 3, mx_input, "feval");
+    std::ostringstream msg;
+    msg << "\nERROR IN: " << __FILE__ << ", LINE: " << __LINE__ << ", -> Error while calling value.\n";
+    dotk::mex::handleException(error, msg.str());
 
-    mxArray* input[3] =
-        { m_Value.get(), state.get(), control.get() };
-    mxArray* output[1];
-
-    mxArray* err = mexCallMATLABWithTrap(1, output, 3, input, "feval");
-    dotk::mex::handleException(err, "ERROR: Invalid Call to DOTk_MexObjectiveFunction<T>::value(state,control)");
-    double value = mxGetScalar(output[0]);
-
-    state.release();
-    control.release();
-
-    return (value);
+    assert(1u == mxGetNumberOfElements(mx_output[0]));
+    double output = mxGetScalar(mx_output[0]);
+    return (output);
 }
 
-template<typename ScalarType>
-void DOTk_MexObjectiveFunction<ScalarType>::partialDerivativeState(const dotk::Vector<ScalarType> & state_,
-                                                             const dotk::Vector<ScalarType> & control_,
-                                                             dotk::Vector<ScalarType> & output_)
+void DOTk_MexObjectiveFunction::partialDerivativeState(const dotk::Vector<double> & state_,
+                                                       const dotk::Vector<double> & control_,
+                                                       dotk::Vector<double> & output_)
 {
-    dotk::DOTk_MexArrayPtr state(mxCreateDoubleMatrix(state_.size(), 1, mxREAL));
-    state_.gather(mxGetPr(state.get()));
+    const dotk::MexVector & state = dynamic_cast<const dotk::MexVector &>(state_);
+    mxArray* mx_state = const_cast<mxArray*>(state.array());
+    const dotk::MexVector & control = dynamic_cast<const dotk::MexVector &>(control_);
+    mxArray* mx_control = const_cast<mxArray*>(control.array());
 
-    dotk::DOTk_MexArrayPtr control(mxCreateDoubleMatrix(control_.size(), 1, mxREAL));
-    control_.gather(mxGetPr(control.get()));
+    mxArray* mx_output[1];
+    mxArray* mx_input[3] = { m_PartialDerivativeState, mx_state, mx_control };
+    mxArray* error = mexCallMATLABWithTrapWithObject(1, mx_output, 3, mx_input, "feval");
+    std::ostringstream msg;
+    msg << "\nERROR IN: " << __FILE__ << ", LINE: " << __LINE__ << ", -> Error while calling partialDerivativeState.\n";
+    dotk::mex::handleException(error, msg.str());
 
-    mxArray* input[3] =
-        { m_FirstDerivativeState.get(), state.get(), control.get() };
-    mxArray* output[1];
-
-    mxArray* err = mexCallMATLABWithTrap(1, output, 3, input, "feval");
-    dotk::mex::handleException(err, "ERROR: Invalid Call to DOTk_MexObjectiveFunction<T>::partialDerivativeState");
-    dotk::mex::copyData(output_.size(), mxGetPr(output[0]), output_);
-
-    state.release();
-    control.release();
+    assert(output_.size() == mxGetNumberOfElements(mx_output[0]));
+    dotk::MexVector & output = dynamic_cast<dotk::MexVector &>(output_);
+    output.setMxArray(mx_output[0]);
 }
 
-template<typename ScalarType>
-void DOTk_MexObjectiveFunction<ScalarType>::partialDerivativeControl(const dotk::Vector<ScalarType> & state_,
-                                                               const dotk::Vector<ScalarType> & control_,
-                                                               dotk::Vector<ScalarType> & output_)
+void DOTk_MexObjectiveFunction::partialDerivativeControl(const dotk::Vector<double> & state_,
+                                                         const dotk::Vector<double> & control_,
+                                                         dotk::Vector<double> & output_)
 {
-    dotk::DOTk_MexArrayPtr state(mxCreateDoubleMatrix(state_.size(), 1, mxREAL));
-    state_.gather(mxGetPr(state.get()));
+    const dotk::MexVector & state = dynamic_cast<const dotk::MexVector &>(state_);
+    mxArray* mx_state = const_cast<mxArray*>(state.array());
+    const dotk::MexVector & control = dynamic_cast<const dotk::MexVector &>(control_);
+    mxArray* mx_control = const_cast<mxArray*>(control.array());
 
-    dotk::DOTk_MexArrayPtr control(mxCreateDoubleMatrix(control_.size(), 1, mxREAL));
-    control_.gather(mxGetPr(control.get()));
+    mxArray* mx_output[1];
+    mxArray* mx_input[3] = { m_PartialDerivativeControl, mx_state, mx_control };
+    mxArray* error = mexCallMATLABWithTrapWithObject(1, mx_output, 3, mx_input, "feval");
+    std::ostringstream msg;
+    msg << "\nERROR IN: " << __FILE__ << ", LINE: " << __LINE__ << ", -> Error while calling partialDerivativeControl.\n";
+    dotk::mex::handleException(error, msg.str());
 
-    mxArray* input[3] =
-        { m_FirstDerivativeControl.get(), state.get(), control.get() };
-    mxArray* output[1];
-
-    mxArray* err = mexCallMATLABWithTrap(1, output, 3, input, "feval");
-    dotk::mex::handleException(err, "ERROR: Invalid Call to DOTk_MexObjectiveFunction<T>::partialDerivativeControl");
-    dotk::mex::copyData(control_.size(), mxGetPr(output[0]), output_);
-
-    state.release();
-    control.release();
+    assert(output_.size() == mxGetNumberOfElements(mx_output[0]));
+    dotk::MexVector & output = dynamic_cast<dotk::MexVector &>(output_);
+    output.setMxArray(mx_output[0]);
 }
 
-template<typename ScalarType>
-void DOTk_MexObjectiveFunction<ScalarType>::partialDerivativeStateState(const dotk::Vector<ScalarType> & state_,
-                                                                  const dotk::Vector<ScalarType> & control_,
-                                                                  const dotk::Vector<ScalarType> & vector_,
-                                                                  dotk::Vector<ScalarType> & output_)
+void DOTk_MexObjectiveFunction::partialDerivativeStateState(const dotk::Vector<double> & state_,
+                                                            const dotk::Vector<double> & control_,
+                                                            const dotk::Vector<double> & vector_,
+                                                            dotk::Vector<double> & output_)
 {
-    dotk::DOTk_MexArrayPtr state(mxCreateDoubleMatrix(state_.size(), 1, mxREAL));
-    state_.gather(mxGetPr(state.get()));
+    const dotk::MexVector & state = dynamic_cast<const dotk::MexVector &>(state_);
+    mxArray* mx_state = const_cast<mxArray*>(state.array());
+    const dotk::MexVector & control = dynamic_cast<const dotk::MexVector &>(control_);
+    mxArray* mx_control = const_cast<mxArray*>(control.array());
+    const dotk::MexVector & vector = dynamic_cast<const dotk::MexVector &>(vector_);
+    mxArray* mx_vector = const_cast<mxArray*>(vector.array());
 
-    dotk::DOTk_MexArrayPtr control(mxCreateDoubleMatrix(control_.size(), 1, mxREAL));
-    control_.gather(mxGetPr(control.get()));
+    mxArray* mx_output[1];
+    mxArray* mx_input[4] = { m_PartialDerivativeStateState, mx_state, mx_control, mx_vector };
+    mxArray* error = mexCallMATLABWithTrapWithObject(1, mx_output, 4, mx_input, "feval");
+    std::ostringstream msg;
+    msg << "\nERROR IN: " << __FILE__ << ", LINE: " << __LINE__ << ", -> Error while calling partialDerivativeStateState.\n";
+    dotk::mex::handleException(error, msg.str());
 
-    dotk::DOTk_MexArrayPtr delta_state(mxCreateDoubleMatrix(vector_.size(), 1, mxREAL));
-    vector_.gather(mxGetPr(delta_state.get()));
-
-    mxArray* input[4] =
-        { m_SecondDerivativeStateState.get(), state.get(), control.get(), delta_state.get() };
-    mxArray* output[1];
-
-    mxArray* err = mexCallMATLABWithTrap(1, output, 4, input, "feval");
-    dotk::mex::handleException(err, "ERROR: Invalid Call to DOTk_MexObjectiveFunction<T>::partialDerivativeStateState");
-    dotk::mex::copyData(output_.size(), mxGetPr(output[0]), output_);
-
-    state.release();
-    control.release();
-    delta_state.release();
+    assert(output_.size() == mxGetNumberOfElements(mx_output[0]));
+    dotk::MexVector & output = dynamic_cast<dotk::MexVector &>(output_);
+    output.setMxArray(mx_output[0]);
 }
 
-template<typename ScalarType>
-void DOTk_MexObjectiveFunction<ScalarType>::partialDerivativeStateControl(const dotk::Vector<ScalarType> & state_,
-                                                                    const dotk::Vector<ScalarType> & control_,
-                                                                    const dotk::Vector<ScalarType> & vector_,
-                                                                    dotk::Vector<ScalarType> & output_)
+void DOTk_MexObjectiveFunction::partialDerivativeStateControl(const dotk::Vector<double> & state_,
+                                                              const dotk::Vector<double> & control_,
+                                                              const dotk::Vector<double> & vector_,
+                                                              dotk::Vector<double> & output_)
 {
-    dotk::DOTk_MexArrayPtr state(mxCreateDoubleMatrix(state_.size(), 1, mxREAL));
-    state_.gather(mxGetPr(state.get()));
+    const dotk::MexVector & state = dynamic_cast<const dotk::MexVector &>(state_);
+    mxArray* mx_state = const_cast<mxArray*>(state.array());
+    const dotk::MexVector & control = dynamic_cast<const dotk::MexVector &>(control_);
+    mxArray* mx_control = const_cast<mxArray*>(control.array());
+    const dotk::MexVector & vector = dynamic_cast<const dotk::MexVector &>(vector_);
+    mxArray* mx_vector = const_cast<mxArray*>(vector.array());
 
-    dotk::DOTk_MexArrayPtr control(mxCreateDoubleMatrix(control_.size(), 1, mxREAL));
-    control_.gather(mxGetPr(control.get()));
+    mxArray* mx_output[1];
+    mxArray* mx_input[4] = { m_PartialDerivativeStateControl, mx_state, mx_control, mx_vector };
+    mxArray* error = mexCallMATLABWithTrapWithObject(1, mx_output, 4, mx_input, "feval");
+    std::ostringstream msg;
+    msg << "\nERROR IN: " << __FILE__ << ", LINE: " << __LINE__ << ", -> Error while calling partialDerivativeStateControl.\n";
+    dotk::mex::handleException(error, msg.str());
 
-    dotk::DOTk_MexArrayPtr delta_control(mxCreateDoubleMatrix(vector_.size(), 1, mxREAL));
-    vector_.gather(mxGetPr(delta_control.get()));
-
-    mxArray* input[4] =
-        { m_SecondDerivativeStateControl.get(), state.get(), control.get(), delta_control.get() };
-    mxArray* output[1];
-
-    mxArray* err = mexCallMATLABWithTrap(1, output, 4, input, "feval");
-    dotk::mex::handleException(err,
-                               "ERROR: Invalid Call to DOTk_MexObjectiveFunction<T>::partialDerivativeStateControl");
-    dotk::mex::copyData(state_.size(), mxGetPr(output[0]), output_);
-
-    state.release();
-    control.release();
-    delta_control.release();
+    assert(output_.size() == mxGetNumberOfElements(mx_output[0]));
+    dotk::MexVector & output = dynamic_cast<dotk::MexVector &>(output_);
+    output.setMxArray(mx_output[0]);
 }
 
-template<typename ScalarType>
-void DOTk_MexObjectiveFunction<ScalarType>::partialDerivativeControlState(const dotk::Vector<ScalarType> & state_,
-                                                                    const dotk::Vector<ScalarType> & control_,
-                                                                    const dotk::Vector<ScalarType> & vector_,
-                                                                    dotk::Vector<ScalarType> & output_)
+void DOTk_MexObjectiveFunction::partialDerivativeControlState(const dotk::Vector<double> & state_,
+                                                              const dotk::Vector<double> & control_,
+                                                              const dotk::Vector<double> & vector_,
+                                                              dotk::Vector<double> & output_)
 {
-    dotk::DOTk_MexArrayPtr state(mxCreateDoubleMatrix(state_.size(), 1, mxREAL));
-    state_.gather(mxGetPr(state.get()));
+    const dotk::MexVector & state = dynamic_cast<const dotk::MexVector &>(state_);
+    mxArray* mx_state = const_cast<mxArray*>(state.array());
+    const dotk::MexVector & control = dynamic_cast<const dotk::MexVector &>(control_);
+    mxArray* mx_control = const_cast<mxArray*>(control.array());
+    const dotk::MexVector & vector = dynamic_cast<const dotk::MexVector &>(vector_);
+    mxArray* mx_vector = const_cast<mxArray*>(vector.array());
 
-    dotk::DOTk_MexArrayPtr control(mxCreateDoubleMatrix(control_.size(), 1, mxREAL));
-    control_.gather(mxGetPr(control.get()));
+    mxArray* mx_output[1];
+    mxArray* mx_input[4] = { m_PartialDerivativeControlState, mx_state, mx_control, mx_vector };
+    mxArray* error = mexCallMATLABWithTrapWithObject(1, mx_output, 4, mx_input, "feval");
+    std::ostringstream msg;
+    msg << "\nERROR IN: " << __FILE__ << ", LINE: " << __LINE__ << ", -> Error while calling partialDerivativeControlState.\n";
+    dotk::mex::handleException(error, msg.str());
 
-    dotk::DOTk_MexArrayPtr delta_state(mxCreateDoubleMatrix(vector_.size(), 1, mxREAL));
-    vector_.gather(mxGetPr(delta_state.get()));
-
-    mxArray* input[4] =
-        { m_SecondDerivativeControlState.get(), state.get(), control.get(), delta_state.get() };
-    mxArray* output[1];
-
-    mxArray* err = mexCallMATLABWithTrap(1, output, 4, input, "feval");
-    dotk::mex::handleException(err,
-                               "ERROR: Invalid Call to DOTk_MexObjectiveFunction<T>::partialDerivativeControlState");
-    dotk::mex::copyData(control_.size(), mxGetPr(output[0]), output_);
-
-    state.release();
-    control.release();
-    delta_state.release();
+    assert(output_.size() == mxGetNumberOfElements(mx_output[0]));
+    dotk::MexVector & output = dynamic_cast<dotk::MexVector &>(output_);
+    output.setMxArray(mx_output[0]);
 }
 
-template<typename ScalarType>
-void DOTk_MexObjectiveFunction<ScalarType>::partialDerivativeControlControl(const dotk::Vector<ScalarType> & state_,
-                                                                      const dotk::Vector<ScalarType> & control_,
-                                                                      const dotk::Vector<ScalarType> & vector_,
-                                                                      dotk::Vector<ScalarType> & output_)
+void DOTk_MexObjectiveFunction::partialDerivativeControlControl(const dotk::Vector<double> & state_,
+                                                                const dotk::Vector<double> & control_,
+                                                                const dotk::Vector<double> & vector_,
+                                                                dotk::Vector<double> & output_)
 {
-    dotk::DOTk_MexArrayPtr state(mxCreateDoubleMatrix(state_.size(), 1, mxREAL));
-    state_.gather(mxGetPr(state.get()));
+    const dotk::MexVector & state = dynamic_cast<const dotk::MexVector &>(state_);
+    mxArray* mx_state = const_cast<mxArray*>(state.array());
+    const dotk::MexVector & control = dynamic_cast<const dotk::MexVector &>(control_);
+    mxArray* mx_control = const_cast<mxArray*>(control.array());
+    const dotk::MexVector & vector = dynamic_cast<const dotk::MexVector &>(vector_);
+    mxArray* mx_vector = const_cast<mxArray*>(vector.array());
 
-    dotk::DOTk_MexArrayPtr control(mxCreateDoubleMatrix(control_.size(), 1, mxREAL));
-    control_.gather(mxGetPr(control.get()));
+    mxArray* mx_output[1];
+    mxArray* mx_input[4] = { m_PartialDerivativeControlControl, mx_state, mx_control, mx_vector };
+    mxArray* error = mexCallMATLABWithTrapWithObject(1, mx_output, 4, mx_input, "feval");
+    std::ostringstream msg;
+    msg << "\nERROR IN: " << __FILE__ << ", LINE: " << __LINE__ << ", -> Error while calling partialDerivativeControlControl.\n";
+    dotk::mex::handleException(error, msg.str());
 
-    dotk::DOTk_MexArrayPtr delta_control(mxCreateDoubleMatrix(vector_.size(), 1, mxREAL));
-    vector_.gather(mxGetPr(delta_control.get()));
-
-    mxArray* input[4] =
-        { m_SecondDerivativeControlControl.get(), state.get(), control.get(), delta_control.get() };
-    mxArray* output[1];
-
-    mxArray* err = mexCallMATLABWithTrap(1, output, 4, input, "feval");
-    dotk::mex::handleException(err,
-                               "ERROR: Invalid Call to DOTk_MexObjectiveFunction<T>::partialDerivativeControlControl");
-    dotk::mex::copyData(control_.size(), mxGetPr(output[0]), output_);
-
-    state.release();
-    control.release();
-    delta_control.release();
+    assert(output_.size() == mxGetNumberOfElements(mx_output[0]));
+    dotk::MexVector & output = dynamic_cast<dotk::MexVector &>(output_);
+    output.setMxArray(mx_output[0]);
 }
 
-template<typename ScalarType>
-void DOTk_MexObjectiveFunction<ScalarType>::clear()
+void DOTk_MexObjectiveFunction::clear()
 {
-    m_Value.release();
-    m_FirstDerivative.release();
-    m_SecondDerivative.release();
-    m_FirstDerivativeState.release();
-    m_FirstDerivativeControl.release();
-    m_SecondDerivativeStateState.release();
-    m_SecondDerivativeStateControl.release();
-    m_SecondDerivativeControlState.release();
-    m_SecondDerivativeControlControl.release();
+    dotk::mex::destroy(m_Value);
+    dotk::mex::destroy(m_Gradient);
+    dotk::mex::destroy(m_Hessian);
+    dotk::mex::destroy(m_PartialDerivativeState);
+    dotk::mex::destroy(m_PartialDerivativeControl);
+    dotk::mex::destroy(m_PartialDerivativeStateState);
+    dotk::mex::destroy(m_PartialDerivativeStateControl);
+    dotk::mex::destroy(m_PartialDerivativeControlState);
+    dotk::mex::destroy(m_PartialDerivativeControlControl);
 }
 
-template<typename ScalarType>
-void DOTk_MexObjectiveFunction<ScalarType>::initialize(const mxArray* operators_, const dotk::types::problem_t & type_)
+void DOTk_MexObjectiveFunction::initialize(const mxArray* operators_, const dotk::types::problem_t & type_)
 {
-    m_Value.reset(mxDuplicateArray(mxGetField(operators_, 0, "value")));
+    m_Value = mxDuplicateArray(mxGetField(operators_, 0, "value"));
     switch(type_)
     {
         case dotk::types::TYPE_ULP:
@@ -305,8 +271,8 @@ void DOTk_MexObjectiveFunction<ScalarType>::initialize(const mxArray* operators_
         case dotk::types::TYPE_CLP:
         case dotk::types::TYPE_ILP:
         {
-            m_FirstDerivative.reset(mxDuplicateArray(mxGetField(operators_, 0, "gradient")));
-            m_SecondDerivative.reset(mxDuplicateArray(mxGetField(operators_, 0, "hessian")));
+            m_Gradient = mxDuplicateArray(mxGetField(operators_, 0, "gradient"));
+            m_Hessian = mxDuplicateArray(mxGetField(operators_, 0, "hessian"));
             break;
         }
         case dotk::types::TYPE_UNLP:
@@ -315,27 +281,24 @@ void DOTk_MexObjectiveFunction<ScalarType>::initialize(const mxArray* operators_
         case dotk::types::TYPE_ENLP_BOUND:
         case dotk::types::TYPE_CNLP:
         {
-            m_FirstDerivativeState.reset(mxDuplicateArray(mxGetField(operators_, 0, "partialDerivativeState")));
-            m_FirstDerivativeControl.reset(mxDuplicateArray(mxGetField(operators_, 0, "partialDerivativeControl")));
-            m_SecondDerivativeStateState.reset(mxDuplicateArray(mxGetField(operators_,
-                                                                           0,
-                                                                           "partialDerivativeStateState")));
-            m_SecondDerivativeStateControl.reset(mxDuplicateArray(mxGetField(operators_,
-                                                                             0,
-                                                                             "partialDerivativeStateControl")));
-            m_SecondDerivativeControlState.reset(mxDuplicateArray(mxGetField(operators_,
-                                                                             0,
-                                                                             "partialDerivativeControlState")));
-            m_SecondDerivativeControlControl.reset(mxDuplicateArray(mxGetField(operators_,
-                                                                               0,
-                                                                               "partialDerivativeControlControl")));
+            m_PartialDerivativeState = mxDuplicateArray(mxGetField(operators_, 0, "partialDerivativeState"));
+            m_PartialDerivativeControl = mxDuplicateArray(mxGetField(operators_, 0, "partialDerivativeControl"));
+            m_PartialDerivativeStateState =
+                    mxDuplicateArray(mxGetField(operators_, 0, "partialDerivativeStateState"));
+            m_PartialDerivativeStateControl =
+                    mxDuplicateArray(mxGetField(operators_, 0, "partialDerivativeStateControl"));
+            m_PartialDerivativeControlState =
+                    mxDuplicateArray(mxGetField(operators_, 0, "partialDerivativeControlState"));
+            m_PartialDerivativeControlControl =
+                    mxDuplicateArray(mxGetField(operators_, 0, "partialDerivativeControlControl"));
             break;
         }
         case dotk::types::PROBLEM_TYPE_UNDEFINED:
         default:
         {
-            std::string err("\nERROR: Invalid Problem ScalarType in Call to DOTk_MexObjectiveFunction<T>::initialize\n");
-            mexErrMsgTxt(err.c_str());
+            std::ostringstream error;
+            error << "\nERROR IN: " << __FILE__ << ", LINE: " << __LINE__ << ", -> Error while calling initialize.\n";
+            mexErrMsgTxt(error.str().c_str());
             break;
         }
     }

@@ -268,43 +268,6 @@ public:
             m_Data[index] = value_;
         }
     }
-    // Gathers data from private member data of a group to one member.
-    void gather(ScalarType* input_) const
-    {
-        int my_rank;
-        MPI_Comm_rank(m_Comm, &my_rank);
-
-        size_t index;
-        size_t dim = this->size();
-        ScalarType* temp = new ScalarType[dim];
-        int thread_count = this->threads();
-
-# pragma omp parallel num_threads(thread_count) \
-    default( none ) \
-    shared ( dim, temp ) \
-    private ( index )
-
-# pragma omp for
-        for(index = 0; index < dim; ++ index)
-        {
-            temp[index] = m_Data[index];
-        }
-
-        if(my_rank == 0)
-        {
-            int root = 0;
-            MPI_Datatype data_type = dotk::parallel::mpiDataType(typeid(ScalarType));
-            MPI_Gatherv(temp, dim, data_type, input_, m_LocalCounts, m_Displacements, data_type, root, m_Comm);
-        }
-        else
-        {
-            int root = 0;
-            MPI_Datatype data_type = dotk::parallel::mpiDataType(typeid(ScalarType));
-            MPI_Gatherv(temp, dim, data_type, nullptr, m_LocalCounts, m_Displacements, data_type, root, m_Comm);
-        }
-        delete[] temp;
-        temp = nullptr;
-    }
     // Returns the number of elements in the vector.
     size_t size() const
     {

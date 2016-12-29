@@ -30,7 +30,7 @@ TEST(NumericalDerivative, ForwardFiniteDifference)
     objective->gradient(*primal->control(), *current_gradient);
 
     dotk::NumericallyDifferentiatedHessian hessian(primal, objective);
-    hessian.setForwardDifference(primal);
+    hessian.setForwardDifference(*primal->control());
 
     std::tr1::shared_ptr< dotk::Vector<Real> > output(new dotk::StdVector<Real>(num_controls, 0.));
     std::tr1::shared_ptr< dotk::Vector<Real> > direction(new dotk::StdVector<Real>(num_controls, 0.1));
@@ -80,7 +80,7 @@ TEST(NumericalDerivative, CentralFiniteDifference)
     objective->gradient(*primal->control(), *current_gradient);
 
     dotk::NumericallyDifferentiatedHessian hessian(primal, objective);
-    hessian.setCentralDifference(primal);
+    hessian.setCentralDifference(*primal->control());
 
     std::tr1::shared_ptr< dotk::Vector<Real> > output(new dotk::StdVector<Real>(num_controls, 0.));
     std::tr1::shared_ptr< dotk::Vector<Real> > direction(new dotk::StdVector<Real>(num_controls, 0.1));
@@ -105,7 +105,7 @@ TEST(NumericalDerivative, SecondOrderForwardFiniteDifference)
     objective->gradient(*primal->control(), *current_gradient);
 
     dotk::NumericallyDifferentiatedHessian hessian(primal, objective);
-    hessian.setSecondOrderForwardDifference(primal);
+    hessian.setSecondOrderForwardDifference(*primal->control());
 
     std::tr1::shared_ptr< dotk::Vector<Real> > direction(new dotk::StdVector<Real>(num_controls, 0.1));
     std::tr1::shared_ptr< dotk::Vector<Real> > output(new dotk::StdVector<Real>(num_controls, 0.));
@@ -130,7 +130,7 @@ TEST(NumericalDerivative, ThirdOrderForwardFiniteDifference)
     objective->gradient(*primal->control(), *current_gradient);
 
     dotk::NumericallyDifferentiatedHessian hessian(primal, objective);
-    hessian.setThirdOrderForwardDifference(primal);
+    hessian.setThirdOrderForwardDifference(*primal->control());
 
     std::tr1::shared_ptr< dotk::Vector<Real> > direction(new dotk::StdVector<Real>(num_controls, 0.1));
     std::tr1::shared_ptr< dotk::Vector<Real> > output(new dotk::StdVector<Real>(num_controls, 0.));
@@ -155,7 +155,7 @@ TEST(NumericalDerivative, ThirdOrderBackwardFiniteDifference)
     objective->gradient(*primal->control(), *current_gradient);
 
     dotk::NumericallyDifferentiatedHessian hessian(primal, objective);
-    hessian.setThirdOrderBackwardDifference(primal);
+    hessian.setThirdOrderBackwardDifference(*primal->control());
 
     std::tr1::shared_ptr< dotk::Vector<Real> > output(new dotk::StdVector<Real>(num_controls, 0.));
     std::tr1::shared_ptr< dotk::Vector<Real> > direction(new dotk::StdVector<Real>(num_controls, 0.1));
@@ -179,7 +179,7 @@ TEST(NumericalDerivative, apply)
     std::tr1::shared_ptr<dotk::DOTk_LineSearchMngTypeULP> mng(new dotk::DOTk_LineSearchMngTypeULP(primal, objective));
 
     dotk::NumericallyDifferentiatedHessian hessian(primal, objective);
-    hessian.setCentralDifference(primal);
+    hessian.setCentralDifference(*primal->control());
 
     (*mng->getTrialStep())[0] = 0.1;
     (*mng->getTrialStep())[1] = 0.1;

@@ -388,39 +388,4 @@ TEST(DOTk_MpiVectorTest, copy)
     dotk::gtest::checkResults(*gold, *y, thread_count);
 }
 
-TEST(DOTk_MpiVectorTest, gather)
-{
-    size_t dim = 1e4;
-    double value = 1.;
-    dotk::MpiVector<double> x(MPI_COMM_WORLD, dim, value);
-    std::vector<double> y(dim, 0.);
-    EXPECT_EQ(dim, y.size());
-
-    double start = 0.;
-    int my_rank;
-    MPI_Comm_rank(MPI_COMM_WORLD, &my_rank);
-    if(my_rank == 0)
-    {
-        start = MPI_Wtime();
-    }
-
-    x.gather(y.data());
-
-    double finish = 0.;
-    if(my_rank == 0)
-    {
-        finish = MPI_Wtime();
-    }
-
-    double time = finish - start;
-    if(my_rank == 0)
-    {
-        printf("WTime is %f\n", time);
-
-        dotk::StdArray<double> gold(dim, 1.);
-        int thread_count = 4;
-        dotk::gtest::checkResults(y.size(), y.data(), gold, thread_count);
-    }
-}
-
 }

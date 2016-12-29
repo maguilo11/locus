@@ -10,7 +10,6 @@
 
 #include <tr1/memory>
 
-#include "DOTk_MexArrayPtr.hpp"
 #include "DOTk_MexAlgorithmTypeNewton.hpp"
 
 namespace dotk
@@ -48,8 +47,8 @@ private:
     double m_LineSearchStagnationTolerance;
     dotk::types::line_search_t m_LineSearchMethod;
 
-    dotk::DOTk_MexArrayPtr m_ObjectiveFunctionOperators;
-    dotk::DOTk_MexArrayPtr m_EqualityConstraintOperators;
+    mxArray* m_ObjectiveFunction;
+    mxArray* m_EqualityConstraint;
 
 private:
     DOTk_MexInexactNewtonTypeLS(const dotk::DOTk_MexInexactNewtonTypeLS & rhs_);

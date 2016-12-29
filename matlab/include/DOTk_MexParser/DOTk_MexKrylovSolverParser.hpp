@@ -14,18 +14,15 @@
 namespace dotk
 {
 
-class DOTk_MexArrayPtr;
-
 namespace mex
 {
 
-dotk::types::krylov_solver_t getKrylovSolverMethod(dotk::DOTk_MexArrayPtr & ptr_);
-
-void parseMaxNumKrylovSolverItr(const mxArray* options_, size_t & output_);
-void parseKrylovSolverFixTolerance(const mxArray* options_, double & output_);
-void parseRelativeToleranceExponential(const mxArray* options_, double & output_);
-void parseKrylovSolverRelativeTolerance(const mxArray* options_, double & output_);
-void parseKrylovSolverMethod(const mxArray* options_, dotk::types::krylov_solver_t & output_);
+size_t parseMaxNumKrylovSolverItr(const mxArray* input_);
+double parseKrylovSolverFixTolerance(const mxArray* input_);
+double parseRelativeToleranceExponential(const mxArray* input_);
+double parseKrylovSolverRelativeTolerance(const mxArray* input_);
+dotk::types::krylov_solver_t getKrylovSolverMethod(const mxArray* input_);
+dotk::types::krylov_solver_t parseKrylovSolverMethod(const mxArray* input_);
 
 }
 

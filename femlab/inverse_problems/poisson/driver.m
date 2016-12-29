@@ -3,14 +3,14 @@ clc;
 %clear;
 
 % Algorithm, testing, and problem interface directories
-addpath /Users/miguelaguilo/dotk/matlab/exe/;
-addpath /Users/miguelaguilo/dotk/matlab/mfiles/;
-addpath /Users/miguelaguilo/Research/intrelab;
-addpath /Users/miguelaguilo/Research/intrelab/mesh2/;
-addpath /Users/miguelaguilo/Research/femlab/tools/;
-%addpath /Users/miguelaguilo/Research/femlab/inverse/poisson/interfaceL2/
-%addpath /Users/miguelaguilo/Research/femlab/inverse/poisson/interfaceResidual/
-addpath /Users/miguelaguilo/Research/femlab/inverse/poisson/interfaceResidualNoSolve/
+addpath /Users/miguelaguilo/locus/matlab/exe/;
+addpath /Users/miguelaguilo/locus/matlab/mfiles/;
+addpath /Users/miguelaguilo/locus/intrelab;
+addpath /Users/miguelaguilo/locus/intrelab/mesh2/;
+addpath /Users/miguelaguilo/locus/femlab/utilities/;
+%addpath /Users/miguelaguilo/locus/femlab/inverse_problems/poisson/interfaceL2/
+%addpath /Users/miguelaguilo/locus/femlab/inverse_problems/poisson/interfaceResidual/
+addpath /Users/miguelaguilo/locus/femlab/inverse_problems/poisson/interfaceResidualNoSolve/
 
 global GLB_INVP;
 
@@ -65,7 +65,7 @@ gamma = 1e-7;
 % the regularization parameter beta is related to the level of noise
 % the larger the noise, the larger beta should be
 rng(0,'v5normal');
-noise = 0.05;
+noise = 0.0;
 
 rhs_fn=@(struc)generateSine(struc);
 

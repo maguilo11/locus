@@ -5,14 +5,16 @@
  *      Author: Miguel A. Aguilo Valentin
  */
 
-#include <mex.h>
-#include "vector.hpp"
-#include "DOTk_Primal.hpp"
-#include "DOTk_MexArrayPtr.hpp"
+#include <sstream>
+#include <iostream>
+
+#include "DOTk_MexVector.hpp"
 #include "DOTk_MexApiUtilities.hpp"
-#include "DOTk_LineSearchStepMng.hpp"
 #include "DOTk_MexAlgorithmParser.hpp"
 #include "DOTk_MexAlgorithmTypeFO.hpp"
+
+#include "DOTk_Primal.hpp"
+#include "DOTk_LineSearchStepMng.hpp"
 #include "DOTk_FirstOrderAlgorithm.hpp"
 #include "DOTk_ProjectedLineSearchStep.hpp"
 #include "DOTk_LineSearchAlgorithmsDataMng.hpp"
@@ -27,7 +29,7 @@ DOTk_MexAlgorithmTypeFO::DOTk_MexAlgorithmTypeFO(const mxArray* options_) :
         m_MaxNumLineSearchItr(10),
         m_GradientTolerance(1e-10),
         m_TrialStepTolerance(1e-10),
-        m_OptimalityTolerance(1e-10),
+        m_ObjectiveTolerance(1e-10),
         m_LineSearchContractionFactor(0.5),
         m_LineSearchStagnationTolerance(1e-8),
         m_ProblemType(dotk::types::PROBLEM_TYPE_UNDEFINED),
@@ -42,7 +44,7 @@ DOTk_MexAlgorithmTypeFO::~DOTk_MexAlgorithmTypeFO()
 
 void DOTk_MexAlgorithmTypeFO::setNumDuals(const mxArray* options_)
 {
-    dotk::mex::parseNumberDuals(options_, m_NumDuals);
+    m_NumDuals = dotk::mex::parseNumberDuals(options_);
 }
 
 size_t DOTk_MexAlgorithmTypeFO::getNumDuals() const
@@ -52,7 +54,7 @@ size_t DOTk_MexAlgorithmTypeFO::getNumDuals() const
 
 void DOTk_MexAlgorithmTypeFO::setNumControls(const mxArray* options_)
 {
-    dotk::mex::parseNumberControls(options_, m_NumControls);
+    m_NumControls = dotk::mex::parseNumberControls(options_);
 }
 
 size_t DOTk_MexAlgorithmTypeFO::getNumControls() const
@@ -75,9 +77,9 @@ double DOTk_MexAlgorithmTypeFO::getTrialStepTolerance() const
     return (m_TrialStepTolerance);
 }
 
-double DOTk_MexAlgorithmTypeFO::getOptimalityTolerance() const
+double DOTk_MexAlgorithmTypeFO::getObjectiveTolerance() const
 {
-    return (m_OptimalityTolerance);
+    return (m_ObjectiveTolerance);
 }
 
 size_t DOTk_MexAlgorithmTypeFO::getMaxNumLineSearchItr() const
@@ -109,17 +111,13 @@ void DOTk_MexAlgorithmTypeFO::setBoundConstraintMethod(const mxArray* options_,
                                                        const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_,
                                                        const std::tr1::shared_ptr<dotk::DOTk_ProjectedLineSearchStep> & step_)
 {
-    dotk::types::constraint_method_t type = dotk::types::CONSTRAINT_METHOD_DISABLED;
-    dotk::mex::parseBoundConstraintMethod(options_, type);
-
+    dotk::types::constraint_method_t type = dotk::mex::parseBoundConstraintMethod(options_);
     switch(type)
     {
         case dotk::types::FEASIBLE_DIR:
         {
-            size_t iterations = 0;
-            dotk::mex::parseMaxNumFeasibleItr(options_, iterations);
-            double factor = 0.;
-            dotk::mex::parseBoundConstraintContractionFactor(options_, factor);
+            size_t iterations = dotk::mex::parseMaxNumFeasibleItr(options_);
+            double factor = dotk::mex::parseFeasibleStepContractionFactor(options_);
             step_->setFeasibleDirectionConstraint(primal_);
             step_->setMaxNumFeasibleItr(iterations);
             step_->setBoundConstraintMethodContractionStep(factor);
@@ -127,23 +125,24 @@ void DOTk_MexAlgorithmTypeFO::setBoundConstraintMethod(const mxArray* options_,
         }
         case dotk::types::PROJECTION_ALONG_FEASIBLE_DIR:
         {
-            double factor = 0.;
-            dotk::mex::parseBoundConstraintContractionFactor(options_, factor);
+            double factor = dotk::mex::parseFeasibleStepContractionFactor(options_);
             step_->setBoundConstraintMethodContractionStep(factor);
             step_->setProjectionAlongFeasibleDirConstraint(primal_);
             break;
         }
         default:
         {
+            std::ostringstream msg;
+            msg << "\nWARNING IN: " << __FILE__ << ", LINE: " << __LINE__
+                    << ", -> Bound constraint method keyword. Method set to PROJECTION ALONG FEASIBLE DIRECTION.\n";
+            mexWarnMsgTxt(msg.str().c_str());
             step_->setProjectionAlongFeasibleDirConstraint(primal_);
-            std::string msg(" DOTk/MEX WARNING: Invalid Bound Constraint Method. Default = PROJECTION ALONG FEASIBLE DIRECTION. \n");
-            mexWarnMsgTxt(msg.c_str());
             break;
         }
     }
 }
 
-void DOTk_MexAlgorithmTypeFO::setLineSearchMethodParameters(dotk::DOTk_LineSearchStepMng & mng_)
+void DOTk_MexAlgorithmTypeFO::setLineSearchStepMng(dotk::DOTk_LineSearchStepMng & mng_)
 {
     size_t max_num_itr = this->getMaxNumLineSearchItr();
     mng_.setMaxNumIterations(max_num_itr);
@@ -155,62 +154,57 @@ void DOTk_MexAlgorithmTypeFO::setLineSearchMethodParameters(dotk::DOTk_LineSearc
 
 void DOTk_MexAlgorithmTypeFO::gatherOutputData(const dotk::DOTk_FirstOrderAlgorithm & algorithm_,
                                                const dotk::DOTk_LineSearchAlgorithmsDataMng & mng_,
-                                               mxArray* output_[])
+                                               mxArray* outputs_[])
 {
     // Create memory allocation for output struct
     const char *field_names[7] =
-        { "Iterations", "ObjectiveFunctionValue", "Control", "Gradient", "NormGradient", "TrialStep", "NormTrialStep" };
-    output_[0] = mxCreateStructMatrix(1, 1, 7, field_names);
+        { "Iterations", "ObjectiveFunctionValue", "Control", "Gradient", "NormGradient", "Step", "NormStep" };
+    outputs_[0] = mxCreateStructMatrix(1, 1, 7, field_names);
 
-    dotk::DOTk_MexArrayPtr itr(mxCreateNumericMatrix_730(1, 1, mxINDEX_CLASS, mxREAL));
-    static_cast<size_t*>(mxGetData(itr.get()))[0] = algorithm_.getNumItrDone();
-    mxSetField(output_[0], 0, "Iterations", itr.get());
+    /* NOTE: mxSetField does not create a copy of the data allocated. Thus,
+     * mxDestroyArray cannot be called. Furthermore, MEX array data (e.g.
+     * control, gradient, etc.) should be duplicated since the data in the
+     * manager will be deallocated at the end. */
+    mxArray* mx_number_iterations = mxCreateNumericMatrix(1, 1, mxINDEX_CLASS, mxREAL);
+    static_cast<size_t*>(mxGetData(mx_number_iterations))[0] = algorithm_.getNumItrDone();
+    mxSetField(outputs_[0], 0, "Iterations", mx_number_iterations);
 
-    dotk::DOTk_MexArrayPtr objective_function_value(mxCreateDoubleMatrix(1, 1, mxREAL));
-    mxGetPr(objective_function_value.get())[0] = mng_.getNewObjectiveFunctionValue();
-    mxSetField(output_[0], 0, "ObjectiveFunctionValue", objective_function_value.get());
+    double value = mng_.getNewObjectiveFunctionValue();
+    mxArray* mx_objective_function_value = mxCreateDoubleScalar(value);
+    mxSetField(outputs_[0], 0, "ObjectiveFunctionValue", mx_objective_function_value);
 
-    size_t num_controls = this->getNumControls();
-    dotk::DOTk_MexArrayPtr primal(mxCreateDoubleMatrix(num_controls, 1, mxREAL));
-    mng_.getNewPrimal()->gather(mxGetPr(primal.get()));
-    mxSetField(output_[0], 0, "Control", primal.get());
+    dotk::MexVector & control = dynamic_cast<dotk::MexVector &>(*mng_.getNewPrimal());
+    mxArray* mx_control = mxDuplicateArray(control.array());
+    mxSetField(outputs_[0], 0, "Control", mx_control);
 
-    dotk::DOTk_MexArrayPtr gradient(mxCreateDoubleMatrix(num_controls, 1, mxREAL));
-    mng_.getNewGradient()->gather(mxGetPr(gradient.get()));
-    mxSetField(output_[0], 0, "Gradient", gradient.get());
+    dotk::MexVector & gradient = dynamic_cast<dotk::MexVector &>(*mng_.getNewGradient());
+    mxArray* mx_gradient = mxDuplicateArray(gradient.array());
+    mxSetField(outputs_[0], 0, "Gradient", mx_gradient);
 
-    dotk::DOTk_MexArrayPtr norm_gradient(mxCreateDoubleMatrix(1, 1, mxREAL));
-    mxGetPr(norm_gradient.get())[0] = mng_.getNewGradient()->norm();
-    mxSetField(output_[0], 0, "NormGradient", norm_gradient.get());
+    value = gradient.norm();
+    mxArray* mx_norm_gradient = mxCreateDoubleScalar(value);
+    mxSetField(outputs_[0], 0, "NormGradient", mx_norm_gradient);
 
-    dotk::DOTk_MexArrayPtr trial_step(mxCreateDoubleMatrix(num_controls, 1, mxREAL));
-    mng_.getTrialStep()->gather(mxGetPr(trial_step.get()));
-    mxSetField(output_[0], 0, "TrialStep", trial_step.get());
+    dotk::MexVector & step = dynamic_cast<dotk::MexVector &>(*mng_.getTrialStep());
+    mxArray* mx_step = mxDuplicateArray(step.array());
+    mxSetField(outputs_[0], 0, "Step", mx_step);
 
-    dotk::DOTk_MexArrayPtr norm_trial_step(mxCreateDoubleMatrix(1, 1, mxREAL));
-    mxGetPr(norm_trial_step.get())[0] = mng_.getTrialStep()->norm();
-    mxSetField(output_[0], 0, "NormTrialStep", norm_trial_step.get());
-
-    itr.release();
-    objective_function_value.release();
-    primal.release();
-    gradient.release();
-    norm_gradient.release();
-    trial_step.release();
-    norm_trial_step.release();
+    value = step.norm();
+    mxArray* mx_norm_step = mxCreateDoubleScalar(value);
+    mxSetField(outputs_[0], 0, "NormStep", mx_norm_step);
 }
 
 void DOTk_MexAlgorithmTypeFO::initialize(const mxArray* options_)
 {
-    dotk::mex::parseProblemType(options_, m_ProblemType);
-    dotk::mex::parseLineSearchMethod(options_, m_LineSearchMethod);
-    dotk::mex::parseGradientTolerance(options_, m_GradientTolerance);
-    dotk::mex::parseTrialStepTolerance(options_, m_TrialStepTolerance);
-    dotk::mex::parseMaxNumAlgorithmItr(options_, m_MaxNumAlgorithmItr);
-    dotk::mex::parseOptimalityTolerance(options_, m_OptimalityTolerance);
-    dotk::mex::parseMaxNumLineSearchItr(options_, m_MaxNumLineSearchItr);
-    dotk::mex::parseLineSearchContractionFactor(options_, m_LineSearchContractionFactor);
-    dotk::mex::parseLineSearchStagnationTolerance(options_, m_LineSearchStagnationTolerance);
+    m_ProblemType = dotk::mex::parseProblemType(options_);
+    m_TrialStepTolerance = dotk::mex::parseStepTolerance(options_);
+    m_LineSearchMethod = dotk::mex::parseLineSearchMethod(options_);
+    m_GradientTolerance = dotk::mex::parseGradientTolerance(options_);
+    m_ObjectiveTolerance = dotk::mex::parseObjectiveTolerance(options_);
+    m_MaxNumLineSearchItr = dotk::mex::parseMaxNumLineSearchItr(options_);
+    m_MaxNumAlgorithmItr = dotk::mex::parseMaxNumOuterIterations(options_);
+    m_LineSearchContractionFactor = dotk::mex::parseLineSearchContractionFactor(options_);
+    m_LineSearchStagnationTolerance = dotk::mex::parseLineSearchStagnationTolerance(options_);
 }
 
 }

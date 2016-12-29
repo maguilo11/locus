@@ -374,38 +374,4 @@ TEST(DOTk_OmpVectorTest, copy)
     dotk::gtest::checkResults(*gold, x, thread_count);
 }
 
-TEST(DOTk_OmpVectorTest, gather)
-{
-    int dim = 1e4;
-    double value = 1.;
-    int thread_count = 4;
-    dotk::OmpVector<double> x(dim, thread_count, 0.);
-    dotk::OmpVector<double> y(dim, thread_count, value);
-
-    double start = 0.;
-    int my_rank = omp_get_thread_num();
-    if(my_rank == 0)
-    {
-        start = omp_get_wtime();
-    }
-
-    y.gather(&(x[0]));
-
-    double finish = 0.;
-    if(my_rank == 0)
-    {
-        finish = omp_get_wtime();
-    }
-
-    double time = finish - start;
-    if(my_rank == 0)
-    {
-        printf("WTime is %f\n", time);
-    }
-
-    std::tr1::shared_ptr<dotk::Vector<double> > gold = y.clone();
-    gold->fill(1.);
-    dotk::gtest::checkResults(x, *gold, thread_count);
-}
-
 }

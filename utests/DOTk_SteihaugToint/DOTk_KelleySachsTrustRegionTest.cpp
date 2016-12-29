@@ -37,10 +37,10 @@ TEST(SteihaugTointKelleySachs, setAndGetFunctions)
     dotk::DOTk_SteihaugTointKelleySachs alg(mng, step_mng);
 
     // TEST DEFAULT VALUES
-    EXPECT_EQ(10, alg.getMaxNumUpdates());
+    EXPECT_EQ(10u, alg.getMaxNumUpdates());
     // TEST SET FUNCTION
     alg.setMaxNumUpdates(2);
-    EXPECT_EQ(2, alg.getMaxNumUpdates());
+    EXPECT_EQ(2u, alg.getMaxNumUpdates());
 }
 
 TEST(SteihaugTointKelleySachs, getMin_UsrDefGrad_UsrDefHess_Rosenbrock)
@@ -80,14 +80,14 @@ TEST(SteihaugTointKelleySachs, getMin_UsrDefGrad_NumDiffHessCD_Rosenbrock)
     std::tr1::shared_ptr<dotk::NumericallyDifferentiatedHessian> hessian(new dotk::NumericallyDifferentiatedHessian(primal, objective));
 
     mng->setUserDefinedGradient();
-    hessian->setCentralDifference(primal);
+    hessian->setCentralDifference(*primal->control());
     std::tr1::shared_ptr<dotk::DOTk_KelleySachsStepMng> step_mng(new dotk::DOTk_KelleySachsStepMng(primal, hessian));
 
     dotk::DOTk_SteihaugTointKelleySachs alg(mng, step_mng);
     alg.getMin();
 
     EXPECT_EQ(dotk::types::ACTUAL_REDUCTION_TOL_SATISFIED, alg.getStoppingCriterion());
-    EXPECT_EQ(16, alg.getNumOptimizationItrDone());
+    EXPECT_EQ(16u, alg.getNumOptimizationItrDone());
     primal->control()->fill(1.);
     dotk::gtest::checkResults(*mng->getNewPrimal(), *primal->control(), 1e-6);
 }
@@ -104,14 +104,14 @@ TEST(SteihaugTointKelleySachs, getMin_UsrDefGrad_NumDiffHessTBD_Rosenbrock)
     std::tr1::shared_ptr<dotk::NumericallyDifferentiatedHessian> hessian(new dotk::NumericallyDifferentiatedHessian(primal, objective));
 
     mng->setUserDefinedGradient();
-    hessian->setThirdOrderBackwardDifference(primal);
+    hessian->setThirdOrderBackwardDifference(*primal->control());
     std::tr1::shared_ptr<dotk::DOTk_KelleySachsStepMng> step_mng(new dotk::DOTk_KelleySachsStepMng(primal, hessian));
 
     dotk::DOTk_SteihaugTointKelleySachs alg(mng, step_mng);
     alg.getMin();
 
     EXPECT_EQ(dotk::types::ACTUAL_REDUCTION_TOL_SATISFIED, alg.getStoppingCriterion());
-    EXPECT_EQ(16, alg.getNumOptimizationItrDone());
+    EXPECT_EQ(16u, alg.getNumOptimizationItrDone());
     primal->control()->fill(1.);
     dotk::gtest::checkResults(*mng->getNewPrimal(), *primal->control(), 1e-6);
 }
@@ -128,14 +128,14 @@ TEST(SteihaugTointKelleySachs, getMin_UsrDefGrad_NumDiffHessTFD_Rosenbrock)
     std::tr1::shared_ptr<dotk::NumericallyDifferentiatedHessian> hessian(new dotk::NumericallyDifferentiatedHessian(primal, objective));
 
     mng->setUserDefinedGradient();
-    hessian->setThirdOrderForwardDifference(primal);
+    hessian->setThirdOrderForwardDifference(*primal->control());
     std::tr1::shared_ptr<dotk::DOTk_KelleySachsStepMng> step_mng(new dotk::DOTk_KelleySachsStepMng(primal, hessian));
 
     dotk::DOTk_SteihaugTointKelleySachs alg(mng, step_mng);
     alg.getMin();
 
     EXPECT_EQ(dotk::types::ACTUAL_REDUCTION_TOL_SATISFIED, alg.getStoppingCriterion());
-    EXPECT_EQ(16, alg.getNumOptimizationItrDone());
+    EXPECT_EQ(16u, alg.getNumOptimizationItrDone());
     primal->control()->fill(1.);
     dotk::gtest::checkResults(*mng->getNewPrimal(), *primal->control(), 1e-6);
 }
@@ -152,14 +152,14 @@ TEST(SteihaugTointKelleySachs, getMin_UsrDefGrad_NumDiffHessSFD_Rosenbrock)
     std::tr1::shared_ptr<dotk::NumericallyDifferentiatedHessian> hessian(new dotk::NumericallyDifferentiatedHessian(primal, objective));
 
     mng->setUserDefinedGradient();
-    hessian->setSecondOrderForwardDifference(primal);
+    hessian->setSecondOrderForwardDifference(*primal->control());
     std::tr1::shared_ptr<dotk::DOTk_KelleySachsStepMng> step_mng(new dotk::DOTk_KelleySachsStepMng(primal, hessian));
 
     dotk::DOTk_SteihaugTointKelleySachs alg(mng, step_mng);
     alg.getMin();
 
     EXPECT_EQ(dotk::types::ACTUAL_REDUCTION_TOL_SATISFIED, alg.getStoppingCriterion());
-    EXPECT_EQ(16, alg.getNumOptimizationItrDone());
+    EXPECT_EQ(16u, alg.getNumOptimizationItrDone());
     primal->control()->fill(1.);
     dotk::gtest::checkResults(*mng->getNewPrimal(), *primal->control(), 1e-6);
 }
@@ -176,14 +176,14 @@ TEST(SteihaugTointKelleySachs, getMin_UsrDefGrad_NumDiffHessBD_Rosenbrock)
     std::tr1::shared_ptr<dotk::NumericallyDifferentiatedHessian> hessian(new dotk::NumericallyDifferentiatedHessian(primal, objective));
 
     mng->setUserDefinedGradient();
-    hessian->setBackwardDifference(primal);
+    hessian->setBackwardDifference(*primal->control());
     std::tr1::shared_ptr<dotk::DOTk_KelleySachsStepMng> step_mng(new dotk::DOTk_KelleySachsStepMng(primal, hessian));
 
     dotk::DOTk_SteihaugTointKelleySachs alg(mng, step_mng);
     alg.getMin();
 
     EXPECT_EQ(dotk::types::ACTUAL_REDUCTION_TOL_SATISFIED, alg.getStoppingCriterion());
-    EXPECT_EQ(16, alg.getNumOptimizationItrDone());
+    EXPECT_EQ(16u, alg.getNumOptimizationItrDone());
     primal->control()->fill(1.);
     dotk::gtest::checkResults(*mng->getNewPrimal(), *primal->control(), 1e-6);
 }
@@ -200,14 +200,14 @@ TEST(SteihaugTointKelleySachs, getMin_UsrDefGrad_NumDiffHessFD_Rosenbrock)
     std::tr1::shared_ptr<dotk::NumericallyDifferentiatedHessian> hessian(new dotk::NumericallyDifferentiatedHessian(primal, objective));
 
     mng->setUserDefinedGradient();
-    hessian->setForwardDifference(primal);
+    hessian->setForwardDifference(*primal->control());
     std::tr1::shared_ptr<dotk::DOTk_KelleySachsStepMng> step_mng(new dotk::DOTk_KelleySachsStepMng(primal, hessian));
 
     dotk::DOTk_SteihaugTointKelleySachs alg(mng, step_mng);
     alg.getMin();
 
     EXPECT_EQ(dotk::types::ACTUAL_REDUCTION_TOL_SATISFIED, alg.getStoppingCriterion());
-    EXPECT_EQ(16, alg.getNumOptimizationItrDone());
+    EXPECT_EQ(16u, alg.getNumOptimizationItrDone());
     primal->control()->fill(1.);
     dotk::gtest::checkResults(*mng->getNewPrimal(), *primal->control(), 1e-6);
 }
@@ -224,15 +224,15 @@ TEST(SteihaugTointKelleySachs, getMin_GradFD_NumDiffHessCD_Rosenbrock)
     std::tr1::shared_ptr<dotk::NumericallyDifferentiatedHessian> hessian(new dotk::NumericallyDifferentiatedHessian(primal, objective));
 
     primal->control()->fill(1e-6);
-    mng->setForwardFiniteDiffGradient(primal);
-    hessian->setCentralDifference(primal);
+    mng->setForwardFiniteDiffGradient(*primal->control());
+    hessian->setCentralDifference(*primal->control());
     std::tr1::shared_ptr<dotk::DOTk_KelleySachsStepMng> step_mng(new dotk::DOTk_KelleySachsStepMng(primal,hessian));
 
     dotk::DOTk_SteihaugTointKelleySachs alg(mng, step_mng);
     alg.getMin();
 
     EXPECT_EQ(dotk::types::ACTUAL_REDUCTION_TOL_SATISFIED, alg.getStoppingCriterion());
-    EXPECT_EQ(20, alg.getNumOptimizationItrDone());
+    EXPECT_EQ(20u, alg.getNumOptimizationItrDone());
     primal->control()->fill(1.);
     dotk::gtest::checkResults(*mng->getNewPrimal(), *primal->control(), 1e-3);
 }
@@ -249,15 +249,15 @@ TEST(SteihaugTointKelleySachs, getMin_GradCD_NumDiffHessCD_Rosenbrock)
     std::tr1::shared_ptr<dotk::NumericallyDifferentiatedHessian> hessian(new dotk::NumericallyDifferentiatedHessian(primal, objective));
 
     primal->control()->fill(1e-6);
-    mng->setCentralFiniteDiffGradient(primal);
-    hessian->setCentralDifference(primal);
+    mng->setCentralFiniteDiffGradient(*primal->control());
+    hessian->setCentralDifference(*primal->control());
     std::tr1::shared_ptr<dotk::DOTk_KelleySachsStepMng> step_mng(new dotk::DOTk_KelleySachsStepMng(primal,hessian));
 
     dotk::DOTk_SteihaugTointKelleySachs alg(mng, step_mng);
     alg.getMin();
 
     EXPECT_EQ(dotk::types::ACTUAL_REDUCTION_TOL_SATISFIED, alg.getStoppingCriterion());
-    EXPECT_EQ(16, alg.getNumOptimizationItrDone());
+    EXPECT_EQ(16u, alg.getNumOptimizationItrDone());
     primal->control()->fill(1.);
     dotk::gtest::checkResults(*mng->getNewPrimal(), *primal->control(), 1e-6);
 }
@@ -274,15 +274,15 @@ TEST(SteihaugTointKelleySachs, getMin_GradBD_NumDiffHessCD_Rosenbrock)
     std::tr1::shared_ptr<dotk::NumericallyDifferentiatedHessian> hessian(new dotk::NumericallyDifferentiatedHessian(primal, objective));
 
     primal->control()->fill(1e-6);
-    mng->setBackwardFiniteDiffGradient(primal);
-    hessian->setCentralDifference(primal);
+    mng->setBackwardFiniteDiffGradient(*primal->control());
+    hessian->setCentralDifference(*primal->control());
     std::tr1::shared_ptr<dotk::DOTk_KelleySachsStepMng> step_mng(new dotk::DOTk_KelleySachsStepMng(primal,hessian));
 
     dotk::DOTk_SteihaugTointKelleySachs alg(mng, step_mng);
     alg.getMin();
 
     EXPECT_EQ(dotk::types::ACTUAL_REDUCTION_TOL_SATISFIED, alg.getStoppingCriterion());
-    EXPECT_EQ(17, alg.getNumOptimizationItrDone());
+    EXPECT_EQ(17u, alg.getNumOptimizationItrDone());
     primal->control()->fill(1.);
     dotk::gtest::checkResults(*mng->getNewPrimal(), *primal->control(), 1e-3);
 }

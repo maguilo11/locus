@@ -5,17 +5,20 @@
  *      Author: Miguel A. Aguilo Valentin
  */
 
-#include "vector.hpp"
-#include "DOTk_Primal.hpp"
+#include <sstream>
+
+#include "DOTk_MexVector.hpp"
 #include "DOTk_MexAlgorithmParser.hpp"
 #include "DOTk_MexQuasiNewtonParser.hpp"
+#include "DOTk_MexKrylovSolverParser.hpp"
+#include "DOTk_MexFiniteDiffNumIntgParser.hpp"
+#include "DOTk_MexFactoriesAlgorithmTypeGB.hpp"
+
+#include "DOTk_Primal.hpp"
 #include "DOTk_LineSearchMngTypeULP.hpp"
 #include "DOTk_LineSearchMngTypeUNP.hpp"
 #include "DOTk_TrustRegionMngTypeULP.hpp"
 #include "DOTk_TrustRegionMngTypeUNP.hpp"
-#include "DOTk_MexKrylovSolverParser.hpp"
-#include "DOTk_MexFiniteDiffNumIntgParser.hpp"
-#include "DOTk_MexFactoriesAlgorithmTypeGB.hpp"
 #include "DOTk_NumericallyDifferentiatedHessian.hpp"
 
 namespace dotk
@@ -29,41 +32,38 @@ void buildKrylovSolver(const mxArray* options_,
                        const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_,
                        Algorithm & algorithm_)
 {
-    size_t itr = 0;
-    dotk::mex::parseMaxNumKrylovSolverItr(options_, itr);
-    dotk::types::krylov_solver_t type = dotk::types::KRYLOV_SOLVER_DISABLED;
-    dotk::mex::parseKrylovSolverMethod(options_, type);
-
+    size_t iterations = dotk::mex::parseMaxNumKrylovSolverItr(options_);
+    dotk::types::krylov_solver_t type = dotk::mex::parseKrylovSolverMethod(options_);
     switch(type)
     {
         case dotk::types::LEFT_PREC_CG:
         {
-            algorithm_.setLeftPrecCgKrylovSolver(primal_, itr);
+            algorithm_.setLeftPrecCgKrylovSolver(primal_, iterations);
             break;
         }
         case dotk::types::PREC_GMRES:
         {
-            algorithm_.setPrecGmresKrylovSolver(primal_, itr);
+            algorithm_.setPrecGmresKrylovSolver(primal_, iterations);
             break;
         }
         case dotk::types::LEFT_PREC_CGNR:
         {
-            algorithm_.setLeftPrecCgnrKrylovSolver(primal_, itr);
+            algorithm_.setLeftPrecCgnrKrylovSolver(primal_, iterations);
             break;
         }
         case dotk::types::LEFT_PREC_CGNE:
         {
-            algorithm_.setLeftPrecCgneKrylovSolver(primal_, itr);
+            algorithm_.setLeftPrecCgneKrylovSolver(primal_, iterations);
             break;
         }
         case dotk::types::LEFT_PREC_CR:
         {
-            algorithm_.setLeftPrecCrKrylovSolver(primal_, itr);
+            algorithm_.setLeftPrecCrKrylovSolver(primal_, iterations);
             break;
         }
         case dotk::types::LEFT_PREC_GCR:
         {
-            algorithm_.setLeftPrecGcrKrylovSolver(primal_, itr);
+            algorithm_.setLeftPrecGcrKrylovSolver(primal_, iterations);
             break;
         }
         case dotk::types::PROJECTED_PREC_CG:
@@ -74,9 +74,11 @@ void buildKrylovSolver(const mxArray* options_,
         case dotk::types::KRYLOV_SOLVER_DISABLED:
         default:
         {
-            algorithm_.setLeftPrecCgKrylovSolver(primal_, itr);
-            std::string msg(" DOTk/MEX WARNING: Invalid Krylov Solver Method. Default = CONUGATE GRADIENT. \n");
-            mexWarnMsgTxt(msg.c_str());
+            std::ostringstream msg;
+            msg << "\nWARNING IN: " << __FILE__ << ", LINE: " << __LINE__
+                    << ", -> Krylov solver set to default type = PCG.\n";
+            mexWarnMsgTxt(msg.str().c_str());
+            algorithm_.setLeftPrecCgKrylovSolver(primal_, iterations);
             break;
         }
     }
@@ -85,11 +87,8 @@ void buildKrylovSolver(const mxArray* options_,
 template<typename Manager>
 void buildTrustRegionMethod(const mxArray* options_, Manager & mng_)
 {
-    dotk::types::trustregion_t type = dotk::types::TRUST_REGION_DISABLED;
-    dotk::mex::parseTrustRegionMethod(options_, type);
-    double initial_trust_region_radius = 1;
-    dotk::mex::parseInitialTrustRegionRadius(options_, initial_trust_region_radius);
-
+    dotk::types::trustregion_t type = dotk::mex::parseTrustRegionMethod(options_);
+    double initial_trust_region_radius = dotk::mex::parseInitialTrustRegionRadius(options_);
     switch(type)
     {
         case dotk::types::TRUST_REGION_DOGLEG:
@@ -109,37 +108,44 @@ void buildTrustRegionMethod(const mxArray* options_, Manager & mng_)
         }
         default:
         {
+            std::ostringstream msg;
+            msg << "\nWARNING IN: " << __FILE__ << ", LINE: " << __LINE__
+                    << ", -> Trust region method set to default type = DOGLEG.\n";
+            mexWarnMsgTxt(msg.str().c_str());
             mng_->setDoglegTrustRegionMethod(initial_trust_region_radius);
-            std::string msg(" DOTk/MEX WARNING: Invalid Trust Region Method. Default = Dogleg. \n");
-            mexWarnMsgTxt(msg.c_str());
             break;
         }
     }
 }
 
 template<typename Manager>
-void buildGradient(const mxArray* options_, const std::tr1::shared_ptr<dotk::DOTk_Primal> & epsilon_, Manager & mng_)
+void buildGradient(const mxArray* options_, Manager & mng_)
 {
-    dotk::types::gradient_t type = dotk::types::GRADIENT_OPERATOR_DISABLED;
-    dotk::mex::parseGradientComputationMethod(options_, type);
+    dotk::types::gradient_t type = dotk::mex::parseGradientComputationMethod(options_);
     switch(type)
     {
         case dotk::types::FORWARD_DIFF_GRAD:
         {
-            dotk::mex::parseFiniteDifferencePerturbation(options_, *epsilon_->control());
-            mng_->setForwardFiniteDiffGradient(epsilon_);
+            mxArray* mx_epsilon = dotk::mex::parseFiniteDifferencePerturbation(options_);
+            dotk::MexVector epsilon(mx_epsilon);
+            mxDestroyArray(mx_epsilon);
+            mng_->setForwardFiniteDiffGradient(epsilon);
             break;
         }
         case dotk::types::BACKWARD_DIFF_GRAD:
         {
-            dotk::mex::parseFiniteDifferencePerturbation(options_, *epsilon_->control());
-            mng_->setBackwardFiniteDiffGradient(epsilon_);
+            mxArray* mx_epsilon = dotk::mex::parseFiniteDifferencePerturbation(options_);
+            dotk::MexVector epsilon(mx_epsilon);
+            mxDestroyArray(mx_epsilon);
+            mng_->setBackwardFiniteDiffGradient(epsilon);
             break;
         }
         case dotk::types::CENTRAL_DIFF_GRAD:
         {
-            dotk::mex::parseFiniteDifferencePerturbation(options_, *epsilon_->control());
-            mng_->setCentralFiniteDiffGradient(epsilon_);
+            mxArray* mx_epsilon = dotk::mex::parseFiniteDifferencePerturbation(options_);
+            dotk::MexVector epsilon(mx_epsilon);
+            mxDestroyArray(mx_epsilon);
+            mng_->setCentralFiniteDiffGradient(epsilon);
             break;
         }
         case dotk::types::USER_DEFINED_GRAD:
@@ -149,28 +155,39 @@ void buildGradient(const mxArray* options_, const std::tr1::shared_ptr<dotk::DOT
         }
         case dotk::types::PARALLEL_FORWARD_DIFF_GRAD:
         {
-            dotk::mex::parseFiniteDifferencePerturbation(options_, *epsilon_->control());
-            mng_->setParallelForwardFiniteDiffGradient(epsilon_);
+            mxArray* mx_epsilon = dotk::mex::parseFiniteDifferencePerturbation(options_);
+            dotk::MexVector epsilon(mx_epsilon);
+            mxDestroyArray(mx_epsilon);
+            mng_->setParallelForwardFiniteDiffGradient(epsilon);
             break;
         }
         case dotk::types::PARALLEL_BACKWARD_DIFF_GRAD:
         {
-            dotk::mex::parseFiniteDifferencePerturbation(options_, *epsilon_->control());
-            mng_->setParallelBackwardFiniteDiffGradient(epsilon_);
+            mxArray* mx_epsilon = dotk::mex::parseFiniteDifferencePerturbation(options_);
+            dotk::MexVector epsilon(mx_epsilon);
+            mxDestroyArray(mx_epsilon);
+            mng_->setParallelBackwardFiniteDiffGradient(epsilon);
             break;
         }
         case dotk::types::PARALLEL_CENTRAL_DIFF_GRAD:
         {
-            dotk::mex::parseFiniteDifferencePerturbation(options_, *epsilon_->control());
-            mng_->setParallelCentralFiniteDiffGradient(epsilon_);
+            mxArray* mx_epsilon = dotk::mex::parseFiniteDifferencePerturbation(options_);
+            dotk::MexVector epsilon(mx_epsilon);
+            mxDestroyArray(mx_epsilon);
+            mng_->setParallelCentralFiniteDiffGradient(epsilon);
             break;
         }
         case dotk::types::GRADIENT_OPERATOR_DISABLED:
+        default:
         {
-            dotk::mex::parseFiniteDifferencePerturbation(options_, *epsilon_->control());
-            mng_->setForwardFiniteDiffGradient(epsilon_);
-            std::string msg(" DOTk/MEX WARNING: Invalid Gradient Method. Default = FORWARD DIFFERENCE. \n");
-            mexWarnMsgTxt(msg.c_str());
+            std::ostringstream msg;
+            msg << "\nWARNING IN: " << __FILE__ << ", LINE: " << __LINE__
+                    << ", -> DEFAULT Gradient method set to Forward Difference.\n";
+            mexWarnMsgTxt(msg.str().c_str());
+            mxArray* mx_epsilon = dotk::mex::parseFiniteDifferencePerturbation(options_);
+            dotk::MexVector epsilon(mx_epsilon);
+            mxDestroyArray(mx_epsilon);
+            mng_->setForwardFiniteDiffGradient(epsilon);
             break;
         }
     }

@@ -5,8 +5,11 @@
  *      Author: Miguel A. Aguilo Valentin
  */
 
+#include <sstream>
+
 #include "DOTk_Primal.hpp"
 #include "DOTk_Hessian.hpp"
+#include "DOTk_MexVector.hpp"
 #include "DOTk_MexHessianFactory.hpp"
 #include "DOTk_MexAlgorithmParser.hpp"
 #include "DOTk_MexQuasiNewtonParser.hpp"
@@ -18,40 +21,47 @@ namespace mex
 {
 
 void buildHessian(const mxArray* options_,
-                  const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_,
                   std::tr1::shared_ptr<dotk::DOTk_Hessian> & hessian_)
 {
-    size_t storage = 0;
-    dotk::types::hessian_t type = dotk::types::HESSIAN_DISABLED;
-    dotk::mex::parseHessianComputationMethod(options_, type);
+    dotk::types::hessian_t type = dotk::mex::parseHessianComputationMethod(options_);
     switch(type)
     {
         case dotk::types::LBFGS_HESS:
         {
-            dotk::mex::parseQuasiNewtonStorage(options_, storage);
-            hessian_->setLbfgsHessian(primal_->control(), storage);
+            size_t num_controls = dotk::mex::parseNumberControls(options_);
+            dotk::MexVector work(num_controls, 0.);
+            size_t storage = dotk::mex::parseQuasiNewtonStorage(options_);
+            hessian_->setLbfgsHessian(work, storage);
             break;
         }
         case dotk::types::LDFP_HESS:
         {
-            dotk::mex::parseQuasiNewtonStorage(options_, storage);
-            hessian_->setLdfpHessian(primal_->control(), storage);
+            size_t num_controls = dotk::mex::parseNumberControls(options_);
+            dotk::MexVector work(num_controls, 0.);
+            size_t storage = dotk::mex::parseQuasiNewtonStorage(options_);
+            hessian_->setLdfpHessian(work, storage);
             break;
         }
         case dotk::types::LSR1_HESS:
         {
-            dotk::mex::parseQuasiNewtonStorage(options_, storage);
-            hessian_->setLsr1Hessian(primal_->control(), storage);
+            size_t num_controls = dotk::mex::parseNumberControls(options_);
+            dotk::MexVector work(num_controls, 0.);
+            size_t storage = dotk::mex::parseQuasiNewtonStorage(options_);
+            hessian_->setLsr1Hessian(work, storage);
             break;
         }
         case dotk::types::SR1_HESS:
         {
-            hessian_->setSr1Hessian(primal_->control());
+            size_t num_controls = dotk::mex::parseNumberControls(options_);
+            dotk::MexVector work(num_controls, 0.);
+            hessian_->setSr1Hessian(work);
             break;
         }
         case dotk::types::DFP_HESS:
         {
-            hessian_->setDfpHessian(primal_->control());
+            size_t num_controls = dotk::mex::parseNumberControls(options_);
+            dotk::MexVector work(num_controls, 0.);
+            hessian_->setDfpHessian(work);
             break;
         }
         case dotk::types::USER_DEFINED_HESS:
@@ -61,7 +71,9 @@ void buildHessian(const mxArray* options_,
         }
         case dotk::types::BARZILAIBORWEIN_HESS:
         {
-            hessian_->setBarzilaiBorweinHessian(primal_->control());
+            size_t num_controls = dotk::mex::parseNumberControls(options_);
+            dotk::MexVector work(num_controls, 0.);
+            hessian_->setBarzilaiBorweinHessian(work);
             break;
         }
         case dotk::types::USER_DEFINED_HESS_TYPE_CNP:
@@ -72,8 +84,9 @@ void buildHessian(const mxArray* options_,
         case dotk::types::HESSIAN_DISABLED:
         default:
         {
-            std::string msg(" DOTk/MEX ERROR: Invalid Hessian Method. See Users' Manual. \n");
-            mexErrMsgTxt(msg.c_str());
+            std::ostringstream msg;
+            msg << "\nERROR IN: " << __FILE__ << ", LINE: " << __LINE__ << ", -> UNDEFINED Hessian Method.\n";
+            mexErrMsgTxt(msg.str().c_str());
             break;
         }
     }

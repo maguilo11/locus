@@ -21,7 +21,7 @@ class Vector;
 class DOTk_SR1Hessian : public dotk::DOTk_SecondOrderOperator
 {
 public:
-    explicit DOTk_SR1Hessian(const std::tr1::shared_ptr<dotk::Vector<Real> > & vector_);
+    explicit DOTk_SR1Hessian(const dotk::Vector<Real> & vector_);
     virtual ~DOTk_SR1Hessian();
 
     const std::tr1::shared_ptr<dotk::Vector<Real> > & getDeltaGrad() const;

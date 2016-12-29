@@ -7,7 +7,7 @@
 
 #include <mex.h>
 #include <string>
-
+#include <sstream>
 #include "DOTk_MexQuasiNewtonParser.hpp"
 
 namespace dotk
@@ -16,42 +16,50 @@ namespace dotk
 namespace mex
 {
 
-dotk::types::invhessian_t getQuasiNewtonMethod(const dotk::DOTk_MexArrayPtr & ptr_);
+dotk::types::invhessian_t getQuasiNewtonMethod(const mxArray* input_);
 
-void parseQuasiNewtonStorage(const mxArray* options_, size_t & output_)
+size_t parseQuasiNewtonStorage(const mxArray* input_)
 {
-    if(mxIsEmpty(mxGetField(options_, 0, "QuasiNewtonStorage")) == true)
+    size_t output = 4;
+    if(mxGetField(input_, 0, "QuasiNewtonStorage") == nullptr)
     {
-        output_ = 4;
-        std::string msg(" DOTk/MEX WARNING: QuasiNewtonStorage is NOT Defined. Default = 4. \n");
-        mexWarnMsgTxt(msg.c_str());
-        return;
+        std::ostringstream msg;
+        msg << "\nWARNING IN: " << __FILE__ << ", LINE: " << __LINE__
+                << ", -> QuasiNewtonStorage keyword is NULL. QuasiNewtonStorage set to 4.\n";
+        mexWarnMsgTxt(msg.str().c_str());
     }
-    dotk::DOTk_MexArrayPtr data;
-    data.reset(mxDuplicateArray(mxGetField(options_, 0, "QuasiNewtonStorage")));
-    output_ = static_cast<size_t>(mxGetScalar(data.get()));
-    data.release();
+    else
+    {
+        mxArray* value = mxDuplicateArray(mxGetField(input_, 0, "QuasiNewtonStorage"));
+        output = static_cast<size_t>(mxGetScalar(value));
+        mxDestroyArray(value);
+    }
+    return (output);
 }
 
-void parseQuasiNewtonMethod(const mxArray* options_, dotk::types::invhessian_t & output_)
+dotk::types::invhessian_t parseQuasiNewtonMethod(const mxArray* input_)
 {
-    if(mxIsEmpty(mxGetField(options_, 0, "QuasiNewtonMethod")) == true)
+    dotk::types::invhessian_t output = dotk::types::BFGS_INV_HESS;
+    if(mxGetField(input_, 0, "QuasiNewtonMethod") == nullptr)
     {
-        output_ = dotk::types::BFGS_INV_HESS;
-        std::string msg(" DOTk/MEX WARNING: QuasiNewtonMethod is NOT Defined. Default = BFGS. \n");
-        mexWarnMsgTxt(msg.c_str());
-        return;
+        std::ostringstream msg;
+        msg << "\nWARNING IN: " << __FILE__ << ", LINE: " << __LINE__
+                << ", -> QuasiNewtonMethod keyword is NULL. QuasiNewtonMethod set to BFGS.\n";
+        mexWarnMsgTxt(msg.str().c_str());
     }
-    dotk::DOTk_MexArrayPtr type;
-    type.reset(mxDuplicateArray(mxGetField(options_, 0, "QuasiNewtonMethod")));
-    output_ = dotk::mex::getQuasiNewtonMethod(type);
-    type.release();
+    else
+    {
+        mxArray* value = mxDuplicateArray(mxGetField(input_, 0, "QuasiNewtonMethod"));
+        output = dotk::mex::getQuasiNewtonMethod(value);
+        mxDestroyArray(value);
+    }
+    return (output);
 }
 
-dotk::types::invhessian_t getQuasiNewtonMethod(const dotk::DOTk_MexArrayPtr & ptr_)
+dotk::types::invhessian_t getQuasiNewtonMethod(const mxArray* input_)
 {
     dotk::types::invhessian_t type = dotk::types::INV_HESS_DISABLED;
-    std::string method(mxArrayToString(ptr_.get()));
+    std::string method(mxArrayToString(input_));
 
     if(method.compare("LBFGS") == 0)
     {
@@ -91,10 +99,11 @@ dotk::types::invhessian_t getQuasiNewtonMethod(const dotk::DOTk_MexArrayPtr & pt
     else
     {
         type = dotk::types::BFGS_INV_HESS;
-        std::string msg(" DOTk/MEX WARNING: Invalid Quasi-Newton Method. Default = BFGS. \n");
-        mexWarnMsgTxt(msg.c_str());
+        std::ostringstream msg;
+        msg << "\nWARNING IN: " << __FILE__ << ", LINE: " << __LINE__
+                << ", -> QuasiNewtonMethod keyword is misspelled. QuasiNewtonMethod set to BFGS.\n";
+        mexWarnMsgTxt(msg.str().c_str());
     }
-
     return (type);
 }
 

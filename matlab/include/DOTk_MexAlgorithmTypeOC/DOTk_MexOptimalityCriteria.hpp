@@ -10,15 +10,11 @@
 
 #include <mex.h>
 #include "DOTk_Types.hpp"
-#include "DOTk_MexArrayPtr.hpp"
 
 namespace dotk
 {
 
 class DOTk_OptimalityCriteria;
-
-template<typename Type>
-class Vector;
 
 class DOTk_MexOptimalityCriteria
 {
@@ -44,27 +40,27 @@ private:
     void clear();
     void initialize(const mxArray* options_[]);
     void printOutputFile(dotk::DOTk_OptimalityCriteria & algorithm_);
-    void gatherOutputData(dotk::DOTk_OptimalityCriteria & algorithm_,
-                          dotk::Vector<double> & primal_,
-                          mxArray* output_[]);
+    void gatherOutputData(dotk::DOTk_OptimalityCriteria & algorithm_, mxArray* output_[]);
     void setAlgorithmParameters(const mxArray* options_, dotk::DOTk_OptimalityCriteria & algorithm_);
 
 private:
+    size_t m_NumberControls;
     size_t m_MaxNumAlgorithmItr;
+
     double m_MoveLimit;
     double m_DualLowerBound;
     double m_DualUpperBound;
     double m_DampingParameter;
     double m_GradientTolerance;
     double m_BisectionTolerance;
-    double m_OptimalityTolerance;
+    double m_ObjectiveTolerance;
     double m_FeasibilityTolerance;
     double m_ControlStagnationTolerance;
     dotk::types::problem_t m_ProblemType;
 
-    dotk::DOTk_MexArrayPtr m_ObjectiveFunctionOperators;
-    dotk::DOTk_MexArrayPtr m_EqualityConstraintOperators;
-    dotk::DOTk_MexArrayPtr m_InequalityConstraintOperators;
+    mxArray* m_ObjectiveFunction;
+    mxArray* m_EqualityConstraint;
+    mxArray* m_InequalityConstraint;
 
 private:
     DOTk_MexOptimalityCriteria(const dotk::DOTk_MexOptimalityCriteria & rhs_);

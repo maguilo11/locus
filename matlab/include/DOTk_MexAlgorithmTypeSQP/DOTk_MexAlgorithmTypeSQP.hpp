@@ -40,7 +40,6 @@ private:
 
     double m_GradientTolerance;
     double m_TrialStepTolerance;
-    double m_OptimalityTolerance;
     double m_FeasibilityTolerance;
 
     dotk::types::problem_t m_ProblemType;

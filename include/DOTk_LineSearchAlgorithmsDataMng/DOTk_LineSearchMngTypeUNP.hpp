@@ -30,15 +30,15 @@ public:
                               const std::tr1::shared_ptr<dotk::DOTk_EqualityConstraint<Real> > & equality_);
     virtual ~DOTk_LineSearchMngTypeUNP();
 
-    void setForwardFiniteDiffGradient(const std::tr1::shared_ptr<dotk::DOTk_Primal> & epsilon_);
-    void setCentralFiniteDiffGradient(const std::tr1::shared_ptr<dotk::DOTk_Primal> & epsilon_);
-    void setBackwardFiniteDiffGradient(const std::tr1::shared_ptr<dotk::DOTk_Primal> & epsilon_);
-    void setParallelForwardFiniteDiffGradient(const std::tr1::shared_ptr<dotk::DOTk_Primal> & epsilon_);
-    void setParallelCentralFiniteDiffGradient(const std::tr1::shared_ptr<dotk::DOTk_Primal> & epsilon_);
-    void setParallelBackwardFiniteDiffGradient(const std::tr1::shared_ptr<dotk::DOTk_Primal> & epsilon_);
+    void setForwardFiniteDiffGradient(const dotk::Vector<Real> & input_);
+    void setCentralFiniteDiffGradient(const dotk::Vector<Real> & input_);
+    void setBackwardFiniteDiffGradient(const dotk::Vector<Real> & input_);
+    void setParallelForwardFiniteDiffGradient(const dotk::Vector<Real> & input_);
+    void setParallelCentralFiniteDiffGradient(const dotk::Vector<Real> & input_);
+    void setParallelBackwardFiniteDiffGradient(const dotk::Vector<Real> & input_);
 
 private:
-    void setFiniteDiffPerturbationVector(const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_);
+    void setFiniteDiffPerturbationVector(const dotk::Vector<Real> & input_);
 
 private:
     // unimplemented

@@ -5,8 +5,7 @@
  *      Author: Miguel A. Aguilo Valentin
  */
 
-#include "vector.hpp"
-#include "DOTk_MexArrayPtr.hpp"
+#include "DOTk_MexVector.hpp"
 #include "DOTk_DataMngCCSA.hpp"
 #include "DOTk_MexMethodCCSA.hpp"
 #include "DOTk_AlgorithmCCSA.hpp"
@@ -23,7 +22,6 @@ DOTk_MexMethodCCSA::DOTk_MexMethodCCSA(const mxArray* options_) :
         m_DualSolverMaxNumberLineSearchIterations(5),
         m_GradientTolerance(1e-3),
         m_ResidualTolerance(1e-4),
-        m_OptimalityTolerance(1e-3),
         m_FeasibilityTolerance(1e-4),
         m_ControlStagnationTolerance(1e-3),
         m_MovingAsymptoteUpperBoundScale(10),
@@ -69,7 +67,6 @@ void DOTk_MexMethodCCSA::setPrimalSolverParameters(dotk::DOTk_AlgorithmCCSA & pr
 
     primal_solver_.setResidualTolerance(m_ResidualTolerance);
     primal_solver_.setGradientTolerance(m_GradientTolerance);
-    primal_solver_.setOptimalityTolerance(m_OptimalityTolerance);
     primal_solver_.setFeasibilityTolerance(m_FeasibilityTolerance);
     primal_solver_.setControlStagnationTolerance(m_ControlStagnationTolerance);
 
@@ -95,97 +92,82 @@ void DOTk_MexMethodCCSA::setDualSolverParameters(const std::tr1::shared_ptr<dotk
 
 void DOTk_MexMethodCCSA::gatherOutputData(dotk::DOTk_AlgorithmCCSA & algorithm_,
                                           const std::tr1::shared_ptr<dotk::DOTk_DataMngCCSA> & data_mng_,
-                                          mxArray* output_[])
+                                          mxArray* outputs_[])
 {
     // Create memory allocation for output struc
-    const char *field_names[10] =
+    const char *field_names[9] =
         { "Iterations", "ObjectiveFunctionValue", "Control", "ObjectiveGradient", "NormObjectiveGradient",
-                "InequalityConstraintResiduals", "Dual", "NormResidualKKT", "MaxFeasibilityMeasure",
-                "ControlStagnationMeasure" };
-    output_[0] = mxCreateStructMatrix(1, 1, 10, field_names);
+                "InequalityResiduals", "Norm_KKT_Residual", "MaxFeasibilityMeasure", "ControlStagnationMeasure" };
+    outputs_[0] = mxCreateStructMatrix(1, 1, 9, field_names);
 
-    dotk::DOTk_MexArrayPtr iterations(mxCreateNumericMatrix_730(1, 1, mxINDEX_CLASS, mxREAL));
-    static_cast<size_t*>(mxGetData(iterations.get()))[0] = algorithm_.getIterationCount();
-    mxSetField(output_[0], 0, "Iterations", iterations.get());
+    /* NOTE: mxSetField does not create a copy of the data allocated. Thus,
+     * mxDestroyArray cannot be called. Furthermore, MEX array data (e.g.
+     * control, gradient, etc.) should be duplicated since the data in the
+     * manager will be deallocated at the end. */
+    mxArray* mx_number_iterations = mxCreateNumericMatrix(1, 1, mxINDEX_CLASS, mxREAL);
+    static_cast<size_t*>(mxGetData(mx_number_iterations))[0] = algorithm_.getIterationCount();
+    mxSetField(outputs_[0], 0, "Iterations", mx_number_iterations);
 
-    dotk::DOTk_MexArrayPtr objective(mxCreateDoubleMatrix(1, 1, mxREAL));
-    mxGetPr(objective.get())[0] = data_mng_->m_CurrentObjectiveFunctionValue;
-    mxSetField(output_[0], 0, "ObjectiveFunctionValue", objective.get());
+    double value = data_mng_->m_CurrentObjectiveFunctionValue;
+    mxArray* mx_objective_function_value = mxCreateDoubleScalar(value);
+    mxSetField(outputs_[0], 0, "ObjectiveFunctionValue", mx_objective_function_value);
 
-    size_t number_controls = data_mng_->m_CurrentControl->size();
-    dotk::DOTk_MexArrayPtr control(mxCreateDoubleMatrix(number_controls, 1, mxREAL));
-    data_mng_->m_CurrentControl->gather(mxGetPr(control.get()));
-    mxSetField(output_[0], 0, "Control", control.get());
+    dotk::MexVector & control = dynamic_cast<dotk::MexVector &>(*data_mng_->m_CurrentControl);
+    mxArray* mx_control = mxDuplicateArray(control.array());
+    mxSetField(outputs_[0], 0, "Control", mx_control);
 
-    dotk::DOTk_MexArrayPtr gradient(mxCreateDoubleMatrix(number_controls, 1, mxREAL));
-    data_mng_->m_CurrentObjectiveGradient->gather(mxGetPr(gradient.get()));
-    mxSetField(output_[0], 0, "ObjectiveGradient", gradient.get());
+    dotk::MexVector & gradient = dynamic_cast<dotk::MexVector &>(*data_mng_->m_CurrentObjectiveGradient);
+    mxArray* mx_gradient = mxDuplicateArray(gradient.array());
+    mxSetField(outputs_[0], 0, "ObjectiveGradient", mx_gradient);
 
-    dotk::DOTk_MexArrayPtr norm_pruned_gradient(mxCreateDoubleMatrix(1, 1, mxREAL));
-    mxGetPr(norm_pruned_gradient.get())[0] = algorithm_.getCurrentObjectiveGradientNorm();
-    mxSetField(output_[0], 0, "NormObjectiveGradient", norm_pruned_gradient.get());
+    value = gradient.norm();
+    mxArray* mx_norm_gradient = mxCreateDoubleScalar(value);
+    mxSetField(outputs_[0], 0, "NormObjectiveGradient", mx_norm_gradient);
 
-    size_t number_duals = data_mng_->m_Dual->size();
-    dotk::DOTk_MexArrayPtr residuals(mxCreateDoubleMatrix(number_duals, 1, mxREAL));
-    data_mng_->m_CurrentInequalityResiduals->gather(mxGetPr(residuals.get()));
-    mxSetField(output_[0], 0, "InequalityConstraintResiduals", residuals.get());
+    dotk::MexVector & inequality_residuals = dynamic_cast<dotk::MexVector &>(*data_mng_->m_CurrentInequalityResiduals);
+    mxArray* mx_inequality_residuals = mxDuplicateArray(inequality_residuals.array());
+    mxSetField(outputs_[0], 0, "InequalityResiduals", mx_inequality_residuals);
 
-    dotk::DOTk_MexArrayPtr dual(mxCreateDoubleMatrix(number_duals, 1, mxREAL));
-    data_mng_->m_Dual->gather(mxGetPr(dual.get()));
-    mxSetField(output_[0], 0, "Dual", dual.get());
+    value = algorithm_.getCurrentResidualNorm();
+    mxArray* mx_norm_kkt_residual = mxCreateDoubleScalar(value);
+    mxSetField(outputs_[0], 0, "Norm_KKT_Residual", mx_norm_kkt_residual);
 
-    dotk::DOTk_MexArrayPtr norm_kkt(mxCreateDoubleMatrix(1, 1, mxREAL));
-    mxGetPr(norm_kkt.get())[0] = algorithm_.getCurrentResidualNorm();
-    mxSetField(output_[0], 0, "NormResidualKKT", norm_kkt.get());
+    value = algorithm_.getCurrentMaxFeasibilityMeasure();
+    mxArray* mx_max_feasibility_measure = mxCreateDoubleScalar(value);
+    mxSetField(outputs_[0], 0, "MaxFeasibilityMeasure", mx_max_feasibility_measure);
 
-    dotk::DOTk_MexArrayPtr max_feasibility_measure(mxCreateDoubleMatrix(1, 1, mxREAL));
-    mxGetPr(max_feasibility_measure.get())[0] = algorithm_.getCurrentMaxFeasibilityMeasure();
-    mxSetField(output_[0], 0, "MaxFeasibilityMeasure", max_feasibility_measure.get());
-
-    dotk::DOTk_MexArrayPtr control_stagnation_measure(mxCreateDoubleMatrix(1, 1, mxREAL));
-    mxGetPr(control_stagnation_measure.get())[0] = algorithm_.getCurrentControlStagnationMeasure();
-    mxSetField(output_[0], 0, "ControlStagnationMeasure", control_stagnation_measure.get());
-
-    iterations.release();
-    objective.release();
-    control.release();
-    gradient.release();
-    norm_pruned_gradient.release();
-    residuals.release();
-    dual.release();
-    norm_kkt.release();
-    max_feasibility_measure.release();
-    control_stagnation_measure.release();
+    value = algorithm_.getCurrentControlStagnationMeasure();
+    mxArray* mx_control_stagnation_measure = mxCreateDoubleScalar(value);
+    mxSetField(outputs_[0], 0, "ControlStagnationMeasure", mx_control_stagnation_measure);
 }
 
 void DOTk_MexMethodCCSA::initialize(const mxArray* options_)
 {
-    dotk::mex::parseProblemType(options_, m_ProblemType);
-    dotk::mex::parseDualSolverType(options_, m_DualSolverType);
-    dotk::mex::parseDualSolverTypeNLCG(options_, m_DualSolverTypeNLCG);
+    m_ProblemType = dotk::mex::parseProblemType(options_);
+    m_DualSolverType = dotk::mex::parseDualSolverType(options_);
+    m_DualSolverTypeNLCG = dotk::mex::parseDualSolverTypeNLCG(options_);
 
-    dotk::mex::parseMaxNumAlgorithmItr(options_, m_PrimalSolverMaxNumberIterations);
-    dotk::mex::parseMaxNumLineSearchItr(options_, m_DualSolverMaxNumberLineSearchIterations);
-    dotk::mex::parseDualSolverMaxNumberIterations(options_, m_DualSolverMaxNumberIterations);
+    m_PrimalSolverMaxNumberIterations = dotk::mex::parseMaxNumOuterIterations(options_);
+    m_DualSolverMaxNumberLineSearchIterations = dotk::mex::parseMaxNumLineSearchItr(options_);
+    m_DualSolverMaxNumberIterations = dotk::mex::parseDualSolverMaxNumberIterations(options_);
 
-    dotk::mex::parseGradientTolerance(options_, m_GradientTolerance);
-    dotk::mex::parseResidualTolerance(options_, m_ResidualTolerance);
-    dotk::mex::parseOptimalityTolerance(options_, m_OptimalityTolerance);
-    dotk::mex::parseFeasibilityTolerance(options_, m_FeasibilityTolerance);
-    dotk::mex::parseControlStagnationTolerance(options_, m_ControlStagnationTolerance);
+    m_GradientTolerance = dotk::mex::parseGradientTolerance(options_);
+    m_ResidualTolerance = dotk::mex::parseResidualTolerance(options_);
+    m_FeasibilityTolerance = dotk::mex::parseFeasibilityTolerance(options_);
+    m_ControlStagnationTolerance = dotk::mex::parseControlStagnationTolerance(options_);
 
-    dotk::mex::parseMovingAsymptoteUpperBoundScale(options_, m_MovingAsymptoteUpperBoundScale);
-    dotk::mex::parseMovingAsymptoteLowerBoundScale(options_, m_MovingAsymptoteLowerBoundScale);
-    dotk::mex::parseMovingAsymptoteExpansionParameter(options_, m_MovingAsymptoteExpansionParameter);
-    dotk::mex::parseMovingAsymptoteContractionParameter(options_, m_MovingAsymptoteContractionParameter);
+    m_MovingAsymptoteUpperBoundScale = dotk::mex::parseMovingAsymptoteUpperBoundScale(options_);
+    m_MovingAsymptoteLowerBoundScale = dotk::mex::parseMovingAsymptoteLowerBoundScale(options_);
+    m_MovingAsymptoteExpansionParameter = dotk::mex::parseMovingAsymptoteExpansionParameter(options_);
+    m_MovingAsymptoteContractionParameter = dotk::mex::parseMovingAsymptoteContractionParameter(options_);
 
-    dotk::mex::parseLineSearchStepLowerBound(options_, m_DualSolverLineSearchStepLowerBound);
-    dotk::mex::parseLineSearchStepUpperBound(options_, m_DualSolverLineSearchStepUpperBound);
-    dotk::mex::parseDualSolverGradientTolerance(options_, m_DualSolverGradientTolerance);
-    dotk::mex::parseDualSolverTrialStepTolerance(options_, m_DualSolverTrialStepTolerance);
-    dotk::mex::parseDualObjectiveEpsilonParameter(options_, m_DualObjectiveEpsilonParameter);
-    dotk::mex::parseDualObjectiveTrialControlBoundScaling(options_, m_DualObjectiveTrialControlBoundScaling);
-    dotk::mex::parseDualSolverObjectiveStagnationTolerance(options_, m_DualSolverObjectiveStagnationTolerance);
+    m_DualSolverTrialStepTolerance = dotk::mex::parseDualSolverStepTolerance(options_);
+    m_DualSolverGradientTolerance = dotk::mex::parseDualSolverGradientTolerance(options_);
+    m_DualSolverLineSearchStepUpperBound = dotk::mex::parseLineSearchStepUpperBound(options_);
+    m_DualSolverLineSearchStepLowerBound = dotk::mex::parseLineSearchStepLowerBound(options_);
+    m_DualObjectiveEpsilonParameter = dotk::mex::parseDualObjectiveRelaxationParameter(options_);
+    m_DualObjectiveTrialControlBoundScaling = dotk::mex::parseDualObjectiveControlBoundsScaling(options_);
+    m_DualSolverObjectiveStagnationTolerance = dotk::mex::parseDualSolverObjectiveStagnationTolerance(options_);
 }
 
 }

@@ -8,13 +8,11 @@
 #ifndef DOTK_MEXMMA_HPP_
 #define DOTK_MEXMMA_HPP_
 
-#include "DOTk_MexArrayPtr.hpp"
 #include "DOTk_MexMethodCCSA.hpp"
 
 namespace dotk
 {
 
-class DOTk_MexArrayPtr;
 class DOTk_AlgorithmCCSA;
 
 class DOTk_MexMMA : public dotk::DOTk_MexMethodCCSA
@@ -33,9 +31,9 @@ private:
     void solveNonlinearProgrammingProblem(const mxArray* input_[], mxArray* output_[]);
 
 private:
-    dotk::DOTk_MexArrayPtr m_ObjectiveFunction;
-    dotk::DOTk_MexArrayPtr m_EqualityConstraint;
-    dotk::DOTk_MexArrayPtr m_InequalityConstraint;
+    mxArray* m_ObjectiveFunction;
+    mxArray* m_EqualityConstraint;
+    mxArray* m_InequalityConstraint;
 
 private:
     DOTk_MexMMA(const dotk::DOTk_MexMMA & rhs_);

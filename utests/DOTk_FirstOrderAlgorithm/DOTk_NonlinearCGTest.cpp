@@ -237,7 +237,7 @@ TEST(NonlinearCG, PerryShanno_UsrDefGrad_CubicIntrpLS_BealeObjFunc)
     (*primal->control())[0] = 3.;
     (*primal->control())[1] = 0.5;
     dotk::gtest::checkResults(*mng->getNewPrimal(), *primal->control(), 1e-5);
-    EXPECT_EQ(23, nlcg.getNumItrDone());
+    EXPECT_EQ(23u, nlcg.getNumItrDone());
 }
 
 TEST(NonlinearCG, Daniels_UsrDefGrad_GoldenSectionLS)
@@ -253,14 +253,14 @@ TEST(NonlinearCG, Daniels_UsrDefGrad_GoldenSectionLS)
 
     mng->setUserDefinedGradient();
     step->setGoldenSectionLineSearch(primal);
-    hessian->setCentralDifference(primal);
+    hessian->setCentralDifference(*primal->control());
     dotk::DOTk_NonlinearCG nlcg(step, mng);
     nlcg.setDanielsNlcg(hessian);
     nlcg.getMin();
 
     primal->control()->fill(1);
     dotk::gtest::checkResults(*mng->getNewPrimal(), *primal->control(), 1e-6);
-    EXPECT_EQ(14, nlcg.getNumItrDone());
+    EXPECT_EQ(14u, nlcg.getNumItrDone());
 }
 
 TEST(NonlinearCG, Daniels_UsrDefGrad_CubicIntrpLS)
@@ -275,14 +275,14 @@ TEST(NonlinearCG, Daniels_UsrDefGrad_CubicIntrpLS)
     std::tr1::shared_ptr<dotk::NumericallyDifferentiatedHessian> hessian(new dotk::NumericallyDifferentiatedHessian(primal, objective));
 
     mng->setUserDefinedGradient();
-    hessian->setCentralDifference(primal);
+    hessian->setCentralDifference(*primal->control());
     dotk::DOTk_NonlinearCG nlcg(step, mng);
     nlcg.setDanielsNlcg(hessian);
     nlcg.getMin();
 
     primal->control()->fill(1);
     dotk::gtest::checkResults(*mng->getNewPrimal(), *primal->control(), 1e-6);
-    EXPECT_EQ(21, nlcg.getNumItrDone());
+    EXPECT_EQ(21u, nlcg.getNumItrDone());
 }
 
 TEST(NonlinearCG, FletcherReeves_UsrDefGrad_GoldenSectionLS)
@@ -321,7 +321,7 @@ TEST(NonlinearCG, FletcherReeves_UsrDefGrad_CubicIntrpLS)
     (*primal->control())[0] = 1.;
     (*primal->control())[1] = 1.;
     dotk::gtest::checkResults(*mng->getNewPrimal(), *primal->control(), 1e-5);
-    EXPECT_EQ(47, nlcg.getNumItrDone());
+    EXPECT_EQ(47u, nlcg.getNumItrDone());
 }
 
 TEST(NonlinearCG, FletcherReeves_GradFD_CubicIntrpLS)
@@ -334,14 +334,14 @@ TEST(NonlinearCG, FletcherReeves_GradFD_CubicIntrpLS)
     std::tr1::shared_ptr<dotk::DOTk_LineSearchMngTypeULP> mng(new dotk::DOTk_LineSearchMngTypeULP(primal, objective));
 
     primal->control()->fill(1e-7);
-    mng->setForwardFiniteDiffGradient(primal);
+    mng->setForwardFiniteDiffGradient(*primal->control());
     dotk::DOTk_NonlinearCG nlcg(step, mng);
     nlcg.getMin();
 
     (*primal->control())[0] = 1.;
     (*primal->control())[1] = 1.;
     dotk::gtest::checkResults(*mng->getNewPrimal(), *primal->control(), 5e-6);
-    EXPECT_EQ(40, nlcg.getNumItrDone());
+    EXPECT_EQ(40u, nlcg.getNumItrDone());
 }
 
 TEST(NonlinearCG, FletcherReeves_GradPrllFD_CubicIntrpLS)
@@ -354,14 +354,14 @@ TEST(NonlinearCG, FletcherReeves_GradPrllFD_CubicIntrpLS)
     std::tr1::shared_ptr<dotk::DOTk_LineSearchMngTypeULP> mng(new dotk::DOTk_LineSearchMngTypeULP(primal, objective));
 
     primal->control()->fill(1e-7);
-    mng->setParallelForwardFiniteDiffGradient(primal);
+    mng->setParallelForwardFiniteDiffGradient(*primal->control());
     dotk::DOTk_NonlinearCG nlcg(step, mng);
     nlcg.getMin();
 
     (*primal->control())[0] = 1.;
     (*primal->control())[1] = 1.;
     dotk::gtest::checkResults(*mng->getNewPrimal(), *primal->control(), 5e-6);
-    EXPECT_EQ(40, nlcg.getNumItrDone());
+    EXPECT_EQ(40u, nlcg.getNumItrDone());
 }
 
 TEST(NonlinearCG, FletcherReeves_GradBD_CubicIntrpLS)
@@ -374,14 +374,14 @@ TEST(NonlinearCG, FletcherReeves_GradBD_CubicIntrpLS)
     std::tr1::shared_ptr<dotk::DOTk_LineSearchMngTypeULP> mng(new dotk::DOTk_LineSearchMngTypeULP(primal, objective));
 
     primal->control()->fill(1e-8);
-    mng->setBackwardFiniteDiffGradient(primal);
+    mng->setBackwardFiniteDiffGradient(*primal->control());
     dotk::DOTk_NonlinearCG nlcg(step, mng);
     nlcg.getMin();
 
     (*primal->control())[0] = 1.;
     (*primal->control())[1] = 1.;
     dotk::gtest::checkResults(*mng->getNewPrimal(), *primal->control(), 5e-6);
-    EXPECT_EQ(21, nlcg.getNumItrDone());
+    EXPECT_EQ(21u, nlcg.getNumItrDone());
 }
 
 TEST(NonlinearCG, FletcherReeves_GradPrllBD_CubicIntrpLS)
@@ -394,14 +394,14 @@ TEST(NonlinearCG, FletcherReeves_GradPrllBD_CubicIntrpLS)
     std::tr1::shared_ptr<dotk::DOTk_LineSearchMngTypeULP> mng(new dotk::DOTk_LineSearchMngTypeULP(primal, objective));
 
     primal->control()->fill(1e-8);
-    mng->setParallelBackwardFiniteDiffGradient(primal);
+    mng->setParallelBackwardFiniteDiffGradient(*primal->control());
     dotk::DOTk_NonlinearCG nlcg(step, mng);
     nlcg.getMin();
 
     (*primal->control())[0] = 1.;
     (*primal->control())[1] = 1.;
     dotk::gtest::checkResults(*mng->getNewPrimal(), *primal->control(), 5e-6);
-    EXPECT_EQ(21, nlcg.getNumItrDone());
+    EXPECT_EQ(21u, nlcg.getNumItrDone());
 }
 
 TEST(NonlinearCG, FletcherReeves_GradCD_CubicIntrpLS)
@@ -414,14 +414,14 @@ TEST(NonlinearCG, FletcherReeves_GradCD_CubicIntrpLS)
     std::tr1::shared_ptr<dotk::DOTk_LineSearchMngTypeULP> mng(new dotk::DOTk_LineSearchMngTypeULP(primal, objective));
 
     primal->control()->fill(1e-7);
-    mng->setCentralFiniteDiffGradient(primal);
+    mng->setCentralFiniteDiffGradient(*primal->control());
     dotk::DOTk_NonlinearCG nlcg(step, mng);
     nlcg.getMin();
 
     (*primal->control())[0] = 1.;
     (*primal->control())[1] = 1.;
     dotk::gtest::checkResults(*mng->getNewPrimal(), *primal->control(), 5e-6);
-    EXPECT_EQ(33, nlcg.getNumItrDone());
+    EXPECT_EQ(33u, nlcg.getNumItrDone());
 }
 
 TEST(NonlinearCG, FletcherReeves_GradPrllCD_CubicIntrpLS)
@@ -434,14 +434,14 @@ TEST(NonlinearCG, FletcherReeves_GradPrllCD_CubicIntrpLS)
     std::tr1::shared_ptr<dotk::DOTk_LineSearchMngTypeULP> mng(new dotk::DOTk_LineSearchMngTypeULP(primal, objective));
 
     primal->control()->fill(1e-7);
-    mng->setParallelCentralFiniteDiffGradient(primal);
+    mng->setParallelCentralFiniteDiffGradient(*primal->control());
     dotk::DOTk_NonlinearCG nlcg(step, mng);
     nlcg.getMin();
 
     (*primal->control())[0] = 1.;
     (*primal->control())[1] = 1.;
     dotk::gtest::checkResults(*mng->getNewPrimal(), *primal->control(), 5e-6);
-    EXPECT_EQ(33, nlcg.getNumItrDone());
+    EXPECT_EQ(33u, nlcg.getNumItrDone());
 }
 
 TEST(NonlinearCG, PolakRibiere_UsrDefGrad_GoldenSectionLS)
@@ -462,7 +462,7 @@ TEST(NonlinearCG, PolakRibiere_UsrDefGrad_GoldenSectionLS)
     (*primal->control())[0] = 1.;
     (*primal->control())[1] = 1.;
     dotk::gtest::checkResults(*mng->getNewPrimal(), *primal->control(), 1e-5);
-    EXPECT_EQ(34, nlcg.getNumItrDone());
+    EXPECT_EQ(34u, nlcg.getNumItrDone());
 }
 
 TEST(NonlinearCG, PolakRibiere_UsrDefGrad_CubicIntrpLS)
@@ -503,7 +503,7 @@ TEST(NonlinearCG, HestenesStiefel_UsrDefGrad_GoldenSectionLS)
     (*primal->control())[0] = 1.;
     (*primal->control())[1] = 1.;
     dotk::gtest::checkResults(*mng->getNewPrimal(), *primal->control(), 1e-6);
-    EXPECT_EQ(119, nlcg.getNumItrDone());
+    EXPECT_EQ(119u, nlcg.getNumItrDone());
 }
 
 TEST(NonlinearCG, HestenesStiefel_UsrDefGrad_CubicIntrpLS)
@@ -768,7 +768,7 @@ TEST(NonlinearCG, LiuStorey_UsrDefGrad_CubicIntrpLS)
     (*primal->control())[0] = 1.;
     (*primal->control())[1] = 1.;
     dotk::gtest::checkResults(*mng->getNewPrimal(), *primal->control(), 1e-5);
-    EXPECT_EQ(22, nlcg.getNumItrDone());
+    EXPECT_EQ(22u, nlcg.getNumItrDone());
 }
 
 TEST(NonlinearCG, Daniels_UsrDefGrad_ArmijoLS)
@@ -783,14 +783,14 @@ TEST(NonlinearCG, Daniels_UsrDefGrad_ArmijoLS)
 
     mng->setUserDefinedGradient();
     step->setArmijoLineSearch(primal, 0.25);
-    hessian->setSecondOrderForwardDifference(primal);
+    hessian->setSecondOrderForwardDifference(*primal->control());
     dotk::DOTk_NonlinearCG nlcg(step, mng);
     nlcg.setDanielsNlcg(hessian);
     nlcg.getMin();
 
     primal->control()->fill(1.);
     dotk::gtest::checkResults(*mng->getNewPrimal(), *primal->control(), 1e-5);
-    EXPECT_EQ(41, nlcg.getNumItrDone());
+    EXPECT_EQ(41u, nlcg.getNumItrDone());
 }
 
 TEST(NonlinearCG, FletcherReeves_UsrDefGrad_ArmijoLS)
@@ -810,7 +810,7 @@ TEST(NonlinearCG, FletcherReeves_UsrDefGrad_ArmijoLS)
     (*primal->control())[0] = 1.;
     (*primal->control())[1] = 1.;
     dotk::gtest::checkResults(*mng->getNewPrimal(), *primal->control(), 1e-5);
-    EXPECT_EQ(75, nlcg.getNumItrDone());
+    EXPECT_EQ(75u, nlcg.getNumItrDone());
 }
 
 TEST(NonlinearCG, PolakRibiere_UsrDefGrad_ArmijoLS)
@@ -999,7 +999,7 @@ TEST(NonlinearCG, LiuStorey_UsrDefGrad_ArmijoLS)
     (*primal->control())[0] = 1.;
     (*primal->control())[1] = 1.;
     dotk::gtest::checkResults(*mng->getNewPrimal(), *primal->control(), 1e-5);
-    EXPECT_EQ(147, nlcg.getNumItrDone());
+    EXPECT_EQ(147u, nlcg.getNumItrDone());
 }
 
 TEST(NonlinearCG, Daniels_UsrDefGrad_GoldsteinLS)
@@ -1014,14 +1014,14 @@ TEST(NonlinearCG, Daniels_UsrDefGrad_GoldsteinLS)
 
     mng->setUserDefinedGradient();
     step->setGoldsteinLineSearch(primal);
-    hessian->setSecondOrderForwardDifference(primal);
+    hessian->setSecondOrderForwardDifference(*primal->control());
     dotk::DOTk_NonlinearCG nlcg(step, mng);
     nlcg.setDanielsNlcg(hessian);
     nlcg.getMin();
 
     primal->control()->fill(1.);
     dotk::gtest::checkResults(*mng->getNewPrimal(), *primal->control(), 1e-5);
-    EXPECT_EQ(32, nlcg.getNumItrDone());
+    EXPECT_EQ(32u, nlcg.getNumItrDone());
 }
 
 TEST(NonlinearCG, FletcherReeves_UsrDefGrad_GoldsteinLS)
@@ -1041,7 +1041,7 @@ TEST(NonlinearCG, FletcherReeves_UsrDefGrad_GoldsteinLS)
     (*primal->control())[0] = 1.;
     (*primal->control())[1] = 1.;
     dotk::gtest::checkResults(*mng->getNewPrimal(), *primal->control(), 1e-5);
-    EXPECT_EQ(52, nlcg.getNumItrDone());
+    EXPECT_EQ(52u, nlcg.getNumItrDone());
 }
 
 TEST(NonlinearCG, PolakRibiere_UsrDefGrad_GoldsteinLS)

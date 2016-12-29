@@ -9,8 +9,6 @@
 #define DOTK_MEXOPTIMALITYCRITERIAPARSER_HPP_
 
 #include <mex.h>
-#include "DOTk_Types.hpp"
-#include "DOTk_MexArrayPtr.hpp"
 
 namespace dotk
 {
@@ -18,11 +16,11 @@ namespace dotk
 namespace mex
 {
 
-void parseOptCriteriaMoveLimit(const mxArray* options_, double & output_);
-void parseOptCriteriaDualLowerBound(const mxArray* options_, double & output_);
-void parseOptCriteriaDualUpperBound(const mxArray* options_, double & output_);
-void parseOptCriteriaDampingParameter(const mxArray* options_, double & output_);
-void parseOptCriteriaBisectionTolerance(const mxArray* options_, double & output_);
+double parseOptCriteriaMoveLimit(const mxArray* input_);
+double parseOptCriteriaDualLowerBound(const mxArray* input_);
+double parseOptCriteriaDualUpperBound(const mxArray* input_);
+double parseOptCriteriaDampingParameter(const mxArray* input_);
+double parseOptCriteriaBisectionTolerance(const mxArray* input_);
 
 }
 

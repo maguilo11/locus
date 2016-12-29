@@ -29,7 +29,7 @@ TEST(DOTk_LSR1Hessian, getHessian)
     std::tr1::shared_ptr<dotk::DOTk_LineSearchMngTypeULP> mng(new dotk::DOTk_LineSearchMngTypeULP(primal, objective));
 
     size_t secant_storage = 3;
-    dotk::DOTk_LSR1Hessian hess(mng->getMatrixTimesVector(), secant_storage);
+    dotk::DOTk_LSR1Hessian hess(*mng->getMatrixTimesVector(), secant_storage);
     EXPECT_EQ(dotk::types::LSR1_HESS, hess.getHessianType());
 
     hess.setNumUpdatesStored(3);

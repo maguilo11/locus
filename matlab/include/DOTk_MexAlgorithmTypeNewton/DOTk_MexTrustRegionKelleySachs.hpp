@@ -8,12 +8,12 @@
 #ifndef DOTK_MEXTRUSTREGIONKELLEYSACHS_HPP_
 #define DOTK_MEXTRUSTREGIONKELLEYSACHS_HPP_
 
+#include "DOTk_Types.hpp"
 #include "DOTk_MexSteihaugTointNewton.hpp"
 
 namespace dotk
 {
 
-class DOTk_MexArrayPtr;
 class DOTk_SteihaugTointKelleySachs;
 
 class DOTk_MexTrustRegionKelleySachs : public dotk::DOTk_MexSteihaugTointNewton
@@ -43,8 +43,8 @@ private:
     size_t m_MaxNumUpdates;
     size_t m_MaxNumSteihaugTointSolverItr;
 
-    dotk::DOTk_MexArrayPtr m_ObjectiveFunctionOperators;
-    dotk::DOTk_MexArrayPtr m_EqualityConstraintOperators;
+    mxArray* m_ObjectiveFunction;
+    mxArray* m_EqualityConstraint;
 
 private:
     DOTk_MexTrustRegionKelleySachs(const dotk::DOTk_MexTrustRegionKelleySachs & rhs_);

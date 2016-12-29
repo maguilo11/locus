@@ -17,29 +17,24 @@ namespace mex
 
 void buildQuasiNewtonMethod(const mxArray* options_, dotk::DOTk_LineSearchQuasiNewton & algorithm_)
 {
-    dotk::types::invhessian_t type = dotk::types::INV_HESS_DISABLED;
-    dotk::mex::parseQuasiNewtonMethod(options_, type);
-
+    dotk::types::invhessian_t type = dotk::mex::parseQuasiNewtonMethod(options_);
     switch(type)
     {
         case dotk::types::LBFGS_INV_HESS:
         {
-            size_t storage = 0;
-            dotk::mex::parseQuasiNewtonStorage(options_, storage);
+            size_t storage = dotk::mex::parseQuasiNewtonStorage(options_);
             algorithm_.setLbfgsSecantMethod(storage);
             break;
         }
         case dotk::types::LDFP_INV_HESS:
         {
-            size_t storage = 0;
-            dotk::mex::parseQuasiNewtonStorage(options_, storage);
+            size_t storage = dotk::mex::parseQuasiNewtonStorage(options_);
             algorithm_.setLdfpSecantMethod(storage);
             break;
         }
         case dotk::types::LSR1_INV_HESS:
         {
-            size_t storage = 0;
-            dotk::mex::parseQuasiNewtonStorage(options_, storage);
+            size_t storage = dotk::mex::parseQuasiNewtonStorage(options_);
             algorithm_.setLsr1SecantMethod(storage);
             break;
         }

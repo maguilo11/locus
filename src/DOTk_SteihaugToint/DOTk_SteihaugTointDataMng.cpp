@@ -6,6 +6,7 @@
  */
 
 #include <cassert>
+#include <sstream>
 
 #include "vector.hpp"
 #include "DOTk_Primal.hpp"
@@ -53,52 +54,52 @@ void DOTk_SteihaugTointDataMng::setUserDefinedGradient()
     assert(m_Gradient->type() == dotk::types::USER_DEFINED_GRAD);
 }
 
-void DOTk_SteihaugTointDataMng::setForwardFiniteDiffGradient(const std::tr1::shared_ptr<dotk::DOTk_Primal> & epsilon_)
+void DOTk_SteihaugTointDataMng::setForwardFiniteDiffGradient(const dotk::Vector<Real> & input_)
 {
     dotk::DOTk_FirstOrderOperatorFactory factory;
     factory.buildForwardFiniteDiffGradient(this->getNewGradient(), m_Gradient);
     assert(m_Gradient->type() == dotk::types::FORWARD_DIFF_GRAD);
-    this->setFiniteDiffPerturbationVector(epsilon_);
+    this->setFiniteDiffPerturbationVector(input_);
 }
 
-void DOTk_SteihaugTointDataMng::setCentralFiniteDiffGradient(const std::tr1::shared_ptr<dotk::DOTk_Primal> & epsilon_)
+void DOTk_SteihaugTointDataMng::setCentralFiniteDiffGradient(const dotk::Vector<Real> & input_)
 {
     dotk::DOTk_FirstOrderOperatorFactory factory;
     factory.buildCentralFiniteDiffGradient(this->getNewGradient(), m_Gradient);
     assert(m_Gradient->type() == dotk::types::CENTRAL_DIFF_GRAD);
-    this->setFiniteDiffPerturbationVector(epsilon_);
+    this->setFiniteDiffPerturbationVector(input_);
 }
 
-void DOTk_SteihaugTointDataMng::setBackwardFiniteDiffGradient(const std::tr1::shared_ptr<dotk::DOTk_Primal> & epsilon_)
+void DOTk_SteihaugTointDataMng::setBackwardFiniteDiffGradient(const dotk::Vector<Real> & input_)
 {
     dotk::DOTk_FirstOrderOperatorFactory factory;
     factory.buildBackwardFiniteDiffGradient(this->getNewGradient(), m_Gradient);
     assert(m_Gradient->type() == dotk::types::BACKWARD_DIFF_GRAD);
-    this->setFiniteDiffPerturbationVector(epsilon_);
+    this->setFiniteDiffPerturbationVector(input_);
 }
 
-void DOTk_SteihaugTointDataMng::setParallelForwardFiniteDiffGradient(const std::tr1::shared_ptr<dotk::DOTk_Primal> & epsilon_)
+void DOTk_SteihaugTointDataMng::setParallelForwardFiniteDiffGradient(const dotk::Vector<Real> & input_)
 {
     dotk::DOTk_FirstOrderOperatorFactory factory;
     factory.buildParallelForwardFiniteDiffGradient(this->getNewGradient(), m_Gradient);
     assert(m_Gradient->type() == dotk::types::PARALLEL_FORWARD_DIFF_GRAD);
-    this->setFiniteDiffPerturbationVector(epsilon_);
+    this->setFiniteDiffPerturbationVector(input_);
 }
 
-void DOTk_SteihaugTointDataMng::setParallelCentralFiniteDiffGradient(const std::tr1::shared_ptr<dotk::DOTk_Primal> & epsilon_)
+void DOTk_SteihaugTointDataMng::setParallelCentralFiniteDiffGradient(const dotk::Vector<Real> & input_)
 {
     dotk::DOTk_FirstOrderOperatorFactory factory;
     factory.buildParallelCentralFiniteDiffGradient(this->getNewGradient(), m_Gradient);
     assert(m_Gradient->type() == dotk::types::PARALLEL_CENTRAL_DIFF_GRAD);
-    this->setFiniteDiffPerturbationVector(epsilon_);
+    this->setFiniteDiffPerturbationVector(input_);
 }
 
-void DOTk_SteihaugTointDataMng::setParallelBackwardFiniteDiffGradient(const std::tr1::shared_ptr<dotk::DOTk_Primal> & epsilon_)
+void DOTk_SteihaugTointDataMng::setParallelBackwardFiniteDiffGradient(const dotk::Vector<Real> & input_)
 {
     dotk::DOTk_FirstOrderOperatorFactory factory;
     factory.buildParallelBackwardFiniteDiffGradient(this->getNewGradient(), m_Gradient);
     assert(m_Gradient->type() == dotk::types::PARALLEL_BACKWARD_DIFF_GRAD);
-    this->setFiniteDiffPerturbationVector(epsilon_);
+    this->setFiniteDiffPerturbationVector(input_);
 }
 
 void DOTk_SteihaugTointDataMng::computeGradient()
@@ -138,15 +139,17 @@ void DOTk_SteihaugTointDataMng::initialize()
     this->setUserDefinedGradient();
 }
 
-void DOTk_SteihaugTointDataMng::setFiniteDiffPerturbationVector(const std::tr1::shared_ptr<dotk::DOTk_Primal> & epsilon_)
+void DOTk_SteihaugTointDataMng::setFiniteDiffPerturbationVector(const dotk::Vector<Real> & input_)
 {
-    if(epsilon_->control().use_count() > 0)
+    if(input_.size() > 0)
     {
-        m_Gradient->setFiniteDiffPerturbationVec(*epsilon_->control());
+        m_Gradient->setFiniteDiffPerturbationVec(input_);
     }
     else
     {
-        std::perror("\n**** Error in DOTk_SteihaugTointDataMng::setFiniteDiffPerturbationVector. User did not define control data. ABORT. ****\n");
+        std::ostringstream msg;
+        msg << "\n**** ERROR IN: " << __FILE__ << ", LINE: " << __LINE__ << ", -> Input vector size = 0. ****\n";
+        std::perror(msg.str().c_str());
         std::abort();
     }
 }

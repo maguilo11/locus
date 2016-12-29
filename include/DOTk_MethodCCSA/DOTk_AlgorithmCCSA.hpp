@@ -44,8 +44,6 @@ public:
     void setGradientTolerance(Real tolerance_);
     Real getCurrentMaxResidual() const;
     void setCurrentMaxResidual(Real input_);
-    Real getOptimalityTolerance() const;
-    void setOptimalityTolerance(Real tolerance_);
     Real getCurrentResidualNorm() const;
     void setCurrentResidualNorm(Real input_);
     Real getFeasibilityTolerance() const;
@@ -90,7 +88,6 @@ private:
     Real m_ResidualTolerance;
     Real m_GradientTolerance;
     Real m_CurrentMaxResidual;
-    Real m_OptimalityTolerance;
     Real m_CurrentResidualNorm;
     Real m_FeasibilityTolerance;
     Real m_ControlStagnationTolerance;

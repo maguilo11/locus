@@ -5,7 +5,9 @@
  *      Author: Miguel A. Aguilo Valentin
  */
 
-#include "DOTk_Primal.hpp"
+#include <sstream>
+
+#include "vector.hpp"
 #include "DOTk_MexNumDiffHessianFactory.hpp"
 #include "DOTk_MexFiniteDiffNumIntgParser.hpp"
 #include "DOTk_NumericallyDifferentiatedHessian.hpp"
@@ -17,51 +19,51 @@ namespace mex
 {
 
 void buildNumericallyDifferentiatedHessian(const mxArray* options_,
-                                           const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_,
-                                           std::tr1::shared_ptr<dotk::NumericallyDifferentiatedHessian> & hessian_)
+                                           const Vector<double> & input_,
+                                           std::tr1::shared_ptr<dotk::NumericallyDifferentiatedHessian> & output_)
 {
-    double epsilon = 0.;
-    dotk::mex::parseNumericalDifferentiationEpsilon(options_, epsilon);
-    dotk::types::numerical_integration_t type = dotk::types::NUM_INTG_DISABLED;
-    dotk::mex::parseNumericalDifferentiationMethod(options_, type);
-
+    double epsilon = dotk::mex::parseNumericalDifferentiationEpsilon(options_);
+    dotk::types::numerical_integration_t type = dotk::mex::parseNumericalDifferentiationMethod(options_);
     switch(type)
     {
         case dotk::types::FORWARD_FINITE_DIFF:
         {
-            hessian_->setForwardDifference(primal_, epsilon);
+            output_->setForwardDifference(input_, epsilon);
             break;
         }
         case dotk::types::BACKWARD_FINITE_DIFF:
         {
-            hessian_->setBackwardDifference(primal_, epsilon);
+            output_->setBackwardDifference(input_, epsilon);
             break;
         }
         case dotk::types::CENTRAL_FINITE_DIFF:
         {
-            hessian_->setCentralDifference(primal_, epsilon);
+            output_->setCentralDifference(input_, epsilon);
             break;
         }
         case dotk::types::SECOND_ORDER_FORWARD_FINITE_DIFF:
         {
-            hessian_->setSecondOrderForwardDifference(primal_, epsilon);
+            output_->setSecondOrderForwardDifference(input_, epsilon);
             break;
         }
         case dotk::types::THIRD_ORDER_FORWARD_FINITE_DIFF:
         {
-            hessian_->setThirdOrderForwardDifference(primal_, epsilon);
+            output_->setThirdOrderForwardDifference(input_, epsilon);
             break;
         }
         case dotk::types::THIRD_ORDER_BACKWARD_FINITE_DIFF:
         {
-            hessian_->setThirdOrderBackwardDifference(primal_, epsilon);
+            output_->setThirdOrderBackwardDifference(input_, epsilon);
             break;
         }
         default:
         {
-            hessian_->setForwardDifference(primal_, epsilon);
-            std::string msg(" DOTk/MEX WARNING: Invalid Numerical Differentiation Method. Default = FORWARD DIFFERENCE. \n");
-            mexWarnMsgTxt(msg.c_str());
+            std::ostringstream msg;
+            msg << "\nWARNING IN: " << __FILE__ << ", LINE: " << __LINE__
+                    << ", -> Numerical Differentiation Method keyword is misspelled."
+                    << " Numerical Differentiation Method set to FORWARD FINITE DIFFERENCE.\n";
+            mexWarnMsgTxt(msg.str().c_str());
+            output_->setForwardDifference(input_, epsilon);
             break;
         }
     }

@@ -14,15 +14,17 @@
 namespace dotk
 {
 
-class DOTk_Primal;
 class NumericallyDifferentiatedHessian;
+
+template<typename SacalarType>
+class Vector;
 
 namespace mex
 {
 
 void buildNumericallyDifferentiatedHessian(const mxArray* options_,
-                                           const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_,
-                                           std::tr1::shared_ptr<dotk::NumericallyDifferentiatedHessian> & hessian_);
+                                           const Vector<double> & input_,
+                                           std::tr1::shared_ptr<dotk::NumericallyDifferentiatedHessian> & output_);
 
 }
 

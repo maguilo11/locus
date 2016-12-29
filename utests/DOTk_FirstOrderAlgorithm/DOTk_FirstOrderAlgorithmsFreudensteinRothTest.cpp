@@ -38,7 +38,7 @@ TEST(FirstOrderAlgorithmsFreudensteinRoth, HestenesStiefel_UsrDefGrad_CubicIntrp
     (*primal->control())[0] = 11.41277900335;
     (*primal->control())[1] = -0.89680525194;
     dotk::gtest::checkResults(*mng->getNewPrimal(), *primal->control(), 1e-7);
-    EXPECT_EQ(16, nlcg.getNumItrDone());
+    EXPECT_EQ(16u, nlcg.getNumItrDone());
     EXPECT_NEAR(48.9843, mng->getNewObjectiveFunctionValue(), 1e-4);
 }
 

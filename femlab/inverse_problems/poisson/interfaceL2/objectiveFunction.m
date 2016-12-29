@@ -1,22 +1,24 @@
 function [Operators] = objectiveFunction()
-Operators.evaluate=@(state,control)evaluate(state,control);
-Operators.firstDerivativeWrtState=...
-    @(state,control)firstDerivativeWrtState(state,control);
-Operators.firstDerivativeWrtControl=...
-    @(state,control)firstDerivativeWrtControl(state,control);
-Operators.secondDerivativeWrtStateState=...
-    @(state,control,dstate)secondDerivativeWrtStateState(state,control,dstate);
-Operators.secondDerivativeWrtStateControl=...
-    @(state,control,dcontrol)secondDerivativeWrtStateControl(state,control,dcontrol);
-Operators.secondDerivativeWrtControlState=...
-    @(state,control,dstate)secondDerivativeWrtControlState(state,control,dstate);
-Operators.secondDerivativeWrtControlControl=...
-    @(state,control,dcontrol)secondDerivativeWrtControlControl(state,control,dcontrol);
+Operators.value=@(state,control)value(state,control);
+% First order derivatives
+Operators.partialDerivativeState=...
+    @(state,control)partialDerivativeState(state,control);
+Operators.partialDerivativeControl=...
+    @(state,control)partialDerivativeControl(state,control);
+% Second order derivatives
+Operators.partialDerivativeStateState=...
+    @(state,control,dstate)partialDerivativeStateState(state,control,dstate);
+Operators.partialDerivativeStateControl=...
+    @(state,control,dcontrol)partialDerivativeStateControl(state,control,dcontrol);
+Operators.partialDerivativeControlState=...
+    @(state,control,dstate)partialDerivativeControlState(state,control,dstate);
+Operators.partialDerivativeControlControl=...
+    @(state,control,dcontrol)partialDerivativeControlControl(state,control,dcontrol);
 end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-function [output] = evaluate(state,control)
+function [output] = value(state,control)
 
 global GLB_INVP;
 
@@ -39,7 +41,7 @@ end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-function [output] = firstDerivativeWrtControl(state,control)
+function [output] = partialDerivativeControl(state,control)
 
 global GLB_INVP;
 
@@ -59,7 +61,7 @@ end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-function [output] = firstDerivativeWrtState(state,control)
+function [output] = partialDerivativeState(state,control)
 
 global GLB_INVP;
 
@@ -71,7 +73,7 @@ end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-function [output] = secondDerivativeWrtStateState(state,control,dstate)
+function [output] = partialDerivativeStateState(state,control,dstate)
 
 global GLB_INVP;
 
@@ -82,7 +84,7 @@ end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-function [output] = secondDerivativeWrtStateControl(state,control,dcontrol)
+function [output] = partialDerivativeStateControl(state,control,dcontrol)
 
 output = zeros(size(state));
 
@@ -90,7 +92,7 @@ end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-function [output] = secondDerivativeWrtControlState(state,control,dstate)
+function [output] = partialDerivativeControlState(state,control,dstate)
 
 output = zeros(size(control));
 
@@ -98,7 +100,7 @@ end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-function [output] = secondDerivativeWrtControlControl(state,control,dcontrol)
+function [output] = partialDerivativeControlControl(state,control,dcontrol)
 
 global GLB_INVP;
 

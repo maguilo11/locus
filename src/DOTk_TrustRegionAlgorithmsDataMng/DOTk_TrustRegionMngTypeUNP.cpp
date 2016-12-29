@@ -5,6 +5,8 @@
  *      Author: Miguel A. Aguilo Valentin
  */
 
+#include <sstream>
+
 #include "vector.hpp"
 #include "DOTk_Primal.hpp"
 #include "DOTk_RoutinesTypeUNP.hpp"
@@ -29,57 +31,59 @@ DOTk_TrustRegionMngTypeUNP::~DOTk_TrustRegionMngTypeUNP()
 {
 }
 
-void DOTk_TrustRegionMngTypeUNP::setForwardFiniteDiffGradient(const std::tr1::shared_ptr<dotk::DOTk_Primal> & epsilon_)
+void DOTk_TrustRegionMngTypeUNP::setForwardFiniteDiffGradient(const dotk::Vector<Real> & input_)
 {
     dotk::DOTk_FirstOrderOperatorFactory factory;
     factory.buildForwardFiniteDiffGradient(this->getNewGradient(), m_FirstOrderOperator);
-    this->setFiniteDiffPerturbationVector(epsilon_);
+    this->setFiniteDiffPerturbationVector(input_);
 }
 
-void DOTk_TrustRegionMngTypeUNP::setCentralFiniteDiffGradient(const std::tr1::shared_ptr<dotk::DOTk_Primal> & epsilon_)
+void DOTk_TrustRegionMngTypeUNP::setCentralFiniteDiffGradient(const dotk::Vector<Real> & input_)
 {
     dotk::DOTk_FirstOrderOperatorFactory factory;
     factory.buildCentralFiniteDiffGradient(this->getNewGradient(), m_FirstOrderOperator);
-    this->setFiniteDiffPerturbationVector(epsilon_);
+    this->setFiniteDiffPerturbationVector(input_);
 }
 
-void DOTk_TrustRegionMngTypeUNP::setBackwardFiniteDiffGradient(const std::tr1::shared_ptr<dotk::DOTk_Primal> & epsilon_)
+void DOTk_TrustRegionMngTypeUNP::setBackwardFiniteDiffGradient(const dotk::Vector<Real> & input_)
 {
     dotk::DOTk_FirstOrderOperatorFactory factory;
     factory.buildBackwardFiniteDiffGradient(this->getNewGradient(), m_FirstOrderOperator);
-    this->setFiniteDiffPerturbationVector(epsilon_);
+    this->setFiniteDiffPerturbationVector(input_);
 }
 
-void DOTk_TrustRegionMngTypeUNP::setParallelForwardFiniteDiffGradient(const std::tr1::shared_ptr<dotk::DOTk_Primal> & epsilon_)
+void DOTk_TrustRegionMngTypeUNP::setParallelForwardFiniteDiffGradient(const dotk::Vector<Real> & input_)
 {
     dotk::DOTk_FirstOrderOperatorFactory factory;
     factory.buildParallelForwardFiniteDiffGradient(this->getNewGradient(), m_FirstOrderOperator);
-    this->setFiniteDiffPerturbationVector(epsilon_);
+    this->setFiniteDiffPerturbationVector(input_);
 }
 
-void DOTk_TrustRegionMngTypeUNP::setParallelCentralFiniteDiffGradient(const std::tr1::shared_ptr<dotk::DOTk_Primal> & epsilon_)
+void DOTk_TrustRegionMngTypeUNP::setParallelCentralFiniteDiffGradient(const dotk::Vector<Real> & input_)
 {
     dotk::DOTk_FirstOrderOperatorFactory factory;
     factory.buildParallelCentralFiniteDiffGradient(this->getNewGradient(), m_FirstOrderOperator);
-    this->setFiniteDiffPerturbationVector(epsilon_);
+    this->setFiniteDiffPerturbationVector(input_);
 }
 
-void DOTk_TrustRegionMngTypeUNP::setParallelBackwardFiniteDiffGradient(const std::tr1::shared_ptr<dotk::DOTk_Primal> & epsilon_)
+void DOTk_TrustRegionMngTypeUNP::setParallelBackwardFiniteDiffGradient(const dotk::Vector<Real> & input_)
 {
     dotk::DOTk_FirstOrderOperatorFactory factory;
     factory.buildParallelBackwardFiniteDiffGradient(this->getNewGradient(), m_FirstOrderOperator);
-    this->setFiniteDiffPerturbationVector(epsilon_);
+    this->setFiniteDiffPerturbationVector(input_);
 }
 
-void DOTk_TrustRegionMngTypeUNP::setFiniteDiffPerturbationVector(const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_)
+void DOTk_TrustRegionMngTypeUNP::setFiniteDiffPerturbationVector(const dotk::Vector<Real> & input_)
 {
-    if(primal_->control().use_count() > 0)
+    if(input_.size() == this->getNewGradient()->size())
     {
-        m_FirstOrderOperator->setFiniteDiffPerturbationVec(*primal_->control());
+        m_FirstOrderOperator->setFiniteDiffPerturbationVec(input_);
     }
     else
     {
-        std::perror("\n**** Error in DOTk_TrustRegionMngTypeUNP::setFiniteDiffPerturbationVector. User did not define control data. ABORT. ****\n");
+        std::ostringstream msg;
+        msg << "\n**** ERROR IN: " << __FILE__ << ", LINE: " << __LINE__ << ", -> Input vector has incorrect dimension. ****\n";
+        std::perror(msg.str().c_str());
         std::abort();
     }
 }

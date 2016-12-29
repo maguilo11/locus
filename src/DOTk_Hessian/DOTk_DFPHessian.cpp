@@ -15,11 +15,11 @@
 namespace dotk
 {
 
-DOTk_DFPHessian::DOTk_DFPHessian(const std::tr1::shared_ptr<dotk::Vector<Real> > & vector_) :
+DOTk_DFPHessian::DOTk_DFPHessian(const dotk::Vector<Real> & vector_) :
         dotk::DOTk_SecondOrderOperator(),
-        m_DeltaPrimal(vector_->clone()),
-        m_DeltaGradient(vector_->clone()),
-        m_HessTimesVec(vector_->clone())
+        m_DeltaPrimal(vector_.clone()),
+        m_DeltaGradient(vector_.clone()),
+        m_HessTimesVec(vector_.clone())
 {
     dotk::DOTk_SecondOrderOperator::setHessianType(dotk::types::hessian_t::DFP_HESS);
 }

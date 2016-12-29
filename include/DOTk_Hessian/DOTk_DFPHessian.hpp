@@ -21,7 +21,7 @@ class Vector;
 class DOTk_DFPHessian : public dotk::DOTk_SecondOrderOperator
 {
 public:
-    explicit DOTk_DFPHessian(const std::tr1::shared_ptr<dotk::Vector<Real> > & vector_);
+    explicit DOTk_DFPHessian(const dotk::Vector<Real> & vector_);
     virtual ~DOTk_DFPHessian();
 
     const std::tr1::shared_ptr<dotk::Vector<Real> > & getDeltaGrad() const;

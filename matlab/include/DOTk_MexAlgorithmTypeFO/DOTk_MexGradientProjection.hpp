@@ -12,7 +12,6 @@
 #include <tr1/memory>
 
 #include "DOTk_Types.hpp"
-#include "DOTk_MexArrayPtr.hpp"
 
 namespace dotk
 {
@@ -49,8 +48,8 @@ private:
     dotk::types::problem_t m_ProblemType;
     dotk::types::line_search_t m_LineSearchMethod;
 
-    dotk::DOTk_MexArrayPtr m_ObjectiveFunction;
-    dotk::DOTk_MexArrayPtr m_EqualityConstraint;
+    mxArray* m_ObjectiveFunction;
+    mxArray* m_EqualityConstraint;
 
 private:
     DOTk_MexGradientProjection(const dotk::DOTk_MexGradientProjection & rhs_);

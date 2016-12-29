@@ -7,9 +7,9 @@
 
 #include <mex.h>
 #include <string>
+#include <sstream>
 
 #include "vector.hpp"
-#include "DOTk_MexArrayPtr.hpp"
 #include "DOTk_MexApiUtilities.hpp"
 #include "DOTk_MexAlgorithmParser.hpp"
 
@@ -19,788 +19,820 @@ namespace dotk
 namespace mex
 {
 
-void parseThreadCount(const mxArray* options_, size_t & output_)
+size_t parseNumberDuals(const mxArray* input_)
 {
-    if(mxIsEmpty(mxGetField(options_, 0, "ThreadCount")) == true)
+    if(mxGetField(input_, 0, "NumberDuals") == nullptr)
     {
-        std::string msg(" DOTk/MEX ERROR: ThreadCount is NOT Defined. See Users' Manual. \n");
-        mexErrMsgTxt(msg.c_str());
+        std::ostringstream msg;
+        msg << "\nERROR IN: " << __FILE__ << ", LINE: " << __LINE__ << ", -> NumberDuals keyword is NULL.\n";
+        mexErrMsgTxt(msg.str().c_str());
     }
-    dotk::DOTk_MexArrayPtr thread_count;
-    thread_count.reset(mxDuplicateArray(mxGetField(options_, 0, "ThreadCount")));
-    output_ = static_cast<size_t>(mxGetScalar(thread_count.get()));
-    thread_count.release();
+    mxArray* value = mxDuplicateArray(mxGetField(input_, 0, "NumberDuals"));
+    size_t output = static_cast<size_t>(mxGetScalar(value));
+    mxDestroyArray(value);
+    return (output);
 }
 
-void parseNumberDuals(const mxArray* options_, size_t & output_)
+size_t parseNumberStates(const mxArray* input_)
 {
-    if(mxIsEmpty(mxGetField(options_, 0, "NumberDuals")) == true)
+    if(mxGetField(input_, 0, "NumberStates") == nullptr)
     {
-        std::string msg(" DOTk/MEX ERROR: NumberDuals is NOT Defined. See Users' Manual. \n");
-        mexErrMsgTxt(msg.c_str());
+        std::ostringstream msg;
+        msg << "\nERROR IN: " << __FILE__ << ", LINE: " << __LINE__ << ", -> NumberStates keyword is NULL.\n";
+        mexErrMsgTxt(msg.str().c_str());
     }
-    dotk::DOTk_MexArrayPtr num_duals;
-    num_duals.reset(mxDuplicateArray(mxGetField(options_, 0, "NumberDuals")));
-    output_ = static_cast<size_t>(mxGetScalar(num_duals.get()));
-    num_duals.release();
+    mxArray* value = mxDuplicateArray(mxGetField(input_, 0, "NumberStates"));
+    size_t output = static_cast<size_t>(mxGetScalar(value));
+    mxDestroyArray(value);
+    return (output);
 }
 
-void parseNumberStates(const mxArray* options_, size_t & output_)
+size_t parseMaxNumUpdates(const mxArray* input_)
 {
-    if(mxIsEmpty(mxGetField(options_, 0, "NumberStates")) == true)
+    if(mxGetField(input_, 0, "MaxNumberUpdates") == nullptr)
     {
-        std::string msg(" DOTk/MEX ERROR: NumberStates is NOT Defined. See Users' Manual. \n");
-        mexErrMsgTxt(msg.c_str());
+        std::ostringstream msg;
+        msg << "\nERROR IN: " << __FILE__ << ", LINE: " << __LINE__ << ", -> MaxNumberUpdates keyword is NULL.\n";
+        mexErrMsgTxt(msg.str().c_str());
     }
-    dotk::DOTk_MexArrayPtr num_states;
-    num_states.reset(mxDuplicateArray(mxGetField(options_, 0, "NumberStates")));
-    output_ = static_cast<size_t>(mxGetScalar(num_states.get()));
-    num_states.release();
+    mxArray* value = mxDuplicateArray(mxGetField(input_, 0, "MaxNumberUpdates"));
+    size_t output = static_cast<size_t>(mxGetScalar(value));
+    mxDestroyArray(value);
+    return (output);
 }
 
-void parseMaxNumUpdates(const mxArray* options_, size_t & output_)
+size_t parseNumberControls(const mxArray* input_)
 {
-    if(mxIsEmpty(mxGetField(options_, 0, "MaxNumberUpdates")) == true)
+    if(mxGetField(input_, 0, "NumberControls") == nullptr)
     {
-        std::string msg(" DOTk/MEX ERROR: MaxNumberUpdates is NOT Defined. See Users' Manual. \n");
-        mexErrMsgTxt(msg.c_str());
+        std::ostringstream msg;
+        msg << "\nERROR IN: " << __FILE__ << ", LINE: " << __LINE__ << ", -> NumberControls keyword is NULL.\n";
+        mexErrMsgTxt(msg.str().c_str());
     }
-    dotk::DOTk_MexArrayPtr max_number_updates;
-    max_number_updates.reset(mxDuplicateArray(mxGetField(options_, 0, "MaxNumberUpdates")));
-    output_ = static_cast<size_t>(mxGetScalar(max_number_updates.get()));
-    max_number_updates.release();
+    mxArray* value = mxDuplicateArray(mxGetField(input_, 0, "NumberControls"));
+    size_t output = static_cast<size_t>(mxGetScalar(value));
+    mxDestroyArray(value);
+    return (output);
 }
 
-void parseNumberControls(const mxArray* options_, size_t & output_)
+size_t parseMaxNumFeasibleItr(const mxArray* input_)
 {
-    if(mxIsEmpty(mxGetField(options_, 0, "NumberControls")) == true)
+    size_t output = 0;
+    if(mxGetField(input_, 0, "MaxNumFeasibleItr") == nullptr)
     {
-        std::string msg(" DOTk/MEX ERROR: NumberControls is NOT Defined. See Users' Manual. \n");
-        mexErrMsgTxt(msg.c_str());
-    }
-    dotk::DOTk_MexArrayPtr num_controls;
-    num_controls.reset(mxDuplicateArray(mxGetField(options_, 0, "NumberControls")));
-    output_ = static_cast<size_t>(mxGetScalar(num_controls.get()));
-    num_controls.release();
-}
-
-void parseMaxNumFeasibleItr(const mxArray* options_, size_t & output_)
-{
-    if(mxIsEmpty(mxGetField(options_, 0, "MaxNumFeasibleItr")) == true)
-    {
-        output_ = 5;
-        std::string msg(" DOTk/MEX WARNING: MaxNumFeasibleItr is NOT Defined. Default = 5. \n");
-        mexWarnMsgTxt(msg.c_str());
-        return;
-    }
-    dotk::DOTk_MexArrayPtr iterations;
-    iterations.reset(mxDuplicateArray(mxGetField(options_, 0, "MaxNumFeasibleItr")));
-    output_ = static_cast<size_t>(mxGetScalar(iterations.get()));
-    iterations.release();
-}
-
-void parseMaxNumAlgorithmItr(const mxArray* options_, size_t & output_)
-{
-    if(mxIsEmpty(mxGetField(options_, 0, "MaxNumAlgorithmItr")) == true)
-    {
-        output_ = 100;
-        std::string msg(" DOTk/MEX WARNING: MaxNumAlgorithmItr is NOT Defined. Default = 100. \n");
-        mexWarnMsgTxt(msg.c_str());
-        return;
-    }
-    dotk::DOTk_MexArrayPtr iterations;
-    iterations.reset(mxDuplicateArray(mxGetField(options_, 0, "MaxNumAlgorithmItr")));
-    output_ = static_cast<size_t>(mxGetScalar(iterations.get()));
-    iterations.release();
-}
-
-void parseMaxNumLineSearchItr(const mxArray* options_, size_t & output_)
-{
-    if(mxIsEmpty(mxGetField(options_, 0, "MaxNumLineSearchItr")) == true)
-    {
-        output_ = 10;
-        std::string msg(" DOTk/MEX WARNING: MaxNumLineSearchItr is NOT Defined. Default = 10. \n");
-        mexWarnMsgTxt(msg.c_str());
-        return;
-    }
-    dotk::DOTk_MexArrayPtr iterations;
-    iterations.reset(mxDuplicateArray(mxGetField(options_, 0, "MaxNumLineSearchItr")));
-    output_ = static_cast<size_t>(mxGetScalar(iterations.get()));
-    iterations.release();
-}
-
-void parseMaxNumTrustRegionSubProblemItr(const mxArray* options_, size_t & output_)
-{
-    if(mxIsEmpty(mxGetField(options_, 0, "MaxNumTrustRegionSubProblemItr")) == true)
-    {
-        output_ = 10;
-        std::string msg(" DOTk/MEX WARNING: MaxNumTrustRegionSubProblemItr is NOT Defined. Default = 10. \n");
-        mexWarnMsgTxt(msg.c_str());
-        return;
-    }
-    dotk::DOTk_MexArrayPtr iterations;
-    iterations.reset(mxDuplicateArray(mxGetField(options_, 0, "MaxNumTrustRegionSubProblemItr")));
-    output_ = static_cast<size_t>(mxGetScalar(iterations.get()));
-    iterations.release();
-}
-
-void parseFiniteDifferenceDiagnosticsUpperSuperScripts(const mxArray* options_, int & output_)
-{
-    if(mxIsEmpty(mxGetField(options_, 0, "FiniteDifferenceDiagnosticsUpperSuperScripts")) == true)
-    {
-        output_ = 5;
-        std::string msg(" DOTk/MEX WARNING: FiniteDifferenceDiagnosticsUpperSuperScripts is NOT Defined. Default = 5. \n");
-        mexWarnMsgTxt(msg.c_str());
-        return;
-    }
-    dotk::DOTk_MexArrayPtr factor;
-    factor.reset(mxDuplicateArray(mxGetField(options_, 0, "FiniteDifferenceDiagnosticsUpperSuperScripts")));
-    output_ = static_cast<int>(mxGetScalar(factor.get()));
-    factor.release();
-}
-
-void parseFiniteDifferenceDiagnosticsLowerSuperScripts(const mxArray* options_, int & output_)
-{
-    if(mxIsEmpty(mxGetField(options_, 0, "FiniteDifferenceDiagnosticsLowerSuperScripts")) == true)
-    {
-        output_ = -3;
-        std::string msg(" DOTk/MEX WARNING: FiniteDifferenceDiagnosticsLowerSuperScripts is NOT Defined. Default = -3. \n");
-        mexWarnMsgTxt(msg.c_str());
-        return;
-    }
-    dotk::DOTk_MexArrayPtr factor;
-    factor.reset(mxDuplicateArray(mxGetField(options_, 0, "FiniteDifferenceDiagnosticsLowerSuperScripts")));
-    output_ = static_cast<int>(mxGetScalar(factor.get()));
-    factor.release();
-}
-
-void parseGradientTolerance(const mxArray* options_, double & output_)
-{
-    if(mxIsEmpty(mxGetField(options_, 0, "GradientTolerance")) == true)
-    {
-        output_ = 1e-8;
-        std::string msg(" DOTk/MEX WARNING: GradientTolerance is NOT Defined. Default = 1e-8. \n");
-        mexWarnMsgTxt(msg.c_str());
-        return;
-    }
-    dotk::DOTk_MexArrayPtr tolerance;
-    tolerance.reset(mxDuplicateArray(mxGetField(options_, 0, "GradientTolerance")));
-    output_ = mxGetScalar(tolerance.get());
-    tolerance.release();
-}
-
-void parseResidualTolerance(const mxArray* options_, double & output_)
-{
-    if(mxIsEmpty(mxGetField(options_, 0, "ResidualTolerance")) == true)
-    {
-        output_ = 1e-8;
-        std::string msg(" DOTk/MEX WARNING: ResidualTolerance is NOT Defined. Default = 1e-8. \n");
-        mexWarnMsgTxt(msg.c_str());
-        return;
-    }
-    dotk::DOTk_MexArrayPtr tolerance;
-    tolerance.reset(mxDuplicateArray(mxGetField(options_, 0, "ResidualTolerance")));
-    output_ = mxGetScalar(tolerance.get());
-    tolerance.release();
-}
-
-void parseOptimalityTolerance(const mxArray* options_, double & output_)
-{
-    if(mxIsEmpty(mxGetField(options_, 0, "OptimalityTolerance")) == true)
-    {
-        output_ = 1e-8;
-        std::string msg(" DOTk/MEX WARNING: OptimalityTolerance is NOT Defined. Default = 1e-8. \n");
-        mexWarnMsgTxt(msg.c_str());
-        return;
-    }
-    dotk::DOTk_MexArrayPtr tolerance;
-    tolerance.reset(mxDuplicateArray(mxGetField(options_, 0, "OptimalityTolerance")));
-    output_ = mxGetScalar(tolerance.get());
-    tolerance.release();
-}
-
-void parseObjectiveTolerance(const mxArray* options_, double & output_)
-{
-    if(mxIsEmpty(mxGetField(options_, 0, "ObjectiveTolerance")) == true)
-    {
-        output_ = 1e-8;
-        std::string msg(" DOTk/MEX WARNING: ObjectiveTolerance is NOT Defined. Default = 1e-8. \n");
-        mexWarnMsgTxt(msg.c_str());
-        return;
-    }
-    dotk::DOTk_MexArrayPtr tolerance;
-    tolerance.reset(mxDuplicateArray(mxGetField(options_, 0, "ObjectiveTolerance")));
-    output_ = mxGetScalar(tolerance.get());
-    tolerance.release();
-}
-
-void parseTrialStepTolerance(const mxArray* options_, double & output_)
-{
-    if(mxIsEmpty(mxGetField(options_, 0, "TrialStepTolerance")) == true)
-    {
-        output_ = 1e-8;
-        std::string msg(" DOTk/MEX WARNING: TrialStepTolerance is NOT Defined. Default = 1e-8. \n");
-        mexWarnMsgTxt(msg.c_str());
-        return;
-    }
-    dotk::DOTk_MexArrayPtr tolerance;
-    tolerance.reset(mxDuplicateArray(mxGetField(options_, 0, "TrialStepTolerance")));
-    output_ = mxGetScalar(tolerance.get());
-    tolerance.release();
-}
-
-void parseFeasibilityTolerance(const mxArray* options_, double & output_)
-{
-    if(mxIsEmpty(mxGetField(options_, 0, "FeasibilityTolerance")) == true)
-    {
-        output_ = 1e-4;
-        std::string msg(" DOTk/MEX ERROR: FeasibilityTolerance is NOT Defined. Default = 1e-4. \n");
-        mexWarnMsgTxt(msg.c_str());
-        return;
-    }
-    dotk::DOTk_MexArrayPtr factor;
-    factor.reset(mxDuplicateArray(mxGetField(options_, 0, "FeasibilityTolerance")));
-    output_ = mxGetScalar(factor.get());
-    factor.release();
-}
-
-void parseActualReductionTolerance(const mxArray* options_, double & output_)
-{
-    if(mxIsEmpty(mxGetField(options_, 0, "ActualReductionTolerance")) == true)
-    {
-        output_ = 1e-8;
-        std::string msg(" DOTk/MEX ERROR: ActualReductionTolerance is NOT Defined. Default = 1e-8. \n");
-        mexWarnMsgTxt(msg.c_str());
-        return;
-    }
-    dotk::DOTk_MexArrayPtr tolerance;
-    tolerance.reset(mxDuplicateArray(mxGetField(options_, 0, "ActualReductionTolerance")));
-    output_ = mxGetScalar(tolerance.get());
-    tolerance.release();
-}
-
-void parseControlStagnationTolerance(const mxArray* options_, double & output_)
-{
-    if(mxIsEmpty(mxGetField(options_, 0, "ControlStagnationTolerance")) == true)
-    {
-        output_ = 1e-2;
-        std::string msg(" DOTk/MEX ERROR: ControlStagnationTolerance is NOT Defined. Default = 1e-2. \n");
-        mexWarnMsgTxt(msg.c_str());
-        return;
-    }
-    dotk::DOTk_MexArrayPtr tolerance;
-    tolerance.reset(mxDuplicateArray(mxGetField(options_, 0, "ControlStagnationTolerance")));
-    output_ = mxGetScalar(tolerance.get());
-    tolerance.release();
-}
-
-void parseMaxTrustRegionRadius(const mxArray* options_, double & output_)
-{
-    if(mxIsEmpty(mxGetField(options_, 0, "MaxTrustRegionRadius")) == true)
-    {
-        output_ = 1e4;
-        std::string msg(" DOTk/MEX WARNING: MaxTrustRegionRadius is NOT Defined. Default = 1e4. \n");
-        mexWarnMsgTxt(msg.c_str());
-        return;
-    }
-    dotk::DOTk_MexArrayPtr tolerance;
-    tolerance.reset(mxDuplicateArray(mxGetField(options_, 0, "MaxTrustRegionRadius")));
-    output_ = mxGetScalar(tolerance.get());
-    tolerance.release();
-}
-
-void parseMinTrustRegionRadius(const mxArray* options_, double & output_)
-{
-    if(mxIsEmpty(mxGetField(options_, 0, "MinTrustRegionRadius")) == true)
-    {
-        output_ = 1e-6;
-        std::string msg(" DOTk/MEX WARNING: MinTrustRegionRadius is NOT Defined. Default = 1e-6. \n");
-        mexWarnMsgTxt(msg.c_str());
-        return;
-    }
-    dotk::DOTk_MexArrayPtr tolerance;
-    tolerance.reset(mxDuplicateArray(mxGetField(options_, 0, "MinTrustRegionRadius")));
-    output_ = mxGetScalar(tolerance.get());
-    tolerance.release();
-}
-
-void parseBoundConstraintStepSize(const mxArray* options_, double & output_)
-{
-    if(mxIsEmpty(mxGetField(options_, 0, "BoundConstraintStepSize")) == true)
-    {
-        output_ = 0.5;
-        std::string msg(" DOTk/MEX WARNING: BoundConstraintStepSize is NOT Defined. Default = 0.5. \n");
-        mexWarnMsgTxt(msg.c_str());
-        return;
-    }
-    dotk::DOTk_MexArrayPtr tolerance;
-    tolerance.reset(mxDuplicateArray(mxGetField(options_, 0, "BoundConstraintStepSize")));
-    output_ = mxGetScalar(tolerance.get());
-    tolerance.release();
-}
-
-void parseInitialTrustRegionRadius(const mxArray* options_, double & output_)
-{
-    if(mxIsEmpty(mxGetField(options_, 0, "InitialTrustRegionRadius")) == true)
-    {
-        output_ = 1e3;
-        std::string msg(" DOTk/MEX WARNING: InitialTrustRegionRadius is NOT Defined. Default = 1e3. \n");
-        mexWarnMsgTxt(msg.c_str());
-        return;
-    }
-    dotk::DOTk_MexArrayPtr tolerance;
-    tolerance.reset(mxDuplicateArray(mxGetField(options_, 0, "InitialTrustRegionRadius")));
-    output_ = mxGetScalar(tolerance.get());
-    tolerance.release();
-}
-
-void parseTrustRegionExpansionFactor(const mxArray* options_, double & output_)
-{
-    if(mxIsEmpty(mxGetField(options_, 0, "TrustRegionExpansionFactor")) == true)
-    {
-        output_ = 2.;
-        std::string msg(" DOTk/MEX WARNING: TrustRegionExpansionFactor is NOT Defined. Default = 2. \n");
-        mexWarnMsgTxt(msg.c_str());
-        return;
-    }
-    dotk::DOTk_MexArrayPtr tolerance;
-    tolerance.reset(mxDuplicateArray(mxGetField(options_, 0, "TrustRegionExpansionFactor")));
-    output_ = mxGetScalar(tolerance.get());
-    tolerance.release();
-}
-
-void parseGoldsteinLineSearchConstant(const mxArray* options_, double & output_)
-{
-    if(mxIsEmpty(mxGetField(options_, 0, "GoldsteinLineSearchConstant")) == true)
-    {
-        output_ = 0.9;
-        std::string msg(" DOTk/MEX WARNING: GoldsteinLineSearchConstant is NOT Defined. Default = 0.9. \n");
-        mexWarnMsgTxt(msg.c_str());
-        return;
-    }
-    dotk::DOTk_MexArrayPtr factor;
-    factor.reset(mxDuplicateArray(mxGetField(options_, 0, "GoldsteinLineSearchConstant")));
-    output_ = mxGetScalar(factor.get());
-    factor.release();
-}
-
-void parseLineSearchContractionFactor(const mxArray* options_, double & output_)
-{
-    if(mxIsEmpty(mxGetField(options_, 0, "LineSearchContractionFactor")) == true)
-    {
-        output_ = 0.5;
-        std::string msg(" DOTk/MEX WARNING: LineSearchContractionFactor is NOT Defined. Default = 0.5. \n");
-        mexWarnMsgTxt(msg.c_str());
-        return;
-    }
-    dotk::DOTk_MexArrayPtr factor;
-    factor.reset(mxDuplicateArray(mxGetField(options_, 0, "LineSearchContractionFactor")));
-    output_ = mxGetScalar(factor.get());
-    factor.release();
-}
-
-void parseTrustRegionContractionFactor(const mxArray* options_, double & output_)
-{
-    if(mxIsEmpty(mxGetField(options_, 0, "TrustRegionContractionFactor")) == true)
-    {
-        output_ = 0.5;
-        std::string msg(" DOTk/MEX WARNING: TrustRegionContractionFactor is NOT Defined. Default = 0.5. \n");
-        mexWarnMsgTxt(msg.c_str());
-        return;
-    }
-    dotk::DOTk_MexArrayPtr factor;
-    factor.reset(mxDuplicateArray(mxGetField(options_, 0, "TrustRegionContractionFactor")));
-    output_ = mxGetScalar(factor.get());
-    factor.release();
-}
-
-void parseLineSearchStagnationTolerance(const mxArray* options_, double & output_)
-{
-    if(mxIsEmpty(mxGetField(options_, 0, "LineSearchStagnationTolerance")) == true)
-    {
-        output_ = 1e-8;
-        std::string msg(" DOTk/MEX WARNING: LineSearchStagnationTolerance is NOT Defined. Default = 1e-8. \n");
-        mexWarnMsgTxt(msg.c_str());
-        return;
-    }
-    dotk::DOTk_MexArrayPtr factor;
-    factor.reset(mxDuplicateArray(mxGetField(options_, 0, "LineSearchStagnationTolerance")));
-    output_ = mxGetScalar(factor.get());
-    factor.release();
-}
-
-void parseBoundConstraintContractionFactor(const mxArray* options_, double & output_)
-{
-    if(mxIsEmpty(mxGetField(options_, 0, "BoundConstraintContractionFactor")) == true)
-    {
-        output_ = 0.5;
-        std::string msg(" DOTk/MEX WARNING: BoundConstraintContractionFactor is NOT Defined. Default = 0.5. \n");
-        mexWarnMsgTxt(msg.c_str());
-        return;
-    }
-    dotk::DOTk_MexArrayPtr factor;
-    factor.reset(mxDuplicateArray(mxGetField(options_, 0, "BoundConstraintContractionFactor")));
-    output_ = mxGetScalar(factor.get());
-    factor.release();
-}
-
-void parseMinActualOverPredictedReductionRatio(const mxArray* options_, double & output_)
-{
-    if(mxIsEmpty(mxGetField(options_, 0, "MinActualOverPredictedReductionRatio")) == true)
-    {
-        output_ = 0.1;
-        std::string msg(" DOTk/MEX WARNING: MinActualOverPredictedReductionRatio is NOT Defined. Default = 0.1. \n");
-        mexWarnMsgTxt(msg.c_str());
-        return;
-    }
-    dotk::DOTk_MexArrayPtr factor;
-    factor.reset(mxDuplicateArray(mxGetField(options_, 0, "MinActualOverPredictedReductionRatio")));
-    output_ = mxGetScalar(factor.get());
-    factor.release();
-}
-
-void parseMidActualOverPredictedReductionRatio(const mxArray* options_, double & output_)
-{
-    if(mxIsEmpty(mxGetField(options_, 0, "MidActualOverPredictedReductionRatio")) == true)
-    {
-        output_ = 0.25;
-        std::string msg(" DOTk/MEX WARNING: MidActualOverPredictedReductionRatio is NOT Defined. Default = 0.25. \n");
-        mexWarnMsgTxt(msg.c_str());
-        return;
-    }
-    dotk::DOTk_MexArrayPtr factor;
-    factor.reset(mxDuplicateArray(mxGetField(options_, 0, "MidActualOverPredictedReductionRatio")));
-    output_ = mxGetScalar(factor.get());
-    factor.release();
-}
-
-void parseMaxActualOverPredictedReductionRatio(const mxArray* options_, double & output_)
-{
-    if(mxIsEmpty(mxGetField(options_, 0, "MaxActualOverPredictedReductionRatio")) == true)
-    {
-        output_ = 0.75;
-        std::string msg(" DOTk/MEX WARNING: MaxActualOverPredictedReductionRatio is NOT Defined. Default = 0.75. \n");
-        mexWarnMsgTxt(msg.c_str());
-        return;
-    }
-    dotk::DOTk_MexArrayPtr factor;
-    factor.reset(mxDuplicateArray(mxGetField(options_, 0, "MaxActualOverPredictedReductionRatio")));
-    output_ = mxGetScalar(factor.get());
-    factor.release();
-}
-
-void parseSetInitialTrustRegionRadiusToNormGradFlag(const mxArray* options_, bool & output_)
-{
-    if(mxIsEmpty(mxGetField(options_, 0, "SetInitialTrustRegionRadiusToNormGrad")) == true)
-    {
-        std::string msg(" DOTk/MEX WARNING: SetInitialTrustRegionRadiusToNormGrad is NOT Defined. Default = true. \n");
-        mexWarnMsgTxt(msg.c_str());
-        output_ = true;
-        return;
-    }
-
-    dotk::DOTk_MexArrayPtr ptr;
-    ptr.reset(mxDuplicateArray(mxGetField(options_, 0, "SetInitialTrustRegionRadiusToNormGrad")));
-
-    std::string flag(mxArrayToString(ptr.get()));
-    if(flag.compare("false") == 0)
-    {
-        output_ = false;
-    }
-    else if(flag.compare("true") == 0)
-    {
-        output_ = true;
+        std::ostringstream msg;
+        msg << "\nWARNING IN: " << __FILE__ << ", LINE: " << __LINE__
+                << ", -> MaxNumFeasibleItr keyword is NULL. MaxNumFeasibleItr set to 5.\n";
+        mexWarnMsgTxt(msg.str().c_str());
+        output = 5;
     }
     else
     {
-        std::string msg(" DOTk/MEX WARNING: SetInitialTrustRegionRadiusToNormGrad is NOT Defined. Options are true or false. Default = true. \n");
-        mexWarnMsgTxt(msg.c_str());
-        output_ = true;
+        mxArray* value = mxDuplicateArray(mxGetField(input_, 0, "MaxNumFeasibleItr"));
+        output = static_cast<size_t>(mxGetScalar(value));
+        mxDestroyArray(value);
     }
-
-    ptr.release();
+    return (output);
 }
 
-void parseDualData(const mxArray* options_, dotk::Vector<double> & output_)
+size_t parseMaxNumOuterIterations(const mxArray* input_)
 {
-    if(mxIsEmpty(mxGetField(options_, 0, "Dual")) == true)
+    size_t output = 0;
+    if(mxGetField(input_, 0, "MaxNumOuterIterations") == nullptr)
     {
-        output_.fill(0);
-        std::string msg(" DOTk/MEX WARNING: Initial Dual Data was NOT Defined. Elements in Dual Container set to zero. \n");
-        mexWarnMsgTxt(msg.c_str());
-        return;
+        std::ostringstream msg;
+        msg << "\nWARNING IN: " << __FILE__ << ", LINE: " << __LINE__
+                << ", -> MaxNumOuterIterations keyword is NULL. MaxNumOuterIterations set to 100.\n";
+        mexWarnMsgTxt(msg.str().c_str());
+        output = 100;
     }
-    dotk::DOTk_MexArrayPtr data;
-    data.reset(mxDuplicateArray(mxGetField(options_, 0, "Dual")));
-    dotk::mex::setDOTkData(data, output_);
-    data.release();
+    else
+    {
+        mxArray* value = mxDuplicateArray(mxGetField(input_, 0, "MaxNumOuterIterations"));
+        output = static_cast<size_t>(mxGetScalar(value));
+        mxDestroyArray(value);
+    }
+    return (output);
 }
 
-void parseStateData(const mxArray* options_, dotk::Vector<double> & output_)
+size_t parseMaxNumLineSearchItr(const mxArray* input_)
 {
-    if(mxIsEmpty(mxGetField(options_, 0, "State")) == true)
+    size_t output = 0;
+    if(mxGetField(input_, 0, "MaxNumLineSearchItr") == nullptr)
     {
-        output_.fill(0);
-        std::string msg(" DOTk/MEX WARNING: Initial State Data was NOT Defined. Elements in State Container set to zero. \n");
-        mexWarnMsgTxt(msg.c_str());
-        return;
+        std::ostringstream msg;
+        msg << "\nWARNING IN: " << __FILE__ << ", LINE: " << __LINE__
+                << ", -> MaxNumLineSearchItr keyword is NULL. MaxNumLineSearchItr set to 10.\n";
+        mexWarnMsgTxt(msg.str().c_str());
+        output = 10;
     }
-    dotk::DOTk_MexArrayPtr data;
-    data.reset(mxDuplicateArray(mxGetField(options_, 0, "State")));
-    dotk::mex::setDOTkData(data, output_);
-    data.release();
+    else
+    {
+        mxArray* value = mxDuplicateArray(mxGetField(input_, 0, "MaxNumLineSearchItr"));
+        output = static_cast<size_t>(mxGetScalar(value));
+        mxDestroyArray(value);
+    }
+    return (output);
 }
 
-void parseControlData(const mxArray* options_, dotk::Vector<double> & output_)
+size_t parseMaxNumTrustRegionSubProblemItr(const mxArray* input_)
 {
-    if(mxIsEmpty(mxGetField(options_, 0, "Control")) == true)
+    size_t output = 0;
+    if(mxGetField(input_, 0, "MaxNumTrustRegionSubProblemItr") == nullptr)
     {
-        std::string msg(" DOTk/MEX ERROR: Initial Control Data was NOT Defined. See Users' Manual. \n");
-        mexErrMsgTxt(msg.c_str());
+        std::ostringstream msg;
+        msg << "\nWARNING IN: " << __FILE__ << ", LINE: " << __LINE__
+                << ", -> MaxNumTrustRegionSubProblemItr keyword is NULL. MaxNumTrustRegionSubProblemItr set to 10.\n";
+        mexWarnMsgTxt(msg.str().c_str());
+        output = 10;
     }
-    dotk::DOTk_MexArrayPtr data;
-    data.reset(mxDuplicateArray(mxGetField(options_, 0, "Control")));
-    dotk::mex::setDOTkData(data, output_);
-    data.release();
+    else
+    {
+        mxArray* value = mxDuplicateArray(mxGetField(input_, 0, "MaxNumTrustRegionSubProblemItr"));
+        output = static_cast<size_t>(mxGetScalar(value));
+        mxDestroyArray(value);
+    }
+    return (output);
 }
 
-void parseObjectiveFunction(const mxArray* options_, dotk::DOTk_MexArrayPtr & ptr_)
+int parseFiniteDifferenceDiagnosticsUpperSuperScripts(const mxArray* input_)
 {
-    if(mxIsEmpty(mxGetField(options_, 0, "ObjectiveFunction")) == true)
+    int output = 0;
+    if(mxGetField(input_, 0, "FiniteDifferenceDiagnosticsUpperSuperScripts") == nullptr)
     {
-        std::string msg(" DOTk/MEX ERROR: Objective Function Operators are NOT Defined. See Users' Manual. \n");
-        mexErrMsgTxt(msg.c_str());
+        std::ostringstream msg;
+        msg << "\nWARNING IN: " << __FILE__ << ", LINE: " << __LINE__
+                << ", -> FiniteDifferenceDiagnosticsUpperSuperScripts keyword is NULL. FiniteDifferenceDiagnosticsUpperSuperScripts set to 5.\n";
+        mexWarnMsgTxt(msg.str().c_str());
+        output = 5;
     }
-    ptr_.reset(mxDuplicateArray(mxGetField(options_, 0, "ObjectiveFunction")));
+    else
+    {
+        mxArray* value = mxDuplicateArray(mxGetField(input_, 0, "FiniteDifferenceDiagnosticsUpperSuperScripts"));
+        output = static_cast<int>(mxGetScalar(value));
+        mxDestroyArray(value);
+    }
+    return (output);
 }
 
-void parseEqualityConstraint(const mxArray* options_, dotk::DOTk_MexArrayPtr & ptr_)
+int parseFiniteDifferenceDiagnosticsLowerSuperScripts(const mxArray* input_)
 {
-    if(mxIsEmpty(mxGetField(options_, 0, "EqualityConstraint")) == true)
+    int output = 0;
+    if(mxGetField(input_, 0, "FiniteDifferenceDiagnosticsLowerSuperScripts") == nullptr)
     {
-        std::string msg(" DOTk/MEX ERROR: Equality Constraint Operators are NOT Defined. See Users' Manual. \n");
-        mexErrMsgTxt(msg.c_str());
+        std::ostringstream msg;
+        msg << "\nWARNING IN: " << __FILE__ << ", LINE: " << __LINE__
+                << ", -> FiniteDifferenceDiagnosticsLowerSuperScripts keyword is NULL. FiniteDifferenceDiagnosticsLowerSuperScripts set to -5.\n";
+        mexWarnMsgTxt(msg.str().c_str());
+        output = -5;
     }
-    ptr_.reset(mxDuplicateArray(mxGetField(options_, 0, "EqualityConstraint")));
+    else
+    {
+        mxArray* value = mxDuplicateArray(mxGetField(input_, 0, "FiniteDifferenceDiagnosticsLowerSuperScripts"));
+        output = static_cast<int>(mxGetScalar(value));
+        mxDestroyArray(value);
+    }
+    return (output);
 }
 
-void parseInequalityConstraint(const mxArray* options_, dotk::DOTk_MexArrayPtr & ptr_)
+double parseGradientTolerance(const mxArray* input_)
 {
-    if(mxIsEmpty(mxGetField(options_, 0, "InequalityConstraint")) == true)
+    double output = 0;
+    if(mxGetField(input_, 0, "GradientTolerance") == nullptr)
     {
-        std::string msg(" DOTk/MEX ERROR: Inequality Constraint Operators are NOT Defined. See Users' Manual. \n");
-        mexErrMsgTxt(msg.c_str());
+        std::ostringstream msg;
+        msg << "\nWARNING IN: " << __FILE__ << ", LINE: " << __LINE__
+                << ", -> GradientTolerance keyword is NULL. GradientTolerance set to 1e-8.\n";
+        mexWarnMsgTxt(msg.str().c_str());
+        output = 1e-8;
     }
-    ptr_.reset(mxDuplicateArray(mxGetField(options_, 0, "InequalityConstraint")));
+    else
+    {
+        mxArray* value = mxDuplicateArray(mxGetField(input_, 0, "GradientTolerance"));
+        output = mxGetScalar(value);
+        mxDestroyArray(value);
+    }
+    return (output);
 }
 
-void parseProblemType(const mxArray* options_, dotk::types::problem_t & output_)
+double parseResidualTolerance(const mxArray* input_)
 {
-    if(mxIsEmpty(mxGetField(options_, 0, "ProblemType")) == true)
+    double output = 0;
+    if(mxGetField(input_, 0, "ResidualTolerance") == nullptr)
     {
-        std::string msg(" DOTk/MEX ERROR: ProblemType is NOT Defined. See Users' Manual. \n");
-        mexErrMsgTxt(msg.c_str());
+        std::ostringstream msg;
+        msg << "\nWARNING IN: " << __FILE__ << ", LINE: " << __LINE__
+                << ", -> ResidualTolerance keyword is NULL. ResidualTolerance set to 1e-8.\n";
+        mexWarnMsgTxt(msg.str().c_str());
+        output = 1e-8;
     }
-    dotk::DOTk_MexArrayPtr type;
-    type.reset(mxDuplicateArray(mxGetField(options_, 0, "ProblemType")));
-    output_ = dotk::mex::getProblemType(type);
-    type.release();
+    else
+    {
+        mxArray* value = mxDuplicateArray(mxGetField(input_, 0, "ResidualTolerance"));
+        output = mxGetScalar(value);
+        mxDestroyArray(value);
+    }
+    return (output);
 }
 
-void parseContainerType(const mxArray* options_, dotk::types::container_t & output_)
+double parseObjectiveTolerance(const mxArray* input_)
 {
-    if(mxIsEmpty(mxGetField(options_, 0, "ContainerType")) == true)
+    double output = 0;
+    if(mxGetField(input_, 0, "ObjectiveTolerance") == nullptr)
     {
-        output_ = dotk::types::SERIAL_ARRAY;
-        std::string msg(" DOTk/MEX WARNING: ContainerType is NOT Defined. Default = Serial C Array. \n");
-        mexWarnMsgTxt(msg.c_str());
-        return;
+        std::ostringstream msg;
+        msg << "\nWARNING IN: " << __FILE__ << ", LINE: " << __LINE__
+                << ", -> ObjectiveTolerance keyword is NULL. ObjectiveTolerance set to 1e-8.\n";
+        mexWarnMsgTxt(msg.str().c_str());
+        output = 1e-8;
     }
-    dotk::DOTk_MexArrayPtr type;
-    type.reset(mxDuplicateArray(mxGetField(options_, 0, "ContainerType")));
-    output_ = dotk::mex::getContainerType(type);
-    type.release();
+    else
+    {
+        mxArray* value = mxDuplicateArray(mxGetField(input_, 0, "ObjectiveTolerance"));
+        output = mxGetScalar(value);
+        mxDestroyArray(value);
+    }
+    return (output);
 }
 
-void parseLineSearchMethod(const mxArray* options_, dotk::types::line_search_t & output_)
+double parseStepTolerance(const mxArray* input_)
 {
-    if(mxIsEmpty(mxGetField(options_, 0, "LineSearchMethod")) == true)
+    double output = 0;
+    if(mxGetField(input_, 0, "StepTolerance") == nullptr)
     {
-        output_ = dotk::types::BACKTRACKING_CUBIC_INTRP;
-        std::string msg(" DOTk/MEX WARNING: LineSearchMethod is NOT Defined. Default = BACKTRACKING CUBIC INTERPOLATION. \n");
-        mexWarnMsgTxt(msg.c_str());
-        return;
+        std::ostringstream msg;
+        msg << "\nWARNING IN: " << __FILE__ << ", LINE: " << __LINE__
+                << ", -> StepTolerance keyword is NULL. StepTolerance set to 1e-8.\n";
+        mexWarnMsgTxt(msg.str().c_str());
+        output = 1e-8;
     }
-    dotk::DOTk_MexArrayPtr type;
-    type.reset(mxDuplicateArray(mxGetField(options_, 0, "LineSearchMethod")));
-    output_ = dotk::mex::getLineSearchMethod(type);
-    type.release();
+    else
+    {
+        mxArray* value = mxDuplicateArray(mxGetField(input_, 0, "StepTolerance"));
+        output = mxGetScalar(value);
+        mxDestroyArray(value);
+    }
+    return (output);
 }
 
-void parseTrustRegionMethod(const mxArray* options_, dotk::types::trustregion_t & output_)
+double parseFeasibilityTolerance(const mxArray* input_)
 {
-    if(mxIsEmpty(mxGetField(options_, 0, "TrustRegionMethod")) == true)
+    double output = 0;
+    if(mxGetField(input_, 0, "FeasibilityTolerance") == nullptr)
     {
-        output_ = dotk::types::TRUST_REGION_DOGLEG;
-        std::string msg(" DOTk/MEX WARNING: TrustRegionMethod is NOT Defined. Default = DOGLEG. \n");
-        mexWarnMsgTxt(msg.c_str());
-        return;
+        std::ostringstream msg;
+        msg << "\nWARNING IN: " << __FILE__ << ", LINE: " << __LINE__
+                << ", -> FeasibilityTolerance keyword is NULL. FeasibilityTolerance set to 1e-4.\n";
+        mexWarnMsgTxt(msg.str().c_str());
+        output = 1e-4;
     }
-    dotk::DOTk_MexArrayPtr type;
-    type.reset(mxDuplicateArray(mxGetField(options_, 0, "TrustRegionMethod")));
-    output_ = dotk::mex::getTrustRegionMethod(type);
-    type.release();
+    else
+    {
+        mxArray* value = mxDuplicateArray(mxGetField(input_, 0, "FeasibilityTolerance"));
+        output = mxGetScalar(value);
+        mxDestroyArray(value);
+    }
+    return (output);
 }
 
-void parseNonlinearCgMethod(const mxArray* options_, dotk::types::nonlinearcg_t & output_)
+double parseActualReductionTolerance(const mxArray* input_)
 {
-    if(mxIsEmpty(mxGetField(options_, 0, "NonlinearCgMethod")) == true)
+    double output = 0;
+    if(mxGetField(input_, 0, "ActualReductionTolerance") == nullptr)
     {
-        output_ = dotk::types::HAGER_ZHANG_NLCG;
-        std::string msg(" DOTk/MEX WARNING: NonlinearCgMethod is NOT Defined. Default = HAGER-ZHANG. \n");
-        mexWarnMsgTxt(msg.c_str());
-        return;
+        std::ostringstream msg;
+        msg << "\nWARNING IN: " << __FILE__ << ", LINE: " << __LINE__
+                << ", -> ActualReductionTolerance keyword is NULL. ActualReductionTolerance set to 1e-8.\n";
+        mexWarnMsgTxt(msg.str().c_str());
+        output = 1e-8;
     }
-    dotk::DOTk_MexArrayPtr type;
-    type.reset(mxDuplicateArray(mxGetField(options_, 0, "NonlinearCgMethod")));
-    output_ = dotk::mex::getNonlinearCgMethod(type);
-    type.release();
+    else
+    {
+        mxArray* value = mxDuplicateArray(mxGetField(input_, 0, "ActualReductionTolerance"));
+        output = mxGetScalar(value);
+        mxDestroyArray(value);
+    }
+    return (output);
 }
 
-void parseHessianComputationMethod(const mxArray* options_, dotk::types::hessian_t & output_)
+double parseControlStagnationTolerance(const mxArray* input_)
 {
-    if(mxIsEmpty(mxGetField(options_, 0, "HessianComputationMethod")) == true)
+    double output = 0;
+    if(mxGetField(input_, 0, "ControlStagnationTolerance") == nullptr)
     {
-        std::string msg(" DOTk/MEX ERROR: HessianComputationMethod is NOT Defined. See Users' Manual. \n");
-        mexErrMsgTxt(msg.c_str());
+        std::ostringstream msg;
+        msg << "\nWARNING IN: " << __FILE__ << ", LINE: " << __LINE__
+                << ", -> ControlStagnationTolerance keyword is NULL. ControlStagnationTolerance set to 1e-2.\n";
+        mexWarnMsgTxt(msg.str().c_str());
+        output = 1e-2;
     }
-    dotk::DOTk_MexArrayPtr type;
-    type.reset(mxDuplicateArray(mxGetField(options_, 0, "HessianComputationMethod")));
-    output_ = dotk::mex::getHessianComputationMethod(type);
-    type.release();
+    else
+    {
+        mxArray* value = mxDuplicateArray(mxGetField(input_, 0, "ControlStagnationTolerance"));
+        output = mxGetScalar(value);
+        mxDestroyArray(value);
+    }
+    return (output);
 }
 
-void parseGradientComputationMethod(const mxArray* options_, dotk::types::gradient_t & output_)
+double parseMaxTrustRegionRadius(const mxArray* input_)
 {
-    if(mxIsEmpty(mxGetField(options_, 0, "GradientComputationMethod")) == true)
+    double output = 0;
+    if(mxGetField(input_, 0, "MaxTrustRegionRadius") == nullptr)
     {
-        std::string msg(" DOTk/MEX ERROR: GradientComputationMethod is NOT Defined. See Users' Manual. \n");
-        mexErrMsgTxt(msg.c_str());
+        std::ostringstream msg;
+        msg << "\nWARNING IN: " << __FILE__ << ", LINE: " << __LINE__
+                << ", -> MaxTrustRegionRadius keyword is NULL. MaxTrustRegionRadius set to 1e4.\n";
+        mexWarnMsgTxt(msg.str().c_str());
+        output = 1e4;
     }
-    dotk::DOTk_MexArrayPtr type;
-    type.reset(mxDuplicateArray(mxGetField(options_, 0, "GradientComputationMethod")));
-    output_ = dotk::mex::getGradientComputationMethod(type);
-    type.release();
+    else
+    {
+        mxArray* value = mxDuplicateArray(mxGetField(input_, 0, "MaxTrustRegionRadius"));
+        output = mxGetScalar(value);
+        mxDestroyArray(value);
+    }
+    return (output);
 }
 
-void parseBoundConstraintMethod(const mxArray* options_, dotk::types::constraint_method_t & output_)
+double parseMinTrustRegionRadius(const mxArray* input_)
 {
-    if(mxIsEmpty(mxGetField(options_, 0, "BoundConstraintMethod")) == true)
+    double output = 0;
+    if(mxGetField(input_, 0, "MinTrustRegionRadius") == nullptr)
     {
-        std::string msg(" DOTk/MEX ERROR: BoundConstraintMethod is NOT Defined. See Users' Manual. \n");
-        mexErrMsgTxt(msg.c_str());
+        std::ostringstream msg;
+        msg << "\nWARNING IN: " << __FILE__ << ", LINE: " << __LINE__
+                << ", -> MinTrustRegionRadius keyword is NULL. MinTrustRegionRadius set to 1e-6.\n";
+        mexWarnMsgTxt(msg.str().c_str());
+        output = 1e-6;
     }
-    dotk::DOTk_MexArrayPtr method;
-    method.reset(mxDuplicateArray(mxGetField(options_, 0, "BoundConstraintMethod")));
-    output_ = dotk::mex::getBoundConstraintMethod(method);
-    method.release();
+    else
+    {
+        mxArray* value = mxDuplicateArray(mxGetField(input_, 0, "MinTrustRegionRadius"));
+        output = mxGetScalar(value);
+        mxDestroyArray(value);
+    }
+    return (output);
 }
 
-void parseDualLowerBound(const mxArray* options_, dotk::Vector<double> & output_)
+double parseInitialTrustRegionRadius(const mxArray* input_)
 {
-    if(mxIsEmpty(mxGetField(options_, 0, "DualLowerBounds")) == true)
+    double output = 0;
+    if(mxGetField(input_, 0, "InitialTrustRegionRadius") == nullptr)
     {
-        std::string msg(" DOTk/MEX WARNING: DualLowerBounds are NOT Defined. Default values used. See Users' Manual. \n");
-        mexWarnMsgTxt(msg.c_str());
-        return;
+        std::ostringstream msg;
+        msg << "\nWARNING IN: " << __FILE__ << ", LINE: " << __LINE__
+                << ", -> InitialTrustRegionRadius keyword is NULL. InitialTrustRegionRadius set to 1e3.\n";
+        mexWarnMsgTxt(msg.str().c_str());
+        output = 1e3;
     }
-    dotk::DOTk_MexArrayPtr data;
-    data.reset(mxDuplicateArray(mxGetField(options_, 0, "DualLowerBounds")));
-    dotk::mex::setDOTkData(data, output_);
-    data.release();
+    else
+    {
+        mxArray* value = mxDuplicateArray(mxGetField(input_, 0, "InitialTrustRegionRadius"));
+        output = mxGetScalar(value);
+        mxDestroyArray(value);
+    }
+    return (output);
 }
 
-void parseDualUpperBound(const mxArray* options_, dotk::Vector<double> & output_)
+double parseTrustRegionExpansionFactor(const mxArray* input_)
 {
-    if(mxIsEmpty(mxGetField(options_, 0, "DualUpperBounds")) == true)
+    double output = 0;
+    if(mxGetField(input_, 0, "TrustRegionExpansionFactor") == nullptr)
     {
-        std::string msg(" DOTk/MEX ERROR: DualUpperBounds are NOT Defined. Default values used. See Users' Manual. \n");
-        mexErrMsgTxt(msg.c_str());
+        std::ostringstream msg;
+        msg << "\nWARNING IN: " << __FILE__ << ", LINE: " << __LINE__
+                << ", -> TrustRegionExpansionFactor keyword is NULL. TrustRegionExpansionFactor set to 2.\n";
+        mexWarnMsgTxt(msg.str().c_str());
+        output = 2;
     }
-    dotk::DOTk_MexArrayPtr data;
-    data.reset(mxDuplicateArray(mxGetField(options_, 0, "DualUpperBounds")));
-    dotk::mex::setDOTkData(data, output_);
-    data.release();
+    else
+    {
+        mxArray* value = mxDuplicateArray(mxGetField(input_, 0, "TrustRegionExpansionFactor"));
+        output = mxGetScalar(value);
+        mxDestroyArray(value);
+    }
+    return (output);
 }
 
-void parseStateLowerBound(const mxArray* options_, dotk::Vector<double> & output_)
+double parseLineSearchContractionFactor(const mxArray* input_)
 {
-    if(mxIsEmpty(mxGetField(options_, 0, "StateLowerBounds")) == true)
+    double output = 0;
+    if(mxGetField(input_, 0, "LineSearchContractionFactor") == nullptr)
     {
-        std::string msg(" DOTk/MEX ERROR: StateLowerBounds are NOT Defined. See Users' Manual. \n");
-        mexErrMsgTxt(msg.c_str());
+        std::ostringstream msg;
+        msg << "\nWARNING IN: " << __FILE__ << ", LINE: " << __LINE__
+                << ", -> LineSearchContractionFactor keyword is NULL. LineSearchContractionFactor set to 0.5.\n";
+        mexWarnMsgTxt(msg.str().c_str());
+        output = 0.5;
     }
-    dotk::DOTk_MexArrayPtr data;
-    data.reset(mxDuplicateArray(mxGetField(options_, 0, "StateLowerBounds")));
-    dotk::mex::setDOTkData(data, output_ );
-    data.release();
+    else
+    {
+        mxArray* value = mxDuplicateArray(mxGetField(input_, 0, "LineSearchContractionFactor"));
+        output = mxGetScalar(value);
+        mxDestroyArray(value);
+    }
+    return (output);
 }
 
-void parseStateUpperBound(const mxArray* options_, dotk::Vector<double> & output_)
+double parseTrustRegionContractionFactor(const mxArray* input_)
 {
-    if(mxIsEmpty(mxGetField(options_, 0, "StateUpperBounds")) == true)
+    double output = 0;
+    if(mxGetField(input_, 0, "TrustRegionContractionFactor") == nullptr)
     {
-        std::string msg(" DOTk/MEX ERROR: StateUpperBounds are NOT Defined. See Users' Manual. \n");
-        mexErrMsgTxt(msg.c_str());
+        std::ostringstream msg;
+        msg << "\nWARNING IN: " << __FILE__ << ", LINE: " << __LINE__
+                << ", -> TrustRegionContractionFactor keyword is NULL. TrustRegionContractionFactor set to 0.5.\n";
+        mexWarnMsgTxt(msg.str().c_str());
+        output = 0.5;
     }
-    dotk::DOTk_MexArrayPtr data;
-    data.reset(mxDuplicateArray(mxGetField(options_, 0, "StateUpperBounds")));
-    dotk::mex::setDOTkData(data, output_);
-    data.release();
+    else
+    {
+        mxArray* value = mxDuplicateArray(mxGetField(input_, 0, "TrustRegionContractionFactor"));
+        output = mxGetScalar(value);
+        mxDestroyArray(value);
+    }
+    return (output);
 }
 
-void parseControlLowerBound(const mxArray* options_, dotk::Vector<double> & output_)
+double parseLineSearchStagnationTolerance(const mxArray* input_)
 {
-    if(mxIsEmpty(mxGetField(options_, 0, "ControlLowerBounds")) == true)
+    double output = 0;
+    if(mxGetField(input_, 0, "LineSearchStagnationTolerance") == nullptr)
     {
-        std::string msg(" DOTk/MEX ERROR: ControlLowerBounds are NOT Defined. See Users' Manual. \n");
-        mexErrMsgTxt(msg.c_str());
+        std::ostringstream msg;
+        msg << "\nWARNING IN: " << __FILE__ << ", LINE: " << __LINE__
+                << ", -> LineSearchStagnationTolerance keyword is NULL. LineSearchStagnationTolerance set to 1e-8.\n";
+        mexWarnMsgTxt(msg.str().c_str());
+        output = 1e-8;
     }
-    dotk::DOTk_MexArrayPtr data;
-    data.reset(mxDuplicateArray(mxGetField(options_, 0, "ControlLowerBounds")));
-    dotk::mex::setDOTkData(data, output_ );
-    data.release();
+    else
+    {
+        mxArray* value = mxDuplicateArray(mxGetField(input_, 0, "LineSearchStagnationTolerance"));
+        output = mxGetScalar(value);
+        mxDestroyArray(value);
+    }
+    return (output);
 }
 
-void parseControlUpperBound(const mxArray* options_, dotk::Vector<double> & output_)
+double parseFeasibleStepContractionFactor(const mxArray* input_)
 {
-    if(mxIsEmpty(mxGetField(options_, 0, "ControlUpperBounds")) == true)
+    double output = 0;
+    if(mxGetField(input_, 0, "FeasibleStepContractionFactor") == nullptr)
     {
-        std::string msg(" DOTk/MEX ERROR: ControlUpperBounds are NOT Defined. See Users' Manual. \n");
-        mexErrMsgTxt(msg.c_str());
+        std::ostringstream msg;
+        msg << "\nWARNING IN: " << __FILE__ << ", LINE: " << __LINE__
+                << ", -> FeasibleStepContractionFactor keyword is NULL. FeasibleStepContractionFactor set to 0.5.\n";
+        mexWarnMsgTxt(msg.str().c_str());
+        output = 0.5;
     }
-    dotk::DOTk_MexArrayPtr data;
-    data.reset(mxDuplicateArray(mxGetField(options_, 0, "ControlUpperBounds")));
-    dotk::mex::setDOTkData(data, output_);
-    data.release();
+    else
+    {
+        mxArray* value = mxDuplicateArray(mxGetField(input_, 0, "FeasibleStepContractionFactor"));
+        output = mxGetScalar(value);
+        mxDestroyArray(value);
+    }
+    return (output);
 }
 
-void parseFiniteDifferencePerturbation(const mxArray* options_, dotk::Vector<double> & output_)
+double parseMinActualOverPredictedReductionRatio(const mxArray* input_)
 {
-    if(mxIsEmpty(mxGetField(options_, 0, "FiniteDifferencePerturbations")) == true)
+    double output = 0;
+    if(mxGetField(input_, 0, "MinActualOverPredictedReductionRatio") == nullptr)
     {
-        std::string msg(" DOTk/MEX ERROR: FiniteDifferencePerturbations are NOT Defined. See Users' Manual. \n");
-        mexErrMsgTxt(msg.c_str());
+        std::ostringstream msg;
+        msg << "\nWARNING IN: " << __FILE__ << ", LINE: " << __LINE__
+                << ", -> MinActualOverPredictedReductionRatio keyword is NULL. MinActualOverPredictedReductionRatio set to 0.1.\n";
+        mexWarnMsgTxt(msg.str().c_str());
+        output = 0.1;
     }
-    dotk::DOTk_MexArrayPtr data;
-    data.reset(mxDuplicateArray(mxGetField(options_, 0, "FiniteDifferencePerturbations")));
-
-    for(size_t index = 0; index < output_.size(); ++index)
+    else
     {
-        output_[index] = mxGetPr(data.get())[index];
+        mxArray* value = mxDuplicateArray(mxGetField(input_, 0, "MinActualOverPredictedReductionRatio"));
+        output = mxGetScalar(value);
+        mxDestroyArray(value);
     }
+    return (output);
+}
 
-    data.release();
+double parseMidActualOverPredictedReductionRatio(const mxArray* input_)
+{
+    double output = 0;
+    if(mxGetField(input_, 0, "MidActualOverPredictedReductionRatio") == nullptr)
+    {
+        std::ostringstream msg;
+        msg << "\nWARNING IN: " << __FILE__ << ", LINE: " << __LINE__
+                << ", -> MidActualOverPredictedReductionRatio keyword is NULL. MidActualOverPredictedReductionRatio set to 0.25.\n";
+        mexWarnMsgTxt(msg.str().c_str());
+        output = 0.25;
+    }
+    else
+    {
+        mxArray* value = mxDuplicateArray(mxGetField(input_, 0, "MidActualOverPredictedReductionRatio"));
+        output = mxGetScalar(value);
+        mxDestroyArray(value);
+    }
+    return (output);
+}
+
+double parseMaxActualOverPredictedReductionRatio(const mxArray* input_)
+{
+    double output = 0;
+    if(mxGetField(input_, 0, "MaxActualOverPredictedReductionRatio") == nullptr)
+    {
+        std::ostringstream msg;
+        msg << "\nWARNING IN: " << __FILE__ << ", LINE: " << __LINE__
+                << ", -> MaxActualOverPredictedReductionRatio keyword is NULL. MaxActualOverPredictedReductionRatio set to 0.75.\n";
+        mexWarnMsgTxt(msg.str().c_str());
+        output = 0.75;
+    }
+    else
+    {
+        mxArray* value = mxDuplicateArray(mxGetField(input_, 0, "MaxActualOverPredictedReductionRatio"));
+        output = mxGetScalar(value);
+        mxDestroyArray(value);
+    }
+    return (output);
+}
+
+bool parseSetInitialTrustRegionRadiusToNormGradFlag(const mxArray* input_)
+{
+    bool output = false;
+    if(mxGetField(input_, 0, "SetInitialTrustRegionRadiusToNormGrad") == nullptr)
+    {
+        std::ostringstream msg;
+        msg << "\nWARNING IN: " << __FILE__ << ", LINE: " << __LINE__
+                << ", -> SetInitialTrustRegionRadiusToNormGrad keyword is NULL. SetInitialTrustRegionRadiusToNormGrad set to true.\n";
+        mexWarnMsgTxt(msg.str().c_str());
+        output = true;
+    }
+    else
+    {
+        mxArray* value = mxDuplicateArray(mxGetField(input_, 0, "SetInitialTrustRegionRadiusToNormGrad"));
+        std::string flag(mxArrayToString(value));
+        if(flag.compare("false") == 0)
+        {
+            output = false;
+        }
+        else if(flag.compare("true") == 0)
+        {
+            output = true;
+        }
+        else
+        {
+            std::ostringstream msg;
+            msg << "\nWARNING IN: " << __FILE__ << ", LINE: " << __LINE__
+                    << ", -> SetInitialTrustRegionRadiusToNormGrad keyword is NOT DEFINED. Options are true or false. Default = true.\n";
+            mexWarnMsgTxt(msg.str().c_str());
+            output = true;
+        }
+    }
+    return (output);
+}
+
+dotk::types::problem_t parseProblemType(const mxArray* input_)
+{
+    if(mxGetField(input_, 0, "ProblemType") == nullptr)
+    {
+        std::ostringstream msg;
+        msg << "\nERROR IN: " << __FILE__ << ", LINE: " << __LINE__ << ", -> ProblemType keyword is NULL.\n";
+        mexErrMsgTxt(msg.str().c_str());
+    }
+    mxArray* value = mxDuplicateArray(mxGetField(input_, 0, "ProblemType"));
+    dotk::types::problem_t output = dotk::mex::getProblemType(value);
+    mxDestroyArray(value);
+    return (output);
+}
+
+dotk::types::line_search_t parseLineSearchMethod(const mxArray* input_)
+{
+    dotk::types::line_search_t output = dotk::types::BACKTRACKING_CUBIC_INTRP;
+    if(mxGetField(input_, 0, "LineSearchMethod") == nullptr)
+    {
+        std::ostringstream msg;
+        msg << "\nWARNING IN: " << __FILE__ << ", LINE: " << __LINE__
+                << ", -> LineSearchMethod keyword is NULL. LineSearchMethod set to BACKTRACKING CUBIC INTRP.\n";
+        mexWarnMsgTxt(msg.str().c_str());
+    }
+    else
+    {
+        mxArray* value = mxDuplicateArray(mxGetField(input_, 0, "LineSearchMethod"));
+        output = dotk::mex::getLineSearchMethod(value);
+        mxDestroyArray(value);
+    }
+    return (output);
+}
+
+dotk::types::trustregion_t parseTrustRegionMethod(const mxArray* input_)
+{
+    dotk::types::trustregion_t output = dotk::types::TRUST_REGION_DOGLEG;
+    if(mxGetField(input_, 0, "TrustRegionMethod") == nullptr)
+    {
+        std::ostringstream msg;
+        msg << "\nWARNING IN: " << __FILE__ << ", LINE: " << __LINE__
+                << ", -> TrustRegionMethod keyword is NULL. TrustRegionMethod set to DOGLEG.\n";
+        mexWarnMsgTxt(msg.str().c_str());
+    }
+    else
+    {
+        mxArray* value = mxDuplicateArray(mxGetField(input_, 0, "TrustRegionMethod"));
+        output = dotk::mex::getTrustRegionMethod(value);
+        mxDestroyArray(value);
+    }
+    return (output);
+}
+
+dotk::types::nonlinearcg_t parseNonlinearCgMethod(const mxArray* input_)
+{
+    dotk::types::nonlinearcg_t output = dotk::types::HAGER_ZHANG_NLCG;
+    if(mxGetField(input_, 0, "NonlinearCgMethod") == nullptr)
+    {
+        std::ostringstream msg;
+        msg << "\nWARNING IN: " << __FILE__ << ", LINE: " << __LINE__
+                << ", -> NonlinearCgMethod keyword is NULL. NonlinearCgMethod set to HAGER-ZHANG.\n";
+        mexWarnMsgTxt(msg.str().c_str());
+    }
+    else
+    {
+        mxArray* value = mxDuplicateArray(mxGetField(input_, 0, "NonlinearCgMethod"));
+        output = dotk::mex::getNonlinearCgMethod(value);
+        mxDestroyArray(value);
+    }
+    return (output);
+}
+
+dotk::types::hessian_t parseHessianComputationMethod(const mxArray* input_)
+{
+    if(mxGetField(input_, 0, "HessianComputationMethod") == nullptr)
+    {
+        std::ostringstream msg;
+        msg << "\nERROR IN: " << __FILE__ << ", LINE: " << __LINE__ << ", -> HessianComputationMethod keyword is NULL.\n";
+        mexErrMsgTxt(msg.str().c_str());
+    }
+    mxArray* value = mxDuplicateArray(mxGetField(input_, 0, "HessianComputationMethod"));
+    dotk::types::hessian_t output = dotk::mex::getHessianComputationMethod(value);
+    mxDestroyArray(value);
+    return (output);
+}
+
+dotk::types::gradient_t parseGradientComputationMethod(const mxArray* input_)
+{
+    if(mxGetField(input_, 0, "GradientComputationMethod") == nullptr)
+    {
+        std::ostringstream msg;
+        msg << "\nERROR IN: " << __FILE__ << ", LINE: " << __LINE__ << ", -> GradientComputationMethod keyword is NULL.\n";
+        mexErrMsgTxt(msg.str().c_str());
+    }
+    mxArray* value = mxDuplicateArray(mxGetField(input_, 0, "GradientComputationMethod"));
+    dotk::types::gradient_t output = dotk::mex::getGradientComputationMethod(value);
+    mxDestroyArray(value);
+    return (output);
+}
+
+dotk::types::constraint_method_t parseBoundConstraintMethod(const mxArray* input_)
+{
+    if(mxGetField(input_, 0, "BoundConstraintMethod") == nullptr)
+    {
+        std::ostringstream msg;
+        msg << "\nERROR IN: " << __FILE__ << ", LINE: " << __LINE__ << ", -> BoundConstraintMethod keyword is NULL.\n";
+        mexErrMsgTxt(msg.str().c_str());
+    }
+    mxArray* value = mxDuplicateArray(mxGetField(input_, 0, "BoundConstraintMethod"));
+    dotk::types::constraint_method_t output = dotk::mex::getBoundConstraintMethod(value);
+    mxDestroyArray(value);
+    return (output);
+}
+
+mxArray* parseObjectiveFunction(const mxArray* input_)
+{
+    if(mxGetField(input_, 0, "ObjectiveFunction") == nullptr)
+    {
+        std::ostringstream msg;
+        msg << "\nERROR IN: " << __FILE__ << ", LINE: " << __LINE__ << ", -> ObjectiveFunction keyword is NULL.\n";
+        mexErrMsgTxt(msg.str().c_str());
+    }
+    mxArray* output = mxDuplicateArray(mxGetField(input_, 0, "ObjectiveFunction"));
+    return (output);
+}
+
+mxArray* parseEqualityConstraint(const mxArray* input_)
+{
+    if(mxGetField(input_, 0, "EqualityConstraint") == nullptr)
+    {
+        std::ostringstream msg;
+        msg << "\nERROR IN: " << __FILE__ << ", LINE: " << __LINE__ << ", -> EqualityConstraint keyword is NULL.\n";
+        mexErrMsgTxt(msg.str().c_str());
+    }
+    mxArray* output = mxDuplicateArray(mxGetField(input_, 0, "EqualityConstraint"));
+    return (output);
+}
+
+mxArray* parseInequalityConstraint(const mxArray* input_)
+{
+    if(mxGetField(input_, 0, "InequalityConstraint") == nullptr)
+    {
+        std::ostringstream msg;
+        msg << "\nERROR IN: " << __FILE__ << ", LINE: " << __LINE__ << ", -> InequalityConstraint keyword is NULL.\n";
+        mexErrMsgTxt(msg.str().c_str());
+    }
+    mxArray* output = mxDuplicateArray(mxGetField(input_, 0, "InequalityConstraint"));
+    return (output);
+}
+
+mxArray* parseDualLowerBound(const mxArray* input_)
+{
+    if(mxGetField(input_, 0, "DualLowerBounds") == nullptr)
+    {
+        std::ostringstream msg;
+        msg << "\nERROR IN: " << __FILE__ << ", LINE: " << __LINE__ << ", -> DualLowerBounds keyword is NULL.\n";
+        mexErrMsgTxt(msg.str().c_str());
+    }
+    mxArray* output = mxDuplicateArray(mxGetField(input_, 0, "DualLowerBounds"));
+    return (output);
+}
+
+mxArray* parseDualUpperBound(const mxArray* input_)
+{
+    if(mxGetField(input_, 0, "DualUpperBounds") == nullptr)
+    {
+        std::ostringstream msg;
+        msg << "\nERROR IN: " << __FILE__ << ", LINE: " << __LINE__ << ", -> DualUpperBounds keyword is NULL.\n";
+        mexErrMsgTxt(msg.str().c_str());
+    }
+    mxArray* output = mxDuplicateArray(mxGetField(input_, 0, "DualUpperBounds"));
+    return (output);
+}
+
+mxArray* parseStateLowerBound(const mxArray* input_)
+{
+    if(mxGetField(input_, 0, "StateLowerBounds") == nullptr)
+    {
+        std::ostringstream msg;
+        msg << "\nERROR IN: " << __FILE__ << ", LINE: " << __LINE__ << ", -> StateLowerBounds keyword is NULL.\n";
+        mexErrMsgTxt(msg.str().c_str());
+    }
+    mxArray* output = mxDuplicateArray(mxGetField(input_, 0, "StateLowerBounds"));
+    return (output);
+}
+
+mxArray* parseStateUpperBound(const mxArray* input_)
+{
+    if(mxGetField(input_, 0, "StateUpperBounds") == nullptr)
+    {
+        std::ostringstream msg;
+        msg << "\nERROR IN: " << __FILE__ << ", LINE: " << __LINE__ << ", -> StateUpperBounds keyword is NULL.\n";
+        mexErrMsgTxt(msg.str().c_str());
+    }
+    mxArray* output = mxDuplicateArray(mxGetField(input_, 0, "StateUpperBounds"));
+    return (output);
+}
+
+mxArray* parseInitialControl(const mxArray* input_)
+{
+    if(mxGetField(input_, 0, "Control") == nullptr)
+    {
+        std::ostringstream msg;
+        msg << "\nERROR IN: " << __FILE__ << ", LINE: " << __LINE__ << ", -> Control keyword is NULL.\n";
+        mexErrMsgTxt(msg.str().c_str());
+    }
+    mxArray* output = mxDuplicateArray(mxGetField(input_, 0, "Control"));
+    return (output);
+}
+
+mxArray* parseControlLowerBound(const mxArray* input_)
+{
+    if(mxGetField(input_, 0, "ControlLowerBounds") == nullptr)
+    {
+        std::ostringstream msg;
+        msg << "\nERROR IN: " << __FILE__ << ", LINE: " << __LINE__ << ", -> ControlLowerBounds keyword is NULL.\n";
+        mexErrMsgTxt(msg.str().c_str());
+    }
+    mxArray* output = mxDuplicateArray(mxGetField(input_, 0, "ControlLowerBounds"));
+    return (output);
+}
+
+mxArray* parseControlUpperBound(const mxArray* input_)
+{
+    if(mxGetField(input_, 0, "ControlUpperBounds") == nullptr)
+    {
+        std::ostringstream msg;
+        msg << "\nERROR IN: " << __FILE__ << ", LINE: " << __LINE__ << ", -> ControlUpperBounds keyword is NULL.\n";
+        mexErrMsgTxt(msg.str().c_str());
+    }
+    mxArray* output = mxDuplicateArray(mxGetField(input_, 0, "ControlUpperBounds"));
+    return (output);
+}
+
+mxArray* parseFiniteDifferencePerturbation(const mxArray* input_)
+{
+    if(mxGetField(input_, 0, "FiniteDifferencePerturbations") == nullptr)
+    {
+        std::ostringstream msg;
+        msg << "\nERROR IN: " << __FILE__ << ", LINE: " << __LINE__ << ", -> FiniteDifferencePerturbations keyword is NULL.\n";
+        mexErrMsgTxt(msg.str().c_str());
+    }
+    mxArray* output = mxDuplicateArray(mxGetField(input_, 0, "FiniteDifferencePerturbations"));
+    return (output);
 }
 
 }

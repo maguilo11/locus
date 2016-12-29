@@ -1,26 +1,29 @@
 function [Operators] = equalityConstraint()
+% Solves
 Operators.solve=@(control)solve(control);
 Operators.applyInverseJacobianWrtState=...
     @(state,control,rhs)applyInverseJacobianWrtState(state,control,rhs);
 Operators.applyInverseAdjointJacobianWrtState=...
     @(state,control,rhs)applyInverseAdjointJacobianWrtState(state,control,rhs);
 Operators.residual=@(state,control)residual(state,control);
-Operators.firstDerivativeWrtState=...
-    @(state,control,dcontrol)firstDerivativeWrtState(state,control,dcontrol);
-Operators.firstDerivativeWrtControl=...
-    @(state,control,dcontrol)firstDerivativeWrtControl(state,control,dcontrol);
-Operators.adjointFirstDerivativeWrtState=...
-    @(state,control,dual)adjointFirstDerivativeWrtState(state,control,dual);
-Operators.adjointFirstDerivativeWrtControl=...
-    @(state,control,dual)adjointFirstDerivativeWrtControl(state,control,dual);
-Operators.secondDerivativeWrtStateState=...
-    @(state,control,dual,dstate)secondDerivativeWrtStateState(state,control,dual,dstate);
-Operators.secondDerivativeWrtStateControl=...
-    @(state,control,dual,dcontrol)secondDerivativeWrtStateControl(state,control,dual,dcontrol);
-Operators.secondDerivativeWrtControlState=...
-    @(state,control,dual,dstate)secondDerivativeWrtControlState(state,control,dual,dstate);
-Operators.secondDerivativeWrtControlControl=...
-    @(state,control,dual,dcontrol)secondDerivativeWrtControlControl(state,control,dual,dcontrol);
+% First order derivatives
+Operators.partialDerivativeState=...
+    @(state,control,dcontrol)partialDerivativeState(state,control,dcontrol);
+Operators.partialDerivativeControl=...
+    @(state,control,dcontrol)partialDerivativeControl(state,control,dcontrol);
+Operators.adjointPartialDerivativeState=...
+    @(state,control,dual)adjointPartialDerivativeState(state,control,dual);
+Operators.adjointPartialDerivativeControl=...
+    @(state,control,dual)adjointPartialDerivativeControl(state,control,dual);
+% Second order derivatives
+Operators.partialDerivativeStateState=...
+    @(state,control,dual,dstate)partialDerivativeStateState(state,control,dual,dstate);
+Operators.partialDerivativeStateControl=...
+    @(state,control,dual,dcontrol)partialDerivativeStateControl(state,control,dual,dcontrol);
+Operators.partialDerivativeControlState=...
+    @(state,control,dual,dstate)partialDerivativeControlState(state,control,dual,dstate);
+Operators.partialDerivativeControlControl=...
+    @(state,control,dual,dcontrol)partialDerivativeControlControl(state,control,dual,dcontrol);
 end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -198,7 +201,7 @@ end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-function [output] = firstDerivativeWrtState(state,control,dstate)
+function [output] = partialDerivativeState(state,control,dstate)
 
 global GLB_INVP;
 
@@ -237,7 +240,7 @@ end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-function [output] = firstDerivativeWrtControl(state,control,dcontrol)
+function [output] = partialDerivativeControl(state,control,dcontrol)
 
 global GLB_INVP;
 
@@ -276,7 +279,7 @@ end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-function [output] = adjointFirstDerivativeWrtState(state,control,dual)
+function [output] = adjointPartialDerivativeState(state,control,dual)
 
 global GLB_INVP;
 
@@ -315,7 +318,7 @@ end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-function [output] = adjointFirstDerivativeWrtControl(state,control,dual)
+function [output] = adjointPartialDerivativeControl(state,control,dual)
 
 global GLB_INVP;
 
@@ -354,13 +357,13 @@ end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-function [output] = secondDerivativeWrtStateState(state,control,dual,dstate)
+function [output] = partialDerivativeStateState(state,control,dual,dstate)
 output=zeros(size(state));
 end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-function [output] = secondDerivativeWrtStateControl(state,control,dual,dcontrol)
+function [output] = partialDerivativeStateControl(state,control,dual,dcontrol)
 
 global GLB_INVP;
 
@@ -398,7 +401,7 @@ end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-function [output] = secondDerivativeWrtControlState(state,control,dual,dstate)
+function [output] = partialDerivativeControlState(state,control,dual,dstate)
 
 global GLB_INVP;
 
@@ -437,6 +440,6 @@ end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-function [output] = secondDerivativeWrtControlControl(state,control,dual,dcontrol)
+function [output] = partialDerivativeControlControl(state,control,dual,dcontrol)
 output = zeros(size(control));
 end

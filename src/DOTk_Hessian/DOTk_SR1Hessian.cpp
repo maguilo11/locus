@@ -15,11 +15,11 @@
 namespace dotk
 {
 
-DOTk_SR1Hessian::DOTk_SR1Hessian(const std::tr1::shared_ptr<dotk::Vector<Real> > & vector_) :
+DOTk_SR1Hessian::DOTk_SR1Hessian(const dotk::Vector<Real> & vector_) :
         dotk::DOTk_SecondOrderOperator(),
-        m_DeltaPrimal(vector_->clone()),
-        m_DeltaGradient(vector_->clone()),
-        m_HessTimesVec(vector_->clone())
+        m_DeltaPrimal(vector_.clone()),
+        m_DeltaGradient(vector_.clone()),
+        m_HessTimesVec(vector_.clone())
 {
     dotk::DOTk_SecondOrderOperator::setHessianType(dotk::types::hessian_t::SR1_HESS);
 }

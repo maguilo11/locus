@@ -148,18 +148,4 @@ TEST(DOTk_SerialArrayTest, copy)
     dotk::gtest::checkResults(*gold, *y, thread_count);
 }
 
-TEST(DOTk_SerialArrayTest, gather)
-{
-    int dim = 1e4;
-    dotk::StdArray<double> array(dim, 1.);
-    std::vector<double> y(dim, 0);
-
-    array.gather(y.data());
-
-    std::tr1::shared_ptr<dotk::Vector<double> > gold = array.clone();
-    gold->fill(1.);
-    int thread_count = 4;
-    dotk::gtest::checkResults(y.size(), y.data(), *gold, thread_count);
-}
-
 }

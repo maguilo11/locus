@@ -5,10 +5,13 @@
  *      Author: Miguel A. Aguilo Valentin
  */
 
-#include "DOTk_RoutinesTypeENP.hpp"
+#include <cstdio>
+#include <cstdlib>
+#include <sstream>
 
 #include "vector.hpp"
 #include "DOTk_Primal.hpp"
+#include "DOTk_RoutinesTypeENP.hpp"
 #include "DOTk_ObjectiveFunction.hpp"
 #include "DOTk_EqualityConstraint.hpp"
 
@@ -202,7 +205,9 @@ void DOTk_RoutinesTypeENP::initialize(const std::tr1::shared_ptr<dotk::DOTk_Prim
     }
     else
     {
-        std::perror("\n**** Error in DOTk_RoutinesTypeENP::initialize. User did not define state data. ABORT. ****\n");
+        std::ostringstream msg;
+        msg << "\n**** ERROR IN: " << __FILE__ << ", LINE: " << __LINE__ << ", -> STATE vector is NULL. ****\n";
+        std::perror(msg.str().c_str());
         std::abort();
     }
 
@@ -212,7 +217,9 @@ void DOTk_RoutinesTypeENP::initialize(const std::tr1::shared_ptr<dotk::DOTk_Prim
     }
     else
     {
-        std::perror("\n**** Error in DOTk_RoutinesTypeENP::initialize. User did not define control data. ABORT. ****\n");
+        std::ostringstream msg;
+        msg << "\n**** ERROR IN: " << __FILE__ << ", LINE: " << __LINE__ << ", -> CONTROL vector is NULL. ****\n";
+        std::perror(msg.str().c_str());
         std::abort();
     }
 }

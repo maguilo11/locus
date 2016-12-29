@@ -202,22 +202,6 @@ TEST(DOTkMultiVariableVector, copy)
     dotk::gtest::checkResults(control_gold.size(), control_gold.data(), *multi_vector.control());
 }
 
-TEST(DOTkMultiVariableVector, gather)
-{
-    size_t num_duals = 10;
-    size_t num_controls = 8;
-    dotk::StdArray<Real> dual(num_duals, 1.);
-    dotk::StdArray<Real> control(num_controls, 2.);
-    dotk::DOTk_MultiVector<Real> multi_vector(control, dual);
-    EXPECT_TRUE(multi_vector.size() == 18);
-
-    std::vector<Real> output(multi_vector.size());
-    multi_vector.gather(output.data());
-
-    dotk::gtest::checkResults(num_controls, output.data(), *multi_vector.control());
-    dotk::gtest::checkResults(num_duals, output.data() + num_controls, *multi_vector.dual());
-}
-
 TEST(DOTkMultiVariableVector, operator_braket)
 {
     size_t num_duals = 10;
@@ -459,25 +443,6 @@ TEST(DOTkMultiVariableVector, copy2)
     dotk::gtest::checkResults(dual_gold.size(), dual_gold.data(), *multi_vector.dual());
     dotk::gtest::checkResults(state_gold.size(), state_gold.data(), *multi_vector.state());
     dotk::gtest::checkResults(control_gold.size(), control_gold.data(), *multi_vector.control());
-}
-
-TEST(DOTkMultiVariableVector, gather2)
-{
-    size_t num_duals = 10;
-    size_t num_states = 6;
-    size_t num_controls = 8;
-    dotk::StdArray<Real> dual(num_duals, 1.);
-    dotk::StdArray<Real> state(num_states, 3.);
-    dotk::StdArray<Real> control(num_controls, 2.);
-    dotk::DOTk_MultiVector<Real> multi_vector(control, state, dual);
-    EXPECT_TRUE(multi_vector.size() == 24);
-
-    std::vector<Real> output(multi_vector.size());
-    multi_vector.gather(output.data());
-
-    dotk::gtest::checkResults(num_controls, output.data(), *multi_vector.control());
-    dotk::gtest::checkResults(num_states, output.data() + num_controls, *multi_vector.state());
-    dotk::gtest::checkResults(num_duals, output.data() + num_controls + num_states, *multi_vector.dual());
 }
 
 TEST(DOTkMultiVariableVector, operator_braket2)

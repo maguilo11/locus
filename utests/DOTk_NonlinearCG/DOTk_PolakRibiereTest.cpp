@@ -43,7 +43,7 @@ TEST(DOTk_Daniels, getDirection)
     (*mng->getTrialStep())[1] = 1.;
 
     std::tr1::shared_ptr<dotk::NumericallyDifferentiatedHessian> hessian(new dotk::NumericallyDifferentiatedHessian(primal, objective));
-    hessian->setForwardDifference(primal);
+    hessian->setForwardDifference(*primal->control());
     hessian->apply(mng, mng->getTrialStep(), mng->getMatrixTimesVector());
     EXPECT_NEAR(-4801.9971998201072, (*mng->getMatrixTimesVector())[0], tolerance);
     EXPECT_NEAR(999.99979994436217, (*mng->getMatrixTimesVector())[1], tolerance);
@@ -77,7 +77,7 @@ TEST(DOTk_Daniels, direction_TakeSteepestDescent)
     (*mng->getTrialStep())[1] = 1.;
 
     std::tr1::shared_ptr<dotk::NumericallyDifferentiatedHessian> hessian(new dotk::NumericallyDifferentiatedHessian(primal, objective));
-    hessian->setForwardDifference(primal);
+    hessian->setForwardDifference(*primal->control());
     dotk::DOTk_Daniels nlcg(hessian);
     nlcg.direction(mng);
 

@@ -50,14 +50,14 @@ void DOTk_Hessian::updateLimitedMemoryStorage(bool update_)
     m_Hessian->setUpdateSecondOrderOperator(true);
 }
 
-void DOTk_Hessian::setSr1Hessian(const std::tr1::shared_ptr<dotk::Vector<Real> > & vector_)
+void DOTk_Hessian::setSr1Hessian(const dotk::Vector<Real> & vector_)
 {
     dotk::DOTk_HessianFactory factory;
     factory.buildSr1Hessian(vector_, m_Hessian);
     m_Type = factory.getFactoryType();
 }
 
-void DOTk_Hessian::setDfpHessian(const std::tr1::shared_ptr<dotk::Vector<Real> > & vector_)
+void DOTk_Hessian::setDfpHessian(const dotk::Vector<Real> & vector_)
 {
     dotk::DOTk_HessianFactory factory;
     factory.buildDfpHessian(vector_, m_Hessian);
@@ -78,28 +78,28 @@ void DOTk_Hessian::setFullSpaceHessian()
     m_Type = factory.getFactoryType();
 }
 
-void DOTk_Hessian::setBarzilaiBorweinHessian(const std::tr1::shared_ptr<dotk::Vector<Real> > & vector_)
+void DOTk_Hessian::setBarzilaiBorweinHessian(const dotk::Vector<Real> & vector_)
 {
     dotk::DOTk_HessianFactory factory;
     factory.buildBarzilaiBorweinHessian(vector_, m_Hessian);
     m_Type = factory.getFactoryType();
 }
 
-void DOTk_Hessian::setLbfgsHessian(const std::tr1::shared_ptr<dotk::Vector<Real> > & vector_, size_t secant_storage_)
+void DOTk_Hessian::setLbfgsHessian(const dotk::Vector<Real> & vector_, size_t secant_storage_)
 {
     dotk::DOTk_HessianFactory factory;
     factory.buildLbfgsHessian(secant_storage_, vector_, m_Hessian);
     m_Type = factory.getFactoryType();
 }
 
-void DOTk_Hessian::setLdfpHessian(const std::tr1::shared_ptr<dotk::Vector<Real> > & vector_, size_t secant_storage_)
+void DOTk_Hessian::setLdfpHessian(const dotk::Vector<Real> & vector_, size_t secant_storage_)
 {
     dotk::DOTk_HessianFactory factory;
     factory.buildLdfpHessian(secant_storage_, vector_, m_Hessian);
     m_Type = factory.getFactoryType();
 }
 
-void DOTk_Hessian::setLsr1Hessian(const std::tr1::shared_ptr<dotk::Vector<Real> > & vector_, size_t secant_storage_)
+void DOTk_Hessian::setLsr1Hessian(const dotk::Vector<Real> & vector_, size_t secant_storage_)
 {
     dotk::DOTk_HessianFactory factory;
     factory.buildLsr1Hessian(secant_storage_, vector_, m_Hessian);

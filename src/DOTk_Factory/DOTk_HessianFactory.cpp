@@ -71,55 +71,49 @@ void DOTk_HessianFactory::buildReducedSpaceHessian(std::tr1::shared_ptr<dotk::DO
     operator_.reset(new dotk::DOTk_UserDefinedHessian);
 }
 
-void DOTk_HessianFactory::buildLbfgsHessian
-(size_t secant_storage_,
- const std::tr1::shared_ptr<dotk::Vector<Real> > & vector_,
- std::tr1::shared_ptr<dotk::DOTk_SecondOrderOperator> & operator_)
+void DOTk_HessianFactory::buildLbfgsHessian(size_t secant_storage_,
+                                            const dotk::Vector<Real> & vector_,
+                                            std::tr1::shared_ptr<dotk::DOTk_SecondOrderOperator> & operator_)
 {
     this->setFactoryType(dotk::types::LBFGS_HESS);
     size_t secant_storage = this->checkSecantStorageInput(secant_storage_);
     operator_.reset(new dotk::DOTk_LBFGSHessian(vector_, secant_storage));
 }
 
-void DOTk_HessianFactory::buildLdfpHessian
-(size_t secant_storage_,
- const std::tr1::shared_ptr<dotk::Vector<Real> > & vector_,
- std::tr1::shared_ptr<dotk::DOTk_SecondOrderOperator> & operator_)
+void DOTk_HessianFactory::buildLdfpHessian(size_t secant_storage_,
+                                           const dotk::Vector<Real> & vector_,
+                                           std::tr1::shared_ptr<dotk::DOTk_SecondOrderOperator> & operator_)
 {
     this->setFactoryType(dotk::types::LDFP_HESS);
     size_t secant_storage = this->checkSecantStorageInput(secant_storage_);
     operator_.reset(new dotk::DOTk_LDFPHessian(vector_, secant_storage));
 }
 
-void DOTk_HessianFactory::buildLsr1Hessian
-(size_t secant_storage_,
- const std::tr1::shared_ptr<dotk::Vector<Real> > & vector_,
- std::tr1::shared_ptr<dotk::DOTk_SecondOrderOperator> & operator_)
+void DOTk_HessianFactory::buildLsr1Hessian(size_t secant_storage_,
+                                           const dotk::Vector<Real> & vector_,
+                                           std::tr1::shared_ptr<dotk::DOTk_SecondOrderOperator> & operator_)
 {
     this->setFactoryType(dotk::types::LSR1_HESS);
     size_t secant_storage = this->checkSecantStorageInput(secant_storage_);
     operator_.reset(new dotk::DOTk_LSR1Hessian(vector_, secant_storage));
 }
 
-void DOTk_HessianFactory::buildSr1Hessian
-(const std::tr1::shared_ptr<dotk::Vector<Real> > & vector_,
- std::tr1::shared_ptr<dotk::DOTk_SecondOrderOperator> & operator_)
+void DOTk_HessianFactory::buildSr1Hessian(const dotk::Vector<Real> & vector_,
+                                          std::tr1::shared_ptr<dotk::DOTk_SecondOrderOperator> & operator_)
 {
     this->setFactoryType(dotk::types::SR1_HESS);
     operator_.reset(new dotk::DOTk_SR1Hessian(vector_));
 }
 
-void DOTk_HessianFactory::buildDfpHessian
-(const std::tr1::shared_ptr<dotk::Vector<Real> > & vector_,
- std::tr1::shared_ptr<dotk::DOTk_SecondOrderOperator> & operator_)
+void DOTk_HessianFactory::buildDfpHessian(const dotk::Vector<Real> & vector_,
+                                          std::tr1::shared_ptr<dotk::DOTk_SecondOrderOperator> & operator_)
 {
     this->setFactoryType(dotk::types::DFP_HESS);
     operator_.reset(new dotk::DOTk_DFPHessian(vector_));
 }
 
-void DOTk_HessianFactory::buildBarzilaiBorweinHessian
-(const std::tr1::shared_ptr<dotk::Vector<Real> > & vector_,
- std::tr1::shared_ptr<dotk::DOTk_SecondOrderOperator> & operator_)
+void DOTk_HessianFactory::buildBarzilaiBorweinHessian(const dotk::Vector<Real> & vector_,
+                                                      std::tr1::shared_ptr<dotk::DOTk_SecondOrderOperator> & operator_)
 {
     this->setFactoryType(dotk::types::BARZILAIBORWEIN_HESS);
     operator_.reset(new dotk::DOTk_BarzilaiBorweinHessian(vector_));
@@ -129,39 +123,39 @@ void DOTk_HessianFactory::build(const dotk::DOTk_OptimizationDataMng * const mng
                                 std::tr1::shared_ptr<dotk::DOTk_SecondOrderOperator> & operator_,
                                 size_t secant_storage_)
 {
-    switch (this->getFactoryType())
+    switch(this->getFactoryType())
     {
         case dotk::types::LBFGS_HESS:
         {
             size_t secant_storage = this->checkSecantStorageInput(secant_storage_);
-            operator_.reset(new dotk::DOTk_LBFGSHessian(mng_->getTrialStep(), secant_storage));
+            operator_.reset(new dotk::DOTk_LBFGSHessian(*mng_->getTrialStep(), secant_storage));
             break;
         }
         case dotk::types::LDFP_HESS:
         {
             size_t secant_storage = this->checkSecantStorageInput(secant_storage_);
-            operator_.reset(new dotk::DOTk_LDFPHessian(mng_->getTrialStep(), secant_storage));
+            operator_.reset(new dotk::DOTk_LDFPHessian(*mng_->getTrialStep(), secant_storage));
             break;
         }
         case dotk::types::LSR1_HESS:
         {
             size_t secant_storage = this->checkSecantStorageInput(secant_storage_);
-            operator_.reset(new dotk::DOTk_LSR1Hessian(mng_->getTrialStep(), secant_storage));
+            operator_.reset(new dotk::DOTk_LSR1Hessian(*mng_->getTrialStep(), secant_storage));
             break;
         }
         case dotk::types::SR1_HESS:
         {
-            operator_.reset(new dotk::DOTk_SR1Hessian(mng_->getTrialStep()));
+            operator_.reset(new dotk::DOTk_SR1Hessian(*mng_->getTrialStep()));
             break;
         }
         case dotk::types::DFP_HESS:
         {
-            operator_.reset(new dotk::DOTk_DFPHessian(mng_->getTrialStep()));
+            operator_.reset(new dotk::DOTk_DFPHessian(*mng_->getTrialStep()));
             break;
         }
         case dotk::types::BARZILAIBORWEIN_HESS:
         {
-            operator_.reset(new dotk::DOTk_BarzilaiBorweinHessian(mng_->getTrialStep()));
+            operator_.reset(new dotk::DOTk_BarzilaiBorweinHessian(*mng_->getTrialStep()));
             break;
         }
         case dotk::types::USER_DEFINED_HESS:
@@ -178,7 +172,7 @@ void DOTk_HessianFactory::build(const dotk::DOTk_OptimizationDataMng * const mng
         {
             std::cout << "\nDOTk WARNING: Invalid hessian operator type, Default Hessian operator set to LBFGS "
                     << "and the secant storage will be set to 4.\n" << std::flush;
-            operator_.reset(new dotk::DOTk_LBFGSHessian(mng_->getTrialStep(), this->getDefaultSecantSotrage()));
+            operator_.reset(new dotk::DOTk_LBFGSHessian(*mng_->getTrialStep(), this->getDefaultSecantSotrage()));
             break;
         }
     }
@@ -187,7 +181,7 @@ void DOTk_HessianFactory::build(const dotk::DOTk_OptimizationDataMng * const mng
 size_t DOTk_HessianFactory::checkSecantStorageInput(size_t secant_storage_)
 {
     size_t secant_storage = secant_storage_;
-    if (secant_storage_ <= 0)
+    if(secant_storage_ <= 0)
     {
         std::cout << "\nDOTk WARNING: Invalid secant storage input. Default secant storage will be set to "
                 << this->getDefaultSecantSotrage() << ".\n\n" << std::flush;

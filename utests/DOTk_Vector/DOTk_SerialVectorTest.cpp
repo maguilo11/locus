@@ -151,18 +151,4 @@ TEST(DOTk_SerialVectorTest, copy)
     dotk::gtest::checkResults(*gold, *y, thread_count);
 }
 
-TEST(DOTk_SerialVectorTest, gather)
-{
-    int dim = 1e4;
-    dotk::StdVector<double> vector(dim, 1.);
-    std::vector<double> y(dim, 0);
-
-    vector.gather(y.data());
-
-    std::tr1::shared_ptr<dotk::Vector<double> > gold = vector.clone();
-    gold->fill(1.);
-    int thread_count = 4;
-    dotk::gtest::checkResults(y.size(), y.data(), *gold, thread_count);
-}
-
 }

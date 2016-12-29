@@ -5,509 +5,447 @@
  *      Author: Miguel A. Aguilo Valentin
  */
 
-#include "vector.hpp"
-#include "DOTk_MexArrayPtr.hpp"
+#include <sstream>
+#include <cassert>
+#include "DOTk_MexVector.hpp"
 #include "DOTk_MexApiUtilities.hpp"
 #include "DOTk_MexEqualityConstraint.hpp"
 
 namespace dotk
 {
 
-template<typename ScalarType>
-DOTk_MexEqualityConstraint<ScalarType>::DOTk_MexEqualityConstraint(const mxArray* operators_,
-                                                             const dotk::types::problem_t & type_) :
-        m_Solve(NULL),
-        m_Hessian(NULL),
-        m_Residual(NULL),
-        m_Jacobian(NULL),
-        m_PartialDerivativeState(NULL),
-        m_PartialDerivativeControl(NULL),
-        m_AdjointPartialDerivative(NULL),
-        m_ApplyInverseJacobianState(NULL),
-        m_PartialDerivativeStateState(NULL),
-        m_AdjointPartialDerivativeState(NULL),
-        m_PartialDerivativeStateControl(NULL),
-        m_PartialDerivativeControlState(NULL),
-        m_AdjointPartialDerivativeControl(NULL),
-        m_PartialDerivativeControlControl(NULL),
-        m_ApplyAdjointInverseJacobianState(NULL)
+DOTk_MexEqualityConstraint::DOTk_MexEqualityConstraint(const mxArray* operators_, const dotk::types::problem_t & type_) :
+        m_Solve(nullptr),
+        m_Residual(nullptr),
+        m_ApplyInverseJacobianState(nullptr),
+        m_ApplyAdjointInverseJacobianState(nullptr),
+        m_Jacobian(nullptr),
+        m_AdjointJacobian(nullptr),
+        m_PartialDerivativeState(nullptr),
+        m_PartialDerivativeControl(nullptr),
+        m_AdjointPartialDerivativeState(nullptr),
+        m_AdjointPartialDerivativeControl(nullptr),
+        m_Hessian(nullptr),
+        m_PartialDerivativeStateState(nullptr),
+        m_PartialDerivativeStateControl(nullptr),
+        m_PartialDerivativeControlState(nullptr),
+        m_PartialDerivativeControlControl(nullptr)
 {
     this->initialize(operators_, type_);
 }
 
-template<typename ScalarType>
-DOTk_MexEqualityConstraint<ScalarType>::~DOTk_MexEqualityConstraint()
+DOTk_MexEqualityConstraint::~DOTk_MexEqualityConstraint()
 {
     this->clear();
 }
 
-template<typename ScalarType>
-void DOTk_MexEqualityConstraint<ScalarType>::solve(const dotk::Vector<ScalarType> & control_, dotk::Vector<ScalarType> & output_)
+void DOTk_MexEqualityConstraint::solve(const dotk::Vector<double> & control_, dotk::Vector<double> & output_)
 {
-    dotk::DOTk_MexArrayPtr control(mxCreateDoubleMatrix(control_.size(), 1, mxREAL));
-    control_.gather(mxGetPr(control.get()));
+    const dotk::MexVector & control = dynamic_cast<const dotk::MexVector &>(control_);
+    mxArray* mx_control = const_cast<mxArray*>(control.array());
 
-    mxArray* input[2] =
-        { m_Solve.get(), control.get() };
-    mxArray* output[1];
+    mxArray* mx_output[1];
+    mxArray* mx_input[2] = { m_Solve, mx_control };
+    mxArray* error = mexCallMATLABWithTrapWithObject(1, mx_output, 2, mx_input, "feval");
+    std::ostringstream msg;
+    msg << "\nERROR IN: " << __FILE__ << ", LINE: " << __LINE__ << ", -> Error while calling solve.\n";
+    dotk::mex::handleException(error, msg.str());
 
-    mxArray* err = mexCallMATLABWithTrap(1, output, 2, input, "feval");
-    dotk::mex::handleException(err, "ERROR: Invalid Call to DOTk_MexEqualityConstraint<ScalarType>::solve");
-    dotk::mex::copyData(output_.size(), mxGetPr(output[0]), output_);
-
-    control.release();
+    assert(output_.size() == mxGetNumberOfElements(mx_output[0]));
+    dotk::MexVector & output = dynamic_cast<dotk::MexVector &>(output_);
+    output.setMxArray(mx_output[0]);
 }
 
-template<typename ScalarType>
-void DOTk_MexEqualityConstraint<ScalarType>::applyInverseJacobianState(const dotk::Vector<ScalarType> & state_,
-                                                                 const dotk::Vector<ScalarType> & control_,
-                                                                 const dotk::Vector<ScalarType> & rhs_,
-                                                                 dotk::Vector<ScalarType> & output_)
+void DOTk_MexEqualityConstraint::applyInverseJacobianState(const dotk::Vector<double> & state_,
+                                                           const dotk::Vector<double> & control_,
+                                                           const dotk::Vector<double> & rhs_,
+                                                           dotk::Vector<double> & output_)
 {
-    dotk::DOTk_MexArrayPtr rhs(mxCreateDoubleMatrix(rhs_.size(), 1, mxREAL));
-    rhs_.gather(mxGetPr(rhs.get()));
+    const dotk::MexVector & rhs = dynamic_cast<const dotk::MexVector &>(rhs_);
+    mxArray* mx_rhs = const_cast<mxArray*>(rhs.array());
+    const dotk::MexVector & state = dynamic_cast<const dotk::MexVector &>(state_);
+    mxArray* mx_state = const_cast<mxArray*>(state.array());
+    const dotk::MexVector & control = dynamic_cast<const dotk::MexVector &>(control_);
+    mxArray* mx_control = const_cast<mxArray*>(control.array());
 
-    dotk::DOTk_MexArrayPtr state(mxCreateDoubleMatrix(state_.size(), 1, mxREAL));
-    state_.gather(mxGetPr(state.get()));
+    mxArray* mx_output[1];
+    mxArray* mx_input[4] = { m_ApplyInverseJacobianState, mx_state, mx_control, mx_rhs };
+    mxArray* error = mexCallMATLABWithTrapWithObject(1, mx_output, 4, mx_input, "feval");
+    std::ostringstream msg;
+    msg << "\nERROR IN: " << __FILE__ << ", LINE: " << __LINE__
+            << ", -> Error while calling applyInverseJacobianState.\n";
+    dotk::mex::handleException(error, msg.str());
 
-    dotk::DOTk_MexArrayPtr control(mxCreateDoubleMatrix(control_.size(), 1, mxREAL));
-    control_.gather(mxGetPr(control.get()));
-
-    mxArray* input[4] =
-        { m_ApplyInverseJacobianState.get(), state.get(), control.get(), rhs.get() };
-    mxArray* output[1];
-
-    mxArray* err = mexCallMATLABWithTrap(1, output, 4, input, "feval");
-    dotk::mex::handleException(err,
-                               "ERROR: Invalid Call to DOTk_MexEqualityConstraint<ScalarType>::applyInverseJacobianState");
-    dotk::mex::copyData(output_.size(), mxGetPr(output[0]), output_);
-
-    rhs.release();
-    state.release();
-    control.release();
+    assert(output_.size() == mxGetNumberOfElements(mx_output[0]));
+    dotk::MexVector & output = dynamic_cast<dotk::MexVector &>(output_);
+    output.setMxArray(mx_output[0]);
 }
 
-template<typename ScalarType>
-void DOTk_MexEqualityConstraint<ScalarType>::applyAdjointInverseJacobianState(const dotk::Vector<ScalarType> & state_,
-                                                                        const dotk::Vector<ScalarType> & control_,
-                                                                        const dotk::Vector<ScalarType> & rhs_,
-                                                                        dotk::Vector<ScalarType> & output_)
+void DOTk_MexEqualityConstraint::applyAdjointInverseJacobianState(const dotk::Vector<double> & state_,
+                                                                  const dotk::Vector<double> & control_,
+                                                                  const dotk::Vector<double> & rhs_,
+                                                                  dotk::Vector<double> & output_)
 {
-    dotk::DOTk_MexArrayPtr rhs(mxCreateDoubleMatrix(rhs_.size(), 1, mxREAL));
-    rhs_.gather(mxGetPr(rhs.get()));
+    const dotk::MexVector & rhs = dynamic_cast<const dotk::MexVector &>(rhs_);
+    mxArray* mx_rhs = const_cast<mxArray*>(rhs.array());
+    const dotk::MexVector & state = dynamic_cast<const dotk::MexVector &>(state_);
+    mxArray* mx_state = const_cast<mxArray*>(state.array());
+    const dotk::MexVector & control = dynamic_cast<const dotk::MexVector &>(control_);
+    mxArray* mx_control = const_cast<mxArray*>(control.array());
 
-    dotk::DOTk_MexArrayPtr state(mxCreateDoubleMatrix(state_.size(), 1, mxREAL));
-    state_.gather(mxGetPr(state.get()));
+    mxArray* mx_output[1];
+    mxArray* mx_input[4] = { m_ApplyAdjointInverseJacobianState, mx_state, mx_control, mx_rhs };
+    mxArray* error = mexCallMATLABWithTrapWithObject(1, mx_output, 4, mx_input, "feval");
+    std::ostringstream msg;
+    msg << "\nERROR IN: " << __FILE__ << ", LINE: " << __LINE__
+            << ", -> Error while calling applyAdjointInverseJacobianState.\n";
+    dotk::mex::handleException(error, msg.str());
 
-    dotk::DOTk_MexArrayPtr control(mxCreateDoubleMatrix(control_.size(), 1, mxREAL));
-    control_.gather(mxGetPr(control.get()));
-
-    mxArray* input[4] =
-        { m_ApplyAdjointInverseJacobianState.get(), state.get(), control.get(), rhs.get() };
-    mxArray* output[1];
-
-    mxArray* err = mexCallMATLABWithTrap(1, output, 4, input, "feval");
-    dotk::mex::handleException(err,
-                               "ERROR: Invalid Call to DOTk_MexEqualityConstraint<ScalarType>::applyAdjointInverseJacobianState");
-    dotk::mex::copyData(output_.size(), mxGetPr(output[0]), output_);
-
-    rhs.release();
-    state.release();
-    control.release();
+    assert(output_.size() == mxGetNumberOfElements(mx_output[0]));
+    dotk::MexVector & output = dynamic_cast<dotk::MexVector &>(output_);
+    output.setMxArray(mx_output[0]);
 }
 
-template<typename ScalarType>
-void DOTk_MexEqualityConstraint<ScalarType>::residual(const dotk::Vector<ScalarType> & primal_, dotk::Vector<ScalarType> & output_)
+void DOTk_MexEqualityConstraint::residual(const dotk::Vector<double> & primal_, dotk::Vector<double> & output_)
 {
-    dotk::DOTk_MexArrayPtr primal(mxCreateDoubleMatrix(primal_.size(), 1, mxREAL));
-    primal_.gather(mxGetPr(primal.get()));
+    const dotk::MexVector & primal = dynamic_cast<const dotk::MexVector &>(primal_);
+    mxArray* mx_primal = const_cast<mxArray*>(primal.array());
 
-    mxArray* input[2] =
-        { m_Residual.get(), primal.get() };
-    mxArray* output[1];
+    mxArray* mx_output[1];
+    mxArray* mx_input[2] = { m_Residual, mx_primal };
+    mxArray* error = mexCallMATLABWithTrapWithObject(1, mx_output, 2, mx_input, "feval");
+    std::ostringstream msg;
+    msg << "\nERROR IN: " << __FILE__ << ", LINE: " << __LINE__ << ", -> Error while calling residual.\n";
+    dotk::mex::handleException(error, msg.str());
 
-    mxArray* err = mexCallMATLABWithTrap(1, output, 2, input, "feval");
-    dotk::mex::handleException(err, "ERROR: Invalid Call to DOTk_MexEqualityConstraint<ScalarType>::residual(primal,output)");
-    dotk::mex::copyData(output_.size(), mxGetPr(output[0]), output_);
-
-    primal.release();
+    assert(output_.size() == mxGetNumberOfElements(mx_output[0]));
+    dotk::MexVector & output = dynamic_cast<dotk::MexVector &>(output_);
+    output.setMxArray(mx_output[0]);
 }
 
-template<typename ScalarType>
-void DOTk_MexEqualityConstraint<ScalarType>::jacobian(const dotk::Vector<ScalarType> & primal_,
-                                                const dotk::Vector<ScalarType> & vector_,
-                                                dotk::Vector<ScalarType> & output_)
+void DOTk_MexEqualityConstraint::jacobian(const dotk::Vector<double> & primal_,
+                                          const dotk::Vector<double> & vector_,
+                                          dotk::Vector<double> & output_)
 {
-    dotk::DOTk_MexArrayPtr primal(mxCreateDoubleMatrix(primal_.size(), 1, mxREAL));
-    primal_.gather(mxGetPr(primal.get()));
+    const dotk::MexVector & primal = dynamic_cast<const dotk::MexVector &>(primal_);
+    mxArray* mx_primal = const_cast<mxArray*>(primal.array());
+    const dotk::MexVector & vector = dynamic_cast<const dotk::MexVector &>(vector_);
+    mxArray* mx_vector = const_cast<mxArray*>(vector.array());
 
-    dotk::DOTk_MexArrayPtr delta_primal(mxCreateDoubleMatrix(vector_.size(), 1, mxREAL));
-    vector_.gather(mxGetPr(delta_primal.get()));
+    mxArray* mx_output[1];
+    mxArray* mx_input[3] = { m_Jacobian, mx_primal, mx_vector };
+    mxArray* error = mexCallMATLABWithTrapWithObject(1, mx_output, 3, mx_input, "feval");
+    std::ostringstream msg;
+    msg << "\nERROR IN: " << __FILE__ << ", LINE: " << __LINE__ << ", -> Error while calling jacobian.\n";
+    dotk::mex::handleException(error, msg.str());
 
-    mxArray* input[3] =
-        { m_Jacobian.get(), primal.get(), delta_primal.get() };
-    mxArray* output[1];
-
-    mxArray* err = mexCallMATLABWithTrap(1, output, 3, input, "feval");
-    dotk::mex::handleException(err, "ERROR: Invalid Call to DOTk_MexEqualityConstraint<ScalarType>::jacobian");
-    dotk::mex::copyData(output_.size(), mxGetPr(output[0]), output_);
-
-    primal.release();
-    delta_primal.release();
+    assert(output_.size() == mxGetNumberOfElements(mx_output[0]));
+    dotk::MexVector & output = dynamic_cast<dotk::MexVector &>(output_);
+    output.setMxArray(mx_output[0]);
 }
 
-template<typename ScalarType>
-void DOTk_MexEqualityConstraint<ScalarType>::adjointJacobian(const dotk::Vector<ScalarType> & primal_,
-                                                       const dotk::Vector<ScalarType> & dual_,
-                                                       dotk::Vector<ScalarType> & output_)
+void DOTk_MexEqualityConstraint::adjointJacobian(const dotk::Vector<double> & primal_,
+                                                 const dotk::Vector<double> & dual_,
+                                                 dotk::Vector<double> & output_)
 {
-    dotk::DOTk_MexArrayPtr dual(mxCreateDoubleMatrix(dual_.size(), 1, mxREAL));
-    dual_.gather(mxGetPr(dual.get()));
+    const dotk::MexVector & primal = dynamic_cast<const dotk::MexVector &>(primal_);
+    mxArray* mx_primal = const_cast<mxArray*>(primal.array());
+    const dotk::MexVector & dual = dynamic_cast<const dotk::MexVector &>(dual_);
+    mxArray* mx_dual = const_cast<mxArray*>(dual.array());
 
-    dotk::DOTk_MexArrayPtr primal(mxCreateDoubleMatrix(primal_.size(), 1, mxREAL));
-    primal_.gather(mxGetPr(primal.get()));
+    mxArray* mx_output[1];
+    mxArray* mx_input[3] = { m_AdjointJacobian, mx_primal, mx_dual };
 
-    mxArray* input[3] =
-        { m_AdjointPartialDerivative.get(), primal.get(), dual.get() };
-    mxArray* output[1];
+    mxArray* error = mexCallMATLABWithTrapWithObject(1, mx_output, 3, mx_input, "feval");
+    std::ostringstream msg;
+    msg << "\nERROR IN: " << __FILE__ << ", LINE: " << __LINE__ << ", -> Error while calling adjointJacobian.\n";
+    dotk::mex::handleException(error, msg.str());
 
-    mxArray* err = mexCallMATLABWithTrap(1, output, 3, input, "feval");
-    dotk::mex::handleException(err, "ERROR: Invalid Call to DOTk_MexEqualityConstraint<ScalarType>::adjointJacobian");
-    dotk::mex::copyData(output_.size(), mxGetPr(output[0]), output_);
-
-    dual.release();
-    primal.release();
+    assert(output_.size() == mxGetNumberOfElements(mx_output[0]));
+    dotk::MexVector & output = dynamic_cast<dotk::MexVector &>(output_);
+    output.setMxArray(mx_output[0]);
 }
 
-template<typename ScalarType>
-void DOTk_MexEqualityConstraint<ScalarType>::hessian(const dotk::Vector<ScalarType> & primal_,
-                                               const dotk::Vector<ScalarType> & dual_,
-                                               const dotk::Vector<ScalarType> & vector_,
-                                               dotk::Vector<ScalarType> & output_)
+void DOTk_MexEqualityConstraint::hessian(const dotk::Vector<double> & primal_,
+                                         const dotk::Vector<double> & dual_,
+                                         const dotk::Vector<double> & vector_,
+                                         dotk::Vector<double> & output_)
 {
-    dotk::DOTk_MexArrayPtr dual(mxCreateDoubleMatrix(dual_.size(), 1, mxREAL));
-    dual_.gather(mxGetPr(dual.get()));
+    const dotk::MexVector & primal = dynamic_cast<const dotk::MexVector &>(primal_);
+    mxArray* mx_primal = const_cast<mxArray*>(primal.array());
+    const dotk::MexVector & dual = dynamic_cast<const dotk::MexVector &>(dual_);
+    mxArray* mx_dual = const_cast<mxArray*>(dual.array());
+    const dotk::MexVector & vector = dynamic_cast<const dotk::MexVector &>(vector_);
+    mxArray* mx_vector = const_cast<mxArray*>(vector.array());
 
-    dotk::DOTk_MexArrayPtr primal(mxCreateDoubleMatrix(primal_.size(), 1, mxREAL));
-    primal_.gather(mxGetPr(primal.get()));
+    mxArray* mx_output[1];
+    mxArray* mx_input[4] = { m_Hessian, mx_primal, mx_dual, mx_vector };
+    mxArray* error = mexCallMATLABWithTrapWithObject(1, mx_output, 4, mx_input, "feval");
+    std::ostringstream msg;
+    msg << "\nERROR IN: " << __FILE__ << ", LINE: " << __LINE__ << ", -> Error while calling hessian.\n";
+    dotk::mex::handleException(error, msg.str());
 
-    dotk::DOTk_MexArrayPtr delta_primal(mxCreateDoubleMatrix(vector_.size(), 1, mxREAL));
-    vector_.gather(mxGetPr(delta_primal.get()));
-
-    mxArray* input[4] =
-        { m_Hessian.get(), primal.get(), dual.get(), delta_primal.get() };
-    mxArray* output[1];
-
-    mxArray* err = mexCallMATLABWithTrap(1, output, 4, input, "feval");
-    dotk::mex::handleException(err, "ERROR: Invalid Call to DOTk_MexEqualityConstraint<ScalarType>::hessian");
-    dotk::mex::copyData(output_.size(), mxGetPr(output[0]), output_);
-
-    dual.release();
-    primal.release();
-    delta_primal.release();
+    assert(output_.size() == mxGetNumberOfElements(mx_output[0]));
+    dotk::MexVector & output = dynamic_cast<dotk::MexVector &>(output_);
+    output.setMxArray(mx_output[0]);
 }
 
-template<typename ScalarType>
-void DOTk_MexEqualityConstraint<ScalarType>::residual(const dotk::Vector<ScalarType> & state_,
-                                                const dotk::Vector<ScalarType> & control_,
-                                                dotk::Vector<ScalarType> & output_)
+void DOTk_MexEqualityConstraint::residual(const dotk::Vector<double> & state_,
+                                          const dotk::Vector<double> & control_,
+                                          dotk::Vector<double> & output_)
 {
-    dotk::DOTk_MexArrayPtr state(mxCreateDoubleMatrix(state_.size(), 1, mxREAL));
-    state_.gather(mxGetPr(state.get()));
+    const dotk::MexVector & state = dynamic_cast<const dotk::MexVector &>(state_);
+    mxArray* mx_state = const_cast<mxArray*>(state.array());
+    const dotk::MexVector & control = dynamic_cast<const dotk::MexVector &>(control_);
+    mxArray* mx_control = const_cast<mxArray*>(control.array());
 
-    dotk::DOTk_MexArrayPtr control(mxCreateDoubleMatrix(control_.size(), 1, mxREAL));
-    control_.gather(mxGetPr(control.get()));
+    mxArray* mx_output[1];
+    mxArray* mx_input[3] = { m_Residual, mx_state, mx_control };
+    mxArray* error = mexCallMATLABWithTrapWithObject(1, mx_output, 3, mx_input, "feval");
+    std::ostringstream msg;
+    msg << "\nERROR IN: " << __FILE__ << ", LINE: " << __LINE__ << ", -> Error while calling residual.\n";
+    dotk::mex::handleException(error, msg.str());
 
-    mxArray* input[3] =
-        { m_Residual.get(), state.get(), control.get() };
-    mxArray* output[1];
-
-    mxArray* err = mexCallMATLABWithTrap(1, output, 3, input, "feval");
-    dotk::mex::handleException(err,
-                               "ERROR: Invalid Call to DOTk_MexEqualityConstraint<ScalarType>::residual(state,control,output)");
-    dotk::mex::copyData(output_.size(), mxGetPr(output[0]), output_);
-
-    state.release();
-    control.release();
+    assert(output_.size() == mxGetNumberOfElements(mx_output[0]));
+    dotk::MexVector & output = dynamic_cast<dotk::MexVector &>(output_);
+    output.setMxArray(mx_output[0]);
 }
 
-template<typename ScalarType>
-void DOTk_MexEqualityConstraint<ScalarType>::partialDerivativeState(const dotk::Vector<ScalarType> & state_,
-                                                              const dotk::Vector<ScalarType> & control_,
-                                                              const dotk::Vector<ScalarType> & vector_,
-                                                              dotk::Vector<ScalarType> & output_)
+void DOTk_MexEqualityConstraint::partialDerivativeState(const dotk::Vector<double> & state_,
+                                                        const dotk::Vector<double> & control_,
+                                                        const dotk::Vector<double> & vector_,
+                                                        dotk::Vector<double> & output_)
 {
-    dotk::DOTk_MexArrayPtr state(mxCreateDoubleMatrix(state_.size(), 1, mxREAL));
-    state_.gather(mxGetPr(state.get()));
+    const dotk::MexVector & state = dynamic_cast<const dotk::MexVector &>(state_);
+    mxArray* mx_state = const_cast<mxArray*>(state.array());
+    const dotk::MexVector & control = dynamic_cast<const dotk::MexVector &>(control_);
+    mxArray* mx_control = const_cast<mxArray*>(control.array());
+    const dotk::MexVector & vector = dynamic_cast<const dotk::MexVector &>(vector_);
+    mxArray* mx_vector = const_cast<mxArray*>(vector.array());
 
-    dotk::DOTk_MexArrayPtr control(mxCreateDoubleMatrix(control_.size(), 1, mxREAL));
-    control_.gather(mxGetPr(control.get()));
+    mxArray* mx_output[1];
+    mxArray* mx_input[4] = { m_PartialDerivativeState, mx_state, mx_control, mx_vector };
+    mxArray* error = mexCallMATLABWithTrapWithObject(1, mx_output, 4, mx_input, "feval");
+    std::ostringstream msg;
+    msg << "\nERROR IN: " << __FILE__ << ", LINE: " << __LINE__ << ", -> Error while calling partialDerivativeState.\n";
+    dotk::mex::handleException(error, msg.str());
 
-    dotk::DOTk_MexArrayPtr delta_state(mxCreateDoubleMatrix(vector_.size(), 1, mxREAL));
-    vector_.gather(mxGetPr(delta_state.get()));
-
-    mxArray* input[4] =
-        { m_PartialDerivativeState.get(), state.get(), control.get(), delta_state.get() };
-    mxArray* output[1];
-
-    mxArray* err = mexCallMATLABWithTrap(1, output, 4, input, "feval");
-    dotk::mex::handleException(err, "ERROR: Invalid Call to DOTk_MexEqualityConstraint<ScalarType>::partialDerivativeState");
-    dotk::mex::copyData(output_.size(), mxGetPr(output[0]), output_);
-
-    state.release();
-    control.release();
-    delta_state.release();
+    assert(output_.size() == mxGetNumberOfElements(mx_output[0]));
+    dotk::MexVector & output = dynamic_cast<dotk::MexVector &>(output_);
+    output.setMxArray(mx_output[0]);
 }
 
-template<typename ScalarType>
-void DOTk_MexEqualityConstraint<ScalarType>::partialDerivativeControl(const dotk::Vector<ScalarType> & state_,
-                                                                const dotk::Vector<ScalarType> & control_,
-                                                                const dotk::Vector<ScalarType> & vector_,
-                                                                dotk::Vector<ScalarType> & output_)
+void DOTk_MexEqualityConstraint::partialDerivativeControl(const dotk::Vector<double> & state_,
+                                                          const dotk::Vector<double> & control_,
+                                                          const dotk::Vector<double> & vector_,
+                                                          dotk::Vector<double> & output_)
 {
-    dotk::DOTk_MexArrayPtr state(mxCreateDoubleMatrix(state_.size(), 1, mxREAL));
-    state_.gather(mxGetPr(state.get()));
+    const dotk::MexVector & state = dynamic_cast<const dotk::MexVector &>(state_);
+    mxArray* mx_state = const_cast<mxArray*>(state.array());
+    const dotk::MexVector & control = dynamic_cast<const dotk::MexVector &>(control_);
+    mxArray* mx_control = const_cast<mxArray*>(control.array());
+    const dotk::MexVector & vector = dynamic_cast<const dotk::MexVector &>(vector_);
+    mxArray* mx_vector = const_cast<mxArray*>(vector.array());
 
-    dotk::DOTk_MexArrayPtr control(mxCreateDoubleMatrix(control_.size(), 1, mxREAL));
-    control_.gather(mxGetPr(control.get()));
+    mxArray* mx_output[1];
+    mxArray* mx_input[4] = { m_PartialDerivativeControl, mx_state, mx_control, mx_vector };
+    mxArray* error = mexCallMATLABWithTrapWithObject(1, mx_output, 4, mx_input, "feval");
+    std::ostringstream msg;
+    msg << "\nERROR IN: " << __FILE__ << ", LINE: " << __LINE__ << ", -> Error while calling partialDerivativeControl.\n";
+    dotk::mex::handleException(error, msg.str());
 
-    dotk::DOTk_MexArrayPtr delta_control(mxCreateDoubleMatrix(vector_.size(), 1, mxREAL));
-    vector_.gather(mxGetPr(delta_control.get()));
-
-    mxArray* input[4] =
-        { m_PartialDerivativeControl.get(), state.get(), control.get(), delta_control.get() };
-    mxArray* output[1];
-
-    mxArray* err = mexCallMATLABWithTrap(1, output, 4, input, "feval");
-    dotk::mex::handleException(err,
-                               "ERROR: Invalid Call to DOTk_MexEqualityConstraint<ScalarType>::partialDerivativeControl");
-    dotk::mex::copyData(output_.size(), mxGetPr(output[0]), output_);
-
-    state.release();
-    control.release();
-    delta_control.release();
+    assert(output_.size() == mxGetNumberOfElements(mx_output[0]));
+    dotk::MexVector & output = dynamic_cast<dotk::MexVector &>(output_);
+    output.setMxArray(mx_output[0]);
 }
 
-template<typename ScalarType>
-void DOTk_MexEqualityConstraint<ScalarType>::adjointPartialDerivativeState(const dotk::Vector<ScalarType> & state_,
-                                                                     const dotk::Vector<ScalarType> & control_,
-                                                                     const dotk::Vector<ScalarType> & dual_,
-                                                                     dotk::Vector<ScalarType> & output_)
+void DOTk_MexEqualityConstraint::adjointPartialDerivativeState(const dotk::Vector<double> & state_,
+                                                               const dotk::Vector<double> & control_,
+                                                               const dotk::Vector<double> & dual_,
+                                                               dotk::Vector<double> & output_)
 {
-    dotk::DOTk_MexArrayPtr dual(mxCreateDoubleMatrix(dual_.size(), 1, mxREAL));
-    dual_.gather(mxGetPr(dual.get()));
+    const dotk::MexVector & state = dynamic_cast<const dotk::MexVector &>(state_);
+    mxArray* mx_state = const_cast<mxArray*>(state.array());
+    const dotk::MexVector & control = dynamic_cast<const dotk::MexVector &>(control_);
+    mxArray* mx_control = const_cast<mxArray*>(control.array());
+    const dotk::MexVector & dual = dynamic_cast<const dotk::MexVector &>(dual_);
+    mxArray* mx_dual = const_cast<mxArray*>(dual.array());
 
-    dotk::DOTk_MexArrayPtr state(mxCreateDoubleMatrix(state_.size(), 1, mxREAL));
-    state_.gather(mxGetPr(state.get()));
+    mxArray* mx_output[1];
+    mxArray* mx_input[4] = { m_AdjointPartialDerivativeState, mx_state, mx_control, mx_dual };
+    mxArray* error = mexCallMATLABWithTrapWithObject(1, mx_output, 4, mx_input, "feval");
+    std::ostringstream msg;
+    msg << "\nERROR IN: " << __FILE__ << ", LINE: " << __LINE__
+            << ", -> Error while calling adjointPartialDerivativeState.\n";
+    dotk::mex::handleException(error, msg.str());
 
-    dotk::DOTk_MexArrayPtr control(mxCreateDoubleMatrix(control_.size(), 1, mxREAL));
-    control_.gather(mxGetPr(control.get()));
-
-    mxArray* input[4] =
-        { m_AdjointPartialDerivativeState.get(), state.get(), control.get(), dual.get() };
-    mxArray* output[1];
-
-    mxArray* err = mexCallMATLABWithTrap(1, output, 4, input, "feval");
-    dotk::mex::handleException(err,
-                               "ERROR: Invalid Call to DOTk_MexEqualityConstraint<ScalarType>::adjointPartialDerivativeState");
-    dotk::mex::copyData(output_.size(), mxGetPr(output[0]), output_);
-
-    dual.release();
-    state.release();
-    control.release();
+    assert(output_.size() == mxGetNumberOfElements(mx_output[0]));
+    dotk::MexVector & output = dynamic_cast<dotk::MexVector &>(output_);
+    output.setMxArray(mx_output[0]);
 }
 
-template<typename ScalarType>
-void DOTk_MexEqualityConstraint<ScalarType>::adjointPartialDerivativeControl(const dotk::Vector<ScalarType> & state_,
-                                                                       const dotk::Vector<ScalarType> & control_,
-                                                                       const dotk::Vector<ScalarType> & dual_,
-                                                                       dotk::Vector<ScalarType> & output_)
+void DOTk_MexEqualityConstraint::adjointPartialDerivativeControl(const dotk::Vector<double> & state_,
+                                                                 const dotk::Vector<double> & control_,
+                                                                 const dotk::Vector<double> & dual_,
+                                                                 dotk::Vector<double> & output_)
 {
-    dotk::DOTk_MexArrayPtr dual(mxCreateDoubleMatrix(dual_.size(), 1, mxREAL));
-    dual_.gather(mxGetPr(dual.get()));
+    const dotk::MexVector & state = dynamic_cast<const dotk::MexVector &>(state_);
+    mxArray* mx_state = const_cast<mxArray*>(state.array());
+    const dotk::MexVector & control = dynamic_cast<const dotk::MexVector &>(control_);
+    mxArray* mx_control = const_cast<mxArray*>(control.array());
+    const dotk::MexVector & dual = dynamic_cast<const dotk::MexVector &>(dual_);
+    mxArray* mx_dual = const_cast<mxArray*>(dual.array());
 
-    dotk::DOTk_MexArrayPtr state(mxCreateDoubleMatrix(state_.size(), 1, mxREAL));
-    state_.gather(mxGetPr(state.get()));
+    mxArray* mx_output[1];
+    mxArray* mx_input[4] = { m_AdjointPartialDerivativeControl, mx_state, mx_control, mx_dual };
+    mxArray* error = mexCallMATLABWithTrapWithObject(1, mx_output, 4, mx_input, "feval");
+    std::ostringstream msg;
+    msg << "\nERROR IN: " << __FILE__ << ", LINE: " << __LINE__
+            << ", -> Error while calling adjointPartialDerivativeControl.\n";
+    dotk::mex::handleException(error, msg.str());
 
-    dotk::DOTk_MexArrayPtr control(mxCreateDoubleMatrix(control_.size(), 1, mxREAL));
-    control_.gather(mxGetPr(control.get()));
-
-    mxArray* input[4] =
-        { m_AdjointPartialDerivativeControl.get(), state.get(), control.get(), dual.get() };
-    mxArray* output[1];
-
-    mxArray* err = mexCallMATLABWithTrap(1, output, 4, input, "feval");
-    dotk::mex::handleException(err,
-                               "ERROR: Invalid Call to DOTk_MexEqualityConstraint<ScalarType>::adjointPartialDerivativeControl");
-    dotk::mex::copyData(output_.size(), mxGetPr(output[0]), output_);
-
-    dual.release();
-    state.release();
-    control.release();
+    assert(output_.size() == mxGetNumberOfElements(mx_output[0]));
+    dotk::MexVector & output = dynamic_cast<dotk::MexVector &>(output_);
+    output.setMxArray(mx_output[0]);
 }
 
-template<typename ScalarType>
-void DOTk_MexEqualityConstraint<ScalarType>::partialDerivativeStateState(const dotk::Vector<ScalarType> & state_,
-                                                                   const dotk::Vector<ScalarType> & control_,
-                                                                   const dotk::Vector<ScalarType> & dual_,
-                                                                   const dotk::Vector<ScalarType> & vector_,
-                                                                   dotk::Vector<ScalarType> & output_)
+void DOTk_MexEqualityConstraint::partialDerivativeStateState(const dotk::Vector<double> & state_,
+                                                             const dotk::Vector<double> & control_,
+                                                             const dotk::Vector<double> & dual_,
+                                                             const dotk::Vector<double> & vector_,
+                                                             dotk::Vector<double> & output_)
 {
-    dotk::DOTk_MexArrayPtr dual(mxCreateDoubleMatrix(dual_.size(), 1, mxREAL));
-    dual_.gather(mxGetPr(dual.get()));
+    const dotk::MexVector & state = dynamic_cast<const dotk::MexVector &>(state_);
+    mxArray* mx_state = const_cast<mxArray*>(state.array());
+    const dotk::MexVector & control = dynamic_cast<const dotk::MexVector &>(control_);
+    mxArray* mx_control = const_cast<mxArray*>(control.array());
+    const dotk::MexVector & dual = dynamic_cast<const dotk::MexVector &>(dual_);
+    mxArray* mx_dual = const_cast<mxArray*>(dual.array());
+    const dotk::MexVector & vector = dynamic_cast<const dotk::MexVector &>(vector_);
+    mxArray* mx_vector = const_cast<mxArray*>(vector.array());
 
-    dotk::DOTk_MexArrayPtr state(mxCreateDoubleMatrix(state_.size(), 1, mxREAL));
-    state_.gather(mxGetPr(state.get()));
+    mxArray* mx_output[1];
+    mxArray* mx_input[5] = { m_PartialDerivativeStateState, mx_state, mx_control, mx_dual, mx_vector };
+    mxArray* error = mexCallMATLABWithTrapWithObject(1, mx_output, 5, mx_input, "feval");
+    std::ostringstream msg;
+    msg << "\nERROR IN: " << __FILE__ << ", LINE: " << __LINE__
+            << ", -> Error while calling partialDerivativeStateState.\n";
+    dotk::mex::handleException(error, msg.str());
 
-    dotk::DOTk_MexArrayPtr control(mxCreateDoubleMatrix(control_.size(), 1, mxREAL));
-    control_.gather(mxGetPr(control.get()));
-
-    dotk::DOTk_MexArrayPtr delta_state(mxCreateDoubleMatrix(vector_.size(), 1, mxREAL));
-    vector_.gather(mxGetPr(delta_state.get()));
-
-    mxArray* input[5] =
-        { m_PartialDerivativeStateState.get(), state.get(), control.get(), dual.get(), delta_state.get() };
-    mxArray* output[1];
-
-    mxArray* err = mexCallMATLABWithTrap(1, output, 5, input, "feval");
-    dotk::mex::handleException(err,
-                               "ERROR: Invalid Call to DOTk_MexEqualityConstraint<ScalarType>::partialDerivativeStateState");
-    dotk::mex::copyData(output_.size(), mxGetPr(output[0]), output_);
-
-    dual.release();
-    state.release();
-    control.release();
-    delta_state.release();
+    assert(output_.size() == mxGetNumberOfElements(mx_output[0]));
+    dotk::MexVector & output = dynamic_cast<dotk::MexVector &>(output_);
+    output.setMxArray(mx_output[0]);
 }
 
-template<typename ScalarType>
-void DOTk_MexEqualityConstraint<ScalarType>::partialDerivativeStateControl(const dotk::Vector<ScalarType> & state_,
-                                                                     const dotk::Vector<ScalarType> & control_,
-                                                                     const dotk::Vector<ScalarType> & dual_,
-                                                                     const dotk::Vector<ScalarType> & vector_,
-                                                                     dotk::Vector<ScalarType> & output_)
+void DOTk_MexEqualityConstraint::partialDerivativeStateControl(const dotk::Vector<double> & state_,
+                                                               const dotk::Vector<double> & control_,
+                                                               const dotk::Vector<double> & dual_,
+                                                               const dotk::Vector<double> & vector_,
+                                                               dotk::Vector<double> & output_)
 {
-    dotk::DOTk_MexArrayPtr dual(mxCreateDoubleMatrix(dual_.size(), 1, mxREAL));
-    dual_.gather(mxGetPr(dual.get()));
+    const dotk::MexVector & state = dynamic_cast<const dotk::MexVector &>(state_);
+    mxArray* mx_state = const_cast<mxArray*>(state.array());
+    const dotk::MexVector & control = dynamic_cast<const dotk::MexVector &>(control_);
+    mxArray* mx_control = const_cast<mxArray*>(control.array());
+    const dotk::MexVector & dual = dynamic_cast<const dotk::MexVector &>(dual_);
+    mxArray* mx_dual = const_cast<mxArray*>(dual.array());
+    const dotk::MexVector & vector = dynamic_cast<const dotk::MexVector &>(vector_);
+    mxArray* mx_vector = const_cast<mxArray*>(vector.array());
 
-    dotk::DOTk_MexArrayPtr state(mxCreateDoubleMatrix(state_.size(), 1, mxREAL));
-    state_.gather(mxGetPr(state.get()));
+    mxArray* mx_output[1];
+    mxArray* mx_input[5] = { m_PartialDerivativeStateControl, mx_state, mx_control, mx_dual, mx_vector };
+    mxArray* error = mexCallMATLABWithTrapWithObject(1, mx_output, 5, mx_input, "feval");
+    std::ostringstream msg;
+    msg << "\nERROR IN: " << __FILE__ << ", LINE: " << __LINE__
+            << ", -> Error while calling partialDerivativeStateControl.\n";
+    dotk::mex::handleException(error, msg.str());
 
-    dotk::DOTk_MexArrayPtr control(mxCreateDoubleMatrix(control_.size(), 1, mxREAL));
-    control_.gather(mxGetPr(control.get()));
-
-    dotk::DOTk_MexArrayPtr delta_control(mxCreateDoubleMatrix(vector_.size(), 1, mxREAL));
-    vector_.gather(mxGetPr(delta_control.get()));
-
-    mxArray* input[5] =
-        { m_PartialDerivativeStateControl.get(), state.get(), control.get(), dual.get(), delta_control.get() };
-    mxArray* output[1];
-
-    mxArray* err = mexCallMATLABWithTrap(1, output, 5, input, "feval");
-    dotk::mex::handleException(err,
-                               "ERROR: Invalid Call to DOTk_MexEqualityConstraint<ScalarType>::partialDerivativeStateControl");
-    dotk::mex::copyData(output_.size(), mxGetPr(output[0]), output_);
-
-    dual.release();
-    state.release();
-    control.release();
-    delta_control.release();
+    assert(output_.size() == mxGetNumberOfElements(mx_output[0]));
+    dotk::MexVector & output = dynamic_cast<dotk::MexVector &>(output_);
+    output.setMxArray(mx_output[0]);
 }
 
-template<typename ScalarType>
-void DOTk_MexEqualityConstraint<ScalarType>::partialDerivativeControlControl(const dotk::Vector<ScalarType> & state_,
-                                                                       const dotk::Vector<ScalarType> & control_,
-                                                                       const dotk::Vector<ScalarType> & dual_,
-                                                                       const dotk::Vector<ScalarType> & vector_,
-                                                                       dotk::Vector<ScalarType> & output_)
+void DOTk_MexEqualityConstraint::partialDerivativeControlControl(const dotk::Vector<double> & state_,
+                                                                 const dotk::Vector<double> & control_,
+                                                                 const dotk::Vector<double> & dual_,
+                                                                 const dotk::Vector<double> & vector_,
+                                                                 dotk::Vector<double> & output_)
 {
-    dotk::DOTk_MexArrayPtr dual(mxCreateDoubleMatrix(dual_.size(), 1, mxREAL));
-    dual_.gather(mxGetPr(dual.get()));
+    const dotk::MexVector & state = dynamic_cast<const dotk::MexVector &>(state_);
+    mxArray* mx_state = const_cast<mxArray*>(state.array());
+    const dotk::MexVector & control = dynamic_cast<const dotk::MexVector &>(control_);
+    mxArray* mx_control = const_cast<mxArray*>(control.array());
+    const dotk::MexVector & dual = dynamic_cast<const dotk::MexVector &>(dual_);
+    mxArray* mx_dual = const_cast<mxArray*>(dual.array());
+    const dotk::MexVector & vector = dynamic_cast<const dotk::MexVector &>(vector_);
+    mxArray* mx_vector = const_cast<mxArray*>(vector.array());
 
-    dotk::DOTk_MexArrayPtr state(mxCreateDoubleMatrix(state_.size(), 1, mxREAL));
-    state_.gather(mxGetPr(state.get()));
+    mxArray* mx_output[1];
+    mxArray* mx_input[5] = { m_PartialDerivativeControlControl, mx_state, mx_control, mx_dual, mx_vector };
+    mxArray* error = mexCallMATLABWithTrapWithObject(1, mx_output, 5, mx_input, "feval");
+    std::ostringstream msg;
+    msg << "\nERROR IN: " << __FILE__ << ", LINE: " << __LINE__
+            << ", -> Error while calling partialDerivativeControlControl.\n";
+    dotk::mex::handleException(error, msg.str());
 
-    dotk::DOTk_MexArrayPtr control(mxCreateDoubleMatrix(control_.size(), 1, mxREAL));
-    control_.gather(mxGetPr(control.get()));
-
-    dotk::DOTk_MexArrayPtr delta_control(mxCreateDoubleMatrix(vector_.size(), 1, mxREAL));
-    vector_.gather(mxGetPr(delta_control.get()));
-
-    mxArray* input[5] =
-        { m_PartialDerivativeControlControl.get(), state.get(), control.get(), dual.get(), delta_control.get() };
-    mxArray* output[1];
-
-    mxArray* err = mexCallMATLABWithTrap(1, output, 5, input, "feval");
-    dotk::mex::handleException(err,
-                               "ERROR: Invalid Call to DOTk_MexEqualityConstraint<ScalarType>::partialDerivativeControlControl");
-    dotk::mex::copyData(output_.size(), mxGetPr(output[0]), output_);
-
-    dual.release();
-    state.release();
-    control.release();
-    delta_control.release();
+    assert(output_.size() == mxGetNumberOfElements(mx_output[0]));
+    dotk::MexVector & output = dynamic_cast<dotk::MexVector &>(output_);
+    output.setMxArray(mx_output[0]);
 }
 
-template<typename ScalarType>
-void DOTk_MexEqualityConstraint<ScalarType>::partialDerivativeControlState(const dotk::Vector<ScalarType> & state_,
-                                                                     const dotk::Vector<ScalarType> & control_,
-                                                                     const dotk::Vector<ScalarType> & dual_,
-                                                                     const dotk::Vector<ScalarType> & vector_,
-                                                                     dotk::Vector<ScalarType> & output_)
+void DOTk_MexEqualityConstraint::partialDerivativeControlState(const dotk::Vector<double> & state_,
+                                                               const dotk::Vector<double> & control_,
+                                                               const dotk::Vector<double> & dual_,
+                                                               const dotk::Vector<double> & vector_,
+                                                               dotk::Vector<double> & output_)
 {
-    dotk::DOTk_MexArrayPtr dual(mxCreateDoubleMatrix(dual_.size(), 1, mxREAL));
-    dual_.gather(mxGetPr(dual.get()));
+    const dotk::MexVector & state = dynamic_cast<const dotk::MexVector &>(state_);
+    mxArray* mx_state = const_cast<mxArray*>(state.array());
+    const dotk::MexVector & control = dynamic_cast<const dotk::MexVector &>(control_);
+    mxArray* mx_control = const_cast<mxArray*>(control.array());
+    const dotk::MexVector & dual = dynamic_cast<const dotk::MexVector &>(dual_);
+    mxArray* mx_dual = const_cast<mxArray*>(dual.array());
+    const dotk::MexVector & vector = dynamic_cast<const dotk::MexVector &>(vector_);
+    mxArray* mx_vector = const_cast<mxArray*>(vector.array());
 
-    dotk::DOTk_MexArrayPtr state(mxCreateDoubleMatrix(state_.size(), 1, mxREAL));
-    state_.gather(mxGetPr(state.get()));
+    mxArray* mx_output[1];
+    mxArray* mx_input[5] = { m_PartialDerivativeControlState, mx_state, mx_control, mx_dual, mx_vector };
+    mxArray* error = mexCallMATLABWithTrapWithObject(1, mx_output, 5, mx_input, "feval");
+    std::ostringstream msg;
+    msg << "\nERROR IN: " << __FILE__ << ", LINE: " << __LINE__
+            << ", -> Error while calling partialDerivativeControlState.\n";
+    dotk::mex::handleException(error, msg.str());
 
-    dotk::DOTk_MexArrayPtr control(mxCreateDoubleMatrix(control_.size(), 1, mxREAL));
-    control_.gather(mxGetPr(control.get()));
-
-    dotk::DOTk_MexArrayPtr delta_state(mxCreateDoubleMatrix(vector_.size(), 1, mxREAL));
-    vector_.gather(mxGetPr(delta_state.get()));
-
-    mxArray* input[5] =
-        { m_PartialDerivativeControlState.get(), state.get(), control.get(), dual.get(), delta_state.get() };
-    mxArray* output[1];
-
-    mxArray* err = mexCallMATLABWithTrap(1, output, 5, input, "feval");
-    dotk::mex::handleException(err,
-                               "ERROR: Invalid Call to DOTk_MexEqualityConstraint<ScalarType>::partialDerivativeControlState");
-    dotk::mex::copyData(output_.size(), mxGetPr(output[0]), output_);
-
-    dual.release();
-    state.release();
-    control.release();
-    delta_state.release();
+    assert(output_.size() == mxGetNumberOfElements(mx_output[0]));
+    dotk::MexVector & output = dynamic_cast<dotk::MexVector &>(output_);
+    output.setMxArray(mx_output[0]);
 }
 
-template<typename ScalarType>
-void DOTk_MexEqualityConstraint<ScalarType>::clear()
+void DOTk_MexEqualityConstraint::clear()
 {
-    m_Solve.release();
-    m_Residual.release();
-    m_Jacobian.release();
-    m_Hessian.release();
-    m_AdjointPartialDerivative.release();
-    m_PartialDerivativeState.release();
-    m_PartialDerivativeControl.release();
-    m_ApplyInverseJacobianState.release();
-    m_PartialDerivativeStateState.release();
-    m_AdjointPartialDerivativeState.release();
-    m_AdjointPartialDerivativeControl.release();
-    m_PartialDerivativeStateControl.release();
-    m_PartialDerivativeControlState.release();
-    m_PartialDerivativeControlControl.release();
-    m_ApplyAdjointInverseJacobianState.release();
+    dotk::mex::destroy(m_Solve);
+    dotk::mex::destroy(m_Residual);
+    dotk::mex::destroy(m_ApplyInverseJacobianState);
+    dotk::mex::destroy(m_ApplyAdjointInverseJacobianState);
+
+    dotk::mex::destroy(m_Jacobian);
+    dotk::mex::destroy(m_AdjointJacobian);
+    dotk::mex::destroy(m_PartialDerivativeState);
+    dotk::mex::destroy(m_PartialDerivativeControl);
+    dotk::mex::destroy(m_AdjointPartialDerivativeState);
+    dotk::mex::destroy(m_AdjointPartialDerivativeControl);
+
+    dotk::mex::destroy(m_Hessian);
+    dotk::mex::destroy(m_PartialDerivativeStateState);
+    dotk::mex::destroy(m_PartialDerivativeStateControl);
+    dotk::mex::destroy(m_PartialDerivativeControlState);
+    dotk::mex::destroy(m_PartialDerivativeControlControl);
 }
 
-template<typename ScalarType>
-void DOTk_MexEqualityConstraint<ScalarType>::initialize(const mxArray* operators_, const dotk::types::problem_t & type_)
+void DOTk_MexEqualityConstraint::initialize(const mxArray* operators_, const dotk::types::problem_t & type_)
 {
-    m_Solve.reset(mxDuplicateArray(mxGetField(operators_, 0, "solve")));
-    m_Residual.reset(mxDuplicateArray(mxGetField(operators_, 0, "residual")));
-
+    m_Solve = mxDuplicateArray(mxGetField(operators_, 0, "solve"));
+    m_Residual = mxDuplicateArray(mxGetField(operators_, 0, "residual"));
     switch(type_)
     {
         case dotk::types::TYPE_ULP:
@@ -517,75 +455,59 @@ void DOTk_MexEqualityConstraint<ScalarType>::initialize(const mxArray* operators
         case dotk::types::TYPE_CLP:
         case dotk::types::TYPE_ILP:
         {
-            m_Jacobian.reset(mxDuplicateArray(mxGetField(operators_, 0, "jacobian")));
-            m_Hessian.reset(mxDuplicateArray(mxGetField(operators_, 0, "hessian")));
-            m_AdjointPartialDerivative.reset(mxDuplicateArray(mxGetField(operators_, 0, "adjointJacobian")));
+            m_Jacobian = mxDuplicateArray(mxGetField(operators_, 0, "jacobian"));
+            m_Hessian = mxDuplicateArray(mxGetField(operators_, 0, "hessian"));
+            m_AdjointJacobian = mxDuplicateArray(mxGetField(operators_, 0, "adjointJacobian"));
             break;
         }
         case dotk::types::TYPE_UNLP:
         case dotk::types::TYPE_NLP_BOUND:
         {
-            m_PartialDerivativeState.reset(mxDuplicateArray(mxGetField(operators_, 0, "partialDerivativeState")));
-            m_PartialDerivativeControl.reset(mxDuplicateArray(mxGetField(operators_, 0, "partialDerivativeControl")));
-            m_ApplyInverseJacobianState.reset(mxDuplicateArray(mxGetField(operators_, 0, "applyInverseJacobianState")));
-            m_PartialDerivativeStateState.reset(mxDuplicateArray(mxGetField(operators_,
-                                                                           0,
-                                                                           "partialDerivativeStateState")));
-            m_AdjointPartialDerivativeState.reset(mxDuplicateArray(mxGetField(operators_,
-                                                                            0,
-                                                                            "adjointPartialDerivativeState")));
-            m_PartialDerivativeStateControl.reset(mxDuplicateArray(mxGetField(operators_,
-                                                                             0,
-                                                                             "partialDerivativeStateControl")));
-            m_PartialDerivativeControlState.reset(mxDuplicateArray(mxGetField(operators_,
-                                                                             0,
-                                                                             "partialDerivativeControlState")));
-            m_AdjointPartialDerivativeControl.reset(mxDuplicateArray(mxGetField(operators_,
-                                                                              0,
-                                                                              "adjointPartialDerivativeControl")));
-            m_PartialDerivativeControlControl.reset(mxDuplicateArray(mxGetField(operators_,
-                                                                               0,
-                                                                               "partialDerivativeControlControl")));
-            m_ApplyAdjointInverseJacobianState.reset(mxDuplicateArray(mxGetField(operators_,
-                                                                                 0,
-                                                                                 "applyAdjointInverseJacobianState")));
+            m_PartialDerivativeState = mxDuplicateArray(mxGetField(operators_, 0, "partialDerivativeState"));
+            m_PartialDerivativeControl = mxDuplicateArray(mxGetField(operators_, 0, "partialDerivativeControl"));
+            m_ApplyInverseJacobianState = mxDuplicateArray(mxGetField(operators_, 0, "applyInverseJacobianState"));
+            m_PartialDerivativeStateState = mxDuplicateArray(mxGetField(operators_, 0, "partialDerivativeStateState"));
+            m_AdjointPartialDerivativeState =
+                    mxDuplicateArray(mxGetField(operators_, 0, "adjointPartialDerivativeState"));
+            m_PartialDerivativeStateControl =
+                    mxDuplicateArray(mxGetField(operators_, 0, "partialDerivativeStateControl"));
+            m_PartialDerivativeControlState =
+                    mxDuplicateArray(mxGetField(operators_, 0, "partialDerivativeControlState"));
+            m_AdjointPartialDerivativeControl =
+                    mxDuplicateArray(mxGetField(operators_, 0, "adjointPartialDerivativeControl"));
+            m_PartialDerivativeControlControl =
+                    mxDuplicateArray(mxGetField(operators_, 0, "partialDerivativeControlControl"));
+            m_ApplyAdjointInverseJacobianState =
+                    mxDuplicateArray(mxGetField(operators_, 0, "applyAdjointInverseJacobianState"));
             break;
         }
         case dotk::types::TYPE_ENLP:
         case dotk::types::TYPE_ENLP_BOUND:
         case dotk::types::TYPE_CNLP:
         {
-            m_PartialDerivativeState.reset(mxDuplicateArray(mxGetField(operators_, 0, "partialDerivativeState")));
-            m_PartialDerivativeControl.reset(mxDuplicateArray(mxGetField(operators_, 0, "partialDerivativeControl")));
-            m_ApplyInverseJacobianState.reset(mxDuplicateArray(mxGetField(operators_, 0, "applyInverseJacobianState")));
-            m_PartialDerivativeStateState.reset(mxDuplicateArray(mxGetField(operators_,
-                                                                           0,
-                                                                           "partialDerivativeStateState")));
-            m_AdjointPartialDerivativeState.reset(mxDuplicateArray(mxGetField(operators_,
-                                                                            0,
-                                                                            "adjointPartialDerivativeState")));
-            m_PartialDerivativeStateControl.reset(mxDuplicateArray(mxGetField(operators_,
-                                                                             0,
-                                                                             "partialDerivativeStateControl")));
-            m_PartialDerivativeControlState.reset(mxDuplicateArray(mxGetField(operators_,
-                                                                             0,
-                                                                             "partialDerivativeControlState")));
-            m_AdjointPartialDerivativeControl.reset(mxDuplicateArray(mxGetField(operators_,
-                                                                              0,
-                                                                              "adjointPartialDerivativeControl")));
-            m_PartialDerivativeControlControl.reset(mxDuplicateArray(mxGetField(operators_,
-                                                                               0,
-                                                                               "partialDerivativeControlControl")));
-            m_ApplyAdjointInverseJacobianState.reset(mxDuplicateArray(mxGetField(operators_,
-                                                                                 0,
-                                                                                 "applyAdjointInverseJacobianState")));
+            m_PartialDerivativeState = mxDuplicateArray(mxGetField(operators_, 0, "partialDerivativeState"));
+            m_PartialDerivativeControl = mxDuplicateArray(mxGetField(operators_, 0, "partialDerivativeControl"));
+            m_ApplyInverseJacobianState = mxDuplicateArray(mxGetField(operators_, 0, "applyInverseJacobianState"));
+            m_PartialDerivativeStateState = mxDuplicateArray(mxGetField(operators_, 0, "partialDerivativeStateState"));
+            m_AdjointPartialDerivativeState =
+                    mxDuplicateArray(mxGetField(operators_, 0, "adjointPartialDerivativeState"));
+            m_PartialDerivativeStateControl =
+                    mxDuplicateArray(mxGetField(operators_, 0, "partialDerivativeStateControl"));
+            m_PartialDerivativeControlState =
+                    mxDuplicateArray(mxGetField(operators_, 0, "partialDerivativeControlState"));
+            m_AdjointPartialDerivativeControl =
+                    mxDuplicateArray(mxGetField(operators_, 0, "adjointPartialDerivativeControl"));
+            m_PartialDerivativeControlControl =
+                    mxDuplicateArray(mxGetField(operators_, 0, "partialDerivativeControlControl"));
+            m_ApplyAdjointInverseJacobianState =
+                    mxDuplicateArray(mxGetField(operators_, 0, "applyAdjointInverseJacobianState"));
             break;
         }
         case dotk::types::PROBLEM_TYPE_UNDEFINED:
         default:
         {
-            std::string err("\nERROR: Invalid Problem ScalarType in Call to DOTk_MexEqualityConstraint<ScalarType>::initialize\n");
-            mexErrMsgTxt(err.c_str());
+            std::string error("\nERROR: Invalid Problem ScalarType in Call to DOTk_MexEqualityConstraint::initialize\n");
+            mexErrMsgTxt(error.c_str());
             break;
         }
     }

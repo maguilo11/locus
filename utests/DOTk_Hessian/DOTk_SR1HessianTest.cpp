@@ -27,7 +27,7 @@ TEST(SR1Hessian, apply)
     std::tr1::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
     std::tr1::shared_ptr<dotk::DOTk_LineSearchMngTypeULP> mng(new dotk::DOTk_LineSearchMngTypeULP(primal, objective));
 
-    dotk::DOTk_SR1Hessian hess(mng->getMatrixTimesVector());
+    dotk::DOTk_SR1Hessian hess(*mng->getMatrixTimesVector());
     EXPECT_EQ(dotk::types::SR1_HESS, hess.getHessianType());
     // vec Information
     dotk::StdVector<Real> control(2, 2.);
@@ -71,7 +71,7 @@ TEST(SR1Hessian, getDeltaPrimal)
     control[1] = 3.;
     mng.setNewPrimal(control);
 
-    dotk::DOTk_SR1Hessian hess(mng.getMatrixTimesVector());
+    dotk::DOTk_SR1Hessian hess(*mng.getMatrixTimesVector());
 
     hess.getDeltaPrimal()->update(1., *mng.getNewPrimal(), 0.);
     hess.getDeltaPrimal()->update(-1.0, *mng.getOldPrimal(), 1.);
@@ -101,7 +101,7 @@ TEST(SR1Hessian, getDeltaGrad)
     mng.getRoutinesMng()->gradient(mng.getOldPrimal(), mng.getOldGradient());
     mng.getRoutinesMng()->gradient(mng.getNewPrimal(), mng.getNewGradient());
 
-    dotk::DOTk_SR1Hessian hess(mng.getMatrixTimesVector());
+    dotk::DOTk_SR1Hessian hess(*mng.getMatrixTimesVector());
     EXPECT_EQ(dotk::types::SR1_HESS, hess.getHessianType());
     hess.getDeltaGrad()->update(1., *mng.getNewGradient(), 0.);
     hess.getDeltaGrad()->update(-1.0, *mng.getOldGradient(), 1.);
@@ -128,7 +128,7 @@ TEST(SR1Hessian, getHessian)
     control[1] = 3.;
     mng->setNewPrimal(control);
 
-    dotk::DOTk_SR1Hessian hess(mng->getMatrixTimesVector());
+    dotk::DOTk_SR1Hessian hess(*mng->getMatrixTimesVector());
     EXPECT_EQ(dotk::types::SR1_HESS, hess.getHessianType());
     hess.getDeltaPrimal()->update(1., *mng->getNewPrimal(), 0.);
     hess.getDeltaPrimal()->update(-1.0, *mng->getOldPrimal(), 1.);

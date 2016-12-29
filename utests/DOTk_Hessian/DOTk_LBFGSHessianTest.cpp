@@ -29,7 +29,7 @@ TEST(DOTk_LBFGSHessian, getDeltaPrimalStorage)
     dotk::DOTk_LineSearchMngTypeULP mng(primal, objective);
 
     size_t secant_storage = 3;
-    dotk::DOTk_LBFGSHessian hess(mng.getMatrixTimesVector(), secant_storage);
+    dotk::DOTk_LBFGSHessian hess(*mng.getMatrixTimesVector(), secant_storage);
     (*hess.getDeltaPrimalStorage(0))[0] = 1.164953510500657;
     (*hess.getDeltaPrimalStorage(0))[1] = 0.626839082632431;
 
@@ -48,7 +48,7 @@ TEST(DOTk_LBFGSHessian, getDeltaGradStorage)
     dotk::DOTk_LineSearchMngTypeULP mng(primal, objective);
 
     size_t secant_storage = 3;
-    dotk::DOTk_LBFGSHessian hess(mng.getMatrixTimesVector(), secant_storage);
+    dotk::DOTk_LBFGSHessian hess(*mng.getMatrixTimesVector(), secant_storage);
     (*hess.getDeltaGradStorage(0))[0] = 0.059059777981351;
     (*hess.getDeltaGradStorage(0))[1] = 1.79707178369482;
 
@@ -67,7 +67,7 @@ TEST(DOTk_LBFGSHessian, getDeltaGradPrimalInnerProductStorage)
     dotk::DOTk_LineSearchMngTypeULP mng(primal, objective);
 
     size_t secant_storage = 3;
-    dotk::DOTk_LBFGSHessian hess(mng.getMatrixTimesVector(), secant_storage);
+    dotk::DOTk_LBFGSHessian hess(*mng.getMatrixTimesVector(), secant_storage);
     EXPECT_EQ(secant_storage, (*hess.getDeltaGradPrimalInnerProductStorage()).size());
     (*hess.getDeltaGradPrimalInnerProductStorage())[0] = 0.059059777981351;
     (*hess.getDeltaGradPrimalInnerProductStorage())[1] = 1.79707178369482;
@@ -89,7 +89,7 @@ TEST(DOTk_LBFGSHessian, getHessian)
     dotk::DOTk_LineSearchMngTypeULP mng(primal, objective);
 
     size_t secant_storage = 3;
-    dotk::DOTk_LBFGSHessian hess(mng.getMatrixTimesVector(), secant_storage);
+    dotk::DOTk_LBFGSHessian hess(*mng.getMatrixTimesVector(), secant_storage);
     EXPECT_EQ(dotk::types::LBFGS_HESS, hess.getHessianType());
 
     hess.setNumUpdatesStored(3);

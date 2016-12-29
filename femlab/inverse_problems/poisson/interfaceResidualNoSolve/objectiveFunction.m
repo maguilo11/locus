@@ -1,14 +1,14 @@
 function [Operators] = objectiveFunction()
-Operators.evaluate=@(control)evaluate(control);
-Operators.firstDerivative=@(control)firstDerivative(control);
-Operators.secondDerivative=@(control,dcontrol)secondDerivative(control,dcontrol);
+Operators.value=@(control)value(control);
+Operators.gradient=@(control)gradient(control);
+Operators.hessian=@(control,dcontrol)hessian(control,dcontrol);
 % Gauss Newton term
-Operators.secondDerivativeWrtControlControl=...
-    @(state,control,dcontrol)secondDerivativeWrtControlControl(state,control,dcontrol);
+Operators.partialDerivativeControlControl=...
+    @(state,control,dcontrol)partialDerivativeControlControl(state,control,dcontrol);
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-function [output] = evaluate(control)
+function [output] = value(control)
 
 global GLB_INVP;
 
@@ -25,10 +25,10 @@ potential = 0.5 * GLB_INVP.theta * alpha * alpha;
 %%%% compute regularization term
 switch GLB_INVP.reg
     case{'Tikhonov'}
-        reg = 0.5 * GLB_INVP.beta * (control'*(GLB_INVP.Ms*control));
+        reg = 0.5 * GLB_INVP.beta * (control*(GLB_INVP.Ms*control'));
     case{'TV'}
         reg = 0.5*GLB_INVP.beta * ...
-            sqrt( (control' * (GLB_INVP.S * control)) + GLB_INVP.gamma );
+            sqrt( (control * (GLB_INVP.S * control')) + GLB_INVP.gamma );
 end
 
 GLB_INVP.state = state;
@@ -38,7 +38,7 @@ end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-function [output] = firstDerivative(control)
+function [output] = gradient(control)
 
 global GLB_INVP;
 
@@ -134,11 +134,11 @@ residual_misfit = (GLB_INVP.theta*alpha*((GLB_INVP.state'*dK_state) - ...
 %%%%%%%%%%% regularization contribution
 switch GLB_INVP.reg
     case{'Tikhonov'}
-        reg = GLB_INVP.beta * (GLB_INVP.Ms*control);
+        reg = GLB_INVP.beta * (GLB_INVP.Ms*control');
     case{'TV'}
         reg = GLB_INVP.beta * 0.5 * ...
-            ( 1.0 / sqrt( control' * (GLB_INVP.S * control) + ...
-            GLB_INVP.gamma ) ) * (GLB_INVP.S * control);
+            ( 1.0 / sqrt( control * (GLB_INVP.S * control') + ...
+            GLB_INVP.gamma ) ) * (GLB_INVP.S * control');
 end
 
 output = residual_misfit + reg;
@@ -147,7 +147,7 @@ end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-function [output] = secondDerivative(control,dcontrol)
+function [output] = hessian(control,dcontrol)
 
 global GLB_INVP;
 
@@ -270,7 +270,7 @@ end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-function [output] = secondDerivativeWrtControlControl(state,control,dcontrol)
+function [output] = partialDerivativeControlControl(state,control,dcontrol)
 
 global GLB_INVP;
 

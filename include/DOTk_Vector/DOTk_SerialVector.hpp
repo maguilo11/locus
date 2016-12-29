@@ -133,15 +133,6 @@ public:
             m_Data[index] = value_;
         }
     }
-    // Gathers data from private member data of a group to one member.
-    void gather(ScalarType* input_) const
-    {
-        size_t dim = this->size();
-        for(size_t index = 0; index < dim; ++index)
-        {
-            input_[index] = m_Data[index];
-        }
-    }
     // Returns the number of elements in the Vector.
     size_t size() const
     {

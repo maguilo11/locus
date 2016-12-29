@@ -6,10 +6,8 @@
  */
 
 #include <mex.h>
+#include <string>
 #include <sstream>
-
-#include "vector.hpp"
-#include "DOTk_MexArrayPtr.hpp"
 #include "DOTk_MexApiUtilities.hpp"
 
 namespace dotk
@@ -18,14 +16,23 @@ namespace dotk
 namespace mex
 {
 
-void handleException(mxArray* err_, std::string msg_)
+void destroy(mxArray* input_)
 {
-    if(err_)
+    if(input_ != nullptr)
+    {
+        mxDestroyArray(input_);
+    }
+    input_ = nullptr;
+}
+
+void handleException(mxArray* input_, std::string output_)
+{
+    if(input_ != nullptr)
     {
         // In the cass of an exception, grab the report
-        mxArray* input[1] = {err_};
+        mxArray* input[1] = {input_};
         mxArray* output[1];
-        mexCallMATLAB(1, output, 1, input, "getReport");
+        mexCallMATLABWithObject(1, output, 1, input, "getReport");
         // Turn the report into a string
         mwSize char_limit = 256;
         char report_[char_limit];
@@ -48,66 +55,15 @@ void handleException(mxArray* err_, std::string msg_)
 
         // Now, tack on our additional error message and then return control to Matlab.
         std::stringstream string_stream;
-        string_stream << msg_ << std::endl << std::endl << report;
+        string_stream << output_ << std::endl << std::endl << report;
         mexErrMsgTxt(string_stream.str().c_str());
     }
 }
 
-size_t getMexArrayDim(const dotk::DOTk_MexArrayPtr & ptr_)
+dotk::types::problem_t getProblemType(const mxArray* input_)
 {
-    if(mxIsEmpty(ptr_.get()))
-    {
-        std::string msg(" DOTK/MEX ERROR: NULL MexArrayPtr In dotk::mex::getMexArrayDim \n");
-        mexErrMsgTxt(msg.c_str());
-    }
-
-    size_t nrows = mxGetM(ptr_.get());
-    size_t ncols = mxGetN(ptr_.get());
-
-    if( nrows > 1 && ncols > 1 )
-    {
-        std::string msg(" DOTK/MEX ERROR: Invalid MexArrayPtr Dimensions In dotk::mex::getMexArrayDim.\n"
-                        " 2D-MEX Array Used Instead Of A 1D-MEX Array. \n");
-        mexErrMsgTxt(msg.c_str());
-    }
-
-    size_t dim = nrows > ncols ? nrows : ncols;
-
-    return(dim);
-}
-
-void setDOTkData(const dotk::DOTk_MexArrayPtr & ptr_, dotk::Vector<double> & data_)
-{
-    size_t data_dim = data_.size();
-    size_t mex_array_dim = dotk::mex::getMexArrayDim(ptr_);
-
-    if(mex_array_dim != data_dim)
-    {
-        std::string msg(" DOTK/MEX ERROR: Input MEX Array Dim IS NOT EQUAL to DOTk Vector Dim. Check Input Data Dimensions. \n");
-        mexErrMsgTxt(msg.c_str());
-    }
-
-    dotk::mex::copyData(mex_array_dim, mxGetPr(ptr_.get()), data_);
-}
-
-void copyData(size_t input_dim_, double* input_, dotk::Vector<double> & output_)
-{
-    if(input_dim_ != output_.size())
-    {
-        std::string msg(" DOTK/MEX ERROR: Input Array Dim IS NOT EQUAL To Output Array Dim. Check dotk::mex::copyData. \n");
-        mexErrMsgTxt(msg.c_str());
-    }
-
-    for(size_t index = 0; index < input_dim_; ++index)
-    {
-        output_[index] = input_[index];
-    }
-}
-
-dotk::types::problem_t getProblemType(const dotk::DOTk_MexArrayPtr & ptr_)
-{
+    std::string option(mxArrayToString(input_));
     dotk::types::problem_t type = dotk::types::PROBLEM_TYPE_UNDEFINED;
-    std::string option(mxArrayToString(ptr_.get()));
 
     if(option.compare("ULP") == 0)
     {
@@ -166,41 +122,18 @@ dotk::types::problem_t getProblemType(const dotk::DOTk_MexArrayPtr & ptr_)
     }
     else
     {
-        std::string msg(" DOTk/MEX ERROR: Invalid Problem Type. See Users' Manual. \n");
-        mexErrMsgTxt(msg.c_str());
+        std::ostringstream msg;
+        msg << "\nERROR IN: " << __FILE__ << ", LINE: " << __LINE__
+                << ", -> PROBLEM TYPE keyword is misspelled. See Users' Manual for valid options.\n";
+        mexErrMsgTxt(msg.str().c_str());
     }
-
     return (type);
 }
 
-dotk::types::container_t getContainerType(const dotk::DOTk_MexArrayPtr & ptr_)
+dotk::types::display_t getDiagnosticsDisplayOption(const mxArray* input_)
 {
-    dotk::types::container_t type = dotk::types::USER_DEFINED_CONTAINER;
-    std::string option(mxArrayToString(ptr_.get()));
-
-    if(option.compare("SERIAL_VECTOR") == 0)
-    {
-        type = dotk::types::SERIAL_VECTOR;
-    }
-    else if(option.compare("SERIAL_ARRAY") == 0)
-    {
-        type = dotk::types::SERIAL_ARRAY;
-    }
-    else
-    {
-        std::string msg(" DOTk/MEX WARNING: Invalid DOTk Container Type. Default = Serial C Array. \n");
-        mexWarnMsgTxt(msg.c_str());
-        type = dotk::types::SERIAL_ARRAY;
-    }
-
-    return (type);
-}
-
-dotk::types::display_t getDiagnosticsDisplayOption(const dotk::DOTk_MexArrayPtr & ptr_)
-{
+    std::string option(mxArrayToString(input_));
     dotk::types::display_t type = dotk::types::OFF;
-    std::string option(mxArrayToString(ptr_.get()));
-
     if(option.compare("ITERATION") == 0)
     {
         mexPrintf(" Diagnostics Display Option = ITERATION \n");
@@ -218,17 +151,18 @@ dotk::types::display_t getDiagnosticsDisplayOption(const dotk::DOTk_MexArrayPtr 
     }
     else
     {
-        std::string msg(" DOTk/MEX ERROR: Invalid Diagnostics Display Option. See Users' Manual. \n");
-        mexErrMsgTxt(msg.c_str());
+        std::ostringstream msg;
+        msg << "\nWARNING IN: " << __FILE__ << ", LINE: " << __LINE__
+                << ", -> Diagnostics display option keyword is misspelled. Option set to OFF.\n";
+        mexWarnMsgTxt(msg.str().c_str());
     }
-
     return (type);
 }
 
-dotk::types::line_search_t getLineSearchMethod(const dotk::DOTk_MexArrayPtr & ptr_)
+dotk::types::line_search_t getLineSearchMethod(const mxArray* input_)
 {
-    std::string line_search_method(mxArrayToString(ptr_.get()));
-    dotk::types::line_search_t step_t = dotk::types::LINE_SEARCH_DISABLED;
+    std::string line_search_method(mxArrayToString(input_));
+    dotk::types::line_search_t step_t = dotk::types::BACKTRACKING_CUBIC_INTRP;
 
     if(line_search_method.compare("ARMIJO") == 0)
     {
@@ -257,18 +191,18 @@ dotk::types::line_search_t getLineSearchMethod(const dotk::DOTk_MexArrayPtr & pt
     }
     else
     {
-        step_t = dotk::types::BACKTRACKING_CUBIC_INTRP;
-        std::string msg(" DOTk/MEX WARNING: Invalid Line Search Method. Default = CUBIC INTRP. \n");
-        mexWarnMsgTxt(msg.c_str());
+        std::ostringstream msg;
+        msg << "\nWARNING IN: " << __FILE__ << ", LINE: " << __LINE__
+                << ", -> LineSearchMethod keyword is misspelled. LineSearchMethod set to BACKTRACKINGCUBIC INTRPOLATION.\n";
+        mexWarnMsgTxt(msg.str().c_str());
     }
-
     return (step_t);
 }
 
-dotk::types::trustregion_t getTrustRegionMethod(const dotk::DOTk_MexArrayPtr & ptr_)
+dotk::types::trustregion_t getTrustRegionMethod(const mxArray* input_)
 {
-    std::string trust_region_method(mxArrayToString(ptr_.get()));
-    dotk::types::trustregion_t type = dotk::types::TRUST_REGION_DISABLED;
+    std::string trust_region_method(mxArrayToString(input_));
+    dotk::types::trustregion_t type = dotk::types::TRUST_REGION_DOGLEG;
 
     if(trust_region_method.compare("CAUCHY") == 0)
     {
@@ -287,19 +221,19 @@ dotk::types::trustregion_t getTrustRegionMethod(const dotk::DOTk_MexArrayPtr & p
     }
     else
     {
-        type = dotk::types::TRUST_REGION_DOGLEG;
-        std::string msg(" DOTk/MEX WARNING: Invalid Trust Region Method. Default = Dogleg. \n");
-        mexWarnMsgTxt(msg.c_str());
+        std::ostringstream msg;
+        msg << "\nWARNING IN: " << __FILE__ << ", LINE: " << __LINE__
+                << ", -> TrustRegionMethod keyword is misspelled. TrustRegionMethod set to DOGLEG.\n";
+        mexWarnMsgTxt(msg.str().c_str());
     }
 
     return (type);
 }
 
-dotk::types::nonlinearcg_t getNonlinearCgMethod(const dotk::DOTk_MexArrayPtr & ptr_)
+dotk::types::nonlinearcg_t getNonlinearCgMethod(const mxArray* input_)
 {
-    dotk::types::nonlinearcg_t type;
-    std::string method(mxArrayToString(ptr_.get()));
-
+    std::string method(mxArrayToString(input_));
+    dotk::types::nonlinearcg_t type = dotk::types::HAGER_ZHANG_NLCG;
     if(method.compare("FLETCHER_REEVES") == 0)
     {
         mexPrintf(" Nonlinear Conjugate Gradient Method = FLETCHER REEVES \n");
@@ -357,19 +291,18 @@ dotk::types::nonlinearcg_t getNonlinearCgMethod(const dotk::DOTk_MexArrayPtr & p
     }
     else
     {
-        type = dotk::types::HAGER_ZHANG_NLCG;
-        std::string msg(" DOTk/MEX WARNING: Invalid Nonlinear Conjugate Gradient Method. Default = HAGER ZHANG. \n");
-        mexWarnMsgTxt(msg.c_str());
+        std::ostringstream msg;
+        msg << "\nWARNING IN: " << __FILE__ << ", LINE: " << __LINE__
+                << ", -> Nonlinear Conjugate Gradient keyword is misspelled. Algorithm set to HAGER-ZHANG.\n";
+        mexWarnMsgTxt(msg.str().c_str());
     }
-
     return (type);
 }
 
-dotk::types::gradient_t getGradientComputationMethod(const dotk::DOTk_MexArrayPtr & ptr_)
+dotk::types::gradient_t getGradientComputationMethod(const mxArray* input_)
 {
-    std::string method(mxArrayToString(ptr_.get()));
-    dotk::types::gradient_t type = dotk::types::GRADIENT_OPERATOR_DISABLED;
-
+    std::string method(mxArrayToString(input_));
+    dotk::types::gradient_t type = dotk::types::CENTRAL_DIFF_GRAD;
     if(method.compare("FORWARD_DIFFERENCE") == 0)
     {
         mexPrintf(" GradientComputationMethod = FORWARD DIFFERENCE \n");
@@ -407,18 +340,18 @@ dotk::types::gradient_t getGradientComputationMethod(const dotk::DOTk_MexArrayPt
     }
     else
     {
-        std::string msg(" DOTk/MEX ERROR: Invalid Gradient Computation Method. See Users' Manual. \n");
-        mexErrMsgTxt(msg.c_str());
+        std::ostringstream msg;
+        msg << "\nERROR IN: " << __FILE__ << ", LINE: " << __LINE__
+                << ", -> GradientComputationMethod keyword is misspelled.\n";
+        mexErrMsgTxt(msg.str().c_str());
     }
-
     return (type);
 }
 
-dotk::types::hessian_t getHessianComputationMethod(const dotk::DOTk_MexArrayPtr & ptr_)
+dotk::types::hessian_t getHessianComputationMethod(const mxArray* input_)
 {
-    dotk::types::hessian_t type = dotk::types::HESSIAN_DISABLED;
-    std::string method(mxArrayToString(ptr_.get()));
-
+    dotk::types::hessian_t type = dotk::types::DFP_HESS;
+    std::string method(mxArrayToString(input_));
     if(method.compare("LBFGS") == 0)
     {
         mexPrintf(" Hessian Computation Method = LBFGS \n");
@@ -461,18 +394,18 @@ dotk::types::hessian_t getHessianComputationMethod(const dotk::DOTk_MexArrayPtr 
     }
     else
     {
-        std::string msg(" DOTk/MEX ERROR: Invalid Hessian Computation Method. See Users' Manual. \n");
-        mexErrMsgTxt(msg.c_str());
+        std::ostringstream msg;
+        msg << "\nERROR IN: " << __FILE__ << ", LINE: " << __LINE__
+                << ", -> HessianComputationMethod keyword is misspelled.\n";
+        mexErrMsgTxt(msg.str().c_str());
     }
-
     return (type);
 }
 
-dotk::types::constraint_method_t getBoundConstraintMethod(const dotk::DOTk_MexArrayPtr & ptr_)
+dotk::types::constraint_method_t getBoundConstraintMethod(const mxArray* input_)
 {
-    std::string method(mxArrayToString(ptr_.get()));
-    dotk::types::constraint_method_t type = dotk::types::CONSTRAINT_METHOD_DISABLED;
-
+    std::string method(mxArrayToString(input_));
+    dotk::types::constraint_method_t type = dotk::types::FEASIBLE_DIR;
     if(method.compare("FEASIBLE_DIR") == 0)
     {
         mexPrintf(" BoundConstraintMethod = FEASIBLE DIRECTION \n");
@@ -485,11 +418,12 @@ dotk::types::constraint_method_t getBoundConstraintMethod(const dotk::DOTk_MexAr
     }
     else
     {
-        type = dotk::types::FEASIBLE_DIR;
-        std::string msg(" DOTk/MEX WARNING: Invalid Bound Constraint Computation Method. Default = FEASIBLE DIRECTION. \n");
-        mexWarnMsgTxt(msg.c_str());
+        std::ostringstream msg;
+        msg << "\nWARNING IN: " << __FILE__ << ", LINE: " << __LINE__
+                << ", -> BoundConstraintMethod method keyword is misspelled."
+                << " BoundConstraintMethod method set to FEASIBLE DIRECTION.\n";
+        mexWarnMsgTxt(msg.str().c_str());
     }
-
     return (type);
 }
 

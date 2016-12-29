@@ -10,7 +10,6 @@
 
 #include <tr1/memory>
 
-#include "DOTk_MexArrayPtr.hpp"
 #include "DOTk_MexAlgorithmTypeNewton.hpp"
 
 namespace dotk
@@ -56,8 +55,8 @@ private:
     double m_TrustRegionContractionFactor;
     double m_MinActualOverPredictedReductionRatio;
 
-    dotk::DOTk_MexArrayPtr m_ObjectiveFunctionOperators;
-    dotk::DOTk_MexArrayPtr m_EqualityConstraintOperators;
+    mxArray* m_ObjectiveFunction;
+    mxArray* m_EqualityConstraint;
 
 private:
     DOTk_MexInexactNewtonTypeTR(const dotk::DOTk_MexInexactNewtonTypeTR & rhs_);

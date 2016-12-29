@@ -18,7 +18,6 @@ DOTk_MexAlgorithmTypeSQP::DOTk_MexAlgorithmTypeSQP(const mxArray* options_) :
         m_MaxNumAlgorithmItr(50),
         m_GradientTolerance(1e-10),
         m_TrialStepTolerance(1e-10),
-        m_OptimalityTolerance(1e-10),
         m_FeasibilityTolerance(1e-12),
         m_ProblemType(dotk::types::PROBLEM_TYPE_UNDEFINED),
         m_HessianComputationMethod(dotk::types::HESSIAN_DISABLED)
@@ -45,11 +44,6 @@ double DOTk_MexAlgorithmTypeSQP::getTrialStepTolerance() const
     return (m_TrialStepTolerance);
 }
 
-double DOTk_MexAlgorithmTypeSQP::getOptimalityTolerance() const
-{
-    return (m_OptimalityTolerance);
-}
-
 double DOTk_MexAlgorithmTypeSQP::getFeasibilityTolerance() const
 {
     return (m_FeasibilityTolerance);
@@ -67,13 +61,12 @@ dotk::types::hessian_t DOTk_MexAlgorithmTypeSQP::getHessianComputationMethod() c
 
 void DOTk_MexAlgorithmTypeSQP::initialize(const mxArray* options_)
 {
-    dotk::mex::parseProblemType(options_, m_ProblemType);
-    dotk::mex::parseGradientTolerance(options_, m_GradientTolerance);
-    dotk::mex::parseMaxNumAlgorithmItr(options_, m_MaxNumAlgorithmItr);
-    dotk::mex::parseTrialStepTolerance(options_, m_TrialStepTolerance);
-    dotk::mex::parseOptimalityTolerance(options_, m_OptimalityTolerance);
-    dotk::mex::parseFeasibilityTolerance(options_, m_FeasibilityTolerance);
-    dotk::mex::parseHessianComputationMethod(options_, m_HessianComputationMethod);
+    m_ProblemType = dotk::mex::parseProblemType(options_);
+    m_TrialStepTolerance = dotk::mex::parseStepTolerance(options_);
+    m_GradientTolerance = dotk::mex::parseGradientTolerance(options_);
+    m_MaxNumAlgorithmItr = dotk::mex::parseMaxNumOuterIterations(options_);
+    m_FeasibilityTolerance = dotk::mex::parseFeasibilityTolerance(options_);
+    m_HessianComputationMethod = dotk::mex::parseHessianComputationMethod(options_);
 }
 
 }

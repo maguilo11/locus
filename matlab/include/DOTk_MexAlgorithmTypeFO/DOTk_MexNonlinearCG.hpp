@@ -8,8 +8,6 @@
 #ifndef DOTK_MEXNONLINEARCG_HPP_
 #define DOTK_MEXNONLINEARCG_HPP_
 
-#include "DOTk_Types.hpp"
-#include "DOTk_MexArrayPtr.hpp"
 #include "DOTk_MexAlgorithmTypeFO.hpp"
 
 namespace dotk
@@ -45,8 +43,8 @@ private:
 
 private:
     dotk::types::nonlinearcg_t m_NonlinearCgType;
-    dotk::DOTk_MexArrayPtr m_ObjectiveFunctionOperators;
-    dotk::DOTk_MexArrayPtr m_EqualityConstraintOperators;
+    mxArray* m_ObjectiveFunction;
+    mxArray* m_EqualityConstraint;
 
 private:
     DOTk_MexNonlinearCG(const dotk::DOTk_MexNonlinearCG & rhs_);

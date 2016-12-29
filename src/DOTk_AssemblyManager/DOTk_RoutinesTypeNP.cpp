@@ -8,6 +8,7 @@
 
 #include <cstdio>
 #include <cstdlib>
+#include <sstream>
 
 #include "vector.hpp"
 #include "DOTk_Primal.hpp"
@@ -105,24 +106,17 @@ void DOTk_RoutinesTypeNP::inequalityGradient(const size_t index_,
 
 void DOTk_RoutinesTypeNP::initialize(const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_)
 {
-    if(primal_->dual().use_count() > 0)
-    {
-        m_EqualityConstraintDual = primal_->state()->clone();
-    }
-    else
-    {
-        std::perror("\n**** Error in DOTk_RoutinesTypeNP::initialize. User did not define dual data. ABORT. ****\n");
-        std::abort();
-    }
-
     if(primal_->state().use_count() > 0)
     {
         m_State = primal_->state()->clone();
         m_StateWorkVec = primal_->state()->clone();
+        m_EqualityConstraintDual = primal_->state()->clone();
     }
     else
     {
-        std::perror("\n**** Error in DOTk_RoutinesTypeNP::initialize. User did not define state data. ABORT. ****\n");
+        std::ostringstream msg;
+        msg << "\n**** ERROR IN: " << __FILE__ << ", LINE: " << __LINE__ << ", -> STATE vector is NULL. ****\n";
+        std::perror(msg.str().c_str());
         std::abort();
     }
 
@@ -132,7 +126,9 @@ void DOTk_RoutinesTypeNP::initialize(const std::tr1::shared_ptr<dotk::DOTk_Prima
     }
     else
     {
-        std::perror("\n**** Error in DOTk_RoutinesTypeNP::initialize. User did not define control data. ABORT. ****\n");
+        std::ostringstream msg;
+        msg << "\n**** ERROR IN: " << __FILE__ << ", LINE: " << __LINE__ << ", -> CONTROL vector is NULL. ****\n";
+        std::perror(msg.str().c_str());
         std::abort();
     }
 }

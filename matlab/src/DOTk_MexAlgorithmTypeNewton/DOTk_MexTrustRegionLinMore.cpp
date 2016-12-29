@@ -5,22 +5,21 @@
  *      Author: Miguel A. Aguilo Valentin
  */
 
-#include "vector.hpp"
 #include "DOTk_Primal.hpp"
 #include "DOTk_Hessian.hpp"
-#include "DOTk_MexHessianFactory.hpp"
-#include "DOTk_MexAlgorithmParser.hpp"
-#include "DOTk_MexContainerFactory.hpp"
 #include "DOTk_SteihaugTointStepMng.hpp"
 #include "DOTk_SteihaugTointDataMng.hpp"
 #include "DOTk_SteihaugTointLinMore.hpp"
-#include "DOTk_MexObjectiveFunction.cpp"
+#include "DOTk_SteihaugTointProjGradStep.hpp"
+
+#include "DOTk_MexVector.hpp"
+#include "DOTk_MexApiUtilities.hpp"
+#include "DOTk_MexHessianFactory.hpp"
+#include "DOTk_MexAlgorithmParser.hpp"
 #include "DOTk_MexObjectiveFunction.hpp"
 #include "DOTk_MexKrylovSolverParser.hpp"
 #include "DOTk_MexTrustRegionLinMore.hpp"
-#include "DOTk_MexEqualityConstraint.cpp"
 #include "DOTk_MexEqualityConstraint.hpp"
-#include "DOTk_SteihaugTointProjGradStep.hpp"
 #include "DOTk_MexFactoriesAlgorithmTypeGB.cpp"
 #include "DOTk_MexFactoriesAlgorithmTypeGB.hpp"
 
@@ -32,7 +31,9 @@ DOTk_MexTrustRegionLinMore::DOTk_MexTrustRegionLinMore(const mxArray* options_[]
         m_ProblemType(dotk::types::PROBLEM_TYPE_UNDEFINED),
         m_MaxNumSteihaugTointSolverItr(200),
         m_SolverRelativeTolerance(0.1),
-        m_SolverRelativeToleranceExponential(0.5)
+        m_SolverRelativeToleranceExponential(0.5),
+        m_ObjectiveFunction(nullptr),
+        m_EqualityConstraint(nullptr)
 {
     this->initializeTrustRegionLinMore(options_);
 }
@@ -44,17 +45,17 @@ DOTk_MexTrustRegionLinMore::~DOTk_MexTrustRegionLinMore()
 
 void DOTk_MexTrustRegionLinMore::clear()
 {
-    m_ObjectiveFunctionOperators.release();
-    m_EqualityConstraintOperators.release();
+    dotk::mex::destroy(m_ObjectiveFunction);
+    dotk::mex::destroy(m_EqualityConstraint);
 }
 
 void DOTk_MexTrustRegionLinMore::initializeTrustRegionLinMore(const mxArray* options_[])
 {
-    dotk::mex::parseProblemType(options_[0], m_ProblemType);
-    dotk::mex::parseObjectiveFunction(options_[1], m_ObjectiveFunctionOperators);
-    dotk::mex::parseMaxNumKrylovSolverItr(options_[0], m_MaxNumSteihaugTointSolverItr);
-    dotk::mex::parseKrylovSolverRelativeTolerance(options_[0], m_SolverRelativeTolerance);
-    dotk::mex::parseRelativeToleranceExponential(options_[0], m_SolverRelativeToleranceExponential);
+    m_ProblemType = dotk::mex::parseProblemType(options_[0]);
+    m_ObjectiveFunction = dotk::mex::parseObjectiveFunction(options_[1]);
+    m_MaxNumSteihaugTointSolverItr = dotk::mex::parseMaxNumKrylovSolverItr(options_[0]);
+    m_SolverRelativeTolerance = dotk::mex::parseKrylovSolverRelativeTolerance(options_[0]);
+    m_SolverRelativeToleranceExponential = dotk::mex::parseRelativeToleranceExponential(options_[0]);
 }
 
 size_t DOTk_MexTrustRegionLinMore::getMaxNumSteihaugTointSolverItr() const
@@ -115,23 +116,30 @@ void DOTk_MexTrustRegionLinMore::solve(const mxArray* input_[], mxArray* output_
 
 void DOTk_MexTrustRegionLinMore::solveTypeLinearProgramming(const mxArray* input_[], mxArray* output_[])
 {
-    std::tr1::shared_ptr<dotk::DOTk_MexObjectiveFunction<double> >
-        objective(new dotk::DOTk_MexObjectiveFunction<double>(m_ObjectiveFunctionOperators.get(), m_ProblemType));
-
+    // Set core data structures: control vector
+    mxArray* mx_initial_control = dotk::mex::parseInitialControl(input_[0]);
+    dotk::MexVector controls(mx_initial_control);
+    mxDestroyArray(mx_initial_control);
     std::tr1::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
-    dotk::mex::buildControlContainer(input_[0], *primal);
+    primal->allocateUserDefinedControl(controls);
 
+    // Set objective function operators and trust region data manager
+    std::tr1::shared_ptr<dotk::DOTk_MexObjectiveFunction>
+        objective(new dotk::DOTk_MexObjectiveFunction(m_ObjectiveFunction, m_ProblemType));
     std::tr1::shared_ptr<dotk::DOTk_SteihaugTointDataMng>
         data(new dotk::DOTk_SteihaugTointDataMng(primal, objective));
-    dotk::mex::buildGradient(input_[0], primal, data);
 
+    // Set gradient and Hessian computation methods
+    dotk::mex::buildGradient(input_[0], data);
     std::tr1::shared_ptr<dotk::DOTk_Hessian> hessian(new dotk::DOTk_Hessian);
-    dotk::mex::buildHessian(input_[0], primal, hessian);
+    dotk::mex::buildHessian(input_[0], hessian);
 
+    // Set trust region step manager
     std::tr1::shared_ptr<dotk::DOTk_SteihaugTointStepMng>
         step(new dotk::DOTk_SteihaugTointStepMng(primal, hessian));
-   dotk::DOTk_MexSteihaugTointNewton::setTrustRegionStepParameters(step);
+    dotk::DOTk_MexSteihaugTointNewton::setTrustRegionStepParameters(step);
 
+    // Initialize trust region algorithm
     dotk::DOTk_SteihaugTointLinMore algorithm(data, step);
     this->setLinMoreAlgorithmParameters(algorithm);
 
@@ -142,27 +150,38 @@ void DOTk_MexTrustRegionLinMore::solveTypeLinearProgramming(const mxArray* input
 
 void DOTk_MexTrustRegionLinMore::solveTypeNonlinearProgramming(const mxArray* input_[], mxArray* output_[])
 {
-    std::tr1::shared_ptr<dotk::DOTk_MexObjectiveFunction<double> >
-        objective(new dotk::DOTk_MexObjectiveFunction<double>(m_ObjectiveFunctionOperators.get(), m_ProblemType));
-    dotk::mex::parseEqualityConstraint(input_[1], m_EqualityConstraintOperators);
-    std::tr1::shared_ptr<dotk::DOTk_MexEqualityConstraint<double> >
-        equality(new dotk::DOTk_MexEqualityConstraint<double>(m_EqualityConstraintOperators.get(), m_ProblemType));
+    // Set core data structures: state and control vectors
+    size_t num_states = dotk::mex::parseNumberStates(input_[0]);
+    dotk::MexVector states(num_states, 0.);
+    mxArray* mx_initial_control = dotk::mex::parseInitialControl(input_[0]);
+    dotk::MexVector controls(mx_initial_control);
+    mxDestroyArray(mx_initial_control);
 
+    // Allocate DOTk data structures
     std::tr1::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
-    dotk::mex::buildDualContainer(input_[0], *primal);
-    dotk::mex::buildControlContainer(input_[0], *primal);
+    primal->allocateUserDefinedState(states);
+    primal->allocateUserDefinedControl(controls);
 
+    // Set objective function, equality constraint, and data manager.
+    std::tr1::shared_ptr<dotk::DOTk_MexObjectiveFunction>
+        objective(new dotk::DOTk_MexObjectiveFunction(m_ObjectiveFunction, m_ProblemType));
+    m_EqualityConstraint = dotk::mex::parseEqualityConstraint(input_[1]);
+    std::tr1::shared_ptr<dotk::DOTk_MexEqualityConstraint>
+        equality(new dotk::DOTk_MexEqualityConstraint(m_EqualityConstraint, m_ProblemType));
     std::tr1::shared_ptr<dotk::DOTk_SteihaugTointDataMng>
         data(new dotk::DOTk_SteihaugTointDataMng(primal, objective, equality));
-    dotk::mex::buildGradient(input_[0], primal, data);
 
+    // Set gradient and Hessian computation methods
+    dotk::mex::buildGradient(input_[0], data);
     std::tr1::shared_ptr<dotk::DOTk_Hessian> hessian(new dotk::DOTk_Hessian);
-    dotk::mex::buildHessian(input_[0], primal, hessian);
+    dotk::mex::buildHessian(input_[0], hessian);
 
+    // Set trust region step manager
     std::tr1::shared_ptr<dotk::DOTk_SteihaugTointStepMng>
         step(new dotk::DOTk_SteihaugTointStepMng(primal, hessian));
     dotk::DOTk_MexSteihaugTointNewton::setTrustRegionStepParameters(step);
 
+    // Initialize trust region algorithm
     dotk::DOTk_SteihaugTointLinMore algorithm(data, step);
     this->setLinMoreAlgorithmParameters(algorithm);
 
@@ -173,30 +192,44 @@ void DOTk_MexTrustRegionLinMore::solveTypeNonlinearProgramming(const mxArray* in
 
 void DOTk_MexTrustRegionLinMore::solveTypeBoundLinearProgramming(const mxArray* input_[], mxArray* output_[])
 {
-    std::tr1::shared_ptr<dotk::DOTk_MexObjectiveFunction<double> >
-        objective(new dotk::DOTk_MexObjectiveFunction<double>(m_ObjectiveFunctionOperators.get(), m_ProblemType));
+    // Set core data structures: control vectors
+    mxArray* mx_initial_control = dotk::mex::parseInitialControl(input_[0]);
+    dotk::MexVector controls(mx_initial_control);
+    mxDestroyArray(mx_initial_control);
 
+    // Allocate DOTk data structures
     std::tr1::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
-    dotk::mex::buildControlContainer(input_[0], *primal);
+    primal->allocateUserDefinedControl(controls);
 
-    std::tr1::shared_ptr<dotk::Vector<double> > bounds = primal->control()->clone();
-    dotk::mex::parseControlLowerBound(input_[0], *bounds);
-    primal->setControlLowerBound(*bounds);
-    bounds->fill(0.);
-    dotk::mex::parseControlUpperBound(input_[0], *bounds);
-    primal->setControlUpperBound(*bounds);
+    // Set lower bounds on control variables
+    mxArray* mx_lower_bound = dotk::mex::parseControlLowerBound(input_[0]);
+    dotk::MexVector lower_bound(mx_lower_bound);
+    mxDestroyArray(mx_lower_bound);
+    primal->setControlLowerBound(lower_bound);
 
+    // Set upper bounds on control variables
+    mxArray* mx_upper_bound = dotk::mex::parseControlUpperBound(input_[0]);
+    dotk::MexVector upper_bound(mx_upper_bound);
+    mxDestroyArray(mx_upper_bound);
+    primal->setControlUpperBound(upper_bound);
+
+    // Set objective function operators and trust region data manager
+    std::tr1::shared_ptr<dotk::DOTk_MexObjectiveFunction>
+        objective(new dotk::DOTk_MexObjectiveFunction(m_ObjectiveFunction, m_ProblemType));
     std::tr1::shared_ptr<dotk::DOTk_SteihaugTointDataMng>
         data(new dotk::DOTk_SteihaugTointDataMng(primal, objective));
-    dotk::mex::buildGradient(input_[0], primal, data);
 
+    // Set gradient and Hessian computation methods
+    dotk::mex::buildGradient(input_[0], data);
     std::tr1::shared_ptr<dotk::DOTk_Hessian> hessian(new dotk::DOTk_Hessian);
-    dotk::mex::buildHessian(input_[0], primal, hessian);
+    dotk::mex::buildHessian(input_[0], hessian);
 
+    // Set trust region step manager
     std::tr1::shared_ptr<dotk::DOTk_SteihaugTointProjGradStep>
         step(new dotk::DOTk_SteihaugTointProjGradStep(primal, hessian));
     dotk::DOTk_MexSteihaugTointNewton::setTrustRegionStepParameters(step);
 
+    // Initialize trust region algorithm
     dotk::DOTk_SteihaugTointLinMore algorithm(data, step);
     this->setLinMoreAlgorithmParameters(algorithm);
 
@@ -207,34 +240,50 @@ void DOTk_MexTrustRegionLinMore::solveTypeBoundLinearProgramming(const mxArray* 
 
 void DOTk_MexTrustRegionLinMore::solveTypeBoundNonlinearProgramming(const mxArray* input_[], mxArray* output_[])
 {
-    std::tr1::shared_ptr<dotk::DOTk_MexObjectiveFunction<double> >
-        objective(new dotk::DOTk_MexObjectiveFunction<double>(m_ObjectiveFunctionOperators.get(), m_ProblemType));
-    dotk::mex::parseEqualityConstraint(input_[1], m_EqualityConstraintOperators);
-    std::tr1::shared_ptr<dotk::DOTk_MexEqualityConstraint<double> >
-        equality(new dotk::DOTk_MexEqualityConstraint<double>(m_EqualityConstraintOperators.get(), m_ProblemType));
+    // Set core data structures: state and control vectors
+    size_t num_states = dotk::mex::parseNumberStates(input_[0]);
+    dotk::MexVector states(num_states, 0.);
+    mxArray* mx_initial_control = dotk::mex::parseInitialControl(input_[0]);
+    dotk::MexVector controls(mx_initial_control);
+    mxDestroyArray(mx_initial_control);
 
+    // Allocate DOTk data structures
     std::tr1::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
-    dotk::mex::buildDualContainer(input_[0], *primal);
-    dotk::mex::buildControlContainer(input_[0], *primal);
+    primal->allocateUserDefinedState(states);
+    primal->allocateUserDefinedControl(controls);
 
-    std::tr1::shared_ptr<dotk::Vector<double> > bounds = primal->control()->clone();
-    dotk::mex::parseControlLowerBound(input_[0], *bounds);
-    primal->setControlLowerBound(*bounds);
-    bounds->fill(0.);
-    dotk::mex::parseControlUpperBound(input_[0], *bounds);
-    primal->setControlUpperBound(*bounds);
+    // Set lower bounds on control variables
+    mxArray* mx_lower_bound = dotk::mex::parseControlLowerBound(input_[0]);
+    dotk::MexVector lower_bound(mx_lower_bound);
+    mxDestroyArray(mx_lower_bound);
+    primal->setControlLowerBound(lower_bound);
 
+    // Set upper bounds on control variables
+    mxArray* mx_upper_bound = dotk::mex::parseControlUpperBound(input_[0]);
+    dotk::MexVector upper_bound(mx_upper_bound);
+    mxDestroyArray(mx_upper_bound);
+    primal->setControlUpperBound(upper_bound);
+
+    // Set objective function, equality constraint, and data manager.
+    std::tr1::shared_ptr<dotk::DOTk_MexObjectiveFunction>
+        objective(new dotk::DOTk_MexObjectiveFunction(m_ObjectiveFunction, m_ProblemType));
+    m_EqualityConstraint = dotk::mex::parseEqualityConstraint(input_[1]);
+    std::tr1::shared_ptr<dotk::DOTk_MexEqualityConstraint>
+        equality(new dotk::DOTk_MexEqualityConstraint(m_EqualityConstraint, m_ProblemType));
     std::tr1::shared_ptr<dotk::DOTk_SteihaugTointDataMng>
         data(new dotk::DOTk_SteihaugTointDataMng(primal, objective, equality));
-    dotk::mex::buildGradient(input_[0], primal, data);
 
+    // Set gradient and Hessian computation methods
+    dotk::mex::buildGradient(input_[0], data);
     std::tr1::shared_ptr<dotk::DOTk_Hessian> hessian(new dotk::DOTk_Hessian);
-    dotk::mex::buildHessian(input_[0], primal, hessian);
+    dotk::mex::buildHessian(input_[0], hessian);
 
-    std::tr1::shared_ptr<dotk::DOTk_SteihaugTointProjGradStep>
-        step(new dotk::DOTk_SteihaugTointProjGradStep(primal, hessian));
+    // Set trust region step manager
+    std::tr1::shared_ptr<dotk::DOTk_SteihaugTointStepMng>
+        step(new dotk::DOTk_SteihaugTointStepMng(primal, hessian));
     dotk::DOTk_MexSteihaugTointNewton::setTrustRegionStepParameters(step);
 
+    // Initialize trust region algorithm
     dotk::DOTk_SteihaugTointLinMore algorithm(data, step);
     this->setLinMoreAlgorithmParameters(algorithm);
 

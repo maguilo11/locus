@@ -32,14 +32,14 @@ TEST(DOTk_BoundLineSearchIxNewtonGmresNumIntgHess, getMin_UsrDefGrad_NumIntgHess
     std::tr1::shared_ptr<dotk::DOTk_LineSearchMngTypeULP> mng(new dotk::DOTk_LineSearchMngTypeULP(primal, objective));
     mng->setUserDefinedGradient();
     std::tr1::shared_ptr<dotk::NumericallyDifferentiatedHessian> hessian(new dotk::NumericallyDifferentiatedHessian(primal, objective));
-    hessian->setForwardDifference(primal);
+    hessian->setForwardDifference(*primal->control());
 
     dotk::DOTk_LineSearchInexactNewton alg(hessian, step, mng);
     alg.setPrecGmresKrylovSolver(primal);
     alg.getMin();
 
     EXPECT_EQ(dotk::types::OBJECTIVE_FUNC_TOL_SATISFIED, alg.getStoppingCriterion());
-    EXPECT_EQ(17, alg.getNumItrDone());
+    EXPECT_EQ(17u, alg.getNumItrDone());
     primal->control()->fill(1.);
     dotk::gtest::checkResults(*mng->getNewPrimal(), *primal->control());
 }
@@ -57,14 +57,14 @@ TEST(DOTk_BoundLineSearchIxNewtonGmresNumIntgHess, getMin_UsrDefGrad_NumIntgHess
     std::tr1::shared_ptr<dotk::DOTk_LineSearchMngTypeULP> mng(new dotk::DOTk_LineSearchMngTypeULP(primal, objective));
     mng->setUserDefinedGradient();
     std::tr1::shared_ptr<dotk::NumericallyDifferentiatedHessian> hessian(new dotk::NumericallyDifferentiatedHessian(primal, objective));
-    hessian->setBackwardDifference(primal, 5e-6);
+    hessian->setBackwardDifference(*primal->control(), 5e-6);
 
     dotk::DOTk_LineSearchInexactNewton alg(hessian, step, mng);
     alg.setPrecGmresKrylovSolver(primal);
     alg.getMin();
 
     EXPECT_EQ(dotk::types::OBJECTIVE_FUNC_TOL_SATISFIED, alg.getStoppingCriterion());
-    EXPECT_EQ(17, alg.getNumItrDone());
+    EXPECT_EQ(17u, alg.getNumItrDone());
     primal->control()->fill(1.);
     dotk::gtest::checkResults(*mng->getNewPrimal(), *primal->control());
 }
@@ -82,14 +82,14 @@ TEST(DOTk_BoundLineSearchIxNewtonGmresNumIntgHess, getMin_UsrDefGrad_NumIntgHess
     std::tr1::shared_ptr<dotk::DOTk_LineSearchMngTypeULP> mng(new dotk::DOTk_LineSearchMngTypeULP(primal, objective));
     mng->setUserDefinedGradient();
     std::tr1::shared_ptr<dotk::NumericallyDifferentiatedHessian> hessian(new dotk::NumericallyDifferentiatedHessian(primal, objective));
-    hessian->setCentralDifference(primal);
+    hessian->setCentralDifference(*primal->control());
 
     dotk::DOTk_LineSearchInexactNewton alg(hessian, step, mng);
     alg.setPrecGmresKrylovSolver(primal);
     alg.getMin();
 
     EXPECT_EQ(dotk::types::OBJECTIVE_FUNC_TOL_SATISFIED, alg.getStoppingCriterion());
-    EXPECT_EQ(17, alg.getNumItrDone());
+    EXPECT_EQ(17u, alg.getNumItrDone());
     primal->control()->fill(1.);
     dotk::gtest::checkResults(*mng->getNewPrimal(), *primal->control());
 }
@@ -107,14 +107,14 @@ TEST(DOTk_BoundLineSearchIxNewtonGmresNumIntgHess, getMin_UsrDefGrad_NumIntgHess
     std::tr1::shared_ptr<dotk::DOTk_LineSearchMngTypeULP> mng(new dotk::DOTk_LineSearchMngTypeULP(primal, objective));
     mng->setUserDefinedGradient();
     std::tr1::shared_ptr<dotk::NumericallyDifferentiatedHessian> hessian(new dotk::NumericallyDifferentiatedHessian(primal, objective));
-    hessian->setSecondOrderForwardDifference(primal);
+    hessian->setSecondOrderForwardDifference(*primal->control());
 
     dotk::DOTk_LineSearchInexactNewton alg(hessian, step, mng);
     alg.setPrecGmresKrylovSolver(primal);
     alg.getMin();
 
     EXPECT_EQ(dotk::types::OBJECTIVE_FUNC_TOL_SATISFIED, alg.getStoppingCriterion());
-    EXPECT_EQ(17, alg.getNumItrDone());
+    EXPECT_EQ(17u, alg.getNumItrDone());
     primal->control()->fill(1.);
     dotk::gtest::checkResults(*mng->getNewPrimal(), *primal->control());
 }
@@ -132,14 +132,14 @@ TEST(DOTk_BoundLineSearchIxNewtonGmresNumIntgHess, getMin_UsrDefGrad_NumIntgHess
     std::tr1::shared_ptr<dotk::DOTk_LineSearchMngTypeULP> mng(new dotk::DOTk_LineSearchMngTypeULP(primal, objective));
     mng->setUserDefinedGradient();
     std::tr1::shared_ptr<dotk::NumericallyDifferentiatedHessian> hessian(new dotk::NumericallyDifferentiatedHessian(primal, objective));
-    hessian->setThirdOrderForwardDifference(primal);
+    hessian->setThirdOrderForwardDifference(*primal->control());
 
     dotk::DOTk_LineSearchInexactNewton alg(hessian, step, mng);
     alg.setPrecGmresKrylovSolver(primal);
     alg.getMin();
 
     EXPECT_EQ(dotk::types::OBJECTIVE_FUNC_TOL_SATISFIED, alg.getStoppingCriterion());
-    EXPECT_EQ(17, alg.getNumItrDone());
+    EXPECT_EQ(17u, alg.getNumItrDone());
     primal->control()->fill(1.);
     dotk::gtest::checkResults(*mng->getNewPrimal(), *primal->control());
 }
@@ -157,14 +157,14 @@ TEST(DOTk_BoundLineSearchIxNewtonGmresNumIntgHess, getMin_UsrDefGrad_NumIntgHess
     std::tr1::shared_ptr<dotk::DOTk_LineSearchMngTypeULP> mng(new dotk::DOTk_LineSearchMngTypeULP(primal, objective));
     mng->setUserDefinedGradient();
     std::tr1::shared_ptr<dotk::NumericallyDifferentiatedHessian> hessian(new dotk::NumericallyDifferentiatedHessian(primal, objective));
-    hessian->setThirdOrderBackwardDifference(primal, 1e-5);
+    hessian->setThirdOrderBackwardDifference(*primal->control(), 1e-5);
 
     dotk::DOTk_LineSearchInexactNewton alg(hessian, step, mng);
     alg.setPrecGmresKrylovSolver(primal);
     alg.getMin();
 
     EXPECT_EQ(dotk::types::OBJECTIVE_FUNC_TOL_SATISFIED, alg.getStoppingCriterion());
-    EXPECT_EQ(17, alg.getNumItrDone());
+    EXPECT_EQ(17u, alg.getNumItrDone());
     primal->control()->fill(1.);
     dotk::gtest::checkResults(*mng->getNewPrimal(), *primal->control());
 }
@@ -183,7 +183,7 @@ TEST(DOTk_BoundLineSearchIxNewtonGmresNumIntgHess, getMin_UsrDefGrad_NumIntgHess
     std::tr1::shared_ptr<dotk::DOTk_LineSearchMngTypeULP> mng(new dotk::DOTk_LineSearchMngTypeULP(primal, objective));
     mng->setUserDefinedGradient();
     std::tr1::shared_ptr<dotk::NumericallyDifferentiatedHessian> hessian(new dotk::NumericallyDifferentiatedHessian(primal, objective));
-    hessian->setForwardDifference(primal);
+    hessian->setForwardDifference(*primal->control());
 
     mng->setUserDefinedGradient();
     dotk::DOTk_LineSearchInexactNewton alg(hessian, step, mng);
@@ -191,7 +191,7 @@ TEST(DOTk_BoundLineSearchIxNewtonGmresNumIntgHess, getMin_UsrDefGrad_NumIntgHess
     alg.getMin();
 
     EXPECT_EQ(dotk::types::OBJECTIVE_FUNC_TOL_SATISFIED, alg.getStoppingCriterion());
-    EXPECT_EQ(17, alg.getNumItrDone());
+    EXPECT_EQ(17u, alg.getNumItrDone());
     primal->control()->fill(1.);
     dotk::gtest::checkResults(*mng->getNewPrimal(), *primal->control());
 }
@@ -210,14 +210,14 @@ TEST(DOTk_BoundLineSearchIxNewtonGmresNumIntgHess, getMin_UsrDefGrad_NumIntgHess
     std::tr1::shared_ptr<dotk::DOTk_LineSearchMngTypeULP> mng(new dotk::DOTk_LineSearchMngTypeULP(primal, objective));
     mng->setUserDefinedGradient();
     std::tr1::shared_ptr<dotk::NumericallyDifferentiatedHessian> hessian(new dotk::NumericallyDifferentiatedHessian(primal, objective));
-    hessian->setBackwardDifference(primal);
+    hessian->setBackwardDifference(*primal->control());
 
     dotk::DOTk_LineSearchInexactNewton alg(hessian, step, mng);
     alg.setPrecGmresKrylovSolver(primal);
     alg.getMin();
 
     EXPECT_EQ(dotk::types::OBJECTIVE_FUNC_TOL_SATISFIED, alg.getStoppingCriterion());
-    EXPECT_EQ(17, alg.getNumItrDone());
+    EXPECT_EQ(17u, alg.getNumItrDone());
     primal->control()->fill(1.);
     dotk::gtest::checkResults(*mng->getNewPrimal(), *primal->control());
 }
@@ -236,14 +236,14 @@ TEST(DOTk_BoundLineSearchIxNewtonGmresNumIntgHess, getMin_UsrDefGrad_NumIntgHess
     std::tr1::shared_ptr<dotk::DOTk_LineSearchMngTypeULP> mng(new dotk::DOTk_LineSearchMngTypeULP(primal, objective));
     mng->setUserDefinedGradient();
     std::tr1::shared_ptr<dotk::NumericallyDifferentiatedHessian> hessian(new dotk::NumericallyDifferentiatedHessian(primal, objective));
-    hessian->setCentralDifference(primal);
+    hessian->setCentralDifference(*primal->control());
 
     dotk::DOTk_LineSearchInexactNewton alg(hessian, step, mng);
     alg.setPrecGmresKrylovSolver(primal);
     alg.getMin();
 
     EXPECT_EQ(dotk::types::OBJECTIVE_FUNC_TOL_SATISFIED, alg.getStoppingCriterion());
-    EXPECT_EQ(17, alg.getNumItrDone());
+    EXPECT_EQ(17u, alg.getNumItrDone());
     primal->control()->fill(1.);
     dotk::gtest::checkResults(*mng->getNewPrimal(), *primal->control());
 }
@@ -262,14 +262,14 @@ TEST(DOTk_BoundLineSearchIxNewtonGmresNumIntgHess, getMin_UsrDefGrad_NumIntgHess
     std::tr1::shared_ptr<dotk::DOTk_LineSearchMngTypeULP> mng(new dotk::DOTk_LineSearchMngTypeULP(primal, objective));
     mng->setUserDefinedGradient();
     std::tr1::shared_ptr<dotk::NumericallyDifferentiatedHessian> hessian(new dotk::NumericallyDifferentiatedHessian(primal, objective));
-    hessian->setSecondOrderForwardDifference(primal);
+    hessian->setSecondOrderForwardDifference(*primal->control());
 
     dotk::DOTk_LineSearchInexactNewton alg(hessian, step, mng);
     alg.setPrecGmresKrylovSolver(primal);
     alg.getMin();
 
     EXPECT_EQ(dotk::types::OBJECTIVE_FUNC_TOL_SATISFIED, alg.getStoppingCriterion());
-    EXPECT_EQ(17, alg.getNumItrDone());
+    EXPECT_EQ(17u, alg.getNumItrDone());
     primal->control()->fill(1.);
     dotk::gtest::checkResults(*mng->getNewPrimal(), *primal->control());
 }
@@ -288,14 +288,14 @@ TEST(DOTk_BoundLineSearchIxNewtonGmresNumIntgHess, getMin_UsrDefGrad_NumIntgHess
     std::tr1::shared_ptr<dotk::DOTk_LineSearchMngTypeULP> mng(new dotk::DOTk_LineSearchMngTypeULP(primal, objective));
     mng->setUserDefinedGradient();
     std::tr1::shared_ptr<dotk::NumericallyDifferentiatedHessian> hessian(new dotk::NumericallyDifferentiatedHessian(primal, objective));
-    hessian->setThirdOrderForwardDifference(primal, 1e-5);
+    hessian->setThirdOrderForwardDifference(*primal->control(), 1e-5);
 
     dotk::DOTk_LineSearchInexactNewton alg(hessian, step, mng);
     alg.setPrecGmresKrylovSolver(primal);
     alg.getMin();
 
     EXPECT_EQ(dotk::types::OBJECTIVE_FUNC_TOL_SATISFIED, alg.getStoppingCriterion());
-    EXPECT_EQ(17, alg.getNumItrDone());
+    EXPECT_EQ(17u, alg.getNumItrDone());
     primal->control()->fill(1.);
     dotk::gtest::checkResults(*mng->getNewPrimal(), *primal->control());
 }
@@ -314,14 +314,14 @@ TEST(DOTk_BoundLineSearchIxNewtonGmresNumIntgHess, getMin_UsrDefGrad_NumIntgHess
     std::tr1::shared_ptr<dotk::DOTk_LineSearchMngTypeULP> mng(new dotk::DOTk_LineSearchMngTypeULP(primal, objective));
     mng->setUserDefinedGradient();
     std::tr1::shared_ptr<dotk::NumericallyDifferentiatedHessian> hessian(new dotk::NumericallyDifferentiatedHessian(primal, objective));
-    hessian->setThirdOrderBackwardDifference(primal, 1e-5);
+    hessian->setThirdOrderBackwardDifference(*primal->control(), 1e-5);
 
     dotk::DOTk_LineSearchInexactNewton alg(hessian, step, mng);
     alg.setPrecGmresKrylovSolver(primal);
     alg.getMin();
 
     EXPECT_EQ(dotk::types::OBJECTIVE_FUNC_TOL_SATISFIED, alg.getStoppingCriterion());
-    EXPECT_EQ(17, alg.getNumItrDone());
+    EXPECT_EQ(17u, alg.getNumItrDone());
     primal->control()->fill(1.);
     dotk::gtest::checkResults(*mng->getNewPrimal(), *primal->control());
 }

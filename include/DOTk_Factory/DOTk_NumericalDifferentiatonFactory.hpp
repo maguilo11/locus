@@ -14,33 +14,34 @@
 namespace dotk
 {
 
-class DOTk_Primal;
+template<typename ScalarType>
+class Vector;
+
 class DOTk_NumericalDifferentiation;
 
 class DOTk_NumericalDifferentiatonFactory
 {
 public:
     DOTk_NumericalDifferentiatonFactory();
-    DOTk_NumericalDifferentiatonFactory(dotk::types::numerical_integration_t type_);
+    explicit DOTk_NumericalDifferentiatonFactory(dotk::types::numerical_integration_t type_);
     ~DOTk_NumericalDifferentiatonFactory();
 
     dotk::types::numerical_integration_t type() const;
     void type(dotk::types::numerical_integration_t type_);
 
-    void buildForwardDifferenceHessian(const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_,
-                                       std::tr1::shared_ptr<dotk::DOTk_NumericalDifferentiation> & intg_);
-    void buildBackwardDifferenceHessian(const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_,
-                                        std::tr1::shared_ptr<dotk::DOTk_NumericalDifferentiation> & intg_);
-    void buildCentralDifferenceHessian(const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_,
-                                       std::tr1::shared_ptr<dotk::DOTk_NumericalDifferentiation> & intg_);
-    void buildSecondOrderForwardDifferenceHessian(const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_,
-                                                  std::tr1::shared_ptr<dotk::DOTk_NumericalDifferentiation> & intg_);
-    void buildThirdOrderForwardDifferenceHessian(const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_,
-                                                 std::tr1::shared_ptr<dotk::DOTk_NumericalDifferentiation> & intg_);
-    void buildThirdOrderBackwardDifferenceHessian(const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_,
-                                                  std::tr1::shared_ptr<dotk::DOTk_NumericalDifferentiation> & intg_);
-    void build(const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_,
-               std::tr1::shared_ptr<dotk::DOTk_NumericalDifferentiation> & intg_);
+    void buildForwardDifferenceHessian(const dotk::Vector<Real> & input_,
+                                       std::tr1::shared_ptr<dotk::DOTk_NumericalDifferentiation> & output_);
+    void buildBackwardDifferenceHessian(const dotk::Vector<Real> & input_,
+                                        std::tr1::shared_ptr<dotk::DOTk_NumericalDifferentiation> & output_);
+    void buildCentralDifferenceHessian(const dotk::Vector<Real> & input_,
+                                       std::tr1::shared_ptr<dotk::DOTk_NumericalDifferentiation> & output_);
+    void buildSecondOrderForwardDifferenceHessian(const dotk::Vector<Real> & input_,
+                                                  std::tr1::shared_ptr<dotk::DOTk_NumericalDifferentiation> & output_);
+    void buildThirdOrderForwardDifferenceHessian(const dotk::Vector<Real> & input_,
+                                                 std::tr1::shared_ptr<dotk::DOTk_NumericalDifferentiation> & output_);
+    void buildThirdOrderBackwardDifferenceHessian(const dotk::Vector<Real> & input_,
+                                                  std::tr1::shared_ptr<dotk::DOTk_NumericalDifferentiation> & output_);
+    void build(const dotk::Vector<Real> & input_, std::tr1::shared_ptr<dotk::DOTk_NumericalDifferentiation> & output_);
 
 private:
     dotk::types::numerical_integration_t m_Type;

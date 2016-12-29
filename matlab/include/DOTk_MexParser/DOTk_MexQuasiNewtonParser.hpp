@@ -9,10 +9,7 @@
 #define DOTK_MEXQUASINEWTONPARSER_HPP_
 
 #include <mex.h>
-#include <cstddef>
-
 #include "DOTk_Types.hpp"
-#include "DOTk_MexArrayPtr.hpp"
 
 namespace dotk
 {
@@ -20,8 +17,8 @@ namespace dotk
 namespace mex
 {
 
-void parseQuasiNewtonStorage(const mxArray* options_, size_t & output_);
-void parseQuasiNewtonMethod(const mxArray* options_, dotk::types::invhessian_t & output_);
+size_t parseQuasiNewtonStorage(const mxArray* input_);
+dotk::types::invhessian_t parseQuasiNewtonMethod(const mxArray* input_);
 
 }
 

@@ -10,7 +10,6 @@
 
 #include <tr1/memory>
 
-#include "DOTk_MexArrayPtr.hpp"
 #include "DOTk_MexAlgorithmTypeNewton.hpp"
 
 namespace dotk
@@ -45,9 +44,6 @@ private:
 
     void setAlgorithmParameters(dotk::DOTk_TrustRegionInexactNewton & algorithm_);
     void setTrustRegionMethodParameters(const std::tr1::shared_ptr<dotk::DOTk_TrustRegionAlgorithmsDataMng> & mng_);
-    void optimize(const std::tr1::shared_ptr<dotk::DOTk_TrustRegionAlgorithmsDataMng> & mng_,
-                  const mxArray* input_[],
-                  mxArray* output_[]);
 
 private:
     size_t m_MaxNumTrustRegionSubProblemItr;
@@ -59,8 +55,8 @@ private:
     double m_TrustRegionContractionFactor;
     double m_MinActualOverPredictedReductionRatio;
 
-    dotk::DOTk_MexArrayPtr m_ObjectiveFunctionOperators;
-    dotk::DOTk_MexArrayPtr m_EqualityConstraintOperators;
+    mxArray* m_ObjectiveFunction;
+    mxArray* m_EqualityConstraint;
 
 private:
     DOTk_MexNewtonTypeTR(const dotk::DOTk_MexNewtonTypeTR & rhs_);

@@ -5,31 +5,28 @@
  *      Author: Miguel A. Aguilo Valentin
  */
 
-
-#include "vector.hpp"
 #include "DOTk_MexMMA.hpp"
+#include "DOTk_MexVector.hpp"
+#include "DOTk_MexApiUtilities.hpp"
+#include "DOTk_MexAlgorithmParser.hpp"
+#include "DOTk_MexObjectiveFunction.hpp"
+#include "DOTk_MexEqualityConstraint.hpp"
+#include "DOTk_MexInequalityConstraint.hpp"
+
 #include "DOTk_Primal.hpp"
 #include "DOTk_DataMngCCSA.hpp"
 #include "DOTk_AlgorithmCCSA.hpp"
 #include "DOTk_SubProblemMMA.hpp"
 #include "DOTk_DualSolverNLCG.hpp"
-#include "DOTk_MexAlgorithmParser.hpp"
-#include "DOTk_MexContainerFactory.hpp"
-#include "DOTk_MexObjectiveFunction.cpp"
-#include "DOTk_MexObjectiveFunction.hpp"
-#include "DOTk_MexEqualityConstraint.cpp"
-#include "DOTk_MexEqualityConstraint.hpp"
-#include "DOTk_MexInequalityConstraint.cpp"
-#include "DOTk_MexInequalityConstraint.hpp"
 
 namespace dotk
 {
 
 DOTk_MexMMA::DOTk_MexMMA(const mxArray* options_[]) :
         dotk::DOTk_MexMethodCCSA(options_[0]),
-        m_ObjectiveFunction(NULL),
-        m_EqualityConstraint(NULL),
-        m_InequalityConstraint(NULL)
+        m_ObjectiveFunction(nullptr),
+        m_EqualityConstraint(nullptr),
+        m_InequalityConstraint(nullptr)
 {
     this->initialize(options_);
 }
@@ -41,11 +38,10 @@ DOTk_MexMMA::~DOTk_MexMMA()
 
 void DOTk_MexMMA::clear()
 {
-    m_ObjectiveFunction.release();
-    m_EqualityConstraint.release();
-    m_InequalityConstraint.release();
+    dotk::mex::destroy(m_ObjectiveFunction);
+    dotk::mex::destroy(m_EqualityConstraint);
+    dotk::mex::destroy(m_InequalityConstraint);
 }
-
 
 void DOTk_MexMMA::solve(const mxArray* input_[], mxArray* output_[])
 {
@@ -84,35 +80,51 @@ void DOTk_MexMMA::solve(const mxArray* input_[], mxArray* output_[])
 
 void DOTk_MexMMA::solveLinearProgrammingProblem(const mxArray* input_[], mxArray* output_[])
 {
+    // Set core data structures: duals and control vectors
+    size_t num_duals = dotk::mex::parseNumberDuals(input_[0]);
+    dotk::MexVector duals(num_duals, 0.);
+    mxArray* mx_initial_control = dotk::mex::parseInitialControl(input_[0]);
+    dotk::MexVector controls(mx_initial_control);
+    mxDestroyArray(mx_initial_control);
+
+    // Allocate DOTk data structures
     std::tr1::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
-    dotk::mex::buildDualContainer(input_[0], *primal);
-    dotk::mex::buildControlContainer(input_[0], *primal);
+    primal->allocateUserDefinedDual(duals);
+    primal->allocateUserDefinedControl(controls);
 
-    std::tr1::shared_ptr< dotk::Vector<double> > vector = primal->control()->clone();
-    dotk::mex::parseControlLowerBound(input_[0], *vector);
-    primal->setControlLowerBound(*vector);
-    vector->fill(0.);
-    dotk::mex::parseControlUpperBound(input_[0], *vector);
-    primal->setControlUpperBound(*vector);
+    // Set lower bounds on control variables
+    mxArray* mx_lower_bound = dotk::mex::parseControlLowerBound(input_[0]);
+    dotk::MexVector lower_bound(mx_lower_bound);
+    mxDestroyArray(mx_lower_bound);
+    primal->setControlLowerBound(lower_bound);
 
-    dotk::types::problem_t type = this->getProblemType();
-    std::tr1::shared_ptr<dotk::DOTk_MexObjectiveFunction<double> >
-        objective(new dotk::DOTk_MexObjectiveFunction<double>(m_ObjectiveFunction.get(), type));
-    std::tr1::shared_ptr<dotk::DOTk_MexInequalityConstraint<double> >
-        shared_ptr(new dotk::DOTk_MexInequalityConstraint<double>(m_InequalityConstraint.get(), type));
+    // Set upper bounds on control variables
+    mxArray* mx_upper_bound = dotk::mex::parseControlUpperBound(input_[0]);
+    dotk::MexVector upper_bound(mx_upper_bound);
+    mxDestroyArray(mx_upper_bound);
+    primal->setControlUpperBound(upper_bound);
+
+    // Set objective function and inequality constraint
+    dotk::types::problem_t problem_type = this->getProblemType();
+    std::tr1::shared_ptr<dotk::DOTk_MexObjectiveFunction>
+        objective(new dotk::DOTk_MexObjectiveFunction(m_ObjectiveFunction, problem_type));
+    std::tr1::shared_ptr<dotk::DOTk_MexInequalityConstraint>
+        shared_ptr(new dotk::DOTk_MexInequalityConstraint(m_InequalityConstraint, problem_type));
     std::vector<std::tr1::shared_ptr<dotk::DOTk_InequalityConstraint<double> > > inequality(1, shared_ptr);
-
+    // Set data manager
     std::tr1::shared_ptr<dotk::DOTk_DataMngCCSA> data_mng(new dotk::DOTk_DataMngCCSA(primal, objective, inequality));
 
+    // Set dual solver
     std::tr1::shared_ptr<dotk::DOTk_DualSolverNLCG> dual_solver(new dotk::DOTk_DualSolverNLCG(primal));
     dual_solver->setNonlinearCgType(dotk::DOTk_MexMethodCCSA::getNonlinearConjugateGradientType());
     dotk::DOTk_MexMethodCCSA::setDualSolverParameters(dual_solver);
 
-    std::tr1::shared_ptr<dotk::DOTk_SubProblemMMA> sub_problem(new dotk::DOTk_SubProblemMMA(data_mng, dual_solver));
-    dotk::DOTk_AlgorithmCCSA algorithm(data_mng, sub_problem);
+    // Set Method of Moving Asymptotes (MMA) subproblem and initialize algorithm
+    std::tr1::shared_ptr<dotk::DOTk_SubProblemMMA> subproblem(new dotk::DOTk_SubProblemMMA(data_mng, dual_solver));
+    dotk::DOTk_AlgorithmCCSA algorithm(data_mng, subproblem);
     dotk::DOTk_MexMethodCCSA::setPrimalSolverParameters(algorithm);
-
     algorithm.printDiagnosticsAtEveryItrAndSolutionAtTheEnd();
+
     algorithm.getMin();
 
     dotk::DOTk_MexMethodCCSA::gatherOutputData(algorithm, data_mng, output_);
@@ -120,40 +132,59 @@ void DOTk_MexMMA::solveLinearProgrammingProblem(const mxArray* input_[], mxArray
 
 void DOTk_MexMMA::solveNonlinearProgrammingProblem(const mxArray* input_[], mxArray* output_[])
 {
+    // Set core data structures: duals, states, and control vectors
+    size_t num_duals = dotk::mex::parseNumberDuals(input_[0]);
+    dotk::MexVector duals(num_duals, 0.);
+    size_t num_states = dotk::mex::parseNumberStates(input_[0]);
+    dotk::MexVector states(num_states, 0.);
+    mxArray* mx_initial_control = dotk::mex::parseInitialControl(input_[0]);
+    dotk::MexVector controls(mx_initial_control);
+    mxDestroyArray(mx_initial_control);
+
+    // Allocate DOTk data structures
     std::tr1::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
-    dotk::mex::buildDualContainer(input_[0], *primal);
-    dotk::mex::buildStateContainer(input_[0], *primal);
-    dotk::mex::buildPrimalContainer(input_[0], *primal);
+    primal->allocateUserDefinedDual(duals);
+    primal->allocateUserDefinedState(states);
+    primal->allocateUserDefinedControl(controls);
 
-    std::tr1::shared_ptr< dotk::Vector<double> > vector = primal->control()->clone();
-    dotk::mex::parseControlLowerBound(input_[0], *vector);
-    primal->setControlLowerBound(*vector);
-    vector->fill(0.);
-    dotk::mex::parseControlUpperBound(input_[0], *vector);
-    primal->setControlUpperBound(*vector);
+    // Set lower bounds on control variables
+    mxArray* mx_lower_bound = dotk::mex::parseControlLowerBound(input_[0]);
+    dotk::MexVector lower_bound(mx_lower_bound);
+    mxDestroyArray(mx_lower_bound);
+    primal->setControlLowerBound(lower_bound);
 
+    // Set upper bounds on control variables
+    mxArray* mx_upper_bound = dotk::mex::parseControlUpperBound(input_[0]);
+    dotk::MexVector upper_bound(mx_upper_bound);
+    mxDestroyArray(mx_upper_bound);
+    primal->setControlUpperBound(upper_bound);
+
+    // Set objective function, equality constraint, and inequality constraint
     dotk::types::problem_t type = this->getProblemType();
-    dotk::mex::parseEqualityConstraint(input_[1], m_EqualityConstraint);
+    std::tr1::shared_ptr<dotk::DOTk_MexObjectiveFunction>
+        objective(new dotk::DOTk_MexObjectiveFunction(m_ObjectiveFunction, type));
+    m_EqualityConstraint = dotk::mex::parseEqualityConstraint(input_[1]);
+    std::tr1::shared_ptr<dotk::DOTk_MexEqualityConstraint>
+        equality(new dotk::DOTk_MexEqualityConstraint(m_EqualityConstraint, type));
+    std::tr1::shared_ptr<dotk::DOTk_MexInequalityConstraint>
+        inequality(new dotk::DOTk_MexInequalityConstraint(m_InequalityConstraint, type));
+    std::vector<std::tr1::shared_ptr<dotk::DOTk_InequalityConstraint<double> > > inequality_vector(1, inequality);
 
-    std::tr1::shared_ptr<dotk::DOTk_MexObjectiveFunction<double> >
-        objective(new dotk::DOTk_MexObjectiveFunction<double>(m_ObjectiveFunction.get(), type));
-    std::tr1::shared_ptr<dotk::DOTk_MexEqualityConstraint<double> >
-        equality(new dotk::DOTk_MexEqualityConstraint<double>(m_EqualityConstraint.get(), type));
-    std::tr1::shared_ptr<dotk::DOTk_MexInequalityConstraint<double> >
-        shared_ptr(new dotk::DOTk_MexInequalityConstraint<double>(m_InequalityConstraint.get(), type));
-    std::vector<std::tr1::shared_ptr<dotk::DOTk_InequalityConstraint<double> > > inequality(1, shared_ptr);
+    // Set data and assembly operators manager
+    std::tr1::shared_ptr<dotk::DOTk_DataMngCCSA>
+        data_mng(new dotk::DOTk_DataMngCCSA(primal, objective, equality, inequality_vector));
 
-    std::tr1::shared_ptr<dotk::DOTk_DataMngCCSA> data_mng(new dotk::DOTk_DataMngCCSA(primal, objective, equality, inequality));
-
+    // Set dual solver
     std::tr1::shared_ptr<dotk::DOTk_DualSolverNLCG> dual_solver(new dotk::DOTk_DualSolverNLCG(primal));
     dual_solver->setNonlinearCgType(dotk::DOTk_MexMethodCCSA::getNonlinearConjugateGradientType());
     dotk::DOTk_MexMethodCCSA::setDualSolverParameters(dual_solver);
 
-    std::tr1::shared_ptr<dotk::DOTk_SubProblemMMA> sub_problem(new dotk::DOTk_SubProblemMMA(data_mng, dual_solver));
-    dotk::DOTk_AlgorithmCCSA algorithm(data_mng, sub_problem);
+    // Set MMA subproblem and initialize algorithm
+    std::tr1::shared_ptr<dotk::DOTk_SubProblemMMA> subproblem(new dotk::DOTk_SubProblemMMA(data_mng, dual_solver));
+    dotk::DOTk_AlgorithmCCSA algorithm(data_mng, subproblem);
     dotk::DOTk_MexMethodCCSA::setPrimalSolverParameters(algorithm);
-
     algorithm.printDiagnosticsAtEveryItrAndSolutionAtTheEnd();
+
     algorithm.getMin();
 
     dotk::DOTk_MexMethodCCSA::gatherOutputData(algorithm, data_mng, output_);
@@ -161,8 +192,8 @@ void DOTk_MexMMA::solveNonlinearProgrammingProblem(const mxArray* input_[], mxAr
 
 void DOTk_MexMMA::initialize(const mxArray* options_[])
 {
-    dotk::mex::parseObjectiveFunction(options_[1], m_ObjectiveFunction);
-    dotk::mex::parseInequalityConstraint(options_[1], m_InequalityConstraint);
+    m_ObjectiveFunction = dotk::mex::parseObjectiveFunction(options_[1]);
+    m_InequalityConstraint = dotk::mex::parseInequalityConstraint(options_[1]);
 }
 
 }

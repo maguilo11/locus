@@ -8,12 +8,12 @@
 #ifndef DOTK_MEXTRUSTREGIONLINMORE_HPP_
 #define DOTK_MEXTRUSTREGIONLINMORE_HPP_
 
+#include "DOTk_Types.hpp"
 #include "DOTk_MexSteihaugTointNewton.hpp"
 
 namespace dotk
 {
 
-class DOTk_MexArrayPtr;
 class DOTk_SteihaugTointLinMore;
 
 class DOTk_MexTrustRegionLinMore : public dotk::DOTk_MexSteihaugTointNewton
@@ -47,8 +47,8 @@ private:
     double m_SolverRelativeTolerance;
     double m_SolverRelativeToleranceExponential;
 
-    dotk::DOTk_MexArrayPtr m_ObjectiveFunctionOperators;
-    dotk::DOTk_MexArrayPtr m_EqualityConstraintOperators;
+    mxArray* m_ObjectiveFunction;
+    mxArray* m_EqualityConstraint;
 
 private:
     DOTk_MexTrustRegionLinMore(const dotk::DOTk_MexTrustRegionLinMore & rhs_);

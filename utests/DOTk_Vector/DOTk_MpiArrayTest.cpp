@@ -8,7 +8,6 @@
 #include "gtest/gtest.h"
 
 #include "DOTk_MpiArray.hpp"
-#include "DOTk_SerialArray.hpp"
 #include "DOTk_GtestDOTkVecTools.hpp"
 
 namespace DOTkMpiArrayTest
@@ -385,41 +384,6 @@ TEST(DOTk_MpiArrayTest, copy)
     gold->fill(1.);
     int thread_count = 4;
     dotk::gtest::checkResults(*gold, *y, thread_count);
-}
-
-TEST(DOTk_MpiArrayTest, gather)
-{
-    size_t dim = 1e4;
-    Real value = 1.;
-    dotk::MpiArray<Real> x(MPI_COMM_WORLD, dim, value);
-    std::vector<Real> y(dim, 0.);
-    EXPECT_EQ(dim, y.size());
-
-    Real start = 0.;
-    int my_rank;
-    MPI_Comm_rank(MPI_COMM_WORLD, &my_rank);
-    if(my_rank == 0)
-    {
-        start = MPI_Wtime();
-    }
-
-    x.gather(y.data());
-
-    Real finish = 0.;
-    if(my_rank == 0)
-    {
-        finish = MPI_Wtime();
-    }
-
-    Real time = finish - start;
-    if(my_rank == 0)
-    {
-        printf("WTime is %f\n", time);
-
-        dotk::StdArray<Real> gold(dim, 1.);
-        int thread_count = 4;
-        dotk::gtest::checkResults(y.size(), y.data(), gold, thread_count);
-    }
 }
 
 }

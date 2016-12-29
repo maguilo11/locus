@@ -14,7 +14,7 @@ MEX_HEADERS=/Applications/MATLAB_R2015a.app/extern/include/
 ALL_INCLUDE_DIR=-I$(CXX_HEADERS) -I$(MEX_HEADERS) -I$(MEX_INCLUDE_DIR) -I$(MEX_PARSER) -I$(MEX_ALG_TYPE_FO) \
 	-I$(MEX_OPERATOR_API) -I$(MEX_ALG_TYPE_NEWTON) -I$(MEX_FACTORIES) -I$(MEX_ALG_TYPE_SQP) -I$(MEX_ALG_TYPE_CCSA) \
 	-I$(MEX_ALG_TYPE_OC) -I$(MEX_UTILITIES)  -I$(MEX_FACTORIES_SRC) -I$(MEX_DIAGNOSTICS) -I$(MEX_OPERATOR_API_SRC) \
-	-I$(MEX_PTR) -I$(DOTk_INV_HESSIAN) -I$(DOTk_FACTORY) -I$(DOTk_TRUST_REGION) -I$(DOTk_NONLINEAR_CG) -I$(DOTk_VARIABLE) \
+	-I$(DOTk_INV_HESSIAN) -I$(DOTk_FACTORY) -I$(DOTk_TRUST_REGION) -I$(DOTk_NONLINEAR_CG) -I$(DOTk_VARIABLE) \
 	-I$(DOTk_BOUND_CONSTRAINT) -I$(DOTk_IO_TOOLS) -I$(DOTk_FIRST_ORDER_ALG) -I$(DOTk_GRAD_ALG_TOOLS) -I$(DOTk_HESSIAN) \
 	-I$(DOTk_LINEAR_OPERATOR) -I$(DOTk_DIRECT_SOLVERS) -I$(DOTk_LEFT_PREC) -I$(DOTk_RIGHT_PREC) -I$(DOTk_SQP_ALG) \
 	-I$(DOTk_ORTHO_PROJ) -I$(DOTk_KRYLOV_SOLVER_MNG) -I$(DOTk_KRYLOV_SOLVER) -I$(DOTk_INEXACT_NEWTON_ALG) -I$(DOTk_FUNCTOR) \
@@ -83,7 +83,6 @@ DOTk_OPERATORS_ROUTINES_MNG=$(DOTk_INCLUDE_DIR)DOTk_AssemblyManager/
 DOTk_STEIHAUG_TOINT=$(DOTk_INCLUDE_DIR)DOTk_SteihaugToint/
 	
 # Set DOTk-MEX interface include directories
-MEX_PTR=$(MEX_INCLUDE_DIR)DOTk_MexPointer/
 MEX_PARSER=$(MEX_INCLUDE_DIR)DOTk_MexParser/
 MEX_UTILITIES=$(MEX_INCLUDE_DIR)DOTk_MexUtilities/
 MEX_FACTORIES=$(MEX_INCLUDE_DIR)DOTk_MexFactories/
@@ -112,7 +111,6 @@ DOTK_OBJS=$(MEX_SOURCE_DIR)DOTk_MexAlgorithmAPI/mexDOTkNonLinearCG.o \
 	$(MEX_SOURCE_DIR)DOTk_MexAlgorithmAPI/mexDOTkIxLinMoreTrustRegion.o \
 	$(MEX_SOURCE_DIR)DOTk_MexAlgorithmAPI/mexDOTkKelleySachsTrustRegion.o \
 	$(MEX_SOURCE_DIR)DOTk_MexAlgorithmAPI/mexDOTkIxKelleySachsTrustRegion.o \
-	$(MEX_SOURCE_DIR)DOTk_MexPointer/DOTk_MexArrayPtr.o \
 	$(MEX_SOURCE_DIR)DOTk_MexAlgorithmTypeFO/DOTk_MexAlgorithmTypeFO.o \
 	$(MEX_SOURCE_DIR)DOTk_MexAlgorithmTypeFO/DOTk_MexNonlinearCG.o \
 	$(MEX_SOURCE_DIR)DOTk_MexAlgorithmTypeFO/DOTk_MexQuasiNewton.o \
@@ -146,9 +144,9 @@ DOTK_OBJS=$(MEX_SOURCE_DIR)DOTk_MexAlgorithmAPI/mexDOTkNonLinearCG.o \
 	$(MEX_SOURCE_DIR)DOTk_MexParser/DOTk_MexParseAlgorithmTypeSQP.o \
 	$(MEX_SOURCE_DIR)DOTk_MexParser/DOTk_MexFiniteDiffNumIntgParser.o \
 	$(MEX_SOURCE_DIR)DOTk_MexParser/DOTk_MexOptimalityCriteriaParser.o \
+	$(MEX_SOURCE_DIR)DOTk_MexUtilities/DOTk_MexVector.o \
 	$(MEX_SOURCE_DIR)DOTk_MexUtilities/DOTk_MexApiUtilities.o \
 	$(MEX_SOURCE_DIR)DOTk_MexFactories/DOTk_MexHessianFactory.o \
-	$(MEX_SOURCE_DIR)DOTk_MexFactories/DOTk_MexContainerFactory.o \
 	$(MEX_SOURCE_DIR)DOTk_MexFactories/DOTk_MexNumDiffHessianFactory.o \
 	$(MEX_SOURCE_DIR)DOTk_MexFactories/DOTk_MexFactoriesAlgorithmTypeGB.o \
 	$(MEX_SOURCE_DIR)DOTk_MexFactories/DOTk_MexFactoriesAlgorithmTypeFO.o \
@@ -366,10 +364,9 @@ MEX_OC=$(MEX_OBJECT_DIR)mexDOTkOptimalityCriteria.o \
 	$(MEX_OBJECT_DIR)DOTk_MexOptimalityCriteria.o \
 	$(MEX_OBJECT_DIR)DOTk_MexEqualityConstraint.o \
 	$(MEX_OBJECT_DIR)DOTk_MexObjectiveFunction.o \
-	$(MEX_OBJECT_DIR)DOTk_MexContainerFactory.o \
 	$(MEX_OBJECT_DIR)DOTk_MexAlgorithmParser.o \
 	$(MEX_OBJECT_DIR)DOTk_MexApiUtilities.o \
-	$(MEX_OBJECT_DIR)DOTk_MexArrayPtr.o \
+	$(MEX_OBJECT_DIR)DOTk_MexVector.o \
 	$(MEX_OBJECT_DIR)DOTk_OptimalityCriteriaRoutineMng.o \
 	$(MEX_OBJECT_DIR)DOTk_OptimalityCriteriaDataMng.o \
 	$(MEX_OBJECT_DIR)DOTk_OptimalityCriteria.o \
@@ -381,14 +378,14 @@ MEX_OC=$(MEX_OBJECT_DIR)mexDOTkOptimalityCriteria.o \
 	$(MEX_OBJECT_DIR)DOTk_Dual.o
 
 MEX_MMA=$(MEX_OBJECT_DIR)mexDOTkMMA.o \
+	$(MEX_OBJECT_DIR)DOTk_MexInequalityConstraint.o \
 	$(MEX_OBJECT_DIR)DOTk_MexEqualityConstraint.o \
 	$(MEX_OBJECT_DIR)DOTk_MexObjectiveFunction.o \
 	$(MEX_OBJECT_DIR)DOTk_MexMethodCcsaParser.o \
-	$(MEX_OBJECT_DIR)DOTk_MexContainerFactory.o \
 	$(MEX_OBJECT_DIR)DOTk_MexAlgorithmParser.o \
 	$(MEX_OBJECT_DIR)DOTk_MexApiUtilities.o \
 	$(MEX_OBJECT_DIR)DOTk_MexMethodCCSA.o \
-	$(MEX_OBJECT_DIR)DOTk_MexArrayPtr.o \
+	$(MEX_OBJECT_DIR)DOTk_MexVector.o \
 	$(MEX_OBJECT_DIR)DOTk_MexMMA.o \
 	$(MEX_OBJECT_DIR)DOTk_DualObjectiveFunctionMMA.o \
 	$(MEX_OBJECT_DIR)DOTk_AssemblyManager.o \
@@ -416,14 +413,14 @@ MEX_MMA=$(MEX_OBJECT_DIR)mexDOTkMMA.o \
 	$(MEX_OBJECT_DIR)DOTk_Dual.o
 
 MEX_GCMMA=$(MEX_OBJECT_DIR)mexDOTkGCMMA.o \
+	$(MEX_OBJECT_DIR)DOTk_MexInequalityConstraint.o \
 	$(MEX_OBJECT_DIR)DOTk_MexEqualityConstraint.o \
 	$(MEX_OBJECT_DIR)DOTk_MexObjectiveFunction.o \
 	$(MEX_OBJECT_DIR)DOTk_MexMethodCcsaParser.o \
-	$(MEX_OBJECT_DIR)DOTk_MexContainerFactory.o \
 	$(MEX_OBJECT_DIR)DOTk_MexAlgorithmParser.o \
 	$(MEX_OBJECT_DIR)DOTk_MexApiUtilities.o \
 	$(MEX_OBJECT_DIR)DOTk_MexMethodCCSA.o \
-	$(MEX_OBJECT_DIR)DOTk_MexArrayPtr.o \
+	$(MEX_OBJECT_DIR)DOTk_MexVector.o \
 	$(MEX_OBJECT_DIR)DOTk_MexGCMMA.o \
 	$(MEX_OBJECT_DIR)DOTk_DualObjectiveFunctionMMA.o \
 	$(MEX_OBJECT_DIR)DOTk_AssemblyManager.o \
@@ -456,12 +453,11 @@ MEX_NONLINEAR_CG=$(MEX_OBJECT_DIR)mexDOTkNonLinearCG.o \
 	$(MEX_OBJECT_DIR)DOTk_MexNumDiffHessianFactory.o \
 	$(MEX_OBJECT_DIR)DOTk_MexEqualityConstraint.o \
 	$(MEX_OBJECT_DIR)DOTk_MexObjectiveFunction.o \
-	$(MEX_OBJECT_DIR)DOTk_MexContainerFactory.o \
 	$(MEX_OBJECT_DIR)DOTk_MexAlgorithmParser.o \
 	$(MEX_OBJECT_DIR)DOTk_MexAlgorithmTypeFO.o \
 	$(MEX_OBJECT_DIR)DOTk_MexApiUtilities.o \
 	$(MEX_OBJECT_DIR)DOTk_MexNonlinearCG.o \
-	$(MEX_OBJECT_DIR)DOTk_MexArrayPtr.o \
+	$(MEX_OBJECT_DIR)DOTk_MexVector.o \
 	$(MEX_OBJECT_DIR)DOTk_ThirdOrderBackwardFiniteDifference.o \
 	$(MEX_OBJECT_DIR)DOTk_SecondOrderForwardFiniteDifference.o \
 	$(MEX_OBJECT_DIR)DOTk_ThirdOrderForwardFiniteDifference.o \
@@ -546,12 +542,11 @@ MEX_QUASI_NEWTON=$(MEX_OBJECT_DIR)mexDOTkQuasiNewton.o \
 	$(MEX_OBJECT_DIR)DOTk_MexEqualityConstraint.o \
 	$(MEX_OBJECT_DIR)DOTk_MexObjectiveFunction.o \
 	$(MEX_OBJECT_DIR)DOTk_MexQuasiNewtonParser.o \
-	$(MEX_OBJECT_DIR)DOTk_MexContainerFactory.o \
 	$(MEX_OBJECT_DIR)DOTk_MexAlgorithmParser.o \
 	$(MEX_OBJECT_DIR)DOTk_MexAlgorithmTypeFO.o \
 	$(MEX_OBJECT_DIR)DOTk_MexApiUtilities.o \
 	$(MEX_OBJECT_DIR)DOTk_MexQuasiNewton.o \
-	$(MEX_OBJECT_DIR)DOTk_MexArrayPtr.o \
+	$(MEX_OBJECT_DIR)DOTk_MexVector.o \
 	$(MEX_OBJECT_DIR)DOTk_BacktrackingCubicInterpolation.o \
 	$(MEX_OBJECT_DIR)DOTk_LineSearchAlgorithmsDataMng.o \
 	$(MEX_OBJECT_DIR)DOTk_ProjectionAlongFeasibleDir.o \
@@ -621,11 +616,10 @@ MEX_TR_LIN_MORE=$(MEX_OBJECT_DIR)mexDOTkLinMoreTrustRegion.o \
 	$(MEX_OBJECT_DIR)DOTk_MexEqualityConstraint.o \
 	$(MEX_OBJECT_DIR)DOTk_MexQuasiNewtonParser.o \
 	$(MEX_OBJECT_DIR)DOTk_MexObjectiveFunction.o \
-	$(MEX_OBJECT_DIR)DOTk_MexContainerFactory.o \
 	$(MEX_OBJECT_DIR)DOTk_MexAlgorithmParser.o \
 	$(MEX_OBJECT_DIR)DOTk_MexHessianFactory.o \
 	$(MEX_OBJECT_DIR)DOTk_MexApiUtilities.o \
-	$(MEX_OBJECT_DIR)DOTk_MexArrayPtr.o \
+	$(MEX_OBJECT_DIR)DOTk_MexVector.o \
 	$(MEX_OBJECT_DIR)DOTk_SteihaugTointProjGradStep.o \
 	$(MEX_OBJECT_DIR)DOTk_FirstOrderOperatorFactory.o \
 	$(MEX_OBJECT_DIR)DOTk_UserDefinedHessianTypeCNP.o \
@@ -686,10 +680,9 @@ MEX_IxTR_LIN_MORE=$(MEX_OBJECT_DIR)mexDOTkIxLinMoreTrustRegion.o \
 	$(MEX_OBJECT_DIR)DOTk_MexKrylovSolverParser.o \
 	$(MEX_OBJECT_DIR)DOTk_MexEqualityConstraint.o \
 	$(MEX_OBJECT_DIR)DOTk_MexObjectiveFunction.o \
-	$(MEX_OBJECT_DIR)DOTk_MexContainerFactory.o \
 	$(MEX_OBJECT_DIR)DOTk_MexAlgorithmParser.o \
 	$(MEX_OBJECT_DIR)DOTk_MexApiUtilities.o \
-	$(MEX_OBJECT_DIR)DOTk_MexArrayPtr.o \
+	$(MEX_OBJECT_DIR)DOTk_MexVector.o \
 	$(MEX_OBJECT_DIR)DOTk_ThirdOrderBackwardFiniteDifference.o \
 	$(MEX_OBJECT_DIR)DOTk_SecondOrderForwardFiniteDifference.o \
 	$(MEX_OBJECT_DIR)DOTk_ThirdOrderForwardFiniteDifference.o \
@@ -755,11 +748,10 @@ MEX_TR_KELLEY_SACHS=$(MEX_OBJECT_DIR)mexDOTkKelleySachsTrustRegion.o \
 	$(MEX_OBJECT_DIR)DOTk_MexEqualityConstraint.o \
 	$(MEX_OBJECT_DIR)DOTk_MexQuasiNewtonParser.o \
 	$(MEX_OBJECT_DIR)DOTk_MexObjectiveFunction.o \
-	$(MEX_OBJECT_DIR)DOTk_MexContainerFactory.o \
 	$(MEX_OBJECT_DIR)DOTk_MexAlgorithmParser.o \
 	$(MEX_OBJECT_DIR)DOTk_MexHessianFactory.o \
 	$(MEX_OBJECT_DIR)DOTk_MexApiUtilities.o \
-	$(MEX_OBJECT_DIR)DOTk_MexArrayPtr.o \
+	$(MEX_OBJECT_DIR)DOTk_MexVector.o \
 	$(MEX_OBJECT_DIR)DOTk_FirstOrderOperatorFactory.o \
 	$(MEX_OBJECT_DIR)DOTk_UserDefinedHessianTypeCNP.o \
 	$(MEX_OBJECT_DIR)DOTk_ProjectedSteihaugTointPcg.o \
@@ -817,10 +809,9 @@ MEX_IxTR_KELLEY_SACHS=$(MEX_OBJECT_DIR)mexDOTkIxKelleySachsTrustRegion.o \
 	$(MEX_OBJECT_DIR)DOTk_MexEqualityConstraint.o \
 	$(MEX_OBJECT_DIR)DOTk_MexQuasiNewtonParser.o \
 	$(MEX_OBJECT_DIR)DOTk_MexObjectiveFunction.o \
-	$(MEX_OBJECT_DIR)DOTk_MexContainerFactory.o \
 	$(MEX_OBJECT_DIR)DOTk_MexAlgorithmParser.o \
 	$(MEX_OBJECT_DIR)DOTk_MexApiUtilities.o \
-	$(MEX_OBJECT_DIR)DOTk_MexArrayPtr.o \
+	$(MEX_OBJECT_DIR)DOTk_MexVector.o \
 	$(MEX_OBJECT_DIR)DOTk_ThirdOrderBackwardFiniteDifference.o \
 	$(MEX_OBJECT_DIR)DOTk_SecondOrderForwardFiniteDifference.o \
 	$(MEX_OBJECT_DIR)DOTk_ThirdOrderForwardFiniteDifference.o \
@@ -887,12 +878,11 @@ MEX_NEWTON_TYPE_LS=$(MEX_OBJECT_DIR)mexDOTkNewtonTypeLS.o \
 	$(MEX_OBJECT_DIR)DOTk_MexEqualityConstraint.o \
 	$(MEX_OBJECT_DIR)DOTk_MexQuasiNewtonParser.o \
 	$(MEX_OBJECT_DIR)DOTk_MexObjectiveFunction.o \
-	$(MEX_OBJECT_DIR)DOTk_MexContainerFactory.o \
 	$(MEX_OBJECT_DIR)DOTk_MexAlgorithmParser.o \
 	$(MEX_OBJECT_DIR)DOTk_MexHessianFactory.o \
 	$(MEX_OBJECT_DIR)DOTk_MexApiUtilities.o \
 	$(MEX_OBJECT_DIR)DOTk_MexNewtonTypeLS.o \
-	$(MEX_OBJECT_DIR)DOTk_MexArrayPtr.o \
+	$(MEX_OBJECT_DIR)DOTk_MexVector.o \
 	$(MEX_OBJECT_DIR)DOTk_SecantLeftPreconditionerFactory.o \
 	$(MEX_OBJECT_DIR)DOTk_BacktrackingCubicInterpolation.o \
 	$(MEX_OBJECT_DIR)DOTk_KrylovSolverStoppingCriterion.o \
@@ -997,12 +987,11 @@ MEX_NEWTON_TYPE_TR=$(MEX_OBJECT_DIR)mexDOTkNewtonTypeTR.o \
 	$(MEX_OBJECT_DIR)DOTk_MexEqualityConstraint.o \
 	$(MEX_OBJECT_DIR)DOTk_MexQuasiNewtonParser.o \
 	$(MEX_OBJECT_DIR)DOTk_MexObjectiveFunction.o \
-	$(MEX_OBJECT_DIR)DOTk_MexContainerFactory.o \
 	$(MEX_OBJECT_DIR)DOTk_MexAlgorithmParser.o \
 	$(MEX_OBJECT_DIR)DOTk_MexHessianFactory.o \
 	$(MEX_OBJECT_DIR)DOTk_MexApiUtilities.o \
 	$(MEX_OBJECT_DIR)DOTk_MexNewtonTypeTR.o \
-	$(MEX_OBJECT_DIR)DOTk_MexArrayPtr.o \
+	$(MEX_OBJECT_DIR)DOTk_MexVector.o \
 	$(MEX_OBJECT_DIR)DOTk_SecantLeftPreconditionerFactory.o \
 	$(MEX_OBJECT_DIR)DOTk_BacktrackingCubicInterpolation.o \
 	$(MEX_OBJECT_DIR)DOTk_KrylovSolverStoppingCriterion.o \
@@ -1110,11 +1099,10 @@ MEX_IxSQP_TYPE_TR=$(MEX_OBJECT_DIR)mexDOTkIxSQPTypeTR.o \
 	$(MEX_OBJECT_DIR)DOTk_MexEqualityConstraint.o \
 	$(MEX_OBJECT_DIR)DOTk_MexQuasiNewtonParser.o \
 	$(MEX_OBJECT_DIR)DOTk_MexObjectiveFunction.o \
-	$(MEX_OBJECT_DIR)DOTk_MexContainerFactory.o \
 	$(MEX_OBJECT_DIR)DOTk_MexAlgorithmTypeSQP.o \
 	$(MEX_OBJECT_DIR)DOTk_MexAlgorithmParser.o \
 	$(MEX_OBJECT_DIR)DOTk_MexApiUtilities.o \
-	$(MEX_OBJECT_DIR)DOTk_MexArrayPtr.o \
+	$(MEX_OBJECT_DIR)DOTk_MexVector.o \
 	$(MEX_OBJECT_DIR)DOTk_SecantLeftPreconditionerFactory.o \
 	$(MEX_OBJECT_DIR)DOTk_SequentialQuadraticProgramming.o \
 	$(MEX_OBJECT_DIR)DOTk_InexactTrustRegionSqpSolverMng.o \
@@ -1226,10 +1214,9 @@ MEX_IxNEWTON_TYPE_LS=$(MEX_OBJECT_DIR)mexDOTkIxNewtonTypeLS.o \
 	$(MEX_OBJECT_DIR)DOTk_MexEqualityConstraint.o \
 	$(MEX_OBJECT_DIR)DOTk_MexQuasiNewtonParser.o \
 	$(MEX_OBJECT_DIR)DOTk_MexObjectiveFunction.o \
-	$(MEX_OBJECT_DIR)DOTk_MexContainerFactory.o \
 	$(MEX_OBJECT_DIR)DOTk_MexAlgorithmParser.o \
 	$(MEX_OBJECT_DIR)DOTk_MexApiUtilities.o \
-	$(MEX_OBJECT_DIR)DOTk_MexArrayPtr.o \
+	$(MEX_OBJECT_DIR)DOTk_MexVector.o \
 	$(MEX_OBJECT_DIR)DOTk_SecondOrderForwardFiniteDifference.o \
 	$(MEX_OBJECT_DIR)DOTk_ThirdOrderBackwardFiniteDifference.o \
 	$(MEX_OBJECT_DIR)DOTk_ThirdOrderForwardFiniteDifference.o \
@@ -1348,10 +1335,9 @@ MEX_IxNEWTON_TYPE_TR=$(MEX_OBJECT_DIR)mexDOTkIxNewtonTypeTR.o \
 	$(MEX_OBJECT_DIR)DOTk_MexEqualityConstraint.o \
 	$(MEX_OBJECT_DIR)DOTk_MexQuasiNewtonParser.o \
 	$(MEX_OBJECT_DIR)DOTk_MexObjectiveFunction.o \
-	$(MEX_OBJECT_DIR)DOTk_MexContainerFactory.o \
 	$(MEX_OBJECT_DIR)DOTk_MexAlgorithmParser.o \
 	$(MEX_OBJECT_DIR)DOTk_MexApiUtilities.o \
-	$(MEX_OBJECT_DIR)DOTk_MexArrayPtr.o \
+	$(MEX_OBJECT_DIR)DOTk_MexVector.o \
 	$(MEX_OBJECT_DIR)DOTk_SecondOrderForwardFiniteDifference.o \
 	$(MEX_OBJECT_DIR)DOTk_ThirdOrderBackwardFiniteDifference.o \
 	$(MEX_OBJECT_DIR)DOTk_ThirdOrderForwardFiniteDifference.o \
@@ -1467,11 +1453,10 @@ MEX_FRST_DIGNSTCS_TYPELP=$(MEX_OBJECT_DIR)mexDOTkCheckFirstDerivativeTypeLP.o \
 	$(MEX_OBJECT_DIR)DOTk_MexEqualityConstraint.o \
 	$(MEX_OBJECT_DIR)DOTk_MexObjectiveFunction.o \
 	$(MEX_OBJECT_DIR)DOTk_MexDiagnosticsTypeLP.o \
-	$(MEX_OBJECT_DIR)DOTk_MexContainerFactory.o \
 	$(MEX_OBJECT_DIR)DOTk_MexAlgorithmParser.o \
 	$(MEX_OBJECT_DIR)DOTk_MexApiUtilities.o \
 	$(MEX_OBJECT_DIR)DOTk_MexDiagnostics.o \
-	$(MEX_OBJECT_DIR)DOTk_MexArrayPtr.o \
+	$(MEX_OBJECT_DIR)DOTk_MexVector.o \
 	$(MEX_OBJECT_DIR)DOTk_DerivativeDiagnosticsTool.o \
 	$(MEX_OBJECT_DIR)DOTk_DescentDirectionTools.o \
 	$(MEX_OBJECT_DIR)DOTk_OptimizationDataMng.o \
@@ -1488,11 +1473,10 @@ MEX_SECND_DIGNSTCS_TYPELP=$(MEX_OBJECT_DIR)mexDOTkCheckSecondDerivativeTypeLP.o 
 	$(MEX_OBJECT_DIR)DOTk_MexEqualityConstraint.o \
 	$(MEX_OBJECT_DIR)DOTk_MexObjectiveFunction.o \
 	$(MEX_OBJECT_DIR)DOTk_MexDiagnosticsTypeLP.o \
-	$(MEX_OBJECT_DIR)DOTk_MexContainerFactory.o \
 	$(MEX_OBJECT_DIR)DOTk_MexAlgorithmParser.o \
 	$(MEX_OBJECT_DIR)DOTk_MexApiUtilities.o \
 	$(MEX_OBJECT_DIR)DOTk_MexDiagnostics.o \
-	$(MEX_OBJECT_DIR)DOTk_MexArrayPtr.o \
+	$(MEX_OBJECT_DIR)DOTk_MexVector.o \
 	$(MEX_OBJECT_DIR)DOTk_DerivativeDiagnosticsTool.o \
 	$(MEX_OBJECT_DIR)DOTk_DescentDirectionTools.o \
 	$(MEX_OBJECT_DIR)DOTk_OptimizationDataMng.o \
@@ -1509,11 +1493,10 @@ MEX_FRST_DIGNSTCS_TYPENLP=$(MEX_OBJECT_DIR)mexDOTkCheckFirstDerivativeTypeNLP.o 
 	$(MEX_OBJECT_DIR)DOTk_MexEqualityConstraint.o \
 	$(MEX_OBJECT_DIR)DOTk_MexObjectiveFunction.o \
 	$(MEX_OBJECT_DIR)DOTk_MexDiagnosticsTypeNLP.o \
-	$(MEX_OBJECT_DIR)DOTk_MexContainerFactory.o \
 	$(MEX_OBJECT_DIR)DOTk_MexAlgorithmParser.o \
 	$(MEX_OBJECT_DIR)DOTk_MexApiUtilities.o \
 	$(MEX_OBJECT_DIR)DOTk_MexDiagnostics.o \
-	$(MEX_OBJECT_DIR)DOTk_MexArrayPtr.o \
+	$(MEX_OBJECT_DIR)DOTk_MexVector.o \
 	$(MEX_OBJECT_DIR)DOTk_DerivativeDiagnosticsTool.o \
 	$(MEX_OBJECT_DIR)DOTk_DiagnosticsInequalityTypeNP.o \
 	$(MEX_OBJECT_DIR)DOTk_DiagnosticsObjectiveTypeNP.o \
@@ -1533,11 +1516,10 @@ MEX_SECND_DIGNSTCS_TYPENLP=$(MEX_OBJECT_DIR)mexDOTkCheckSecondDerivativeTypeNLP.
 	$(MEX_OBJECT_DIR)DOTk_MexEqualityConstraint.o \
 	$(MEX_OBJECT_DIR)DOTk_MexObjectiveFunction.o \
 	$(MEX_OBJECT_DIR)DOTk_MexDiagnosticsTypeNLP.o \
-	$(MEX_OBJECT_DIR)DOTk_MexContainerFactory.o \
 	$(MEX_OBJECT_DIR)DOTk_MexAlgorithmParser.o \
 	$(MEX_OBJECT_DIR)DOTk_MexApiUtilities.o \
 	$(MEX_OBJECT_DIR)DOTk_MexDiagnostics.o \
-	$(MEX_OBJECT_DIR)DOTk_MexArrayPtr.o \
+	$(MEX_OBJECT_DIR)DOTk_MexVector.o \
 	$(MEX_OBJECT_DIR)DOTk_DerivativeDiagnosticsTool.o \
 	$(MEX_OBJECT_DIR)DOTk_DiagnosticsInequalityTypeNP.o \
 	$(MEX_OBJECT_DIR)DOTk_DiagnosticsObjectiveTypeNP.o \

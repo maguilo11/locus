@@ -5,6 +5,8 @@
  *      Author: Miguel A. Aguilo Valentin
  */
 
+#include <sstream>
+
 #include "vector.hpp"
 #include "DOTk_Primal.hpp"
 #include "DOTk_LineSearch.hpp"
@@ -56,7 +58,9 @@ void DOTk_ProjectionAlongFeasibleDir::initialize(const std::tr1::shared_ptr<dotk
     }
     else
     {
-        std::perror("\n**** Error in DOTk_ProjectionAlongFeasibleDir::initialize. User did not define control lower bounds. ABORT. ****\n");
+        std::ostringstream msg;
+        msg << "\n**** ERROR IN: " << __FILE__ << ", LINE: " << __LINE__ << ", -> LOWER BOUND DATA is NULL, ABORT. ****\n";
+        std::perror(msg.str().c_str());
         std::abort();
     }
     if(primal_->getControlUpperBound().use_count() > 0)
@@ -65,7 +69,9 @@ void DOTk_ProjectionAlongFeasibleDir::initialize(const std::tr1::shared_ptr<dotk
     }
     else
     {
-        std::perror("\n**** Error in DOTk_ProjectionAlongFeasibleDir::initialize. User did not define control upper bounds. ABORT. ****\n");
+        std::ostringstream msg;
+        msg << "\n**** ERROR IN: " << __FILE__ << ", LINE: " << __LINE__ << ", -> UPPER BOUND DATA is NULL, ABORT. ****\n";
+        std::perror(msg.str().c_str());
         std::abort();
     }
 }

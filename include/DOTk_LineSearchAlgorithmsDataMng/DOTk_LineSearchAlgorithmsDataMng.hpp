@@ -13,14 +13,12 @@
 namespace dotk
 {
 
-template<typename Type>
+template<typename ScalarType>
 class Vector;
 
 class DOTk_Primal;
-class DOTk_FirstOrderOperator;
-class DOTk_SecondOrderOperator;
-class DOTk_OptimizationDataMng;
 class DOTk_AssemblyManager;
+class DOTk_FirstOrderOperator;
 
 class DOTk_LineSearchAlgorithmsDataMng : public dotk::DOTk_OptimizationDataMng
 {

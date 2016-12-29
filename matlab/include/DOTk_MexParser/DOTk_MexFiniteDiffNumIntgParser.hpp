@@ -14,15 +14,12 @@
 namespace dotk
 {
 
-class DOTk_MexArrayPtr;
-
 namespace mex
 {
 
-void parseNumericalDifferentiationEpsilon(const mxArray* options_, double & output_);
-void parseNumericalDifferentiationMethod(const mxArray* options_, dotk::types::numerical_integration_t & output_);
-
-dotk::types::numerical_integration_t getFiniteDiffNumIntgMethod(dotk::DOTk_MexArrayPtr & ptr_);
+double parseNumericalDifferentiationEpsilon(const mxArray* input_);
+dotk::types::numerical_integration_t getFiniteDiffNumIntgMethod(const mxArray* input_);
+dotk::types::numerical_integration_t parseNumericalDifferentiationMethod(const mxArray* input_);
 
 }
 

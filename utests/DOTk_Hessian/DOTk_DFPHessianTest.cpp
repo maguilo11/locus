@@ -27,7 +27,7 @@ TEST(DOTk_DFPHessian, getHessian)
     std::tr1::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
     std::tr1::shared_ptr<dotk::DOTk_LineSearchMngTypeULP> mng(new dotk::DOTk_LineSearchMngTypeULP(primal, objective));
 
-    dotk::DOTk_DFPHessian hess(mng->getMatrixTimesVector());
+    dotk::DOTk_DFPHessian hess(*mng->getMatrixTimesVector());
     EXPECT_EQ(dotk::types::DFP_HESS, hess.getHessianType());
 
     // Primal Information
@@ -67,7 +67,7 @@ TEST(DOTk_DFPHessian, apply)
     primal->allocateSerialControlArray(ncontrols, 2);
     std::tr1::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
     std::tr1::shared_ptr<dotk::DOTk_LineSearchMngTypeULP> mng(new dotk::DOTk_LineSearchMngTypeULP(primal, objective));
-    dotk::DOTk_DFPHessian hess(mng->getMatrixTimesVector());
+    dotk::DOTk_DFPHessian hess(*mng->getMatrixTimesVector());
     EXPECT_EQ(dotk::types::DFP_HESS, hess.getHessianType());
 
     // Primal Information

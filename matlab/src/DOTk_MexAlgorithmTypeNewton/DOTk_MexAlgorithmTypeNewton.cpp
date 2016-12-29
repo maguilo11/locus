@@ -5,14 +5,12 @@
  *      Author: Miguel A. Aguilo Valentin
  */
 
-#include <mex.h>
-
-#include "vector.hpp"
-#include "DOTk_MexArrayPtr.hpp"
+#include "DOTk_MexVector.hpp"
 #include "DOTk_MexAlgorithmParser.hpp"
-#include "DOTk_OptimizationDataMng.hpp"
 #include "DOTk_MexKrylovSolverParser.hpp"
 #include "DOTk_MexAlgorithmTypeNewton.hpp"
+
+#include "DOTk_OptimizationDataMng.hpp"
 #include "DOTk_InexactNewtonAlgorithms.hpp"
 
 namespace dotk
@@ -71,60 +69,55 @@ dotk::types::problem_t DOTk_MexAlgorithmTypeNewton::getProblemType() const
 
 void DOTk_MexAlgorithmTypeNewton::initialize(const mxArray* options_)
 {
-    dotk::mex::parseProblemType(options_, m_ProblemType);
-    dotk::mex::parseNumberControls(options_, m_NumControls);
-    dotk::mex::parseGradientTolerance(options_, m_GradientTolerance);
-    dotk::mex::parseMaxNumAlgorithmItr(options_, m_MaxNumAlgorithmItr);
-    dotk::mex::parseTrialStepTolerance(options_, m_TrialStepTolerance);
-    dotk::mex::parseOptimalityTolerance(options_, m_ObjectiveFunctionTolerance);
-    dotk::mex::parseKrylovSolverRelativeTolerance(options_, m_KrylovSolverRelativeTolerance);
+    m_ProblemType = dotk::mex::parseProblemType(options_);
+    m_NumControls = dotk::mex::parseNumberControls(options_);
+    m_TrialStepTolerance = dotk::mex::parseStepTolerance(options_);
+    m_GradientTolerance = dotk::mex::parseGradientTolerance(options_);
+    m_MaxNumAlgorithmItr = dotk::mex::parseMaxNumOuterIterations(options_);
+    m_ObjectiveFunctionTolerance = dotk::mex::parseObjectiveTolerance(options_);
+    m_KrylovSolverRelativeTolerance = dotk::mex::parseKrylovSolverRelativeTolerance(options_);
 }
 
 void DOTk_MexAlgorithmTypeNewton::gatherOutputData(const dotk::DOTk_InexactNewtonAlgorithms & algorithm_,
                                                    const dotk::DOTk_OptimizationDataMng & mng_,
-                                                   mxArray* output_[])
+                                                   mxArray* outputs_[])
 {
     // Create memory allocation for output struct
     const char *field_names[7] =
-        { "Iterations", "ObjectiveFunctionValue", "Control", "Gradient", "NormGradient", "TrialStep", "NormTrialStep" };
-    output_[0] = mxCreateStructMatrix(1, 1, 7, field_names);
+        { "Iterations", "ObjectiveFunctionValue", "Control", "Gradient", "NormGradient", "Step", "NormStep" };
+    outputs_[0] = mxCreateStructMatrix(1, 1, 7, field_names);
 
-    dotk::DOTk_MexArrayPtr itr(mxCreateNumericMatrix_730(1, 1, mxINDEX_CLASS, mxREAL));
-    static_cast<size_t*>(mxGetData(itr.get()))[0] = algorithm_.getNumItrDone();
-    mxSetField(output_[0], 0, "Iterations", itr.get());
+    /* NOTE: mxSetField does not create a copy of the data allocated. Thus,
+     * mxDestroyArray cannot be called. Furthermore, MEX array data (e.g.
+     * control, gradient, etc.) should be duplicated since the data in the
+     * manager will be deallocated at the end. */
+    mxArray* mx_number_iterations = mxCreateNumericMatrix(1, 1, mxINDEX_CLASS, mxREAL);
+    static_cast<size_t*>(mxGetData(mx_number_iterations))[0] = algorithm_.getNumItrDone();
+    mxSetField(outputs_[0], 0, "Iterations", mx_number_iterations);
 
-    dotk::DOTk_MexArrayPtr objective_function_value(mxCreateDoubleMatrix(1, 1, mxREAL));
-    mxGetPr(objective_function_value.get())[0] = mng_.getNewObjectiveFunctionValue();
-    mxSetField(output_[0], 0, "ObjectiveFunctionValue", objective_function_value.get());
+    double value = mng_.getNewObjectiveFunctionValue();
+    mxArray* mx_objective_function_value = mxCreateDoubleScalar(value);
+    mxSetField(outputs_[0], 0, "ObjectiveFunctionValue", mx_objective_function_value);
 
-    size_t num_controls = this->getNumControls();
-    dotk::DOTk_MexArrayPtr primal(mxCreateDoubleMatrix(num_controls, 1, mxREAL));
-    mng_.getNewPrimal()->gather(mxGetPr(primal.get()));
-    mxSetField(output_[0], 0, "Control", primal.get());
+    dotk::MexVector & control = dynamic_cast<dotk::MexVector &>(*mng_.getNewPrimal());
+    mxArray* mx_control = mxDuplicateArray(control.array());
+    mxSetField(outputs_[0], 0, "Control", mx_control);
 
-    dotk::DOTk_MexArrayPtr gradient(mxCreateDoubleMatrix(num_controls, 1, mxREAL));
-    mng_.getNewGradient()->gather(mxGetPr(gradient.get()));
-    mxSetField(output_[0], 0, "Gradient", gradient.get());
+    dotk::MexVector & gradient = dynamic_cast<dotk::MexVector &>(*mng_.getNewGradient());
+    mxArray* mx_gradient = mxDuplicateArray(gradient.array());
+    mxSetField(outputs_[0], 0, "Gradient", mx_gradient);
 
-    dotk::DOTk_MexArrayPtr norm_gradient(mxCreateDoubleMatrix(1, 1, mxREAL));
-    mxGetPr(norm_gradient.get())[0] = mng_.getNewGradient()->norm();
-    mxSetField(output_[0], 0, "NormGradient", norm_gradient.get());
+    value = gradient.norm();
+    mxArray* mx_norm_gradient = mxCreateDoubleScalar(value);
+    mxSetField(outputs_[0], 0, "NormGradient", mx_norm_gradient);
 
-    dotk::DOTk_MexArrayPtr trial_step(mxCreateDoubleMatrix(num_controls, 1, mxREAL));
-    mng_.getTrialStep()->gather(mxGetPr(trial_step.get()));
-    mxSetField(output_[0], 0, "TrialStep", trial_step.get());
+    dotk::MexVector & step = dynamic_cast<dotk::MexVector &>(*mng_.getTrialStep());
+    mxArray* mx_step = mxDuplicateArray(step.array());
+    mxSetField(outputs_[0], 0, "Step", mx_step);
 
-    dotk::DOTk_MexArrayPtr norm_trial_step(mxCreateDoubleMatrix(1, 1, mxREAL));
-    mxGetPr(norm_trial_step.get())[0] = mng_.getTrialStep()->norm();
-    mxSetField(output_[0], 0, "NormTrialStep", norm_trial_step.get());
-
-    itr.release();
-    objective_function_value.release();
-    primal.release();
-    gradient.release();
-    norm_gradient.release();
-    trial_step.release();
-    norm_trial_step.release();
+    value = step.norm();
+    mxArray* mx_norm_step = mxCreateDoubleScalar(value);
+    mxSetField(outputs_[0], 0, "NormStep", mx_norm_step);
 }
 
 }

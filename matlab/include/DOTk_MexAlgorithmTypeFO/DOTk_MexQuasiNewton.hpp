@@ -9,7 +9,6 @@
 #define DOTK_MEXQUASINEWTON_HPP_
 
 #include "DOTk_Types.hpp"
-#include "DOTk_MexArrayPtr.hpp"
 #include "DOTk_MexAlgorithmTypeFO.hpp"
 
 namespace dotk
@@ -43,8 +42,8 @@ private:
                   mxArray* output_[]);
 
 private:
-    dotk::DOTk_MexArrayPtr m_ObjectiveFunctionOperators;
-    dotk::DOTk_MexArrayPtr m_EqualityConstraintOperators;
+    mxArray* m_ObjectiveFunction;
+    mxArray* m_EqualityConstraint;
 
 private:
     DOTk_MexQuasiNewton(const dotk::DOTk_MexQuasiNewton & rhs_);

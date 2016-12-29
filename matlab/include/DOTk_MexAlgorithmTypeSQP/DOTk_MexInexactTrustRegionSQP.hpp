@@ -8,7 +8,6 @@
 #ifndef DOTK_MEXINEXACTTRUSTREGIONSQP_HPP_
 #define DOTK_MEXINEXACTTRUSTREGIONSQP_HPP_
 
-#include "DOTk_MexArrayPtr.hpp"
 #include "DOTk_MexAlgorithmTypeSQP.hpp"
 
 namespace dotk
@@ -45,8 +44,8 @@ private:
                                  mxArray* output_[]);
 
 private:
-    dotk::DOTk_MexArrayPtr m_ObjectiveFunctionOperators;
-    dotk::DOTk_MexArrayPtr m_EqualityConstraintOperators;
+    mxArray* m_ObjectiveFunction;
+    mxArray* m_EqualityConstraint;
 
 private:
     DOTk_MexInexactTrustRegionSQP(const dotk::DOTk_MexInexactTrustRegionSQP&);

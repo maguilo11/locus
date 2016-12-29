@@ -6,27 +6,24 @@
  */
 
 #include "vector.hpp"
-#include "DOTk_Primal.hpp"
 #include "DOTk_Functor.hpp"
 #include "DOTk_SecondOrderForwardFiniteDifference.hpp"
 
 namespace dotk
 {
 
-DOTk_SecondOrderForwardFiniteDifference::DOTk_SecondOrderForwardFiniteDifference
-(const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_) :
-        dotk::DOTk_NumericalDifferentiation(dotk::types::numerical_integration_t::SECOND_ORDER_FORWARD_FINITE_DIFF),
-        m_Gradient(primal_->control()->clone()),
-        m_OriginalPrimal(primal_->control()->clone())
+DOTk_SecondOrderForwardFiniteDifference::DOTk_SecondOrderForwardFiniteDifference(const dotk::Vector<Real> & input_) :
+        dotk::DOTk_NumericalDifferentiation(dotk::types::SECOND_ORDER_FORWARD_FINITE_DIFF),
+        m_Gradient(input_.clone()),
+        m_OriginalPrimal(input_.clone())
 {
 }
 
-DOTk_SecondOrderForwardFiniteDifference::DOTk_SecondOrderForwardFiniteDifference
-(const std::tr1::shared_ptr< dotk::DOTk_Primal> & primal_, Real epsilon_) :
-        dotk::DOTk_NumericalDifferentiation(dotk::types::numerical_integration_t::SECOND_ORDER_FORWARD_FINITE_DIFF,
-                                            epsilon_),
-        m_Gradient(primal_->control()->clone()),
-        m_OriginalPrimal(primal_->control()->clone())
+DOTk_SecondOrderForwardFiniteDifference::DOTk_SecondOrderForwardFiniteDifference(const dotk::Vector<Real> & input_,
+                                                                                 Real epsilon_) :
+        dotk::DOTk_NumericalDifferentiation(dotk::types::SECOND_ORDER_FORWARD_FINITE_DIFF, epsilon_),
+        m_Gradient(input_.clone()),
+        m_OriginalPrimal(input_.clone())
 {
 }
 

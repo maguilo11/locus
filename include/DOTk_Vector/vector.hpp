@@ -47,8 +47,6 @@ public:
     virtual ScalarType norm() const = 0;
     //! Assigns new contents to the vector, replacing its current contents, and not modifying its size.
     virtual void fill(const ScalarType & value_) = 0;
-    //! Gathers data from private member data of a group to one member.
-    virtual void gather(ScalarType* input_) const = 0;
     //! Returns the number of elements in the vector.
     virtual size_t size() const = 0;
     //! Clones memory for an object of type dotk::Vector

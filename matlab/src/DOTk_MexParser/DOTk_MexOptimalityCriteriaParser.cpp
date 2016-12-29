@@ -7,6 +7,7 @@
 
 #include <mex.h>
 #include <string>
+#include <sstream>
 
 #include "DOTk_MexOptimalityCriteriaParser.hpp"
 
@@ -16,79 +17,99 @@ namespace dotk
 namespace mex
 {
 
-void parseOptCriteriaMoveLimit(const mxArray* options_, double & output_)
+double parseOptCriteriaMoveLimit(const mxArray* input_)
 {
-    if(mxIsEmpty(mxGetField(options_, 0, "MoveLimit")) == true)
+    double output = 0.01;
+    if(mxGetField(input_, 0, "MoveLimit") == nullptr)
     {
-        output_ = 0.1;
-        std::string msg(" DOTk/MEX ERROR: MoveLimit is NOT Defined. Default = 0.01. \n");
-        mexWarnMsgTxt(msg.c_str());
-        return;
+        std::ostringstream msg;
+        msg << "\nERROR IN: " << __FILE__ << ", LINE: " << __LINE__
+                << ", -> MoveLimit keyword is NULL. MoveLimit set to 0.01\n";
+        mexWarnMsgTxt(msg.str().c_str());
     }
-    dotk::DOTk_MexArrayPtr factor;
-    factor.reset(mxDuplicateArray(mxGetField(options_, 0, "MoveLimit")));
-    output_ = mxGetScalar(factor.get());
-    factor.release();
+    else
+    {
+        mxArray* value = mxDuplicateArray(mxGetField(input_, 0, "MoveLimit"));
+        output = mxGetScalar(value);
+        mxDestroyArray(value);
+    }
+    return (output);
 }
 
-void parseOptCriteriaDualLowerBound(const mxArray* options_, double & output_)
+double parseOptCriteriaDualLowerBound(const mxArray* input_)
 {
-    if(mxIsEmpty(mxGetField(options_, 0, "DualLowerBound")) == true)
+    double output = 0.;
+    if(mxGetField(input_, 0, "DualLowerBound") == nullptr)
     {
-        output_ = 0.1;
-        std::string msg(" DOTk/MEX ERROR: DualLowerBound is NOT Defined. Default = 0. \n");
-        mexWarnMsgTxt(msg.c_str());
-        return;
+        std::ostringstream msg;
+        msg << "\nERROR IN: " << __FILE__ << ", LINE: " << __LINE__
+                << ", -> DualLowerBound keyword is NULL. DualLowerBound set to 0.\n";
+        mexWarnMsgTxt(msg.str().c_str());
     }
-    dotk::DOTk_MexArrayPtr factor;
-    factor.reset(mxDuplicateArray(mxGetField(options_, 0, "DualLowerBound")));
-    output_ = mxGetScalar(factor.get());
-    factor.release();
+    else
+    {
+        mxArray* value = mxDuplicateArray(mxGetField(input_, 0, "DualLowerBound"));
+        output = mxGetScalar(value);
+        mxDestroyArray(value);
+    }
+    return (output);
 }
 
-void parseOptCriteriaDualUpperBound(const mxArray* options_, double & output_)
+double parseOptCriteriaDualUpperBound(const mxArray* input_)
 {
-    if(mxIsEmpty(mxGetField(options_, 0, "DualUpperBound")) == true)
+    double output = 1e4;
+    if(mxGetField(input_, 0, "DualUpperBound") == nullptr)
     {
-        output_ = 0.1;
-        std::string msg(" DOTk/MEX ERROR: DualUpperBound is NOT Defined. Default = 1e4. \n");
-        mexWarnMsgTxt(msg.c_str());
-        return;
+        std::ostringstream msg;
+        msg << "\nERROR IN: " << __FILE__ << ", LINE: " << __LINE__
+                << ", -> DualUpperBound keyword is NULL. DualUpperBound set to 1e4.\n";
+        mexWarnMsgTxt(msg.str().c_str());
     }
-    dotk::DOTk_MexArrayPtr factor;
-    factor.reset(mxDuplicateArray(mxGetField(options_, 0, "DualUpperBound")));
-    output_ = mxGetScalar(factor.get());
-    factor.release();
+    else
+    {
+        mxArray* value = mxDuplicateArray(mxGetField(input_, 0, "DualUpperBound"));
+        output = mxGetScalar(value);
+        mxDestroyArray(value);
+    }
+    return (output);
 }
 
-void parseOptCriteriaDampingParameter(const mxArray* options_, double & output_)
+double parseOptCriteriaDampingParameter(const mxArray* input_)
 {
-    if(mxIsEmpty(mxGetField(options_, 0, "DampingParameter")) == true)
+    double output = 0.5;
+    if(mxGetField(input_, 0, "DampingParameter") == nullptr)
     {
-        output_ = 0.1;
-        std::string msg(" DOTk/MEX ERROR: DampingParameter is NOT Defined. Default = 0.5. \n");
-        mexWarnMsgTxt(msg.c_str());
-        return;
+        std::ostringstream msg;
+        msg << "\nERROR IN: " << __FILE__ << ", LINE: " << __LINE__
+                << ", -> DampingParameter keyword is NULL. DampingParameter set to 0.5.\n";
+        mexWarnMsgTxt(msg.str().c_str());
     }
-    dotk::DOTk_MexArrayPtr factor;
-    factor.reset(mxDuplicateArray(mxGetField(options_, 0, "DampingParameter")));
-    output_ = mxGetScalar(factor.get());
-    factor.release();
+    else
+    {
+        mxArray* value = mxDuplicateArray(mxGetField(input_, 0, "DampingParameter"));
+        output = mxGetScalar(value);
+        mxDestroyArray(value);
+    }
+    return (output);
 }
 
-void parseOptCriteriaBisectionTolerance(const mxArray* options_, double & output_)
+double parseOptCriteriaBisectionTolerance(const mxArray* input_)
 {
-    if(mxIsEmpty(mxGetField(options_, 0, "BisectionTolerance")) == true)
+    double output = 1e-4;
+    if(mxGetField(input_, 0, "BisectionTolerance") == nullptr)
     {
-        output_ = 0.1;
-        std::string msg(" DOTk/MEX ERROR: BisectionTolerance is NOT Defined. Default = 1e-4. \n");
-        mexWarnMsgTxt(msg.c_str());
-        return;
+        std::ostringstream msg;
+        msg << "\nERROR IN: " << __FILE__ << ", LINE: " << __LINE__
+                << ", -> BisectionTolerance keyword is NULL. BisectionTolerance set to 1e-4.\n";
+        mexWarnMsgTxt(msg.str().c_str());
     }
-    dotk::DOTk_MexArrayPtr factor;
-    factor.reset(mxDuplicateArray(mxGetField(options_, 0, "BisectionTolerance")));
-    output_ = mxGetScalar(factor.get());
-    factor.release();
+    else
+    {
+        mxArray* value = mxDuplicateArray(mxGetField(input_, 0, "BisectionTolerance"));
+        output = mxGetScalar(value);
+        mxDestroyArray(value);
+    }
+    return (output);
 }
 
 }

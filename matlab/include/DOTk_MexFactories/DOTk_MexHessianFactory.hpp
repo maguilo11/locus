@@ -14,14 +14,12 @@
 namespace dotk
 {
 
-class DOTk_Primal;
 class DOTk_Hessian;
 
 namespace mex
 {
 
 void buildHessian(const mxArray* options_,
-                  const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_,
                   std::tr1::shared_ptr<dotk::DOTk_Hessian> & hessian_);
 
 }

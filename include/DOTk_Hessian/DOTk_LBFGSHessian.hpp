@@ -23,8 +23,7 @@ class matrix;
 class DOTk_LBFGSHessian : public dotk::DOTk_SecondOrderOperator
 {
 public:
-    DOTk_LBFGSHessian(const std::tr1::shared_ptr<dotk::Vector<Real> > & vector_,
-                      size_t max_secant_storage_);
+    DOTk_LBFGSHessian(const dotk::Vector<Real> & vector_, size_t max_secant_storage_);
     virtual ~DOTk_LBFGSHessian();
 
     const std::tr1::shared_ptr<std::vector<Real> > & getDeltaGradPrimalInnerProductStorage() const;

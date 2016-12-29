@@ -43,7 +43,7 @@ TEST(DOTk_TrustRegionInexactNewtonCGNR, getMin_DoubleDoglegTR_DOTk_FreudensteinR
     (*primal->control())[0] = 11.41277900335;
     (*primal->control())[1] = -0.89680525194;
     dotk::gtest::checkResults(*mng->getNewPrimal(), *primal->control(), 1e-7);
-    EXPECT_EQ(12, alg.getNumItrDone());
+    EXPECT_EQ(12u, alg.getNumItrDone());
     EXPECT_NEAR(48.9843, mng->getNewObjectiveFunctionValue(), 1e-4);
     EXPECT_EQ(dotk::types::GRADIENT_TOL_SATISFIED, alg.getStoppingCriterion());
 }
@@ -65,7 +65,7 @@ TEST(DOTk_TrustRegionInexactNewtonCGNR, getMin_UsrDefGrad_UsrDefHess_DoubleDogle
     alg.getMin();
 
     EXPECT_EQ(dotk::types::OBJECTIVE_FUNC_TOL_SATISFIED, alg.getStoppingCriterion());
-    EXPECT_EQ(11 , alg.getNumItrDone());
+    EXPECT_EQ(11u, alg.getNumItrDone());
     (*primal->control())[0] = 3.;
     (*primal->control())[1] = 0.5;
     dotk::gtest::checkResults(*mng->getNewPrimal(), *primal->control(), 1e-6);
@@ -88,7 +88,7 @@ TEST(DOTk_TrustRegionInexactNewtonCGNR, getMin_UsrDefGrad_UsrDefHess_DoglegTR_Be
     alg.getMin();
 
     EXPECT_EQ(dotk::types::OBJECTIVE_FUNC_TOL_SATISFIED, alg.getStoppingCriterion());
-    EXPECT_EQ(14 , alg.getNumItrDone());
+    EXPECT_EQ(14u, alg.getNumItrDone());
     (*primal->control())[0] = 3.;
     (*primal->control())[1] = 0.5;
     dotk::gtest::checkResults(*mng->getNewPrimal(), *primal->control(), 1e-6);
@@ -111,7 +111,7 @@ TEST(DOTk_TrustRegionInexactNewtonCGNR, getMin_UsrDefGrad_UsrDefHess_DoglegTR_No
     alg.getMin();
 
     EXPECT_EQ(dotk::types::OBJECTIVE_FUNC_TOL_SATISFIED, alg.getStoppingCriterion());
-    EXPECT_EQ(22, alg.getNumItrDone());
+    EXPECT_EQ(22u, alg.getNumItrDone());
     primal->control()->fill(1.);
     dotk::gtest::checkResults(*mng->getNewPrimal(), *primal->control(), 1e-6);
 }
@@ -133,7 +133,7 @@ TEST(DOTk_TrustRegionInexactNewtonCGNR, getMin_UsrDefGrad_UsrDefHess_DoubleDogle
     alg.getMin();
 
     EXPECT_EQ(dotk::types::OBJECTIVE_FUNC_TOL_SATISFIED, alg.getStoppingCriterion());
-    EXPECT_EQ(22, alg.getNumItrDone());
+    EXPECT_EQ(22u, alg.getNumItrDone());
     primal->control()->fill(1.);
     dotk::gtest::checkResults(*mng->getNewPrimal(), *primal->control(), 1e-8);
 }
@@ -150,13 +150,13 @@ TEST(DOTk_TrustRegionInexactNewtonCGNR, getMin_UsrDefGrad_DFPHess_DoglegTR_NoPre
 
     mng->setDoglegTrustRegionMethod();
     mng->setUserDefinedGradient();
-    hessian->setDfpHessian(primal->control());;
+    hessian->setDfpHessian(*primal->control());;
     dotk::DOTk_TrustRegionInexactNewton alg(hessian, mng);
     alg.setLeftPrecCgnrKrylovSolver(primal);
     alg.getMin();
 
     EXPECT_EQ(dotk::types::OBJECTIVE_FUNC_TOL_SATISFIED, alg.getStoppingCriterion());
-    EXPECT_EQ(477, alg.getNumItrDone());
+    EXPECT_EQ(477u, alg.getNumItrDone());
     primal->control()->fill(1.);
     dotk::gtest::checkResults(*mng->getNewPrimal(), *primal->control(), 5e-6);
 }
@@ -173,13 +173,13 @@ TEST(DOTk_TrustRegionInexactNewtonCGNR, getMin_UsrDefGrad_DFPHess_DoubleDoglegTR
 
     mng->setDoubleDoglegTrustRegionMethod(mng->getTrialStep());
     mng->setUserDefinedGradient();
-    hessian->setDfpHessian(primal->control());;
+    hessian->setDfpHessian(*primal->control());;
     dotk::DOTk_TrustRegionInexactNewton alg(hessian, mng);
     alg.setLeftPrecCgnrKrylovSolver(primal);
     alg.getMin();
 
     EXPECT_EQ(dotk::types::OBJECTIVE_FUNC_TOL_SATISFIED, alg.getStoppingCriterion());
-    EXPECT_EQ(253, alg.getNumItrDone());
+    EXPECT_EQ(253u, alg.getNumItrDone());
     primal->control()->fill(1.);
     dotk::gtest::checkResults(*mng->getNewPrimal(), *primal->control(), 5e-6);
 }
@@ -196,13 +196,13 @@ TEST(DOTk_TrustRegionInexactNewtonCGNR, getMin_UsrDefGrad_BBHess_DoglegTR_NoPrec
 
     mng->setDoglegTrustRegionMethod();
     mng->setUserDefinedGradient();
-    hessian->setBarzilaiBorweinHessian(primal->control());;
+    hessian->setBarzilaiBorweinHessian(*primal->control());;
     dotk::DOTk_TrustRegionInexactNewton alg(hessian, mng);
     alg.setLeftPrecCgnrKrylovSolver(primal);
     alg.getMin();
 
     EXPECT_EQ(dotk::types::OBJECTIVE_FUNC_TOL_SATISFIED, alg.getStoppingCriterion());
-    EXPECT_EQ(2134, alg.getNumItrDone());
+    EXPECT_EQ(2134u, alg.getNumItrDone());
     primal->control()->fill(1.);
     dotk::gtest::checkResults(*mng->getNewPrimal(), *primal->control(), 5e-6);
 }
@@ -219,13 +219,13 @@ TEST(DOTk_TrustRegionInexactNewtonCGNR, getMin_UsrDefGrad_BBHess_DoubleDoglegTR_
 
     mng->setDoubleDoglegTrustRegionMethod(mng->getTrialStep());
     mng->setUserDefinedGradient();
-    hessian->setBarzilaiBorweinHessian(primal->control());;
+    hessian->setBarzilaiBorweinHessian(*primal->control());;
     dotk::DOTk_TrustRegionInexactNewton alg(hessian, mng);
     alg.setLeftPrecCgnrKrylovSolver(primal);
     alg.getMin();
 
     EXPECT_EQ(dotk::types::OBJECTIVE_FUNC_TOL_SATISFIED, alg.getStoppingCriterion());
-    EXPECT_EQ(2030, alg.getNumItrDone());
+    EXPECT_EQ(2030u, alg.getNumItrDone());
     primal->control()->fill(1.);
     dotk::gtest::checkResults(*mng->getNewPrimal(), *primal->control(), 5e-6);
 }
@@ -242,13 +242,13 @@ TEST(DOTk_TrustRegionInexactNewtonCGNR, getMin_UsrDefGrad_SR1Hess_DoglegTR_NoPre
 
     mng->setDoglegTrustRegionMethod();
     mng->setUserDefinedGradient();
-    hessian->setSr1Hessian(primal->control());;
+    hessian->setSr1Hessian(*primal->control());;
     dotk::DOTk_TrustRegionInexactNewton alg(hessian, mng);
     alg.setLeftPrecCgnrKrylovSolver(primal);
     alg.getMin();
 
     EXPECT_EQ(dotk::types::OBJECTIVE_FUNC_TOL_SATISFIED, alg.getStoppingCriterion());
-    EXPECT_EQ(2134, alg.getNumItrDone());
+    EXPECT_EQ(2134u, alg.getNumItrDone());
     primal->control()->fill(1.);
     dotk::gtest::checkResults(*mng->getNewPrimal(), *primal->control(), 5e-6);
 }
@@ -265,13 +265,13 @@ TEST(DOTk_TrustRegionInexactNewtonCGNR, getMin_UsrDefGrad_SR1Hess_DoubleDoglegTR
 
     mng->setDoubleDoglegTrustRegionMethod(mng->getTrialStep());
     mng->setUserDefinedGradient();
-    hessian->setSr1Hessian(primal->control());;
+    hessian->setSr1Hessian(*primal->control());;
     dotk::DOTk_TrustRegionInexactNewton alg(hessian, mng);
     alg.setLeftPrecCgnrKrylovSolver(primal);
     alg.getMin();
 
     EXPECT_EQ(dotk::types::OBJECTIVE_FUNC_TOL_SATISFIED, alg.getStoppingCriterion());
-    EXPECT_EQ(2030, alg.getNumItrDone());
+    EXPECT_EQ(2030u, alg.getNumItrDone());
     primal->control()->fill(1.);
     dotk::gtest::checkResults(*mng->getNewPrimal(), *primal->control(), 5e-6);
 }
@@ -289,13 +289,13 @@ TEST(DOTk_TrustRegionInexactNewtonCGNR, getMin_UsrDefGrad_LDFPHess_DoglegTR_NoPr
     mng->setDoglegTrustRegionMethod();
     mng->setUserDefinedGradient();
     size_t secant_storage = 6;
-    hessian->setLdfpHessian(primal->control(), secant_storage);;
+    hessian->setLdfpHessian(*primal->control(), secant_storage);;
     dotk::DOTk_TrustRegionInexactNewton alg(hessian, mng);
     alg.setLeftPrecCgnrKrylovSolver(primal);
     alg.getMin();
 
     EXPECT_EQ(dotk::types::OBJECTIVE_FUNC_TOL_SATISFIED, alg.getStoppingCriterion());
-    EXPECT_EQ(35, alg.getNumItrDone());
+    EXPECT_EQ(35u, alg.getNumItrDone());
     primal->control()->fill(1.);
     dotk::gtest::checkResults(*mng->getNewPrimal(), *primal->control(), 7e-8);
 }
@@ -313,13 +313,13 @@ TEST(DOTk_TrustRegionInexactNewtonCGNR, getMin_UsrDefGrad_LDFPHess_DoubleDoglegT
     mng->setDoubleDoglegTrustRegionMethod(mng->getTrialStep());
     mng->setUserDefinedGradient();
     size_t secant_storage = 6;
-    hessian->setLdfpHessian(primal->control(), secant_storage);;
+    hessian->setLdfpHessian(*primal->control(), secant_storage);;
     dotk::DOTk_TrustRegionInexactNewton alg(hessian, mng);
     alg.setLeftPrecCgnrKrylovSolver(primal);
     alg.getMin();
 
     EXPECT_EQ(dotk::types::OBJECTIVE_FUNC_TOL_SATISFIED, alg.getStoppingCriterion());
-    EXPECT_EQ(35, alg.getNumItrDone());
+    EXPECT_EQ(35u, alg.getNumItrDone());
     primal->control()->fill(1.);
     dotk::gtest::checkResults(*mng->getNewPrimal(), *primal->control(), 7e-8);
 }
@@ -334,14 +334,14 @@ TEST(DOTk_TrustRegionInexactNewtonCGNR, getMin_UsrDefGrad_NumIntgHessFD_DoglegTR
     std::tr1::shared_ptr<dotk::DOTk_TrustRegionMngTypeULP> mng(new dotk::DOTk_TrustRegionMngTypeULP(primal, objective));
     std::tr1::shared_ptr<dotk::NumericallyDifferentiatedHessian> hessian(new dotk::NumericallyDifferentiatedHessian(primal, objective));
 
-    hessian->setForwardDifference(primal);
+    hessian->setForwardDifference(*primal->control());
     mng->setUserDefinedGradient();
     dotk::DOTk_TrustRegionInexactNewton alg(hessian, mng);
     alg.setLeftPrecCgnrKrylovSolver(primal);
     alg.getMin();
 
     EXPECT_EQ(dotk::types::OBJECTIVE_FUNC_TOL_SATISFIED, alg.getStoppingCriterion());
-    EXPECT_EQ(26, alg.getNumItrDone());
+    EXPECT_EQ(26u, alg.getNumItrDone());
     primal->control()->fill(1.);
     dotk::gtest::checkResults(*mng->getNewPrimal(), *primal->control(), 5e-7);
 }
@@ -356,14 +356,14 @@ TEST(DOTk_TrustRegionInexactNewtonCGNR, getMin_UsrDefGrad_NumIntgHessBD_DoglegTR
     std::tr1::shared_ptr<dotk::DOTk_TrustRegionMngTypeULP> mng(new dotk::DOTk_TrustRegionMngTypeULP(primal, objective));
     std::tr1::shared_ptr<dotk::NumericallyDifferentiatedHessian> hessian(new dotk::NumericallyDifferentiatedHessian(primal, objective));
 
-    hessian->setBackwardDifference(primal, 5e-8);
+    hessian->setBackwardDifference(*primal->control(), 5e-8);
     mng->setUserDefinedGradient();
     dotk::DOTk_TrustRegionInexactNewton alg(hessian, mng);
     alg.setLeftPrecCgnrKrylovSolver(primal);
     alg.getMin();
 
     EXPECT_EQ(dotk::types::OBJECTIVE_FUNC_TOL_SATISFIED, alg.getStoppingCriterion());
-    EXPECT_EQ(23, alg.getNumItrDone());
+    EXPECT_EQ(23u, alg.getNumItrDone());
     primal->control()->fill(1.);
     dotk::gtest::checkResults(*mng->getNewPrimal(), *primal->control(), 5e-7);
 }
@@ -378,14 +378,14 @@ TEST(DOTk_TrustRegionInexactNewtonCGNR, getMin_UsrDefGrad_NumIntgHessCD_DoglegTR
     std::tr1::shared_ptr<dotk::DOTk_TrustRegionMngTypeULP> mng(new dotk::DOTk_TrustRegionMngTypeULP(primal, objective));
     std::tr1::shared_ptr<dotk::NumericallyDifferentiatedHessian> hessian(new dotk::NumericallyDifferentiatedHessian(primal, objective));
 
-    hessian->setCentralDifference(primal, 1e-7);
+    hessian->setCentralDifference(*primal->control(), 1e-7);
     mng->setUserDefinedGradient();
     dotk::DOTk_TrustRegionInexactNewton alg(hessian, mng);
     alg.setLeftPrecCgnrKrylovSolver(primal);
     alg.getMin();
 
     EXPECT_EQ(dotk::types::OBJECTIVE_FUNC_TOL_SATISFIED, alg.getStoppingCriterion());
-    EXPECT_EQ(28, alg.getNumItrDone());
+    EXPECT_EQ(28u, alg.getNumItrDone());
     primal->control()->fill(1.);
     dotk::gtest::checkResults(*mng->getNewPrimal(), *primal->control(), 1e-6);
 }
@@ -400,14 +400,14 @@ TEST(DOTk_TrustRegionInexactNewtonCGNR, getMin_UsrDefGrad_NumIntgHessSoFD_Dogleg
     std::tr1::shared_ptr<dotk::DOTk_TrustRegionMngTypeULP> mng(new dotk::DOTk_TrustRegionMngTypeULP(primal, objective));
     std::tr1::shared_ptr<dotk::NumericallyDifferentiatedHessian> hessian(new dotk::NumericallyDifferentiatedHessian(primal, objective));
 
-    hessian->setSecondOrderForwardDifference(primal, 1e-7);
+    hessian->setSecondOrderForwardDifference(*primal->control(), 1e-7);
     mng->setUserDefinedGradient();
     dotk::DOTk_TrustRegionInexactNewton alg(hessian, mng);
     alg.setLeftPrecCgnrKrylovSolver(primal);
     alg.getMin();
 
     EXPECT_EQ(dotk::types::OBJECTIVE_FUNC_TOL_SATISFIED, alg.getStoppingCriterion());
-    EXPECT_EQ(34, alg.getNumItrDone());
+    EXPECT_EQ(34u, alg.getNumItrDone());
     primal->control()->fill(1.);
     dotk::gtest::checkResults(*mng->getNewPrimal(), *primal->control(), 5e-6);
 }
@@ -422,14 +422,14 @@ TEST(DOTk_TrustRegionInexactNewtonCGNR, getMin_UsrDefGrad_NumIntgHessToBD_Dogleg
     std::tr1::shared_ptr<dotk::DOTk_TrustRegionMngTypeULP> mng(new dotk::DOTk_TrustRegionMngTypeULP(primal, objective));
     std::tr1::shared_ptr<dotk::NumericallyDifferentiatedHessian> hessian(new dotk::NumericallyDifferentiatedHessian(primal, objective));
 
-    hessian->setThirdOrderBackwardDifference(primal, 1e-5);
+    hessian->setThirdOrderBackwardDifference(*primal->control(), 1e-5);
     mng->setUserDefinedGradient();
     dotk::DOTk_TrustRegionInexactNewton alg(hessian, mng);
     alg.setLeftPrecCgnrKrylovSolver(primal);
     alg.getMin();
 
     EXPECT_EQ(dotk::types::OBJECTIVE_FUNC_TOL_SATISFIED, alg.getStoppingCriterion());
-    EXPECT_EQ(22, alg.getNumItrDone());
+    EXPECT_EQ(22u, alg.getNumItrDone());
     primal->control()->fill(1.);
     dotk::gtest::checkResults(*mng->getNewPrimal(), *primal->control(), 5e-7);
 }
@@ -444,14 +444,14 @@ TEST(DOTk_TrustRegionInexactNewtonCGNR, getMin_UsrDefGrad_NumIntgHessToFD_Dogleg
     std::tr1::shared_ptr<dotk::DOTk_TrustRegionMngTypeULP> mng(new dotk::DOTk_TrustRegionMngTypeULP(primal, objective));
     std::tr1::shared_ptr<dotk::NumericallyDifferentiatedHessian> hessian(new dotk::NumericallyDifferentiatedHessian(primal, objective));
 
-    hessian->setThirdOrderForwardDifference(primal, 1e-5);
+    hessian->setThirdOrderForwardDifference(*primal->control(), 1e-5);
     mng->setUserDefinedGradient();
     dotk::DOTk_TrustRegionInexactNewton alg(hessian, mng);
     alg.setLeftPrecCgnrKrylovSolver(primal);
     alg.getMin();
 
     EXPECT_EQ(dotk::types::OBJECTIVE_FUNC_TOL_SATISFIED, alg.getStoppingCriterion());
-    EXPECT_EQ(22, alg.getNumItrDone());
+    EXPECT_EQ(22u, alg.getNumItrDone());
     primal->control()->fill(1.);
     dotk::gtest::checkResults(*mng->getNewPrimal(), *primal->control(), 5e-7);
 }
@@ -466,7 +466,7 @@ TEST(DOTk_TrustRegionInexactNewtonCGNR, getMin_UsrDefGrad_NumIntgHessFD_DoubleDo
     std::tr1::shared_ptr<dotk::DOTk_TrustRegionMngTypeULP> mng(new dotk::DOTk_TrustRegionMngTypeULP(primal, objective));
     std::tr1::shared_ptr<dotk::NumericallyDifferentiatedHessian> hessian(new dotk::NumericallyDifferentiatedHessian(primal, objective));
 
-    hessian->setForwardDifference(primal, 1e-7);
+    hessian->setForwardDifference(*primal->control(), 1e-7);
     mng->setDoubleDoglegTrustRegionMethod(mng->getTrialStep());
     mng->setUserDefinedGradient();
     dotk::DOTk_TrustRegionInexactNewton alg(hessian, mng);
@@ -474,7 +474,7 @@ TEST(DOTk_TrustRegionInexactNewtonCGNR, getMin_UsrDefGrad_NumIntgHessFD_DoubleDo
     alg.getMin();
 
     EXPECT_EQ(dotk::types::OBJECTIVE_FUNC_TOL_SATISFIED, alg.getStoppingCriterion());
-    EXPECT_EQ(23, alg.getNumItrDone());
+    EXPECT_EQ(23u, alg.getNumItrDone());
     primal->control()->fill(1.);
     dotk::gtest::checkResults(*mng->getNewPrimal(), *primal->control(), 5e-7);
 }
@@ -489,7 +489,7 @@ TEST(DOTk_TrustRegionInexactNewtonCGNR, getMin_UsrDefGrad_NumIntgHessBD_DoubleDo
     std::tr1::shared_ptr<dotk::DOTk_TrustRegionMngTypeULP> mng(new dotk::DOTk_TrustRegionMngTypeULP(primal, objective));
     std::tr1::shared_ptr<dotk::NumericallyDifferentiatedHessian> hessian(new dotk::NumericallyDifferentiatedHessian(primal, objective));
 
-    hessian->setBackwardDifference(primal, 1e-7);
+    hessian->setBackwardDifference(*primal->control(), 1e-7);
     mng->setDoubleDoglegTrustRegionMethod(mng->getTrialStep());
     mng->setUserDefinedGradient();
     dotk::DOTk_TrustRegionInexactNewton alg(hessian, mng);
@@ -497,7 +497,7 @@ TEST(DOTk_TrustRegionInexactNewtonCGNR, getMin_UsrDefGrad_NumIntgHessBD_DoubleDo
     alg.getMin();
 
     EXPECT_EQ(dotk::types::OBJECTIVE_FUNC_TOL_SATISFIED, alg.getStoppingCriterion());
-    EXPECT_EQ(23, alg.getNumItrDone());
+    EXPECT_EQ(23u, alg.getNumItrDone());
     primal->control()->fill(1.);
     dotk::gtest::checkResults(*mng->getNewPrimal(), *primal->control(), 5e-7);
 }
@@ -512,7 +512,7 @@ TEST(DOTk_TrustRegionInexactNewtonCGNR, getMin_UsrDefGrad_NumIntgHessCD_DoubleDo
     std::tr1::shared_ptr<dotk::DOTk_TrustRegionMngTypeULP> mng(new dotk::DOTk_TrustRegionMngTypeULP(primal, objective));
     std::tr1::shared_ptr<dotk::NumericallyDifferentiatedHessian> hessian(new dotk::NumericallyDifferentiatedHessian(primal, objective));
 
-    hessian->setCentralDifference(primal, 5e-7);
+    hessian->setCentralDifference(*primal->control(), 5e-7);
     mng->setDoubleDoglegTrustRegionMethod(mng->getTrialStep());
     mng->setUserDefinedGradient();
     dotk::DOTk_TrustRegionInexactNewton alg(hessian, mng);
@@ -520,7 +520,7 @@ TEST(DOTk_TrustRegionInexactNewtonCGNR, getMin_UsrDefGrad_NumIntgHessCD_DoubleDo
     alg.getMin();
 
     EXPECT_EQ(dotk::types::OBJECTIVE_FUNC_TOL_SATISFIED, alg.getStoppingCriterion());
-    EXPECT_EQ(23, alg.getNumItrDone());
+    EXPECT_EQ(23u, alg.getNumItrDone());
     primal->control()->fill(1.);
     dotk::gtest::checkResults(*mng->getNewPrimal(), *primal->control(), 5e-7);
 }
@@ -535,7 +535,7 @@ TEST(DOTk_TrustRegionInexactNewtonCGNR, getMin_UsrDefGrad_NumIntgHessSoFD_Double
     std::tr1::shared_ptr<dotk::DOTk_TrustRegionMngTypeULP> mng(new dotk::DOTk_TrustRegionMngTypeULP(primal, objective));
     std::tr1::shared_ptr<dotk::NumericallyDifferentiatedHessian> hessian(new dotk::NumericallyDifferentiatedHessian(primal, objective));
 
-    hessian->setSecondOrderForwardDifference(primal, 1e-5);
+    hessian->setSecondOrderForwardDifference(*primal->control(), 1e-5);
     mng->setDoubleDoglegTrustRegionMethod(mng->getTrialStep());
     mng->setUserDefinedGradient();
     dotk::DOTk_TrustRegionInexactNewton alg(hessian, mng);
@@ -543,7 +543,7 @@ TEST(DOTk_TrustRegionInexactNewtonCGNR, getMin_UsrDefGrad_NumIntgHessSoFD_Double
     alg.getMin();
 
     EXPECT_EQ(dotk::types::OBJECTIVE_FUNC_TOL_SATISFIED, alg.getStoppingCriterion());
-    EXPECT_EQ(22, alg.getNumItrDone());
+    EXPECT_EQ(22u, alg.getNumItrDone());
     primal->control()->fill(1.);
     dotk::gtest::checkResults(*mng->getNewPrimal(), *primal->control(), 5e-7);
 }
@@ -558,7 +558,7 @@ TEST(DOTk_TrustRegionInexactNewtonCGNR, getMin_UsrDefGrad_NumIntgHessToFD_Double
     std::tr1::shared_ptr<dotk::DOTk_TrustRegionMngTypeULP> mng(new dotk::DOTk_TrustRegionMngTypeULP(primal, objective));
     std::tr1::shared_ptr<dotk::NumericallyDifferentiatedHessian> hessian(new dotk::NumericallyDifferentiatedHessian(primal, objective));
 
-    hessian->setThirdOrderForwardDifference(primal, 1e-5);
+    hessian->setThirdOrderForwardDifference(*primal->control(), 1e-5);
     mng->setDoubleDoglegTrustRegionMethod(mng->getTrialStep());
     mng->setUserDefinedGradient();
     dotk::DOTk_TrustRegionInexactNewton alg(hessian, mng);
@@ -566,7 +566,7 @@ TEST(DOTk_TrustRegionInexactNewtonCGNR, getMin_UsrDefGrad_NumIntgHessToFD_Double
     alg.getMin();
 
     EXPECT_EQ(dotk::types::OBJECTIVE_FUNC_TOL_SATISFIED, alg.getStoppingCriterion());
-    EXPECT_EQ(22, alg.getNumItrDone());
+    EXPECT_EQ(22u, alg.getNumItrDone());
     primal->control()->fill(1.);
     dotk::gtest::checkResults(*mng->getNewPrimal(), *primal->control(), 5e-7);
 }
@@ -581,7 +581,7 @@ TEST(DOTk_TrustRegionInexactNewtonCGNR, getMin_UsrDefGrad_NumIntgHessToBD_Double
     std::tr1::shared_ptr<dotk::DOTk_TrustRegionMngTypeULP> mng(new dotk::DOTk_TrustRegionMngTypeULP(primal, objective));
     std::tr1::shared_ptr<dotk::NumericallyDifferentiatedHessian> hessian(new dotk::NumericallyDifferentiatedHessian(primal, objective));
 
-    hessian->setThirdOrderBackwardDifference(primal, 1e-5);
+    hessian->setThirdOrderBackwardDifference(*primal->control(), 1e-5);
     mng->setDoubleDoglegTrustRegionMethod(mng->getTrialStep());
     mng->setUserDefinedGradient();
     dotk::DOTk_TrustRegionInexactNewton alg(hessian, mng);
@@ -589,7 +589,7 @@ TEST(DOTk_TrustRegionInexactNewtonCGNR, getMin_UsrDefGrad_NumIntgHessToBD_Double
     alg.getMin();
 
     EXPECT_EQ(dotk::types::OBJECTIVE_FUNC_TOL_SATISFIED, alg.getStoppingCriterion());
-    EXPECT_EQ(22, alg.getNumItrDone());
+    EXPECT_EQ(22u, alg.getNumItrDone());
     primal->control()->fill(1.);
     dotk::gtest::checkResults(*mng->getNewPrimal(), *primal->control(), 5e-7);
 }

@@ -23,7 +23,7 @@ class matrix;
 class DOTk_LDFPHessian : public dotk::DOTk_SecondOrderOperator
 {
 public:
-    DOTk_LDFPHessian(const std::tr1::shared_ptr<dotk::Vector<Real> > & vector_, size_t max_secant_storage_);
+    DOTk_LDFPHessian(const dotk::Vector<Real> & vector_, size_t max_secant_storage_);
     virtual ~DOTk_LDFPHessian();
 
     const std::tr1::shared_ptr<dotk::Vector<Real> > & getDeltaGradStorage(size_t at_) const;

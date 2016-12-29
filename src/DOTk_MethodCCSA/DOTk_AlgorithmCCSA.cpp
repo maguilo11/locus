@@ -28,7 +28,6 @@ DOTk_AlgorithmCCSA::DOTk_AlgorithmCCSA(const std::tr1::shared_ptr<dotk::DOTk_Dat
         m_ResidualTolerance(1e-4),
         m_GradientTolerance(1e-3),
         m_CurrentMaxResidual(std::numeric_limits<Real>::max()),
-        m_OptimalityTolerance(1e-4),
         m_CurrentResidualNorm(std::numeric_limits<Real>::max()),
         m_FeasibilityTolerance(1e-4),
         m_ControlStagnationTolerance(1e-3),
@@ -107,16 +106,6 @@ Real DOTk_AlgorithmCCSA::getCurrentMaxResidual() const
 void DOTk_AlgorithmCCSA::setCurrentMaxResidual(Real input_)
 {
     m_CurrentMaxResidual = input_;
-}
-
-Real DOTk_AlgorithmCCSA::getOptimalityTolerance() const
-{
-    return (m_OptimalityTolerance);
-}
-
-void DOTk_AlgorithmCCSA::setOptimalityTolerance(Real tolerance_)
-{
-    m_OptimalityTolerance = tolerance_;
 }
 
 Real DOTk_AlgorithmCCSA::getCurrentResidualNorm() const

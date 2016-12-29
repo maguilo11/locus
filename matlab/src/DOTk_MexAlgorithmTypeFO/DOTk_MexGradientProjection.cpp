@@ -5,18 +5,16 @@
  *      Author: Miguel A. Aguilo Valentin
  */
 
+#include "DOTk_MexVector.hpp"
 #include "DOTk_MexNonlinearCG.hpp"
+#include "DOTk_MexApiUtilities.hpp"
 #include "DOTk_MexAlgorithmParser.hpp"
-#include "DOTk_MexContainerFactory.hpp"
-#include "DOTk_MexObjectiveFunction.cpp"
 #include "DOTk_MexObjectiveFunction.hpp"
-#include "DOTk_MexEqualityConstraint.cpp"
 #include "DOTk_MexEqualityConstraint.hpp"
 #include "DOTk_MexGradientProjection.hpp"
 #include "DOTk_MexFactoriesAlgorithmTypeGB.cpp"
 #include "DOTk_MexFactoriesAlgorithmTypeGB.hpp"
 
-#include "vector.hpp"
 #include "DOTk_Primal.hpp"
 #include "DOTk_LineSearchStep.hpp"
 #include "DOTk_LineSearchMngTypeULP.hpp"
@@ -48,23 +46,23 @@ DOTk_MexGradientProjection::~DOTk_MexGradientProjection()
 
 void DOTk_MexGradientProjection::clear()
 {
-    m_ObjectiveFunction.release();
-    m_EqualityConstraint.release();
+    dotk::mex::destroy(m_ObjectiveFunction);
+    dotk::mex::destroy(m_EqualityConstraint);
 }
 
 void DOTk_MexGradientProjection::initialize(const mxArray* options_[])
 {
-    dotk::mex::parseObjectiveFunction(options_[1], m_ObjectiveFunction);
+    m_ObjectiveFunction = dotk::mex::parseObjectiveFunction(options_[1]);
 
-    dotk::mex::parseProblemType(options_[0], m_ProblemType);
-    dotk::mex::parseLineSearchMethod(options_[0], m_LineSearchMethod);
-    dotk::mex::parseMaxNumAlgorithmItr(options_[0], m_MaxNumIterations);
-    dotk::mex::parseObjectiveTolerance(options_[0], m_ObjectiveTolerance);
-    dotk::mex::parseGradientTolerance(options_[0], m_ProjectedGradientTolerance);
+    m_ProblemType = dotk::mex::parseProblemType(options_[0]);
+    m_LineSearchMethod = dotk::mex::parseLineSearchMethod(options_[0]);
+    m_MaxNumIterations = dotk::mex::parseMaxNumOuterIterations(options_[0]);
+    m_ObjectiveTolerance = dotk::mex::parseObjectiveTolerance(options_[0]);
+    m_ProjectedGradientTolerance = dotk::mex::parseGradientTolerance(options_[0]);
 
-    dotk::mex::parseMaxNumLineSearchItr(options_[0], m_MaxNumLineSearchIterations);
-    dotk::mex::parseLineSearchContractionFactor(options_[0], m_LineSearchContractionFactor);
-    dotk::mex::parseLineSearchStagnationTolerance(options_[0], m_LineSearchStagnationTolerance);
+    m_MaxNumLineSearchIterations = dotk::mex::parseMaxNumLineSearchItr(options_[0]);
+    m_LineSearchContractionFactor = dotk::mex::parseLineSearchContractionFactor(options_[0]);
+    m_LineSearchStagnationTolerance = dotk::mex::parseLineSearchStagnationTolerance(options_[0]);
 }
 
 void DOTk_MexGradientProjection::solve(const mxArray* input_[], mxArray* output_[])
@@ -102,34 +100,48 @@ void DOTk_MexGradientProjection::solve(const mxArray* input_[], mxArray* output_
 
 void DOTk_MexGradientProjection::solveLinearProgrammingProblem(const mxArray* input_[], mxArray* output_[])
 {
+    // Set core data structures: control vectors
+    mxArray* mx_initial_control = dotk::mex::parseInitialControl(input_[0]);
+    dotk::MexVector controls(mx_initial_control);
+    mxDestroyArray(mx_initial_control);
+
+    // Allocate DOTk data structures
     std::tr1::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
-    dotk::mex::buildControlContainer(input_[0], *primal);
+    primal->allocateUserDefinedControl(controls);
 
-    std::tr1::shared_ptr< dotk::Vector<double> > vector = primal->control()->clone();
-    dotk::mex::parseControlLowerBound(input_[0], *vector);
-    primal->setControlLowerBound(*vector);
-    vector->fill(0.);
-    dotk::mex::parseControlUpperBound(input_[0], *vector);
-    primal->setControlUpperBound(*vector);
+    // Set lower bounds on control variables
+    mxArray* mx_lower_bound = dotk::mex::parseControlLowerBound(input_[0]);
+    dotk::MexVector lower_bound(mx_lower_bound);
+    mxDestroyArray(mx_lower_bound);
+    primal->setControlLowerBound(lower_bound);
 
+    // Set upper bounds on control variables
+    mxArray* mx_upper_bound = dotk::mex::parseControlUpperBound(input_[0]);
+    dotk::MexVector upper_bound(mx_upper_bound);
+    mxDestroyArray(mx_upper_bound);
+    primal->setControlUpperBound(upper_bound);
+
+    // Set line search step manager
     std::tr1::shared_ptr<dotk::DOTk_LineSearchStep> step(new dotk::DOTk_LineSearchStep(primal));
     step->build(primal, m_LineSearchMethod);
     step->setMaxNumIterations(m_MaxNumLineSearchIterations);
     step->setContractionFactor(m_LineSearchContractionFactor);
     step->setStagnationTolerance(m_LineSearchStagnationTolerance);
 
-    std::tr1::shared_ptr<dotk::DOTk_MexObjectiveFunction<double> >
-        objective(new dotk::DOTk_MexObjectiveFunction<double>(m_ObjectiveFunction.get(), m_ProblemType));
+    // Set line search algorithm data manager
+    std::tr1::shared_ptr<dotk::DOTk_MexObjectiveFunction>
+        objective(new dotk::DOTk_MexObjectiveFunction(m_ObjectiveFunction, m_ProblemType));
     std::tr1::shared_ptr<dotk::DOTk_LineSearchMngTypeULP>
         mng(new dotk::DOTk_LineSearchMngTypeULP(primal, objective));
-    dotk::mex::buildGradient(input_[0], primal, mng);
+    dotk::mex::buildGradient(input_[0], mng);
 
+    // Initialize algorithm
     dotk::GradientProjectionMethod algorithm(primal, step, mng);
     algorithm.setMaxNumIterations(m_MaxNumIterations);
     algorithm.setObjectiveTolerance(m_ObjectiveTolerance);
     algorithm.setProjectedGradientTolerance(m_ProjectedGradientTolerance);
-
     algorithm.printDiagnostics();
+
     algorithm.getMin();
 
     this->outputData(algorithm, *mng, output_);
@@ -137,38 +149,54 @@ void DOTk_MexGradientProjection::solveLinearProgrammingProblem(const mxArray* in
 
 void DOTk_MexGradientProjection::solveNonlinearProgrammingProblem(const mxArray* input_[], mxArray* output_[])
 {
+    // Set core data structures: state and control vectors
+    size_t num_states = dotk::mex::parseNumberStates(input_[0]);
+    dotk::MexVector states(num_states, 0.);
+    mxArray* mx_initial_control = dotk::mex::parseInitialControl(input_[0]);
+    dotk::MexVector controls(mx_initial_control);
+    mxDestroyArray(mx_initial_control);
+
+    // Allocate DOTk data structures
     std::tr1::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
-    dotk::mex::buildDualContainer(input_[0], *primal);
-    dotk::mex::buildControlContainer(input_[0], *primal);
+    primal->allocateUserDefinedState(states);
+    primal->allocateUserDefinedControl(controls);
 
-    std::tr1::shared_ptr< dotk::Vector<double> > vector = primal->control()->clone();
-    dotk::mex::parseControlLowerBound(input_[0], *vector);
-    primal->setControlLowerBound(*vector);
-    vector->fill(0.);
-    dotk::mex::parseControlUpperBound(input_[0], *vector);
-    primal->setControlUpperBound(*vector);
+    // Set lower bounds on control variables
+    mxArray* mx_lower_bound = dotk::mex::parseControlLowerBound(input_[0]);
+    dotk::MexVector lower_bound(mx_lower_bound);
+    mxDestroyArray(mx_lower_bound);
+    primal->setControlLowerBound(lower_bound);
 
+    // Set upper bounds on control variables
+    mxArray* mx_upper_bound = dotk::mex::parseControlUpperBound(input_[0]);
+    dotk::MexVector upper_bound(mx_upper_bound);
+    mxDestroyArray(mx_upper_bound);
+    primal->setControlUpperBound(upper_bound);
+
+    // Set line search step manager
     std::tr1::shared_ptr<dotk::DOTk_LineSearchStep> step(new dotk::DOTk_LineSearchStep(primal));
     step->build(primal, m_LineSearchMethod);
     step->setMaxNumIterations(m_MaxNumLineSearchIterations);
     step->setContractionFactor(m_LineSearchContractionFactor);
     step->setStagnationTolerance(m_LineSearchStagnationTolerance);
 
-    std::tr1::shared_ptr<dotk::DOTk_MexObjectiveFunction<double> >
-        objective(new dotk::DOTk_MexObjectiveFunction<double>(m_ObjectiveFunction.get(), m_ProblemType));
-    dotk::mex::parseEqualityConstraint(input_[1], m_EqualityConstraint);
-    std::tr1::shared_ptr<dotk::DOTk_MexEqualityConstraint<double> >
-        equality(new dotk::DOTk_MexEqualityConstraint<double>(m_EqualityConstraint.get(), m_ProblemType));
+    // Set objective function, equality constraint, and line search algorithm data manager
+    std::tr1::shared_ptr<dotk::DOTk_MexObjectiveFunction>
+        objective(new dotk::DOTk_MexObjectiveFunction(m_ObjectiveFunction, m_ProblemType));
+    m_EqualityConstraint = dotk::mex::parseEqualityConstraint(input_[1]);
+    std::tr1::shared_ptr<dotk::DOTk_MexEqualityConstraint>
+        equality(new dotk::DOTk_MexEqualityConstraint(m_EqualityConstraint, m_ProblemType));
     std::tr1::shared_ptr<dotk::DOTk_LineSearchMngTypeUNP>
         mng(new dotk::DOTk_LineSearchMngTypeUNP(primal, objective, equality));
-    dotk::mex::buildGradient(input_[0], primal, mng);
+    dotk::mex::buildGradient(input_[0], mng);
 
+    // Initialize gradient projection algorithm
     dotk::GradientProjectionMethod algorithm(primal, step, mng);
     algorithm.setMaxNumIterations(m_MaxNumIterations);
     algorithm.setObjectiveTolerance(m_ObjectiveTolerance);
     algorithm.setProjectedGradientTolerance(m_ProjectedGradientTolerance);
-
     algorithm.printDiagnostics();
+
     algorithm.getMin();
 
     this->outputData(algorithm, *mng, output_);
@@ -176,49 +204,37 @@ void DOTk_MexGradientProjection::solveNonlinearProgrammingProblem(const mxArray*
 
 void DOTk_MexGradientProjection::outputData(const dotk::GradientProjectionMethod & algorithm_,
                                             const dotk::DOTk_LineSearchAlgorithmsDataMng & mng_,
-                                            mxArray* output_[])
+                                            mxArray* outputs_[])
 {
     // Create memory allocation for output struct
     const char *field_names[7] =
         { "Iterations", "ObjectiveFunctionValue", "Control", "Gradient", "NormGradient", "ProjectedGradient", "NormProjectedGradient" };
-    output_[0] = mxCreateStructMatrix(1, 1, 7, field_names);
+    outputs_[0] = mxCreateStructMatrix(1, 1, 7, field_names);
 
-    dotk::DOTk_MexArrayPtr iteration_count(mxCreateNumericMatrix_730(1, 1, mxINDEX_CLASS, mxREAL));
-    static_cast<size_t*>(mxGetData(iteration_count.get()))[0] = algorithm_.getIterationCount();
-    mxSetField(output_[0], 0, "Iterations", iteration_count.get());
+    mxArray* number_iterations = mxCreateDoubleScalar(algorithm_.getIterationCount());
+    mxSetField(outputs_[0], 0, "Iterations", number_iterations);
+    mxDestroyArray(number_iterations);
 
-    dotk::DOTk_MexArrayPtr objective_function_value(mxCreateDoubleMatrix(1, 1, mxREAL));
-    mxGetPr(objective_function_value.get())[0] = mng_.getNewObjectiveFunctionValue();
-    mxSetField(output_[0], 0, "ObjectiveFunctionValue", objective_function_value.get());
+    mxArray* objective_function_value = mxCreateDoubleScalar(mng_.getNewObjectiveFunctionValue());
+    mxSetField(outputs_[0], 0, "ObjectiveFunctionValue", objective_function_value);
+    mxDestroyArray(objective_function_value);
 
-    size_t num_controls = mng_.getNewPrimal()->size();
-    dotk::DOTk_MexArrayPtr primal(mxCreateDoubleMatrix(num_controls, 1, mxREAL));
-    mng_.getNewPrimal()->gather(mxGetPr(primal.get()));
-    mxSetField(output_[0], 0, "Control", primal.get());
+    dotk::MexVector & control = dynamic_cast<dotk::MexVector &>(*mng_.getNewPrimal());
+    mxSetField(outputs_[0], 0, "Control", control.array());
 
-    dotk::DOTk_MexArrayPtr gradient(mxCreateDoubleMatrix(num_controls, 1, mxREAL));
-    mng_.getNewGradient()->gather(mxGetPr(gradient.get()));
-    mxSetField(output_[0], 0, "Gradient", gradient.get());
+    dotk::MexVector & gradient = dynamic_cast<dotk::MexVector &>(*mng_.getNewGradient());
+    mxSetField(outputs_[0], 0, "Gradient", gradient.array());
 
-    dotk::DOTk_MexArrayPtr norm_gradient(mxCreateDoubleMatrix(1, 1, mxREAL));
-    mxGetPr(norm_gradient.get())[0] = mng_.getNewGradient()->norm();
-    mxSetField(output_[0], 0, "NormGradient", norm_gradient.get());
+    mxArray* norm_gradient = mxCreateDoubleScalar(gradient.norm());
+    mxSetField(outputs_[0], 0, "NormGradient", norm_gradient);
+    mxDestroyArray(norm_gradient);
 
-    dotk::DOTk_MexArrayPtr projected_gradient(mxCreateDoubleMatrix(num_controls, 1, mxREAL));
-    mng_.getTrialStep()->gather(mxGetPr(projected_gradient.get()));
-    mxSetField(output_[0], 0, "ProjectedGradient", projected_gradient.get());
+    dotk::MexVector & projected_gradient = dynamic_cast<dotk::MexVector &>(*mng_.getTrialStep());
+    mxSetField(outputs_[0], 0, "ProjectedGradient", projected_gradient.array());
 
-    dotk::DOTk_MexArrayPtr norm_projected_gradient(mxCreateDoubleMatrix(1, 1, mxREAL));
-    mxGetPr(norm_projected_gradient.get())[0] = mng_.getTrialStep()->norm();
-    mxSetField(output_[0], 0, "NormProjectedGradient", norm_projected_gradient.get());
-
-    iteration_count.release();
-    objective_function_value.release();
-    primal.release();
-    gradient.release();
-    norm_gradient.release();
-    projected_gradient.release();
-    norm_projected_gradient.release();
+    mxArray* norm_projected_gradient = mxCreateDoubleScalar(projected_gradient.norm());
+    mxSetField(outputs_[0], 0, "NormProjectedGradient", norm_projected_gradient);
+    mxDestroyArray(norm_projected_gradient);
 }
 
 }

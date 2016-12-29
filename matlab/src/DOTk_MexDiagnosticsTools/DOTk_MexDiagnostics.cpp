@@ -40,9 +40,9 @@ dotk::types::problem_t DOTk_MexDiagnostics::getProblemType() const
 
 void DOTk_MexDiagnostics::initialize(const mxArray* options_)
 {
-    dotk::mex::parseProblemType(options_, m_ProblemType);
-    dotk::mex::parseFiniteDifferenceDiagnosticsLowerSuperScripts(options_, m_LowerSuperScrips);
-    dotk::mex::parseFiniteDifferenceDiagnosticsUpperSuperScripts(options_, m_UpperSuperScrips);
+    m_ProblemType = dotk::mex::parseProblemType(options_);
+    m_LowerSuperScrips = dotk::mex::parseFiniteDifferenceDiagnosticsLowerSuperScripts(options_);
+    m_UpperSuperScrips = dotk::mex::parseFiniteDifferenceDiagnosticsUpperSuperScripts(options_);
 }
 
 }

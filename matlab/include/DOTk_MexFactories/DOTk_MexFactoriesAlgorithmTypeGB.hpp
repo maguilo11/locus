@@ -15,7 +15,6 @@ namespace dotk
 {
 
 class DOTk_Primal;
-class DOTk_OptimizationDataMng;
 
 namespace mex
 {
@@ -29,7 +28,7 @@ template<typename Manager>
 void buildTrustRegionMethod(const mxArray* options_, Manager & mng_);
 
 template<typename Manager>
-void buildGradient(const mxArray* options_, const std::tr1::shared_ptr<dotk::DOTk_Primal> & epsilon_, Manager & mng_);
+void buildGradient(const mxArray* options_, Manager & mng_);
 
 }
 

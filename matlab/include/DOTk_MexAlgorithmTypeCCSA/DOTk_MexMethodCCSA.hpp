@@ -49,7 +49,6 @@ private:
 
     double m_GradientTolerance;
     double m_ResidualTolerance;
-    double m_OptimalityTolerance;
     double m_FeasibilityTolerance;
     double m_ControlStagnationTolerance;
 

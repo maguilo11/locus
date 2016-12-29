@@ -8,13 +8,11 @@
 #ifndef DOTK_MEXGCMMA_HPP_
 #define DOTK_MEXGCMMA_HPP_
 
-#include "DOTk_MexArrayPtr.hpp"
 #include "DOTk_MexMethodCCSA.hpp"
 
 namespace dotk
 {
 
-class DOTk_MexArrayPtr;
 class DOTk_AlgorithmCCSA;
 
 class DOTk_MexGCMMA : public dotk::DOTk_MexMethodCCSA
@@ -38,9 +36,9 @@ private:
     double m_SubProblemResidualTolerance;
     double m_SubProblemStagnationTolerance;
 
-    dotk::DOTk_MexArrayPtr m_ObjectiveFunction;
-    dotk::DOTk_MexArrayPtr m_EqualityConstraint;
-    dotk::DOTk_MexArrayPtr m_InequalityConstraint;
+    mxArray* m_ObjectiveFunction;
+    mxArray* m_EqualityConstraint;
+    mxArray* m_InequalityConstraint;
 
 private:
     DOTk_MexGCMMA(const dotk::DOTk_MexGCMMA & rhs_);

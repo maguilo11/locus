@@ -28,19 +28,19 @@ class DOTk_EqualityConstraint;
 class NumericallyDifferentiatedHessian : public dotk::DOTk_LinearOperator
 {
 public:
-    NumericallyDifferentiatedHessian(const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_,
+    NumericallyDifferentiatedHessian(const std::tr1::shared_ptr<dotk::DOTk_Primal> & input_,
                                      const std::tr1::shared_ptr<dotk::DOTk_ObjectiveFunction<Real> > & objective_);
-    NumericallyDifferentiatedHessian(const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_,
+    NumericallyDifferentiatedHessian(const std::tr1::shared_ptr<dotk::DOTk_Primal> & input_,
                                      const std::tr1::shared_ptr<dotk::DOTk_ObjectiveFunction<Real> > & objective_,
                                      const std::tr1::shared_ptr<dotk::DOTk_EqualityConstraint<Real> > & equality_);
     virtual ~NumericallyDifferentiatedHessian();
 
-    void setForwardDifference(const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_, Real epsilon_ = 1e-6);
-    void setBackwardDifference(const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_, Real epsilon_ = 1e-6);
-    void setCentralDifference(const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_, Real epsilon_ = 1e-6);
-    void setSecondOrderForwardDifference(const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_, Real epsilon_ = 1e-6);
-    void setThirdOrderForwardDifference(const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_, Real epsilon_ = 1e-6);
-    void setThirdOrderBackwardDifference(const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_, Real epsilon_ = 1e-6);
+    void setForwardDifference(const dotk::Vector<Real> & input_, Real epsilon_ = 1e-6);
+    void setBackwardDifference(const dotk::Vector<Real> & input_, Real epsilon_ = 1e-6);
+    void setCentralDifference(const dotk::Vector<Real> & input_, Real epsilon_ = 1e-6);
+    void setSecondOrderForwardDifference(const dotk::Vector<Real> & input_, Real epsilon_ = 1e-6);
+    void setThirdOrderForwardDifference(const dotk::Vector<Real> & input_, Real epsilon_ = 1e-6);
+    void setThirdOrderBackwardDifference(const dotk::Vector<Real> & input_, Real epsilon_ = 1e-6);
 
     void apply(const std::tr1::shared_ptr<dotk::Vector<Real> > & primal_,
                const std::tr1::shared_ptr<dotk::Vector<Real> > & gradient_,

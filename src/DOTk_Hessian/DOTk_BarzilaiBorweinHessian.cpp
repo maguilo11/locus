@@ -13,10 +13,10 @@
 namespace dotk
 {
 
-DOTk_BarzilaiBorweinHessian::DOTk_BarzilaiBorweinHessian(const std::tr1::shared_ptr<dotk::Vector<Real> > & vector_) :
+DOTk_BarzilaiBorweinHessian::DOTk_BarzilaiBorweinHessian(const dotk::Vector<Real> & vector_) :
         dotk::DOTk_SecondOrderOperator(),
-        m_DeltaPrimal(vector_->clone()),
-        m_DeltaGradient(vector_->clone())
+        m_DeltaPrimal(vector_.clone()),
+        m_DeltaGradient(vector_.clone())
 {
     dotk::DOTk_SecondOrderOperator::setHessianType(dotk::types::hessian_t::BARZILAIBORWEIN_HESS);
 }

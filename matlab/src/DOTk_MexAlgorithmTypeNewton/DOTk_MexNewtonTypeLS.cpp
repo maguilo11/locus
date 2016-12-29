@@ -5,23 +5,22 @@
  *      Author: Miguel A. Aguilo Valentin
  */
 
-#include "vector.hpp"
+#include "DOTk_MexVector.hpp"
+#include "DOTk_MexNewtonTypeLS.hpp"
+#include "DOTk_MexApiUtilities.hpp"
+#include "DOTk_MexHessianFactory.hpp"
+#include "DOTk_MexAlgorithmParser.hpp"
+#include "DOTk_MexObjectiveFunction.hpp"
+#include "DOTk_MexEqualityConstraint.hpp"
+#include "DOTk_MexFactoriesAlgorithmTypeGB.cpp"
+#include "DOTk_MexFactoriesAlgorithmTypeGB.hpp"
+
 #include "DOTk_Primal.hpp"
 #include "DOTk_Hessian.hpp"
 #include "DOTk_LineSearchStep.hpp"
-#include "DOTk_MexNewtonTypeLS.hpp"
-#include "DOTk_MexHessianFactory.hpp"
-#include "DOTk_MexAlgorithmParser.hpp"
-#include "DOTk_MexContainerFactory.hpp"
-#include "DOTk_MexObjectiveFunction.cpp"
-#include "DOTk_MexObjectiveFunction.hpp"
 #include "DOTk_LineSearchMngTypeULP.hpp"
 #include "DOTk_LineSearchMngTypeUNP.hpp"
-#include "DOTk_MexEqualityConstraint.cpp"
-#include "DOTk_MexEqualityConstraint.hpp"
 #include "DOTk_LineSearchInexactNewton.hpp"
-#include "DOTk_MexFactoriesAlgorithmTypeGB.cpp"
-#include "DOTk_MexFactoriesAlgorithmTypeGB.hpp"
 #include "DOTk_LineSearchAlgorithmsDataMng.hpp"
 
 namespace dotk
@@ -33,8 +32,8 @@ DOTk_MexNewtonTypeLS::DOTk_MexNewtonTypeLS(const mxArray* options_[]) :
         m_LineSearchContractionFactor(0.5),
         m_LineSearchStagnationTolerance(1e-8),
         m_LineSearchMethod(dotk::types::LINE_SEARCH_DISABLED),
-        m_ObjectiveFunctionOperators(NULL),
-        m_EqualityConstraintOperators(NULL)
+        m_ObjectiveFunction(nullptr),
+        m_EqualityConstraint(nullptr)
 {
     this->initialize(options_);
 }
@@ -126,75 +125,101 @@ void DOTk_MexNewtonTypeLS::setLineSearchMethodParameters
 
 void DOTk_MexNewtonTypeLS::solveTypeLinearProgramming(const mxArray* input_[], mxArray* output_[])
 {
-    dotk::types::problem_t type = DOTk_MexAlgorithmTypeNewton::getProblemType();
-    std::tr1::shared_ptr<dotk::DOTk_MexObjectiveFunction<double> >
-        objective(new dotk::DOTk_MexObjectiveFunction<double>(m_ObjectiveFunctionOperators.get(), type));
-
+    // Set core data structures: control vector
+    mxArray* mx_initial_control = dotk::mex::parseInitialControl(input_[0]);
+    dotk::MexVector controls(mx_initial_control);
+    mxDestroyArray(mx_initial_control);
     std::tr1::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
-    dotk::mex::buildControlContainer(input_[0], *primal);
+    primal->allocateUserDefinedControl(controls);
 
+    // Set objective function and data manager
+    dotk::types::problem_t problem_type = DOTk_MexAlgorithmTypeNewton::getProblemType();
+    std::tr1::shared_ptr<dotk::DOTk_MexObjectiveFunction>
+        objective(new dotk::DOTk_MexObjectiveFunction(m_ObjectiveFunction, problem_type));
     std::tr1::shared_ptr<dotk::DOTk_LineSearchMngTypeULP>
-        mng(new dotk::DOTk_LineSearchMngTypeULP(primal, objective));
-    dotk::mex::buildGradient(input_[0], primal, mng);
-    this->optimize(mng, input_, output_);
-}
+        data_mng(new dotk::DOTk_LineSearchMngTypeULP(primal, objective));
 
-void DOTk_MexNewtonTypeLS::solveTypeNonlinearProgramming(const mxArray* input_[], mxArray* output_[])
-{
-    dotk::types::problem_t type = DOTk_MexAlgorithmTypeNewton::getProblemType();
-    std::tr1::shared_ptr<dotk::DOTk_MexObjectiveFunction<double> >
-        objective(new dotk::DOTk_MexObjectiveFunction<double>(m_ObjectiveFunctionOperators.get(), type));
-    dotk::mex::parseEqualityConstraint(input_[1], m_EqualityConstraintOperators);
-    std::tr1::shared_ptr<dotk::DOTk_MexEqualityConstraint<double> >
-        equality(new dotk::DOTk_MexEqualityConstraint<double>(m_EqualityConstraintOperators.get(), type));
-
-    std::tr1::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
-    dotk::mex::buildDualContainer(input_[0], *primal);
-    dotk::mex::buildControlContainer(input_[0], *primal);
-
-    std::tr1::shared_ptr<dotk::DOTk_LineSearchMngTypeUNP>
-        mng(new dotk::DOTk_LineSearchMngTypeUNP(primal, objective, equality));
-    dotk::mex::buildGradient(input_[0], primal, mng);
-    this->optimize(mng, input_, output_);
-}
-
-void DOTk_MexNewtonTypeLS::clear()
-{
-    m_ObjectiveFunctionOperators.release();
-    m_EqualityConstraintOperators.release();
-}
-
-void DOTk_MexNewtonTypeLS::initialize(const mxArray* options_[])
-{
-    dotk::mex::parseLineSearchMethod(options_[0], m_LineSearchMethod);
-    dotk::mex::parseMaxNumLineSearchItr(options_[0], m_MaxNumLineSearchItr);
-    dotk::mex::parseObjectiveFunction(options_[1], m_ObjectiveFunctionOperators);
-    dotk::mex::parseLineSearchContractionFactor(options_[0], m_LineSearchContractionFactor);
-    dotk::mex::parseLineSearchStagnationTolerance(options_[0], m_LineSearchStagnationTolerance);
-}
-
-void DOTk_MexNewtonTypeLS::optimize(const std::tr1::shared_ptr<dotk::DOTk_LineSearchAlgorithmsDataMng> & mng_,
-                                    const mxArray* input_[],
-                                    mxArray* output_[])
-{
-    std::tr1::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
-    dotk::mex::buildControlContainer(input_[0], *primal);
+    // Set gradient and Hessian computation method
+    dotk::mex::buildGradient(input_[0], data_mng);
     std::tr1::shared_ptr<dotk::DOTk_Hessian> hessian(new dotk::DOTk_Hessian);
-    dotk::mex::buildHessian(input_[0], primal, hessian);
+    dotk::mex::buildHessian(input_[0], hessian);
 
+    // Set line search step manager
     std::tr1::shared_ptr<dotk::DOTk_LineSearchStep> step(new dotk::DOTk_LineSearchStep(primal));
-    dotk::types::line_search_t type = this->getLineSearchMethod();
-    step->build(primal, type);
+    dotk::types::line_search_t line_search_type = this->getLineSearchMethod();
+    step->build(primal, line_search_type);
     this->setLineSearchMethodParameters(step);
 
-    dotk::DOTk_LineSearchInexactNewton algorithm(hessian, step, mng_);
+    // Initialize line search algorithm
+    dotk::DOTk_LineSearchInexactNewton algorithm(hessian, step, data_mng);
     dotk::mex::buildKrylovSolver(input_[0], primal, algorithm);
     this->setAlgorithmParameters(algorithm);
     algorithm.printDiagnosticsEveryItrAndSolutionAtTheEnd();
 
     algorithm.getMin();
 
-    DOTk_MexAlgorithmTypeNewton::gatherOutputData(algorithm, *mng_, output_);
+    DOTk_MexAlgorithmTypeNewton::gatherOutputData(algorithm, *data_mng, output_);
+}
+
+void DOTk_MexNewtonTypeLS::solveTypeNonlinearProgramming(const mxArray* input_[], mxArray* output_[])
+{
+    // Set core data structures: state and control vectors
+    size_t num_states = dotk::mex::parseNumberStates(input_[0]);
+    dotk::MexVector states(num_states, 0.);
+    mxArray* mx_initial_control = dotk::mex::parseInitialControl(input_[0]);
+    dotk::MexVector controls(mx_initial_control);
+    mxDestroyArray(mx_initial_control);
+
+    // Allocate DOTk data structures
+    std::tr1::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    primal->allocateUserDefinedState(states);
+    primal->allocateUserDefinedControl(controls);
+
+    // Set objective function and equality constraint
+    dotk::types::problem_t problem_type = DOTk_MexAlgorithmTypeNewton::getProblemType();
+    std::tr1::shared_ptr<dotk::DOTk_MexObjectiveFunction>
+        objective(new dotk::DOTk_MexObjectiveFunction(m_ObjectiveFunction, problem_type));
+    m_EqualityConstraint = dotk::mex::parseEqualityConstraint(input_[1]);
+    std::tr1::shared_ptr<dotk::DOTk_MexEqualityConstraint>
+        equality(new dotk::DOTk_MexEqualityConstraint(m_EqualityConstraint, problem_type));
+
+    // Set data manager and gradient/Hessian computation methods
+    std::tr1::shared_ptr<dotk::DOTk_LineSearchMngTypeUNP>
+        data_mng(new dotk::DOTk_LineSearchMngTypeUNP(primal, objective, equality));
+    dotk::mex::buildGradient(input_[0], data_mng);
+    std::tr1::shared_ptr<dotk::DOTk_Hessian> hessian(new dotk::DOTk_Hessian);
+    dotk::mex::buildHessian(input_[0], hessian);
+
+    // Set line search step manager
+    std::tr1::shared_ptr<dotk::DOTk_LineSearchStep> step(new dotk::DOTk_LineSearchStep(primal));
+    dotk::types::line_search_t line_search_type = this->getLineSearchMethod();
+    step->build(primal, line_search_type);
+    this->setLineSearchMethodParameters(step);
+
+    // Initialize line search algorithm
+    dotk::DOTk_LineSearchInexactNewton algorithm(hessian, step, data_mng);
+    dotk::mex::buildKrylovSolver(input_[0], primal, algorithm);
+    this->setAlgorithmParameters(algorithm);
+    algorithm.printDiagnosticsEveryItrAndSolutionAtTheEnd();
+
+    algorithm.getMin();
+
+    DOTk_MexAlgorithmTypeNewton::gatherOutputData(algorithm, *data_mng, output_);
+}
+
+void DOTk_MexNewtonTypeLS::clear()
+{
+    dotk::mex::destroy(m_ObjectiveFunction);
+    dotk::mex::destroy(m_EqualityConstraint);
+}
+
+void DOTk_MexNewtonTypeLS::initialize(const mxArray* options_[])
+{
+    m_LineSearchMethod = dotk::mex::parseLineSearchMethod(options_[0]);
+    m_ObjectiveFunction = dotk::mex::parseObjectiveFunction(options_[1]);
+    m_MaxNumLineSearchItr = dotk::mex::parseMaxNumLineSearchItr(options_[0]);
+    m_LineSearchContractionFactor = dotk::mex::parseLineSearchContractionFactor(options_[0]);
+    m_LineSearchStagnationTolerance = dotk::mex::parseLineSearchStagnationTolerance(options_[0]);
 }
 
 }
