@@ -111,27 +111,33 @@ void MxTrustRegionReducedOrderModelTypeB::output(const trrom::ReducedBasisNewton
         { "Iterations", "ObjectiveFunction", "Gradient", "NormGradient", "NormStep", "Control" };
     outputs_[0] = mxCreateStructMatrix(1, 1, 6, field_names);
 
-    mxArray* number_iterations = mxCreateDoubleScalar(data_.getIterationCounter());
-    mxSetField(outputs_[0], 0, "Iterations", number_iterations);
-    mxDestroyArray(number_iterations);
+    /* NOTE: mxSetField does not create a copy of the data allocated. Thus,
+     * mxDestroyArray cannot be called. Furthermore, MEX array data (e.g.
+     * control, gradient, etc.) should be duplicated since the data in the
+     * manager will be deallocated at the end. */
+    mxArray* mx_number_iterations = mxCreateNumericMatrix(1, 1, mxINDEX_CLASS, mxREAL);
+    static_cast<size_t*>(mxGetData(mx_number_iterations))[0] = data_.getIterationCounter();
+    mxSetField(outputs_[0], 0, "Iterations", mx_number_iterations);
 
-    mxArray* objective_function_value = mxCreateDoubleScalar(data_.getNewObjectiveFunctionValue());
-    mxSetField(outputs_[0], 0, "ObjectiveFunction", objective_function_value);
-    mxDestroyArray(objective_function_value);
+    double value = data_.getNewObjectiveFunctionValue()
+    mxArray* mx_objective_function_value = mxCreateDoubleScalar(value);
+    mxSetField(outputs_[0], 0, "ObjectiveFunction", mx_objective_function_value);
 
-    trrom::MxVector & mx_gradient = dynamic_cast<trrom::MxVector &>(*data_.getNewGradient());
-    mxSetField(outputs_[0], 0, "Gradient", mx_gradient.array());
+    trrom::MxVector & gradient = dynamic_cast<trrom::MxVector &>(*data_.getNewGradient());
+    mxArray* mx_gradient = mxDuplicateArray(gradient.array());
+    mxSetField(outputs_[0], 0, "Gradient", mx_gradient);
 
-    mxArray* norm_gradient = mxCreateDoubleScalar(data_.getNormNewGradient());
-    mxSetField(outputs_[0], 0, "NormGradient", norm_gradient);
-    mxDestroyArray(norm_gradient);
+    value = gradient.norm();
+    mxArray* mx_norm_gradient = mxCreateDoubleScalar(value);
+    mxSetField(outputs_[0], 0, "NormGradient", mx_norm_gradient);
 
-    mxArray* norm_step = mxCreateDoubleScalar(data_.getNormTrialStep());
-    mxSetField(outputs_[0], 0, "NormStep", norm_step);
-    mxDestroyArray(norm_step);
+    value = data_.getNormTrialStep();
+    mxArray* mx_norm_step = mxCreateDoubleScalar(value);
+    mxSetField(outputs_[0], 0, "NormStep", mx_norm_step);
 
-    trrom::MxVector & mx_controls = dynamic_cast<trrom::MxVector &>(*data_.getNewPrimal());
-    mxSetField(outputs_[0], 0, "Controls", mx_controls.array());
+    trrom::MxVector & control = dynamic_cast<trrom::MxVector &>(*data_.getNewPrimal());
+    mxArray* mx_control = mxDuplicateArray(control.array());
+    mxSetField(outputs_[0], 0, "Controls", mx_control);
 }
 
 void MxTrustRegionReducedOrderModelTypeB::solveOptimizationProblem(const std::tr1::shared_ptr<trrom::ReducedBasisData> & data_,
