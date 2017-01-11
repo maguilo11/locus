@@ -119,7 +119,7 @@ void MxTrustRegionReducedOrderModelTypeB::output(const trrom::ReducedBasisNewton
     static_cast<size_t*>(mxGetData(mx_number_iterations))[0] = data_.getIterationCounter();
     mxSetField(outputs_[0], 0, "Iterations", mx_number_iterations);
 
-    double value = data_.getNewObjectiveFunctionValue()
+    double value = data_.getNewObjectiveFunctionValue();
     mxArray* mx_objective_function_value = mxCreateDoubleScalar(value);
     mxSetField(outputs_[0], 0, "ObjectiveFunction", mx_objective_function_value);
 
