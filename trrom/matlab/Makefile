@@ -17,44 +17,101 @@ CXXFLAGS=-I$(HOME)include -I$(CXXINCL) -I$(MEXINC) -g -fPIC -Wall -std=c++11
 OBJDIR=obj/
 EXEDIR=exe/
 
-OBJS=$(HOME)matlab/TRROM_MxDriver.o \
-	$(HOME)matlab/TRROM_MxVector.o \
-	$(HOME)matlab/TRROM_MxMatrix.o \
-	$(HOME)matlab/TRROM_MxVectorTest.o \
-	$(HOME)matlab/TRROM_MxMatrixTest.o \
-	$(HOME)matlab/TRROM_MxDirectSolver.o \
-	$(HOME)matlab/TRROM_MxDirectSolverTest.o \
-	$(HOME)matlab/TRROM_MxSpectralDecompositionTest.o \
-	$(HOME)matlab/TRROM_MxSingularValueDecomposition.o \
-	$(HOME)matlab/TRROM_MxOrthogonalDecomposition.o \
-	$(HOME)matlab/TRROM_MxOrthogonalDecompositionTest.o \
-	$(HOME)matlab/TRROM_MxReducedBasisObjective.o \
-	$(HOME)matlab/TRROM_MxReducedObjectiveOperators.o \
-	$(HOME)matlab/TRROM_MxReducedObjectiveOperatorsTest.o \
-	$(HOME)matlab/TRROM_MxInequalityOperators.o \
-	$(HOME)matlab/TRROM_MxInequalityOperatorsTest.o \
-	$(HOME)matlab/TRROM_MxReducedBasisPDE.o \
-	$(HOME)matlab/TRROM_MxReducedBasisPDETest.o \
-	$(HOME)matlab/TRROM_MxBrandMatrixFactory.o \
-	$(HOME)matlab/TRROM_MxBrandMatrixFactoryTest.o \
-	$(HOME)matlab/TRROM_MxBrandLowRankSVD.o \
-	$(HOME)matlab/TRROM_MxLowRankSVDTest.o \
-	$(HOME)matlab/TRROM_MxLinearAlgebraFactory.o \
-	$(HOME)matlab/TRROM_MxLinearAlgebraFactoryTest.o \
-	$(HOME)matlab/TRROM_MxDiscreteEmpiricalInterpolationTest.o \
-	$(HOME)matlab/TRROM_MxParserTest.o \
-	$(HOME)matlab/TRROM_MxParserUtilities.o \
-	$(HOME)matlab/TRROM_MxTrustRegionReducedOrderModelTypeB.o \
-	$(HOME)src/TRROM_Data.o \
-	$(HOME)src/TRROM_Dual.o \
-	$(HOME)src/TRROM_State.o \
-	$(HOME)src/TRROM_Slacks.o \
-	$(HOME)src/TRROM_Control.o \
-	$(HOME)src/TRROM_Variable.o \
-	$(HOME)src/TRROM_BrandLowRankSVD.o \
-	$(HOME)src/TRROM_ReducedBasisData.o \
-	$(HOME)src/TRROM_DiscreteEmpiricalInterpolation.o
-	
+OBJS=$(HOME)matlab/TRROM_MxVector.o \
+    $(HOME)matlab/TRROM_MxMatrix.o \
+    $(HOME)matlab/TRROM_MxVectorTest.o \
+    $(HOME)matlab/TRROM_MxMatrixTest.o \
+    $(HOME)matlab/TRROM_MxDirectSolver.o \
+    $(HOME)matlab/TRROM_MxDirectSolverTest.o \
+    $(HOME)matlab/TRROM_MxSpectralDecompositionTest.o \
+    $(HOME)matlab/TRROM_MxSingularValueDecomposition.o \
+    $(HOME)matlab/TRROM_MxOrthogonalDecomposition.o \
+    $(HOME)matlab/TRROM_MxOrthogonalDecompositionTest.o \
+    $(HOME)matlab/TRROM_MxReducedObjectiveOperators.o \
+    $(HOME)matlab/TRROM_MxReducedObjectiveOperatorsTest.o \
+    $(HOME)matlab/TRROM_MxInequalityOperators.o \
+    $(HOME)matlab/TRROM_MxInequalityOperatorsTest.o \
+    $(HOME)matlab/TRROM_MxReducedBasisPDE.o \
+    $(HOME)matlab/TRROM_MxReducedBasisPDETest.o \
+    $(HOME)matlab/TRROM_MxBrandMatrixFactory.o \
+    $(HOME)matlab/TRROM_MxBrandMatrixFactoryTest.o \
+    $(HOME)matlab/TRROM_MxBrandLowRankSVD.o \
+    $(HOME)matlab/TRROM_MxLowRankSVDTest.o \
+    $(HOME)matlab/TRROM_MxLinearAlgebraFactory.o \
+    $(HOME)matlab/TRROM_MxLinearAlgebraFactoryTest.o \
+    $(HOME)matlab/TRROM_MxDriver.o \
+    $(HOME)matlab/TRROM_MxParserTest.o \
+    $(HOME)matlab/TRROM_MxParserUtilities.o \
+    $(HOME)matlab/TRROM_MxReducedBasisObjective.o \
+    $(HOME)matlab/TRROM_MxTrustRegionReducedOrderModelTypeB.o \
+    $(HOME)matlab/TRROM_MxDiscreteEmpiricalInterpolationTest.o \
+    $(HOME)src/TRROM_Data.o \
+    $(HOME)src/TRROM_Dual.o \
+    $(HOME)src/TRROM_State.o \
+    $(HOME)src/TRROM_Slacks.o \
+    $(HOME)src/TRROM_Control.o \
+    $(HOME)src/TRROM_Variable.o \
+    $(HOME)src/TRROM_ReducedBasis.o \
+    $(HOME)src/TRROM_Preconditioner.o \
+    $(HOME)src/TRROM_ReducedHessian.o \
+    $(HOME)src/TRROM_VariablesUtils.o \
+    $(HOME)src/TRROM_BrandLowRankSVD.o \
+    $(HOME)src/TRROM_BoundConstraints.o \
+    $(HOME)src/TRROM_ReducedBasisData.o \
+    $(HOME)src/TRROM_TrustRegionStepMng.o \
+    $(HOME)src/TRROM_KelleySachsStepMng.o \
+    $(HOME)src/TRROM_TrustRegionNewtonIO.o \
+    $(HOME)src/TRROM_SteihaugTointSolver.o \
+    $(HOME)src/TRROM_OptimizationDataMng.o \
+    $(HOME)src/TRROM_TrustRegionNewtonBase.o \
+    $(HOME)src/TRROM_ReducedBasisInterface.o \
+    $(HOME)src/TRROM_TrustRegionReducedBasis.o \
+    $(HOME)src/TRROM_ReducedBasisAssemblyMng.o \
+    $(HOME)src/TRROM_SpectralDecompositionMng.o \
+    $(HOME)src/TRROM_ReducedBasisNewtonDataMng.o \
+    $(HOME)src/TRROM_ProjectedSteihaugTointPcg.o \
+    $(HOME)src/TRROM_DiscreteEmpiricalInterpolation.o
+
+DRIVER=$(HOME)matlab/TRROM_MxDriver.o \
+    $(HOME)matlab/TRROM_MxTrustRegionReducedOrderModelTypeB.o \
+    $(HOME)matlab/TRROM_MxSingularValueDecomposition.o \
+    $(HOME)matlab/TRROM_MxOrthogonalDecomposition.o \
+    $(HOME)matlab/TRROM_MxReducedBasisObjective.o \
+    $(HOME)matlab/TRROM_MxLinearAlgebraFactory.o \
+    $(HOME)matlab/TRROM_MxBrandMatrixFactory.o \
+    $(HOME)matlab/TRROM_MxParserUtilities.o \
+    $(HOME)matlab/TRROM_MxReducedBasisPDE.o \
+    $(HOME)matlab/TRROM_MxBrandLowRankSVD.o \
+    $(HOME)matlab/TRROM_MxDirectSolver.o \
+    $(HOME)matlab/TRROM_MxMatrix.o \
+    $(HOME)matlab/TRROM_MxVector.o \
+    $(HOME)src/TRROM_Data.o \
+    $(HOME)src/TRROM_Dual.o \
+    $(HOME)src/TRROM_State.o \
+    $(HOME)src/TRROM_Slacks.o \
+    $(HOME)src/TRROM_Control.o \
+    $(HOME)src/TRROM_Variable.o \
+    $(HOME)src/TRROM_ReducedBasis.o \
+    $(HOME)src/TRROM_Preconditioner.o \
+    $(HOME)src/TRROM_ReducedHessian.o \
+    $(HOME)src/TRROM_VariablesUtils.o \
+    $(HOME)src/TRROM_BrandLowRankSVD.o \
+    $(HOME)src/TRROM_BoundConstraints.o \
+    $(HOME)src/TRROM_ReducedBasisData.o \
+    $(HOME)src/TRROM_TrustRegionStepMng.o \
+    $(HOME)src/TRROM_KelleySachsStepMng.o \
+    $(HOME)src/TRROM_TrustRegionNewtonIO.o \
+    $(HOME)src/TRROM_SteihaugTointSolver.o \
+    $(HOME)src/TRROM_OptimizationDataMng.o \
+    $(HOME)src/TRROM_TrustRegionNewtonBase.o \
+    $(HOME)src/TRROM_ReducedBasisInterface.o \
+    $(HOME)src/TRROM_TrustRegionReducedBasis.o \
+    $(HOME)src/TRROM_ReducedBasisAssemblyMng.o \
+    $(HOME)src/TRROM_SpectralDecompositionMng.o \
+    $(HOME)src/TRROM_ReducedBasisNewtonDataMng.o \
+    $(HOME)src/TRROM_ProjectedSteihaugTointPcg.o \
+    $(HOME)src/TRROM_DiscreteEmpiricalInterpolation.o
+
 EQTEST=$(HOME)matlab/TRROM_MxReducedBasisPDETest.o \
 	$(HOME)matlab/TRROM_MxReducedBasisPDE.o \
 	$(HOME)matlab/TRROM_MxVector.o \
