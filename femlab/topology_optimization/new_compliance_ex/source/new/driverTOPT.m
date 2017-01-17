@@ -5,8 +5,8 @@ model_t = 'simp';
 
 % regularization parameters ( Tikhonov or TV (Total Variation) )
 reg = 'TV'; 
-beta = 1e-2; 
-gamma = 1e-2;
+beta = 1e-5; 
+gamma = 1e-5;
 
 % generate problem-specific constant quantities
 input.neumann = false;

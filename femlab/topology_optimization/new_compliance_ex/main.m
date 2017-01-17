@@ -79,7 +79,7 @@ if(derivative_check == true)
 else
     %%%%%%%%%%% Solve nonlinear programming problem with GCMMA %%%%%%%%%%%%
     tol = 1e-9;
-    max_outer_itr = 50;
+    max_outer_itr = 400;
     a_coefficients = zeros(1+inequality.number_inequalities,1);
     a_coefficients(1) = 1;
     d_coefficients = ones(inequality.number_inequalities,1);
@@ -88,7 +88,7 @@ else
         gcmma(objective, equality, inequality, initial_control, ...
         control_lower_bound, control_upper_bound,...
         a_coefficients, d_coefficients, c_coefficients,max_outer_itr, tol);
-    show(GLB_INVP.mesh.t, GLB_INVP.mesh.p,output.control);
+    show(GLB_INVP.mesh.t, GLB_INVP.mesh.p,output.control(1:GLB_INVP.nVertGrid));
 end
 
 end

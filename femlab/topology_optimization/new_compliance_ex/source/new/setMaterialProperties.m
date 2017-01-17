@@ -15,8 +15,8 @@ if(struc.multi_material==false)
     struc.VolumeFraction = 0.4;
 else
     % Set material properties
-    E = [0.9; 0.2];
-    nu = [0.3; 0.25];
+    E = [0.9; 0.5];
+    nu = [0.3; 0.4];
     G = E ./ (2.*(1+nu));          % shear modulus
     B = E ./ (3.*(1 - (2*nu)));    % bulk modulus
     struc.num_materials = length(E);
