@@ -39,7 +39,7 @@ switch problem_t
         mesh_file = '/Users/miguelaguilo/locus/femlab/mesh_tools/data/lbracket_2D_quad.exo';
         [GLB_INVP] = driverTOPT(mesh_file,multi_material);
         GLB_INVP.PenaltyModel = modifiedSIMP;
-        GLB_INVP.InterpolationRule = summationRule;
+        GLB_INVP.InterpolationRule = mixtureRule;
         inequality.number_inequalities = length(GLB_INVP.VolumeFraction);
         
         % Set initial guess
@@ -78,8 +78,8 @@ if(derivative_check == true)
     set(gca,'yscale','log');
 else
     %%%%%%%%%%% Solve nonlinear programming problem with GCMMA %%%%%%%%%%%%
-    tol = 1e-9;
-    max_outer_itr = 150;
+    tol = 1e-12;
+    max_outer_itr = 100;
     a_coefficients = zeros(1+inequality.number_inequalities,1);
     a_coefficients(1) = 1;
     d_coefficients = ones(inequality.number_inequalities,1);

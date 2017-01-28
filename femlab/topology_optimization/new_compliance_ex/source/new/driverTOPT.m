@@ -24,6 +24,6 @@ struc.model_t = model_t;
 struc.theta = 1;
 struc.alpha = 1;
 % problem parameters
-struc.SimpPenalty = 3;
+struc.SimpPenalty = [3; 3];
 
 end

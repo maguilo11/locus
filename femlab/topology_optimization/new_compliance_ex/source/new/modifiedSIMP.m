@@ -9,7 +9,7 @@ function [value] = evaluate(material_index,cell_index,controls)
 
 global GLB_INVP;
 
-simp_penalty = GLB_INVP.SimpPenalty;
+simp_penalty = GLB_INVP.SimpPenalty(material_index);
 min_stiffness = GLB_INVP.min_stiffness(material_index);
 cell_controls_at_cub_points = GLB_INVP.CellMassMatrices(:,:,cell_index) * ...
     controls(:,cell_index,material_index);
@@ -24,7 +24,7 @@ function [value] = sensitivity(material_index,cell_index,controls)
 
 global GLB_INVP;
 
-simp_penalty = GLB_INVP.SimpPenalty;
+simp_penalty = GLB_INVP.SimpPenalty(material_index);
 power_integer = simp_penalty - 1;
 min_stiffness = GLB_INVP.min_stiffness(material_index);
 cell_controls_at_cub_points = GLB_INVP.CellMassMatrices(:,:,cell_index) * ...
