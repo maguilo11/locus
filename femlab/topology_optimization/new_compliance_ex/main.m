@@ -15,7 +15,7 @@ addpath /Users/miguelaguilo/locus/femlab/algorithm/gcmma/;
 %%%%%%%%%%%%%%%%%%%%%%%%%% Paths to dependencies %%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Problem setup %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-multi_material = true;
+multi_material = false;
 derivative_check = false;
 problem_t = 'compliance';
 objective = objectiveFunction;
@@ -39,7 +39,7 @@ switch problem_t
         mesh_file = '/Users/miguelaguilo/locus/femlab/mesh_tools/data/lbracket_2D_quad.exo';
         [GLB_INVP] = driverTOPT(mesh_file,multi_material);
         GLB_INVP.PenaltyModel = modifiedSIMP;
-        GLB_INVP.InterpolationRule = mixtureRule;
+        GLB_INVP.InterpolationRule = summationRule;
         inequality.number_inequalities = length(GLB_INVP.VolumeFraction);
         
         % Set initial guess
@@ -51,6 +51,12 @@ switch problem_t
         % Precompute stiffness matrices
         GLB_INVP.CellStifsnessMat =...
             computeStiffnessMatrix(GLB_INVP.G, GLB_INVP.B);
+        
+        % Build filter operator
+        avg_cell_weight = ...
+            sum(GLB_INVP.ElemVolume) / size(GLB_INVP.ElemVolume,1);
+        [GLB_INVP.Filter] = ...
+            Filter(GLB_INVP.mesh, avg_cell_weight, GLB_INVP.filter_radius);
         
         % Compute objective function scale factor
         data = sum(GLB_INVP.VolumeFraction) .* ones(number_controls,1);
@@ -74,8 +80,7 @@ end
 if(derivative_check == true)
     %%%%%%%%%%%%%%%%% Finite difference derivative check %%%%%%%%%%%%%%%%%%
     [error] = checkGradient(objective,equality,initial_control);
-    plot(error);
-    set(gca,'yscale','log');
+    semilogy(error);
 else
     %%%%%%%%%%% Solve nonlinear programming problem with GCMMA %%%%%%%%%%%%
     tol = 1e-12;
@@ -84,10 +89,12 @@ else
     a_coefficients(1) = 1;
     d_coefficients = ones(inequality.number_inequalities,1);
     c_coefficients = 1e3*ones(inequality.number_inequalities,1);
+    tic
     [output] = ...
         gcmma(objective, equality, inequality, initial_control, ...
         control_lower_bound, control_upper_bound,...
         a_coefficients, d_coefficients, c_coefficients,max_outer_itr, tol);
+    toc
     if(GLB_INVP.multi_material == true)
         show(GLB_INVP.mesh.t, GLB_INVP.mesh.p,output.control(1:GLB_INVP.nVertGrid));
         show(GLB_INVP.mesh.t, GLB_INVP.mesh.p,output.control(1+GLB_INVP.nVertGrid:end));

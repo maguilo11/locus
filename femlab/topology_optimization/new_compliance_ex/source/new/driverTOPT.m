@@ -5,8 +5,8 @@ model_t = 'simp';
 
 % regularization parameters ( Tikhonov or TV (Total Variation) )
 reg = 'TV'; 
-beta = 1e-5; 
-gamma = 1e-5;
+beta = 1e-6; 
+gamma = 1e-6;
 
 % generate problem-specific constant quantities
 input.neumann = false;
@@ -20,10 +20,11 @@ struc.reg = reg;
 struc.beta = beta;
 struc.gamma = gamma;
 struc.model_t = model_t;
+struc.filter_radius = 2;
 % Normalization factors
 struc.theta = 1;
 struc.alpha = 1;
 % problem parameters
-struc.SimpPenalty = [3; 3];
+struc.SimpPenalty = [6; 6];
 
 end

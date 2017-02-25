@@ -22,8 +22,8 @@
 #include "TRROM_MxReducedBasisPDE.hpp"
 #include "TRROM_MxParserUtilities.hpp"
 #include "TRROM_MxLinearAlgebraFactory.hpp"
-#include "TRROM_MxReducedBasisObjective.hpp"
 #include "TRROM_MxSingularValueDecomposition.hpp"
+#include "TRROM_MxReducedBasisObjectiveOperators.hpp"
 #include "TRROM_MxTrustRegionReducedOrderModelTypeB.hpp"
 
 namespace trrom
@@ -158,7 +158,7 @@ void MxTrustRegionReducedOrderModelTypeB::solveOptimizationProblem(const std::tr
 
     // Set objective and partial differential equation (PDE) operators manager
     mxArray* mx_objective = trrom::mx::parseReducedBasisObjectiveFunction(inputs_[1]);
-    std::tr1::shared_ptr<trrom::ReducedBasisObjective> objective(new trrom::MxReducedBasisObjective(mx_objective));
+    std::tr1::shared_ptr<trrom::ReducedBasisObjectiveOperators> objective(new trrom::MxReducedBasisObjectiveOperators(mx_objective));
     mxDestroyArray(mx_objective);
     mxArray* mx_pde = trrom::mx::parseReducedBasisPartialDifferentialEquation(inputs_[1]);
     std::tr1::shared_ptr<trrom::ReducedBasisPDE> pde(new trrom::MxReducedBasisPDE(mx_pde));

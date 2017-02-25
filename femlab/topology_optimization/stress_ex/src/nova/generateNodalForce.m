@@ -20,7 +20,7 @@ function [struc] = generateNodalForce(struc)
 force = zeros(struc.spaceDim*struc.nVertGrid, 1);
 nodeset = struc.mesh.nodeset{1};
 dof = nodeset*struc.spaceDim;
-force(dof) = -5e0;
+force(dof) = -1e1;
 struc.force = force;
 
 end

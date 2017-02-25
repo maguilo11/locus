@@ -42,7 +42,7 @@ OBJS=$(HOME)matlab/TRROM_MxVector.o \
     $(HOME)matlab/TRROM_MxDriver.o \
     $(HOME)matlab/TRROM_MxParserTest.o \
     $(HOME)matlab/TRROM_MxParserUtilities.o \
-    $(HOME)matlab/TRROM_MxReducedBasisObjective.o \
+    $(HOME)matlab/TRROM_MxReducedBasisObjectiveOperators.o \
     $(HOME)matlab/TRROM_MxTrustRegionReducedOrderModelTypeB.o \
     $(HOME)matlab/TRROM_MxDiscreteEmpiricalInterpolationTest.o \
     $(HOME)src/TRROM_Data.o \
@@ -74,9 +74,9 @@ OBJS=$(HOME)matlab/TRROM_MxVector.o \
 
 DRIVER=$(HOME)matlab/TRROM_MxDriver.o \
     $(HOME)matlab/TRROM_MxTrustRegionReducedOrderModelTypeB.o \
+    $(HOME)matlab/TRROM_MxReducedBasisObjectiveOperators.o \
     $(HOME)matlab/TRROM_MxSingularValueDecomposition.o \
     $(HOME)matlab/TRROM_MxOrthogonalDecomposition.o \
-    $(HOME)matlab/TRROM_MxReducedBasisObjective.o \
     $(HOME)matlab/TRROM_MxLinearAlgebraFactory.o \
     $(HOME)matlab/TRROM_MxBrandMatrixFactory.o \
     $(HOME)matlab/TRROM_MxParserUtilities.o \

@@ -19,7 +19,8 @@ function [output] = evaluate(state,control,index)
 
 global GLB_INVP;
 
-output = sum(GLB_INVP.Ms*control) / GLB_INVP.OriginalVolume;
+filtered_control = GLB_INVP.Filter*control;
+output = sum(GLB_INVP.Ms*filtered_control) / GLB_INVP.OriginalVolume;
 
 end
 
@@ -29,7 +30,7 @@ function [output] = gradient(state,control,index)
 
 global GLB_INVP;
 one = ones(GLB_INVP.nVertGrid,1);
-mass_matrix_times_one = GLB_INVP.Ms * one;
+mass_matrix_times_one = GLB_INVP.Filter' * (GLB_INVP.Ms * one);
 output = mass_matrix_times_one ./ GLB_INVP.OriginalVolume;
 
 end

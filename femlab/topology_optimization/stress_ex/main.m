@@ -32,20 +32,19 @@ GLB_INVP.OriginalVolume = sum(GLB_INVP.Ms*one);
 initial_control = GLB_INVP.VolumeFraction * ones(GLB_INVP.nVertGrid,1);
 GLB_INVP.CellStifsnessMat = computeStiffnessMatrix(GLB_INVP.G, GLB_INVP.B);
 GLB_INVP.MinCellStifsnessMat = computeStiffnessMatrix(GLB_INVP.Gmin, GLB_INVP.Bmin);
-%avg_cell_weight = sum(GLB_INVP.ElemVolume) / size(GLB_INVP.ElemVolume,1);
-%[GLB_INVP.Filter] = Filter(GLB_INVP.mesh, avg_cell_weight, GLB_INVP.filter_radius);
-GLB_INVP.Filter = speye(GLB_INVP.nVertGrid);
+avg_cell_weight = sum(GLB_INVP.ElemVolume) / size(GLB_INVP.ElemVolume,1);
+[GLB_INVP.Filter] = Filter(GLB_INVP.mesh, avg_cell_weight, GLB_INVP.filter_radius);
 %%%%%%%%%%%%%%%%%%%%%%%%%% Physics problem setup %%%%%%%%%%%%%%%%%%%%%%%%%%
 
 if(derivative_check == true)
     %%%%%%%%%%%%%%%%% Finite difference derivative check %%%%%%%%%%%%%%%%%%
     [error] = checkGradient(objective,equality,initial_control);
-    plot(error);
+    semilogy(error);
     %%%%%%%%%%%%%%%%% Finite difference derivative check %%%%%%%%%%%%%%%%%%
 else
     %%%%%%%%%%%%%%%%%%%%% Solve optimization problem %%%%%%%%%%%%%%%%%%%%%%
-    tol = 1e-8;
-    max_outer_itr = 200;
+    tol = 1e-12;
+    max_outer_itr = 300;
     inequality.number_inequalities = 1;
     number_controls = GLB_INVP.nVertGrid;
     a_coefficients = zeros(1+inequality.number_inequalities,1);
@@ -55,9 +54,12 @@ else
     control_upper_bound = ones(number_controls,1);
     control_lower_bound = zeros(number_controls,1);
     
+    t = cputime;
     [output] = gcmma(objective, equality, inequality, initial_control, ...
         control_lower_bound, control_upper_bound,a_coefficients, ...
         d_coefficients, c_coefficients,max_outer_itr, tol);
+    runtime = cputime - t;
+    fprintf('CPU TIME: %f', runtime);
     
     %%%%%%%%%%%%%%%%%%%%% Solve optimization problem %%%%%%%%%%%%%%%%%%%%%%
     show(GLB_INVP.mesh.t, GLB_INVP.mesh.p,output.control);

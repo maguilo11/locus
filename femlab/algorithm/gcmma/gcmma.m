@@ -57,10 +57,10 @@ primal = zeros(number_controls+number_inequalities+1,1);
 [primal] = initAuxiliaryVariables(state, primal, inequality, a_coeff);
 % outer optimization loop
 iteration = 1;
-grad_tolerance = 1e-3;
-objective_stagnation_tol = 1e-8;
-feasibility_tolerance = 1e-3;
-control_stagnation_tolerance = 1e-8;
+grad_tolerance = 1e-10;
+objective_stagnation_tol = 1e-10;
+feasibility_tolerance = 1e-10;
+control_stagnation_tolerance = 1e-10;
 dual = zeros(number_inequalities,1);
 feasibility_measure = ones(number_inequalities,1);
 number_ccsa_functions = number_inequalities+1;
@@ -82,7 +82,7 @@ while(iteration <= max_outer_itr)
     control_stagnation_norm = ...
         norm(control_minus_one-primal(1:number_controls));
     objective_stagnation = abs(Fold - function_values(1));
-    grad_norm = norm(function_grad(active_set~=1,1))  / initial_grad_norm;
+    grad_norm = norm(function_grad(active_set~=1,1));
     %show(GLB_INVP.mesh.t, GLB_INVP.mesh.p, primal(1:GLB_INVP.nVertGrid));
     if(stop == true)
         why = 'residual';

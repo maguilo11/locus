@@ -286,7 +286,7 @@ MassMat = ...
     reshape(PenalizedMassMatPerCell, 1, numel(PenalizedMassMatPerCell));
 M = sparse(GLB_INVP.iIdxVertices, GLB_INVP.jIdxVertices, MassMat);
 one = ones(GLB_INVP.nVertGrid,1);
-output = GLB_INVP.Filter * (M * one);
+output = GLB_INVP.Filter' * (M * one);
 
 end
 

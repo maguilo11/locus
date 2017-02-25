@@ -35,8 +35,17 @@ nVertGrid = GLB_INVP.nVertGrid;
 %%%%%%%%%%% Initialization of lhs (i.e. solution) vector.
 state = zeros(spaceDim*nVertGrid,1);
 
-%%%%%%%%%%% Penalized Cell Stiffness Matrices
-nodal_controls = GLB_INVP.InterpolationRule.transform(control);
+%%%%%%%%%%% Apply filter to controls
+filtered_control = zeros(size(control));
+for material_index=1:GLB_INVP.num_materials
+    end_index = nVertGrid*material_index;
+    begin_index = nVertGrid*(material_index-1) + 1;
+    filtered_control(begin_index:end_index) = ...
+        GLB_INVP.Filter*control(begin_index:end_index);
+end
+
+%%%%%%%%%%% Penalize Cell Stiffness Matrices
+nodal_controls = GLB_INVP.InterpolationRule.transform(filtered_control);
 PenalizedStiffMatPerCell = ...
     zeros(GLB_INVP.numDof, GLB_INVP.numDof, GLB_INVP.numCells);
 for material_index=1:GLB_INVP.num_materials

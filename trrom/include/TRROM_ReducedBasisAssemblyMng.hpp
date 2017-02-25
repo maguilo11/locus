@@ -14,8 +14,8 @@ namespace trrom
 
 class ReducedBasisPDE;
 class ReducedBasisData;
-class ReducedBasisObjective;
 class ReducedBasisInterface;
+class ReducedBasisObjectiveOperators;
 
 template<typename ScalarType>
 class Vector;
@@ -27,7 +27,7 @@ class ReducedBasisAssemblyMng : public trrom::AssemblyManager
 public:
     ReducedBasisAssemblyMng(const std::tr1::shared_ptr<trrom::ReducedBasisData> & data_,
                             const std::tr1::shared_ptr<trrom::ReducedBasisInterface> & interface_,
-                            const std::tr1::shared_ptr<trrom::ReducedBasisObjective> & objective_,
+                            const std::tr1::shared_ptr<trrom::ReducedBasisObjectiveOperators> & objective_,
                             const std::tr1::shared_ptr<trrom::ReducedBasisPDE> & partial_differential_equation_);
     virtual ~ReducedBasisAssemblyMng();
 
@@ -117,7 +117,7 @@ private:
     std::tr1::shared_ptr<trrom::Vector<double> > m_ControlWorkVec;
 
     std::tr1::shared_ptr<trrom::ReducedBasisPDE> m_PDE;
-    std::tr1::shared_ptr<trrom::ReducedBasisObjective> m_Objective;
+    std::tr1::shared_ptr<trrom::ReducedBasisObjectiveOperators> m_Objective;
     std::tr1::shared_ptr<trrom::ReducedBasisInterface> m_ReducedBasisInterface;
 
 private:

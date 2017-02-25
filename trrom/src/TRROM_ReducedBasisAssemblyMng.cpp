@@ -9,16 +9,16 @@
 #include "TRROM_ReducedBasis.hpp"
 #include "TRROM_ReducedBasisPDE.hpp"
 #include "TRROM_ReducedBasisData.hpp"
-#include "TRROM_ReducedBasisObjective.hpp"
 #include "TRROM_ReducedBasisInterface.hpp"
 #include "TRROM_ReducedBasisAssemblyMng.hpp"
+#include "TRROM_ReducedBasisObjectiveOperators.hpp"
 
 namespace trrom
 {
 
 ReducedBasisAssemblyMng::ReducedBasisAssemblyMng(const std::tr1::shared_ptr<trrom::ReducedBasisData> & data_,
                                                  const std::tr1::shared_ptr<trrom::ReducedBasisInterface> & interface_,
-                                                 const std::tr1::shared_ptr<trrom::ReducedBasisObjective> & objective_,
+                                                 const std::tr1::shared_ptr<trrom::ReducedBasisObjectiveOperators> & objective_,
                                                  const std::tr1::shared_ptr<trrom::ReducedBasisPDE> & partial_differential_equation_) :
         m_UseFullNewtonHessian(true),
         m_HessianCounter(0),

@@ -1,5 +1,5 @@
 /*
- * TRROM_MxReducedBasisObjective.cpp
+ * TRROM_MxReducedBasisObjectiveOperators.cpp
  *
  *  Created on: Dec 23, 2016
  *      Author: Miguel A. Aguilo Valentin
@@ -10,12 +10,12 @@
 
 #include "TRROM_MxUtils.hpp"
 #include "TRROM_MxVector.hpp"
-#include "TRROM_MxReducedBasisObjective.hpp"
+#include "TRROM_MxReducedBasisObjectiveOperators.hpp"
 
 namespace trrom
 {
 
-MxReducedBasisObjective::MxReducedBasisObjective(const mxArray* input_) :
+MxReducedBasisObjectiveOperators::MxReducedBasisObjectiveOperators(const mxArray* input_) :
         m_Value(mxDuplicateArray(mxGetField(input_, 0, "value"))),
         m_Fidelity(mxDuplicateArray(mxGetField(input_, 0, "fidelity"))),
         m_GradientError(mxDuplicateArray(mxGetField(input_, 0, "evaluateGradientInexactness"))),
@@ -29,7 +29,7 @@ MxReducedBasisObjective::MxReducedBasisObjective(const mxArray* input_) :
 {
 }
 
-MxReducedBasisObjective::~MxReducedBasisObjective()
+MxReducedBasisObjectiveOperators::~MxReducedBasisObjectiveOperators()
 {
     mxDestroyArray(m_PartialDerivativeStateControl);
     mxDestroyArray(m_PartialDerivativeStateState);
@@ -43,7 +43,8 @@ MxReducedBasisObjective::~MxReducedBasisObjective()
     mxDestroyArray(m_Value);
 }
 
-double MxReducedBasisObjective::value(const trrom::Vector<double> & state_, const trrom::Vector<double> & control_)
+double MxReducedBasisObjectiveOperators::value(const trrom::Vector<double> & state_,
+                                               const trrom::Vector<double> & control_)
 {
     const trrom::MxVector & state = dynamic_cast<const trrom::MxVector &>(state_);
     mxArray* mx_state = const_cast<mxArray*>(state.array());
@@ -65,8 +66,8 @@ double MxReducedBasisObjective::value(const trrom::Vector<double> & state_, cons
     return (output);
 }
 
-double MxReducedBasisObjective::evaluateObjectiveInexactness(const trrom::Vector<double> & state_,
-                                                             const trrom::Vector<double> & control_)
+double MxReducedBasisObjectiveOperators::evaluateObjectiveInexactness(const trrom::Vector<double> & state_,
+                                                                      const trrom::Vector<double> & control_)
 {
     const trrom::MxVector & state = dynamic_cast<const trrom::MxVector &>(state_);
     mxArray* mx_state = const_cast<mxArray*>(state.array());
@@ -89,8 +90,8 @@ double MxReducedBasisObjective::evaluateObjectiveInexactness(const trrom::Vector
     return (output);
 }
 
-double MxReducedBasisObjective::evaluateGradientInexactness(const trrom::Vector<double> & state_,
-                                                            const trrom::Vector<double> & control_)
+double MxReducedBasisObjectiveOperators::evaluateGradientInexactness(const trrom::Vector<double> & state_,
+                                                                     const trrom::Vector<double> & control_)
 {
     const trrom::MxVector & state = dynamic_cast<const trrom::MxVector &>(state_);
     mxArray* mx_state = const_cast<mxArray*>(state.array());
@@ -113,9 +114,9 @@ double MxReducedBasisObjective::evaluateGradientInexactness(const trrom::Vector<
     return (output);
 }
 
-void MxReducedBasisObjective::partialDerivativeState(const trrom::Vector<double> & state_,
-                                                     const trrom::Vector<double> & control_,
-                                                     trrom::Vector<double> & output_)
+void MxReducedBasisObjectiveOperators::partialDerivativeState(const trrom::Vector<double> & state_,
+                                                              const trrom::Vector<double> & control_,
+                                                              trrom::Vector<double> & output_)
 {
     const trrom::MxVector & state = dynamic_cast<const trrom::MxVector &>(state_);
     mxArray* mx_state = const_cast<mxArray*>(state.array());
@@ -137,9 +138,9 @@ void MxReducedBasisObjective::partialDerivativeState(const trrom::Vector<double>
     output.setMxArray(mx_output[0]);
 }
 
-void MxReducedBasisObjective::partialDerivativeControl(const trrom::Vector<double> & state_,
-                                                       const trrom::Vector<double> & control_,
-                                                       trrom::Vector<double> & output_)
+void MxReducedBasisObjectiveOperators::partialDerivativeControl(const trrom::Vector<double> & state_,
+                                                                const trrom::Vector<double> & control_,
+                                                                trrom::Vector<double> & output_)
 {
     const trrom::MxVector & state = dynamic_cast<const trrom::MxVector &>(state_);
     mxArray* mx_state = const_cast<mxArray*>(state.array());
@@ -162,10 +163,10 @@ void MxReducedBasisObjective::partialDerivativeControl(const trrom::Vector<doubl
     output.setMxArray(mx_output[0]);
 }
 
-void MxReducedBasisObjective::partialDerivativeControlState(const trrom::Vector<double> & state_,
-                                                            const trrom::Vector<double> & control_,
-                                                            const trrom::Vector<double> & vector_,
-                                                            trrom::Vector<double> & output_)
+void MxReducedBasisObjectiveOperators::partialDerivativeControlState(const trrom::Vector<double> & state_,
+                                                                     const trrom::Vector<double> & control_,
+                                                                     const trrom::Vector<double> & vector_,
+                                                                     trrom::Vector<double> & output_)
 {
     const trrom::MxVector & state = dynamic_cast<const trrom::MxVector &>(state_);
     mxArray* mx_state = const_cast<mxArray*>(state.array());
@@ -190,10 +191,10 @@ void MxReducedBasisObjective::partialDerivativeControlState(const trrom::Vector<
     output.setMxArray(mx_output[0]);
 }
 
-void MxReducedBasisObjective::partialDerivativeControlControl(const trrom::Vector<double> & state_,
-                                                              const trrom::Vector<double> & control_,
-                                                              const trrom::Vector<double> & vector_,
-                                                              trrom::Vector<double> & output_)
+void MxReducedBasisObjectiveOperators::partialDerivativeControlControl(const trrom::Vector<double> & state_,
+                                                                       const trrom::Vector<double> & control_,
+                                                                       const trrom::Vector<double> & vector_,
+                                                                       trrom::Vector<double> & output_)
 {
     const trrom::MxVector & state = dynamic_cast<const trrom::MxVector &>(state_);
     mxArray* mx_state = const_cast<mxArray*>(state.array());
@@ -218,10 +219,10 @@ void MxReducedBasisObjective::partialDerivativeControlControl(const trrom::Vecto
     output.setMxArray(mx_output[0]);
 }
 
-void MxReducedBasisObjective::partialDerivativeStateState(const trrom::Vector<double> & state_,
-                                                          const trrom::Vector<double> & control_,
-                                                          const trrom::Vector<double> & vector_,
-                                                          trrom::Vector<double> & output_)
+void MxReducedBasisObjectiveOperators::partialDerivativeStateState(const trrom::Vector<double> & state_,
+                                                                   const trrom::Vector<double> & control_,
+                                                                   const trrom::Vector<double> & vector_,
+                                                                   trrom::Vector<double> & output_)
 {
     const trrom::MxVector & state = dynamic_cast<const trrom::MxVector &>(state_);
     mxArray* mx_state = const_cast<mxArray*>(state.array());
@@ -246,10 +247,10 @@ void MxReducedBasisObjective::partialDerivativeStateState(const trrom::Vector<do
     output.setMxArray(mx_output[0]);
 }
 
-void MxReducedBasisObjective::partialDerivativeStateControl(const trrom::Vector<double> & state_,
-                                                            const trrom::Vector<double> & control_,
-                                                            const trrom::Vector<double> & vector_,
-                                                            trrom::Vector<double> & output_)
+void MxReducedBasisObjectiveOperators::partialDerivativeStateControl(const trrom::Vector<double> & state_,
+                                                                     const trrom::Vector<double> & control_,
+                                                                     const trrom::Vector<double> & vector_,
+                                                                     trrom::Vector<double> & output_)
 {
     const trrom::MxVector & state = dynamic_cast<const trrom::MxVector &>(state_);
     mxArray* mx_state = const_cast<mxArray*>(state.array());
@@ -274,7 +275,7 @@ void MxReducedBasisObjective::partialDerivativeStateControl(const trrom::Vector<
     output.setMxArray(mx_output[0]);
 }
 
-void MxReducedBasisObjective::fidelity(trrom::types::fidelity_t input_)
+void MxReducedBasisObjectiveOperators::fidelity(trrom::types::fidelity_t input_)
 {
     // Get fidelity, there are two options: low- or high-fidelity
     mxArray* mx_fidelity;

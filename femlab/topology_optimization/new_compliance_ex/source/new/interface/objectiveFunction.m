@@ -18,8 +18,17 @@ end
 function [output] = evaluate(state,control)
 global GLB_INVP;
 
+%%%%%%%%%%% Apply filter to controls
+filtered_control = zeros(size(control));
+for material_index=1:GLB_INVP.num_materials
+    end_index = GLB_INVP.nVertGrid*material_index;
+    begin_index = GLB_INVP.nVertGrid*(material_index-1) + 1;
+    filtered_control(begin_index:end_index) = ...
+        GLB_INVP.Filter*control(begin_index:end_index);
+end
+
 compliance = 0;
-nodal_controls = GLB_INVP.InterpolationRule.transform(control);
+nodal_controls = GLB_INVP.InterpolationRule.transform(filtered_control);
 for material_index=1:GLB_INVP.num_materials
     %%%%%%%%%%% Compute contribution for this material %%%%%%%%%%%
     PenalizedStiffMatPerCell = ...
@@ -69,6 +78,15 @@ function [output] = gradient(state,control)
 
 global GLB_INVP;
 
+%%%%%%%%%%% Apply filter to controls
+filtered_control = zeros(size(control));
+for material_index=1:GLB_INVP.num_materials
+    end_index = GLB_INVP.nVertGrid*material_index;
+    begin_index = GLB_INVP.nVertGrid*(material_index-1) + 1;
+    filtered_control(begin_index:end_index) = ...
+        GLB_INVP.Filter*control(begin_index:end_index);
+end
+
 %%%%%%%%%%% Compute penalized sensitivities
 one = ones(GLB_INVP.nVertGrid,1);
 compliance = zeros(size(control));
@@ -96,7 +114,7 @@ for material_index=1:GLB_INVP.num_materials
         sparse(GLB_INVP.iIdxVertices, GLB_INVP.jIdxVertices, this_material_matrix);
     last = material_index * GLB_INVP.nVertGrid;
     first = 1 + ((material_index-1)*GLB_INVP.nVertGrid);
-    compliance(first:last) = ThisMaterialMatrix * one;
+    compliance(first:last) = GLB_INVP.Filter' * (ThisMaterialMatrix * one);
 end
 
 %%%%%%%%%%% compute regularization term

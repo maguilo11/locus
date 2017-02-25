@@ -16,7 +16,7 @@ if(struc.multi_material==false)
 else
     % Set material properties
     E = [0.9; 0.8];
-    nu = [0.3; 0.4];
+    nu = [0.3; 0.3];
     G = E ./ (2.*(1+nu));          % shear modulus
     B = E ./ (3.*(1 - (2*nu)));    % bulk modulus
     struc.num_materials = length(E);

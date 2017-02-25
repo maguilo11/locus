@@ -68,7 +68,8 @@ for cell=1:GLB_INVP.numCells
     cell_stress_ratio = sqrt(elem_von_mises)/GLB_INVP.StressNormFactor(cell);
     elem_stress_measure(cell) = GLB_INVP.ElemVolume(cell) * (cell_stress_ratio^GLB_INVP.PowerKS);
 end
-stress_measure = ((1/GLB_INVP.OriginalVolume) * sum(elem_stress_measure))^(1/GLB_INVP.PowerKS);
+stress_measure = ((GLB_INVP.constant/GLB_INVP.OriginalVolume) * ...
+    sum(elem_stress_measure))^(1/GLB_INVP.PowerKS);
 
 %%%%%%%%%%%%%%%%%%%%%%%%% evaluate stress measure %%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -200,7 +201,8 @@ for cell=1:GLB_INVP.numCells
         (6 * (elem_penalty_1 * elem_avg_stress(3,cell)) * ...
         (elem_penalty_2 * elem_avg_stress(3,cell)));
     elem_coeff = (0.5/(elem_von_mises_stress * GLB_INVP.StressNormFactor(cell))) * elem_coeff;
-    elem_coeff = (1/GLB_INVP.OriginalVolume) * GLB_INVP.ElemVolume(cell) * GLB_INVP.PowerKS * ...
+    elem_coeff = (GLB_INVP.constant/GLB_INVP.OriginalVolume) * ...
+        GLB_INVP.ElemVolume(cell) * GLB_INVP.PowerKS * ...
         (elem_stress_ratio^(GLB_INVP.PowerKS-1)) * elem_coeff;
     
     %%%% Penalized Mass Matrix One
@@ -213,8 +215,9 @@ one = ones(GLB_INVP.nVertGrid,1);
 matrix = reshape(PenalizedMassMatPerCellTwo, 1, numel(PenalizedMassMatPerCellTwo));
 Mass2 = sparse(GLB_INVP.iIdxVertices, GLB_INVP.jIdxVertices, matrix);
 stress_meas_grad = ((1/GLB_INVP.PowerKS) * ...
-    (((1/GLB_INVP.OriginalVolume) * sum(elem_stress_measure))^((1/GLB_INVP.PowerKS) - 1))) .* (Mass2 * one);
-stress_meas_grad = GLB_INVP.Filter*stress_meas_grad;
+    (((GLB_INVP.constant/GLB_INVP.OriginalVolume) * ...
+    sum(elem_stress_measure))^((1/GLB_INVP.PowerKS) - 1))) .* (Mass2 * one);
+stress_meas_grad = GLB_INVP.Filter'*stress_meas_grad;
 
 %%%%%%%%%%% compute perimeter control gradient
 switch GLB_INVP.reg
@@ -323,12 +326,14 @@ for cell=1:GLB_INVP.numCells
         (cell_penalty * cell_avg_stress_sens(2,:,cell))) + ...
         6 * (cell_penalty * cell_avg_stress(3,cell)) * ...
         (cell_penalty * cell_avg_stress_sens(3,:,cell));
-    cell_sensitivities(:,cell) = (1/GLB_INVP.OriginalVolume) * (GLB_INVP.ElemVolume(cell) * GLB_INVP.PowerKS * ...
+    cell_sensitivities(:,cell) = (GLB_INVP.constant/GLB_INVP.OriginalVolume) * ...
+        (GLB_INVP.ElemVolume(cell) * GLB_INVP.PowerKS * ...
         stress_ratio^(GLB_INVP.PowerKS-1)) * (0.5/(GLB_INVP.StressNormFactor(cell) * ...
         cell_von_mises_stress)) .* cell_sensitivities(:,cell);
 
 end
-constant = ((1/GLB_INVP.PowerKS) * (((1/GLB_INVP.OriginalVolume) * sum(cell_stress_measure))^((1/GLB_INVP.PowerKS) - 1)));
+constant = ((1/GLB_INVP.PowerKS) * (((GLB_INVP.constant/GLB_INVP.OriginalVolume) * ...
+    sum(cell_stress_measure))^((1/GLB_INVP.PowerKS) - 1)));
 cell_sensitivities = constant .* cell_sensitivities;
 
 %%%%%%%%%%% store force vector

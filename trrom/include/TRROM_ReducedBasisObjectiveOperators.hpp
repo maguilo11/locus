@@ -1,11 +1,11 @@
 /*
- * TRROM_ReducedBasisObjective.hpp
+ * ReducedBasisObjectiveOperators.hpp
  *
  *  Created on: Aug 17, 2016
  */
 
-#ifndef TRROM_REDUCEDBASISOBJECTIVE_HPP_
-#define TRROM_REDUCEDBASISOBJECTIVE_HPP_
+#ifndef TRROM_REDUCEDBASISOBJECTIVEOPERATORS_HPP_
+#define TRROM_REDUCEDBASISOBJECTIVEOPERATORS_HPP_
 
 #include "TRROM_Types.hpp"
 
@@ -15,10 +15,10 @@ namespace trrom
 template<typename ScalarType>
 class Vector;
 
-class ReducedBasisObjective
+class ReducedBasisObjectiveOperators
 {
 public:
-    virtual ~ReducedBasisObjective()
+    virtual ~ReducedBasisObjectiveOperators()
     {
     }
 
@@ -160,4 +160,4 @@ public:
 
 }
 
-#endif /* TRROM_REDUCEDBASISOBJECTIVE_HPP_ */
+#endif /* TRROM_REDUCEDBASISOBJECTIVEOPERATORS_HPP_ */
