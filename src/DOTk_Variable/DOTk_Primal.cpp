@@ -27,6 +27,11 @@ DOTk_Primal::~DOTk_Primal()
 {
 }
 
+dotk::types::variable_t DOTk_Primal::type() const
+{
+    return (dotk::types::PRIMAL);
+}
+
 const std::tr1::shared_ptr<dotk::Vector<Real> > & DOTk_Primal::dual() const
 {
     return (m_Dual->data());
@@ -40,11 +45,6 @@ const std::tr1::shared_ptr<dotk::Vector<Real> > & DOTk_Primal::state() const
 const std::tr1::shared_ptr<dotk::Vector<Real> > & DOTk_Primal::control() const
 {
     return (m_Control->data());
-}
-
-dotk::types::variable_t DOTk_Primal::type() const
-{
-    return (dotk::types::PRIMAL);
 }
 
 const std::tr1::shared_ptr<dotk::Vector<Real> > & DOTk_Primal::getDualLowerBound() const

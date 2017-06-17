@@ -28,11 +28,11 @@ public:
     DOTk_Primal();
     ~DOTk_Primal();
 
+    dotk::types::variable_t type() const;
+
     const std::tr1::shared_ptr<dotk::Vector<Real> > & dual() const;
     const std::tr1::shared_ptr<dotk::Vector<Real> > & state() const;
     const std::tr1::shared_ptr<dotk::Vector<Real> > & control() const;
-
-    dotk::types::variable_t type() const;
 
     const std::tr1::shared_ptr<dotk::Vector<Real> > & getDualLowerBound() const;
     const std::tr1::shared_ptr<dotk::Vector<Real> > & getDualUpperBound() const;
