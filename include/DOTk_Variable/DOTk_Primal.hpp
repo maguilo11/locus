@@ -32,13 +32,6 @@ public:
     const std::tr1::shared_ptr<dotk::Vector<Real> > & state() const;
     const std::tr1::shared_ptr<dotk::Vector<Real> > & control() const;
 
-    const std::tr1::shared_ptr<dotk::DOTk_Dual> & dualStruc() const;
-    const std::tr1::shared_ptr<dotk::DOTk_State> & stateStruc() const;
-    const std::tr1::shared_ptr<dotk::DOTk_Control> & controlStruc() const;
-
-    size_t getDualBasisSize() const;
-    size_t getStateBasisSize() const;
-    size_t getControlBasisSize() const;
     dotk::types::variable_t type() const;
 
     const std::tr1::shared_ptr<dotk::Vector<Real> > & getDualLowerBound() const;
