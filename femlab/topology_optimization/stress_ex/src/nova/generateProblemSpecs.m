@@ -1,7 +1,7 @@
 function [struc] = generateProblemSpecs(struc)
 
 % Material Properties
-E = 1;
+E = 8;
 nu = 0.3;
 stiffness_bound = 1e-6;
 %

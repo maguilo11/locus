@@ -1,4 +1,4 @@
-function show(elements3,coordinates,u)
+function show(elements,coordinates,data)
 %SHOW   Presents two-dimensional piecewise affine function graphically.
 %    SHOW(ELEMENTS3,COORDINATES,U) presents a two-dimensional
 %    spline function graphically. ELEMENTS3 denotes a set of triangles
@@ -26,7 +26,7 @@ function show(elements3,coordinates,u)
 %
 figure;
 hold on;
-trisurf(elements3,coordinates(:,1),coordinates(:,2),u','facecolor','interp')
+trisurf(elements,coordinates(:,1),coordinates(:,2),data','facecolor','interp')
 view(0,90)
 shading interp;
 colormap(jet);

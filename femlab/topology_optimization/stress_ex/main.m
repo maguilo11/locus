@@ -44,7 +44,7 @@ if(derivative_check == true)
 else
     %%%%%%%%%%%%%%%%%%%%% Solve optimization problem %%%%%%%%%%%%%%%%%%%%%%
     tol = 1e-12;
-    max_outer_itr = 300;
+    max_outer_itr = 100;
     inequality.number_inequalities = 1;
     number_controls = GLB_INVP.nVertGrid;
     a_coefficients = zeros(1+inequality.number_inequalities,1);

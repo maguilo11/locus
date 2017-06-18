@@ -18,7 +18,7 @@ rhs_fn=@(struc)generateNodalForce(struc);
 struc.reg = reg;
 struc.beta = beta;
 struc.gamma = gamma;
-struc.filter_radius = 2;
+struc.filter_radius = 4;
 struc.VolumeFraction = VolumeFraction;
 % Normalization factors
 struc.theta = 1;

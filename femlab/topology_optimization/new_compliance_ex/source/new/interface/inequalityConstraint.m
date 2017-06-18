@@ -30,8 +30,8 @@ output = 0;
 for material_index=1:GLB_INVP.num_materials
     last = material_index * GLB_INVP.nVertGrid;
     first = 1 + ((material_index-1)*GLB_INVP.nVertGrid);
-    output = output + ...
-        (sum(GLB_INVP.Ms*filtered_control(first:last)) / GLB_INVP.OriginalVolume);
+    output = output + (GLB_INVP.density(material_index) * ...
+        (sum(GLB_INVP.Ms*filtered_control(first:last)) / GLB_INVP.OriginalVolume));
 end
 
 end % end evaluate 
@@ -48,7 +48,8 @@ for material_index=1:GLB_INVP.num_materials
     last = material_index * GLB_INVP.nVertGrid;
     first = 1 + ((material_index-1)*GLB_INVP.nVertGrid);
     mass_matrix_times_one = GLB_INVP.Filter' * (GLB_INVP.Ms * one);
-    output(first:last) = mass_matrix_times_one ./ GLB_INVP.OriginalVolume;
+    output(first:last) = GLB_INVP.density(material_index) .* ...
+        (mass_matrix_times_one ./ GLB_INVP.OriginalVolume);
 end % end gradient
 
 end % end inequality constraint 

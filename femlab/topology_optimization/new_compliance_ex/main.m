@@ -9,13 +9,13 @@ global GLB_INVP;
 addpath ./source/new/;
 addpath ./source/new/interface/;
 addpath /Users/miguelaguilo/locus/intrelab/;
+addpath /Users/miguelaguilo/locus/femlab/utilities/;
 addpath /Users/miguelaguilo/locus/femlab/mesh_tools/;
-addpath /Users/miguelaguilo/Research/femlab/utilities/;
 addpath /Users/miguelaguilo/locus/femlab/algorithm/gcmma/;
 %%%%%%%%%%%%%%%%%%%%%%%%%% Paths to dependencies %%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Problem setup %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-multi_material = false;
+multi_material = true;
 derivative_check = false;
 problem_t = 'compliance';
 objective = objectiveFunction;
