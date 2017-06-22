@@ -13,7 +13,7 @@
 namespace dotk
 {
 
-DOTk_Daniels::DOTk_Daniels(const std::tr1::shared_ptr<dotk::DOTk_LinearOperator> & hessian_) :
+DOTk_Daniels::DOTk_Daniels(const std::shared_ptr<dotk::DOTk_LinearOperator> & hessian_) :
         dotk::DOTk_DescentDirection(dotk::types::DANIELS_NLCG),
         m_Hessian(hessian_)
 {
@@ -23,7 +23,7 @@ DOTk_Daniels::~DOTk_Daniels()
 {
 }
 
-void DOTk_Daniels::direction(const std::tr1::shared_ptr<dotk::DOTk_OptimizationDataMng> & mng_)
+void DOTk_Daniels::direction(const std::shared_ptr<dotk::DOTk_OptimizationDataMng> & mng_)
 {
     Real value = dotk::DOTk_DescentDirection::computeCosineAngle(mng_->getOldGradient(), mng_->getTrialStep());
 

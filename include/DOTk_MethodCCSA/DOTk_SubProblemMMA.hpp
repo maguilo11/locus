@@ -24,23 +24,23 @@ class Vector;
 class DOTk_SubProblemMMA : public dotk::DOTk_SubProblemCCSA
 {
 public:
-    explicit DOTk_SubProblemMMA(const std::tr1::shared_ptr<dotk::DOTk_DataMngCCSA> & data_mng_);
-    DOTk_SubProblemMMA(const std::tr1::shared_ptr<dotk::DOTk_DataMngCCSA> & data_mng_,
-                       const std::tr1::shared_ptr<dotk::DOTk_DualSolverCCSA> & dual_solver_);
+    explicit DOTk_SubProblemMMA(const std::shared_ptr<dotk::DOTk_DataMngCCSA> & data_mng_);
+    DOTk_SubProblemMMA(const std::shared_ptr<dotk::DOTk_DataMngCCSA> & data_mng_,
+                       const std::shared_ptr<dotk::DOTk_DualSolverCCSA> & dual_solver_);
     ~DOTk_SubProblemMMA();
 
     dotk::ccsa::stopping_criterion_t getDualSolverStoppingCriterion() const;
 
     void setDualObjectiveEpsilonParameter(Real input_);
-    virtual void solve(const std::tr1::shared_ptr<dotk::DOTk_DataMngCCSA> & data_mng_);
+    virtual void solve(const std::shared_ptr<dotk::DOTk_DataMngCCSA> & data_mng_);
 
 private:
     Real m_ObjectiveFunctionRho;
-    std::tr1::shared_ptr<dotk::Vector<Real> > m_InequalityConstraintRho;
+    std::shared_ptr<dotk::Vector<Real> > m_InequalityConstraintRho;
 
-    std::tr1::shared_ptr<dotk::DOTk_BoundConstraints> m_Bounds;
-    std::tr1::shared_ptr<dotk::DOTk_DualSolverCCSA> m_DualSolver;
-    std::tr1::shared_ptr<dotk::DOTk_DualObjectiveFunctionMMA> m_DualObjectiveFunction;
+    std::shared_ptr<dotk::DOTk_BoundConstraints> m_Bounds;
+    std::shared_ptr<dotk::DOTk_DualSolverCCSA> m_DualSolver;
+    std::shared_ptr<dotk::DOTk_DualObjectiveFunctionMMA> m_DualObjectiveFunction;
 
 private:
     DOTk_SubProblemMMA(const dotk::DOTk_SubProblemMMA &);

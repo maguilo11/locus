@@ -10,7 +10,8 @@
 
 #include <string>
 #include <sstream>
-#include <tr1/memory>
+#include <memory>
+
 #include "DOTk_Types.hpp"
 
 namespace dotk
@@ -42,10 +43,10 @@ public:
                                          const Real finite_difference_approximation_,
                                          const Real relative_difference_,
                                          const Real epsilon_);
-    bool checkDomainDimensions(const std::tr1::shared_ptr<dotk::Vector<Real> > & field_,
+    bool checkDomainDimensions(const std::shared_ptr<dotk::Vector<Real> > & field_,
                                const std::string & function_name_,
                                std::ostringstream & output_msg_);
-    bool checkCodomainDimensions(const std::tr1::shared_ptr<dotk::Vector<Real> > & field_,
+    bool checkCodomainDimensions(const std::shared_ptr<dotk::Vector<Real> > & field_,
                                  const std::string & function_name_,
                                  std::ostringstream & output_msg_);
 

@@ -24,7 +24,7 @@ DOTk_Hessian::DOTk_Hessian() :
     this->setReducedSpaceHessian();
 }
 
-DOTk_Hessian::DOTk_Hessian(const std::tr1::shared_ptr<dotk::DOTk_SecondOrderOperator> & hessian_) :
+DOTk_Hessian::DOTk_Hessian(const std::shared_ptr<dotk::DOTk_SecondOrderOperator> & hessian_) :
         dotk::DOTk_LinearOperator(dotk::types::HESSIAN_MATRIX),
         m_Type(dotk::types::HESSIAN_DISABLED),
         m_Hessian(hessian_)
@@ -106,9 +106,9 @@ void DOTk_Hessian::setLsr1Hessian(const dotk::Vector<Real> & vector_, size_t sec
     m_Type = factory.getFactoryType();
 }
 
-void DOTk_Hessian::apply(const std::tr1::shared_ptr<dotk::DOTk_OptimizationDataMng> & mng_,
-                         const std::tr1::shared_ptr<dotk::Vector<Real> > & vector_,
-                         const std::tr1::shared_ptr<dotk::Vector<Real> > & output_)
+void DOTk_Hessian::apply(const std::shared_ptr<dotk::DOTk_OptimizationDataMng> & mng_,
+                         const std::shared_ptr<dotk::Vector<Real> > & vector_,
+                         const std::shared_ptr<dotk::Vector<Real> > & output_)
 {
     assert(m_Hessian.use_count() > 0);
     m_Hessian->apply(mng_, vector_, output_);

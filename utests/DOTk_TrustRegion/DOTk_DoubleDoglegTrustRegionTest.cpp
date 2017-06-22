@@ -21,7 +21,7 @@ namespace DOTkDoubleDoglegTrustRegionTest
 
 TEST(DOTk_DoubleDoglegTrustRegion, setAndGetParamPromotesMonotonicallyDecreasingQuadraticModel)
 {
-    std::tr1::shared_ptr<dotk::Vector<Real> > vec = dotk::gtest::allocateData(2, 0);
+    std::shared_ptr<dotk::Vector<Real> > vec = dotk::gtest::allocateData(2, 0);
     dotk::DOTk_DoubleDoglegTrustRegion step(vec);
     EXPECT_EQ(dotk::types::TRUST_REGION_DOUBLE_DOGLEG, step.getTrustRegionType());
 
@@ -33,15 +33,15 @@ TEST(DOTk_DoubleDoglegTrustRegion, setAndGetParamPromotesMonotonicallyDecreasing
 
 TEST(DOTk_DoubleDoglegTrustRegion, computeDoubleDoglegRoot)
 {
-    std::tr1::shared_ptr<dotk::Vector<Real> > grad = dotk::gtest::allocateData(2, 0);
+    std::shared_ptr<dotk::Vector<Real> > grad = dotk::gtest::allocateData(2, 0);
     (*grad)[0] = 6.;
     (*grad)[1] = 2.;
 
-    std::tr1::shared_ptr<dotk::Vector<Real> > hess_times_grad = grad->clone();
+    std::shared_ptr<dotk::Vector<Real> > hess_times_grad = grad->clone();
     (*hess_times_grad)[0] = 84.;
     (*hess_times_grad)[1] = 4.;
 
-    std::tr1::shared_ptr<dotk::Vector<Real> > newton_direction = grad->clone();
+    std::shared_ptr<dotk::Vector<Real> > newton_direction = grad->clone();
     (*newton_direction)[0] = -3. / 7.;
     (*newton_direction)[1] = -1.;
 
@@ -54,15 +54,15 @@ TEST(DOTk_DoubleDoglegTrustRegion, computeDoubleDoglegRoot)
 
 TEST(DOTk_DoubleDoglegTrustRegion, doubleDogleg)
 {
-    std::tr1::shared_ptr<dotk::Vector<Real> > grad = dotk::gtest::allocateData(2, 0);
+    std::shared_ptr<dotk::Vector<Real> > grad = dotk::gtest::allocateData(2, 0);
     (*grad)[0] = 6.;
     (*grad)[1] = 2.;
 
-    std::tr1::shared_ptr<dotk::Vector<Real> > hess_times_grad = grad->clone();
+    std::shared_ptr<dotk::Vector<Real> > hess_times_grad = grad->clone();
     (*hess_times_grad)[0] = 84.;
     (*hess_times_grad)[1] = 4.;
 
-    std::tr1::shared_ptr<dotk::Vector<Real> > newton_dir = grad->clone();
+    std::shared_ptr<dotk::Vector<Real> > newton_dir = grad->clone();
     (*newton_dir)[0] = -3. / 7.;
     (*newton_dir)[1] = -1.;
 
@@ -70,7 +70,7 @@ TEST(DOTk_DoubleDoglegTrustRegion, doubleDogleg)
     dotk::DOTk_DoubleDoglegTrustRegion step(grad);
     step.doubleDogleg(trust_region_radius, grad, hess_times_grad, newton_dir);
 
-    std::tr1::shared_ptr<dotk::Vector<Real> > gold = grad->clone();
+    std::shared_ptr<dotk::Vector<Real> > gold = grad->clone();
     (*gold)[0] = -0.3397877009;
     (*gold)[1] = -0.6686137287;
     dotk::gtest::checkResults(*newton_dir, *gold);
@@ -79,9 +79,9 @@ TEST(DOTk_DoubleDoglegTrustRegion, doubleDogleg)
 TEST(DOTk_DoubleDoglegTrustRegion, step)
 {
     size_t ncontrols = 2;
-    std::tr1::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
     primal->allocateSerialControlArray(ncontrols, 2);
-    std::tr1::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
+    std::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
     dotk::DOTk_LineSearchMngTypeULP mng(primal, objective);
 
     (*primal->control())[0] = 6.;
@@ -98,7 +98,7 @@ TEST(DOTk_DoubleDoglegTrustRegion, step)
     step.setTrustRegionRadius(0.75);
     step.step(&mng, mng.getMatrixTimesVector(), mng.getTrialStep());
 
-    std::tr1::shared_ptr<dotk::Vector<Real> > gold = primal->control()->clone();
+    std::shared_ptr<dotk::Vector<Real> > gold = primal->control()->clone();
     (*gold)[0] = -0.3397877009;
     (*gold)[1] = -0.6686137287;
     dotk::gtest::checkResults(*mng.getTrialStep(), *gold);

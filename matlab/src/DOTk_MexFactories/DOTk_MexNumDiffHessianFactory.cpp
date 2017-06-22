@@ -20,7 +20,7 @@ namespace mex
 
 void buildNumericallyDifferentiatedHessian(const mxArray* options_,
                                            const Vector<double> & input_,
-                                           std::tr1::shared_ptr<dotk::NumericallyDifferentiatedHessian> & output_)
+                                           std::shared_ptr<dotk::NumericallyDifferentiatedHessian> & output_)
 {
     double epsilon = dotk::mex::parseNumericalDifferentiationEpsilon(options_);
     dotk::types::numerical_integration_t type = dotk::mex::parseNumericalDifferentiationMethod(options_);

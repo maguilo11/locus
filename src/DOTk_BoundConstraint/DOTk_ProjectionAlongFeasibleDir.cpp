@@ -16,7 +16,7 @@
 namespace dotk
 {
 
-DOTk_ProjectionAlongFeasibleDir::DOTk_ProjectionAlongFeasibleDir(const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_) :
+DOTk_ProjectionAlongFeasibleDir::DOTk_ProjectionAlongFeasibleDir(const std::shared_ptr<dotk::DOTk_Primal> & primal_) :
         dotk::DOTk_BoundConstraint(primal_, dotk::types::constraint_method_t::PROJECTION_ALONG_FEASIBLE_DIR),
         m_LowerBounds(primal_->control()->clone()),
         m_UpperBounds(primal_->control()->clone()),
@@ -29,8 +29,8 @@ DOTk_ProjectionAlongFeasibleDir::~DOTk_ProjectionAlongFeasibleDir()
 {
 }
 
-void DOTk_ProjectionAlongFeasibleDir::getDirection(const std::tr1::shared_ptr<dotk::Vector<Real> > & primal_,
-                                                   const std::tr1::shared_ptr<dotk::Vector<Real> > & feasible_dir_)
+void DOTk_ProjectionAlongFeasibleDir::getDirection(const std::shared_ptr<dotk::Vector<Real> > & primal_,
+                                                   const std::shared_ptr<dotk::Vector<Real> > & feasible_dir_)
 {
     m_TrialPrimal->update(1., *primal_, 0.);
     m_TrialPrimal->update(dotk::DOTk_BoundConstraint::getStepSize(), *feasible_dir_, 1.);
@@ -39,8 +39,8 @@ void DOTk_ProjectionAlongFeasibleDir::getDirection(const std::tr1::shared_ptr<do
     feasible_dir_->update(static_cast<Real>(-1.0), *primal_, 1.);
 }
 
-void DOTk_ProjectionAlongFeasibleDir::constraint(const std::tr1::shared_ptr<dotk::DOTk_LineSearch> & step_,
-                                                 const std::tr1::shared_ptr<dotk::DOTk_OptimizationDataMng> & mng_)
+void DOTk_ProjectionAlongFeasibleDir::constraint(const std::shared_ptr<dotk::DOTk_LineSearch> & step_,
+                                                 const std::shared_ptr<dotk::DOTk_OptimizationDataMng> & mng_)
 {
     m_TrialPrimal->update(1., *mng_->getNewPrimal(), 0.);
     dotk::DOTk_BoundConstraint::computeScaledTrialStep(step_, mng_, m_TrialPrimal);
@@ -50,7 +50,7 @@ void DOTk_ProjectionAlongFeasibleDir::constraint(const std::tr1::shared_ptr<dotk
     mng_->setNewObjectiveFunctionValue(new_objective_function_value);
 }
 
-void DOTk_ProjectionAlongFeasibleDir::initialize(const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_)
+void DOTk_ProjectionAlongFeasibleDir::initialize(const std::shared_ptr<dotk::DOTk_Primal> & primal_)
 {
     if(primal_->getControlLowerBound().use_count() > 0)
     {

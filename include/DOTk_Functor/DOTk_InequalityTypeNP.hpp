@@ -29,9 +29,9 @@ public:
     {
     }
 
-    Real operator()(const std::tr1::shared_ptr<dotk::DOTk_InequalityConstraint<Real> > & inequality_,
-                    const std::tr1::shared_ptr<dotk::Vector<Real> > & state_,
-                    const std::tr1::shared_ptr<dotk::Vector<Real> > & control_) const
+    Real operator()(const std::shared_ptr<dotk::DOTk_InequalityConstraint<Real> > & inequality_,
+                    const std::shared_ptr<dotk::Vector<Real> > & state_,
+                    const std::shared_ptr<dotk::Vector<Real> > & control_) const
     {
         Real value = inequality_->value(*state_, *control_);
 
@@ -53,10 +53,10 @@ public:
     {
     }
 
-    void operator()(const std::tr1::shared_ptr<dotk::DOTk_InequalityConstraint<Real> > & inequality_,
-                    const std::tr1::shared_ptr<dotk::Vector<Real> > & state_,
-                    const std::tr1::shared_ptr<dotk::Vector<Real> > & control_,
-                    const std::tr1::shared_ptr<dotk::Vector<Real> > & derivative_) const
+    void operator()(const std::shared_ptr<dotk::DOTk_InequalityConstraint<Real> > & inequality_,
+                    const std::shared_ptr<dotk::Vector<Real> > & state_,
+                    const std::shared_ptr<dotk::Vector<Real> > & control_,
+                    const std::shared_ptr<dotk::Vector<Real> > & derivative_) const
     {
         inequality_->partialDerivativeState(*state_, *control_, *derivative_);
     }
@@ -76,10 +76,10 @@ public:
     {
     }
 
-    void operator()(const std::tr1::shared_ptr<dotk::DOTk_InequalityConstraint<Real> > & inequality_,
-                    const std::tr1::shared_ptr<dotk::Vector<Real> > & state_,
-                    const std::tr1::shared_ptr<dotk::Vector<Real> > & control_,
-                    const std::tr1::shared_ptr<dotk::Vector<Real> > & derivative_) const
+    void operator()(const std::shared_ptr<dotk::DOTk_InequalityConstraint<Real> > & inequality_,
+                    const std::shared_ptr<dotk::Vector<Real> > & state_,
+                    const std::shared_ptr<dotk::Vector<Real> > & control_,
+                    const std::shared_ptr<dotk::Vector<Real> > & derivative_) const
     {
         inequality_->partialDerivativeControl(*state_, *control_, *derivative_);
     }

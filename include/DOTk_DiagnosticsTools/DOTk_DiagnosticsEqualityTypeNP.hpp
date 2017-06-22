@@ -25,7 +25,7 @@ class Vector;
 class DOTk_DiagnosticsEqualityTypeNP : public dotk::DOTk_DerivativeDiagnosticsTool
 {
 public:
-    explicit DOTk_DiagnosticsEqualityTypeNP(const std::tr1::shared_ptr<dotk::DOTk_EqualityConstraint<Real> > & equality_);
+    explicit DOTk_DiagnosticsEqualityTypeNP(const std::shared_ptr<dotk::DOTk_EqualityConstraint<Real> > & equality_);
     ~DOTk_DiagnosticsEqualityTypeNP();
 
     void checkPartialDerivativeState(const dotk::DOTk_State & state_,
@@ -63,24 +63,24 @@ public:
 
 private:
     template<typename VectorValuedFunction, typename VectorValuedFunctionFirstDerivative>
-    void checkVectorValuedFunctionPartialDerivative(const std::tr1::shared_ptr<dotk::Vector<Real> > & perturbation_vec_,
+    void checkVectorValuedFunctionPartialDerivative(const std::shared_ptr<dotk::Vector<Real> > & perturbation_vec_,
                                                     const VectorValuedFunction & function_,
                                                     const VectorValuedFunctionFirstDerivative & first_derivative_,
                                                     dotk::nlp::variables & variables_);
     template<typename VectorValuedFunctionFirstDerivative, typename AdjointVectorValuedFunctionFirstDerivative>
-    Real checkAdjointPartialDerivativeVectorValuedFunction(const std::tr1::shared_ptr<dotk::Vector<Real> > & perturbation_vec_,
+    Real checkAdjointPartialDerivativeVectorValuedFunction(const std::shared_ptr<dotk::Vector<Real> > & perturbation_vec_,
                                                            const VectorValuedFunctionFirstDerivative& first_derivative_,
                                                            const AdjointVectorValuedFunctionFirstDerivative& adjoint_first_derivative_,
                                                            dotk::nlp::variables & variables_);
     template<typename AdjointVectorValuedFunctionFirstDerivative, typename AdjointVectorValuedFunctionSecondDerivative>
-    void checkAdjointSecondPartialDerivativeVectorValuedFunction(const std::tr1::shared_ptr<dotk::Vector<Real> > & direction_,
+    void checkAdjointSecondPartialDerivativeVectorValuedFunction(const std::shared_ptr<dotk::Vector<Real> > & direction_,
                                                                  const AdjointVectorValuedFunctionFirstDerivative& adjoint_first_derivative_,
                                                                  const AdjointVectorValuedFunctionSecondDerivative& adjoint_second_derivative_,
                                                                  dotk::nlp::variables & variables_);
 
 private:
-    std::tr1::shared_ptr<dotk::Vector<Real> > m_OriginalField;
-    std::tr1::shared_ptr<dotk::DOTk_EqualityConstraint<Real> > m_ContinuousOperators;
+    std::shared_ptr<dotk::Vector<Real> > m_OriginalField;
+    std::shared_ptr<dotk::DOTk_EqualityConstraint<Real> > m_ContinuousOperators;
 
 private:
     DOTk_DiagnosticsEqualityTypeNP(const dotk::DOTk_DiagnosticsEqualityTypeNP &);

@@ -140,9 +140,9 @@ public:
         return (m_LocalDim);
     }
     // Clones memory for an object of ScalarType dotk::Vector<ScalarType>
-    std::tr1::shared_ptr<dotk::Vector<ScalarType> > clone() const
+    std::shared_ptr<dotk::Vector<ScalarType> > clone() const
     {
-        std::tr1::shared_ptr < dotk::StdArray<ScalarType> > output(new dotk::StdArray<ScalarType>(m_LocalDim));
+        std::shared_ptr < dotk::StdArray<ScalarType> > output(new dotk::StdArray<ScalarType>(m_LocalDim));
         return (output);
     }
     // Operator overloads the square bracket operator

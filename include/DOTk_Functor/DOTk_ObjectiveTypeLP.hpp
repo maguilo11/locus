@@ -29,8 +29,8 @@ public:
     {
     }
 
-    Real operator()(const std::tr1::shared_ptr<dotk::DOTk_ObjectiveFunction<Real> > & operators_,
-                    const std::tr1::shared_ptr<dotk::Vector<Real> > & primal_) const
+    Real operator()(const std::shared_ptr<dotk::DOTk_ObjectiveFunction<Real> > & operators_,
+                    const std::shared_ptr<dotk::Vector<Real> > & primal_) const
     {
         Real objective_function_value = operators_->value(*primal_);
         return (objective_function_value);
@@ -56,9 +56,9 @@ public:
     {
         return (m_Codomain);
     }
-    void operator()(const std::tr1::shared_ptr<dotk::DOTk_ObjectiveFunction<Real> > & operators_,
-                    const std::tr1::shared_ptr<dotk::Vector<Real> > & primal_,
-                    std::tr1::shared_ptr<dotk::Vector<Real> > & output_) const
+    void operator()(const std::shared_ptr<dotk::DOTk_ObjectiveFunction<Real> > & operators_,
+                    const std::shared_ptr<dotk::Vector<Real> > & primal_,
+                    std::shared_ptr<dotk::Vector<Real> > & output_) const
     {
         operators_->gradient(*primal_, *output_);
     }
@@ -86,10 +86,10 @@ public:
     {
         return (m_Codomain);
     }
-    void operator()(const std::tr1::shared_ptr<dotk::DOTk_ObjectiveFunction<Real> > & operators_,
-                    const std::tr1::shared_ptr<dotk::Vector<Real> > & primal_,
-                    const std::tr1::shared_ptr<dotk::Vector<Real> > & delta_primal_,
-                    std::tr1::shared_ptr<dotk::Vector<Real> > & output_) const
+    void operator()(const std::shared_ptr<dotk::DOTk_ObjectiveFunction<Real> > & operators_,
+                    const std::shared_ptr<dotk::Vector<Real> > & primal_,
+                    const std::shared_ptr<dotk::Vector<Real> > & delta_primal_,
+                    std::shared_ptr<dotk::Vector<Real> > & output_) const
     {
         operators_->hessian(*primal_, *delta_primal_, *output_);
     }

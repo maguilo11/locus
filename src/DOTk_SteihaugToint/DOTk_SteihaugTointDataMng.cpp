@@ -22,8 +22,8 @@
 namespace dotk
 {
 
-DOTk_SteihaugTointDataMng::DOTk_SteihaugTointDataMng(const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_,
-                                                     const std::tr1::shared_ptr<dotk::DOTk_ObjectiveFunction<Real> > & objective_) :
+DOTk_SteihaugTointDataMng::DOTk_SteihaugTointDataMng(const std::shared_ptr<dotk::DOTk_Primal> & primal_,
+                                                     const std::shared_ptr<dotk::DOTk_ObjectiveFunction<Real> > & objective_) :
         dotk::DOTk_OptimizationDataMng(primal_),
         m_PrimalStruc(primal_),
         m_Gradient(),
@@ -32,9 +32,9 @@ DOTk_SteihaugTointDataMng::DOTk_SteihaugTointDataMng(const std::tr1::shared_ptr<
     this->initialize();
 }
 
-DOTk_SteihaugTointDataMng::DOTk_SteihaugTointDataMng(const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_,
-                                                     const std::tr1::shared_ptr<dotk::DOTk_ObjectiveFunction<Real> > & objective_,
-                                                     const std::tr1::shared_ptr<dotk::DOTk_EqualityConstraint<Real> > & equality_) :
+DOTk_SteihaugTointDataMng::DOTk_SteihaugTointDataMng(const std::shared_ptr<dotk::DOTk_Primal> & primal_,
+                                                     const std::shared_ptr<dotk::DOTk_ObjectiveFunction<Real> > & objective_,
+                                                     const std::shared_ptr<dotk::DOTk_EqualityConstraint<Real> > & equality_) :
         dotk::DOTk_OptimizationDataMng(primal_),
         m_PrimalStruc(primal_),
         m_Gradient(),
@@ -113,7 +113,7 @@ Real DOTk_SteihaugTointDataMng::evaluateObjective()
     return (value);
 }
 
-Real DOTk_SteihaugTointDataMng::evaluateObjective(const std::tr1::shared_ptr<dotk::Vector<Real> > & input_)
+Real DOTk_SteihaugTointDataMng::evaluateObjective(const std::shared_ptr<dotk::Vector<Real> > & input_)
 {
     Real value = m_AssemblyMng->objective(input_);
     return (value);
@@ -124,12 +124,12 @@ size_t DOTk_SteihaugTointDataMng::getObjectiveFunctionEvaluationCounter() const
     return (m_AssemblyMng->getObjectiveFunctionEvaluationCounter());
 }
 
-const std::tr1::shared_ptr<dotk::DOTk_Primal> & DOTk_SteihaugTointDataMng::getPrimalStruc() const
+const std::shared_ptr<dotk::DOTk_Primal> & DOTk_SteihaugTointDataMng::getPrimalStruc() const
 {
     return (m_PrimalStruc);
 }
 
-const std::tr1::shared_ptr<dotk::DOTk_AssemblyManager> & DOTk_SteihaugTointDataMng::getRoutinesMng() const
+const std::shared_ptr<dotk::DOTk_AssemblyManager> & DOTk_SteihaugTointDataMng::getRoutinesMng() const
 {
     return (m_AssemblyMng);
 }

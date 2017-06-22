@@ -28,18 +28,18 @@ DOTk_SR1Hessian::~DOTk_SR1Hessian()
 {
 }
 
-const std::tr1::shared_ptr<dotk::Vector<Real> > & DOTk_SR1Hessian::getDeltaGrad() const
+const std::shared_ptr<dotk::Vector<Real> > & DOTk_SR1Hessian::getDeltaGrad() const
 {
     return (m_DeltaGradient);
 }
 
-const std::tr1::shared_ptr<dotk::Vector<Real> > & DOTk_SR1Hessian::getDeltaPrimal() const
+const std::shared_ptr<dotk::Vector<Real> > & DOTk_SR1Hessian::getDeltaPrimal() const
 {
     return (m_DeltaPrimal);
 }
 
-void DOTk_SR1Hessian::getHessian(const std::tr1::shared_ptr<dotk::Vector<Real> > & vector_,
-                                 const std::tr1::shared_ptr<dotk::Vector<Real> > & hess_times_vector_)
+void DOTk_SR1Hessian::getHessian(const std::shared_ptr<dotk::Vector<Real> > & vector_,
+                                 const std::shared_ptr<dotk::Vector<Real> > & hess_times_vector_)
 {
     hess_times_vector_->update(1., *vector_, 0.);
     Real dgrad_dot_dprimal = m_DeltaGradient->dot(*m_DeltaPrimal);
@@ -73,9 +73,9 @@ void DOTk_SR1Hessian::getHessian(const std::tr1::shared_ptr<dotk::Vector<Real> >
     }
 }
 
-void DOTk_SR1Hessian::apply(const std::tr1::shared_ptr<dotk::DOTk_OptimizationDataMng> & mng_,
-                            const std::tr1::shared_ptr<dotk::Vector<Real> > & vector_,
-                            const std::tr1::shared_ptr<dotk::Vector<Real> > & matrix_times_vector_)
+void DOTk_SR1Hessian::apply(const std::shared_ptr<dotk::DOTk_OptimizationDataMng> & mng_,
+                            const std::shared_ptr<dotk::Vector<Real> > & vector_,
+                            const std::shared_ptr<dotk::Vector<Real> > & matrix_times_vector_)
 {
     dotk::DOTk_SecondOrderOperator::computeDeltaPrimal(mng_->getNewPrimal(), mng_->getOldPrimal(), m_DeltaPrimal);
     dotk::DOTk_SecondOrderOperator::computeDeltaGradient(mng_->getNewGradient(), mng_->getOldGradient(), m_DeltaGradient);

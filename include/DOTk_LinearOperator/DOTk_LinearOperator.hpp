@@ -8,7 +8,7 @@
 #ifndef DOTK_LINEAROPERATOR_HPP_
 #define DOTK_LINEAROPERATOR_HPP_
 
-#include <tr1/memory>
+#include <memory>
 #include "DOTk_Types.hpp"
 
 namespace dotk
@@ -29,9 +29,9 @@ public:
 
     virtual void setNumOtimizationItrDone(size_t itr_);
     virtual void updateLimitedMemoryStorage(bool update_);
-    virtual void apply(const std::tr1::shared_ptr<dotk::DOTk_OptimizationDataMng> & mng_,
-                       const std::tr1::shared_ptr<dotk::Vector<Real> > & vector_,
-                       const std::tr1::shared_ptr<dotk::Vector<Real> > & output_);
+    virtual void apply(const std::shared_ptr<dotk::DOTk_OptimizationDataMng> & mng_,
+                       const std::shared_ptr<dotk::Vector<Real> > & vector_,
+                       const std::shared_ptr<dotk::Vector<Real> > & output_);
 
 private:
     dotk::types::linear_operator_t m_LinearOperatorType;

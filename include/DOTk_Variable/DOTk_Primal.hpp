@@ -8,7 +8,7 @@
 #ifndef DOTK_PRIMAL_HPP_
 #define DOTK_PRIMAL_HPP_
 
-#include <tr1/memory>
+#include <memory>
 
 #include "DOTk_Types.hpp"
 
@@ -30,16 +30,16 @@ public:
 
     dotk::types::variable_t type() const;
 
-    const std::tr1::shared_ptr<dotk::Vector<Real> > & dual() const;
-    const std::tr1::shared_ptr<dotk::Vector<Real> > & state() const;
-    const std::tr1::shared_ptr<dotk::Vector<Real> > & control() const;
+    const std::shared_ptr<dotk::Vector<Real> > & dual() const;
+    const std::shared_ptr<dotk::Vector<Real> > & state() const;
+    const std::shared_ptr<dotk::Vector<Real> > & control() const;
 
-    const std::tr1::shared_ptr<dotk::Vector<Real> > & getDualLowerBound() const;
-    const std::tr1::shared_ptr<dotk::Vector<Real> > & getDualUpperBound() const;
-    const std::tr1::shared_ptr<dotk::Vector<Real> > & getStateLowerBound() const;
-    const std::tr1::shared_ptr<dotk::Vector<Real> > & getStateUpperBound() const;
-    const std::tr1::shared_ptr<dotk::Vector<Real> > & getControlLowerBound() const;
-    const std::tr1::shared_ptr<dotk::Vector<Real> > & getControlUpperBound() const;
+    const std::shared_ptr<dotk::Vector<Real> > & getDualLowerBound() const;
+    const std::shared_ptr<dotk::Vector<Real> > & getDualUpperBound() const;
+    const std::shared_ptr<dotk::Vector<Real> > & getStateLowerBound() const;
+    const std::shared_ptr<dotk::Vector<Real> > & getStateUpperBound() const;
+    const std::shared_ptr<dotk::Vector<Real> > & getControlLowerBound() const;
+    const std::shared_ptr<dotk::Vector<Real> > & getControlUpperBound() const;
 
     void setDualBasisSize(size_t size_);
     void setDualLowerBound(Real value_);
@@ -72,9 +72,9 @@ public:
     void allocateSerialControlVector(size_t size_, Real value_ = 0.);
 
 private:
-    std::tr1::shared_ptr<dotk::DOTk_Dual> m_Dual;
-    std::tr1::shared_ptr<dotk::DOTk_State> m_State;
-    std::tr1::shared_ptr<dotk::DOTk_Control> m_Control;
+    std::shared_ptr<dotk::DOTk_Dual> m_Dual;
+    std::shared_ptr<dotk::DOTk_State> m_State;
+    std::shared_ptr<dotk::DOTk_Control> m_Control;
 
 private:
     DOTk_Primal(const dotk::DOTk_Primal &);

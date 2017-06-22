@@ -30,8 +30,8 @@ TEST(DOTk_FletcherReeves, setAndGetMinCosineAngleTol)
 
 TEST(DOTk_FletcherReeves, computeCosineAngle)
 {
-    std::tr1::shared_ptr<dotk::Vector<Real> > gold_grad = dotk::gtest::allocateControl();
-    std::tr1::shared_ptr<dotk::Vector<Real> > trial_step = gold_grad->clone();
+    std::shared_ptr<dotk::Vector<Real> > gold_grad = dotk::gtest::allocateControl();
+    std::shared_ptr<dotk::Vector<Real> > trial_step = gold_grad->clone();
     (*gold_grad)[0] = 1.;
     (*gold_grad)[1] = 2.;
     (*trial_step)[0] = 11.;
@@ -49,14 +49,14 @@ TEST(DOTk_FletcherReeves, computeCosineAngle)
 
 TEST(DOTk_FletcherReeves, steepestDescent)
 {
-    std::tr1::shared_ptr<dotk::Vector<Real> > grad = dotk::gtest::allocateControl();
-    std::tr1::shared_ptr<dotk::Vector<Real> > trial_step = grad->clone();
+    std::shared_ptr<dotk::Vector<Real> > grad = dotk::gtest::allocateControl();
+    std::shared_ptr<dotk::Vector<Real> > trial_step = grad->clone();
     (*grad)[0] = 1.;
     (*grad)[1] = 2.;
 
     dotk::DOTk_FletcherReeves dir;
     dir.steepestDescent(grad, trial_step);
-    std::tr1::shared_ptr<dotk::Vector<Real> > gold = grad->clone();
+    std::shared_ptr<dotk::Vector<Real> > gold = grad->clone();
     (*gold)[0] = -1;
     (*gold)[1] = -2;
     dotk::gtest::checkResults(*trial_step, *gold);
@@ -76,9 +76,9 @@ TEST(DOTk_FletcherReeves, isTrialStepOrthogonalToSteepestDescent)
 TEST(DOTk_FletcherReeves, computeScaleFactor)
 {
     size_t ncontrols = 2;
-    std::tr1::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
     primal->allocateSerialControlArray(ncontrols, 2);
-    std::tr1::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
+    std::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
     dotk::DOTk_LineSearchMngTypeULP mng(primal, objective);
 
     (*primal->control())[0] = 1.;
@@ -98,9 +98,9 @@ TEST(DOTk_FletcherReeves, computeScaleFactor)
 TEST(DOTk_FletcherReeves, getDirection)
 {
     size_t ncontrols = 2;
-    std::tr1::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
     primal->allocateSerialControlArray(ncontrols, 2);
-    std::tr1::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
+    std::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
     dotk::DOTk_LineSearchMngTypeULP mng(primal, objective);
 
     (*primal->control())[0] = 1.;
@@ -117,7 +117,7 @@ TEST(DOTk_FletcherReeves, getDirection)
     EXPECT_EQ(dotk::types::FLETCHER_REEVES_NLCG, dir.getNonlinearCGType());
     dir.getDirection(mng.getOldGradient(), mng.getNewGradient(), mng.getTrialStep());
 
-    std::tr1::shared_ptr<dotk::Vector<Real> > gold = dotk::gtest::allocateControl();
+    std::shared_ptr<dotk::Vector<Real> > gold = dotk::gtest::allocateControl();
     (*gold)[0] = -110.;
     (*gold)[1] = -264.;
     Real tol = 1e-8;
@@ -128,10 +128,10 @@ TEST(DOTk_FletcherReeves, getDirection)
 TEST(DOTk_FletcherReeves, direction)
 {
     size_t ncontrols = 2;
-    std::tr1::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
     primal->allocateSerialControlArray(ncontrols, 2);
-    std::tr1::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
-    std::tr1::shared_ptr<dotk::DOTk_LineSearchMngTypeULP>
+    std::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
+    std::shared_ptr<dotk::DOTk_LineSearchMngTypeULP>
     mng(new dotk::DOTk_LineSearchMngTypeULP(primal, objective));
 
     (*primal->control())[0] = 1.;
@@ -148,7 +148,7 @@ TEST(DOTk_FletcherReeves, direction)
 
     // TEST 1
     dir.direction(mng);
-    std::tr1::shared_ptr<dotk::Vector<Real> > gold = dotk::gtest::allocateControl();
+    std::shared_ptr<dotk::Vector<Real> > gold = dotk::gtest::allocateControl();
     (*gold)[0] = -110.;
     (*gold)[1] = -264.;
     Real tol = 1e-8;

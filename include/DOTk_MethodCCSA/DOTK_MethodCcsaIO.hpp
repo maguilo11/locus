@@ -8,8 +8,8 @@
 #ifndef DOTK_METHODCCSAIO_HPP_
 #define DOTK_METHODCCSAIO_HPP_
 
+#include <memory>
 #include <fstream>
-#include <tr1/memory>
 #include "DOTk_Types.hpp"
 
 namespace dotk
@@ -31,9 +31,9 @@ public:
     void openFile(const char * const name_);
     void closeFile();
 
-    void printSolution(const std::tr1::shared_ptr<dotk::DOTk_DataMngCCSA> & data_mng_);
+    void printSolution(const std::shared_ptr<dotk::DOTk_DataMngCCSA> & data_mng_);
     void print(const dotk::DOTk_AlgorithmCCSA* const algorithm_,
-               const std::tr1::shared_ptr<dotk::DOTk_DataMngCCSA> & data_mng_);
+               const std::shared_ptr<dotk::DOTk_DataMngCCSA> & data_mng_);
 
 private:
     void printHeader();

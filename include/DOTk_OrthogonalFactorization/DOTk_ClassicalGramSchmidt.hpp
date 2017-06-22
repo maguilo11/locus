@@ -22,9 +22,9 @@ public:
     DOTk_ClassicalGramSchmidt();
     virtual ~DOTk_ClassicalGramSchmidt();
 
-    void factorization(const std::tr1::shared_ptr<dotk::matrix<Real> > & input_,
-                       std::tr1::shared_ptr<dotk::matrix<Real> > & Q_,
-                       std::tr1::shared_ptr<dotk::matrix<Real> > & R_);
+    void factorization(const std::shared_ptr<dotk::matrix<Real> > & input_,
+                       std::shared_ptr<dotk::matrix<Real> > & Q_,
+                       std::shared_ptr<dotk::matrix<Real> > & R_);
 
 private:
     DOTk_ClassicalGramSchmidt(const dotk::DOTk_ClassicalGramSchmidt &);

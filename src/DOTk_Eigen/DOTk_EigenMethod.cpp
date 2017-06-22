@@ -30,17 +30,17 @@ dotk::types::eigen_t DOTk_EigenMethod::type() const
     return (m_EigenType);
 }
 
-void DOTk_EigenMethod::solve(const std::tr1::shared_ptr<dotk::matrix<Real> > & input_,
-                             std::tr1::shared_ptr<dotk::Vector<Real> > & eigenvalues_,
-                             std::tr1::shared_ptr<dotk::matrix<Real> > & eigenvectors_)
+void DOTk_EigenMethod::solve(const std::shared_ptr<dotk::matrix<Real> > & input_,
+                             std::shared_ptr<dotk::Vector<Real> > & eigenvalues_,
+                             std::shared_ptr<dotk::matrix<Real> > & eigenvectors_)
 {
     std::string msg(" CALLING UNIMPLEMENTED dotk::DOTk_EigenMethod::solve **** ");
     std::cerr << " **** ERROR MESSAGE: " << msg.c_str() << std::flush;
 }
 
-void DOTk_EigenMethod::solve(const std::tr1::shared_ptr<dotk::matrix<Real> > & input_,
+void DOTk_EigenMethod::solve(const std::shared_ptr<dotk::matrix<Real> > & input_,
                              Real & eigenvalues_,
-                             std::tr1::shared_ptr<dotk::Vector<Real> > & eigenvectors_)
+                             std::shared_ptr<dotk::Vector<Real> > & eigenvectors_)
 {
     std::string msg(" CALLING UNIMPLEMENTED dotk::DOTk_EigenMethod::solve **** ");
     std::cerr << " **** ERROR MESSAGE: " << msg.c_str() << std::flush;

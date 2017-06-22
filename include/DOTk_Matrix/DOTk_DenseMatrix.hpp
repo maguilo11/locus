@@ -93,7 +93,7 @@ public:
     // Sets matrix element to input value
     virtual void set(const size_t & row_index_, const size_t & column_index_, ScalarType value_);
     // Clones memory for an object of type dotk::matrix
-    virtual std::tr1::shared_ptr< dotk::matrix<ScalarType> > clone() const;
+    virtual std::shared_ptr< dotk::matrix<ScalarType> > clone() const;
     // Operator overloads the parenthesis operator
     virtual ScalarType & operator()(const size_t & row_index_, const size_t & column_index_);
     // Operator overloads the parenthesis operator

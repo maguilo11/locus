@@ -26,21 +26,21 @@ class matrix;
 class DOTk_ArnoldiProjection: public dotk::DOTk_OrthogonalProjection
 {
 public:
-    DOTk_ArnoldiProjection(const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_, size_t krylov_subspace_dim_);
+    DOTk_ArnoldiProjection(const std::shared_ptr<dotk::DOTk_Primal> & primal_, size_t krylov_subspace_dim_);
     virtual ~DOTk_ArnoldiProjection();
 
     virtual void setInitialResidual(Real value_);
     virtual Real getInitialResidual() const;
 
     virtual void clear();
-    virtual const std::tr1::shared_ptr<dotk::Vector<Real> > & getOrthogonalVector(size_t index_) const;
-    virtual void setOrthogonalVector(size_t index_, const std::tr1::shared_ptr<dotk::Vector<Real> > & vec_);
+    virtual const std::shared_ptr<dotk::Vector<Real> > & getOrthogonalVector(size_t index_) const;
+    virtual void setOrthogonalVector(size_t index_, const std::shared_ptr<dotk::Vector<Real> > & vec_);
     virtual void apply(const dotk::DOTk_KrylovSolver * const solver_,
-                       const std::tr1::shared_ptr<dotk::Vector<Real> > & kernel_vector_);
+                       const std::shared_ptr<dotk::Vector<Real> > & kernel_vector_);
 
     void updateHessenbergMatrix(size_t current_itr_,
-                                const std::tr1::shared_ptr<dotk::Vector<Real> > & left_prec_times_vec_);
-    void arnoldi(size_t ortho_vector_index_, const std::tr1::shared_ptr<dotk::Vector<Real> > & kernel_vector_);
+                                const std::shared_ptr<dotk::Vector<Real> > & left_prec_times_vec_);
+    void arnoldi(size_t ortho_vector_index_, const std::shared_ptr<dotk::Vector<Real> > & kernel_vector_);
     void applyGivensRotationsToHessenbergMatrix(int current_itr_);
 
 private:
@@ -48,12 +48,12 @@ private:
     std::vector<Real> m_Cosine;
     std::vector<Real> m_ScaleFactorsStorage;
     std::vector<Real> m_NormAppxProjectedResidualStorage;
-    std::tr1::shared_ptr<dotk::DOTk_DirectSolver> m_DirectSolver;
-    std::tr1::shared_ptr<dotk::matrix<Real> > m_HessenbergMatrix;
-    std::vector<std::tr1::shared_ptr<dotk::Vector<Real> > > m_OrthogonalBasis;
+    std::shared_ptr<dotk::DOTk_DirectSolver> m_DirectSolver;
+    std::shared_ptr<dotk::matrix<Real> > m_HessenbergMatrix;
+    std::vector<std::shared_ptr<dotk::Vector<Real> > > m_OrthogonalBasis;
 
 private:
-    void initialize(const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_);
+    void initialize(const std::shared_ptr<dotk::DOTk_Primal> & primal_);
 
 private:
     DOTk_ArnoldiProjection(const dotk::DOTk_ArnoldiProjection &);

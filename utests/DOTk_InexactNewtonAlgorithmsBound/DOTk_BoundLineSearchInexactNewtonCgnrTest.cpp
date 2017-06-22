@@ -22,14 +22,14 @@ namespace DOTkBoundLineSearchInexactNewtonCgnrTest
 TEST(DOTk_BoundLineSearchInexactNewtonCGNR, getMin_UsrDefGrad_UsrDefHess_ArmijoLS_NoPrec_FeasDir)
 {
     size_t ncontrols = 2;
-    std::tr1::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
     primal->allocateSerialControlArray(ncontrols, 2);
     primal->setControlLowerBound(0);
     primal->setControlUpperBound(5);
-    std::tr1::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
-    std::tr1::shared_ptr<dotk::DOTk_ProjectedLineSearchStep> step(new dotk::DOTk_ProjectedLineSearchStep(primal));
-    std::tr1::shared_ptr<dotk::DOTk_LineSearchMngTypeULP> mng(new dotk::DOTk_LineSearchMngTypeULP(primal, objective));
-    std::tr1::shared_ptr<dotk::DOTk_Hessian> hessian(new dotk::DOTk_Hessian);
+    std::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
+    std::shared_ptr<dotk::DOTk_ProjectedLineSearchStep> step(new dotk::DOTk_ProjectedLineSearchStep(primal));
+    std::shared_ptr<dotk::DOTk_LineSearchMngTypeULP> mng(new dotk::DOTk_LineSearchMngTypeULP(primal, objective));
+    std::shared_ptr<dotk::DOTk_Hessian> hessian(new dotk::DOTk_Hessian);
 
     step->setFeasibleDirectionConstraint(primal);
     step->setArmijoLineSearch(primal);
@@ -47,14 +47,14 @@ TEST(DOTk_BoundLineSearchInexactNewtonCGNR, getMin_UsrDefGrad_UsrDefHess_ArmijoL
 TEST(DOTk_BoundLineSearchInexactNewtonCGNR, getMin_UsrDefGrad_UsrDefHess_ArmijoLS_NoPrec_ScaledProjectionAlongFeasDir)
 {
     size_t ncontrols = 2;
-    std::tr1::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
     primal->allocateSerialControlArray(ncontrols, 2);
     primal->setControlLowerBound(0);
     primal->setControlUpperBound(5);
-    std::tr1::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
-    std::tr1::shared_ptr<dotk::DOTk_ProjectedLineSearchStep> step(new dotk::DOTk_ProjectedLineSearchStep(primal));
-    std::tr1::shared_ptr<dotk::DOTk_LineSearchMngTypeULP> mng(new dotk::DOTk_LineSearchMngTypeULP(primal, objective));
-    std::tr1::shared_ptr<dotk::DOTk_Hessian> hessian(new dotk::DOTk_Hessian);
+    std::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
+    std::shared_ptr<dotk::DOTk_ProjectedLineSearchStep> step(new dotk::DOTk_ProjectedLineSearchStep(primal));
+    std::shared_ptr<dotk::DOTk_LineSearchMngTypeULP> mng(new dotk::DOTk_LineSearchMngTypeULP(primal, objective));
+    std::shared_ptr<dotk::DOTk_Hessian> hessian(new dotk::DOTk_Hessian);
 
     step->setProjectionAlongFeasibleDirConstraint(primal);
     step->setArmijoLineSearch(primal);
@@ -72,14 +72,14 @@ TEST(DOTk_BoundLineSearchInexactNewtonCGNR, getMin_UsrDefGrad_UsrDefHess_ArmijoL
 TEST(DOTk_BoundLineSearchInexactNewtonCGNR, getMin_UsrDefGrad_LDFPHess_ArmijoLS_NoPrec_FeasDir)
 {
     size_t ncontrols = 2;
-    std::tr1::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
     primal->allocateSerialControlArray(ncontrols, 2);
     primal->setControlLowerBound(0);
     primal->setControlUpperBound(5);
-    std::tr1::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
-    std::tr1::shared_ptr<dotk::DOTk_ProjectedLineSearchStep> step(new dotk::DOTk_ProjectedLineSearchStep(primal));
-    std::tr1::shared_ptr<dotk::DOTk_LineSearchMngTypeULP> mng(new dotk::DOTk_LineSearchMngTypeULP(primal, objective));
-    std::tr1::shared_ptr<dotk::DOTk_Hessian> hessian(new dotk::DOTk_Hessian);
+    std::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
+    std::shared_ptr<dotk::DOTk_ProjectedLineSearchStep> step(new dotk::DOTk_ProjectedLineSearchStep(primal));
+    std::shared_ptr<dotk::DOTk_LineSearchMngTypeULP> mng(new dotk::DOTk_LineSearchMngTypeULP(primal, objective));
+    std::shared_ptr<dotk::DOTk_Hessian> hessian(new dotk::DOTk_Hessian);
 
     step->setArmijoLineSearch(primal);
     mng->setUserDefinedGradient();
@@ -98,14 +98,14 @@ TEST(DOTk_BoundLineSearchInexactNewtonCGNR, getMin_UsrDefGrad_LDFPHess_ArmijoLS_
 TEST(DOTk_BoundLineSearchInexactNewtonCGNR, getMin_UsrDefGrad_LDFPHess_ArmijoLS_NoPrec_ScaledProjectionAlongFeasDir)
 {
     size_t ncontrols = 2;
-    std::tr1::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
     primal->allocateSerialControlArray(ncontrols, 2);
     primal->setControlLowerBound(0);
     primal->setControlUpperBound(5);
-    std::tr1::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
-    std::tr1::shared_ptr<dotk::DOTk_ProjectedLineSearchStep> step(new dotk::DOTk_ProjectedLineSearchStep(primal));
-    std::tr1::shared_ptr<dotk::DOTk_LineSearchMngTypeULP> mng(new dotk::DOTk_LineSearchMngTypeULP(primal, objective));
-    std::tr1::shared_ptr<dotk::DOTk_Hessian> hessian(new dotk::DOTk_Hessian);
+    std::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
+    std::shared_ptr<dotk::DOTk_ProjectedLineSearchStep> step(new dotk::DOTk_ProjectedLineSearchStep(primal));
+    std::shared_ptr<dotk::DOTk_LineSearchMngTypeULP> mng(new dotk::DOTk_LineSearchMngTypeULP(primal, objective));
+    std::shared_ptr<dotk::DOTk_Hessian> hessian(new dotk::DOTk_Hessian);
 
     step->setProjectionAlongFeasibleDirConstraint(primal);
     step->setArmijoLineSearch(primal);
@@ -125,14 +125,14 @@ TEST(DOTk_BoundLineSearchInexactNewtonCGNR, getMin_UsrDefGrad_LDFPHess_ArmijoLS_
 TEST(DOTk_BoundLineSearchInexactNewtonCGNR, getMin_UsrDefGrad_LSR1Hess_ArmijoLS_NoPrec_FeasDir)
 {
     size_t ncontrols = 2;
-    std::tr1::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
     primal->allocateSerialControlArray(ncontrols, 2);
     primal->setControlLowerBound(0);
     primal->setControlUpperBound(5);
-    std::tr1::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
-    std::tr1::shared_ptr<dotk::DOTk_ProjectedLineSearchStep> step(new dotk::DOTk_ProjectedLineSearchStep(primal));
-    std::tr1::shared_ptr<dotk::DOTk_LineSearchMngTypeULP> mng(new dotk::DOTk_LineSearchMngTypeULP(primal, objective));
-    std::tr1::shared_ptr<dotk::DOTk_Hessian> hessian(new dotk::DOTk_Hessian);
+    std::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
+    std::shared_ptr<dotk::DOTk_ProjectedLineSearchStep> step(new dotk::DOTk_ProjectedLineSearchStep(primal));
+    std::shared_ptr<dotk::DOTk_LineSearchMngTypeULP> mng(new dotk::DOTk_LineSearchMngTypeULP(primal, objective));
+    std::shared_ptr<dotk::DOTk_Hessian> hessian(new dotk::DOTk_Hessian);
 
     step->setArmijoLineSearch(primal);
     mng->setUserDefinedGradient();
@@ -151,14 +151,14 @@ TEST(DOTk_BoundLineSearchInexactNewtonCGNR, getMin_UsrDefGrad_LSR1Hess_ArmijoLS_
 TEST(DOTk_BoundLineSearchInexactNewtonCGNR, getMin_UsrDefGrad_LSR1Hess_ArmijoLS_NoPrec_ScaledProjectionAlongFeasDir)
 {
     size_t ncontrols = 2;
-    std::tr1::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
     primal->allocateSerialControlArray(ncontrols, 2);
     primal->setControlLowerBound(0);
     primal->setControlUpperBound(5);
-    std::tr1::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
-    std::tr1::shared_ptr<dotk::DOTk_ProjectedLineSearchStep> step(new dotk::DOTk_ProjectedLineSearchStep(primal));
-    std::tr1::shared_ptr<dotk::DOTk_LineSearchMngTypeULP> mng(new dotk::DOTk_LineSearchMngTypeULP(primal, objective));
-    std::tr1::shared_ptr<dotk::DOTk_Hessian> hessian(new dotk::DOTk_Hessian);
+    std::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
+    std::shared_ptr<dotk::DOTk_ProjectedLineSearchStep> step(new dotk::DOTk_ProjectedLineSearchStep(primal));
+    std::shared_ptr<dotk::DOTk_LineSearchMngTypeULP> mng(new dotk::DOTk_LineSearchMngTypeULP(primal, objective));
+    std::shared_ptr<dotk::DOTk_Hessian> hessian(new dotk::DOTk_Hessian);
 
     step->setProjectionAlongFeasibleDirConstraint(primal);
     step->setArmijoLineSearch(primal);
@@ -178,14 +178,14 @@ TEST(DOTk_BoundLineSearchInexactNewtonCGNR, getMin_UsrDefGrad_LSR1Hess_ArmijoLS_
 TEST(DOTk_BoundLineSearchInexactNewtonCGNR, getMin_UsrDefGrad_DFPHess_ArmijoLS_NoPrec_FeasDir)
 {
     size_t ncontrols = 2;
-    std::tr1::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
     primal->allocateSerialControlArray(ncontrols, 2);
     primal->setControlLowerBound(0);
     primal->setControlUpperBound(5);
-    std::tr1::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
-    std::tr1::shared_ptr<dotk::DOTk_ProjectedLineSearchStep> step(new dotk::DOTk_ProjectedLineSearchStep(primal));
-    std::tr1::shared_ptr<dotk::DOTk_LineSearchMngTypeULP> mng(new dotk::DOTk_LineSearchMngTypeULP(primal, objective));
-    std::tr1::shared_ptr<dotk::DOTk_Hessian> hessian(new dotk::DOTk_Hessian);
+    std::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
+    std::shared_ptr<dotk::DOTk_ProjectedLineSearchStep> step(new dotk::DOTk_ProjectedLineSearchStep(primal));
+    std::shared_ptr<dotk::DOTk_LineSearchMngTypeULP> mng(new dotk::DOTk_LineSearchMngTypeULP(primal, objective));
+    std::shared_ptr<dotk::DOTk_Hessian> hessian(new dotk::DOTk_Hessian);
 
     step->setArmijoLineSearch(primal);
     mng->setUserDefinedGradient();
@@ -203,14 +203,14 @@ TEST(DOTk_BoundLineSearchInexactNewtonCGNR, getMin_UsrDefGrad_DFPHess_ArmijoLS_N
 TEST(DOTk_BoundLineSearchInexactNewtonCGNR, getMin_UsrDefGrad_DFPHess_ArmijoLS_NoPrec_ScaledProjectionAlongFeasDir)
 {
     size_t ncontrols = 2;
-    std::tr1::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
     primal->allocateSerialControlArray(ncontrols, 2);
     primal->setControlLowerBound(0);
     primal->setControlUpperBound(5);
-    std::tr1::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
-    std::tr1::shared_ptr<dotk::DOTk_ProjectedLineSearchStep> step(new dotk::DOTk_ProjectedLineSearchStep(primal));
-    std::tr1::shared_ptr<dotk::DOTk_LineSearchMngTypeULP> mng(new dotk::DOTk_LineSearchMngTypeULP(primal, objective));
-    std::tr1::shared_ptr<dotk::DOTk_Hessian> hessian(new dotk::DOTk_Hessian);
+    std::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
+    std::shared_ptr<dotk::DOTk_ProjectedLineSearchStep> step(new dotk::DOTk_ProjectedLineSearchStep(primal));
+    std::shared_ptr<dotk::DOTk_LineSearchMngTypeULP> mng(new dotk::DOTk_LineSearchMngTypeULP(primal, objective));
+    std::shared_ptr<dotk::DOTk_Hessian> hessian(new dotk::DOTk_Hessian);
 
     step->setProjectionAlongFeasibleDirConstraint(primal);
     step->setArmijoLineSearch(primal);
@@ -230,14 +230,14 @@ TEST(DOTk_BoundLineSearchInexactNewtonCGNR, getMin_UsrDefGrad_DFPHess_ArmijoLS_N
 TEST(DOTk_BoundLineSearchInexactNewtonCGNR, getMin_UsrDefGrad_BBHess_ArmijoLS_NoPrec_FeasDir)
 {
     size_t ncontrols = 2;
-    std::tr1::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
     primal->allocateSerialControlArray(ncontrols, 2);
     primal->setControlLowerBound(0);
     primal->setControlUpperBound(5);
-    std::tr1::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
-    std::tr1::shared_ptr<dotk::DOTk_ProjectedLineSearchStep> step(new dotk::DOTk_ProjectedLineSearchStep(primal));
-    std::tr1::shared_ptr<dotk::DOTk_LineSearchMngTypeULP> mng(new dotk::DOTk_LineSearchMngTypeULP(primal, objective));
-    std::tr1::shared_ptr<dotk::DOTk_Hessian> hessian(new dotk::DOTk_Hessian);
+    std::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
+    std::shared_ptr<dotk::DOTk_ProjectedLineSearchStep> step(new dotk::DOTk_ProjectedLineSearchStep(primal));
+    std::shared_ptr<dotk::DOTk_LineSearchMngTypeULP> mng(new dotk::DOTk_LineSearchMngTypeULP(primal, objective));
+    std::shared_ptr<dotk::DOTk_Hessian> hessian(new dotk::DOTk_Hessian);
 
     step->setArmijoLineSearch(primal);
     mng->setUserDefinedGradient();
@@ -255,14 +255,14 @@ TEST(DOTk_BoundLineSearchInexactNewtonCGNR, getMin_UsrDefGrad_BBHess_ArmijoLS_No
 TEST(DOTk_BoundLineSearchInexactNewtonCGNR, getMin_UsrDefGrad_BBHess_ArmijoLS_NoPrec_ScaledProjectionAlongFeasDir)
 {
     size_t ncontrols = 2;
-    std::tr1::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
     primal->allocateSerialControlArray(ncontrols, 2);
     primal->setControlLowerBound(0);
     primal->setControlUpperBound(5);
-    std::tr1::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
-    std::tr1::shared_ptr<dotk::DOTk_ProjectedLineSearchStep> step(new dotk::DOTk_ProjectedLineSearchStep(primal));
-    std::tr1::shared_ptr<dotk::DOTk_LineSearchMngTypeULP> mng(new dotk::DOTk_LineSearchMngTypeULP(primal, objective));
-    std::tr1::shared_ptr<dotk::DOTk_Hessian> hessian(new dotk::DOTk_Hessian);
+    std::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
+    std::shared_ptr<dotk::DOTk_ProjectedLineSearchStep> step(new dotk::DOTk_ProjectedLineSearchStep(primal));
+    std::shared_ptr<dotk::DOTk_LineSearchMngTypeULP> mng(new dotk::DOTk_LineSearchMngTypeULP(primal, objective));
+    std::shared_ptr<dotk::DOTk_Hessian> hessian(new dotk::DOTk_Hessian);
 
     step->setProjectionAlongFeasibleDirConstraint(primal);
     step->setArmijoLineSearch(primal);
@@ -281,14 +281,14 @@ TEST(DOTk_BoundLineSearchInexactNewtonCGNR, getMin_UsrDefGrad_BBHess_ArmijoLS_No
 TEST(DOTk_BoundLineSearchInexactNewtonCGNR, getMin_UsrDefGrad_SR1Hess_ArmijoLS_NoPrec_FeasDir)
 {
     size_t ncontrols = 2;
-    std::tr1::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
     primal->allocateSerialControlArray(ncontrols, 2);
     primal->setControlLowerBound(0);
     primal->setControlUpperBound(5);
-    std::tr1::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
-    std::tr1::shared_ptr<dotk::DOTk_ProjectedLineSearchStep> step(new dotk::DOTk_ProjectedLineSearchStep(primal));
-    std::tr1::shared_ptr<dotk::DOTk_LineSearchMngTypeULP> mng(new dotk::DOTk_LineSearchMngTypeULP(primal, objective));
-    std::tr1::shared_ptr<dotk::DOTk_Hessian> hessian(new dotk::DOTk_Hessian);
+    std::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
+    std::shared_ptr<dotk::DOTk_ProjectedLineSearchStep> step(new dotk::DOTk_ProjectedLineSearchStep(primal));
+    std::shared_ptr<dotk::DOTk_LineSearchMngTypeULP> mng(new dotk::DOTk_LineSearchMngTypeULP(primal, objective));
+    std::shared_ptr<dotk::DOTk_Hessian> hessian(new dotk::DOTk_Hessian);
 
     step->setArmijoLineSearch(primal);
     mng->setUserDefinedGradient();
@@ -306,14 +306,14 @@ TEST(DOTk_BoundLineSearchInexactNewtonCGNR, getMin_UsrDefGrad_SR1Hess_ArmijoLS_N
 TEST(DOTk_BoundLineSearchInexactNewtonCGNR, getMin_UsrDefGrad_SR1Hess_ArmijoLS_NoPrec_ScaledProjectionAlongFeasDir)
 {
     size_t ncontrols = 2;
-    std::tr1::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
     primal->allocateSerialControlArray(ncontrols, 2);
     primal->setControlLowerBound(0);
     primal->setControlUpperBound(5);
-    std::tr1::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
-    std::tr1::shared_ptr<dotk::DOTk_ProjectedLineSearchStep> step(new dotk::DOTk_ProjectedLineSearchStep(primal));
-    std::tr1::shared_ptr<dotk::DOTk_LineSearchMngTypeULP> mng(new dotk::DOTk_LineSearchMngTypeULP(primal, objective));
-    std::tr1::shared_ptr<dotk::DOTk_Hessian> hessian(new dotk::DOTk_Hessian);
+    std::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
+    std::shared_ptr<dotk::DOTk_ProjectedLineSearchStep> step(new dotk::DOTk_ProjectedLineSearchStep(primal));
+    std::shared_ptr<dotk::DOTk_LineSearchMngTypeULP> mng(new dotk::DOTk_LineSearchMngTypeULP(primal, objective));
+    std::shared_ptr<dotk::DOTk_Hessian> hessian(new dotk::DOTk_Hessian);
 
     step->setProjectionAlongFeasibleDirConstraint(primal);
     step->setArmijoLineSearch(primal);

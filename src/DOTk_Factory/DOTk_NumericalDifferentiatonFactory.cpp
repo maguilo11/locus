@@ -44,49 +44,49 @@ void DOTk_NumericalDifferentiatonFactory::type(dotk::types::numerical_integratio
 }
 
 void DOTk_NumericalDifferentiatonFactory::buildForwardDifferenceHessian
-(const dotk::Vector<Real> & input_, std::tr1::shared_ptr<dotk::DOTk_NumericalDifferentiation> & output_)
+(const dotk::Vector<Real> & input_, std::shared_ptr<dotk::DOTk_NumericalDifferentiation> & output_)
 {
     this->type(dotk::types::FORWARD_FINITE_DIFF);
     output_.reset(new dotk::DOTk_ForwardFiniteDifference(input_));
 }
 
 void DOTk_NumericalDifferentiatonFactory::buildBackwardDifferenceHessian
-(const dotk::Vector<Real> & input_, std::tr1::shared_ptr<dotk::DOTk_NumericalDifferentiation> & output_)
+(const dotk::Vector<Real> & input_, std::shared_ptr<dotk::DOTk_NumericalDifferentiation> & output_)
 {
     this->type(dotk::types::BACKWARD_FINITE_DIFF);
     output_.reset(new dotk::DOTk_BackwardFiniteDifference(input_));
 }
 
 void DOTk_NumericalDifferentiatonFactory::buildCentralDifferenceHessian
-(const dotk::Vector<Real> & input_, std::tr1::shared_ptr<dotk::DOTk_NumericalDifferentiation> & output_)
+(const dotk::Vector<Real> & input_, std::shared_ptr<dotk::DOTk_NumericalDifferentiation> & output_)
 {
     this->type(dotk::types::CENTRAL_FINITE_DIFF);
     output_.reset(new dotk::DOTk_CentralFiniteDifference(input_));
 }
 
 void DOTk_NumericalDifferentiatonFactory::buildSecondOrderForwardDifferenceHessian
-(const dotk::Vector<Real> & input_, std::tr1::shared_ptr<dotk::DOTk_NumericalDifferentiation> & output_)
+(const dotk::Vector<Real> & input_, std::shared_ptr<dotk::DOTk_NumericalDifferentiation> & output_)
 {
     this->type(dotk::types::SECOND_ORDER_FORWARD_FINITE_DIFF);
     output_.reset(new dotk::DOTk_SecondOrderForwardFiniteDifference(input_));
 }
 
 void DOTk_NumericalDifferentiatonFactory::buildThirdOrderForwardDifferenceHessian
-(const dotk::Vector<Real> & input_, std::tr1::shared_ptr<dotk::DOTk_NumericalDifferentiation> & output_)
+(const dotk::Vector<Real> & input_, std::shared_ptr<dotk::DOTk_NumericalDifferentiation> & output_)
 {
     this->type(dotk::types::THIRD_ORDER_FORWARD_FINITE_DIFF);
     output_.reset(new dotk::DOTk_ThirdOrderForwardFiniteDifference(input_));
 }
 
 void DOTk_NumericalDifferentiatonFactory::buildThirdOrderBackwardDifferenceHessian
-(const dotk::Vector<Real> & input_, std::tr1::shared_ptr<dotk::DOTk_NumericalDifferentiation> & output_)
+(const dotk::Vector<Real> & input_, std::shared_ptr<dotk::DOTk_NumericalDifferentiation> & output_)
 {
     this->type(dotk::types::THIRD_ORDER_BACKWARD_FINITE_DIFF);
     output_.reset(new dotk::DOTk_ThirdOrderBackwardFiniteDifference(input_));
 }
 
 void DOTk_NumericalDifferentiatonFactory::build(const dotk::Vector<Real> & input_,
-                                                std::tr1::shared_ptr<dotk::DOTk_NumericalDifferentiation> & output_)
+                                                std::shared_ptr<dotk::DOTk_NumericalDifferentiation> & output_)
 {
     switch(this->type())
     {

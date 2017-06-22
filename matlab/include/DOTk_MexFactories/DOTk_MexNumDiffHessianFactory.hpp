@@ -9,7 +9,7 @@
 #define DOTK_MEXNUMDIFFHESSIANFACTORY_HPP_
 
 #include <mex.h>
-#include <tr1/memory>
+#include <memory>
 
 namespace dotk
 {
@@ -24,7 +24,7 @@ namespace mex
 
 void buildNumericallyDifferentiatedHessian(const mxArray* options_,
                                            const Vector<double> & input_,
-                                           std::tr1::shared_ptr<dotk::NumericallyDifferentiatedHessian> & output_);
+                                           std::shared_ptr<dotk::NumericallyDifferentiatedHessian> & output_);
 
 }
 

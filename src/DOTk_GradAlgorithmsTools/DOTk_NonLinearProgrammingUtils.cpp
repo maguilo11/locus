@@ -17,10 +17,10 @@ namespace dotk
 namespace nlp
 {
 
-std::tr1::shared_ptr<dotk::Vector<Real> > clone(dotk::nlp::variables & variables_,
+std::shared_ptr<dotk::Vector<Real> > clone(dotk::nlp::variables & variables_,
                                                 dotk::types::variable_t codomain_)
 {
-    std::tr1::shared_ptr<dotk::Vector<Real> > output;
+    std::shared_ptr<dotk::Vector<Real> > output;
     switch(codomain_)
     {
         case dotk::types::STATE:

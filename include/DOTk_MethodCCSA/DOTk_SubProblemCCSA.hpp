@@ -9,7 +9,7 @@
 #ifndef DOTK_SUBPROBLEMCCSA_HPP_
 #define DOTK_SUBPROBLEMCCSA_HPP_
 
-#include <tr1/memory>
+#include <memory>
 #include "DOTk_UtilsCCSA.hpp"
 
 namespace dotk
@@ -42,7 +42,7 @@ public:
     void setDualObjectiveTrialControlBoundScaling(Real input_);
 
     virtual void setDualObjectiveEpsilonParameter(Real input_) = 0;
-    virtual void solve(const std::tr1::shared_ptr<dotk::DOTk_DataMngCCSA> & data_mng_) = 0;
+    virtual void solve(const std::shared_ptr<dotk::DOTk_DataMngCCSA> & data_mng_) = 0;
 
 private:
     dotk::ccsa::subproblem_t m_Type;

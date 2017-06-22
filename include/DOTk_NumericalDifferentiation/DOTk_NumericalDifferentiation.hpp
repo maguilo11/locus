@@ -8,7 +8,7 @@
 #ifndef DOTK_NUMERICALDIFFERENTIATION_HPP_
 #define DOTK_NUMERICALDIFFERENTIATION_HPP_
 
-#include <tr1/memory>
+#include <memory>
 #include "DOTk_Types.hpp"
 
 namespace dotk
@@ -29,7 +29,7 @@ public:
     void setEpsilon(Real epsilon_);
     dotk::types::numerical_integration_t type() const;
 
-    virtual void differentiate(const std::tr1::shared_ptr<dotk::DOTk_Functor> & operator_,
+    virtual void differentiate(const std::shared_ptr<dotk::DOTk_Functor> & operator_,
                                const dotk::Vector<Real> & primal_,
                                const dotk::Vector<Real> & direction_,
                                const dotk::Vector<Real> & first_derivative_,

@@ -45,8 +45,8 @@ dotk::types::projection_t DOTk_OrthogonalProjectionFactory::getFactoryType() con
 }
 
 void DOTk_OrthogonalProjectionFactory::buildGramSchmidt
-(const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_,
- std::tr1::shared_ptr<dotk::DOTk_OrthogonalProjection> & projection_)
+(const std::shared_ptr<dotk::DOTk_Primal> & primal_,
+ std::shared_ptr<dotk::DOTk_OrthogonalProjection> & projection_)
 {
     this->setFactoryType(dotk::types::GRAM_SCHMIDT);
     size_t krylov_subspace_dim = this->getKrylovSubspaceDim();
@@ -54,8 +54,8 @@ void DOTk_OrthogonalProjectionFactory::buildGramSchmidt
 }
 
 void DOTk_OrthogonalProjectionFactory::buildArnoldiProjection
-(const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_,
- std::tr1::shared_ptr<dotk::DOTk_OrthogonalProjection> & projection_)
+(const std::shared_ptr<dotk::DOTk_Primal> & primal_,
+ std::shared_ptr<dotk::DOTk_OrthogonalProjection> & projection_)
 {
     this->setFactoryType(dotk::types::ARNOLDI);
     size_t krylov_subspace_dim = this->getKrylovSubspaceDim();
@@ -63,8 +63,8 @@ void DOTk_OrthogonalProjectionFactory::buildArnoldiProjection
 }
 
 void DOTk_OrthogonalProjectionFactory::build
-(const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_,
- std::tr1::shared_ptr<dotk::DOTk_OrthogonalProjection> & projection_)
+(const std::shared_ptr<dotk::DOTk_Primal> & primal_,
+ std::shared_ptr<dotk::DOTk_OrthogonalProjection> & projection_)
 {
     switch (this->getFactoryType())
     {

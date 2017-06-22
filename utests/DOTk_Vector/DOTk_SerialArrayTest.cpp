@@ -53,7 +53,7 @@ TEST(DOTk_SerialArrayTest, abs)
 
     array.abs();
 
-    std::tr1::shared_ptr<dotk::Vector<double> > gold = array.clone();
+    std::shared_ptr<dotk::Vector<double> > gold = array.clone();
     gold->fill(111.);
     int thread_count = 4;
     dotk::gtest::checkResults(*gold, array, thread_count);
@@ -66,7 +66,7 @@ TEST(DOTk_SerialArrayTest, scale)
 
     array.scale(3.);
 
-    std::tr1::shared_ptr<dotk::Vector<double> > gold = array.clone();
+    std::shared_ptr<dotk::Vector<double> > gold = array.clone();
     gold->fill(3.);
     int thread_count = 4;
     dotk::gtest::checkResults(*gold, array, thread_count);
@@ -80,7 +80,7 @@ TEST(DOTk_SerialArrayTest, elementWiseMultiplication)
 
     x.elementWiseMultiplication(y);
 
-    std::tr1::shared_ptr<dotk::Vector<double> > gold = x.clone();
+    std::shared_ptr<dotk::Vector<double> > gold = x.clone();
     gold->fill(4.);
     int thread_count = 4;
     dotk::gtest::checkResults(*gold, x, thread_count);
@@ -94,7 +94,7 @@ TEST(DOTk_SerialArrayTest, axpy)
 
     y.update(3., x, 1.);
 
-    std::tr1::shared_ptr<dotk::Vector<double> > gold = x.clone();
+    std::shared_ptr<dotk::Vector<double> > gold = x.clone();
     gold->fill(4.);
     int thread_count = 4;
     dotk::gtest::checkResults(*gold, y, thread_count);
@@ -138,11 +138,11 @@ TEST(DOTk_SerialArrayTest, copy)
 {
     int dim = 1e4;
     dotk::StdArray<double> array(dim, 1.);
-    std::tr1::shared_ptr<dotk::Vector<double> > y = array.clone();
+    std::shared_ptr<dotk::Vector<double> > y = array.clone();
 
     y->update(1., array, 0.);
 
-    std::tr1::shared_ptr<dotk::Vector<double> > gold = array.clone();
+    std::shared_ptr<dotk::Vector<double> > gold = array.clone();
     gold->fill(1.);
     int thread_count = 4;
     dotk::gtest::checkResults(*gold, *y, thread_count);

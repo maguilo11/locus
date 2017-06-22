@@ -8,6 +8,8 @@
 #ifndef DOTK_GTESTDOTKVECTOOLS_HPP_
 #define DOTK_GTESTDOTKVECTOOLS_HPP_
 
+#include <memory>
+
 #include "DOTK_Types.hpp"
 
 namespace dotk
@@ -21,8 +23,8 @@ class Vector;
 namespace gtest
 {
 
-std::tr1::shared_ptr<dotk::Vector<Real> > allocateControl();
-std::tr1::shared_ptr<dotk::Vector<Real> > allocateData(size_t num_entries_, Real value_ = 0);
+std::shared_ptr<dotk::Vector<Real> > allocateControl();
+std::shared_ptr<dotk::Vector<Real> > allocateData(size_t num_entries_, Real value_ = 0);
 
 void checkResults(const std::vector<Real> & results_, const std::vector<Real> & gold_, Real tol_ = 1e-8);
 void checkResults(const dotk::Vector<Real> & results_, const dotk::Vector<Real> & gold_, Real tol_ = 1e-8);

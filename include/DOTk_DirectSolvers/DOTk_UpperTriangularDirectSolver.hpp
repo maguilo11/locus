@@ -25,11 +25,11 @@ public:
     explicit DOTk_UpperTriangularDirectSolver(size_t num_unknowns_);
     virtual ~DOTk_UpperTriangularDirectSolver();
 
-    void backwardSolve(const std::tr1::shared_ptr<dotk::matrix<Real> > matrix_,
+    void backwardSolve(const std::shared_ptr<dotk::matrix<Real> > matrix_,
                        const std::vector<Real> & rhs_vec_,
                        std::vector<Real> & solution_vec_) const;
 
-    virtual void solve(const std::tr1::shared_ptr<dotk::matrix<Real> > matrix_,
+    virtual void solve(const std::shared_ptr<dotk::matrix<Real> > matrix_,
                        const std::vector<Real> & rhs_vec_,
                        std::vector<Real> & solution_vec_);
 

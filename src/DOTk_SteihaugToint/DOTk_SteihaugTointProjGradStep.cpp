@@ -20,8 +20,8 @@ namespace dotk
 {
 
 DOTk_SteihaugTointProjGradStep::DOTk_SteihaugTointProjGradStep
-(const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_,
- const std::tr1::shared_ptr<dotk::DOTk_LinearOperator> & linear_operator_) :
+(const std::shared_ptr<dotk::DOTk_Primal> & primal_,
+ const std::shared_ptr<dotk::DOTk_LinearOperator> & linear_operator_) :
         dotk::DOTk_TrustRegionStepMng(),
         m_MaxNumProjections(10),
         m_LineSearchContraction(0.5),
@@ -42,9 +42,9 @@ DOTk_SteihaugTointProjGradStep::DOTk_SteihaugTointProjGradStep
 }
 
 DOTk_SteihaugTointProjGradStep::DOTk_SteihaugTointProjGradStep
-(const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_,
- const std::tr1::shared_ptr<dotk::DOTk_LinearOperator> & linear_operator_,
- const std::tr1::shared_ptr<dotk::DOTk_Preconditioner> & preconditioner_) :
+(const std::shared_ptr<dotk::DOTk_Primal> & primal_,
+ const std::shared_ptr<dotk::DOTk_LinearOperator> & linear_operator_,
+ const std::shared_ptr<dotk::DOTk_Preconditioner> & preconditioner_) :
         dotk::DOTk_TrustRegionStepMng(),
         m_MaxNumProjections(10),
         m_LineSearchContraction(0.5),
@@ -103,9 +103,9 @@ void DOTk_SteihaugTointProjGradStep::setNumOptimizationItrDone(const size_t & it
     m_LinearOperator->setNumOtimizationItrDone(itr_);
 }
 
-void DOTk_SteihaugTointProjGradStep::solveSubProblem(const std::tr1::shared_ptr<dotk::DOTk_OptimizationDataMng> & mng_,
-                                                     const std::tr1::shared_ptr<dotk::DOTk_SteihaugTointSolver> & solver_,
-                                                     const std::tr1::shared_ptr<dotk::DOTk_SteihaugTointNewtonIO> & io_)
+void DOTk_SteihaugTointProjGradStep::solveSubProblem(const std::shared_ptr<dotk::DOTk_OptimizationDataMng> & mng_,
+                                                     const std::shared_ptr<dotk::DOTk_SteihaugTointSolver> & solver_,
+                                                     const std::shared_ptr<dotk::DOTk_SteihaugTointNewtonIO> & io_)
 {
     m_ActiveSet->fill(0);
     Real new_objective_value = 0.;
@@ -152,7 +152,7 @@ void DOTk_SteihaugTointProjGradStep::solveSubProblem(const std::tr1::shared_ptr<
     m_LinearOperator->updateLimitedMemoryStorage(true);
 }
 
-void DOTk_SteihaugTointProjGradStep::initialize(const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_)
+void DOTk_SteihaugTointProjGradStep::initialize(const std::shared_ptr<dotk::DOTk_Primal> & primal_)
 {
     if(primal_->control().use_count() > 0)
     {
@@ -165,7 +165,7 @@ void DOTk_SteihaugTointProjGradStep::initialize(const std::tr1::shared_ptr<dotk:
     }
 }
 
-void DOTk_SteihaugTointProjGradStep::bounds(const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_)
+void DOTk_SteihaugTointProjGradStep::bounds(const std::shared_ptr<dotk::DOTk_Primal> & primal_)
 {
     bool control_bounds_active = (primal_->getControlLowerBound().use_count() > 0)
             && (primal_->getControlUpperBound().use_count() > 0);
@@ -179,7 +179,7 @@ void DOTk_SteihaugTointProjGradStep::bounds(const std::tr1::shared_ptr<dotk::DOT
     m_UpperBound->update(1., *primal_->getControlUpperBound(), 0.);
 }
 
-void DOTk_SteihaugTointProjGradStep::updateDataManager(const std::tr1::shared_ptr<dotk::DOTk_OptimizationDataMng> & mng_)
+void DOTk_SteihaugTointProjGradStep::updateDataManager(const std::shared_ptr<dotk::DOTk_OptimizationDataMng> & mng_)
 {
     mng_->getOldPrimal()->update(1., *m_CurrentPrimal, 0.);
     mng_->getOldGradient()->update(1., *mng_->getNewGradient(), 0.);
@@ -196,7 +196,7 @@ void DOTk_SteihaugTointProjGradStep::updateDataManager(const std::tr1::shared_pt
     mng_->setNormTrialStep(norm_projected_trial_step);
 }
 
-void DOTk_SteihaugTointProjGradStep::updateControl(const std::tr1::shared_ptr<dotk::DOTk_OptimizationDataMng> & mng_)
+void DOTk_SteihaugTointProjGradStep::updateControl(const std::shared_ptr<dotk::DOTk_OptimizationDataMng> & mng_)
 {
     Real step = 1.;
     Real predicted_reduction = 0.;
@@ -239,7 +239,7 @@ void DOTk_SteihaugTointProjGradStep::updateControl(const std::tr1::shared_ptr<do
 }
 
 void DOTk_SteihaugTointProjGradStep::computeProjectedCauchyStep
-(const std::tr1::shared_ptr<dotk::DOTk_OptimizationDataMng> & mng_)
+(const std::shared_ptr<dotk::DOTk_OptimizationDataMng> & mng_)
 {
     Real step = -1.;
     Real mu0 = this->getControlUpdateRoutineConstant();

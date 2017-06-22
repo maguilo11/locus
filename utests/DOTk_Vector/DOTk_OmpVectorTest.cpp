@@ -138,7 +138,7 @@ TEST(DOTk_OmpVectorTest, abs)
         printf("ABS WTime is %f\n", time);
     }
 
-    std::tr1::shared_ptr<dotk::Vector<double> > gold = x.clone();
+    std::shared_ptr<dotk::Vector<double> > gold = x.clone();
     gold->fill(12);
     dotk::gtest::checkResults(*gold, x, thread_count);
 }
@@ -171,7 +171,7 @@ TEST(DOTk_OmpVectorTest, scale)
         printf("WTime is %f\n", time);
     }
 
-    std::tr1::shared_ptr<dotk::Vector<double> > gold = vector.clone();
+    std::shared_ptr<dotk::Vector<double> > gold = vector.clone();
     gold->fill(3.);
     dotk::gtest::checkResults(*gold, vector, thread_count);
 }
@@ -204,7 +204,7 @@ TEST(DOTk_OmpVectorTest, elementWiseMultiplication)
         printf("WTime is %f\n", time);
     }
 
-    std::tr1::shared_ptr<dotk::Vector<double> > gold = x.clone();
+    std::shared_ptr<dotk::Vector<double> > gold = x.clone();
     gold->fill(4.);
     dotk::gtest::checkResults(*gold, x, thread_count);
 }
@@ -238,7 +238,7 @@ TEST(DOTk_OmpVectorTest, axpy)
         printf("WTime is %f\n", time);
     }
 
-    std::tr1::shared_ptr<dotk::Vector<double> > gold = x.clone();
+    std::shared_ptr<dotk::Vector<double> > gold = x.clone();
     gold->fill(4.);
     dotk::gtest::checkResults(*gold, y, thread_count);
 }
@@ -369,7 +369,7 @@ TEST(DOTk_OmpVectorTest, copy)
         printf("WTime is %f\n", time);
     }
 
-    std::tr1::shared_ptr<dotk::Vector<double> > gold = x.clone();
+    std::shared_ptr<dotk::Vector<double> > gold = x.clone();
     gold->fill(1.);
     dotk::gtest::checkResults(*gold, x, thread_count);
 }

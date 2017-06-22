@@ -122,12 +122,12 @@ dotk::types::stop_criterion_t DOTk_FirstOrderAlgorithm::getStoppingCriterion() c
     return (m_StoppingCriterion);
 }
 
-bool DOTk_FirstOrderAlgorithm::checkStoppingCriteria(const std::tr1::shared_ptr<dotk::DOTk_OptimizationDataMng> & mng_)
+bool DOTk_FirstOrderAlgorithm::checkStoppingCriteria(const std::shared_ptr<dotk::DOTk_OptimizationDataMng> & mng_)
 {
     /// Check reduced space algorithm convergence.\n
     /// Input: \n
     ///    mng_ = shared pointer to gradient based class data manager. \n
-    ///      (const std::tr1::shared_ptr<dotk::DOTk_OptimizationDataMng>)\n
+    ///      (const std::shared_ptr<dotk::DOTk_OptimizationDataMng>)\n
     ///
     bool stop = false;
     if(this->getNumItrDone() < 1)
@@ -172,12 +172,12 @@ bool DOTk_FirstOrderAlgorithm::checkStoppingCriteria(const std::tr1::shared_ptr<
     return (stop);
 }
 
-void DOTk_FirstOrderAlgorithm::resetCurrentStateToFormer(const std::tr1::shared_ptr<dotk::DOTk_OptimizationDataMng> & mng_)
+void DOTk_FirstOrderAlgorithm::resetCurrentStateToFormer(const std::shared_ptr<dotk::DOTk_OptimizationDataMng> & mng_)
 {
     /// Reset current state to former state solution \n
     /// Input/Output: \n
     ///    vector_space_ = shared pointer to reduced space algorithm vector space. \n
-    ///      (const std::tr1::shared_ptr<dotk::DOTk_VectorSpaceReduced>)\n
+    ///      (const std::shared_ptr<dotk::DOTk_VectorSpaceReduced>)\n
     ///
     mng_->getNewPrimal()->update(1., *mng_->getOldPrimal(), 0.);
     mng_->getNewGradient()->update(1., *mng_->getOldGradient(), 0.);

@@ -16,7 +16,7 @@
 namespace dotk
 {
 
-DOTk_LBFGSInvHessian::DOTk_LBFGSInvHessian(const std::tr1::shared_ptr<dotk::Vector<Real> > & vector_,
+DOTk_LBFGSInvHessian::DOTk_LBFGSInvHessian(const std::shared_ptr<dotk::Vector<Real> > & vector_,
                                            size_t max_secant_storage_) :
         dotk::DOTk_SecondOrderOperator(max_secant_storage_),
         m_Alpha(max_secant_storage_, 0.),
@@ -33,24 +33,24 @@ DOTk_LBFGSInvHessian::~DOTk_LBFGSInvHessian()
 {
 }
 
-const std::tr1::shared_ptr<std::vector<Real> > & DOTk_LBFGSInvHessian::getDeltaGradPrimalInnerProductStorage() const
+const std::shared_ptr<std::vector<Real> > & DOTk_LBFGSInvHessian::getDeltaGradPrimalInnerProductStorage() const
 {
     /// Return limited memory storage of inner product between deltaGradient and deltaPrimal
     return (m_RhoStorage);
 }
 
-const std::tr1::shared_ptr<dotk::Vector<Real> > & DOTk_LBFGSInvHessian::getDeltaGradStorage(size_t at_) const
+const std::shared_ptr<dotk::Vector<Real> > & DOTk_LBFGSInvHessian::getDeltaGradStorage(size_t at_) const
 {
     return (m_DeltaGradientStorage->basis(at_));
 }
 
-const std::tr1::shared_ptr<dotk::Vector<Real> > & DOTk_LBFGSInvHessian::getDeltaPrimalStorage(size_t at_) const
+const std::shared_ptr<dotk::Vector<Real> > & DOTk_LBFGSInvHessian::getDeltaPrimalStorage(size_t at_) const
 {
     return (m_DeltaPrimalStorage->basis(at_));
 }
 
-void DOTk_LBFGSInvHessian::getInvHessian(const std::tr1::shared_ptr<dotk::Vector<Real> > & vector_,
-                                         const std::tr1::shared_ptr<dotk::Vector<Real> > & inv_hess_times_vector_)
+void DOTk_LBFGSInvHessian::getInvHessian(const std::shared_ptr<dotk::Vector<Real> > & vector_,
+                                         const std::shared_ptr<dotk::Vector<Real> > & inv_hess_times_vector_)
 {
     int storage_size = dotk::DOTk_SecondOrderOperator::getNumUpdatesStored() - 1;
     inv_hess_times_vector_->update(1., *vector_, 0.);
@@ -64,7 +64,7 @@ void DOTk_LBFGSInvHessian::getInvHessian(const std::tr1::shared_ptr<dotk::Vector
     for (int index_i = storage_size; index_i >= 0; index_i--)
     {
         m_Alpha[index_i] = (*m_RhoStorage)[index_i] * m_DeltaPrimalStorage->basis(index_i)->dot(*inv_hess_times_vector_);
-        inv_hess_times_vector_->update(-m_Alpha[index_i], *m_DeltaGradientStorage->basis(index_i), 1.);
+        inv_hess_times_vector_->update(-m_Alpha[index_i], *(m_DeltaGradientStorage->basis(index_i)), static_cast<Real>(1.));
     }
 
     for(int index_j = 0; index_j <= storage_size; ++index_j)
@@ -82,9 +82,9 @@ void DOTk_LBFGSInvHessian::getInvHessian(const std::tr1::shared_ptr<dotk::Vector
     }
 }
 
-void DOTk_LBFGSInvHessian::apply(const std::tr1::shared_ptr<dotk::DOTk_OptimizationDataMng> & mng_,
-                                 const std::tr1::shared_ptr<dotk::Vector<Real> > & vector_,
-                                 const std::tr1::shared_ptr<dotk::Vector<Real> > & matrix_times_vector_)
+void DOTk_LBFGSInvHessian::apply(const std::shared_ptr<dotk::DOTk_OptimizationDataMng> & mng_,
+                                 const std::shared_ptr<dotk::Vector<Real> > & vector_,
+                                 const std::shared_ptr<dotk::Vector<Real> > & matrix_times_vector_)
 {
     dotk::DOTk_SecondOrderOperator::computeDeltaPrimal(mng_->getNewPrimal(), mng_->getOldPrimal(), m_DeltaPrimal);
     dotk::DOTk_SecondOrderOperator::computeDeltaGradient(mng_->getNewGradient(), mng_->getOldGradient(), m_DeltaGradient);

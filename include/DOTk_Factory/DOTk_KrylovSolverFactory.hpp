@@ -9,7 +9,7 @@
 #define DOTK_KRYLOVSOLVERFACTORY_HPP_
 
 #include <string>
-#include <tr1/memory>
+#include <memory>
 
 namespace dotk
 {
@@ -30,32 +30,32 @@ public:
     dotk::types::krylov_solver_t getFactoryType() const;
     void setFactoryType(dotk::types::krylov_solver_t type_);
 
-    void buildPrecGmresSolver(const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_,
-                              const std::tr1::shared_ptr<dotk::DOTk_LinearOperator> & linear_operator_,
+    void buildPrecGmresSolver(const std::shared_ptr<dotk::DOTk_Primal> & primal_,
+                              const std::shared_ptr<dotk::DOTk_LinearOperator> & linear_operator_,
                               size_t max_num_itr_,
-                              std::tr1::shared_ptr<dotk::DOTk_KrylovSolver> & solver_);
-    void buildLeftPrecCgSolver(const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_,
-                               const std::tr1::shared_ptr<dotk::DOTk_LinearOperator> & linear_operator_,
-                               std::tr1::shared_ptr<dotk::DOTk_KrylovSolver> & solver_);
-    void buildLeftPrecCrSolver(const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_,
-                               const std::tr1::shared_ptr<dotk::DOTk_LinearOperator> & linear_operator_,
-                               std::tr1::shared_ptr<dotk::DOTk_KrylovSolver> & solver_);
-    void buildLeftPrecGcrSolver(const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_,
-                                const std::tr1::shared_ptr<dotk::DOTk_LinearOperator> & linear_operator_,
+                              std::shared_ptr<dotk::DOTk_KrylovSolver> & solver_);
+    void buildLeftPrecCgSolver(const std::shared_ptr<dotk::DOTk_Primal> & primal_,
+                               const std::shared_ptr<dotk::DOTk_LinearOperator> & linear_operator_,
+                               std::shared_ptr<dotk::DOTk_KrylovSolver> & solver_);
+    void buildLeftPrecCrSolver(const std::shared_ptr<dotk::DOTk_Primal> & primal_,
+                               const std::shared_ptr<dotk::DOTk_LinearOperator> & linear_operator_,
+                               std::shared_ptr<dotk::DOTk_KrylovSolver> & solver_);
+    void buildLeftPrecGcrSolver(const std::shared_ptr<dotk::DOTk_Primal> & primal_,
+                                const std::shared_ptr<dotk::DOTk_LinearOperator> & linear_operator_,
                                 size_t max_num_itr_,
-                                std::tr1::shared_ptr<dotk::DOTk_KrylovSolver> & solver_);
-    void buildLeftPrecCgneSolver(const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_,
-                                 const std::tr1::shared_ptr<dotk::DOTk_LinearOperator> & linear_operator_,
-                                 std::tr1::shared_ptr<dotk::DOTk_KrylovSolver> & solver_);
-    void buildLeftPrecCgnrSolver(const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_,
-                                 const std::tr1::shared_ptr<dotk::DOTk_LinearOperator> & linear_operator_,
-                                 std::tr1::shared_ptr<dotk::DOTk_KrylovSolver> & solver_);
-    void buildProjLeftPrecCgSolver(const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_,
-                                   const std::tr1::shared_ptr<dotk::DOTk_LinearOperator> & linear_operator_,
+                                std::shared_ptr<dotk::DOTk_KrylovSolver> & solver_);
+    void buildLeftPrecCgneSolver(const std::shared_ptr<dotk::DOTk_Primal> & primal_,
+                                 const std::shared_ptr<dotk::DOTk_LinearOperator> & linear_operator_,
+                                 std::shared_ptr<dotk::DOTk_KrylovSolver> & solver_);
+    void buildLeftPrecCgnrSolver(const std::shared_ptr<dotk::DOTk_Primal> & primal_,
+                                 const std::shared_ptr<dotk::DOTk_LinearOperator> & linear_operator_,
+                                 std::shared_ptr<dotk::DOTk_KrylovSolver> & solver_);
+    void buildProjLeftPrecCgSolver(const std::shared_ptr<dotk::DOTk_Primal> & primal_,
+                                   const std::shared_ptr<dotk::DOTk_LinearOperator> & linear_operator_,
                                    size_t max_num_itr_,
-                                   std::tr1::shared_ptr<dotk::DOTk_KrylovSolver> & solver_);
-    void build(const std::tr1::shared_ptr<dotk::DOTk_KrylovSolverDataMng> & mng_,
-               std::tr1::shared_ptr<dotk::DOTk_KrylovSolver> & solver_);
+                                   std::shared_ptr<dotk::DOTk_KrylovSolver> & solver_);
+    void build(const std::shared_ptr<dotk::DOTk_KrylovSolverDataMng> & mng_,
+               std::shared_ptr<dotk::DOTk_KrylovSolver> & solver_);
 
 private:
     std::string mWarningMsg;

@@ -27,15 +27,15 @@ TEST(DOTk_ProjLeftPrecCgTest, checkOrthogonalityMeasure)
 {
     size_t nduals = 2;
     size_t ncontrols = 2;
-    std::tr1::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
     primal->allocateSerialDualArray(nduals);
     primal->allocateSerialControlArray(ncontrols);
-    std::tr1::shared_ptr<dotk::DOTk_NocedalAndWrightEquality> equality(new dotk::DOTk_NocedalAndWrightEquality);
-    std::tr1::shared_ptr<dotk::DOTk_NocedalAndWrightObjective> objective(new dotk::DOTk_NocedalAndWrightObjective);
-    std::tr1::shared_ptr<dotk::DOTk_TrustRegionMngTypeELP> mng(new dotk::DOTk_TrustRegionMngTypeELP(primal, objective, equality));
+    std::shared_ptr<dotk::DOTk_NocedalAndWrightEquality> equality(new dotk::DOTk_NocedalAndWrightEquality);
+    std::shared_ptr<dotk::DOTk_NocedalAndWrightObjective> objective(new dotk::DOTk_NocedalAndWrightObjective);
+    std::shared_ptr<dotk::DOTk_TrustRegionMngTypeELP> mng(new dotk::DOTk_TrustRegionMngTypeELP(primal, objective, equality));
 
     size_t krylov_subspace_dim = 3;
-    std::tr1::shared_ptr<dotk::DOTk_Hessian> hessian(new dotk::DOTk_Hessian);
+    std::shared_ptr<dotk::DOTk_Hessian> hessian(new dotk::DOTk_Hessian);
     dotk::DOTk_ProjectedLeftPrecCG solver(primal, hessian, krylov_subspace_dim);
 
     (*primal->dual())[0] = 1.;
@@ -119,7 +119,7 @@ TEST(DOTk_ProjLeftPrecCgTest, ppcg)
 {
     size_t nduals = 3;
     size_t ncontrols = 5;
-    std::tr1::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
     primal->allocateSerialDualArray(nduals);
     primal->allocateSerialControlArray(ncontrols);
     (*primal->control())[0] = -1.8;
@@ -127,9 +127,9 @@ TEST(DOTk_ProjLeftPrecCgTest, ppcg)
     (*primal->control())[2] = 1.9;
     (*primal->control())[3] = -0.8;
     (*primal->control())[4] = -0.8;
-    std::tr1::shared_ptr<dotk::DOTk_NocedalAndWrightEquality> equality(new dotk::DOTk_NocedalAndWrightEquality);
-    std::tr1::shared_ptr<dotk::DOTk_NocedalAndWrightObjective> objective(new dotk::DOTk_NocedalAndWrightObjective);
-    std::tr1::shared_ptr<dotk::DOTk_TrustRegionMngTypeELP>
+    std::shared_ptr<dotk::DOTk_NocedalAndWrightEquality> equality(new dotk::DOTk_NocedalAndWrightEquality);
+    std::shared_ptr<dotk::DOTk_NocedalAndWrightObjective> objective(new dotk::DOTk_NocedalAndWrightObjective);
+    std::shared_ptr<dotk::DOTk_TrustRegionMngTypeELP>
         mng(new dotk::DOTk_TrustRegionMngTypeELP(primal, objective, equality));
 
     (*primal->dual())[0] = 0.0207961931305597;
@@ -153,9 +153,9 @@ TEST(DOTk_ProjLeftPrecCgTest, ppcg)
     size_t itr = 200;
     primal->dual()->fill(0.);
     primal->control()->fill(0.);
-    std::tr1::shared_ptr<dotk::DOTk_Hessian> hessian(new dotk::DOTk_Hessian);
+    std::shared_ptr<dotk::DOTk_Hessian> hessian(new dotk::DOTk_Hessian);
     hessian->setFullSpaceHessian();
-    std::tr1::shared_ptr<dotk::DOTk_ProjLeftPrecCgDataMng> smng(new dotk::DOTk_ProjLeftPrecCgDataMng(primal, hessian, itr));
+    std::shared_ptr<dotk::DOTk_ProjLeftPrecCgDataMng> smng(new dotk::DOTk_ProjLeftPrecCgDataMng(primal, hessian, itr));
     smng->setAugmentedSystemPrecWithGmresSolver(primal);
 
     dotk::DOTk_ProjectedLeftPrecCG solver(smng);
@@ -168,11 +168,11 @@ TEST(DOTk_ProjLeftPrecCgTest, ppcg)
     solver.getDataMng()->getLeftPrec()->setParameter(dotk::types::NORM_GRADIENT, grad_norm);
 
     Real tolerance = 1e-12;
-    std::tr1::shared_ptr<dotk::DOTk_FixedCriterion> criterion(new dotk::DOTk_FixedCriterion(tolerance));
+    std::shared_ptr<dotk::DOTk_FixedCriterion> criterion(new dotk::DOTk_FixedCriterion(tolerance));
 
     solver.ppcg(solver.getDataMng()->getResidual(0), criterion, mng);
 
-    std::tr1::shared_ptr<dotk::Vector<Real> > gold = primal->control()->clone();
+    std::shared_ptr<dotk::Vector<Real> > gold = primal->control()->clone();
     (*gold)[0] = 0.0196000125684081;
     (*gold)[1] = -0.0219737165126789;
     (*gold)[2] = 0.0361541754328155;

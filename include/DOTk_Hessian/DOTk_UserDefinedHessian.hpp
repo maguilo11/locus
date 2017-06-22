@@ -24,9 +24,9 @@ public:
     DOTk_UserDefinedHessian();
     virtual ~DOTk_UserDefinedHessian();
 
-    virtual void apply(const std::tr1::shared_ptr<dotk::DOTk_OptimizationDataMng> & mng_,
-                       const std::tr1::shared_ptr<dotk::Vector<Real> > & vector_,
-                       const std::tr1::shared_ptr<dotk::Vector<Real> > & hessian_times_vector_);
+    virtual void apply(const std::shared_ptr<dotk::DOTk_OptimizationDataMng> & mng_,
+                       const std::shared_ptr<dotk::Vector<Real> > & vector_,
+                       const std::shared_ptr<dotk::Vector<Real> > & hessian_times_vector_);
 
 private:
     DOTk_UserDefinedHessian(const dotk::DOTk_UserDefinedHessian &);

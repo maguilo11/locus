@@ -21,7 +21,7 @@
 namespace dotk
 {
 
-DOTk_ProjectedLeftPrecCG::DOTk_ProjectedLeftPrecCG(const std::tr1::shared_ptr<dotk::DOTk_KrylovSolverDataMng> & mng_) :
+DOTk_ProjectedLeftPrecCG::DOTk_ProjectedLeftPrecCG(const std::shared_ptr<dotk::DOTk_KrylovSolverDataMng> & mng_) :
         dotk::DOTk_KrylovSolver(dotk::types::PROJECTED_PREC_CG),
         m_InexactnessTolerance(1e-12),
         m_OrthogonalityTolerance(0.5),
@@ -33,8 +33,8 @@ DOTk_ProjectedLeftPrecCG::DOTk_ProjectedLeftPrecCG(const std::tr1::shared_ptr<do
     this->initialize();
 }
 
-DOTk_ProjectedLeftPrecCG::DOTk_ProjectedLeftPrecCG(const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_,
-                                                   const std::tr1::shared_ptr<dotk::DOTk_LinearOperator> & operator_,
+DOTk_ProjectedLeftPrecCG::DOTk_ProjectedLeftPrecCG(const std::shared_ptr<dotk::DOTk_Primal> & primal_,
+                                                   const std::shared_ptr<dotk::DOTk_LinearOperator> & operator_,
                                                    size_t max_num_itr_) :
         dotk::DOTk_KrylovSolver(dotk::types::PROJECTED_PREC_CG),
         m_InexactnessTolerance(1e-12),
@@ -81,17 +81,17 @@ void DOTk_ProjectedLeftPrecCG::setMaxNumKrylovSolverItr(size_t itr_)
     m_DataMng->setMaxNumSolverItr(itr_);
 }
 
-const std::tr1::shared_ptr<dotk::DOTk_KrylovSolverDataMng> & DOTk_ProjectedLeftPrecCG::getDataMng() const
+const std::shared_ptr<dotk::DOTk_KrylovSolverDataMng> & DOTk_ProjectedLeftPrecCG::getDataMng() const
 {
     return (m_DataMng);
 }
 
-const std::tr1::shared_ptr<dotk::DOTk_LinearOperator> & DOTk_ProjectedLeftPrecCG::getLinearOperator() const
+const std::shared_ptr<dotk::DOTk_LinearOperator> & DOTk_ProjectedLeftPrecCG::getLinearOperator() const
 {
     return (m_DataMng->getLinearOperator());
 }
 
-const std::tr1::shared_ptr<dotk::Vector<Real> > &
+const std::shared_ptr<dotk::Vector<Real> > &
 DOTk_ProjectedLeftPrecCG::getDescentDirection()
 {
     return (m_ProjectedConjugateDirection);
@@ -128,8 +128,8 @@ bool DOTk_ProjectedLeftPrecCG::checkOrthogonalityMeasure()
     return (invalid_orthogonality_measure);
 }
 
-void DOTk_ProjectedLeftPrecCG::initialize(const std::tr1::shared_ptr<dotk::Vector<Real> > & rhs_vec_,
-                                          const std::tr1::shared_ptr<dotk::DOTk_OptimizationDataMng> & mng_)
+void DOTk_ProjectedLeftPrecCG::initialize(const std::shared_ptr<dotk::Vector<Real> > & rhs_vec_,
+                                          const std::shared_ptr<dotk::DOTk_OptimizationDataMng> & mng_)
 {
     this->clear();
     size_t itr = 0;
@@ -140,13 +140,13 @@ void DOTk_ProjectedLeftPrecCG::initialize(const std::tr1::shared_ptr<dotk::Vecto
     m_DataMng->getResidual(itr)->update(1., *m_DataMng->getLeftPrecTimesVector(itr), 0.);
 }
 
-void DOTk_ProjectedLeftPrecCG::ppcg(const std::tr1::shared_ptr<dotk::Vector<Real> > & rhs_vec_,
-                                    const std::tr1::shared_ptr<dotk::DOTk_KrylovSolverStoppingCriterion> & criterion_,
-                                    const std::tr1::shared_ptr<dotk::DOTk_OptimizationDataMng> & optimization_data_mng_)
+void DOTk_ProjectedLeftPrecCG::ppcg(const std::shared_ptr<dotk::Vector<Real> > & rhs_vec_,
+                                    const std::shared_ptr<dotk::DOTk_KrylovSolverStoppingCriterion> & criterion_,
+                                    const std::shared_ptr<dotk::DOTk_OptimizationDataMng> & optimization_data_mng_)
 {
     size_t itr = 0;
     this->initialize(rhs_vec_, optimization_data_mng_);
-    const std::tr1::shared_ptr<dotk::DOTk_OrthogonalProjection> & projection = m_DataMng->getProjection();
+    const std::shared_ptr<dotk::DOTk_OrthogonalProjection> & projection = m_DataMng->getProjection();
     while(1)
     {
         this->setFirstSolution();
@@ -208,9 +208,9 @@ void DOTk_ProjectedLeftPrecCG::ppcg(const std::tr1::shared_ptr<dotk::Vector<Real
     }
 }
 
-void DOTk_ProjectedLeftPrecCG::solve(const std::tr1::shared_ptr<dotk::Vector<Real> > & rhs_vec_,
-                                     const std::tr1::shared_ptr<dotk::DOTk_KrylovSolverStoppingCriterion> & criterion_,
-                                     const std::tr1::shared_ptr<dotk::DOTk_OptimizationDataMng> & mng_)
+void DOTk_ProjectedLeftPrecCG::solve(const std::shared_ptr<dotk::Vector<Real> > & rhs_vec_,
+                                     const std::shared_ptr<dotk::DOTk_KrylovSolverStoppingCriterion> & criterion_,
+                                     const std::shared_ptr<dotk::DOTk_OptimizationDataMng> & mng_)
 {
     this->ppcg(rhs_vec_, criterion_, mng_);
 }
@@ -243,7 +243,7 @@ bool DOTk_ProjectedLeftPrecCG::checkInexactnessMeasure(Real curvature_,
 {
     bool invalid_inexactness_measure = false;
     size_t current_itr = dotk::DOTk_KrylovSolver::getNumSolverItrDone();
-    const std::tr1::shared_ptr<dotk::DOTk_OrthogonalProjection> & projection = m_DataMng->getProjection();
+    const std::shared_ptr<dotk::DOTk_OrthogonalProjection> & projection = m_DataMng->getProjection();
 
     Real norm_proj_prec_res_dot_proj_prec_res = projection->getOrthogonalVector(current_itr)->norm();
 

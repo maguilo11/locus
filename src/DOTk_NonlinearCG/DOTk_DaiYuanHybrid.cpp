@@ -31,9 +31,9 @@ void DOTk_DaiYuanHybrid::setWolfeConstant(Real value_)
 {
     mWolfeConstant = value_;
 }
-Real DOTk_DaiYuanHybrid::computeScaleFactor(const std::tr1::shared_ptr<dotk::Vector<Real> > & old_grad_,
-                                            const std::tr1::shared_ptr<dotk::Vector<Real> > & new_grad_,
-                                            const std::tr1::shared_ptr<dotk::Vector<Real> > & dir_)
+Real DOTk_DaiYuanHybrid::computeScaleFactor(const std::shared_ptr<dotk::Vector<Real> > & old_grad_,
+                                            const std::shared_ptr<dotk::Vector<Real> > & new_grad_,
+                                            const std::shared_ptr<dotk::Vector<Real> > & dir_)
 {
     Real new_grad_dot_new_grad = new_grad_->dot(*new_grad_);
     Real new_grad_dot_old_grad = new_grad_->dot(*old_grad_);
@@ -50,15 +50,15 @@ Real DOTk_DaiYuanHybrid::computeScaleFactor(const std::tr1::shared_ptr<dotk::Vec
     return (beta);
 }
 
-void DOTk_DaiYuanHybrid::getDirection(const std::tr1::shared_ptr<dotk::Vector<Real> > & old_grad_,
-                                      const std::tr1::shared_ptr<dotk::Vector<Real> > & new_grad_,
-                                      const std::tr1::shared_ptr<dotk::Vector<Real> > & dir_)
+void DOTk_DaiYuanHybrid::getDirection(const std::shared_ptr<dotk::Vector<Real> > & old_grad_,
+                                      const std::shared_ptr<dotk::Vector<Real> > & new_grad_,
+                                      const std::shared_ptr<dotk::Vector<Real> > & dir_)
 {
     Real beta = this->computeScaleFactor(old_grad_, new_grad_, dir_);
     dir_->update(-1., *new_grad_, beta);
 }
 
-void DOTk_DaiYuanHybrid::direction(const std::tr1::shared_ptr<dotk::DOTk_OptimizationDataMng> & mng_)
+void DOTk_DaiYuanHybrid::direction(const std::shared_ptr<dotk::DOTk_OptimizationDataMng> & mng_)
 {
     Real value = dotk::DOTk_DescentDirection::computeCosineAngle(mng_->getOldGradient(), mng_->getTrialStep());
     if(dotk::DOTk_DescentDirection::isTrialStepOrthogonalToSteepestDescent(value) == true)

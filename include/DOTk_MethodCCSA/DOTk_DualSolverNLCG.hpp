@@ -26,7 +26,7 @@ class DOTk_DualSolverNLCG : public dotk::DOTk_DualSolverCCSA
 {
     // Nonlinear Conjugate Gradient Dual Solver
 public:
-    explicit DOTk_DualSolverNLCG(const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_);
+    explicit DOTk_DualSolverNLCG(const std::shared_ptr<dotk::DOTk_Primal> & primal_);
     virtual ~DOTk_DualSolverNLCG();
 
     dotk::types::nonlinearcg_t getNonlinearCgType() const;
@@ -42,13 +42,13 @@ public:
     Real getOldObjectiveFunctionValue() const;
 
     virtual void reset();
-    virtual void solve(const std::tr1::shared_ptr<dotk::DOTk_ObjectiveFunction<Real> > & objective_,
-                       const std::tr1::shared_ptr<dotk::Vector<Real> > & solution_);
-    void step(const std::tr1::shared_ptr<dotk::DOTk_ObjectiveFunction<Real> > & objective_);
+    virtual void solve(const std::shared_ptr<dotk::DOTk_ObjectiveFunction<Real> > & objective_,
+                       const std::shared_ptr<dotk::Vector<Real> > & solution_);
+    void step(const std::shared_ptr<dotk::DOTk_ObjectiveFunction<Real> > & objective_);
 
 private:
     Real computeScaling();
-    void initialize(const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_);
+    void initialize(const std::shared_ptr<dotk::DOTk_Primal> & primal_);
     bool stoppingCriteriaSatisfied();
     Real quadraticInterpolationModel(const std::vector<Real> step_values_,
                                      const std::vector<Real> objective_function_values_,
@@ -57,13 +57,13 @@ private:
 private:
     dotk::types::nonlinearcg_t m_NonlinearCgType;
 
-    std::tr1::shared_ptr<dotk::Vector<Real> > m_TrialDual;
-    std::tr1::shared_ptr<dotk::Vector<Real> > m_ProjectedStep;
-    std::tr1::shared_ptr<dotk::Vector<Real> > m_DualLowerBound;
-    std::tr1::shared_ptr<dotk::Vector<Real> > m_DualUpperBound;
+    std::shared_ptr<dotk::Vector<Real> > m_TrialDual;
+    std::shared_ptr<dotk::Vector<Real> > m_ProjectedStep;
+    std::shared_ptr<dotk::Vector<Real> > m_DualLowerBound;
+    std::shared_ptr<dotk::Vector<Real> > m_DualUpperBound;
 
-    std::tr1::shared_ptr<dotk::DOTk_BoundConstraints> m_Bounds;
-    std::tr1::shared_ptr<dotk::DOTk_DataMngNonlinearCG> m_DataMng;
+    std::shared_ptr<dotk::DOTk_BoundConstraints> m_Bounds;
+    std::shared_ptr<dotk::DOTk_DataMngNonlinearCG> m_DataMng;
 
 private:
     DOTk_DualSolverNLCG(const dotk::DOTk_DualSolverNLCG &);

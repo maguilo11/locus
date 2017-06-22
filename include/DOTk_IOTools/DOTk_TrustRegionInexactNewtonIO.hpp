@@ -8,6 +8,7 @@
 #ifndef DOTK_TRUSTREGIONINEXACTNEWTONIO_HPP_
 #define DOTK_TRUSTREGIONINEXACTNEWTONIO_HPP_
 
+#include <memory>
 #include <fstream>
 
 namespace dotk
@@ -32,8 +33,8 @@ public:
     void closeFile();
     void openFile(const char * const name_);
     void printDiagnosticReport(const dotk::DOTk_TrustRegionInexactNewton * const alg_,
-                               const std::tr1::shared_ptr<dotk::DOTk_KrylovSolver> & solver_,
-                               const std::tr1::shared_ptr<dotk::DOTk_TrustRegionAlgorithmsDataMng> & opt_mng_,
+                               const std::shared_ptr<dotk::DOTk_KrylovSolver> & solver_,
+                               const std::shared_ptr<dotk::DOTk_TrustRegionAlgorithmsDataMng> & opt_mng_,
                                bool did_trust_region_subproblem_converged_ = false);
 
 private:
@@ -42,16 +43,16 @@ private:
 
     void writeHeader();
     void writeDiagnostics(const dotk::DOTk_TrustRegionInexactNewton * const alg_,
-                          const std::tr1::shared_ptr<dotk::DOTk_KrylovSolver> & solver_,
-                          const std::tr1::shared_ptr<dotk::DOTk_TrustRegionAlgorithmsDataMng> & mng_);
+                          const std::shared_ptr<dotk::DOTk_KrylovSolver> & solver_,
+                          const std::shared_ptr<dotk::DOTk_TrustRegionAlgorithmsDataMng> & mng_);
     void writeInitialDiagnostics(const dotk::DOTk_TrustRegionInexactNewton * const alg_,
-                                 const std::tr1::shared_ptr<dotk::DOTk_TrustRegionAlgorithmsDataMng> & mng_);
+                                 const std::shared_ptr<dotk::DOTk_TrustRegionAlgorithmsDataMng> & mng_);
     void writeTrustRegionSubProblemDiagnostics(const dotk::DOTk_TrustRegionInexactNewton * const alg_,
-                                               const std::tr1::shared_ptr<dotk::DOTk_KrylovSolver> & solver_,
-                                               const std::tr1::shared_ptr<dotk::DOTk_TrustRegionAlgorithmsDataMng> & mng_);
+                                               const std::shared_ptr<dotk::DOTk_KrylovSolver> & solver_,
+                                               const std::shared_ptr<dotk::DOTk_TrustRegionAlgorithmsDataMng> & mng_);
     void writeFullTrustRegionSubProblemDiagnostics(const dotk::DOTk_TrustRegionInexactNewton * const alg_,
-                                                   const std::tr1::shared_ptr<dotk::DOTk_KrylovSolver> & solver_,
-                                                   const std::tr1::shared_ptr<dotk::DOTk_TrustRegionAlgorithmsDataMng> & mng_);
+                                                   const std::shared_ptr<dotk::DOTk_KrylovSolver> & solver_,
+                                                   const std::shared_ptr<dotk::DOTk_TrustRegionAlgorithmsDataMng> & mng_);
 
 private:
     bool m_PrintLicenseFlag;

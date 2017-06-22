@@ -24,19 +24,19 @@ public:
     explicit DOTk_DFPHessian(const dotk::Vector<Real> & vector_);
     virtual ~DOTk_DFPHessian();
 
-    const std::tr1::shared_ptr<dotk::Vector<Real> > & getDeltaGrad() const;
-    const std::tr1::shared_ptr<dotk::Vector<Real> > & getDeltaPrimal() const;
+    const std::shared_ptr<dotk::Vector<Real> > & getDeltaGrad() const;
+    const std::shared_ptr<dotk::Vector<Real> > & getDeltaPrimal() const;
 
-    void getHessian(const std::tr1::shared_ptr<dotk::Vector<Real> > & vec_,
-                    const std::tr1::shared_ptr<dotk::Vector<Real> > & hess_times_vec_);
-    virtual void apply(const std::tr1::shared_ptr<dotk::DOTk_OptimizationDataMng> & mng_,
-                       const std::tr1::shared_ptr<dotk::Vector<Real> > & vec_,
-                       const std::tr1::shared_ptr<dotk::Vector<Real> > & matrix_times_vec_);
+    void getHessian(const std::shared_ptr<dotk::Vector<Real> > & vec_,
+                    const std::shared_ptr<dotk::Vector<Real> > & hess_times_vec_);
+    virtual void apply(const std::shared_ptr<dotk::DOTk_OptimizationDataMng> & mng_,
+                       const std::shared_ptr<dotk::Vector<Real> > & vec_,
+                       const std::shared_ptr<dotk::Vector<Real> > & matrix_times_vec_);
 
 private:
-    std::tr1::shared_ptr<dotk::Vector<Real> > m_DeltaPrimal;
-    std::tr1::shared_ptr<dotk::Vector<Real> > m_DeltaGradient;
-    std::tr1::shared_ptr<dotk::Vector<Real> > m_HessTimesVec;
+    std::shared_ptr<dotk::Vector<Real> > m_DeltaPrimal;
+    std::shared_ptr<dotk::Vector<Real> > m_DeltaGradient;
+    std::shared_ptr<dotk::Vector<Real> > m_HessTimesVec;
 
 private:
     DOTk_DFPHessian(const dotk::DOTk_DFPHessian &);

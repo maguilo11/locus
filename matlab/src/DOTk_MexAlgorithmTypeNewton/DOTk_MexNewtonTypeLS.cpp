@@ -113,7 +113,7 @@ void DOTk_MexNewtonTypeLS::setAlgorithmParameters(dotk::DOTk_LineSearchInexactNe
 }
 
 void DOTk_MexNewtonTypeLS::setLineSearchMethodParameters
-(const std::tr1::shared_ptr<dotk::DOTk_LineSearchStepMng> & step_)
+(const std::shared_ptr<dotk::DOTk_LineSearchStepMng> & step_)
 {
     size_t max_num_itr = this->getMaxNumLineSearchItr();
     step_->setMaxNumIterations(max_num_itr);
@@ -129,23 +129,23 @@ void DOTk_MexNewtonTypeLS::solveTypeLinearProgramming(const mxArray* input_[], m
     mxArray* mx_initial_control = dotk::mex::parseInitialControl(input_[0]);
     dotk::MexVector controls(mx_initial_control);
     mxDestroyArray(mx_initial_control);
-    std::tr1::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
     primal->allocateUserDefinedControl(controls);
 
     // Set objective function and data manager
     dotk::types::problem_t problem_type = DOTk_MexAlgorithmTypeNewton::getProblemType();
-    std::tr1::shared_ptr<dotk::DOTk_MexObjectiveFunction>
+    std::shared_ptr<dotk::DOTk_MexObjectiveFunction>
         objective(new dotk::DOTk_MexObjectiveFunction(m_ObjectiveFunction, problem_type));
-    std::tr1::shared_ptr<dotk::DOTk_LineSearchMngTypeULP>
+    std::shared_ptr<dotk::DOTk_LineSearchMngTypeULP>
         data_mng(new dotk::DOTk_LineSearchMngTypeULP(primal, objective));
 
     // Set gradient and Hessian computation method
     dotk::mex::buildGradient(input_[0], data_mng);
-    std::tr1::shared_ptr<dotk::DOTk_Hessian> hessian(new dotk::DOTk_Hessian);
+    std::shared_ptr<dotk::DOTk_Hessian> hessian(new dotk::DOTk_Hessian);
     dotk::mex::buildHessian(input_[0], hessian);
 
     // Set line search step manager
-    std::tr1::shared_ptr<dotk::DOTk_LineSearchStep> step(new dotk::DOTk_LineSearchStep(primal));
+    std::shared_ptr<dotk::DOTk_LineSearchStep> step(new dotk::DOTk_LineSearchStep(primal));
     dotk::types::line_search_t line_search_type = this->getLineSearchMethod();
     step->build(primal, line_search_type);
     this->setLineSearchMethodParameters(step);
@@ -171,27 +171,27 @@ void DOTk_MexNewtonTypeLS::solveTypeNonlinearProgramming(const mxArray* input_[]
     mxDestroyArray(mx_initial_control);
 
     // Allocate DOTk data structures
-    std::tr1::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
     primal->allocateUserDefinedState(states);
     primal->allocateUserDefinedControl(controls);
 
     // Set objective function and equality constraint
     dotk::types::problem_t problem_type = DOTk_MexAlgorithmTypeNewton::getProblemType();
-    std::tr1::shared_ptr<dotk::DOTk_MexObjectiveFunction>
+    std::shared_ptr<dotk::DOTk_MexObjectiveFunction>
         objective(new dotk::DOTk_MexObjectiveFunction(m_ObjectiveFunction, problem_type));
     m_EqualityConstraint = dotk::mex::parseEqualityConstraint(input_[1]);
-    std::tr1::shared_ptr<dotk::DOTk_MexEqualityConstraint>
+    std::shared_ptr<dotk::DOTk_MexEqualityConstraint>
         equality(new dotk::DOTk_MexEqualityConstraint(m_EqualityConstraint, problem_type));
 
     // Set data manager and gradient/Hessian computation methods
-    std::tr1::shared_ptr<dotk::DOTk_LineSearchMngTypeUNP>
+    std::shared_ptr<dotk::DOTk_LineSearchMngTypeUNP>
         data_mng(new dotk::DOTk_LineSearchMngTypeUNP(primal, objective, equality));
     dotk::mex::buildGradient(input_[0], data_mng);
-    std::tr1::shared_ptr<dotk::DOTk_Hessian> hessian(new dotk::DOTk_Hessian);
+    std::shared_ptr<dotk::DOTk_Hessian> hessian(new dotk::DOTk_Hessian);
     dotk::mex::buildHessian(input_[0], hessian);
 
     // Set line search step manager
-    std::tr1::shared_ptr<dotk::DOTk_LineSearchStep> step(new dotk::DOTk_LineSearchStep(primal));
+    std::shared_ptr<dotk::DOTk_LineSearchStep> step(new dotk::DOTk_LineSearchStep(primal));
     dotk::types::line_search_t line_search_type = this->getLineSearchMethod();
     step->build(primal, line_search_type);
     this->setLineSearchMethodParameters(step);

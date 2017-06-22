@@ -9,7 +9,7 @@
 #define DOTK_OPTIMALITYCRITERIA_HPP_
 
 #include <sstream>
-#include <tr1/memory>
+#include <memory>
 #include "DOTk_Types.hpp"
 
 namespace dotk
@@ -31,10 +31,10 @@ class DOTk_InequalityConstraint;
 class DOTk_OptimalityCriteria
 {
 public:
-    DOTk_OptimalityCriteria(const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_,
-                            const std::tr1::shared_ptr<dotk::DOTk_ObjectiveFunction<Real> > & objective_,
-                            const std::tr1::shared_ptr<dotk::DOTk_EqualityConstraint<Real> > & equality_,
-                            const std::tr1::shared_ptr<dotk::DOTk_InequalityConstraint<Real> > & inequality_);
+    DOTk_OptimalityCriteria(const std::shared_ptr<dotk::DOTk_Primal> & primal_,
+                            const std::shared_ptr<dotk::DOTk_ObjectiveFunction<Real> > & objective_,
+                            const std::shared_ptr<dotk::DOTk_EqualityConstraint<Real> > & equality_,
+                            const std::shared_ptr<dotk::DOTk_InequalityConstraint<Real> > & inequality_);
     ~DOTk_OptimalityCriteria();
 
     size_t getNumItrDone() const;
@@ -74,8 +74,8 @@ private:
     bool m_PrintDiagnostics;
     Real m_ObjectiveFunctionValue;
     std::ostringstream m_OutputStream;
-    std::tr1::shared_ptr<dotk::DOTk_OptimalityCriteriaDataMng> m_DataMng;
-    std::tr1::shared_ptr<dotk::DOTk_OptimalityCriteriaRoutineMng> m_RoutineMng;
+    std::shared_ptr<dotk::DOTk_OptimalityCriteriaDataMng> m_DataMng;
+    std::shared_ptr<dotk::DOTk_OptimalityCriteriaRoutineMng> m_RoutineMng;
 
 private:
     DOTk_OptimalityCriteria(const dotk::DOTk_OptimalityCriteria &);

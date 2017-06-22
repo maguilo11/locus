@@ -26,17 +26,17 @@ public:
 
     Real getConstant() const;
     void setConstant(Real value_);
-    Real computeScaleFactor(const std::tr1::shared_ptr<dotk::Vector<Real> > & old_grad_,
-                            const std::tr1::shared_ptr<dotk::Vector<Real> > & new_grad_,
-                            const std::tr1::shared_ptr<dotk::Vector<Real> > & old_primal_,
-                            const std::tr1::shared_ptr<dotk::Vector<Real> > & new_primal_,
-                            const std::tr1::shared_ptr<dotk::Vector<Real> > & dir_);
-    void getDirection(const std::tr1::shared_ptr<dotk::Vector<Real> > & old_grad_,
-                      const std::tr1::shared_ptr<dotk::Vector<Real> > & new_grad_,
-                      const std::tr1::shared_ptr<dotk::Vector<Real> > & old_primal_,
-                      const std::tr1::shared_ptr<dotk::Vector<Real> > & new_primal_,
-                      const std::tr1::shared_ptr<dotk::Vector<Real> > & dir_);
-    virtual void direction(const std::tr1::shared_ptr<dotk::DOTk_OptimizationDataMng> & mng_);
+    Real computeScaleFactor(const std::shared_ptr<dotk::Vector<Real> > & old_grad_,
+                            const std::shared_ptr<dotk::Vector<Real> > & new_grad_,
+                            const std::shared_ptr<dotk::Vector<Real> > & old_primal_,
+                            const std::shared_ptr<dotk::Vector<Real> > & new_primal_,
+                            const std::shared_ptr<dotk::Vector<Real> > & dir_);
+    void getDirection(const std::shared_ptr<dotk::Vector<Real> > & old_grad_,
+                      const std::shared_ptr<dotk::Vector<Real> > & new_grad_,
+                      const std::shared_ptr<dotk::Vector<Real> > & old_primal_,
+                      const std::shared_ptr<dotk::Vector<Real> > & new_primal_,
+                      const std::shared_ptr<dotk::Vector<Real> > & dir_);
+    virtual void direction(const std::shared_ptr<dotk::DOTk_OptimizationDataMng> & mng_);
 
 private:
     Real mConstant;

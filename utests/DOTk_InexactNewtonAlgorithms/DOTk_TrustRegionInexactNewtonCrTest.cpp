@@ -25,14 +25,14 @@ namespace DOTkTrustRegionInexactNewtonCrTest
 TEST(DOTk_TrustRegionInexactNewtonCR, getMin_DoubleDoglegTR_DOTk_FreudensteinRothObjective)
 {
     size_t ncontrols = 2;
-    std::tr1::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
     primal->allocateSerialControlArray(ncontrols);
     (*primal->control())[0] = 0.5;
     (*primal->control())[1] = -2.0;
 
-    std::tr1::shared_ptr<dotk::DOTk_FreudensteinRothObjective> objective(new dotk::DOTk_FreudensteinRothObjective);
-    std::tr1::shared_ptr<dotk::DOTk_TrustRegionMngTypeULP> mng(new dotk::DOTk_TrustRegionMngTypeULP(primal, objective));
-    std::tr1::shared_ptr<dotk::DOTk_Hessian> hessian(new dotk::DOTk_Hessian);
+    std::shared_ptr<dotk::DOTk_FreudensteinRothObjective> objective(new dotk::DOTk_FreudensteinRothObjective);
+    std::shared_ptr<dotk::DOTk_TrustRegionMngTypeULP> mng(new dotk::DOTk_TrustRegionMngTypeULP(primal, objective));
+    std::shared_ptr<dotk::DOTk_Hessian> hessian(new dotk::DOTk_Hessian);
 
     mng->setUserDefinedGradient();
     mng->setDoubleDoglegTrustRegionMethod(mng->getTrialStep());
@@ -51,12 +51,12 @@ TEST(DOTk_TrustRegionInexactNewtonCR, getMin_DoubleDoglegTR_DOTk_FreudensteinRot
 TEST(DOTk_TrustRegionInexactNewtonCR, getMin_UsrDefGrad_UsrDefHess_DoubleDoglegTR_BealeObjective)
 {
     size_t ncontrols = 2;
-    std::tr1::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
     primal->allocateSerialControlArray(ncontrols, 1);
 
-    std::tr1::shared_ptr<dotk::DOTk_BealeObjective> objective(new dotk::DOTk_BealeObjective);
-    std::tr1::shared_ptr<dotk::DOTk_TrustRegionMngTypeULP> mng(new dotk::DOTk_TrustRegionMngTypeULP(primal, objective));
-    std::tr1::shared_ptr<dotk::DOTk_Hessian> hessian(new dotk::DOTk_Hessian);
+    std::shared_ptr<dotk::DOTk_BealeObjective> objective(new dotk::DOTk_BealeObjective);
+    std::shared_ptr<dotk::DOTk_TrustRegionMngTypeULP> mng(new dotk::DOTk_TrustRegionMngTypeULP(primal, objective));
+    std::shared_ptr<dotk::DOTk_Hessian> hessian(new dotk::DOTk_Hessian);
 
     mng->setUserDefinedGradient();
     mng->setDoubleDoglegTrustRegionMethod(mng->getTrialStep());
@@ -74,12 +74,12 @@ TEST(DOTk_TrustRegionInexactNewtonCR, getMin_UsrDefGrad_UsrDefHess_DoubleDoglegT
 TEST(DOTk_TrustRegionInexactNewtonCR, getMin_UsrDefGrad_UsrDefHess_DoglegTR_BealeObjective)
 {
     size_t ncontrols = 2;
-    std::tr1::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
     primal->allocateSerialControlArray(ncontrols, 1);
 
-    std::tr1::shared_ptr<dotk::DOTk_BealeObjective> objective(new dotk::DOTk_BealeObjective);
-    std::tr1::shared_ptr<dotk::DOTk_TrustRegionMngTypeULP> mng(new dotk::DOTk_TrustRegionMngTypeULP(primal, objective));
-    std::tr1::shared_ptr<dotk::DOTk_Hessian> hessian(new dotk::DOTk_Hessian);
+    std::shared_ptr<dotk::DOTk_BealeObjective> objective(new dotk::DOTk_BealeObjective);
+    std::shared_ptr<dotk::DOTk_TrustRegionMngTypeULP> mng(new dotk::DOTk_TrustRegionMngTypeULP(primal, objective));
+    std::shared_ptr<dotk::DOTk_Hessian> hessian(new dotk::DOTk_Hessian);
 
     mng->setDoglegTrustRegionMethod();
     mng->setUserDefinedGradient();
@@ -97,12 +97,12 @@ TEST(DOTk_TrustRegionInexactNewtonCR, getMin_UsrDefGrad_UsrDefHess_DoglegTR_Beal
 TEST(DOTk_TrustRegionInexactNewtonCR, getMin_UsrDefGrad_UsrDefHess_DoglegTR_NoPrec)
 {
     size_t ncontrols = 2;
-    std::tr1::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
     primal->allocateSerialControlArray(ncontrols, 2);
 
-    std::tr1::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
-    std::tr1::shared_ptr<dotk::DOTk_TrustRegionMngTypeULP> mng(new dotk::DOTk_TrustRegionMngTypeULP(primal, objective));
-    std::tr1::shared_ptr<dotk::DOTk_Hessian> hessian(new dotk::DOTk_Hessian);
+    std::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
+    std::shared_ptr<dotk::DOTk_TrustRegionMngTypeULP> mng(new dotk::DOTk_TrustRegionMngTypeULP(primal, objective));
+    std::shared_ptr<dotk::DOTk_Hessian> hessian(new dotk::DOTk_Hessian);
 
     mng->setDoglegTrustRegionMethod();
     mng->setUserDefinedGradient();
@@ -119,12 +119,12 @@ TEST(DOTk_TrustRegionInexactNewtonCR, getMin_UsrDefGrad_UsrDefHess_DoglegTR_NoPr
 TEST(DOTk_TrustRegionInexactNewtonCR, getMin_UsrDefGrad_UsrDefHess_DoubleDoglegTR_NoPrec)
 {
     size_t ncontrols = 2;
-    std::tr1::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
     primal->allocateSerialControlArray(ncontrols, 2);
 
-    std::tr1::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
-    std::tr1::shared_ptr<dotk::DOTk_TrustRegionMngTypeULP> mng(new dotk::DOTk_TrustRegionMngTypeULP(primal, objective));
-    std::tr1::shared_ptr<dotk::DOTk_Hessian> hessian(new dotk::DOTk_Hessian);
+    std::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
+    std::shared_ptr<dotk::DOTk_TrustRegionMngTypeULP> mng(new dotk::DOTk_TrustRegionMngTypeULP(primal, objective));
+    std::shared_ptr<dotk::DOTk_Hessian> hessian(new dotk::DOTk_Hessian);
 
     mng->setDoubleDoglegTrustRegionMethod(mng->getTrialStep());
     mng->setUserDefinedGradient();
@@ -141,12 +141,12 @@ TEST(DOTk_TrustRegionInexactNewtonCR, getMin_UsrDefGrad_UsrDefHess_DoubleDoglegT
 TEST(DOTk_TrustRegionInexactNewtonCR, getMin_UsrDefGrad_DFPHess_DoglegTR_NoPrec)
 {
     size_t ncontrols = 2;
-    std::tr1::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
     primal->allocateSerialControlArray(ncontrols, 2);
 
-    std::tr1::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
-    std::tr1::shared_ptr<dotk::DOTk_TrustRegionMngTypeULP> mng(new dotk::DOTk_TrustRegionMngTypeULP(primal, objective));
-    std::tr1::shared_ptr<dotk::DOTk_Hessian> hessian(new dotk::DOTk_Hessian);
+    std::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
+    std::shared_ptr<dotk::DOTk_TrustRegionMngTypeULP> mng(new dotk::DOTk_TrustRegionMngTypeULP(primal, objective));
+    std::shared_ptr<dotk::DOTk_Hessian> hessian(new dotk::DOTk_Hessian);
 
     mng->setDoglegTrustRegionMethod();
     mng->setUserDefinedGradient();
@@ -164,12 +164,12 @@ TEST(DOTk_TrustRegionInexactNewtonCR, getMin_UsrDefGrad_DFPHess_DoglegTR_NoPrec)
 TEST(DOTk_TrustRegionInexactNewtonCR, getMin_UsrDefGrad_DFPHess_DoubleDoglegTR_NoPrec)
 {
     size_t ncontrols = 2;
-    std::tr1::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
     primal->allocateSerialControlArray(ncontrols, 2);
 
-    std::tr1::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
-    std::tr1::shared_ptr<dotk::DOTk_TrustRegionMngTypeULP> mng(new dotk::DOTk_TrustRegionMngTypeULP(primal, objective));
-    std::tr1::shared_ptr<dotk::DOTk_Hessian> hessian(new dotk::DOTk_Hessian);
+    std::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
+    std::shared_ptr<dotk::DOTk_TrustRegionMngTypeULP> mng(new dotk::DOTk_TrustRegionMngTypeULP(primal, objective));
+    std::shared_ptr<dotk::DOTk_Hessian> hessian(new dotk::DOTk_Hessian);
 
     mng->setDoubleDoglegTrustRegionMethod(mng->getTrialStep());
     mng->setUserDefinedGradient();
@@ -187,12 +187,12 @@ TEST(DOTk_TrustRegionInexactNewtonCR, getMin_UsrDefGrad_DFPHess_DoubleDoglegTR_N
 TEST(DOTk_TrustRegionInexactNewtonCR, getMin_UsrDefGrad_BBHess_DoglegTR_NoPrec)
 {
     size_t ncontrols = 2;
-    std::tr1::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
     primal->allocateSerialControlArray(ncontrols, 2);
 
-    std::tr1::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
-    std::tr1::shared_ptr<dotk::DOTk_TrustRegionMngTypeULP> mng(new dotk::DOTk_TrustRegionMngTypeULP(primal, objective));
-    std::tr1::shared_ptr<dotk::DOTk_Hessian> hessian(new dotk::DOTk_Hessian);
+    std::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
+    std::shared_ptr<dotk::DOTk_TrustRegionMngTypeULP> mng(new dotk::DOTk_TrustRegionMngTypeULP(primal, objective));
+    std::shared_ptr<dotk::DOTk_Hessian> hessian(new dotk::DOTk_Hessian);
 
    mng->setDoglegTrustRegionMethod();
     mng->setUserDefinedGradient();
@@ -210,12 +210,12 @@ TEST(DOTk_TrustRegionInexactNewtonCR, getMin_UsrDefGrad_BBHess_DoglegTR_NoPrec)
 TEST(DOTk_TrustRegionInexactNewtonCR, getMin_UsrDefGrad_BBHess_DoubleDoglegTR_NoPrec)
 {
     size_t ncontrols = 2;
-    std::tr1::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
     primal->allocateSerialControlArray(ncontrols, 2);
 
-    std::tr1::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
-    std::tr1::shared_ptr<dotk::DOTk_TrustRegionMngTypeULP> mng(new dotk::DOTk_TrustRegionMngTypeULP(primal, objective));
-    std::tr1::shared_ptr<dotk::DOTk_Hessian> hessian(new dotk::DOTk_Hessian);
+    std::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
+    std::shared_ptr<dotk::DOTk_TrustRegionMngTypeULP> mng(new dotk::DOTk_TrustRegionMngTypeULP(primal, objective));
+    std::shared_ptr<dotk::DOTk_Hessian> hessian(new dotk::DOTk_Hessian);
 
     mng->setDoubleDoglegTrustRegionMethod(mng->getTrialStep());
     mng->setUserDefinedGradient();
@@ -233,12 +233,12 @@ TEST(DOTk_TrustRegionInexactNewtonCR, getMin_UsrDefGrad_BBHess_DoubleDoglegTR_No
 TEST(DOTk_TrustRegionInexactNewtonCR, getMin_UsrDefGrad_SR1Hess_DoglegTR_NoPrec)
 {
     size_t ncontrols = 2;
-    std::tr1::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
     primal->allocateSerialControlArray(ncontrols, 2);
 
-    std::tr1::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
-    std::tr1::shared_ptr<dotk::DOTk_TrustRegionMngTypeULP> mng(new dotk::DOTk_TrustRegionMngTypeULP(primal, objective));
-    std::tr1::shared_ptr<dotk::DOTk_Hessian> hessian(new dotk::DOTk_Hessian);
+    std::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
+    std::shared_ptr<dotk::DOTk_TrustRegionMngTypeULP> mng(new dotk::DOTk_TrustRegionMngTypeULP(primal, objective));
+    std::shared_ptr<dotk::DOTk_Hessian> hessian(new dotk::DOTk_Hessian);
 
     mng->setDoglegTrustRegionMethod();
     mng->setUserDefinedGradient();
@@ -256,12 +256,12 @@ TEST(DOTk_TrustRegionInexactNewtonCR, getMin_UsrDefGrad_SR1Hess_DoglegTR_NoPrec)
 TEST(DOTk_TrustRegionInexactNewtonCR, getMin_UsrDefGrad_SR1Hess_DoubleDoglegTR_NoPrec)
 {
     size_t ncontrols = 2;
-    std::tr1::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
     primal->allocateSerialControlArray(ncontrols, 2);
 
-    std::tr1::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
-    std::tr1::shared_ptr<dotk::DOTk_TrustRegionMngTypeULP> mng(new dotk::DOTk_TrustRegionMngTypeULP(primal, objective));
-    std::tr1::shared_ptr<dotk::DOTk_Hessian> hessian(new dotk::DOTk_Hessian);
+    std::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
+    std::shared_ptr<dotk::DOTk_TrustRegionMngTypeULP> mng(new dotk::DOTk_TrustRegionMngTypeULP(primal, objective));
+    std::shared_ptr<dotk::DOTk_Hessian> hessian(new dotk::DOTk_Hessian);
 
     mng->setDoubleDoglegTrustRegionMethod(mng->getTrialStep());
     mng->setUserDefinedGradient();
@@ -279,12 +279,12 @@ TEST(DOTk_TrustRegionInexactNewtonCR, getMin_UsrDefGrad_SR1Hess_DoubleDoglegTR_N
 TEST(DOTk_TrustRegionInexactNewtonCR, getMin_UsrDefGrad_LDFPHess_DoglegTR_NoPrec)
 {
     size_t ncontrols = 2;
-    std::tr1::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
     primal->allocateSerialControlArray(ncontrols, 2);
 
-    std::tr1::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
-    std::tr1::shared_ptr<dotk::DOTk_TrustRegionMngTypeULP> mng(new dotk::DOTk_TrustRegionMngTypeULP(primal, objective));
-    std::tr1::shared_ptr<dotk::DOTk_Hessian> hessian(new dotk::DOTk_Hessian);
+    std::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
+    std::shared_ptr<dotk::DOTk_TrustRegionMngTypeULP> mng(new dotk::DOTk_TrustRegionMngTypeULP(primal, objective));
+    std::shared_ptr<dotk::DOTk_Hessian> hessian(new dotk::DOTk_Hessian);
 
     mng->setDoglegTrustRegionMethod();
     mng->setUserDefinedGradient();
@@ -303,12 +303,12 @@ TEST(DOTk_TrustRegionInexactNewtonCR, getMin_UsrDefGrad_LDFPHess_DoglegTR_NoPrec
 TEST(DOTk_TrustRegionInexactNewtonCR, getMin_UsrDefGrad_LDFPHess_DoubleDoglegTR_NoPrec)
 {
     size_t ncontrols = 2;
-    std::tr1::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
     primal->allocateSerialControlArray(ncontrols, 2);
 
-    std::tr1::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
-    std::tr1::shared_ptr<dotk::DOTk_TrustRegionMngTypeULP> mng(new dotk::DOTk_TrustRegionMngTypeULP(primal, objective));
-    std::tr1::shared_ptr<dotk::DOTk_Hessian> hessian(new dotk::DOTk_Hessian);
+    std::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
+    std::shared_ptr<dotk::DOTk_TrustRegionMngTypeULP> mng(new dotk::DOTk_TrustRegionMngTypeULP(primal, objective));
+    std::shared_ptr<dotk::DOTk_Hessian> hessian(new dotk::DOTk_Hessian);
 
     mng->setDoubleDoglegTrustRegionMethod(mng->getTrialStep());
     mng->setUserDefinedGradient();
@@ -327,12 +327,12 @@ TEST(DOTk_TrustRegionInexactNewtonCR, getMin_UsrDefGrad_LDFPHess_DoubleDoglegTR_
 TEST(DOTk_TrustRegionInexactNewtonCR, getMin_UsrDefGrad_NumIntgHessFD_DoglegTR_NoPrec)
 {
     size_t ncontrols = 2;
-    std::tr1::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
     primal->allocateSerialControlArray(ncontrols, 2);
 
-    std::tr1::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
-    std::tr1::shared_ptr<dotk::DOTk_TrustRegionMngTypeULP> mng(new dotk::DOTk_TrustRegionMngTypeULP(primal, objective));
-    std::tr1::shared_ptr<dotk::NumericallyDifferentiatedHessian> hessian(new dotk::NumericallyDifferentiatedHessian(primal, objective));
+    std::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
+    std::shared_ptr<dotk::DOTk_TrustRegionMngTypeULP> mng(new dotk::DOTk_TrustRegionMngTypeULP(primal, objective));
+    std::shared_ptr<dotk::NumericallyDifferentiatedHessian> hessian(new dotk::NumericallyDifferentiatedHessian(primal, objective));
 
     hessian->setForwardDifference(*primal->control());
     mng->setUserDefinedGradient();
@@ -349,12 +349,12 @@ TEST(DOTk_TrustRegionInexactNewtonCR, getMin_UsrDefGrad_NumIntgHessFD_DoglegTR_N
 TEST(DOTk_TrustRegionInexactNewtonCR, getMin_UsrDefGrad_NumIntgHessBD_DoglegTR_NoPrec)
 {
     size_t ncontrols = 2;
-    std::tr1::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
     primal->allocateSerialControlArray(ncontrols, 2);
 
-    std::tr1::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
-    std::tr1::shared_ptr<dotk::DOTk_TrustRegionMngTypeULP> mng(new dotk::DOTk_TrustRegionMngTypeULP(primal, objective));
-    std::tr1::shared_ptr<dotk::NumericallyDifferentiatedHessian> hessian(new dotk::NumericallyDifferentiatedHessian(primal, objective));
+    std::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
+    std::shared_ptr<dotk::DOTk_TrustRegionMngTypeULP> mng(new dotk::DOTk_TrustRegionMngTypeULP(primal, objective));
+    std::shared_ptr<dotk::NumericallyDifferentiatedHessian> hessian(new dotk::NumericallyDifferentiatedHessian(primal, objective));
 
     hessian->setBackwardDifference(*primal->control(), 1e-7);
     mng->setUserDefinedGradient();
@@ -371,12 +371,12 @@ TEST(DOTk_TrustRegionInexactNewtonCR, getMin_UsrDefGrad_NumIntgHessBD_DoglegTR_N
 TEST(DOTk_TrustRegionInexactNewtonCR, getMin_UsrDefGrad_NumIntgHessCD_DoglegTR_NoPrec)
 {
     size_t ncontrols = 2;
-    std::tr1::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
     primal->allocateSerialControlArray(ncontrols, 2);
 
-    std::tr1::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
-    std::tr1::shared_ptr<dotk::DOTk_TrustRegionMngTypeULP> mng(new dotk::DOTk_TrustRegionMngTypeULP(primal, objective));
-    std::tr1::shared_ptr<dotk::NumericallyDifferentiatedHessian> hessian(new dotk::NumericallyDifferentiatedHessian(primal, objective));
+    std::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
+    std::shared_ptr<dotk::DOTk_TrustRegionMngTypeULP> mng(new dotk::DOTk_TrustRegionMngTypeULP(primal, objective));
+    std::shared_ptr<dotk::NumericallyDifferentiatedHessian> hessian(new dotk::NumericallyDifferentiatedHessian(primal, objective));
 
     hessian->setCentralDifference(*primal->control(), 1e-7);
     mng->setUserDefinedGradient();
@@ -393,12 +393,12 @@ TEST(DOTk_TrustRegionInexactNewtonCR, getMin_UsrDefGrad_NumIntgHessCD_DoglegTR_N
 TEST(DOTk_TrustRegionInexactNewtonCR, getMin_UsrDefGrad_NumIntgHessSoFD_DoglegTR_NoPrec)
 {
     size_t ncontrols = 2;
-    std::tr1::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
     primal->allocateSerialControlArray(ncontrols, 2);
 
-    std::tr1::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
-    std::tr1::shared_ptr<dotk::DOTk_TrustRegionMngTypeULP> mng(new dotk::DOTk_TrustRegionMngTypeULP(primal, objective));
-    std::tr1::shared_ptr<dotk::NumericallyDifferentiatedHessian> hessian(new dotk::NumericallyDifferentiatedHessian(primal, objective));
+    std::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
+    std::shared_ptr<dotk::DOTk_TrustRegionMngTypeULP> mng(new dotk::DOTk_TrustRegionMngTypeULP(primal, objective));
+    std::shared_ptr<dotk::NumericallyDifferentiatedHessian> hessian(new dotk::NumericallyDifferentiatedHessian(primal, objective));
 
     hessian->setSecondOrderForwardDifference(*primal->control(), 1e-7);
     mng->setUserDefinedGradient();
@@ -415,12 +415,12 @@ TEST(DOTk_TrustRegionInexactNewtonCR, getMin_UsrDefGrad_NumIntgHessSoFD_DoglegTR
 TEST(DOTk_TrustRegionInexactNewtonCR, getMin_UsrDefGrad_NumIntgHessToBD_DoglegTR_NoPrec)
 {
     size_t ncontrols = 2;
-    std::tr1::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
     primal->allocateSerialControlArray(ncontrols, 2);
 
-    std::tr1::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
-    std::tr1::shared_ptr<dotk::DOTk_TrustRegionMngTypeULP> mng(new dotk::DOTk_TrustRegionMngTypeULP(primal, objective));
-    std::tr1::shared_ptr<dotk::NumericallyDifferentiatedHessian> hessian(new dotk::NumericallyDifferentiatedHessian(primal, objective));
+    std::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
+    std::shared_ptr<dotk::DOTk_TrustRegionMngTypeULP> mng(new dotk::DOTk_TrustRegionMngTypeULP(primal, objective));
+    std::shared_ptr<dotk::NumericallyDifferentiatedHessian> hessian(new dotk::NumericallyDifferentiatedHessian(primal, objective));
 
     hessian->setThirdOrderBackwardDifference(*primal->control(), 1e-5);
     mng->setUserDefinedGradient();
@@ -437,12 +437,12 @@ TEST(DOTk_TrustRegionInexactNewtonCR, getMin_UsrDefGrad_NumIntgHessToBD_DoglegTR
 TEST(DOTk_TrustRegionInexactNewtonCR, getMin_UsrDefGrad_NumIntgHessToFD_DoglegTR_NoPrec)
 {
     size_t ncontrols = 2;
-    std::tr1::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
     primal->allocateSerialControlArray(ncontrols, 2);
 
-    std::tr1::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
-    std::tr1::shared_ptr<dotk::DOTk_TrustRegionMngTypeULP> mng(new dotk::DOTk_TrustRegionMngTypeULP(primal, objective));
-    std::tr1::shared_ptr<dotk::NumericallyDifferentiatedHessian> hessian(new dotk::NumericallyDifferentiatedHessian(primal, objective));
+    std::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
+    std::shared_ptr<dotk::DOTk_TrustRegionMngTypeULP> mng(new dotk::DOTk_TrustRegionMngTypeULP(primal, objective));
+    std::shared_ptr<dotk::NumericallyDifferentiatedHessian> hessian(new dotk::NumericallyDifferentiatedHessian(primal, objective));
 
     hessian->setThirdOrderForwardDifference(*primal->control(), 1e-5);
     mng->setUserDefinedGradient();
@@ -459,12 +459,12 @@ TEST(DOTk_TrustRegionInexactNewtonCR, getMin_UsrDefGrad_NumIntgHessToFD_DoglegTR
 TEST(DOTk_TrustRegionInexactNewtonCR, getMin_UsrDefGrad_NumIntgHessFD_DoubleDoglegTR_NoPrec)
 {
     size_t ncontrols = 2;
-    std::tr1::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
     primal->allocateSerialControlArray(ncontrols, 2);
 
-    std::tr1::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
-    std::tr1::shared_ptr<dotk::DOTk_TrustRegionMngTypeULP> mng(new dotk::DOTk_TrustRegionMngTypeULP(primal, objective));
-    std::tr1::shared_ptr<dotk::NumericallyDifferentiatedHessian> hessian(new dotk::NumericallyDifferentiatedHessian(primal, objective));
+    std::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
+    std::shared_ptr<dotk::DOTk_TrustRegionMngTypeULP> mng(new dotk::DOTk_TrustRegionMngTypeULP(primal, objective));
+    std::shared_ptr<dotk::NumericallyDifferentiatedHessian> hessian(new dotk::NumericallyDifferentiatedHessian(primal, objective));
 
     hessian->setForwardDifference(*primal->control(), 1e-7);
     mng->setDoubleDoglegTrustRegionMethod(mng->getTrialStep());
@@ -482,11 +482,11 @@ TEST(DOTk_TrustRegionInexactNewtonCR, getMin_UsrDefGrad_NumIntgHessFD_DoubleDogl
 TEST(DOTk_TrustRegionInexactNewtonCR, getMin_UsrDefGrad_NumIntgHessBD_DoubleDoglegTR_NoPrec)
 {
     size_t ncontrols = 2;
-    std::tr1::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
     primal->allocateSerialControlArray(ncontrols, 2);
-    std::tr1::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
-    std::tr1::shared_ptr<dotk::DOTk_TrustRegionMngTypeULP> mng(new dotk::DOTk_TrustRegionMngTypeULP(primal, objective));
-    std::tr1::shared_ptr<dotk::NumericallyDifferentiatedHessian> hessian(new dotk::NumericallyDifferentiatedHessian(primal, objective));
+    std::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
+    std::shared_ptr<dotk::DOTk_TrustRegionMngTypeULP> mng(new dotk::DOTk_TrustRegionMngTypeULP(primal, objective));
+    std::shared_ptr<dotk::NumericallyDifferentiatedHessian> hessian(new dotk::NumericallyDifferentiatedHessian(primal, objective));
 
     hessian->setBackwardDifference(*primal->control(), 1e-7);
     mng->setDoubleDoglegTrustRegionMethod(mng->getTrialStep());
@@ -504,12 +504,12 @@ TEST(DOTk_TrustRegionInexactNewtonCR, getMin_UsrDefGrad_NumIntgHessBD_DoubleDogl
 TEST(DOTk_TrustRegionInexactNewtonCR, getMin_UsrDefGrad_NumIntgHessCD_DoubleDoglegTR_NoPrec)
 {
     size_t ncontrols = 2;
-    std::tr1::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
     primal->allocateSerialControlArray(ncontrols, 2);
 
-    std::tr1::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
-    std::tr1::shared_ptr<dotk::DOTk_TrustRegionMngTypeULP> mng(new dotk::DOTk_TrustRegionMngTypeULP(primal, objective));
-    std::tr1::shared_ptr<dotk::NumericallyDifferentiatedHessian> hessian(new dotk::NumericallyDifferentiatedHessian(primal, objective));
+    std::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
+    std::shared_ptr<dotk::DOTk_TrustRegionMngTypeULP> mng(new dotk::DOTk_TrustRegionMngTypeULP(primal, objective));
+    std::shared_ptr<dotk::NumericallyDifferentiatedHessian> hessian(new dotk::NumericallyDifferentiatedHessian(primal, objective));
 
     hessian->setCentralDifference(*primal->control(), 5e-7);
     mng->setDoubleDoglegTrustRegionMethod(mng->getTrialStep());
@@ -527,12 +527,12 @@ TEST(DOTk_TrustRegionInexactNewtonCR, getMin_UsrDefGrad_NumIntgHessCD_DoubleDogl
 TEST(DOTk_TrustRegionInexactNewtonCR, getMin_UsrDefGrad_NumIntgHessSoFD_DoubleDoglegTR_NoPrec)
 {
     size_t ncontrols = 2;
-    std::tr1::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
     primal->allocateSerialControlArray(ncontrols, 2);
 
-    std::tr1::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
-    std::tr1::shared_ptr<dotk::DOTk_TrustRegionMngTypeULP> mng(new dotk::DOTk_TrustRegionMngTypeULP(primal, objective));
-    std::tr1::shared_ptr<dotk::NumericallyDifferentiatedHessian> hessian(new dotk::NumericallyDifferentiatedHessian(primal, objective));
+    std::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
+    std::shared_ptr<dotk::DOTk_TrustRegionMngTypeULP> mng(new dotk::DOTk_TrustRegionMngTypeULP(primal, objective));
+    std::shared_ptr<dotk::NumericallyDifferentiatedHessian> hessian(new dotk::NumericallyDifferentiatedHessian(primal, objective));
 
     hessian->setSecondOrderForwardDifference(*primal->control(), 1e-5);
     mng->setDoubleDoglegTrustRegionMethod(mng->getTrialStep());
@@ -550,12 +550,12 @@ TEST(DOTk_TrustRegionInexactNewtonCR, getMin_UsrDefGrad_NumIntgHessSoFD_DoubleDo
 TEST(DOTk_TrustRegionInexactNewtonCR, getMin_UsrDefGrad_NumIntgHessToFD_DoubleDoglegTR_NoPrec)
 {
     size_t ncontrols = 2;
-    std::tr1::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
     primal->allocateSerialControlArray(ncontrols, 2);
 
-    std::tr1::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
-    std::tr1::shared_ptr<dotk::DOTk_TrustRegionMngTypeULP> mng(new dotk::DOTk_TrustRegionMngTypeULP(primal, objective));
-    std::tr1::shared_ptr<dotk::NumericallyDifferentiatedHessian> hessian(new dotk::NumericallyDifferentiatedHessian(primal, objective));
+    std::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
+    std::shared_ptr<dotk::DOTk_TrustRegionMngTypeULP> mng(new dotk::DOTk_TrustRegionMngTypeULP(primal, objective));
+    std::shared_ptr<dotk::NumericallyDifferentiatedHessian> hessian(new dotk::NumericallyDifferentiatedHessian(primal, objective));
 
     hessian->setThirdOrderForwardDifference(*primal->control());
     mng->setDoubleDoglegTrustRegionMethod(mng->getTrialStep());
@@ -573,12 +573,12 @@ TEST(DOTk_TrustRegionInexactNewtonCR, getMin_UsrDefGrad_NumIntgHessToFD_DoubleDo
 TEST(DOTk_TrustRegionInexactNewtonCR, getMin_UsrDefGrad_NumIntgHessToBD_DoubleDoglegTR_NoPrec)
 {
     size_t ncontrols = 2;
-    std::tr1::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
     primal->allocateSerialControlArray(ncontrols, 2);
 
-    std::tr1::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
-    std::tr1::shared_ptr<dotk::DOTk_TrustRegionMngTypeULP> mng(new dotk::DOTk_TrustRegionMngTypeULP(primal, objective));
-    std::tr1::shared_ptr<dotk::NumericallyDifferentiatedHessian> hessian(new dotk::NumericallyDifferentiatedHessian(primal, objective));
+    std::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
+    std::shared_ptr<dotk::DOTk_TrustRegionMngTypeULP> mng(new dotk::DOTk_TrustRegionMngTypeULP(primal, objective));
+    std::shared_ptr<dotk::NumericallyDifferentiatedHessian> hessian(new dotk::NumericallyDifferentiatedHessian(primal, objective));
 
     hessian->setThirdOrderBackwardDifference(*primal->control());
     mng->setDoubleDoglegTrustRegionMethod(mng->getTrialStep());

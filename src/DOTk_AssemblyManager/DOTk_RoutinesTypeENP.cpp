@@ -18,9 +18,9 @@
 namespace dotk
 {
 
-DOTk_RoutinesTypeENP::DOTk_RoutinesTypeENP(const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_,
-                                           const std::tr1::shared_ptr<dotk::DOTk_ObjectiveFunction<Real> >& objective_,
-                                           const std::tr1::shared_ptr<dotk::DOTk_EqualityConstraint<Real> >& equality_) :
+DOTk_RoutinesTypeENP::DOTk_RoutinesTypeENP(const std::shared_ptr<dotk::DOTk_Primal> & primal_,
+                                           const std::shared_ptr<dotk::DOTk_ObjectiveFunction<Real> >& objective_,
+                                           const std::shared_ptr<dotk::DOTk_EqualityConstraint<Real> >& equality_) :
         dotk::DOTk_AssemblyManager(),
         m_StateWorkVector(),
         m_ControlWorkVector(),
@@ -34,7 +34,7 @@ DOTk_RoutinesTypeENP::~DOTk_RoutinesTypeENP()
 {
 }
 
-Real DOTk_RoutinesTypeENP::objective(const std::tr1::shared_ptr<dotk::Vector<Real> > & primal_)
+Real DOTk_RoutinesTypeENP::objective(const std::shared_ptr<dotk::Vector<Real> > & primal_)
 {
     /// DOTk interface: Objective function for nonlinear programming problems. \n
     ///
@@ -44,8 +44,8 @@ Real DOTk_RoutinesTypeENP::objective(const std::tr1::shared_ptr<dotk::Vector<Rea
 
     return (value);
 }
-void DOTk_RoutinesTypeENP::equalityConstraint(const std::tr1::shared_ptr<dotk::Vector<Real> > & primal_,
-                                              const std::tr1::shared_ptr<dotk::Vector<Real> > & output_)
+void DOTk_RoutinesTypeENP::equalityConstraint(const std::shared_ptr<dotk::Vector<Real> > & primal_,
+                                              const std::shared_ptr<dotk::Vector<Real> > & output_)
 {
     /// DOTk interface: Evaluate equality constraint for nonlinear programming problems. \n
     ///
@@ -54,9 +54,9 @@ void DOTk_RoutinesTypeENP::equalityConstraint(const std::tr1::shared_ptr<dotk::V
     dotk::DOTk_AssemblyManager::updateEqualityConstraintEvaluationCounter();
 }
 
-void DOTk_RoutinesTypeENP::gradient(const std::tr1::shared_ptr<dotk::Vector<Real> > & primal_,
-                                    const std::tr1::shared_ptr<dotk::Vector<Real> > & dual_,
-                                    const std::tr1::shared_ptr<dotk::Vector<Real> > & output_)
+void DOTk_RoutinesTypeENP::gradient(const std::shared_ptr<dotk::Vector<Real> > & primal_,
+                                    const std::shared_ptr<dotk::Vector<Real> > & dual_,
+                                    const std::shared_ptr<dotk::Vector<Real> > & output_)
 {
     /// DOTk interface: Assemble gradient operator for nonlinear programming problems. \n
     ///
@@ -82,9 +82,9 @@ void DOTk_RoutinesTypeENP::gradient(const std::tr1::shared_ptr<dotk::Vector<Real
     dotk::DOTk_AssemblyManager::updateGradientEvaluationCounter();
 }
 
-void DOTk_RoutinesTypeENP::jacobian(const std::tr1::shared_ptr<dotk::Vector<Real> > & primal_,
-                                    const std::tr1::shared_ptr<dotk::Vector<Real> > & delta_primal_,
-                                    const std::tr1::shared_ptr<dotk::Vector<Real> > & output_)
+void DOTk_RoutinesTypeENP::jacobian(const std::shared_ptr<dotk::Vector<Real> > & primal_,
+                                    const std::shared_ptr<dotk::Vector<Real> > & delta_primal_,
+                                    const std::shared_ptr<dotk::Vector<Real> > & output_)
 {
     /// DOTk interface: Compute the application of the perturbation vector to the Jacobian operator \n
     ///                 for nonlinear programming problems. \n
@@ -105,9 +105,9 @@ void DOTk_RoutinesTypeENP::jacobian(const std::tr1::shared_ptr<dotk::Vector<Real
     dotk::DOTk_AssemblyManager::updateJacobianEvaluationCounter();
 }
 
-void DOTk_RoutinesTypeENP::adjointJacobian(const std::tr1::shared_ptr<dotk::Vector<Real> > & primal_,
-                                           const std::tr1::shared_ptr<dotk::Vector<Real> > & dual_,
-                                           const std::tr1::shared_ptr<dotk::Vector<Real> > & output_)
+void DOTk_RoutinesTypeENP::adjointJacobian(const std::shared_ptr<dotk::Vector<Real> > & primal_,
+                                           const std::shared_ptr<dotk::Vector<Real> > & dual_,
+                                           const std::shared_ptr<dotk::Vector<Real> > & output_)
 {
     /// DOTk interface: Compute the application of the perturbation vector to the Jacobian operator \n
     ///                  for nonlinear programming problems. \n
@@ -127,10 +127,10 @@ void DOTk_RoutinesTypeENP::adjointJacobian(const std::tr1::shared_ptr<dotk::Vect
     dotk::DOTk_AssemblyManager::updateAdjointJacobianEvaluationCounter();
 }
 
-void DOTk_RoutinesTypeENP::hessian(const std::tr1::shared_ptr<dotk::Vector<Real> > & primal_,
-                                   const std::tr1::shared_ptr<dotk::Vector<Real> > & dual_,
-                                   const std::tr1::shared_ptr<dotk::Vector<Real> > & delta_primal_,
-                                   const std::tr1::shared_ptr<dotk::Vector<Real> > & output_)
+void DOTk_RoutinesTypeENP::hessian(const std::shared_ptr<dotk::Vector<Real> > & primal_,
+                                   const std::shared_ptr<dotk::Vector<Real> > & dual_,
+                                   const std::shared_ptr<dotk::Vector<Real> > & delta_primal_,
+                                   const std::shared_ptr<dotk::Vector<Real> > & output_)
 {
     /// DOTk interface: Compute the application of the perturbation vector to the Hessian operator \n
     ///                 for nonlinear programming problems. \n
@@ -197,7 +197,7 @@ void DOTk_RoutinesTypeENP::hessian(const std::tr1::shared_ptr<dotk::Vector<Real>
     dotk::DOTk_AssemblyManager::updateHessianEvaluationCounter();
 }
 
-void DOTk_RoutinesTypeENP::initialize(const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_)
+void DOTk_RoutinesTypeENP::initialize(const std::shared_ptr<dotk::DOTk_Primal> & primal_)
 {
     if(primal_->state().use_count() > 0)
     {

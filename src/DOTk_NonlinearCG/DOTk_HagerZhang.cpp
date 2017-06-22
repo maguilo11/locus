@@ -32,9 +32,9 @@ Real DOTk_HagerZhang::getLowerBoundLimit() const
     return (mLowerBoundLimit);
 }
 
-Real DOTk_HagerZhang::computeScaleFactor(const std::tr1::shared_ptr<dotk::Vector<Real> > & old_grad_,
-                                         const std::tr1::shared_ptr<dotk::Vector<Real> > & new_grad_,
-                                         const std::tr1::shared_ptr<dotk::Vector<Real> > & dir_)
+Real DOTk_HagerZhang::computeScaleFactor(const std::shared_ptr<dotk::Vector<Real> > & old_grad_,
+                                         const std::shared_ptr<dotk::Vector<Real> > & new_grad_,
+                                         const std::shared_ptr<dotk::Vector<Real> > & dir_)
 {
     Real dir_dot_new_grad = dir_->dot(*new_grad_);
     Real dir_dot_old_grad = dir_->dot(*old_grad_);
@@ -59,15 +59,15 @@ Real DOTk_HagerZhang::computeScaleFactor(const std::tr1::shared_ptr<dotk::Vector
     return (beta);
 }
 
-void DOTk_HagerZhang::getDirection(const std::tr1::shared_ptr<dotk::Vector<Real> > & old_grad_,
-                                   const std::tr1::shared_ptr<dotk::Vector<Real> > & new_grad_,
-                                   const std::tr1::shared_ptr<dotk::Vector<Real> > & dir_)
+void DOTk_HagerZhang::getDirection(const std::shared_ptr<dotk::Vector<Real> > & old_grad_,
+                                   const std::shared_ptr<dotk::Vector<Real> > & new_grad_,
+                                   const std::shared_ptr<dotk::Vector<Real> > & dir_)
 {
     Real beta = this->computeScaleFactor(old_grad_, new_grad_, dir_);
     dir_->update(static_cast<Real>(-1.0), *new_grad_, beta);
 }
 
-void DOTk_HagerZhang::direction(const std::tr1::shared_ptr<dotk::DOTk_OptimizationDataMng> & mng_)
+void DOTk_HagerZhang::direction(const std::shared_ptr<dotk::DOTk_OptimizationDataMng> & mng_)
 {
     Real value = dotk::DOTk_DescentDirection::computeCosineAngle(mng_->getOldGradient(), mng_->getTrialStep());
     if(dotk::DOTk_DescentDirection::isTrialStepOrthogonalToSteepestDescent(value) == true)

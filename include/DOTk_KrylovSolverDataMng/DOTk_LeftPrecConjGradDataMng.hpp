@@ -23,8 +23,8 @@ class Vector;
 class DOTk_LeftPrecConjGradDataMng : public dotk::DOTk_KrylovSolverDataMng
 {
 public:
-    DOTk_LeftPrecConjGradDataMng(const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_,
-                                 const std::tr1::shared_ptr<dotk::DOTk_LinearOperator> & linear_operator_);
+    DOTk_LeftPrecConjGradDataMng(const std::shared_ptr<dotk::DOTk_Primal> & primal_,
+                                 const std::shared_ptr<dotk::DOTk_LinearOperator> & linear_operator_);
     virtual ~DOTk_LeftPrecConjGradDataMng();
 
     void setLbfgsSecantLeftPreconditioner(size_t secant_storage_);
@@ -34,15 +34,15 @@ public:
     void setBfgsSecantLeftPreconditioner();
     void setBarzilaiBorweinSecantLeftPreconditioner();
 
-    virtual const std::tr1::shared_ptr<dotk::DOTk_LeftPreconditioner> & getLeftPrec() const;
-    virtual const std::tr1::shared_ptr<dotk::Vector<Real> > & getLeftPrecTimesVector() const;
+    virtual const std::shared_ptr<dotk::DOTk_LeftPreconditioner> & getLeftPrec() const;
+    virtual const std::shared_ptr<dotk::Vector<Real> > & getLeftPrecTimesVector() const;
 
 private:
-    std::tr1::shared_ptr<dotk::DOTk_LeftPreconditioner> m_LeftPreconditioner;
-    std::tr1::shared_ptr<dotk::Vector<Real> > m_LeftPrecTimesResidual;
+    std::shared_ptr<dotk::DOTk_LeftPreconditioner> m_LeftPreconditioner;
+    std::shared_ptr<dotk::Vector<Real> > m_LeftPrecTimesResidual;
 
 private:
-    void allocate(const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_);
+    void allocate(const std::shared_ptr<dotk::DOTk_Primal> & primal_);
 
 private:
     DOTk_LeftPrecConjGradDataMng(const dotk::DOTk_LeftPrecConjGradDataMng &);

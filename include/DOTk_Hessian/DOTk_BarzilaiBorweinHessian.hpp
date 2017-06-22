@@ -24,19 +24,19 @@ public:
     explicit DOTk_BarzilaiBorweinHessian(const dotk::Vector<Real> & vector_);
     virtual ~DOTk_BarzilaiBorweinHessian();
 
-    void computeDeltaPrimal(const std::tr1::shared_ptr<dotk::Vector<Real> > & new_primal_,
-                            const std::tr1::shared_ptr<dotk::Vector<Real> > & old_primal_);
-    void computeDeltaGradient(const std::tr1::shared_ptr<dotk::Vector<Real> > & new_gradient_,
-                              const std::tr1::shared_ptr<dotk::Vector<Real> > & old_gradient_);
-    void getHessian(const std::tr1::shared_ptr<dotk::Vector<Real> > & vec_,
-                    const std::tr1::shared_ptr<dotk::Vector<Real> > & mat_times_vec_);
-    virtual void apply(const std::tr1::shared_ptr<dotk::DOTk_OptimizationDataMng> & mng_,
-                       const std::tr1::shared_ptr<dotk::Vector<Real> > & vec_,
-                       const std::tr1::shared_ptr<dotk::Vector<Real> > & matrix_times_vec_);
+    void computeDeltaPrimal(const std::shared_ptr<dotk::Vector<Real> > & new_primal_,
+                            const std::shared_ptr<dotk::Vector<Real> > & old_primal_);
+    void computeDeltaGradient(const std::shared_ptr<dotk::Vector<Real> > & new_gradient_,
+                              const std::shared_ptr<dotk::Vector<Real> > & old_gradient_);
+    void getHessian(const std::shared_ptr<dotk::Vector<Real> > & vec_,
+                    const std::shared_ptr<dotk::Vector<Real> > & mat_times_vec_);
+    virtual void apply(const std::shared_ptr<dotk::DOTk_OptimizationDataMng> & mng_,
+                       const std::shared_ptr<dotk::Vector<Real> > & vec_,
+                       const std::shared_ptr<dotk::Vector<Real> > & matrix_times_vec_);
 
 private:
-    std::tr1::shared_ptr<dotk::Vector<Real> > m_DeltaPrimal;
-    std::tr1::shared_ptr<dotk::Vector<Real> > m_DeltaGradient;
+    std::shared_ptr<dotk::Vector<Real> > m_DeltaPrimal;
+    std::shared_ptr<dotk::Vector<Real> > m_DeltaGradient;
 
 
 private:

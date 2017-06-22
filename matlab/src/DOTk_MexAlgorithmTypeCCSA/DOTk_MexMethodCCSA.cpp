@@ -78,7 +78,7 @@ void DOTk_MexMethodCCSA::setPrimalSolverParameters(dotk::DOTk_AlgorithmCCSA & pr
     primal_solver_.setDualObjectiveTrialControlBoundScaling(m_DualObjectiveTrialControlBoundScaling);
 }
 
-void DOTk_MexMethodCCSA::setDualSolverParameters(const std::tr1::shared_ptr<dotk::DOTk_DualSolverNLCG> & dual_solver_)
+void DOTk_MexMethodCCSA::setDualSolverParameters(const std::shared_ptr<dotk::DOTk_DualSolverNLCG> & dual_solver_)
 {
     dual_solver_->setNonlinearCgType(m_DualSolverTypeNLCG);
     dual_solver_->setMaxNumIterations(m_DualSolverMaxNumberIterations);
@@ -91,7 +91,7 @@ void DOTk_MexMethodCCSA::setDualSolverParameters(const std::tr1::shared_ptr<dotk
 }
 
 void DOTk_MexMethodCCSA::gatherOutputData(dotk::DOTk_AlgorithmCCSA & algorithm_,
-                                          const std::tr1::shared_ptr<dotk::DOTk_DataMngCCSA> & data_mng_,
+                                          const std::shared_ptr<dotk::DOTk_DataMngCCSA> & data_mng_,
                                           mxArray* outputs_[])
 {
     // Create memory allocation for output struc

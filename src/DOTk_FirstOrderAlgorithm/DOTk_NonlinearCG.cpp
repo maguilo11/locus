@@ -22,8 +22,8 @@
 namespace dotk
 {
 
-DOTk_NonlinearCG::DOTk_NonlinearCG(const std::tr1::shared_ptr<dotk::DOTk_LineSearchStepMng> & step_,
-                                   const std::tr1::shared_ptr<dotk::DOTk_LineSearchAlgorithmsDataMng> & mng_) :
+DOTk_NonlinearCG::DOTk_NonlinearCG(const std::shared_ptr<dotk::DOTk_LineSearchStepMng> & step_,
+                                   const std::shared_ptr<dotk::DOTk_LineSearchAlgorithmsDataMng> & mng_) :
         dotk::DOTk_FirstOrderAlgorithm(dotk::types::NONLINEAR_CG),
         m_LineSearch(step_),
         m_IO(new dotk::DOTk_FirstOrderLineSearchAlgIO),
@@ -38,7 +38,7 @@ DOTk_NonlinearCG::~DOTk_NonlinearCG()
 {
 }
 
-void DOTk_NonlinearCG::setDanielsNlcg(const std::tr1::shared_ptr<dotk::DOTk_LinearOperator> & hessian_)
+void DOTk_NonlinearCG::setDanielsNlcg(const std::shared_ptr<dotk::DOTk_LinearOperator> & hessian_)
 {
     dotk::DOTk_NonlinearCGFactory factory;
     factory.buildDanielsNlcg(hessian_, m_DescentDirection);

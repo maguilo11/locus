@@ -9,7 +9,7 @@
 #define DOTK_MEXALGORITHMTYPEFO_HPP_
 
 #include <mex.h>
-#include <tr1/memory>
+#include <memory>
 
 #include "DOTk_Types.hpp"
 
@@ -50,8 +50,8 @@ public:
                           const dotk::DOTk_LineSearchAlgorithmsDataMng & mng_,
                           mxArray* output_[]);
     void setBoundConstraintMethod(const mxArray* options_,
-                                  const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_,
-                                  const std::tr1::shared_ptr<dotk::DOTk_ProjectedLineSearchStep> & step_);
+                                  const std::shared_ptr<dotk::DOTk_Primal> & primal_,
+                                  const std::shared_ptr<dotk::DOTk_ProjectedLineSearchStep> & step_);
 
     virtual void solve(const mxArray* input_[], mxArray* output_[]) = 0;
 

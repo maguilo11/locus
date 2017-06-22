@@ -35,24 +35,24 @@ DOTk_LBFGSHessian::~DOTk_LBFGSHessian()
 {
 }
 
-const std::tr1::shared_ptr<std::vector<Real> > & DOTk_LBFGSHessian::getDeltaGradPrimalInnerProductStorage() const
+const std::shared_ptr<std::vector<Real> > & DOTk_LBFGSHessian::getDeltaGradPrimalInnerProductStorage() const
 {
     /// Return limited memory storage of inner product between deltaGradient and deltaPrimal
     return (m_RhoStorage);
 }
 
-const std::tr1::shared_ptr<dotk::Vector<Real> > & DOTk_LBFGSHessian::getDeltaGradStorage(size_t at_) const
+const std::shared_ptr<dotk::Vector<Real> > & DOTk_LBFGSHessian::getDeltaGradStorage(size_t at_) const
 {
     return (m_DeltaGradientStorage->basis(at_));
 }
 
-const std::tr1::shared_ptr<dotk::Vector<Real> > & DOTk_LBFGSHessian::getDeltaPrimalStorage(size_t at_) const
+const std::shared_ptr<dotk::Vector<Real> > & DOTk_LBFGSHessian::getDeltaPrimalStorage(size_t at_) const
 {
     return (m_DeltaPrimalStorage->basis(at_));
 }
 
-void DOTk_LBFGSHessian::getHessian(const std::tr1::shared_ptr<dotk::Vector<Real> > & vector_,
-                                   const std::tr1::shared_ptr<dotk::Vector<Real> > & hess_times_vec_)
+void DOTk_LBFGSHessian::getHessian(const std::shared_ptr<dotk::Vector<Real> > & vector_,
+                                   const std::shared_ptr<dotk::Vector<Real> > & hess_times_vec_)
 {
     /// Limited memory Broyden–Fletcher–Goldfarb–Shanno (BFGS) method \n
     /// In:  \n
@@ -108,9 +108,9 @@ void DOTk_LBFGSHessian::getHessian(const std::tr1::shared_ptr<dotk::Vector<Real>
     }
 }
 
-void DOTk_LBFGSHessian::apply(const std::tr1::shared_ptr<dotk::DOTk_OptimizationDataMng> & mng_,
-                              const std::tr1::shared_ptr<dotk::Vector<Real> > & vector_,
-                              const std::tr1::shared_ptr<dotk::Vector<Real> > & matrix_times_vec_)
+void DOTk_LBFGSHessian::apply(const std::shared_ptr<dotk::DOTk_OptimizationDataMng> & mng_,
+                              const std::shared_ptr<dotk::Vector<Real> > & vector_,
+                              const std::shared_ptr<dotk::Vector<Real> > & matrix_times_vec_)
 {
     dotk::DOTk_SecondOrderOperator::computeDeltaPrimal(mng_->getNewPrimal(), mng_->getOldPrimal(), m_DeltaPrimal);
     dotk::DOTk_SecondOrderOperator::computeDeltaGradient(mng_->getNewGradient(),

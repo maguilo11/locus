@@ -9,7 +9,7 @@
 #define DOTK_MATHUTILS_HPP_
 
 #include <vector>
-#include <tr1/memory>
+#include <memory>
 
 #include "DOTk_Types.hpp"
 
@@ -19,12 +19,12 @@ namespace dotk
 template<typename ScalarType>
 class Vector;
 
-Real norm(const std::tr1::shared_ptr<dotk::Vector<Real> > & input_);
-void scale(const Real & alpha_, const std::tr1::shared_ptr<dotk::Vector<Real> > & output_);
+Real norm(const std::shared_ptr<dotk::Vector<Real> > & input_);
+void scale(const Real & alpha_, const std::shared_ptr<dotk::Vector<Real> > & output_);
 void update(const Real & alpha_,
-            const std::tr1::shared_ptr<dotk::Vector<Real> > & input_,
+            const std::shared_ptr<dotk::Vector<Real> > & input_,
             const Real & beta_,
-            const std::tr1::shared_ptr<dotk::Vector<Real> > & output_);
+            const std::shared_ptr<dotk::Vector<Real> > & output_);
 
 Real frobeniusNorm(const std::vector<std::vector<Real> > & matrix_);
 void givens(const Real & a_, const Real & b_, Real & cosine_, Real & sine_);

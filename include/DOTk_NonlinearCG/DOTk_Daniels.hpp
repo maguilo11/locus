@@ -22,13 +22,13 @@ class Vector;
 class DOTk_Daniels : public dotk::DOTk_DescentDirection
 {
 public:
-    explicit DOTk_Daniels(const std::tr1::shared_ptr<dotk::DOTk_LinearOperator> & hessian_);
+    explicit DOTk_Daniels(const std::shared_ptr<dotk::DOTk_LinearOperator> & hessian_);
     virtual ~DOTk_Daniels();
 
-    virtual void direction(const std::tr1::shared_ptr<dotk::DOTk_OptimizationDataMng> & mng_);
+    virtual void direction(const std::shared_ptr<dotk::DOTk_OptimizationDataMng> & mng_);
 
 private:
-    std::tr1::shared_ptr<dotk::DOTk_LinearOperator> m_Hessian;
+    std::shared_ptr<dotk::DOTk_LinearOperator> m_Hessian;
 
 private:
     DOTk_Daniels(const dotk::DOTk_Daniels &);

@@ -20,7 +20,7 @@
 namespace dotk
 {
 
-DOTk_SubProblemGCMMA::DOTk_SubProblemGCMMA(const std::tr1::shared_ptr<dotk::DOTk_DataMngCCSA> & data_mng_) :
+DOTk_SubProblemGCMMA::DOTk_SubProblemGCMMA(const std::shared_ptr<dotk::DOTk_DataMngCCSA> & data_mng_) :
         dotk::DOTk_SubProblemCCSA(dotk::ccsa::subproblem_t::GCMMA),
         m_ObjectiveFunctionRho(1),
         m_ObjectiveFunctionMinRho(1e-5),
@@ -39,8 +39,8 @@ DOTk_SubProblemGCMMA::DOTk_SubProblemGCMMA(const std::tr1::shared_ptr<dotk::DOTk
     this->initialize();
 }
 
-DOTk_SubProblemGCMMA::DOTk_SubProblemGCMMA(const std::tr1::shared_ptr<dotk::DOTk_DataMngCCSA> & data_mng_,
-                     const std::tr1::shared_ptr<dotk::DOTk_DualSolverCCSA> & dual_solver_) :
+DOTk_SubProblemGCMMA::DOTk_SubProblemGCMMA(const std::shared_ptr<dotk::DOTk_DataMngCCSA> & data_mng_,
+                     const std::shared_ptr<dotk::DOTk_DualSolverCCSA> & dual_solver_) :
         dotk::DOTk_SubProblemCCSA(dotk::ccsa::subproblem_t::GCMMA),
         m_ObjectiveFunctionRho(1),
         m_ObjectiveFunctionMinRho(1e-5),
@@ -73,7 +73,7 @@ void DOTk_SubProblemGCMMA::setDualObjectiveEpsilonParameter(Real input_)
     m_DualObjectiveFunction->setEpsilon(input_);
 }
 
-void DOTk_SubProblemGCMMA::solve(const std::tr1::shared_ptr<dotk::DOTk_DataMngCCSA> & data_mng_)
+void DOTk_SubProblemGCMMA::solve(const std::shared_ptr<dotk::DOTk_DataMngCCSA> & data_mng_)
 {
     Real scale = dotk::DOTk_SubProblemCCSA::getDualObjectiveTrialControlBoundScaling();
     m_DualObjectiveFunction->updateMovingAsymptotes(data_mng_->m_CurrentControl, data_mng_->m_CurrentSigma);
@@ -139,7 +139,7 @@ void DOTk_SubProblemGCMMA::checkGlobalizationScalingParameters()
     }
 }
 
-void DOTk_SubProblemGCMMA::updateState(const std::tr1::shared_ptr<dotk::DOTk_DataMngCCSA> & data_mng_)
+void DOTk_SubProblemGCMMA::updateState(const std::shared_ptr<dotk::DOTk_DataMngCCSA> & data_mng_)
 {
     this->checkGlobalizationScalingParameters();
 
@@ -149,7 +149,7 @@ void DOTk_SubProblemGCMMA::updateState(const std::tr1::shared_ptr<dotk::DOTk_Dat
     data_mng_->m_CurrentObjectiveFunctionValue = m_NewTrialObjectiveFunctionValue;
 }
 
-bool DOTk_SubProblemGCMMA::stoppingCriteriaSatisfied(const std::tr1::shared_ptr<dotk::DOTk_DataMngCCSA> & data_mng_)
+bool DOTk_SubProblemGCMMA::stoppingCriteriaSatisfied(const std::shared_ptr<dotk::DOTk_DataMngCCSA> & data_mng_)
 {
     bool criteria_satisfied = false;
     Real residual_norm = dotk::ccsa::computeResidualNorm(m_TrialControl, data_mng_->m_Dual, data_mng_);
@@ -170,7 +170,7 @@ bool DOTk_SubProblemGCMMA::stoppingCriteriaSatisfied(const std::tr1::shared_ptr<
     return (criteria_satisfied);
 }
 
-void DOTk_SubProblemGCMMA::updateObjectiveGlobalizationScalingParameters(const std::tr1::shared_ptr<dotk::DOTk_DataMngCCSA> & data_mng_)
+void DOTk_SubProblemGCMMA::updateObjectiveGlobalizationScalingParameters(const std::shared_ptr<dotk::DOTk_DataMngCCSA> & data_mng_)
 {
     Real w_function_evaluation = 0;
     Real v_function_evaluation = 0;
@@ -204,7 +204,7 @@ void DOTk_SubProblemGCMMA::updateObjectiveGlobalizationScalingParameters(const s
     }
 }
 
-void DOTk_SubProblemGCMMA::updateInequalityGlobalizationScalingParameters(const std::tr1::shared_ptr<dotk::DOTk_DataMngCCSA> & data_mng_)
+void DOTk_SubProblemGCMMA::updateInequalityGlobalizationScalingParameters(const std::shared_ptr<dotk::DOTk_DataMngCCSA> & data_mng_)
 {
     size_t number_primals = data_mng_->m_CurrentControl->size();
     for(size_t index_i = 0; index_i < data_mng_->getNumberInequalityConstraints(); ++index_i)

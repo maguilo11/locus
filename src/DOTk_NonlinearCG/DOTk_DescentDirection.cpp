@@ -54,8 +54,8 @@ dotk::types::nonlinearcg_t DOTk_DescentDirection::getNonlinearCGType() const
     return (mNonlinearCGType);
 }
 
-Real DOTk_DescentDirection::computeCosineAngle(const std::tr1::shared_ptr<dotk::Vector<Real> > & grad_,
-                                               const std::tr1::shared_ptr<dotk::Vector<Real> > & dir_)
+Real DOTk_DescentDirection::computeCosineAngle(const std::shared_ptr<dotk::Vector<Real> > & grad_,
+                                               const std::shared_ptr<dotk::Vector<Real> > & dir_)
 {
     Real norm_dir = dir_->norm();
     Real grad_dot_dir = grad_->dot(*dir_);
@@ -85,8 +85,8 @@ bool DOTk_DescentDirection::isTrialStepOrthogonalToSteepestDescent(Real cosine_v
     return (is_orthogonal);
 }
 
-void DOTk_DescentDirection::steepestDescent(const std::tr1::shared_ptr<dotk::Vector<Real> > & grad_,
-                                            const std::tr1::shared_ptr<dotk::Vector<Real> > & dir_)
+void DOTk_DescentDirection::steepestDescent(const std::shared_ptr<dotk::Vector<Real> > & grad_,
+                                            const std::shared_ptr<dotk::Vector<Real> > & dir_)
 {
     dir_->update(-1., *grad_, 0.);
 }

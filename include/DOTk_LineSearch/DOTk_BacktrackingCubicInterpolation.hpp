@@ -22,12 +22,12 @@ class Vector;
 class DOTk_BacktrackingCubicInterpolation : public dotk::DOTk_LineSearch
 {
 public:
-    explicit DOTk_BacktrackingCubicInterpolation(const std::tr1::shared_ptr<dotk::Vector<Real> > & vector_);
+    explicit DOTk_BacktrackingCubicInterpolation(const std::shared_ptr<dotk::Vector<Real> > & vector_);
     virtual ~DOTk_BacktrackingCubicInterpolation();
 
     virtual Real getConstant() const;
     virtual void setConstant(Real value_);
-    virtual void step(const std::tr1::shared_ptr<dotk::DOTk_OptimizationDataMng> & mng_);
+    virtual void step(const std::shared_ptr<dotk::DOTk_OptimizationDataMng> & mng_);
 
 private:
     void checkBacktrackingStep(std::vector<Real> & step_);
@@ -37,7 +37,7 @@ private:
 
 private:
     Real m_ArmijoRuleConstant;
-    std::tr1::shared_ptr<dotk::Vector<Real> > m_TrialPrimal;
+    std::shared_ptr<dotk::Vector<Real> > m_TrialPrimal;
 
 private:
     // unimplemented

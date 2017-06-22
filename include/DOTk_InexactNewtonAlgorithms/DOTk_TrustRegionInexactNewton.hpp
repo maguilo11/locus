@@ -26,11 +26,11 @@ class Vector;
 class DOTk_TrustRegionInexactNewton : public dotk::DOTk_InexactNewtonAlgorithms
 {
 public:
-    DOTk_TrustRegionInexactNewton(const std::tr1::shared_ptr<dotk::DOTk_LinearOperator> & hessian_,
-                                  const std::tr1::shared_ptr<dotk::DOTk_TrustRegionAlgorithmsDataMng> & mng_);
-    DOTk_TrustRegionInexactNewton(const std::tr1::shared_ptr<dotk::DOTk_LinearOperator> & hessian_,
-                                  const std::tr1::shared_ptr<dotk::DOTk_TrustRegionAlgorithmsDataMng> & mng_,
-                                  const std::tr1::shared_ptr<dotk::DOTk_KrylovSolverDataMng> & solver_mng_);
+    DOTk_TrustRegionInexactNewton(const std::shared_ptr<dotk::DOTk_LinearOperator> & hessian_,
+                                  const std::shared_ptr<dotk::DOTk_TrustRegionAlgorithmsDataMng> & mng_);
+    DOTk_TrustRegionInexactNewton(const std::shared_ptr<dotk::DOTk_LinearOperator> & hessian_,
+                                  const std::shared_ptr<dotk::DOTk_TrustRegionAlgorithmsDataMng> & mng_,
+                                  const std::shared_ptr<dotk::DOTk_KrylovSolverDataMng> & solver_mng_);
     virtual ~DOTk_TrustRegionInexactNewton();
 
     void setNewObjectiveFunctionValue(Real value_);
@@ -39,19 +39,19 @@ public:
     virtual void setNumItrDone(size_t itr_);
     void setMaxNumKrylovSolverItr(size_t itr_);
 
-    void setLeftPrecCgKrylovSolver(const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_,
+    void setLeftPrecCgKrylovSolver(const std::shared_ptr<dotk::DOTk_Primal> & primal_,
                                    size_t max_num_itr_ = 200);
-    void setPrecGmresKrylovSolver(const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_,
+    void setPrecGmresKrylovSolver(const std::shared_ptr<dotk::DOTk_Primal> & primal_,
                                   size_t max_num_itr_ = 200);
-    void setLeftPrecCgnrKrylovSolver(const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_,
+    void setLeftPrecCgnrKrylovSolver(const std::shared_ptr<dotk::DOTk_Primal> & primal_,
                                      size_t max_num_itr_ = 200);
-    void setLeftPrecCgneKrylovSolver(const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_,
+    void setLeftPrecCgneKrylovSolver(const std::shared_ptr<dotk::DOTk_Primal> & primal_,
                                      size_t max_num_itr_ = 200);
-    void setLeftPrecCrKrylovSolver(const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_,
+    void setLeftPrecCrKrylovSolver(const std::shared_ptr<dotk::DOTk_Primal> & primal_,
                                    size_t max_num_itr_ = 200);
-    void setLeftPrecGcrKrylovSolver(const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_,
+    void setLeftPrecGcrKrylovSolver(const std::shared_ptr<dotk::DOTk_Primal> & primal_,
                                     size_t max_num_itr_ = 200);
-    void setProjLeftPrecCgKrylovSolver(const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_,
+    void setProjLeftPrecCgKrylovSolver(const std::shared_ptr<dotk::DOTk_Primal> & primal_,
                                        size_t max_num_itr_ = 200);
 
     void printDiagnosticsAndSolutionEveryItr();
@@ -70,13 +70,13 @@ private:
 private:
     Real m_NewObjectiveFuncValue;
 
-    std::tr1::shared_ptr<dotk::DOTk_KrylovSolver> m_KrylovSolver;
-    std::tr1::shared_ptr<dotk::DOTk_TrustRegionInexactNewtonIO> m_IO;
-    std::tr1::shared_ptr<dotk::DOTk_LinearOperator> m_LinearOperator;
-    std::tr1::shared_ptr<dotk::DOTk_TrustRegionAlgorithmsDataMng> m_DataMng;
+    std::shared_ptr<dotk::DOTk_KrylovSolver> m_KrylovSolver;
+    std::shared_ptr<dotk::DOTk_TrustRegionInexactNewtonIO> m_IO;
+    std::shared_ptr<dotk::DOTk_LinearOperator> m_LinearOperator;
+    std::shared_ptr<dotk::DOTk_TrustRegionAlgorithmsDataMng> m_DataMng;
 
-    std::tr1::shared_ptr<dotk::Vector<Real> > m_WorkVector;
-    std::tr1::shared_ptr<dotk::Vector<Real> > m_HessTimesTrialStep;
+    std::shared_ptr<dotk::Vector<Real> > m_WorkVector;
+    std::shared_ptr<dotk::Vector<Real> > m_HessTimesTrialStep;
 
 private:
     DOTk_TrustRegionInexactNewton(const dotk::DOTk_TrustRegionInexactNewton&);

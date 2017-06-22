@@ -44,9 +44,9 @@ void DOTk_RayleighQuotient::setRelativeDifferenceTolerance(Real tol_)
     m_RelativeDifferenceTolerance = tol_;
 }
 
-void DOTk_RayleighQuotient::solve(const std::tr1::shared_ptr<dotk::matrix<Real> > & matrix_,
+void DOTk_RayleighQuotient::solve(const std::shared_ptr<dotk::matrix<Real> > & matrix_,
                                   Real & eigenvalues_,
-                                  std::tr1::shared_ptr<dotk::Vector<Real> > & eigenvectors_)
+                                  std::shared_ptr<dotk::Vector<Real> > & eigenvectors_)
 {
     size_t max_num_itr = this->getMaxNumItr();
     Real relative_difference_tolerance = this->getRelativeDifferenceTolerance();

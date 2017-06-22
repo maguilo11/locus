@@ -244,11 +244,11 @@ public:
         return (m_NumDim);
     }
     // Clones memory for an object of ScalarType dotk::Vector
-    std::tr1::shared_ptr<dotk::Vector<ScalarType> > clone() const
+    std::shared_ptr<dotk::Vector<ScalarType> > clone() const
     {
         size_t dim = this->size();
         int thread_count = this->threads();
-        std::tr1::shared_ptr < dotk::OmpArray<ScalarType> > output(new dotk::OmpArray<ScalarType>(dim, thread_count, 0.));
+        std::shared_ptr < dotk::OmpArray<ScalarType> > output(new dotk::OmpArray<ScalarType>(dim, thread_count, 0.));
         return (output);
     }
     // Operator overloads the square bracket operator

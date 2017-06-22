@@ -9,7 +9,7 @@
 #define DOTK_MEXMETHODCCSA_HPP_
 
 #include <mex.h>
-#include <tr1/memory>
+#include <memory>
 
 #include "DOTk_Types.hpp"
 #include "DOTk_UtilsCCSA.hpp"
@@ -32,9 +32,9 @@ public:
     dotk::types::nonlinearcg_t getNonlinearConjugateGradientType() const;
 
     void setPrimalSolverParameters(dotk::DOTk_AlgorithmCCSA & primal_solver_);
-    void setDualSolverParameters(const std::tr1::shared_ptr<dotk::DOTk_DualSolverNLCG> & dual_solver_);
+    void setDualSolverParameters(const std::shared_ptr<dotk::DOTk_DualSolverNLCG> & dual_solver_);
     void gatherOutputData(dotk::DOTk_AlgorithmCCSA & algorithm_,
-                          const std::tr1::shared_ptr<dotk::DOTk_DataMngCCSA> & data_mng_,
+                          const std::shared_ptr<dotk::DOTk_DataMngCCSA> & data_mng_,
                           mxArray* output_[]);
 
     virtual void solve(const mxArray* input_[], mxArray* output_[]) = 0;

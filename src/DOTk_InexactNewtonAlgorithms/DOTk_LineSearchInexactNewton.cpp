@@ -28,9 +28,9 @@
 namespace dotk
 {
 
-DOTk_LineSearchInexactNewton::DOTk_LineSearchInexactNewton(const std::tr1::shared_ptr<dotk::DOTk_LinearOperator> & hessian_,
-                                                           const std::tr1::shared_ptr<dotk::DOTk_LineSearchStepMng> & step_,
-                                                           const std::tr1::shared_ptr<dotk::DOTk_LineSearchAlgorithmsDataMng> & mng_) :
+DOTk_LineSearchInexactNewton::DOTk_LineSearchInexactNewton(const std::shared_ptr<dotk::DOTk_LinearOperator> & hessian_,
+                                                           const std::shared_ptr<dotk::DOTk_LineSearchStepMng> & step_,
+                                                           const std::shared_ptr<dotk::DOTk_LineSearchAlgorithmsDataMng> & mng_) :
         dotk::DOTk_InexactNewtonAlgorithms(dotk::types::LINE_SEARCH_INEXACT_NEWTON),
         m_SolverRhsVector(mng_->getTrialStep()->clone()),
         m_KrylovSolver(),
@@ -57,7 +57,7 @@ void DOTk_LineSearchInexactNewton::setMaxNumKrylovSolverItr(size_t itr_)
     m_KrylovSolver->setMaxNumKrylovSolverItr(itr_);
 }
 
-void DOTk_LineSearchInexactNewton::setPrecGmresKrylovSolver(const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_,
+void DOTk_LineSearchInexactNewton::setPrecGmresKrylovSolver(const std::shared_ptr<dotk::DOTk_Primal> & primal_,
                                                             size_t max_num_itr_)
 {
     dotk::DOTk_KrylovSolverFactory factory;
@@ -65,7 +65,7 @@ void DOTk_LineSearchInexactNewton::setPrecGmresKrylovSolver(const std::tr1::shar
     m_KrylovSolver->setMaxNumKrylovSolverItr(max_num_itr_);
 }
 
-void DOTk_LineSearchInexactNewton::setLeftPrecCgKrylovSolver(const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_,
+void DOTk_LineSearchInexactNewton::setLeftPrecCgKrylovSolver(const std::shared_ptr<dotk::DOTk_Primal> & primal_,
                                                              size_t max_num_itr_)
 {
     dotk::DOTk_KrylovSolverFactory factory;
@@ -73,7 +73,7 @@ void DOTk_LineSearchInexactNewton::setLeftPrecCgKrylovSolver(const std::tr1::sha
     m_KrylovSolver->setMaxNumKrylovSolverItr(max_num_itr_);
 }
 
-void DOTk_LineSearchInexactNewton::setLeftPrecCrKrylovSolver(const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_,
+void DOTk_LineSearchInexactNewton::setLeftPrecCrKrylovSolver(const std::shared_ptr<dotk::DOTk_Primal> & primal_,
                                                              size_t max_num_itr_)
 {
     dotk::DOTk_KrylovSolverFactory factory;
@@ -81,14 +81,14 @@ void DOTk_LineSearchInexactNewton::setLeftPrecCrKrylovSolver(const std::tr1::sha
     m_KrylovSolver->setMaxNumKrylovSolverItr(max_num_itr_);
 }
 
-void DOTk_LineSearchInexactNewton::setLeftPrecGcrKrylovSolver(const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_,
+void DOTk_LineSearchInexactNewton::setLeftPrecGcrKrylovSolver(const std::shared_ptr<dotk::DOTk_Primal> & primal_,
                                                               size_t max_num_itr_)
 {
     dotk::DOTk_KrylovSolverFactory factory;
     factory.buildLeftPrecGcrSolver(primal_, m_LinearOperator, max_num_itr_, m_KrylovSolver);
 }
 
-void DOTk_LineSearchInexactNewton::setLeftPrecCgneKrylovSolver(const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_,
+void DOTk_LineSearchInexactNewton::setLeftPrecCgneKrylovSolver(const std::shared_ptr<dotk::DOTk_Primal> & primal_,
                                                                size_t max_num_itr_)
 {
     dotk::DOTk_KrylovSolverFactory factory;
@@ -96,7 +96,7 @@ void DOTk_LineSearchInexactNewton::setLeftPrecCgneKrylovSolver(const std::tr1::s
     m_KrylovSolver->setMaxNumKrylovSolverItr(max_num_itr_);
 }
 
-void DOTk_LineSearchInexactNewton::setLeftPrecCgnrKrylovSolver(const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_,
+void DOTk_LineSearchInexactNewton::setLeftPrecCgnrKrylovSolver(const std::shared_ptr<dotk::DOTk_Primal> & primal_,
                                                                size_t max_num_itr_)
 {
     dotk::DOTk_KrylovSolverFactory factory;

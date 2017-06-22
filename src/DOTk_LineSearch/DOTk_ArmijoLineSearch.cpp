@@ -12,7 +12,7 @@
 namespace dotk
 {
 
-DOTk_ArmijoLineSearch::DOTk_ArmijoLineSearch(const std::tr1::shared_ptr<dotk::Vector<Real> > & vector_) :
+DOTk_ArmijoLineSearch::DOTk_ArmijoLineSearch(const std::shared_ptr<dotk::Vector<Real> > & vector_) :
         dotk::DOTk_LineSearch(dotk::types::line_search_t::BACKTRACKING_ARMIJO),
         m_ArmijoRuleConstant(1e-4),
         m_TrialPrimal(vector_->clone())
@@ -33,7 +33,7 @@ void DOTk_ArmijoLineSearch::setConstant(Real value_)
     m_ArmijoRuleConstant = value_;
 }
 
-void DOTk_ArmijoLineSearch::step(const std::tr1::shared_ptr<dotk::DOTk_OptimizationDataMng> & mng_)
+void DOTk_ArmijoLineSearch::step(const std::shared_ptr<dotk::DOTk_OptimizationDataMng> & mng_)
 {
     Real step = 1.;
     m_TrialPrimal->update(1., *mng_->getOldPrimal(), 0.);

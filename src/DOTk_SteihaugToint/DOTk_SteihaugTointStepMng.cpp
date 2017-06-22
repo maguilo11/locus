@@ -18,8 +18,8 @@
 namespace dotk
 {
 
-DOTk_SteihaugTointStepMng::DOTk_SteihaugTointStepMng(const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_,
-                                                     const std::tr1::shared_ptr<dotk::DOTk_LinearOperator> & linear_operator_) :
+DOTk_SteihaugTointStepMng::DOTk_SteihaugTointStepMng(const std::shared_ptr<dotk::DOTk_Primal> & primal_,
+                                                     const std::shared_ptr<dotk::DOTk_LinearOperator> & linear_operator_) :
         dotk::DOTk_TrustRegionStepMng(),
         m_CurrentPrimal(primal_->control()),
         m_LinearOperator(linear_operator_),
@@ -27,9 +27,9 @@ DOTk_SteihaugTointStepMng::DOTk_SteihaugTointStepMng(const std::tr1::shared_ptr<
 {
 }
 
-DOTk_SteihaugTointStepMng::DOTk_SteihaugTointStepMng(const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_,
-                                                     const std::tr1::shared_ptr<dotk::DOTk_LinearOperator> & linear_operator_,
-                                                     const std::tr1::shared_ptr<dotk::DOTk_Preconditioner> & preconditioner_) :
+DOTk_SteihaugTointStepMng::DOTk_SteihaugTointStepMng(const std::shared_ptr<dotk::DOTk_Primal> & primal_,
+                                                     const std::shared_ptr<dotk::DOTk_LinearOperator> & linear_operator_,
+                                                     const std::shared_ptr<dotk::DOTk_Preconditioner> & preconditioner_) :
         dotk::DOTk_TrustRegionStepMng(),
         m_CurrentPrimal(primal_->control()),
         m_LinearOperator(linear_operator_),
@@ -46,9 +46,9 @@ void DOTk_SteihaugTointStepMng::setNumOptimizationItrDone(const size_t & itr_)
     m_LinearOperator->setNumOtimizationItrDone(itr_);
 }
 
-void DOTk_SteihaugTointStepMng::solveSubProblem(const std::tr1::shared_ptr<dotk::DOTk_OptimizationDataMng> & mng_,
-                                                const std::tr1::shared_ptr<dotk::DOTk_SteihaugTointSolver> & solver_,
-                                                const std::tr1::shared_ptr<dotk::DOTk_SteihaugTointNewtonIO> & io_)
+void DOTk_SteihaugTointStepMng::solveSubProblem(const std::shared_ptr<dotk::DOTk_OptimizationDataMng> & mng_,
+                                                const std::shared_ptr<dotk::DOTk_SteihaugTointSolver> & solver_,
+                                                const std::shared_ptr<dotk::DOTk_SteihaugTointNewtonIO> & io_)
 {
     Real new_objective_value = 0.;
     this->setNumTrustRegionSubProblemItrDone(1);
@@ -99,7 +99,7 @@ void DOTk_SteihaugTointStepMng::solveSubProblem(const std::tr1::shared_ptr<dotk:
     m_LinearOperator->updateLimitedMemoryStorage(true);
 }
 
-void DOTk_SteihaugTointStepMng::updateDataManager(const std::tr1::shared_ptr<dotk::DOTk_OptimizationDataMng> & mng_)
+void DOTk_SteihaugTointStepMng::updateDataManager(const std::shared_ptr<dotk::DOTk_OptimizationDataMng> & mng_)
 {
     mng_->getOldPrimal()->update(1., *m_CurrentPrimal, 0.);
     mng_->getOldGradient()->update(1., *mng_->getNewGradient(), 0.);

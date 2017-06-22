@@ -9,7 +9,7 @@
 #define DOTK_MEXFACTORIESALGORITHMTYPEGB_HPP_
 
 #include <mex.h>
-#include <tr1/memory>
+#include <memory>
 
 namespace dotk
 {
@@ -21,7 +21,7 @@ namespace mex
 
 template<typename Algorithm>
 void buildKrylovSolver(const mxArray* options_,
-                       const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_,
+                       const std::shared_ptr<dotk::DOTk_Primal> & primal_,
                        Algorithm & algorithm_);
 
 template<typename Manager>

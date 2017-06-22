@@ -37,23 +37,23 @@ TEST(DOTk_KrylovSolverStoppingCriterion, DOTk_FixedCriterion)
 {
     size_t nduals = 3;
     size_t ncontrols = 5;
-    std::tr1::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
     primal->allocateSerialDualArray(nduals);
     primal->allocateSerialControlArray(ncontrols, 1.);
-    std::tr1::shared_ptr<dotk::DOTk_NocedalAndWrightEquality> equality(new dotk::DOTk_NocedalAndWrightEquality);
-    std::tr1::shared_ptr<dotk::DOTk_NocedalAndWrightObjective> objective(new dotk::DOTk_NocedalAndWrightObjective);
-    std::tr1::shared_ptr<dotk::DOTk_TrustRegionMngTypeELP>
+    std::shared_ptr<dotk::DOTk_NocedalAndWrightEquality> equality(new dotk::DOTk_NocedalAndWrightEquality);
+    std::shared_ptr<dotk::DOTk_NocedalAndWrightObjective> objective(new dotk::DOTk_NocedalAndWrightObjective);
+    std::shared_ptr<dotk::DOTk_TrustRegionMngTypeELP>
         mng(new dotk::DOTk_TrustRegionMngTypeELP(primal, objective, equality));
 
-    std::tr1::shared_ptr<dotk::DOTk_AugmentedSystem> augmented_system(new dotk::DOTk_AugmentedSystem);
-    std::tr1::shared_ptr<dotk::DOTk_PrecGenMinResDataMng> smng(new dotk::DOTk_PrecGenMinResDataMng(primal, augmented_system));
-    std::tr1::shared_ptr<dotk::DOTk_PrecGMRES> solver(new dotk::DOTk_PrecGMRES(smng));
+    std::shared_ptr<dotk::DOTk_AugmentedSystem> augmented_system(new dotk::DOTk_AugmentedSystem);
+    std::shared_ptr<dotk::DOTk_PrecGenMinResDataMng> smng(new dotk::DOTk_PrecGenMinResDataMng(primal, augmented_system));
+    std::shared_ptr<dotk::DOTk_PrecGMRES> solver(new dotk::DOTk_PrecGMRES(smng));
 
     Real fixed_tolerance = 1e-4;
     dotk::DOTk_FixedCriterion tol(fixed_tolerance);
 
     Real tolerance = 1e-8;
-    std::tr1::shared_ptr<dotk::DOTk_MultiVector<Real> >
+    std::shared_ptr<dotk::DOTk_MultiVector<Real> >
         vector(new dotk::DOTk_MultiVector<Real>(*primal->control(), *primal->dual()));
     EXPECT_NEAR(1e-4, tol.evaluate(solver.get(), vector), tolerance);
 }
@@ -62,24 +62,24 @@ TEST(DOTk_KrylovSolverStoppingCriterion, DOTk_RelativeCriterion)
 {
     size_t nduals = 3;
     size_t ncontrols = 5;
-    std::tr1::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
     primal->allocateSerialDualArray(nduals);
     primal->allocateSerialControlArray(ncontrols, 1.);
-    std::tr1::shared_ptr<dotk::DOTk_NocedalAndWrightEquality> equality(new dotk::DOTk_NocedalAndWrightEquality);
-    std::tr1::shared_ptr<dotk::DOTk_NocedalAndWrightObjective> objective(new dotk::DOTk_NocedalAndWrightObjective);
-    std::tr1::shared_ptr<dotk::DOTk_TrustRegionMngTypeELP>
+    std::shared_ptr<dotk::DOTk_NocedalAndWrightEquality> equality(new dotk::DOTk_NocedalAndWrightEquality);
+    std::shared_ptr<dotk::DOTk_NocedalAndWrightObjective> objective(new dotk::DOTk_NocedalAndWrightObjective);
+    std::shared_ptr<dotk::DOTk_TrustRegionMngTypeELP>
         mng(new dotk::DOTk_TrustRegionMngTypeELP(primal, objective, equality));
 
-    std::tr1::shared_ptr<dotk::DOTk_AugmentedSystem> augmented_system(new dotk::DOTk_AugmentedSystem);
-    std::tr1::shared_ptr<dotk::DOTk_PrecGenMinResDataMng> smng(new dotk::DOTk_PrecGenMinResDataMng(primal, augmented_system));
-    std::tr1::shared_ptr<dotk::DOTk_PrecGMRES> solver(new dotk::DOTk_PrecGMRES(smng));
+    std::shared_ptr<dotk::DOTk_AugmentedSystem> augmented_system(new dotk::DOTk_AugmentedSystem);
+    std::shared_ptr<dotk::DOTk_PrecGenMinResDataMng> smng(new dotk::DOTk_PrecGenMinResDataMng(primal, augmented_system));
+    std::shared_ptr<dotk::DOTk_PrecGMRES> solver(new dotk::DOTk_PrecGMRES(smng));
 
     Real relative_fixed_tolerance = 1e-4;
     dotk::DOTk_RelativeCriterion tol(relative_fixed_tolerance);
 
     // TEST 1: INITIAL CALCULATION, E.G. SOLVER ITERATION = 0
     Real tolerance = 1e-8;
-    std::tr1::shared_ptr<dotk::Vector<Real> >
+    std::shared_ptr<dotk::Vector<Real> >
         vector(new dotk::DOTk_MultiVector<Real>(*primal->control(), *primal->dual()));
     solver->setSolverResidualNorm(0.2);
     EXPECT_NEAR(2e-5, tol.evaluate(solver.get(), vector), tolerance);
@@ -94,22 +94,22 @@ TEST(DOTk_KrylovSolverStoppingCriterion, DOTk_TangentialProblemCriterion)
 {
     size_t nduals = 3;
     size_t ncontrols = 5;
-    std::tr1::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
     primal->allocateSerialDualArray(nduals);
     primal->allocateSerialControlArray(ncontrols, 1.);
-    std::tr1::shared_ptr<dotk::DOTk_NocedalAndWrightEquality> equality(new dotk::DOTk_NocedalAndWrightEquality);
-    std::tr1::shared_ptr<dotk::DOTk_NocedalAndWrightObjective> objective(new dotk::DOTk_NocedalAndWrightObjective);
-    std::tr1::shared_ptr<dotk::DOTk_TrustRegionMngTypeELP>
+    std::shared_ptr<dotk::DOTk_NocedalAndWrightEquality> equality(new dotk::DOTk_NocedalAndWrightEquality);
+    std::shared_ptr<dotk::DOTk_NocedalAndWrightObjective> objective(new dotk::DOTk_NocedalAndWrightObjective);
+    std::shared_ptr<dotk::DOTk_TrustRegionMngTypeELP>
         mng(new dotk::DOTk_TrustRegionMngTypeELP(primal, objective, equality));
 
-    std::tr1::shared_ptr<dotk::DOTk_AugmentedSystem> augmented_system(new dotk::DOTk_AugmentedSystem);
-    std::tr1::shared_ptr<dotk::DOTk_PrecGenMinResDataMng> smng(new dotk::DOTk_PrecGenMinResDataMng(primal, augmented_system));
-    std::tr1::shared_ptr<dotk::DOTk_PrecGMRES> solver(new dotk::DOTk_PrecGMRES(smng));
+    std::shared_ptr<dotk::DOTk_AugmentedSystem> augmented_system(new dotk::DOTk_AugmentedSystem);
+    std::shared_ptr<dotk::DOTk_PrecGenMinResDataMng> smng(new dotk::DOTk_PrecGenMinResDataMng(primal, augmented_system));
+    std::shared_ptr<dotk::DOTk_PrecGMRES> solver(new dotk::DOTk_PrecGMRES(smng));
 
     dotk::DOTk_TangentialProblemCriterion tol(mng->getTrialStep());
 
     // TEST 1: TOLERANCE < EPSILON
-    std::tr1::shared_ptr<dotk::DOTk_MultiVector<Real> >
+    std::shared_ptr<dotk::DOTk_MultiVector<Real> >
         vector(new dotk::DOTk_MultiVector<Real>(*primal->control(), *primal->dual()));
     EXPECT_EQ(std::numeric_limits<Real>::epsilon(), tol.evaluate(solver.get(), vector));
 
@@ -130,17 +130,17 @@ TEST(DOTk_KrylovSolverStoppingCriterion, DOTk_QuasiNormalProbCriterion)
 {
     size_t nduals = 3;
     size_t ncontrols = 5;
-    std::tr1::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
     primal->allocateSerialDualArray(nduals);
     primal->allocateSerialControlArray(ncontrols, 1.);
-    std::tr1::shared_ptr<dotk::DOTk_NocedalAndWrightEquality> equality(new dotk::DOTk_NocedalAndWrightEquality);
-    std::tr1::shared_ptr<dotk::DOTk_NocedalAndWrightObjective> objective(new dotk::DOTk_NocedalAndWrightObjective);
-    std::tr1::shared_ptr<dotk::DOTk_TrustRegionMngTypeELP>
+    std::shared_ptr<dotk::DOTk_NocedalAndWrightEquality> equality(new dotk::DOTk_NocedalAndWrightEquality);
+    std::shared_ptr<dotk::DOTk_NocedalAndWrightObjective> objective(new dotk::DOTk_NocedalAndWrightObjective);
+    std::shared_ptr<dotk::DOTk_TrustRegionMngTypeELP>
         mng(new dotk::DOTk_TrustRegionMngTypeELP(primal, objective, equality));
 
-    std::tr1::shared_ptr<dotk::DOTk_AugmentedSystem> augmented_system(new dotk::DOTk_AugmentedSystem);
-    std::tr1::shared_ptr<dotk::DOTk_PrecGenMinResDataMng> smng(new dotk::DOTk_PrecGenMinResDataMng(primal, augmented_system));
-    std::tr1::shared_ptr<dotk::DOTk_PrecGMRES> solver(new dotk::DOTk_PrecGMRES(smng));
+    std::shared_ptr<dotk::DOTk_AugmentedSystem> augmented_system(new dotk::DOTk_AugmentedSystem);
+    std::shared_ptr<dotk::DOTk_PrecGenMinResDataMng> smng(new dotk::DOTk_PrecGenMinResDataMng(primal, augmented_system));
+    std::shared_ptr<dotk::DOTk_PrecGMRES> solver(new dotk::DOTk_PrecGMRES(smng));
 
     dotk::DOTk_QuasiNormalProbCriterion tol;
 
@@ -158,7 +158,7 @@ TEST(DOTk_KrylovSolverStoppingCriterion, DOTk_QuasiNormalProbCriterion)
     EXPECT_NEAR(0.7, tol.getTrustRegionRadiusPenaltyParameter(), tolerance);
 
     tol.setStoppingTolerance(1e-3);
-    std::tr1::shared_ptr<dotk::DOTk_MultiVector<Real> >
+    std::shared_ptr<dotk::DOTk_MultiVector<Real> >
         vector(new dotk::DOTk_MultiVector<Real>(*primal->control(), *primal->dual()));
     EXPECT_NEAR(1e-3, tol.evaluate(solver.get(), vector), tolerance);
 }
@@ -167,16 +167,16 @@ TEST(DOTk_KrylovSolverStoppingCriterion, DOTk_TangentialSubProblemCriterion)
 {
     size_t nduals = 3;
     size_t ncontrols = 5;
-    std::tr1::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
     primal->allocateSerialDualArray(nduals);
     primal->allocateSerialControlArray(ncontrols, 1.);
-    std::tr1::shared_ptr<dotk::DOTk_NocedalAndWrightEquality> equality(new dotk::DOTk_NocedalAndWrightEquality);
-    std::tr1::shared_ptr<dotk::DOTk_NocedalAndWrightObjective> objective(new dotk::DOTk_NocedalAndWrightObjective);
-    std::tr1::shared_ptr<dotk::DOTk_TrustRegionMngTypeELP> mng(new dotk::DOTk_TrustRegionMngTypeELP(primal, objective, equality));
+    std::shared_ptr<dotk::DOTk_NocedalAndWrightEquality> equality(new dotk::DOTk_NocedalAndWrightEquality);
+    std::shared_ptr<dotk::DOTk_NocedalAndWrightObjective> objective(new dotk::DOTk_NocedalAndWrightObjective);
+    std::shared_ptr<dotk::DOTk_TrustRegionMngTypeELP> mng(new dotk::DOTk_TrustRegionMngTypeELP(primal, objective, equality));
 
-    std::tr1::shared_ptr<dotk::DOTk_AugmentedSystem> augmented_system(new dotk::DOTk_AugmentedSystem);
-    std::tr1::shared_ptr<dotk::DOTk_PrecGenMinResDataMng> smng(new dotk::DOTk_PrecGenMinResDataMng(primal, augmented_system));
-    std::tr1::shared_ptr<dotk::DOTk_PrecGMRES> solver(new dotk::DOTk_PrecGMRES(smng));
+    std::shared_ptr<dotk::DOTk_AugmentedSystem> augmented_system(new dotk::DOTk_AugmentedSystem);
+    std::shared_ptr<dotk::DOTk_PrecGenMinResDataMng> smng(new dotk::DOTk_PrecGenMinResDataMng(primal, augmented_system));
+    std::shared_ptr<dotk::DOTk_PrecGMRES> solver(new dotk::DOTk_PrecGMRES(smng));
 
     Real projected_gradient_tolerance = 1e-4;
     dotk::DOTk_TangentialSubProblemCriterion tol(projected_gradient_tolerance);
@@ -190,7 +190,7 @@ TEST(DOTk_KrylovSolverStoppingCriterion, DOTk_TangentialSubProblemCriterion)
     Real norm_gradient = std::sqrt(gradient_dot_gradient);
     tol.set(dotk::types::NORM_GRADIENT, norm_gradient);
 
-    std::tr1::shared_ptr<dotk::DOTk_MultiVector<Real> >
+    std::shared_ptr<dotk::DOTk_MultiVector<Real> >
         vector(new dotk::DOTk_MultiVector<Real>(*primal->control(), *primal->dual()));
     vector->fill(0);
     EXPECT_EQ(std::numeric_limits<Real>::epsilon(), tol.evaluate(solver.get(), vector));

@@ -9,7 +9,7 @@
 #define DOTK_MEXSTEIHAUGTOINTNEWTON_HPP_
 
 #include <mex.h>
-#include <tr1/memory>
+#include <memory>
 
 namespace dotk
 {
@@ -43,7 +43,7 @@ public:
     bool isInitialTrustRegionRadiusSetToNormGrad() const;
 
     void setAlgorithmParameters(dotk::DOTk_SteihaugTointNewton & algorithm_);
-    void setTrustRegionStepParameters(const std::tr1::shared_ptr<dotk::DOTk_TrustRegionStepMng> & mng_);
+    void setTrustRegionStepParameters(const std::shared_ptr<dotk::DOTk_TrustRegionStepMng> & mng_);
     void gatherOutputData(const dotk::DOTk_SteihaugTointNewton & algorithm_,
                           const dotk::DOTk_OptimizationDataMng & mng_,
                           const dotk::DOTk_TrustRegionStepMng & step_,

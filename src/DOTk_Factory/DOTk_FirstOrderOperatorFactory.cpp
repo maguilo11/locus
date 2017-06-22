@@ -46,55 +46,55 @@ dotk::types::gradient_t DOTk_FirstOrderOperatorFactory::getFactoryType() const
 }
 
 void DOTk_FirstOrderOperatorFactory::buildForwardFiniteDiffGradient
-(const std::tr1::shared_ptr<dotk::Vector<Real> > & vector_,
- std::tr1::shared_ptr<dotk::DOTk_FirstOrderOperator> & grad_)
+(const std::shared_ptr<dotk::Vector<Real> > & vector_,
+ std::shared_ptr<dotk::DOTk_FirstOrderOperator> & grad_)
 {
     grad_.reset(new dotk::DOTk_ForwardDifferenceGrad(vector_));
     this->setFactoryType(dotk::types::FORWARD_DIFF_GRAD);
 }
 
 void DOTk_FirstOrderOperatorFactory::buildBackwardFiniteDiffGradient
-(const std::tr1::shared_ptr<dotk::Vector<Real> > & vector_,
- std::tr1::shared_ptr<dotk::DOTk_FirstOrderOperator> & grad_)
+(const std::shared_ptr<dotk::Vector<Real> > & vector_,
+ std::shared_ptr<dotk::DOTk_FirstOrderOperator> & grad_)
 {
     grad_.reset(new dotk::DOTk_BackwardDifferenceGrad(vector_));
     this->setFactoryType(dotk::types::BACKWARD_DIFF_GRAD);
 }
 
 void DOTk_FirstOrderOperatorFactory::buildCentralFiniteDiffGradient
-(const std::tr1::shared_ptr<dotk::Vector<Real> > & vector_,
- std::tr1::shared_ptr<dotk::DOTk_FirstOrderOperator> & grad_)
+(const std::shared_ptr<dotk::Vector<Real> > & vector_,
+ std::shared_ptr<dotk::DOTk_FirstOrderOperator> & grad_)
 {
     grad_.reset(new dotk::DOTk_CentralDifferenceGrad(vector_));
     this->setFactoryType(dotk::types::CENTRAL_DIFF_GRAD);
 }
 
 void DOTk_FirstOrderOperatorFactory::buildUserDefinedGradient
-(std::tr1::shared_ptr<dotk::DOTk_FirstOrderOperator> & grad_)
+(std::shared_ptr<dotk::DOTk_FirstOrderOperator> & grad_)
 {
     grad_.reset(new dotk::DOTk_UserDefinedGrad);
     this->setFactoryType(dotk::types::USER_DEFINED_GRAD);
 }
 
 void DOTk_FirstOrderOperatorFactory::buildParallelForwardFiniteDiffGradient
-(const std::tr1::shared_ptr<dotk::Vector<Real> > & vector_,
- std::tr1::shared_ptr<dotk::DOTk_FirstOrderOperator> & grad_)
+(const std::shared_ptr<dotk::Vector<Real> > & vector_,
+ std::shared_ptr<dotk::DOTk_FirstOrderOperator> & grad_)
 {
     grad_.reset(new dotk::DOTk_ParallelForwardDiffGrad(vector_));
     this->setFactoryType(dotk::types::PARALLEL_FORWARD_DIFF_GRAD);
 }
 
 void DOTk_FirstOrderOperatorFactory::buildParallelBackwardFiniteDiffGradient
-(const std::tr1::shared_ptr<dotk::Vector<Real> > & vector_,
- std::tr1::shared_ptr<dotk::DOTk_FirstOrderOperator> & grad_)
+(const std::shared_ptr<dotk::Vector<Real> > & vector_,
+ std::shared_ptr<dotk::DOTk_FirstOrderOperator> & grad_)
 {
     grad_.reset(new dotk::DOTk_ParallelBackwardDiffGrad(vector_));
     this->setFactoryType(dotk::types::PARALLEL_BACKWARD_DIFF_GRAD);
 }
 
 void DOTk_FirstOrderOperatorFactory::buildParallelCentralFiniteDiffGradient
-(const std::tr1::shared_ptr<dotk::Vector<Real> > & vector_,
- std::tr1::shared_ptr<dotk::DOTk_FirstOrderOperator> & grad_)
+(const std::shared_ptr<dotk::Vector<Real> > & vector_,
+ std::shared_ptr<dotk::DOTk_FirstOrderOperator> & grad_)
 {
     grad_.reset(new dotk::DOTk_ParallelCentralDiffGrad(vector_));
     this->setFactoryType(dotk::types::PARALLEL_CENTRAL_DIFF_GRAD);
@@ -102,7 +102,7 @@ void DOTk_FirstOrderOperatorFactory::buildParallelCentralFiniteDiffGradient
 
 void DOTk_FirstOrderOperatorFactory::build
 (const dotk::DOTk_OptimizationDataMng * const mng_,
- std::tr1::shared_ptr<dotk::DOTk_FirstOrderOperator> & grad_)
+ std::shared_ptr<dotk::DOTk_FirstOrderOperator> & grad_)
 {
     switch(this->getFactoryType())
     {

@@ -9,7 +9,7 @@
 #define DOTK_DATAMNGCCSA_HPP_
 
 #include <vector>
-#include <tr1/memory>
+#include <memory>
 
 #include "DOTk_Types.hpp"
 
@@ -33,13 +33,13 @@ class DOTk_InequalityConstraint;
 class DOTk_DataMngCCSA
 {
 public:
-    DOTk_DataMngCCSA(const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_,
-                     const std::tr1::shared_ptr<dotk::DOTk_ObjectiveFunction<Real> > & objective_,
-                     const std::vector<std::tr1::shared_ptr<dotk::DOTk_InequalityConstraint<Real> > > & inequality_);
-    DOTk_DataMngCCSA(const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_,
-                     const std::tr1::shared_ptr<dotk::DOTk_ObjectiveFunction<Real> > & objective_,
-                     const std::tr1::shared_ptr<dotk::DOTk_EqualityConstraint<Real> > & equality_,
-                     const std::vector<std::tr1::shared_ptr<dotk::DOTk_InequalityConstraint<Real> > > & inequality_);
+    DOTk_DataMngCCSA(const std::shared_ptr<dotk::DOTk_Primal> & primal_,
+                     const std::shared_ptr<dotk::DOTk_ObjectiveFunction<Real> > & objective_,
+                     const std::vector<std::shared_ptr<dotk::DOTk_InequalityConstraint<Real> > > & inequality_);
+    DOTk_DataMngCCSA(const std::shared_ptr<dotk::DOTk_Primal> & primal_,
+                     const std::shared_ptr<dotk::DOTk_ObjectiveFunction<Real> > & objective_,
+                     const std::shared_ptr<dotk::DOTk_EqualityConstraint<Real> > & equality_,
+                     const std::vector<std::shared_ptr<dotk::DOTk_InequalityConstraint<Real> > > & inequality_);
     virtual ~DOTk_DataMngCCSA();
 
     size_t getNumberInequalityConstraints() const;
@@ -53,44 +53,44 @@ public:
     void evaluateObjectiveFunction();
     void initializeAuxiliaryVariables();
 
-    Real evaluateObjectiveFunction(const std::tr1::shared_ptr<dotk::Vector<Real> > & primal_);
-    void evaluateInequalityConstraints(const std::tr1::shared_ptr<dotk::Vector<Real> > & control_,
-                                       const std::tr1::shared_ptr<dotk::Vector<Real> > & residual_,
-                                       const std::tr1::shared_ptr<dotk::Vector<Real> > & feasibility_measure_);
+    Real evaluateObjectiveFunction(const std::shared_ptr<dotk::Vector<Real> > & primal_);
+    void evaluateInequalityConstraints(const std::shared_ptr<dotk::Vector<Real> > & control_,
+                                       const std::shared_ptr<dotk::Vector<Real> > & residual_,
+                                       const std::shared_ptr<dotk::Vector<Real> > & feasibility_measure_);
 
 public:
     Real m_ObjectiveCoefficientsA;
     Real m_InitialAuxiliaryVariableZ;
     Real m_CurrentObjectiveFunctionValue;
 
-    std::tr1::shared_ptr<dotk::Vector<Real> > m_Dual;
-    std::tr1::shared_ptr<dotk::Vector<Real> > m_MinRho;
-    std::tr1::shared_ptr<dotk::Vector<Real> > m_ActiveSet;
-    std::tr1::shared_ptr<dotk::Vector<Real> > m_WorkVector;
-    std::tr1::shared_ptr<dotk::Vector<Real> > m_CurrentSigma;
-    std::tr1::shared_ptr<dotk::Vector<Real> > m_CurrentControl;
-    std::tr1::shared_ptr<dotk::Vector<Real> > m_PreviousControl;
-    std::tr1::shared_ptr<dotk::Vector<Real> > m_ControlLowerBound;
-    std::tr1::shared_ptr<dotk::Vector<Real> > m_ControlUpperBound;
-    std::tr1::shared_ptr<dotk::Vector<Real> > m_CurrentObjectiveGradient;
-    std::tr1::shared_ptr<dotk::Vector<Real> > m_CurrentFeasibilityMeasures;
-    std::tr1::shared_ptr<dotk::Vector<Real> > m_CurrentInequalityResiduals;
-    std::tr1::shared_ptr<dotk::matrix<Real> > m_CurrentInequalityGradients;
-    std::tr1::shared_ptr<dotk::Vector<Real> > m_InputAuxiliaryVariablesY;
-    std::tr1::shared_ptr<dotk::Vector<Real> > m_InputInequalityCoefficientsA;
-    std::tr1::shared_ptr<dotk::Vector<Real> > m_InputInequalityCoefficientsC;
-    std::tr1::shared_ptr<dotk::Vector<Real> > m_InputInequalityCoefficientsD;
+    std::shared_ptr<dotk::Vector<Real> > m_Dual;
+    std::shared_ptr<dotk::Vector<Real> > m_MinRho;
+    std::shared_ptr<dotk::Vector<Real> > m_ActiveSet;
+    std::shared_ptr<dotk::Vector<Real> > m_WorkVector;
+    std::shared_ptr<dotk::Vector<Real> > m_CurrentSigma;
+    std::shared_ptr<dotk::Vector<Real> > m_CurrentControl;
+    std::shared_ptr<dotk::Vector<Real> > m_PreviousControl;
+    std::shared_ptr<dotk::Vector<Real> > m_ControlLowerBound;
+    std::shared_ptr<dotk::Vector<Real> > m_ControlUpperBound;
+    std::shared_ptr<dotk::Vector<Real> > m_CurrentObjectiveGradient;
+    std::shared_ptr<dotk::Vector<Real> > m_CurrentFeasibilityMeasures;
+    std::shared_ptr<dotk::Vector<Real> > m_CurrentInequalityResiduals;
+    std::shared_ptr<dotk::matrix<Real> > m_CurrentInequalityGradients;
+    std::shared_ptr<dotk::Vector<Real> > m_InputAuxiliaryVariablesY;
+    std::shared_ptr<dotk::Vector<Real> > m_InputInequalityCoefficientsA;
+    std::shared_ptr<dotk::Vector<Real> > m_InputInequalityCoefficientsC;
+    std::shared_ptr<dotk::Vector<Real> > m_InputInequalityCoefficientsD;
 
-    std::tr1::shared_ptr<dotk::DOTk_Primal> m_Primal;
+    std::shared_ptr<dotk::DOTk_Primal> m_Primal;
 
 private:
-    void initialize(const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_);
+    void initialize(const std::shared_ptr<dotk::DOTk_Primal> & primal_);
     void checkInitialAuxiliaryVariables();
-    void checkInputs(const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_);
+    void checkInputs(const std::shared_ptr<dotk::DOTk_Primal> & primal_);
 
 private:
     size_t m_NumInequalityConstraints;
-    std::tr1::shared_ptr<dotk::DOTk_AssemblyManager> m_AssemblyMng;
+    std::shared_ptr<dotk::DOTk_AssemblyManager> m_AssemblyMng;
 
 private:
     DOTk_DataMngCCSA(const dotk::DOTk_DataMngCCSA &);

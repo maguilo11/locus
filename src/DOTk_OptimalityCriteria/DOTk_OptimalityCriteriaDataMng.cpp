@@ -16,7 +16,7 @@ namespace dotk
 {
 
 DOTk_OptimalityCriteriaDataMng::DOTk_OptimalityCriteriaDataMng
-(const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_) :
+(const std::shared_ptr<dotk::DOTk_Primal> & primal_) :
         m_MoveLimit(0.01),
         m_InequalityDual(0),
         m_DampingParameter(0.5),
@@ -232,7 +232,7 @@ dotk::Vector<Real> & DOTk_OptimalityCriteriaDataMng::getInequalityGradient() con
     return (*m_InequalityGradient);
 }
 
-void DOTk_OptimalityCriteriaDataMng::initialize(const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_)
+void DOTk_OptimalityCriteriaDataMng::initialize(const std::shared_ptr<dotk::DOTk_Primal> & primal_)
 {
     assert(primal_->state().use_count() > 0);
     assert(primal_->control().use_count() > 0);

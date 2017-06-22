@@ -22,10 +22,10 @@ class Vector;
 class DOTk_GoldenSectionLineSearch : public dotk::DOTk_LineSearch
 {
 public:
-    explicit DOTk_GoldenSectionLineSearch(const std::tr1::shared_ptr<dotk::Vector<Real> > & vector_);
+    explicit DOTk_GoldenSectionLineSearch(const std::shared_ptr<dotk::Vector<Real> > & vector_);
     virtual ~DOTk_GoldenSectionLineSearch();
 
-    virtual void step(const std::tr1::shared_ptr<dotk::DOTk_OptimizationDataMng> & mng_);
+    virtual void step(const std::shared_ptr<dotk::DOTk_OptimizationDataMng> & mng_);
 
 private:
     void checkGoldenSectionStep();
@@ -33,7 +33,7 @@ private:
 private:
     std::vector<Real> m_Step;
     std::vector<Real> m_ObjectiveFuncVal;
-    std::tr1::shared_ptr<dotk::Vector<Real> > m_TrialPrimal;
+    std::shared_ptr<dotk::Vector<Real> > m_TrialPrimal;
 
 private:
     // unimplemented

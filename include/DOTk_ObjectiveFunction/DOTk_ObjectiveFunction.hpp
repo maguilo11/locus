@@ -9,7 +9,7 @@
 #define DOTK_OBJECTIVEFUNCTION_HPP_
 
 #include <vector>
-#include <tr1/memory>
+#include <memory>
 
 #include "vector.hpp"
 #include "DOTk_Types.hpp"
@@ -28,16 +28,16 @@ public:
     {
     }
 
-    virtual void value(const std::vector<std::tr1::shared_ptr<dotk::Vector<ScalarType> > > & primal_,
-                       const std::tr1::shared_ptr<dotk::Vector<ScalarType> > & fval_)
+    virtual void value(const std::vector<std::shared_ptr<dotk::Vector<ScalarType> > > & primal_,
+                       const std::shared_ptr<dotk::Vector<ScalarType> > & fval_)
     {
         std::perror("\n**** Calling Unimplemented Function DOTk_ObjectiveFunction::value(in, out). ABORT. ****\n");
         std::abort();
     }
-    virtual void value(const std::vector<std::tr1::shared_ptr<dotk::Vector<ScalarType> > > & primal_plus_epsilon_,
-                       const std::vector<std::tr1::shared_ptr<dotk::Vector<ScalarType> > > & primal_minus_epsilon_,
-                       const std::tr1::shared_ptr<dotk::Vector<ScalarType> > & value_plus_,
-                       const std::tr1::shared_ptr<dotk::Vector<ScalarType> > & value_minus_)
+    virtual void value(const std::vector<std::shared_ptr<dotk::Vector<ScalarType> > > & primal_plus_epsilon_,
+                       const std::vector<std::shared_ptr<dotk::Vector<ScalarType> > > & primal_minus_epsilon_,
+                       const std::shared_ptr<dotk::Vector<ScalarType> > & value_plus_,
+                       const std::shared_ptr<dotk::Vector<ScalarType> > & value_minus_)
     {
         std::perror("\n**** Calling Unimplemented Function DOTk_ObjectiveFunction::value(in, in, out, out). ABORT. ****\n");
         std::abort();

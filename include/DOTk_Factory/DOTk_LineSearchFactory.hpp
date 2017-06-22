@@ -8,7 +8,7 @@
 #ifndef DOTK_LINESEARCHFACTORY_HPP_
 #define DOTK_LINESEARCHFACTORY_HPP_
 
-#include <tr1/memory>
+#include <memory>
 #include "DOTk_Types.hpp"
 
 namespace dotk
@@ -29,17 +29,17 @@ public:
     void setFactoryType(dotk::types::line_search_t type_);
     dotk::types::line_search_t getFactoryType() const;
 
-    void buildArmijoLineSearch(const std::tr1::shared_ptr<dotk::Vector<Real> > & vector_,
-                               std::tr1::shared_ptr<dotk::DOTk_LineSearch> & line_search_);
-    void buildGoldsteinLineSearch(const std::tr1::shared_ptr<dotk::Vector<Real> > & vector_,
-                                  std::tr1::shared_ptr<dotk::DOTk_LineSearch> & line_search_);
-    void buildCubicLineSearch(const std::tr1::shared_ptr<dotk::Vector<Real> > & vector_,
-                              std::tr1::shared_ptr<dotk::DOTk_LineSearch> & line_search_);
-    void buildGoldenSectionLineSearch(const std::tr1::shared_ptr<dotk::Vector<Real> > & vector_,
-                                      std::tr1::shared_ptr<dotk::DOTk_LineSearch> & line_search_);
+    void buildArmijoLineSearch(const std::shared_ptr<dotk::Vector<Real> > & vector_,
+                               std::shared_ptr<dotk::DOTk_LineSearch> & line_search_);
+    void buildGoldsteinLineSearch(const std::shared_ptr<dotk::Vector<Real> > & vector_,
+                                  std::shared_ptr<dotk::DOTk_LineSearch> & line_search_);
+    void buildCubicLineSearch(const std::shared_ptr<dotk::Vector<Real> > & vector_,
+                              std::shared_ptr<dotk::DOTk_LineSearch> & line_search_);
+    void buildGoldenSectionLineSearch(const std::shared_ptr<dotk::Vector<Real> > & vector_,
+                                      std::shared_ptr<dotk::DOTk_LineSearch> & line_search_);
 
-    void build(const std::tr1::shared_ptr<dotk::Vector<Real> > & vector_,
-               std::tr1::shared_ptr<dotk::DOTk_LineSearch> & line_search_) const;
+    void build(const std::shared_ptr<dotk::Vector<Real> > & vector_,
+               std::shared_ptr<dotk::DOTk_LineSearch> & line_search_) const;
 
 private:
     dotk::types::line_search_t m_FactoryType;

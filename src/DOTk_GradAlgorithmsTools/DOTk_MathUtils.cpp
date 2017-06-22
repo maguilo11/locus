@@ -13,7 +13,7 @@
 namespace dotk
 {
 
-Real norm(const std::tr1::shared_ptr<dotk::Vector<Real> > & input_)
+Real norm(const std::shared_ptr<dotk::Vector<Real> > & input_)
 {
     Real output = input_->control()->dot(*input_->control());
     if(input_->state().use_count() > 0)
@@ -25,7 +25,7 @@ Real norm(const std::tr1::shared_ptr<dotk::Vector<Real> > & input_)
     return (output);
 }
 
-void scale(const Real & alpha_, const std::tr1::shared_ptr<dotk::Vector<Real> > & output_)
+void scale(const Real & alpha_, const std::shared_ptr<dotk::Vector<Real> > & output_)
 {
     output_->control()->scale(alpha_);
     if(output_->state().use_count() > 0)
@@ -35,9 +35,9 @@ void scale(const Real & alpha_, const std::tr1::shared_ptr<dotk::Vector<Real> > 
 }
 
 void update(const Real & alpha_,
-            const std::tr1::shared_ptr<dotk::Vector<Real> > & input_,
+            const std::shared_ptr<dotk::Vector<Real> > & input_,
             const Real & beta_,
-            const std::tr1::shared_ptr<dotk::Vector<Real> > & output_)
+            const std::shared_ptr<dotk::Vector<Real> > & output_)
 {
     output_->control()->update(alpha_, *input_->control(), beta_);
     if(input_->state().use_count() > 0)

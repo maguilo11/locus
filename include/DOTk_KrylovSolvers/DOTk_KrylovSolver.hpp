@@ -8,7 +8,7 @@
 #ifndef DOTK_KRYLOVSOLVER_HPP_
 #define DOTK_KRYLOVSOLVER_HPP_
 
-#include <tr1/memory>
+#include <memory>
 #include "DOTk_Types.hpp"
 
 namespace dotk
@@ -52,12 +52,12 @@ public:
     bool checkResidualNorm(Real norm_, Real stopping_tolerance_);
 
     virtual void setMaxNumKrylovSolverItr(size_t itr_) = 0;
-    virtual const std::tr1::shared_ptr<dotk::DOTk_KrylovSolverDataMng> & getDataMng() const = 0;
-    virtual const std::tr1::shared_ptr<dotk::DOTk_LinearOperator> & getLinearOperator() const = 0;
-    virtual const std::tr1::shared_ptr<dotk::Vector<Real> > & getDescentDirection() = 0;
-    virtual void solve(const std::tr1::shared_ptr<dotk::Vector<Real> > & rhs_,
-                       const std::tr1::shared_ptr<dotk::DOTk_KrylovSolverStoppingCriterion> & criterion_,
-                       const std::tr1::shared_ptr<dotk::DOTk_OptimizationDataMng> & opt_prob_mng_) = 0;
+    virtual const std::shared_ptr<dotk::DOTk_KrylovSolverDataMng> & getDataMng() const = 0;
+    virtual const std::shared_ptr<dotk::DOTk_LinearOperator> & getLinearOperator() const = 0;
+    virtual const std::shared_ptr<dotk::Vector<Real> > & getDescentDirection() = 0;
+    virtual void solve(const std::shared_ptr<dotk::Vector<Real> > & rhs_,
+                       const std::shared_ptr<dotk::DOTk_KrylovSolverStoppingCriterion> & criterion_,
+                       const std::shared_ptr<dotk::DOTk_OptimizationDataMng> & opt_prob_mng_) = 0;
 
 private:
     size_t m_NumSolverItrDone;

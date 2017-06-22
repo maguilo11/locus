@@ -28,11 +28,11 @@ class DOTk_EqualityConstraint;
 class NumericallyDifferentiatedHessian : public dotk::DOTk_LinearOperator
 {
 public:
-    NumericallyDifferentiatedHessian(const std::tr1::shared_ptr<dotk::DOTk_Primal> & input_,
-                                     const std::tr1::shared_ptr<dotk::DOTk_ObjectiveFunction<Real> > & objective_);
-    NumericallyDifferentiatedHessian(const std::tr1::shared_ptr<dotk::DOTk_Primal> & input_,
-                                     const std::tr1::shared_ptr<dotk::DOTk_ObjectiveFunction<Real> > & objective_,
-                                     const std::tr1::shared_ptr<dotk::DOTk_EqualityConstraint<Real> > & equality_);
+    NumericallyDifferentiatedHessian(const std::shared_ptr<dotk::DOTk_Primal> & input_,
+                                     const std::shared_ptr<dotk::DOTk_ObjectiveFunction<Real> > & objective_);
+    NumericallyDifferentiatedHessian(const std::shared_ptr<dotk::DOTk_Primal> & input_,
+                                     const std::shared_ptr<dotk::DOTk_ObjectiveFunction<Real> > & objective_,
+                                     const std::shared_ptr<dotk::DOTk_EqualityConstraint<Real> > & equality_);
     virtual ~NumericallyDifferentiatedHessian();
 
     void setForwardDifference(const dotk::Vector<Real> & input_, Real epsilon_ = 1e-6);
@@ -42,20 +42,20 @@ public:
     void setThirdOrderForwardDifference(const dotk::Vector<Real> & input_, Real epsilon_ = 1e-6);
     void setThirdOrderBackwardDifference(const dotk::Vector<Real> & input_, Real epsilon_ = 1e-6);
 
-    void apply(const std::tr1::shared_ptr<dotk::Vector<Real> > & primal_,
-               const std::tr1::shared_ptr<dotk::Vector<Real> > & gradient_,
-               const std::tr1::shared_ptr<dotk::Vector<Real> > & vector_,
-               const std::tr1::shared_ptr<dotk::Vector<Real> > & output_);
-    void apply(const std::tr1::shared_ptr<dotk::DOTk_OptimizationDataMng> & mng_,
-               const std::tr1::shared_ptr<dotk::Vector<Real> > & vector_,
-               const std::tr1::shared_ptr<dotk::Vector<Real> > & output_);
+    void apply(const std::shared_ptr<dotk::Vector<Real> > & primal_,
+               const std::shared_ptr<dotk::Vector<Real> > & gradient_,
+               const std::shared_ptr<dotk::Vector<Real> > & vector_,
+               const std::shared_ptr<dotk::Vector<Real> > & output_);
+    void apply(const std::shared_ptr<dotk::DOTk_OptimizationDataMng> & mng_,
+               const std::shared_ptr<dotk::Vector<Real> > & vector_,
+               const std::shared_ptr<dotk::Vector<Real> > & output_);
 
     void setNumOtimizationItrDone(size_t itr_);
     void updateLimitedMemoryStorage(bool update_);
 
 private:
-    std::tr1::shared_ptr<dotk::DOTk_Functor> m_GradientFunctor;
-    std::tr1::shared_ptr<dotk::DOTk_NumericalDifferentiation> m_NumericalDifferentiation;
+    std::shared_ptr<dotk::DOTk_Functor> m_GradientFunctor;
+    std::shared_ptr<dotk::DOTk_NumericalDifferentiation> m_NumericalDifferentiation;
 };
 
 }

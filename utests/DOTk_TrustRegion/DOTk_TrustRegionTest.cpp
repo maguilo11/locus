@@ -109,10 +109,10 @@ TEST(DOTk_TrustRegion, setAndGetPredictedReduction)
     Real tol = 1e-8;
     EXPECT_NEAR(std::numeric_limits<Real>::min(), step.getPredictedReduction(), tol);
 
-    std::tr1::shared_ptr<dotk::Vector<Real> > grad = dotk::gtest::allocateData(2, 2);
-    std::tr1::shared_ptr<dotk::Vector<Real> > trial_step = grad->clone();
+    std::shared_ptr<dotk::Vector<Real> > grad = dotk::gtest::allocateData(2, 2);
+    std::shared_ptr<dotk::Vector<Real> > trial_step = grad->clone();
     trial_step->fill(2);
-    std::tr1::shared_ptr<dotk::Vector<Real> > hess_times_trial_step = grad->clone();
+    std::shared_ptr<dotk::Vector<Real> > hess_times_trial_step = grad->clone();
     hess_times_trial_step->fill(2);
     step.computePredictedReduction(grad, trial_step, hess_times_trial_step);
     EXPECT_NEAR(-12., step.getPredictedReduction(), tol);
@@ -170,7 +170,7 @@ TEST(DOTk_TrustRegion, computeAlternateStep)
 
     // TEST: norm of Newton direction is greater that trust region radius
     Real tol = 1e-8;
-    std::tr1::shared_ptr<dotk::Vector<Real> > vec = dotk::gtest::allocateData(2);
+    std::shared_ptr<dotk::Vector<Real> > vec = dotk::gtest::allocateData(2);
     vec->fill(1e4);
     Real trust_region_step = step.computeAlternateStep(step.getTrustRegionRadius(), vec);
     EXPECT_NEAR(1e4, trust_region_step, tol);
@@ -184,10 +184,10 @@ TEST(DOTk_TrustRegion, computeDoglegStep)
 {
     dotk::DOTk_TrustRegion step;
 
-    std::tr1::shared_ptr<dotk::Vector<Real> > cauchy_dir = dotk::gtest::allocateData(2);
+    std::shared_ptr<dotk::Vector<Real> > cauchy_dir = dotk::gtest::allocateData(2);
     (*cauchy_dir)[0] = -0.46875;
     (*cauchy_dir)[1] = -0.15625;
-    std::tr1::shared_ptr<dotk::Vector<Real> > newton_dir = cauchy_dir->clone();
+    std::shared_ptr<dotk::Vector<Real> > newton_dir = cauchy_dir->clone();
     (*newton_dir)[0] = -0.320;
     (*newton_dir)[1] = -0.747;
     Real trust_region_radius = 0.75;
@@ -200,7 +200,7 @@ TEST(DOTk_TrustRegion, computeDoglegStep)
 TEST(DOTk_TrustRegion, acceptTrustRegionRadius)
 {
     // Test: NaN actual over predicted reduction
-    std::tr1::shared_ptr<dotk::Vector<Real> > trial_step = dotk::gtest::allocateData(2);
+    std::shared_ptr<dotk::Vector<Real> > trial_step = dotk::gtest::allocateData(2);
 
     dotk::DOTk_TrustRegion step;
     step.setMaxTrustRegionRadius(1e10);
@@ -211,9 +211,9 @@ TEST(DOTk_TrustRegion, acceptTrustRegionRadius)
     EXPECT_NEAR(0.5, step.getTrustRegionRadius(), tolerance);
 
     // Test: actual over predicted reduction is less than lower limit
-    std::tr1::shared_ptr<dotk::Vector<Real> > grad = trial_step->clone();
+    std::shared_ptr<dotk::Vector<Real> > grad = trial_step->clone();
     grad->fill(std::numeric_limits<Real>::infinity());
-    std::tr1::shared_ptr<dotk::Vector<Real> > hess_times_vec = trial_step->clone();
+    std::shared_ptr<dotk::Vector<Real> > hess_times_vec = trial_step->clone();
     hess_times_vec->fill(std::numeric_limits<Real>::infinity());
 
     step.setTrustRegionRadius(1.);
@@ -246,19 +246,19 @@ TEST(DOTk_TrustRegion, computeCauchyDirection)
     dotk::DOTk_TrustRegion step;
     step.setTrustRegionRadius(1.);
 
-    std::tr1::shared_ptr<dotk::Vector<Real> > grad = dotk::gtest::allocateData(2);
+    std::shared_ptr<dotk::Vector<Real> > grad = dotk::gtest::allocateData(2);
     (*grad)[0] = 6.;
     (*grad)[1] = 2.;
 
-    std::tr1::shared_ptr<dotk::Vector<Real> > matrix_times_grad = grad->clone();
+    std::shared_ptr<dotk::Vector<Real> > matrix_times_grad = grad->clone();
     (*matrix_times_grad)[0] = 84;
     (*matrix_times_grad)[1] = 4;
 
-    std::tr1::shared_ptr<dotk::Vector<Real> > cauchy_point = grad->clone();
+    std::shared_ptr<dotk::Vector<Real> > cauchy_point = grad->clone();
     step.computeCauchyPoint(grad, matrix_times_grad, cauchy_point);
 
     // TEST: Positive curvature
-    std::tr1::shared_ptr<dotk::Vector<Real> > gold = grad->clone();
+    std::shared_ptr<dotk::Vector<Real> > gold = grad->clone();
     (*gold)[0] = -0.46875;
     (*gold)[1] = -0.15625;
     dotk::gtest::checkResults(*cauchy_point, *gold);

@@ -8,7 +8,6 @@
 #ifndef DOTK_POWERMETHOD_HPP_
 #define DOTK_POWERMETHOD_HPP_
 
-#include <tr1/memory>
 #include "DOTk_EigenMethod.hpp"
 
 namespace dotk
@@ -29,9 +28,9 @@ public:
     void setMaxNumItr(size_t itr_);
     Real getRelativeDifferenceTolerance() const;
     void setRelativeDifferenceTolerance(Real tol_);
-    virtual void solve(const std::tr1::shared_ptr<dotk::matrix<Real> > & matrix_,
+    virtual void solve(const std::shared_ptr<dotk::matrix<Real> > & matrix_,
                        Real & eigenvalues_,
-                       std::tr1::shared_ptr<dotk::Vector<Real> > & eigenvectors_);
+                       std::shared_ptr<dotk::Vector<Real> > & eigenvectors_);
 
 private:
     size_t m_MaxNumItr;

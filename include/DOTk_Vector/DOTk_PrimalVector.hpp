@@ -47,11 +47,11 @@ public:
     // Returns the number of elements in the vector.
     virtual size_t size() const;
     // Clones memory for an object of ScalarType dotk::DOTk_MultiVector
-    virtual std::tr1::shared_ptr<dotk::Vector<ScalarType> > clone() const;
+    virtual std::shared_ptr<dotk::Vector<ScalarType> > clone() const;
     // Returns shared pointer to state vector
-    virtual const std::tr1::shared_ptr<dotk::Vector<ScalarType> > & state() const;
+    virtual const std::shared_ptr<dotk::Vector<ScalarType> > & state() const;
     // Returns shared pointer to control vector
-    virtual const std::tr1::shared_ptr<dotk::Vector<ScalarType> > & control() const;
+    virtual const std::shared_ptr<dotk::Vector<ScalarType> > & control() const;
     // Operator overloads the square bracket operator
     virtual ScalarType & operator [](size_t index_);
     // Operator overloads the const square bracket operator
@@ -63,8 +63,8 @@ private:
 
 private:
     size_t m_Size;
-    std::tr1::shared_ptr<dotk::Vector<ScalarType> > m_State;
-    std::tr1::shared_ptr<dotk::Vector<ScalarType> > m_Control;
+    std::shared_ptr<dotk::Vector<ScalarType> > m_State;
+    std::shared_ptr<dotk::Vector<ScalarType> > m_Control;
 
 private:
     DOTk_PrimalVector(const dotk::DOTk_PrimalVector<ScalarType> &);

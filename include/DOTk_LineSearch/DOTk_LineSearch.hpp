@@ -8,7 +8,7 @@
 #ifndef DOTK_LINESEARCH_HPP_
 #define DOTK_LINESEARCH_HPP_
 
-#include <tr1/memory>
+#include <memory>
 #include "DOTk_Types.hpp"
 
 namespace dotk
@@ -41,7 +41,7 @@ public:
 
     dotk::types::line_search_t type() const;
 
-    virtual void step(const std::tr1::shared_ptr<dotk::DOTk_OptimizationDataMng> & mng_) = 0;
+    virtual void step(const std::shared_ptr<dotk::DOTk_OptimizationDataMng> & mng_) = 0;
 
 private:
     size_t m_MaxNumLineSearchItr;

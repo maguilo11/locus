@@ -8,7 +8,7 @@
 #ifndef DOTK_INEXACTNEWTONALGORITHMS_HPP_
 #define DOTK_INEXACTNEWTONALGORITHMS_HPP_
 
-#include <tr1/memory>
+#include <memory>
 
 #include "DOTk_Types.hpp"
 
@@ -46,17 +46,17 @@ public:
 
     void setFixedStoppingCriterion(Real fixed_tolerance_);
     void setRelativeStoppingCriterion(Real relative_tolerance_);
-    void setTrialStep(const std::tr1::shared_ptr<dotk::DOTk_KrylovSolver> & solver_,
-                      const std::tr1::shared_ptr<dotk::DOTk_OptimizationDataMng> & mng_);
-    bool checkStoppingCriteria(const std::tr1::shared_ptr<dotk::DOTk_OptimizationDataMng> & mng_);
+    void setTrialStep(const std::shared_ptr<dotk::DOTk_KrylovSolver> & solver_,
+                      const std::shared_ptr<dotk::DOTk_OptimizationDataMng> & mng_);
+    bool checkStoppingCriteria(const std::shared_ptr<dotk::DOTk_OptimizationDataMng> & mng_);
 
     virtual void setMaxNumKrylovSolverItr(size_t itr_) = 0;
 
 protected:
-    std::tr1::shared_ptr<dotk::DOTk_KrylovSolverStoppingCriterion> m_Criterion;
+    std::shared_ptr<dotk::DOTk_KrylovSolverStoppingCriterion> m_Criterion;
 
 private:
-    void resetCurrentStateToFormer(const std::tr1::shared_ptr<dotk::DOTk_OptimizationDataMng> & mng_);
+    void resetCurrentStateToFormer(const std::shared_ptr<dotk::DOTk_OptimizationDataMng> & mng_);
 
 private:
     size_t m_MaxNumOptItr;

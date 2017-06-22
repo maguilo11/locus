@@ -8,7 +8,7 @@
 #ifndef DOTK_OPTIMALITYCRITERIADATAMNG_HPP_
 #define DOTK_OPTIMALITYCRITERIADATAMNG_HPP_
 
-#include <tr1/memory>
+#include <memory>
 #include "DOTk_Types.hpp"
 
 namespace dotk
@@ -22,7 +22,7 @@ class DOTk_Primal;
 class DOTk_OptimalityCriteriaDataMng
 {
 public:
-    DOTk_OptimalityCriteriaDataMng(const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_);
+    DOTk_OptimalityCriteriaDataMng(const std::shared_ptr<dotk::DOTk_Primal> & primal_);
     ~DOTk_OptimalityCriteriaDataMng();
 
     Real getMoveLimit() const;
@@ -66,7 +66,7 @@ public:
     dotk::Vector<Real> & getInequalityGradient() const;
 
 private:
-    void initialize(const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_);
+    void initialize(const std::shared_ptr<dotk::DOTk_Primal> & primal_);
 
 private:
     Real m_MoveLimit;
@@ -86,13 +86,13 @@ private:
 
     size_t m_MaxNumOptimizationItr;
 
-    std::tr1::shared_ptr<dotk::Vector<Real> > m_State;
-    std::tr1::shared_ptr<dotk::Vector<Real> > m_OldControl;
-    std::tr1::shared_ptr<dotk::Vector<Real> > m_NewControl;
-    std::tr1::shared_ptr<dotk::Vector<Real> > m_ControlLowerBound;
-    std::tr1::shared_ptr<dotk::Vector<Real> > m_ControlUpperBound;
-    std::tr1::shared_ptr<dotk::Vector<Real> > m_ObjectiveGradient;
-    std::tr1::shared_ptr<dotk::Vector<Real> > m_InequalityGradient;
+    std::shared_ptr<dotk::Vector<Real> > m_State;
+    std::shared_ptr<dotk::Vector<Real> > m_OldControl;
+    std::shared_ptr<dotk::Vector<Real> > m_NewControl;
+    std::shared_ptr<dotk::Vector<Real> > m_ControlLowerBound;
+    std::shared_ptr<dotk::Vector<Real> > m_ControlUpperBound;
+    std::shared_ptr<dotk::Vector<Real> > m_ObjectiveGradient;
+    std::shared_ptr<dotk::Vector<Real> > m_InequalityGradient;
 
 private:
     DOTk_OptimalityCriteriaDataMng(const dotk::DOTk_OptimalityCriteriaDataMng &);

@@ -8,7 +8,7 @@
 #ifndef DOTK_AUGMENTEDSYSTEMPRECFACTORY_HPP_
 #define DOTK_AUGMENTEDSYSTEMPRECFACTORY_HPP_
 
-#include <tr1/memory>
+#include <memory>
 
 namespace dotk
 {
@@ -23,23 +23,23 @@ public:
     ~DOTk_AugmentedSystemPrecFactory();
 
     void buildAugmentedSystemPrecWithPcgSolver
-    (const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_,
-     std::tr1::shared_ptr<dotk::DOTk_LeftPreconditioner> & prec_);
+    (const std::shared_ptr<dotk::DOTk_Primal> & primal_,
+     std::shared_ptr<dotk::DOTk_LeftPreconditioner> & prec_);
     void buildAugmentedSystemPrecWithGcrSolver
-    (const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_,
-     std::tr1::shared_ptr<dotk::DOTk_LeftPreconditioner> & prec_);
+    (const std::shared_ptr<dotk::DOTk_Primal> & primal_,
+     std::shared_ptr<dotk::DOTk_LeftPreconditioner> & prec_);
     void buildAugmentedSystemPrecWithCrSolver
-    (const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_,
-     std::tr1::shared_ptr<dotk::DOTk_LeftPreconditioner> & prec_);
+    (const std::shared_ptr<dotk::DOTk_Primal> & primal_,
+     std::shared_ptr<dotk::DOTk_LeftPreconditioner> & prec_);
     void buildAugmentedSystemPrecWithCgneSolver
-    (const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_,
-     std::tr1::shared_ptr<dotk::DOTk_LeftPreconditioner> & prec_);
+    (const std::shared_ptr<dotk::DOTk_Primal> & primal_,
+     std::shared_ptr<dotk::DOTk_LeftPreconditioner> & prec_);
     void buildAugmentedSystemPrecWithCgnrSolver
-    (const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_,
-     std::tr1::shared_ptr<dotk::DOTk_LeftPreconditioner> & prec_);
+    (const std::shared_ptr<dotk::DOTk_Primal> & primal_,
+     std::shared_ptr<dotk::DOTk_LeftPreconditioner> & prec_);
     void buildAugmentedSystemPrecWithGmresSolver
-    (const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_,
-     std::tr1::shared_ptr<dotk::DOTk_LeftPreconditioner> & prec_);
+    (const std::shared_ptr<dotk::DOTk_Primal> & primal_,
+     std::shared_ptr<dotk::DOTk_LeftPreconditioner> & prec_);
 
 private:
     size_t m_MaxNumSolverItr;

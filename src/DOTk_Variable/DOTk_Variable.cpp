@@ -59,7 +59,7 @@ dotk::types::variable_t DOTk_Variable::type() const
     return (m_Type);
 }
 
-const std::tr1::shared_ptr<dotk::Vector<Real> > & DOTk_Variable::data() const
+const std::shared_ptr<dotk::Vector<Real> > & DOTk_Variable::data() const
 {
     return (m_Data);
 }
@@ -86,7 +86,7 @@ void DOTk_Variable::setLowerBound(const dotk::Vector<Real> & lower_bound_)
     m_LowerBound->update(1., lower_bound_, 0.);
 }
 
-const std::tr1::shared_ptr<dotk::Vector<Real> > & DOTk_Variable::lowerBound() const
+const std::shared_ptr<dotk::Vector<Real> > & DOTk_Variable::lowerBound() const
 {
     return (m_LowerBound);
 }
@@ -113,7 +113,7 @@ void DOTk_Variable::setUpperBound(const dotk::Vector<Real> & upper_bound_)
     m_UpperBound->update(1., upper_bound_, 0.);
 }
 
-const std::tr1::shared_ptr<dotk::Vector<Real> > & DOTk_Variable::upperBound() const
+const std::shared_ptr<dotk::Vector<Real> > & DOTk_Variable::upperBound() const
 {
     return (m_UpperBound);
 }

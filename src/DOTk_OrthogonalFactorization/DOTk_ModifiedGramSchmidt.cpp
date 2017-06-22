@@ -21,9 +21,9 @@ DOTk_ModifiedGramSchmidt::~DOTk_ModifiedGramSchmidt()
 {
 }
 
-void DOTk_ModifiedGramSchmidt::factorization(const std::tr1::shared_ptr<dotk::matrix<Real> > & input_,
-                                             std::tr1::shared_ptr<dotk::matrix<Real> > & Q_,
-                                             std::tr1::shared_ptr<dotk::matrix<Real> > & R_)
+void DOTk_ModifiedGramSchmidt::factorization(const std::shared_ptr<dotk::matrix<Real> > & input_,
+                                             std::shared_ptr<dotk::matrix<Real> > & Q_,
+                                             std::shared_ptr<dotk::matrix<Real> > & R_)
 {
     dotk::qr::modifiedGramSchmidt(*input_, *Q_, *R_);
 }

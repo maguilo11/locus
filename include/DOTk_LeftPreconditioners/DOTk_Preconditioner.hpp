@@ -26,12 +26,12 @@ public:
 
     dotk::types::left_prec_t type() const;
 
-    virtual void applyPreconditioner(const std::tr1::shared_ptr<dotk::DOTk_OptimizationDataMng> & mng_,
-                                     const std::tr1::shared_ptr<dotk::Vector<Real> > & vector_,
-                                     std::tr1::shared_ptr<dotk::Vector<Real> > & prec_times_vector_);
-    virtual void applyInvPreconditioner(const std::tr1::shared_ptr<dotk::DOTk_OptimizationDataMng> & mng_,
-                                        const std::tr1::shared_ptr<dotk::Vector<Real> > & vector_,
-                                        std::tr1::shared_ptr<dotk::Vector<Real> > & inv_prec_times_vector_);
+    virtual void applyPreconditioner(const std::shared_ptr<dotk::DOTk_OptimizationDataMng> & mng_,
+                                     const std::shared_ptr<dotk::Vector<Real> > & vector_,
+                                     std::shared_ptr<dotk::Vector<Real> > & prec_times_vector_);
+    virtual void applyInvPreconditioner(const std::shared_ptr<dotk::DOTk_OptimizationDataMng> & mng_,
+                                        const std::shared_ptr<dotk::Vector<Real> > & vector_,
+                                        std::shared_ptr<dotk::Vector<Real> > & inv_prec_times_vector_);
 
 private:
     dotk::types::left_prec_t m_Type;

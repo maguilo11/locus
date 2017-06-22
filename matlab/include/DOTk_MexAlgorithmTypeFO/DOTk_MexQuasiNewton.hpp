@@ -36,8 +36,8 @@ private:
     void solveTypeBoundNonlinearProgramming(const mxArray* input_[], mxArray* output_[]);
 
     void setAlgorithmParameters(dotk::DOTk_LineSearchQuasiNewton & algorithm_);
-    void optimize(const std::tr1::shared_ptr<dotk::DOTk_LineSearchStepMng> & step_,
-                  const std::tr1::shared_ptr<dotk::DOTk_LineSearchAlgorithmsDataMng> & mng_,
+    void optimize(const std::shared_ptr<dotk::DOTk_LineSearchStepMng> & step_,
+                  const std::shared_ptr<dotk::DOTk_LineSearchAlgorithmsDataMng> & mng_,
                   const mxArray* input_[],
                   mxArray* output_[]);
 

@@ -81,8 +81,8 @@ void DOTk_InexactTrustRegionSqpIO::closeFile()
 }
 
 void DOTk_InexactTrustRegionSqpIO::printDiagnosticsReport(const dotk::DOTk_InexactTrustRegionSQP* const alg_,
-                                                          const std::tr1::shared_ptr<dotk::DOTk_TrustRegionMngTypeELP> & mng_,
-                                                          const std::tr1::shared_ptr<dotk::DOTk_InexactTrustRegionSqpSolverMng> & solver_)
+                                                          const std::shared_ptr<dotk::DOTk_TrustRegionMngTypeELP> & mng_,
+                                                          const std::shared_ptr<dotk::DOTk_InexactTrustRegionSqpSolverMng> & solver_)
 {
     size_t num_opt_itr_done = alg_->getNumItrDone();
     size_t num_trust_region_subproblem_itr = alg_->getNumTrustRegionSubProblemItrDone();
@@ -126,7 +126,7 @@ void DOTk_InexactTrustRegionSqpIO::writeHeader()
 }
 
 void DOTk_InexactTrustRegionSqpIO::writeInitialDiagnostics(const dotk::DOTk_InexactTrustRegionSQP* const alg_,
-                                                           const std::tr1::shared_ptr<dotk::DOTk_TrustRegionMngTypeELP> & mng_)
+                                                           const std::shared_ptr<dotk::DOTk_TrustRegionMngTypeELP> & mng_)
 {
     size_t num_opt_itr_done = alg_->getNumItrDone();
     size_t objective_function_counter = mng_->getObjectiveFunctionEvaluationCounter();
@@ -153,9 +153,9 @@ void DOTk_InexactTrustRegionSqpIO::writeInitialDiagnostics(const dotk::DOTk_Inex
 }
 
 void DOTk_InexactTrustRegionSqpIO::writeFirstTrustRegionSubProblemItrDiagnostics(const dotk::DOTk_InexactTrustRegionSQP* const alg_,
-                                                                                 const std::tr1::shared_ptr<
+                                                                                 const std::shared_ptr<
                                                                                          dotk::DOTk_TrustRegionMngTypeELP> & mng_,
-                                                                                 const std::tr1::shared_ptr<
+                                                                                 const std::shared_ptr<
                                                                                          dotk::DOTk_InexactTrustRegionSqpSolverMng> & solver_mng_)
 {
     size_t num_opt_itr_done = alg_->getNumItrDone();
@@ -200,9 +200,9 @@ void DOTk_InexactTrustRegionSqpIO::writeFirstTrustRegionSubProblemItrDiagnostics
 }
 
 void DOTk_InexactTrustRegionSqpIO::writeTrustRegionSubProblemDiagnostics(const dotk::DOTk_InexactTrustRegionSQP* const alg_,
-                                                                         const std::tr1::shared_ptr<
+                                                                         const std::shared_ptr<
                                                                                  dotk::DOTk_TrustRegionMngTypeELP> & mng_,
-                                                                         const std::tr1::shared_ptr<
+                                                                         const std::shared_ptr<
                                                                                  dotk::DOTk_InexactTrustRegionSqpSolverMng> & solver_mng_)
 {
     std::ostringstream dual_prob_exit_criterion;

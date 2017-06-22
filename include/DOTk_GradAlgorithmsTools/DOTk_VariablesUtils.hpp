@@ -8,7 +8,7 @@
 #ifndef DOTK_VARIABLESUTILS_HPP_
 #define DOTK_VARIABLESUTILS_HPP_
 
-#include <tr1/memory>
+#include <memory>
 #include "DOTk_Types.hpp"
 
 namespace dotk
@@ -17,10 +17,10 @@ namespace dotk
 template<typename ScalarType>
 class Vector;
 
-void printDual(const std::tr1::shared_ptr<dotk::Vector<Real> > & dual_);
-void printState(const std::tr1::shared_ptr<dotk::Vector<Real> > & state_);
-void printControl(const std::tr1::shared_ptr<dotk::Vector<Real> > & control_);
-void printSolution(const std::tr1::shared_ptr<dotk::Vector<Real> > & solution_);
+void printDual(const std::shared_ptr<dotk::Vector<Real> > & dual_);
+void printState(const std::shared_ptr<dotk::Vector<Real> > & state_);
+void printControl(const std::shared_ptr<dotk::Vector<Real> > & control_);
+void printSolution(const std::shared_ptr<dotk::Vector<Real> > & solution_);
 
 }
 

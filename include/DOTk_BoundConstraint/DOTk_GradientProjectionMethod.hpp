@@ -22,9 +22,9 @@ class DOTk_LineSearchAlgorithmsDataMng;
 class GradientProjectionMethod
 {
 public:
-    GradientProjectionMethod(const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_,
-                             const std::tr1::shared_ptr<dotk::DOTk_LineSearchStepMng> & step_,
-                             const std::tr1::shared_ptr<dotk::DOTk_LineSearchAlgorithmsDataMng> & mng_);
+    GradientProjectionMethod(const std::shared_ptr<dotk::DOTk_Primal> & primal_,
+                             const std::shared_ptr<dotk::DOTk_LineSearchStepMng> & step_,
+                             const std::shared_ptr<dotk::DOTk_LineSearchAlgorithmsDataMng> & mng_);
     ~GradientProjectionMethod();
 
     void getMin();
@@ -57,10 +57,10 @@ private:
 
     std::ofstream m_OutputFile;
 
-    std::tr1::shared_ptr<dotk::DOTk_Primal> m_Primal;
-    std::tr1::shared_ptr<dotk::DOTk_BoundConstraints> m_Bounds;
-    std::tr1::shared_ptr<dotk::DOTk_LineSearchStepMng> m_LineSearchStep;
-    std::tr1::shared_ptr<dotk::DOTk_LineSearchAlgorithmsDataMng> m_Data;
+    std::shared_ptr<dotk::DOTk_Primal> m_Primal;
+    std::shared_ptr<dotk::DOTk_BoundConstraints> m_Bounds;
+    std::shared_ptr<dotk::DOTk_LineSearchStepMng> m_LineSearchStep;
+    std::shared_ptr<dotk::DOTk_LineSearchAlgorithmsDataMng> m_Data;
 
 private:
     GradientProjectionMethod(const dotk::GradientProjectionMethod &);

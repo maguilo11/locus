@@ -24,27 +24,27 @@ class Vector;
 class DOTk_ParallelCentralDiffGrad: public dotk::DOTk_FirstOrderOperator
 {
 public:
-    explicit DOTk_ParallelCentralDiffGrad(const std::tr1::shared_ptr<dotk::Vector<Real> > & vector_);
+    explicit DOTk_ParallelCentralDiffGrad(const std::shared_ptr<dotk::Vector<Real> > & vector_);
     virtual ~DOTk_ParallelCentralDiffGrad();
 
-    const std::tr1::shared_ptr<dotk::Vector<Real> > & getFiniteDiffPerturbationVec() const;
+    const std::shared_ptr<dotk::Vector<Real> > & getFiniteDiffPerturbationVec() const;
     virtual void setFiniteDiffPerturbationVec(const dotk::Vector<Real> & input_);
 
     void getGradient(Real fval_,
-                     const std::tr1::shared_ptr<dotk::DOTk_AssemblyManager> & interface_,
-                     const std::tr1::shared_ptr<dotk::Vector<Real> > & primal_,
-                     const std::tr1::shared_ptr<dotk::Vector<Real> > & grad_);
+                     const std::shared_ptr<dotk::DOTk_AssemblyManager> & interface_,
+                     const std::shared_ptr<dotk::Vector<Real> > & primal_,
+                     const std::shared_ptr<dotk::Vector<Real> > & grad_);
     virtual void gradient(const dotk::DOTk_OptimizationDataMng * const mng_);
 
 private:
-    void initialize(const std::tr1::shared_ptr<dotk::Vector<Real> > & vector_);
+    void initialize(const std::shared_ptr<dotk::Vector<Real> > & vector_);
 
 private:
-    std::tr1::shared_ptr<dotk::Vector<Real> > m_FvalPlusEntries;
-    std::tr1::shared_ptr<dotk::Vector<Real> > m_FvalMinusEntries;
-    std::tr1::shared_ptr<dotk::Vector<Real> > m_FiniteDiffPerturbationVec;
-    std::vector<std::tr1::shared_ptr<dotk::Vector<Real> > > m_PerturbedPrimalPlusEntries;
-    std::vector<std::tr1::shared_ptr<dotk::Vector<Real> > > m_PerturbedPrimalMinusEntries;
+    std::shared_ptr<dotk::Vector<Real> > m_FvalPlusEntries;
+    std::shared_ptr<dotk::Vector<Real> > m_FvalMinusEntries;
+    std::shared_ptr<dotk::Vector<Real> > m_FiniteDiffPerturbationVec;
+    std::vector<std::shared_ptr<dotk::Vector<Real> > > m_PerturbedPrimalPlusEntries;
+    std::vector<std::shared_ptr<dotk::Vector<Real> > > m_PerturbedPrimalMinusEntries;
 
 private:
     DOTk_ParallelCentralDiffGrad(const dotk::DOTk_ParallelCentralDiffGrad &);

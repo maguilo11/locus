@@ -108,8 +108,8 @@ dotk::types::line_search_t DOTk_MexAlgorithmTypeFO::getLineSearchMethod() const
 }
 
 void DOTk_MexAlgorithmTypeFO::setBoundConstraintMethod(const mxArray* options_,
-                                                       const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_,
-                                                       const std::tr1::shared_ptr<dotk::DOTk_ProjectedLineSearchStep> & step_)
+                                                       const std::shared_ptr<dotk::DOTk_Primal> & primal_,
+                                                       const std::shared_ptr<dotk::DOTk_ProjectedLineSearchStep> & step_)
 {
     dotk::types::constraint_method_t type = dotk::mex::parseBoundConstraintMethod(options_);
     switch(type)

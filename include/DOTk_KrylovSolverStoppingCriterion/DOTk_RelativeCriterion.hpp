@@ -25,7 +25,7 @@ public:
     virtual ~DOTk_RelativeCriterion();
 
     virtual Real evaluate(const dotk::DOTk_KrylovSolver * const solver_,
-                          const std::tr1::shared_ptr<dotk::Vector<Real> > & kernel_vector_);
+                          const std::shared_ptr<dotk::Vector<Real> > & kernel_vector_);
 
 private:
     Real computeStoppingTolerance(Real intial_norm_residual_);

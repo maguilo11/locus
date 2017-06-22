@@ -8,6 +8,8 @@
 #ifndef DOTK_FIRSTORDERLINESEARCHALGIO_HPP_
 #define DOTK_FIRSTORDERLINESEARCHALGIO_HPP_
 
+#include <memory>
+
 namespace dotk
 {
 
@@ -28,8 +30,8 @@ public:
 
     void closeFile();
     void openFile(const char* const name_);
-    void printDiagnosticsReport(const std::tr1::shared_ptr<dotk::DOTk_LineSearchStepMng> & step_,
-                                const std::tr1::shared_ptr<dotk::DOTk_LineSearchAlgorithmsDataMng> & mng_);
+    void printDiagnosticsReport(const std::shared_ptr<dotk::DOTk_LineSearchStepMng> & step_,
+                                const std::shared_ptr<dotk::DOTk_LineSearchAlgorithmsDataMng> & mng_);
 
 private:
     bool m_PrintLicenseFlag;

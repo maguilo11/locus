@@ -243,11 +243,11 @@ public:
         return (m_Data.size());
     }
     // Clones memory for an object of ScalarType dotk::Vector
-    std::tr1::shared_ptr<dotk::Vector<ScalarType> > clone() const
+    std::shared_ptr<dotk::Vector<ScalarType> > clone() const
     {
         size_t dim = m_Data.size();
         int thread_count = this->threads();
-        std::tr1::shared_ptr < dotk::OmpVector<ScalarType> > output(new dotk::OmpVector<ScalarType>(dim, thread_count, 0.));
+        std::shared_ptr < dotk::OmpVector<ScalarType> > output(new dotk::OmpVector<ScalarType>(dim, thread_count, 0.));
         return (output);
     }
     // Operator overloads the square bracket operator

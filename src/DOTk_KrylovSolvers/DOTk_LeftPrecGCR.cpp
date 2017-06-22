@@ -19,7 +19,7 @@
 namespace dotk
 {
 
-DOTk_LeftPrecGCR::DOTk_LeftPrecGCR(const std::tr1::shared_ptr<dotk::DOTk_KrylovSolverDataMng> & solver_mng_) :
+DOTk_LeftPrecGCR::DOTk_LeftPrecGCR(const std::shared_ptr<dotk::DOTk_KrylovSolverDataMng> & solver_mng_) :
         dotk::DOTk_KrylovSolver(dotk::types::LEFT_PREC_GCR),
         m_DataMng(solver_mng_),
         mBetaCoefficients(solver_mng_->getMaxNumSolverItr()),
@@ -29,8 +29,8 @@ DOTk_LeftPrecGCR::DOTk_LeftPrecGCR(const std::tr1::shared_ptr<dotk::DOTk_KrylovS
     this->initialize(solver_mng_->getSolution());
 }
 
-DOTk_LeftPrecGCR::DOTk_LeftPrecGCR(const std::tr1::shared_ptr<dotk::DOTk_Primal> & variable_,
-                                   const std::tr1::shared_ptr<dotk::DOTk_LinearOperator> & linear_operator_,
+DOTk_LeftPrecGCR::DOTk_LeftPrecGCR(const std::shared_ptr<dotk::DOTk_Primal> & variable_,
+                                   const std::shared_ptr<dotk::DOTk_LinearOperator> & linear_operator_,
                                    size_t max_num_itr_) :
         dotk::DOTk_KrylovSolver(dotk::types::LEFT_PREC_GCR),
         m_DataMng(new dotk::DOTk_LeftPrecGenConjResDataMng(variable_, linear_operator_, max_num_itr_)),
@@ -45,9 +45,9 @@ DOTk_LeftPrecGCR::~DOTk_LeftPrecGCR()
 {
 }
 
-void DOTk_LeftPrecGCR::initialize(const std::tr1::shared_ptr<dotk::Vector<Real> > & rhs_vec_,
-                                  const std::tr1::shared_ptr<dotk::DOTk_KrylovSolverStoppingCriterion> & criterion_,
-                                  const std::tr1::shared_ptr<dotk::DOTk_OptimizationDataMng> & opt_mng_)
+void DOTk_LeftPrecGCR::initialize(const std::shared_ptr<dotk::Vector<Real> > & rhs_vec_,
+                                  const std::shared_ptr<dotk::DOTk_KrylovSolverStoppingCriterion> & criterion_,
+                                  const std::shared_ptr<dotk::DOTk_OptimizationDataMng> & opt_mng_)
 {
     size_t itr_done = 0;
     dotk::DOTk_KrylovSolver::setNumSolverItrDone(itr_done);
@@ -70,9 +70,9 @@ void DOTk_LeftPrecGCR::initialize(const std::tr1::shared_ptr<dotk::Vector<Real> 
     dotk::DOTk_KrylovSolver::setInitialStoppingTolerance(stopping_tolerance);
 }
 
-void DOTk_LeftPrecGCR::pgcr(const std::tr1::shared_ptr<dotk::Vector<Real> > & rhs_vec_,
-                            const std::tr1::shared_ptr<dotk::DOTk_KrylovSolverStoppingCriterion> & criterion_,
-                            const std::tr1::shared_ptr<dotk::DOTk_OptimizationDataMng> & opt_mng_)
+void DOTk_LeftPrecGCR::pgcr(const std::shared_ptr<dotk::Vector<Real> > & rhs_vec_,
+                            const std::shared_ptr<dotk::DOTk_KrylovSolverStoppingCriterion> & criterion_,
+                            const std::shared_ptr<dotk::DOTk_OptimizationDataMng> & opt_mng_)
 {
     this->initialize(rhs_vec_, criterion_, opt_mng_);
     if(dotk::DOTk_KrylovSolver::checkCurvature(dotk::DOTk_KrylovSolver::getSolverResidualNorm()) == true)
@@ -130,30 +130,30 @@ void DOTk_LeftPrecGCR::setMaxNumKrylovSolverItr(size_t itr_)
     m_DataMng->setMaxNumSolverItr(itr_);
 }
 
-const std::tr1::shared_ptr<dotk::DOTk_KrylovSolverDataMng> & DOTk_LeftPrecGCR::getDataMng() const
+const std::shared_ptr<dotk::DOTk_KrylovSolverDataMng> & DOTk_LeftPrecGCR::getDataMng() const
 {
     return (m_DataMng);
 }
 
-const std::tr1::shared_ptr<dotk::DOTk_LinearOperator> & DOTk_LeftPrecGCR::getLinearOperator() const
+const std::shared_ptr<dotk::DOTk_LinearOperator> & DOTk_LeftPrecGCR::getLinearOperator() const
 {
     return (m_DataMng->getLinearOperator());
 }
 
-const std::tr1::shared_ptr<dotk::Vector<Real> > & DOTk_LeftPrecGCR::getDescentDirection()
+const std::shared_ptr<dotk::Vector<Real> > & DOTk_LeftPrecGCR::getDescentDirection()
 {
     size_t index = dotk::DOTk_KrylovSolver::getNumSolverItrDone() - 1;
     return (mConjugateDirectionStorage[index]);
 }
 
-void DOTk_LeftPrecGCR::solve(const std::tr1::shared_ptr<dotk::Vector<Real> > & rhs_vec_,
-                             const std::tr1::shared_ptr<dotk::DOTk_KrylovSolverStoppingCriterion> & criterion_,
-                             const std::tr1::shared_ptr<dotk::DOTk_OptimizationDataMng> & opt_mng_)
+void DOTk_LeftPrecGCR::solve(const std::shared_ptr<dotk::Vector<Real> > & rhs_vec_,
+                             const std::shared_ptr<dotk::DOTk_KrylovSolverStoppingCriterion> & criterion_,
+                             const std::shared_ptr<dotk::DOTk_OptimizationDataMng> & opt_mng_)
 {
     this->pgcr(rhs_vec_, criterion_, opt_mng_);
 }
 
-void DOTk_LeftPrecGCR::initialize(const std::tr1::shared_ptr<dotk::Vector<Real> > vector_)
+void DOTk_LeftPrecGCR::initialize(const std::shared_ptr<dotk::Vector<Real> > vector_)
 {
     size_t dimensions = m_DataMng->getMaxNumSolverItr();
     for(size_t row = 0; row < dimensions; ++ row)
@@ -181,7 +181,7 @@ void DOTk_LeftPrecGCR::updateConjugateDirectionStorage(size_t current_itr_)
         mConjugateDirectionStorage[next_itr]->update(1., *m_DataMng->getResidual(), 0.);
         for(size_t i = 0; i <= current_itr_; ++ i)
         {
-            mConjugateDirectionStorage[next_itr]->update(mBetaCoefficients[i], *mConjugateDirectionStorage[i], 1.);
+            mConjugateDirectionStorage[next_itr]->update(mBetaCoefficients[i], *mConjugateDirectionStorage[i], static_cast<Real>(1.));
         }
     }
     else
@@ -192,15 +192,15 @@ void DOTk_LeftPrecGCR::updateConjugateDirectionStorage(size_t current_itr_)
 
 void DOTk_LeftPrecGCR::updateLinearOperatorTimesConjugateDirStorage(size_t current_itr_)
 {
-    size_t next_itr = current_itr_ + 1;
-    if(next_itr < m_DataMng->getMaxNumSolverItr())
+    size_t tNextIteration = current_itr_ + 1;
+    if(tNextIteration < m_DataMng->getMaxNumSolverItr())
     {
-        mLinearOperatorTimesConjugateDirStorage[next_itr]->update(1., *m_DataMng->getMatrixTimesVector(), 0.);
-        for(size_t i = 0; i <= current_itr_; ++ i)
+        mLinearOperatorTimesConjugateDirStorage[tNextIteration]->update(1., *m_DataMng->getMatrixTimesVector(), 0.);
+        for(size_t tIndex = 0; tIndex <= current_itr_; ++ tIndex)
         {
-            mLinearOperatorTimesConjugateDirStorage[next_itr]->update(mBetaCoefficients[i],
-                                                                      *mLinearOperatorTimesConjugateDirStorage[i],
-                                                                      1.);
+            mLinearOperatorTimesConjugateDirStorage[tNextIteration]->update(mBetaCoefficients[tIndex],
+                                                                            *mLinearOperatorTimesConjugateDirStorage[tIndex],
+                                                                            static_cast<Real>(1.));
         }
     }
     else

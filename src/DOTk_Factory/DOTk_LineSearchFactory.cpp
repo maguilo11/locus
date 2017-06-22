@@ -44,32 +44,32 @@ dotk::types::line_search_t DOTk_LineSearchFactory::getFactoryType() const
     return (m_FactoryType);
 }
 
-void DOTk_LineSearchFactory::buildArmijoLineSearch(const std::tr1::shared_ptr<dotk::Vector<Real> > & vector_,
-                                                   std::tr1::shared_ptr<dotk::DOTk_LineSearch> & line_search_)
+void DOTk_LineSearchFactory::buildArmijoLineSearch(const std::shared_ptr<dotk::Vector<Real> > & vector_,
+                                                   std::shared_ptr<dotk::DOTk_LineSearch> & line_search_)
 {
     line_search_.reset(new dotk::DOTk_ArmijoLineSearch(vector_));
 }
 
-void DOTk_LineSearchFactory::buildGoldsteinLineSearch(const std::tr1::shared_ptr<dotk::Vector<Real> > & vector_,
-                                                      std::tr1::shared_ptr<dotk::DOTk_LineSearch> & line_search_)
+void DOTk_LineSearchFactory::buildGoldsteinLineSearch(const std::shared_ptr<dotk::Vector<Real> > & vector_,
+                                                      std::shared_ptr<dotk::DOTk_LineSearch> & line_search_)
 {
     line_search_.reset(new dotk::DOTk_GoldsteinLineSearch(vector_));
 }
 
-void DOTk_LineSearchFactory::buildCubicLineSearch(const std::tr1::shared_ptr<dotk::Vector<Real> > & vector_,
-                                                  std::tr1::shared_ptr<dotk::DOTk_LineSearch> & line_search_)
+void DOTk_LineSearchFactory::buildCubicLineSearch(const std::shared_ptr<dotk::Vector<Real> > & vector_,
+                                                  std::shared_ptr<dotk::DOTk_LineSearch> & line_search_)
 {
     line_search_.reset(new dotk::DOTk_BacktrackingCubicInterpolation(vector_));
 }
 
-void DOTk_LineSearchFactory::buildGoldenSectionLineSearch(const std::tr1::shared_ptr<dotk::Vector<Real> > & vector_,
-                                                          std::tr1::shared_ptr<dotk::DOTk_LineSearch> & line_search_)
+void DOTk_LineSearchFactory::buildGoldenSectionLineSearch(const std::shared_ptr<dotk::Vector<Real> > & vector_,
+                                                          std::shared_ptr<dotk::DOTk_LineSearch> & line_search_)
 {
     line_search_.reset(new dotk::DOTk_GoldenSectionLineSearch(vector_));
 }
 
-void DOTk_LineSearchFactory::build(const std::tr1::shared_ptr<dotk::Vector<Real> > & vector_,
-                                   std::tr1::shared_ptr<dotk::DOTk_LineSearch> & line_search_) const
+void DOTk_LineSearchFactory::build(const std::shared_ptr<dotk::Vector<Real> > & vector_,
+                                   std::shared_ptr<dotk::DOTk_LineSearch> & line_search_) const
 {
     switch(this->getFactoryType())
     {

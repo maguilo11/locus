@@ -25,9 +25,9 @@ class DOTk_EqualityConstraint;
 class DOTk_LineSearchMngTypeUNP : public dotk::DOTk_LineSearchAlgorithmsDataMng
 {
 public:
-    DOTk_LineSearchMngTypeUNP(const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_,
-                              const std::tr1::shared_ptr<dotk::DOTk_ObjectiveFunction<Real> > & objective_,
-                              const std::tr1::shared_ptr<dotk::DOTk_EqualityConstraint<Real> > & equality_);
+    DOTk_LineSearchMngTypeUNP(const std::shared_ptr<dotk::DOTk_Primal> & primal_,
+                              const std::shared_ptr<dotk::DOTk_ObjectiveFunction<Real> > & objective_,
+                              const std::shared_ptr<dotk::DOTk_EqualityConstraint<Real> > & equality_);
     virtual ~DOTk_LineSearchMngTypeUNP();
 
     void setForwardFiniteDiffGradient(const dotk::Vector<Real> & input_);

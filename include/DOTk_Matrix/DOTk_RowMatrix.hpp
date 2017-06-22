@@ -94,13 +94,13 @@ public:
     // Returns linearly independent spanning set dimension
     virtual size_t basisDimension() const;
     // Returns shared pointer to the first element of ith-row.
-    virtual std::tr1::shared_ptr<dotk::Vector<ScalarType> > & basis(const size_t & index_);
+    virtual std::shared_ptr<dotk::Vector<ScalarType> > & basis(const size_t & index_);
     // Operator overloads the parenthesis operator
     virtual ScalarType & operator () (const size_t & row_index_, const size_t & column_index_);
     // Operator overloads the parenthesis operator
     virtual const ScalarType & operator () (const size_t & row_index_, const size_t & column_index_) const;
     // Clones memory for an object of type dotk::matrix
-    virtual std::tr1::shared_ptr< dotk::matrix<ScalarType> > clone() const;
+    virtual std::shared_ptr< dotk::matrix<ScalarType> > clone() const;
     // Returns dotk matrix type
     virtual dotk::types::matrix_t type() const;
 
@@ -112,7 +112,7 @@ private:
     size_t m_Size;
     size_t m_NumRows;
     size_t m_NumColumns;
-    std::tr1::shared_ptr<dotk::Vector<ScalarType> >* m_MatrixData;
+    std::shared_ptr<dotk::Vector<ScalarType> >* m_MatrixData;
 
 private:
     DOTk_RowMatrix(const dotk::serial::DOTk_RowMatrix<ScalarType> &);

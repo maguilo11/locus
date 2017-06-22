@@ -21,9 +21,9 @@ DOTk_LiuStorey::~DOTk_LiuStorey()
 {
 }
 
-Real DOTk_LiuStorey::computeScaleFactor(const std::tr1::shared_ptr<dotk::Vector<Real> > & old_grad_,
-                                        const std::tr1::shared_ptr<dotk::Vector<Real> > & new_grad_,
-                                        const std::tr1::shared_ptr<dotk::Vector<Real> > & dir_)
+Real DOTk_LiuStorey::computeScaleFactor(const std::shared_ptr<dotk::Vector<Real> > & old_grad_,
+                                        const std::shared_ptr<dotk::Vector<Real> > & new_grad_,
+                                        const std::shared_ptr<dotk::Vector<Real> > & dir_)
 {
     /// Do I need the negative sign?
     Real new_grad_dot_new_grad = new_grad_->dot(*new_grad_);
@@ -34,15 +34,15 @@ Real DOTk_LiuStorey::computeScaleFactor(const std::tr1::shared_ptr<dotk::Vector<
     return (beta);
 }
 
-void DOTk_LiuStorey::getDirection(const std::tr1::shared_ptr<dotk::Vector<Real> > & old_grad_,
-                                  const std::tr1::shared_ptr<dotk::Vector<Real> > & new_grad_,
-                                  const std::tr1::shared_ptr<dotk::Vector<Real> > & dir_)
+void DOTk_LiuStorey::getDirection(const std::shared_ptr<dotk::Vector<Real> > & old_grad_,
+                                  const std::shared_ptr<dotk::Vector<Real> > & new_grad_,
+                                  const std::shared_ptr<dotk::Vector<Real> > & dir_)
 {
     Real beta = this->computeScaleFactor(old_grad_, new_grad_, dir_);
     dir_->update(static_cast<Real>(-1.0), *new_grad_, beta);
 }
 
-void DOTk_LiuStorey::direction(const std::tr1::shared_ptr<dotk::DOTk_OptimizationDataMng> & mng_)
+void DOTk_LiuStorey::direction(const std::shared_ptr<dotk::DOTk_OptimizationDataMng> & mng_)
 {
     Real value = dotk::DOTk_DescentDirection::computeCosineAngle(mng_->getOldGradient(), mng_->getTrialStep());
     if(dotk::DOTk_DescentDirection::isTrialStepOrthogonalToSteepestDescent(value) == true)

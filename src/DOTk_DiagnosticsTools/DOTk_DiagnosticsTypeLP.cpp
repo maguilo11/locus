@@ -18,7 +18,7 @@
 namespace dotk
 {
 
-DOTk_DiagnosticsTypeLP::DOTk_DiagnosticsTypeLP(const std::tr1::shared_ptr<dotk::DOTk_ObjectiveFunction<Real> > & objective_) :
+DOTk_DiagnosticsTypeLP::DOTk_DiagnosticsTypeLP(const std::shared_ptr<dotk::DOTk_ObjectiveFunction<Real> > & objective_) :
         dotk::DOTk_DerivativeDiagnosticsTool(),
         m_TrueDerivative(),
         m_OriginalPrimal(),
@@ -28,8 +28,8 @@ DOTk_DiagnosticsTypeLP::DOTk_DiagnosticsTypeLP(const std::tr1::shared_ptr<dotk::
 {
 }
 
-DOTk_DiagnosticsTypeLP::DOTk_DiagnosticsTypeLP(const std::tr1::shared_ptr<dotk::DOTk_ObjectiveFunction<Real> > & objective_,
-                                               const std::tr1::shared_ptr<dotk::DOTk_EqualityConstraint<Real> > & equality_) :
+DOTk_DiagnosticsTypeLP::DOTk_DiagnosticsTypeLP(const std::shared_ptr<dotk::DOTk_ObjectiveFunction<Real> > & objective_,
+                                               const std::shared_ptr<dotk::DOTk_EqualityConstraint<Real> > & equality_) :
         dotk::DOTk_DerivativeDiagnosticsTool(),
         m_TrueDerivative(),
         m_OriginalPrimal(),
@@ -39,9 +39,9 @@ DOTk_DiagnosticsTypeLP::DOTk_DiagnosticsTypeLP(const std::tr1::shared_ptr<dotk::
 {
 }
 
-DOTk_DiagnosticsTypeLP::DOTk_DiagnosticsTypeLP(const std::tr1::shared_ptr<dotk::DOTk_ObjectiveFunction<Real> > & objective_,
-                                               const std::tr1::shared_ptr<dotk::DOTk_EqualityConstraint<Real> > & equality_,
-                                               const std::vector<std::tr1::shared_ptr<dotk::DOTk_InequalityConstraint<Real> > > & inequality_) :
+DOTk_DiagnosticsTypeLP::DOTk_DiagnosticsTypeLP(const std::shared_ptr<dotk::DOTk_ObjectiveFunction<Real> > & objective_,
+                                               const std::shared_ptr<dotk::DOTk_EqualityConstraint<Real> > & equality_,
+                                               const std::vector<std::shared_ptr<dotk::DOTk_InequalityConstraint<Real> > > & inequality_) :
         dotk::DOTk_DerivativeDiagnosticsTool(),
         m_TrueDerivative(),
         m_OriginalPrimal(),
@@ -72,7 +72,7 @@ void DOTk_DiagnosticsTypeLP::checkObjectiveGradient(const dotk::DOTk_Variable & 
     m_OriginalPrimal = primal_.data()->clone();
     m_OriginalPrimal->update(1., *primal_.data(), 0.);
 
-    std::tr1::shared_ptr<dotk::Vector<Real> > delta_primal = primal_.data()->clone();
+    std::shared_ptr<dotk::Vector<Real> > delta_primal = primal_.data()->clone();
     dotk::gtools::generateRandomVector(delta_primal);
 
     m_TrueDerivative.reset();
@@ -104,7 +104,7 @@ void DOTk_DiagnosticsTypeLP::checkObjectiveHessian(const dotk::DOTk_Variable & p
     m_OriginalPrimal = primal_.data()->clone();
     m_OriginalPrimal->update(1., *primal_.data(), 0.);
 
-    std::tr1::shared_ptr<dotk::Vector<Real> > delta_primal = primal_.data()->clone();
+    std::shared_ptr<dotk::Vector<Real> > delta_primal = primal_.data()->clone();
     dotk::gtools::generateRandomVector(delta_primal);
 
     m_TrueDerivative.reset();
@@ -140,7 +140,7 @@ void DOTk_DiagnosticsTypeLP::checkEqualityConstraintJacobian(const dotk::DOTk_Va
     m_OriginalPrimal = primal_.data()->clone();
     m_OriginalPrimal->update(1., *primal_.data(), 0.);
 
-    std::tr1::shared_ptr<dotk::Vector<Real> > delta_primal = m_OriginalPrimal->clone();
+    std::shared_ptr<dotk::Vector<Real> > delta_primal = m_OriginalPrimal->clone();
     dotk::gtools::generateRandomVector(delta_primal);
 
     dotk::lp::EqualityConstraintResidual equality_constraint;
@@ -167,7 +167,7 @@ Real DOTk_DiagnosticsTypeLP::checkEqualityConstraintAdjointJacobian(const dotk::
         return (-1.);
     }
 
-    std::tr1::shared_ptr<dotk::Vector<Real> > delta_primal = primal_.data()->clone();
+    std::shared_ptr<dotk::Vector<Real> > delta_primal = primal_.data()->clone();
     dotk::gtools::generateRandomVector(delta_primal);
 
     dotk::lp::EqualityConstraintFirstDerivative first_derivative;
@@ -206,7 +206,7 @@ void DOTk_DiagnosticsTypeLP::checkEqualityConstraintJacobianDerivative(const dot
     m_OriginalPrimal = primal_.data()->clone();
     m_OriginalPrimal->update(1., *primal_.data(), 0.);
 
-    std::tr1::shared_ptr<dotk::Vector<Real> > delta_primal = primal_.data()->clone();
+    std::shared_ptr<dotk::Vector<Real> > delta_primal = primal_.data()->clone();
     dotk::gtools::generateRandomVector(delta_primal);
 
     dotk::lp::EqualityConstraintAdjointFirstDerivative adjoint_first_derivative;
@@ -238,7 +238,7 @@ void DOTk_DiagnosticsTypeLP::checkInequalityConstraintJacobian(const dotk::DOTk_
     m_OriginalPrimal = primal_.data()->clone();
     m_OriginalPrimal->update(1., *primal_.data(), 0.);
 
-    std::tr1::shared_ptr<dotk::Vector<Real> > perturbation = primal_.data()->clone();
+    std::shared_ptr<dotk::Vector<Real> > perturbation = primal_.data()->clone();
     dotk::gtools::generateRandomVector(perturbation);
 
     m_TrueDerivative.reset();
@@ -264,8 +264,8 @@ void DOTk_DiagnosticsTypeLP::checkInequalityConstraintJacobian(const dotk::DOTk_
 }
 
 template<typename Functor, typename DerivativeOperators>
-void DOTk_DiagnosticsTypeLP::checkScalarValuedFunctionFirstDerivative(const std::tr1::shared_ptr<dotk::Vector<Real> > & primal_,
-                                                                      const std::tr1::shared_ptr<dotk::Vector<Real> > & delta_primal_,
+void DOTk_DiagnosticsTypeLP::checkScalarValuedFunctionFirstDerivative(const std::shared_ptr<dotk::Vector<Real> > & primal_,
+                                                                      const std::shared_ptr<dotk::Vector<Real> > & delta_primal_,
                                                                       const Functor & functor_,
                                                                       const DerivativeOperators & operators_)
 {
@@ -310,8 +310,8 @@ void DOTk_DiagnosticsTypeLP::checkScalarValuedFunctionFirstDerivative(const std:
 }
 
 template<typename Functor, typename DerivativeOperators>
-void DOTk_DiagnosticsTypeLP::checkScalarValuedFunctionSecondDerivative(const std::tr1::shared_ptr<dotk::Vector<Real> > & primal_,
-                                                                       const std::tr1::shared_ptr<dotk::Vector<Real> > & delta_primal_,
+void DOTk_DiagnosticsTypeLP::checkScalarValuedFunctionSecondDerivative(const std::shared_ptr<dotk::Vector<Real> > & primal_,
+                                                                       const std::shared_ptr<dotk::Vector<Real> > & delta_primal_,
                                                                        const Functor & first_derivative_,
                                                                        const DerivativeOperators & second_derivative_)
 {
@@ -321,8 +321,8 @@ void DOTk_DiagnosticsTypeLP::checkScalarValuedFunctionSecondDerivative(const std
             dotk::DOTk_DerivativeDiagnosticsTool::getFiniteDifferenceDiagnosticsSuperScriptsUpperLimit();
 
     Real norm_true_derivative_times_dprimal = m_TrueDerivative->norm();
-    std::tr1::shared_ptr<dotk::Vector<Real> > gradient = primal_->clone();
-    std::tr1::shared_ptr<dotk::Vector<Real> > finite_difference_derivative_times_dprimal = primal_->clone();
+    std::shared_ptr<dotk::Vector<Real> > gradient = primal_->clone();
+    std::shared_ptr<dotk::Vector<Real> > finite_difference_derivative_times_dprimal = primal_->clone();
 
     for(Int superscript = superscript_lower_limit; superscript <= superscript_upper_limit; ++ superscript)
     {
@@ -366,14 +366,14 @@ void DOTk_DiagnosticsTypeLP::checkScalarValuedFunctionSecondDerivative(const std
     }
 
 }
-void DOTk_DiagnosticsTypeLP::checkVectorValuedFunctionFirstDerivative(const std::tr1::shared_ptr<dotk::Vector<Real> > & delta_primal_,
+void DOTk_DiagnosticsTypeLP::checkVectorValuedFunctionFirstDerivative(const std::shared_ptr<dotk::Vector<Real> > & delta_primal_,
                                                                       const dotk::lp::EqualityConstraintResidual & function_,
                                                                       const dotk::lp::EqualityConstraintFirstDerivative & first_derivative_,
-                                                                      const std::tr1::shared_ptr<dotk::Vector<Real> > & primal_)
+                                                                      const std::shared_ptr<dotk::Vector<Real> > & primal_)
 {
-    std::tr1::shared_ptr<dotk::Vector<Real> > residual = primal_->clone();
-    std::tr1::shared_ptr<dotk::Vector<Real> > finite_diff_first_derivative = primal_->clone();
-    std::tr1::shared_ptr<dotk::Vector<Real> > true_first_derivative = primal_->clone();
+    std::shared_ptr<dotk::Vector<Real> > residual = primal_->clone();
+    std::shared_ptr<dotk::Vector<Real> > finite_diff_first_derivative = primal_->clone();
+    std::shared_ptr<dotk::Vector<Real> > true_first_derivative = primal_->clone();
 
     first_derivative_(m_EqualityConstraint, primal_, delta_primal_, true_first_derivative);
     Real norm_true_first_derivative = true_first_derivative->norm();
@@ -425,18 +425,18 @@ void DOTk_DiagnosticsTypeLP::checkVectorValuedFunctionFirstDerivative(const std:
 
 }
 
-Real DOTk_DiagnosticsTypeLP::checkAdjointFirstDerivativeVectorValuedFunction(const std::tr1::shared_ptr<
+Real DOTk_DiagnosticsTypeLP::checkAdjointFirstDerivativeVectorValuedFunction(const std::shared_ptr<
                                                                                      dotk::Vector<Real> > & delta_primal_,
                                                                              const dotk::lp::EqualityConstraintFirstDerivative & first_derivative_,
                                                                              const dotk::lp::EqualityConstraintAdjointFirstDerivative & adjoint_first_derivative_,
-                                                                             const std::tr1::shared_ptr<
+                                                                             const std::shared_ptr<
                                                                                      dotk::Vector<Real> > & primal_,
-                                                                             const std::tr1::shared_ptr<
+                                                                             const std::shared_ptr<
                                                                                      dotk::Vector<Real> > & dual_)
 {
-    std::tr1::shared_ptr<dotk::Vector<Real> > first_derivative_times_dprimal = dual_->clone();
+    std::shared_ptr<dotk::Vector<Real> > first_derivative_times_dprimal = dual_->clone();
     first_derivative_(m_EqualityConstraint, primal_, delta_primal_, first_derivative_times_dprimal);
-    std::tr1::shared_ptr<dotk::Vector<Real> > adjoint_first_derivative_times_dual = delta_primal_->clone();
+    std::shared_ptr<dotk::Vector<Real> > adjoint_first_derivative_times_dual = delta_primal_->clone();
     adjoint_first_derivative_(m_EqualityConstraint, primal_, dual_, adjoint_first_derivative_times_dual);
 
     Real dual_dot_first_derivative_times_dprimal = dual_->dot(*first_derivative_times_dprimal);
@@ -448,13 +448,13 @@ Real DOTk_DiagnosticsTypeLP::checkAdjointFirstDerivativeVectorValuedFunction(con
     return (absolute_difference);
 }
 
-void DOTk_DiagnosticsTypeLP::checkSecondDerivativeVectorValuedFunction(const std::tr1::shared_ptr<dotk::Vector<Real> > & delta_primal_,
+void DOTk_DiagnosticsTypeLP::checkSecondDerivativeVectorValuedFunction(const std::shared_ptr<dotk::Vector<Real> > & delta_primal_,
                                                                        const dotk::lp::EqualityConstraintAdjointFirstDerivative & adjoint_first_derivative_,
                                                                        const dotk::lp::EqualityConstraintSecondDerivative & adjoint_second_derivative_,
-                                                                       const std::tr1::shared_ptr<dotk::Vector<Real> > & primal_,
-                                                                       const std::tr1::shared_ptr<dotk::Vector<Real> > & dual_)
+                                                                       const std::shared_ptr<dotk::Vector<Real> > & primal_,
+                                                                       const std::shared_ptr<dotk::Vector<Real> > & dual_)
 {
-    std::tr1::shared_ptr<dotk::Vector<Real> > true_second_derivative_times_dprimal = primal_->clone();
+    std::shared_ptr<dotk::Vector<Real> > true_second_derivative_times_dprimal = primal_->clone();
     adjoint_second_derivative_(m_EqualityConstraint,
                                primal_,
                                dual_,
@@ -463,8 +463,8 @@ void DOTk_DiagnosticsTypeLP::checkSecondDerivativeVectorValuedFunction(const std
 
     Real true_norm_second_derivative_times_dprimal = true_second_derivative_times_dprimal->norm();
 
-    std::tr1::shared_ptr<dotk::Vector<Real> > adjoint_first_derivative = primal_->clone();
-    std::tr1::shared_ptr<dotk::Vector<Real> > finite_diff_second_derivative_times_dprimal = primal_->clone();
+    std::shared_ptr<dotk::Vector<Real> > adjoint_first_derivative = primal_->clone();
+    std::shared_ptr<dotk::Vector<Real> > finite_diff_second_derivative_times_dprimal = primal_->clone();
 
     Int superscript_lower_limit =
             dotk::DOTk_DerivativeDiagnosticsTool::getFiniteDifferenceDiagnosticsSuperScriptsLowerLimit();

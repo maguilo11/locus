@@ -22,9 +22,9 @@ DOTk_AugmentedSystem::~DOTk_AugmentedSystem()
 {
 }
 
-void DOTk_AugmentedSystem::apply(const std::tr1::shared_ptr<dotk::DOTk_OptimizationDataMng> & mng_,
-                                 const std::tr1::shared_ptr<dotk::Vector<Real> > & input_,
-                                 const std::tr1::shared_ptr<dotk::Vector<Real> > & output_)
+void DOTk_AugmentedSystem::apply(const std::shared_ptr<dotk::DOTk_OptimizationDataMng> & mng_,
+                                 const std::shared_ptr<dotk::Vector<Real> > & input_,
+                                 const std::shared_ptr<dotk::Vector<Real> > & output_)
 {
     /// Apply left hand side vector to augmented system.  Thus, we have the following matrix vector product for solution: \n
     /// \n

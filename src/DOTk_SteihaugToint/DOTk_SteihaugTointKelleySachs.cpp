@@ -19,8 +19,8 @@
 namespace dotk
 {
 
-DOTk_SteihaugTointKelleySachs::DOTk_SteihaugTointKelleySachs(const std::tr1::shared_ptr<dotk::DOTk_OptimizationDataMng> & data_mng_,
-                                                             const std::tr1::shared_ptr<dotk::DOTk_KelleySachsStepMng> & step_mng) :
+DOTk_SteihaugTointKelleySachs::DOTk_SteihaugTointKelleySachs(const std::shared_ptr<dotk::DOTk_OptimizationDataMng> & data_mng_,
+                                                             const std::shared_ptr<dotk::DOTk_KelleySachsStepMng> & step_mng) :
         dotk::DOTk_SteihaugTointNewton(),
         m_MaxNumUpdates(10),
         m_StationarityMeasure(0),

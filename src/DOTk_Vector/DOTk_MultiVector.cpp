@@ -179,36 +179,36 @@ size_t DOTk_MultiVector<ScalarType>::size() const
 }
 
 template<typename ScalarType>
-std::tr1::shared_ptr<dotk::Vector<ScalarType> > DOTk_MultiVector<ScalarType>::clone() const
+std::shared_ptr<dotk::Vector<ScalarType> > DOTk_MultiVector<ScalarType>::clone() const
 {
     if(m_State.use_count() > 0)
     {
-        std::tr1::shared_ptr<dotk::DOTk_MultiVector<ScalarType> >
+        std::shared_ptr<dotk::DOTk_MultiVector<ScalarType> >
             vector(new dotk::DOTk_MultiVector<ScalarType>(*m_Control, *m_State, *m_Dual));
         return (vector);
     }
     else
     {
-        std::tr1::shared_ptr<dotk::DOTk_MultiVector<ScalarType> >
+        std::shared_ptr<dotk::DOTk_MultiVector<ScalarType> >
             vector(new dotk::DOTk_MultiVector<ScalarType>(*m_Control, *m_Dual));
         return (vector);
     }
 }
 
 template<typename ScalarType>
-const std::tr1::shared_ptr<dotk::Vector<ScalarType> > & DOTk_MultiVector<ScalarType>::dual() const
+const std::shared_ptr<dotk::Vector<ScalarType> > & DOTk_MultiVector<ScalarType>::dual() const
 {
     return (m_Dual);
 }
 
 template<typename ScalarType>
-const std::tr1::shared_ptr<dotk::Vector<ScalarType> > & DOTk_MultiVector<ScalarType>::state() const
+const std::shared_ptr<dotk::Vector<ScalarType> > & DOTk_MultiVector<ScalarType>::state() const
 {
     return (m_State);
 }
 
 template<typename ScalarType>
-const std::tr1::shared_ptr<dotk::Vector<ScalarType> > & DOTk_MultiVector<ScalarType>::control() const
+const std::shared_ptr<dotk::Vector<ScalarType> > & DOTk_MultiVector<ScalarType>::control() const
 {
     return (m_Control);
 }

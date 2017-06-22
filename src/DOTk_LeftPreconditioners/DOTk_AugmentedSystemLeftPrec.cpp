@@ -23,7 +23,7 @@
 namespace dotk
 {
 
-DOTk_AugmentedSystemLeftPrec::DOTk_AugmentedSystemLeftPrec(const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_) :
+DOTk_AugmentedSystemLeftPrec::DOTk_AugmentedSystemLeftPrec(const std::shared_ptr<dotk::DOTk_Primal> & primal_) :
         dotk::DOTk_LeftPreconditioner(dotk::types::AUGMENTED_SYSTEM_LEFT_PRECONDITIONER),
         m_Solver(),
         m_AugmentedSystem(new dotk::DOTk_AugmentedSystem),
@@ -47,7 +47,7 @@ Real DOTk_AugmentedSystemLeftPrec::getParameter(dotk::types::stopping_criterion_
     return (m_Criterion->get(type_));
 }
 
-void DOTk_AugmentedSystemLeftPrec::setLeftPrecCgSolver(const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_,
+void DOTk_AugmentedSystemLeftPrec::setLeftPrecCgSolver(const std::shared_ptr<dotk::DOTk_Primal> & primal_,
                                                        size_t max_num_itr_)
 {
     dotk::DOTk_KrylovSolverFactory factory;
@@ -55,7 +55,7 @@ void DOTk_AugmentedSystemLeftPrec::setLeftPrecCgSolver(const std::tr1::shared_pt
     m_Solver->getDataMng()->setMaxNumSolverItr(max_num_itr_);
 }
 
-void DOTk_AugmentedSystemLeftPrec::setLeftPrecCrSolver(const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_,
+void DOTk_AugmentedSystemLeftPrec::setLeftPrecCrSolver(const std::shared_ptr<dotk::DOTk_Primal> & primal_,
                                                        size_t max_num_itr_)
 {
     dotk::DOTk_KrylovSolverFactory factory;
@@ -63,14 +63,14 @@ void DOTk_AugmentedSystemLeftPrec::setLeftPrecCrSolver(const std::tr1::shared_pt
     m_Solver->getDataMng()->setMaxNumSolverItr(max_num_itr_);
 }
 
-void DOTk_AugmentedSystemLeftPrec::setLeftPrecGcrSolver(const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_,
+void DOTk_AugmentedSystemLeftPrec::setLeftPrecGcrSolver(const std::shared_ptr<dotk::DOTk_Primal> & primal_,
                                                         size_t max_num_itr_)
 {
     dotk::DOTk_KrylovSolverFactory factory;
     factory.buildLeftPrecGcrSolver(primal_, m_AugmentedSystem, max_num_itr_, m_Solver);
 }
 
-void DOTk_AugmentedSystemLeftPrec::setLeftPrecCgneSolver(const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_,
+void DOTk_AugmentedSystemLeftPrec::setLeftPrecCgneSolver(const std::shared_ptr<dotk::DOTk_Primal> & primal_,
                                                          size_t max_num_itr_)
 {
     dotk::DOTk_KrylovSolverFactory factory;
@@ -78,7 +78,7 @@ void DOTk_AugmentedSystemLeftPrec::setLeftPrecCgneSolver(const std::tr1::shared_
     m_Solver->getDataMng()->setMaxNumSolverItr(max_num_itr_);
 }
 
-void DOTk_AugmentedSystemLeftPrec::setLeftPrecCgnrSolver(const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_,
+void DOTk_AugmentedSystemLeftPrec::setLeftPrecCgnrSolver(const std::shared_ptr<dotk::DOTk_Primal> & primal_,
                                                          size_t max_num_itr_)
 {
     dotk::DOTk_KrylovSolverFactory factory;
@@ -86,16 +86,16 @@ void DOTk_AugmentedSystemLeftPrec::setLeftPrecCgnrSolver(const std::tr1::shared_
     m_Solver->getDataMng()->setMaxNumSolverItr(max_num_itr_);
 }
 
-void DOTk_AugmentedSystemLeftPrec::setPrecGmresSolver(const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_,
+void DOTk_AugmentedSystemLeftPrec::setPrecGmresSolver(const std::shared_ptr<dotk::DOTk_Primal> & primal_,
                                                       size_t max_num_itr_)
 {
     dotk::DOTk_KrylovSolverFactory factory;
     factory.buildPrecGmresSolver(primal_, m_AugmentedSystem, max_num_itr_, m_Solver);
 }
 
-void DOTk_AugmentedSystemLeftPrec::apply(const std::tr1::shared_ptr<dotk::DOTk_OptimizationDataMng> & mng_,
-                                         const std::tr1::shared_ptr<dotk::Vector<Real> > & vector_,
-                                         const std::tr1::shared_ptr<dotk::Vector<Real> > & output_)
+void DOTk_AugmentedSystemLeftPrec::apply(const std::shared_ptr<dotk::DOTk_OptimizationDataMng> & mng_,
+                                         const std::shared_ptr<dotk::Vector<Real> > & vector_,
+                                         const std::shared_ptr<dotk::Vector<Real> > & output_)
 {
     Real norm_residual = dotk::norm(vector_);
     m_Criterion->set(dotk::types::NORM_RESIDUAL, norm_residual);
@@ -105,7 +105,7 @@ void DOTk_AugmentedSystemLeftPrec::apply(const std::tr1::shared_ptr<dotk::DOTk_O
     dotk::update(1., m_Solver->getDataMng()->getSolution(), 0., output_);
 }
 
-void DOTk_AugmentedSystemLeftPrec::initialize(const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_)
+void DOTk_AugmentedSystemLeftPrec::initialize(const std::shared_ptr<dotk::DOTk_Primal> & primal_)
 {
     dotk::DOTk_KrylovSolverFactory factory;
     factory.buildLeftPrecCgSolver(primal_, m_AugmentedSystem, m_Solver);

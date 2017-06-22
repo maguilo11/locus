@@ -32,11 +32,11 @@ void DOTk_DaiLiao::setConstant(Real value_)
     mConstant = value_;
 }
 
-Real DOTk_DaiLiao::computeScaleFactor(const std::tr1::shared_ptr<dotk::Vector<Real> > & old_grad_,
-                                      const std::tr1::shared_ptr<dotk::Vector<Real> > & new_grad_,
-                                      const std::tr1::shared_ptr<dotk::Vector<Real> > & old_primal_,
-                                      const std::tr1::shared_ptr<dotk::Vector<Real> > & new_primal_,
-                                      const std::tr1::shared_ptr<dotk::Vector<Real> > & dir_)
+Real DOTk_DaiLiao::computeScaleFactor(const std::shared_ptr<dotk::Vector<Real> > & old_grad_,
+                                      const std::shared_ptr<dotk::Vector<Real> > & new_grad_,
+                                      const std::shared_ptr<dotk::Vector<Real> > & old_primal_,
+                                      const std::shared_ptr<dotk::Vector<Real> > & new_primal_,
+                                      const std::shared_ptr<dotk::Vector<Real> > & dir_)
 {
     Real innr_direction_newGrad = dir_->dot(*new_grad_);
     Real innr_direction_oldGrad = dir_->dot(*old_grad_);
@@ -54,17 +54,17 @@ Real DOTk_DaiLiao::computeScaleFactor(const std::tr1::shared_ptr<dotk::Vector<Re
     return (beta);
 }
 
-void DOTk_DaiLiao::getDirection(const std::tr1::shared_ptr<dotk::Vector<Real> > & old_grad_,
-                                const std::tr1::shared_ptr<dotk::Vector<Real> > & new_grad_,
-                                const std::tr1::shared_ptr<dotk::Vector<Real> > & old_primal_,
-                                const std::tr1::shared_ptr<dotk::Vector<Real> > & new_primal_,
-                                const std::tr1::shared_ptr<dotk::Vector<Real> > & dir_)
+void DOTk_DaiLiao::getDirection(const std::shared_ptr<dotk::Vector<Real> > & old_grad_,
+                                const std::shared_ptr<dotk::Vector<Real> > & new_grad_,
+                                const std::shared_ptr<dotk::Vector<Real> > & old_primal_,
+                                const std::shared_ptr<dotk::Vector<Real> > & new_primal_,
+                                const std::shared_ptr<dotk::Vector<Real> > & dir_)
 {
     Real beta = this->computeScaleFactor(old_grad_, new_grad_, old_primal_, new_primal_, dir_);
     dir_->update(-1., *new_grad_, beta);
 }
 
-void DOTk_DaiLiao::direction(const std::tr1::shared_ptr<dotk::DOTk_OptimizationDataMng> & mng_)
+void DOTk_DaiLiao::direction(const std::shared_ptr<dotk::DOTk_OptimizationDataMng> & mng_)
 {
     Real value = dotk::DOTk_DescentDirection::computeCosineAngle(mng_->getOldGradient(), mng_->getTrialStep());
     if(dotk::DOTk_DescentDirection::isTrialStepOrthogonalToSteepestDescent(value) == true)

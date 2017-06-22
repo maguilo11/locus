@@ -8,7 +8,7 @@
 #ifndef INCLUDE_DOTK_METHODCCSA_DOTK_ALGORITHMCCSA_HPP_
 #define INCLUDE_DOTK_METHODCCSA_DOTK_ALGORITHMCCSA_HPP_
 
-#include <tr1/memory>
+#include <memory>
 
 #include "DOTk_UtilsCCSA.hpp"
 
@@ -27,8 +27,8 @@ class DOTk_AlgorithmCCSA
 {
     // Conservative Convex Separable Approximations (CCSA) method main algorithmic driver
 public:
-    DOTk_AlgorithmCCSA(const std::tr1::shared_ptr<dotk::DOTk_DataMngCCSA> & data_mng_,
-                       const std::tr1::shared_ptr<dotk::DOTk_SubProblemCCSA> & sub_problem_);
+    DOTk_AlgorithmCCSA(const std::shared_ptr<dotk::DOTk_DataMngCCSA> & data_mng_,
+                       const std::shared_ptr<dotk::DOTk_SubProblemCCSA> & sub_problem_);
     ~DOTk_AlgorithmCCSA();
 
     dotk::ccsa::stopping_criterion_t getStoppingCriterion() const;
@@ -100,14 +100,14 @@ private:
     Real m_MovingAsymptoteExpansionParameter;
     Real m_MovingAsymptoteContractionParameter;
 
-    std::tr1::shared_ptr<dotk::Vector<Real> > m_OldSigma;
-    std::tr1::shared_ptr<dotk::Vector<Real> > m_AuxiliaryZcandidates;
-    std::tr1::shared_ptr<dotk::Vector<Real> > m_ControlAtIterationIminusTwo;
+    std::shared_ptr<dotk::Vector<Real> > m_OldSigma;
+    std::shared_ptr<dotk::Vector<Real> > m_AuxiliaryZcandidates;
+    std::shared_ptr<dotk::Vector<Real> > m_ControlAtIterationIminusTwo;
 
-    std::tr1::shared_ptr<dotk::DOTK_MethodCcsaIO> m_IO;
-    std::tr1::shared_ptr<dotk::DOTk_DataMngCCSA> m_DataMng;
-    std::tr1::shared_ptr<dotk::DOTk_BoundConstraints> m_Bounds;
-    std::tr1::shared_ptr<dotk::DOTk_SubProblemCCSA> m_SubProblem;
+    std::shared_ptr<dotk::DOTK_MethodCcsaIO> m_IO;
+    std::shared_ptr<dotk::DOTk_DataMngCCSA> m_DataMng;
+    std::shared_ptr<dotk::DOTk_BoundConstraints> m_Bounds;
+    std::shared_ptr<dotk::DOTk_SubProblemCCSA> m_SubProblem;
 
 private:
     DOTk_AlgorithmCCSA(const dotk::DOTk_AlgorithmCCSA &);

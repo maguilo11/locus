@@ -59,13 +59,13 @@ dotk::types::hessian_t DOTk_HessianFactory::getFactoryType() const
     return (mFactoryType);
 }
 
-void DOTk_HessianFactory::buildFullSpaceHessian(std::tr1::shared_ptr<dotk::DOTk_SecondOrderOperator> & operator_)
+void DOTk_HessianFactory::buildFullSpaceHessian(std::shared_ptr<dotk::DOTk_SecondOrderOperator> & operator_)
 {
     this->setFactoryType(dotk::types::USER_DEFINED_HESS_TYPE_CNP);
     operator_.reset(new dotk::DOTk_UserDefinedHessianTypeCNP);
 }
 
-void DOTk_HessianFactory::buildReducedSpaceHessian(std::tr1::shared_ptr<dotk::DOTk_SecondOrderOperator> & operator_)
+void DOTk_HessianFactory::buildReducedSpaceHessian(std::shared_ptr<dotk::DOTk_SecondOrderOperator> & operator_)
 {
     this->setFactoryType(dotk::types::USER_DEFINED_HESS);
     operator_.reset(new dotk::DOTk_UserDefinedHessian);
@@ -73,7 +73,7 @@ void DOTk_HessianFactory::buildReducedSpaceHessian(std::tr1::shared_ptr<dotk::DO
 
 void DOTk_HessianFactory::buildLbfgsHessian(size_t secant_storage_,
                                             const dotk::Vector<Real> & vector_,
-                                            std::tr1::shared_ptr<dotk::DOTk_SecondOrderOperator> & operator_)
+                                            std::shared_ptr<dotk::DOTk_SecondOrderOperator> & operator_)
 {
     this->setFactoryType(dotk::types::LBFGS_HESS);
     size_t secant_storage = this->checkSecantStorageInput(secant_storage_);
@@ -82,7 +82,7 @@ void DOTk_HessianFactory::buildLbfgsHessian(size_t secant_storage_,
 
 void DOTk_HessianFactory::buildLdfpHessian(size_t secant_storage_,
                                            const dotk::Vector<Real> & vector_,
-                                           std::tr1::shared_ptr<dotk::DOTk_SecondOrderOperator> & operator_)
+                                           std::shared_ptr<dotk::DOTk_SecondOrderOperator> & operator_)
 {
     this->setFactoryType(dotk::types::LDFP_HESS);
     size_t secant_storage = this->checkSecantStorageInput(secant_storage_);
@@ -91,7 +91,7 @@ void DOTk_HessianFactory::buildLdfpHessian(size_t secant_storage_,
 
 void DOTk_HessianFactory::buildLsr1Hessian(size_t secant_storage_,
                                            const dotk::Vector<Real> & vector_,
-                                           std::tr1::shared_ptr<dotk::DOTk_SecondOrderOperator> & operator_)
+                                           std::shared_ptr<dotk::DOTk_SecondOrderOperator> & operator_)
 {
     this->setFactoryType(dotk::types::LSR1_HESS);
     size_t secant_storage = this->checkSecantStorageInput(secant_storage_);
@@ -99,28 +99,28 @@ void DOTk_HessianFactory::buildLsr1Hessian(size_t secant_storage_,
 }
 
 void DOTk_HessianFactory::buildSr1Hessian(const dotk::Vector<Real> & vector_,
-                                          std::tr1::shared_ptr<dotk::DOTk_SecondOrderOperator> & operator_)
+                                          std::shared_ptr<dotk::DOTk_SecondOrderOperator> & operator_)
 {
     this->setFactoryType(dotk::types::SR1_HESS);
     operator_.reset(new dotk::DOTk_SR1Hessian(vector_));
 }
 
 void DOTk_HessianFactory::buildDfpHessian(const dotk::Vector<Real> & vector_,
-                                          std::tr1::shared_ptr<dotk::DOTk_SecondOrderOperator> & operator_)
+                                          std::shared_ptr<dotk::DOTk_SecondOrderOperator> & operator_)
 {
     this->setFactoryType(dotk::types::DFP_HESS);
     operator_.reset(new dotk::DOTk_DFPHessian(vector_));
 }
 
 void DOTk_HessianFactory::buildBarzilaiBorweinHessian(const dotk::Vector<Real> & vector_,
-                                                      std::tr1::shared_ptr<dotk::DOTk_SecondOrderOperator> & operator_)
+                                                      std::shared_ptr<dotk::DOTk_SecondOrderOperator> & operator_)
 {
     this->setFactoryType(dotk::types::BARZILAIBORWEIN_HESS);
     operator_.reset(new dotk::DOTk_BarzilaiBorweinHessian(vector_));
 }
 
 void DOTk_HessianFactory::build(const dotk::DOTk_OptimizationDataMng * const mng_,
-                                std::tr1::shared_ptr<dotk::DOTk_SecondOrderOperator> & operator_,
+                                std::shared_ptr<dotk::DOTk_SecondOrderOperator> & operator_,
                                 size_t secant_storage_)
 {
     switch(this->getFactoryType())

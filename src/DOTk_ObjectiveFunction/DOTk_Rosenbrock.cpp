@@ -30,8 +30,8 @@ Real DOTk_Rosenbrock::value(const dotk::Vector<Real> & primal_)
     return (value);
 }
 
-void DOTk_Rosenbrock::value(const std::vector<std::tr1::shared_ptr<dotk::Vector<Real> > > & primal_,
-                            const std::tr1::shared_ptr<dotk::Vector<Real> > & fval_)
+void DOTk_Rosenbrock::value(const std::vector<std::shared_ptr<dotk::Vector<Real> > > & primal_,
+                            const std::shared_ptr<dotk::Vector<Real> > & fval_)
 {
     size_t number_controls = fval_->size();
     for(size_t index = 0; index < number_controls; ++ index)
@@ -40,10 +40,10 @@ void DOTk_Rosenbrock::value(const std::vector<std::tr1::shared_ptr<dotk::Vector<
     }
 }
 
-void DOTk_Rosenbrock::value(const std::vector<std::tr1::shared_ptr<dotk::Vector<Real> > > & primal_plus_,
-                            const std::vector<std::tr1::shared_ptr<dotk::Vector<Real> > > & primal_minus_,
-                            const std::tr1::shared_ptr<dotk::Vector<Real> > & values_plus_,
-                            const std::tr1::shared_ptr<dotk::Vector<Real> > & values_minus_)
+void DOTk_Rosenbrock::value(const std::vector<std::shared_ptr<dotk::Vector<Real> > > & primal_plus_,
+                            const std::vector<std::shared_ptr<dotk::Vector<Real> > > & primal_minus_,
+                            const std::shared_ptr<dotk::Vector<Real> > & values_plus_,
+                            const std::shared_ptr<dotk::Vector<Real> > & values_minus_)
 {
     size_t number_controls = values_plus_->size();
     for(size_t index = 0; index < number_controls; ++ index)

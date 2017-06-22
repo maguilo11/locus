@@ -29,8 +29,8 @@ public:
     {
     }
 
-    Real operator()(const std::tr1::shared_ptr<dotk::DOTk_InequalityConstraint<Real> > & inequality_,
-                    const std::tr1::shared_ptr<dotk::Vector<Real> > & primal_) const
+    Real operator()(const std::shared_ptr<dotk::DOTk_InequalityConstraint<Real> > & inequality_,
+                    const std::shared_ptr<dotk::Vector<Real> > & primal_) const
     {
         Real value = inequality_->value(*primal_);
 
@@ -52,9 +52,9 @@ public:
     {
     }
 
-    void operator()(const std::tr1::shared_ptr<dotk::DOTk_InequalityConstraint<Real> > & inequality_,
-                    const std::tr1::shared_ptr<dotk::Vector<Real> > & primal_,
-                    const std::tr1::shared_ptr<dotk::Vector<Real> > & derivative_) const
+    void operator()(const std::shared_ptr<dotk::DOTk_InequalityConstraint<Real> > & inequality_,
+                    const std::shared_ptr<dotk::Vector<Real> > & primal_,
+                    const std::shared_ptr<dotk::Vector<Real> > & derivative_) const
     {
         inequality_->gradient(*primal_, *derivative_);
     }
@@ -74,10 +74,10 @@ public:
     {
     }
 
-    void operator()(const std::tr1::shared_ptr<dotk::DOTk_InequalityConstraint<Real> > & inequality_,
-                    const std::tr1::shared_ptr<dotk::Vector<Real> > & primal_,
-                    const std::tr1::shared_ptr<dotk::Vector<Real> > & delta_primal_,
-                    const std::tr1::shared_ptr<dotk::Vector<Real> > & derivative_) const
+    void operator()(const std::shared_ptr<dotk::DOTk_InequalityConstraint<Real> > & inequality_,
+                    const std::shared_ptr<dotk::Vector<Real> > & primal_,
+                    const std::shared_ptr<dotk::Vector<Real> > & delta_primal_,
+                    const std::shared_ptr<dotk::Vector<Real> > & derivative_) const
     {
         inequality_->hessian(*primal_, *delta_primal_, *derivative_);
     }

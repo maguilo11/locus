@@ -17,7 +17,7 @@
 namespace dotk
 {
 
-DOTk_ProjectedLineSearchStep::DOTk_ProjectedLineSearchStep(const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_) :
+DOTk_ProjectedLineSearchStep::DOTk_ProjectedLineSearchStep(const std::shared_ptr<dotk::DOTk_Primal> & primal_) :
         m_LineSearch(),
         m_BoundConstraint()
 {
@@ -28,8 +28,8 @@ DOTk_ProjectedLineSearchStep::DOTk_ProjectedLineSearchStep(const std::tr1::share
     step_factory.buildCubicLineSearch(primal_->control(), m_LineSearch);
 }
 
-DOTk_ProjectedLineSearchStep::DOTk_ProjectedLineSearchStep(const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_,
-                                                           const std::tr1::shared_ptr<dotk::DOTk_LineSearch> & step_) :
+DOTk_ProjectedLineSearchStep::DOTk_ProjectedLineSearchStep(const std::shared_ptr<dotk::DOTk_Primal> & primal_,
+                                                           const std::shared_ptr<dotk::DOTk_LineSearch> & step_) :
         m_LineSearch(step_),
         m_BoundConstraint()
 {
@@ -56,13 +56,13 @@ void DOTk_ProjectedLineSearchStep::setBoundConstraintMethodContractionStep(Real 
     m_BoundConstraint->setContractionStep(input_);
 }
 
-void DOTk_ProjectedLineSearchStep::setFeasibleDirectionConstraint(const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_)
+void DOTk_ProjectedLineSearchStep::setFeasibleDirectionConstraint(const std::shared_ptr<dotk::DOTk_Primal> & primal_)
 {
     dotk::DOTk_BoundConstraintFactory factory;
     factory.buildFeasibleDirection(primal_, m_BoundConstraint);
 }
 
-void DOTk_ProjectedLineSearchStep::setProjectionAlongFeasibleDirConstraint(const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_)
+void DOTk_ProjectedLineSearchStep::setProjectionAlongFeasibleDirConstraint(const std::shared_ptr<dotk::DOTk_Primal> & primal_)
 {
     dotk::DOTk_BoundConstraintFactory factory;
     factory.buildProjectionAlongFeasibleDirection(primal_, m_BoundConstraint);
@@ -83,7 +83,7 @@ void DOTk_ProjectedLineSearchStep::setStagnationTolerance(Real input_)
     m_LineSearch->setStepStagnationTol(input_);
 }
 
-void DOTk_ProjectedLineSearchStep::setArmijoLineSearch(const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_,
+void DOTk_ProjectedLineSearchStep::setArmijoLineSearch(const std::shared_ptr<dotk::DOTk_Primal> & primal_,
                                                        Real contraction_factor_)
 {
     dotk::DOTk_LineSearchFactory factory;
@@ -91,7 +91,7 @@ void DOTk_ProjectedLineSearchStep::setArmijoLineSearch(const std::tr1::shared_pt
     m_LineSearch->setContractionFactor(contraction_factor_);
 }
 
-void DOTk_ProjectedLineSearchStep::setGoldsteinLineSearch(const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_,
+void DOTk_ProjectedLineSearchStep::setGoldsteinLineSearch(const std::shared_ptr<dotk::DOTk_Primal> & primal_,
                                                           Real constant_,
                                                           Real contraction_factor_)
 {
@@ -101,7 +101,7 @@ void DOTk_ProjectedLineSearchStep::setGoldsteinLineSearch(const std::tr1::shared
     m_LineSearch->setConstant(constant_);
 }
 
-void DOTk_ProjectedLineSearchStep::setCubicLineSearch(const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_,
+void DOTk_ProjectedLineSearchStep::setCubicLineSearch(const std::shared_ptr<dotk::DOTk_Primal> & primal_,
                                                       Real contraction_factor_)
 {
     dotk::DOTk_LineSearchFactory factory;
@@ -109,7 +109,7 @@ void DOTk_ProjectedLineSearchStep::setCubicLineSearch(const std::tr1::shared_ptr
     m_LineSearch->setContractionFactor(contraction_factor_);
 }
 
-void DOTk_ProjectedLineSearchStep::setGoldenSectionLineSearch(const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_,
+void DOTk_ProjectedLineSearchStep::setGoldenSectionLineSearch(const std::shared_ptr<dotk::DOTk_Primal> & primal_,
                                                               Real contraction_factor_)
 {
     dotk::DOTk_LineSearchFactory factory;
@@ -127,14 +127,14 @@ size_t DOTk_ProjectedLineSearchStep::iterations() const
     return (m_LineSearch->getNumLineSearchItrDone());
 }
 
-void DOTk_ProjectedLineSearchStep::build(const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_,
+void DOTk_ProjectedLineSearchStep::build(const std::shared_ptr<dotk::DOTk_Primal> & primal_,
                                          dotk::types::line_search_t type_)
 {
     dotk::DOTk_LineSearchFactory factory(type_);
     factory.build(primal_->control(), m_LineSearch);
 }
 
-void DOTk_ProjectedLineSearchStep::solveSubProblem(const std::tr1::shared_ptr<dotk::DOTk_OptimizationDataMng> & mng_)
+void DOTk_ProjectedLineSearchStep::solveSubProblem(const std::shared_ptr<dotk::DOTk_OptimizationDataMng> & mng_)
 {
     m_BoundConstraint->constraint(m_LineSearch, mng_);
 

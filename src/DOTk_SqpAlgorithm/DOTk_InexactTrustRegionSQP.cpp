@@ -25,9 +25,9 @@ namespace dotk
 {
 
 DOTk_InexactTrustRegionSQP::DOTk_InexactTrustRegionSQP
-(const std::tr1::shared_ptr<dotk::DOTk_LinearOperator> & hessian_,
- const std::tr1::shared_ptr<dotk::DOTk_TrustRegionMngTypeELP> & data_mng_,
- const std::tr1::shared_ptr<dotk::DOTk_InexactTrustRegionSqpSolverMng> & solver_mng_) :
+(const std::shared_ptr<dotk::DOTk_LinearOperator> & hessian_,
+ const std::shared_ptr<dotk::DOTk_TrustRegionMngTypeELP> & data_mng_,
+ const std::shared_ptr<dotk::DOTk_InexactTrustRegionSqpSolverMng> & solver_mng_) :
         dotk::DOTk_SequentialQuadraticProgramming(dotk::types::INEXACT_TRUST_REGION_SQP),
         m_ActualReduction(1.),
         m_PredictedReduction(1.),

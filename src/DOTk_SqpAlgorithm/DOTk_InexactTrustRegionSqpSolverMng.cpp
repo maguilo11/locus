@@ -30,8 +30,8 @@ namespace dotk
 {
 
 DOTk_InexactTrustRegionSqpSolverMng::DOTk_InexactTrustRegionSqpSolverMng
-(const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_,
- const std::tr1::shared_ptr<dotk::DOTk_TrustRegionMngTypeELP> & data_mng_) :
+(const std::shared_ptr<dotk::DOTk_Primal> & primal_,
+ const std::shared_ptr<dotk::DOTk_TrustRegionMngTypeELP> & data_mng_) :
         m_ToleranceContractionFactor(1e-1),
         m_MaxNumDualProblemItr(200),
         m_MaxNumTangentialProblemItr(200),
@@ -207,7 +207,7 @@ Real DOTk_InexactTrustRegionSqpSolverMng::getTangentialToleranceContractionFacto
 }
 
 dotk::types::solver_stop_criterion_t DOTk_InexactTrustRegionSqpSolverMng::solveDualProb
-(const std::tr1::shared_ptr<dotk::DOTk_TrustRegionMngTypeELP> & mng_)
+(const std::shared_ptr<dotk::DOTk_TrustRegionMngTypeELP> & mng_)
 {
     Real norm_gradient = mng_->getNewGradient()->norm();
     m_DualProblemCriterion->set(dotk::types::NORM_GRADIENT, norm_gradient);
@@ -224,7 +224,7 @@ dotk::types::solver_stop_criterion_t DOTk_InexactTrustRegionSqpSolverMng::solveD
 }
 
 dotk::types::solver_stop_criterion_t DOTk_InexactTrustRegionSqpSolverMng::solveTangentialProb
-(const std::tr1::shared_ptr<dotk::DOTk_TrustRegionMngTypeELP> & mng_)
+(const std::shared_ptr<dotk::DOTk_TrustRegionMngTypeELP> & mng_)
 {
     dotk::update(1., mng_->m_ProjectedTangentialStep, 0., mng_->m_AugmentedSystemLeftHandSide);
     mng_->getAugmentedSystemLeftHandSide()->dual()->fill(static_cast<Real>(0.));
@@ -253,7 +253,7 @@ dotk::types::solver_stop_criterion_t DOTk_InexactTrustRegionSqpSolverMng::solveT
 }
 
 dotk::types::solver_stop_criterion_t DOTk_InexactTrustRegionSqpSolverMng::solveQuasiNormalProb
-(const std::tr1::shared_ptr<dotk::DOTk_TrustRegionMngTypeELP> & mng_)
+(const std::shared_ptr<dotk::DOTk_TrustRegionMngTypeELP> & mng_)
 {
     Real current_trust_region_radius = mng_->getTrustRegionRadius();
     Real trust_region_radius_penalty_param = m_QuasiNormalProbCriterion->getTrustRegionRadiusPenaltyParameter();
@@ -302,9 +302,9 @@ dotk::types::solver_stop_criterion_t DOTk_InexactTrustRegionSqpSolverMng::solveQ
 }
 
 dotk::types::solver_stop_criterion_t DOTk_InexactTrustRegionSqpSolverMng::solveTangentialSubProb
-(const std::tr1::shared_ptr<dotk::DOTk_TrustRegionMngTypeELP> & mng_)
+(const std::shared_ptr<dotk::DOTk_TrustRegionMngTypeELP> & mng_)
 {
-    const std::tr1::shared_ptr<dotk::DOTk_LeftPreconditioner> & preconditioner =
+    const std::shared_ptr<dotk::DOTk_LeftPreconditioner> & preconditioner =
             m_TangentialSubProbSolver->getDataMng()->getLeftPrec();
 
     Real current_trust_region_radius = mng_->getTrustRegionRadius();
@@ -362,7 +362,7 @@ bool DOTk_InexactTrustRegionSqpSolverMng::adjustSolversTolerance()
 
 }
 
-void DOTk_InexactTrustRegionSqpSolverMng::initialize(const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_)
+void DOTk_InexactTrustRegionSqpSolverMng::initialize(const std::shared_ptr<dotk::DOTk_Primal> & primal_)
 {
     size_t max_num_itr = this->getMaxNumTangentialSubProblemItr();
     assert(this->getMaxNumDualProblemItr() > 0);
@@ -372,7 +372,7 @@ void DOTk_InexactTrustRegionSqpSolverMng::initialize(const std::tr1::shared_ptr<
 }
 
 void DOTk_InexactTrustRegionSqpSolverMng::computeScaledProjectedTangentialStep
-(const std::tr1::shared_ptr<dotk::DOTk_TrustRegionMngTypeELP> & mng_)
+(const std::shared_ptr<dotk::DOTk_TrustRegionMngTypeELP> & mng_)
 {
     bool curvature_violation = m_TangentialSubProbSolver->invalidCurvatureWasDetected();
     bool trust_region_violation = m_TangentialSubProbSolver->trustRegionViolationDetected();
@@ -386,7 +386,7 @@ void DOTk_InexactTrustRegionSqpSolverMng::computeScaledProjectedTangentialStep
 }
 
 void DOTk_InexactTrustRegionSqpSolverMng::computeScaledQuasiNormalStep
-(const std::tr1::shared_ptr<dotk::DOTk_TrustRegionMngTypeELP> & mng_)
+(const std::shared_ptr<dotk::DOTk_TrustRegionMngTypeELP> & mng_)
 {
     Real current_trust_region_radius = mng_->getTrustRegionRadius();
     Real trust_region_radius_penalty_param = m_QuasiNormalProbCriterion->getTrustRegionRadiusPenaltyParameter();
@@ -402,9 +402,9 @@ void DOTk_InexactTrustRegionSqpSolverMng::computeScaledQuasiNormalStep
 }
 
 void DOTk_InexactTrustRegionSqpSolverMng::computeNormalCauchyStep
-(const std::tr1::shared_ptr<dotk::DOTk_TrustRegionMngTypeELP> & mng_)
+(const std::shared_ptr<dotk::DOTk_TrustRegionMngTypeELP> & mng_)
 {
-    const std::tr1::shared_ptr<dotk::DOTk_AssemblyManager> & interface = mng_->getRoutinesMng();
+    const std::shared_ptr<dotk::DOTk_AssemblyManager> & interface = mng_->getRoutinesMng();
     interface->adjointJacobian(mng_->getNewPrimal(),
                                mng_->getNewEqualityConstraintResidual(),
                                mng_->m_NormalCauchyStep);
@@ -420,8 +420,8 @@ void DOTk_InexactTrustRegionSqpSolverMng::computeNormalCauchyStep
     mng_->m_NormalCauchyStep->scale(scale_factor);
 }
 
-void DOTk_InexactTrustRegionSqpSolverMng::setDefaultKrylovSolvers(const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_,
-                                                                  const std::tr1::shared_ptr<dotk::DOTk_LinearOperator> & hessian_)
+void DOTk_InexactTrustRegionSqpSolverMng::setDefaultKrylovSolvers(const std::shared_ptr<dotk::DOTk_Primal> & primal_,
+                                                                  const std::shared_ptr<dotk::DOTk_LinearOperator> & hessian_)
 {
     dotk::DOTk_KrylovSolverFactory factory;
 
@@ -446,13 +446,13 @@ void DOTk_InexactTrustRegionSqpSolverMng::setDefaultKrylovSolvers(const std::tr1
     this->buildTangentialSubProblemSolver(primal_, hessian_);
 }
 
-void DOTk_InexactTrustRegionSqpSolverMng::buildTangentialSubProblemSolver(const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_,
-                                                                          const std::tr1::shared_ptr<dotk::DOTk_LinearOperator> & hessian_)
+void DOTk_InexactTrustRegionSqpSolverMng::buildTangentialSubProblemSolver(const std::shared_ptr<dotk::DOTk_Primal> & primal_,
+                                                                          const std::shared_ptr<dotk::DOTk_LinearOperator> & hessian_)
 {
     size_t max_num_itr = this->getMaxNumTangentialSubProblemItr();
     assert(max_num_itr > 0);
 
-    std::tr1::shared_ptr<dotk::DOTk_Primal> temp_primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> temp_primal(new dotk::DOTk_Primal);
     temp_primal->allocateUserDefinedDual(*primal_->dual());
     temp_primal->allocateUserDefinedControl(*primal_->control());
     if(primal_->state().use_count() > 0)

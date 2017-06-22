@@ -23,9 +23,9 @@
 namespace dotk
 {
 
-GradientProjectionMethod::GradientProjectionMethod(const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_,
-                                                   const std::tr1::shared_ptr<dotk::DOTk_LineSearchStepMng> & step_,
-                                                   const std::tr1::shared_ptr<dotk::DOTk_LineSearchAlgorithmsDataMng> & mng_) :
+GradientProjectionMethod::GradientProjectionMethod(const std::shared_ptr<dotk::DOTk_Primal> & primal_,
+                                                   const std::shared_ptr<dotk::DOTk_LineSearchStepMng> & step_,
+                                                   const std::shared_ptr<dotk::DOTk_LineSearchAlgorithmsDataMng> & mng_) :
         m_PrintOutputFile(false),
         m_IterationCount(0),
         m_MaxNumIterations(5000),

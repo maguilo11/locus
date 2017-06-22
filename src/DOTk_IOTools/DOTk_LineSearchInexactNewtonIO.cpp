@@ -76,9 +76,9 @@ void DOTk_LineSearchInexactNewtonIO::closeFile()
     m_DiagnosticsFile.close();
 }
 
-void DOTk_LineSearchInexactNewtonIO::printDiagnosticsReport(const std::tr1::shared_ptr<dotk::DOTk_KrylovSolver> & solver_,
-                                                            const std::tr1::shared_ptr<dotk::DOTk_LineSearchStepMng> & step_,
-                                                            const std::tr1::shared_ptr<dotk::DOTk_LineSearchAlgorithmsDataMng> & mng_)
+void DOTk_LineSearchInexactNewtonIO::printDiagnosticsReport(const std::shared_ptr<dotk::DOTk_KrylovSolver> & solver_,
+                                                            const std::shared_ptr<dotk::DOTk_LineSearchStepMng> & step_,
+                                                            const std::shared_ptr<dotk::DOTk_LineSearchAlgorithmsDataMng> & mng_)
 {
     if(this->display() == dotk::types::OFF)
     {

@@ -52,13 +52,13 @@ dotk::types::projection_t DOTk_OrthogonalProjection::getProjectionType() const
     return (mProjectionType);
 }
 
-const std::tr1::shared_ptr<dotk::Vector<Real> > & DOTk_OrthogonalProjection::getLinearOperatorTimesOrthoVector(size_t index_) const
+const std::shared_ptr<dotk::Vector<Real> > & DOTk_OrthogonalProjection::getLinearOperatorTimesOrthoVector(size_t index_) const
 {
     std::perror("\n**** DOTk ERROR in DOTk_OrthogonalProjection::getLinearOperatorTimesOrthoVector. Function not implemented. ABORT. ****\n");
     std::abort();
 }
 
-void DOTk_OrthogonalProjection::setLinearOperatorTimesOrthoVector(size_t index_, const std::tr1::shared_ptr<dotk::Vector<Real> > & vec_)
+void DOTk_OrthogonalProjection::setLinearOperatorTimesOrthoVector(size_t index_, const std::shared_ptr<dotk::Vector<Real> > & vec_)
 {
     std::perror("\n**** DOTk ERROR in DOTk_OrthogonalProjection::setLinearOperatorTimesOrthoVector. Function not implemented. ABORT. ****\n");
     std::abort();

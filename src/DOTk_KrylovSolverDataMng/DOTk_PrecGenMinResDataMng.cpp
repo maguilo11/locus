@@ -21,8 +21,8 @@
 namespace dotk
 {
 
-DOTk_PrecGenMinResDataMng::DOTk_PrecGenMinResDataMng(const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_,
-                                                     const std::tr1::shared_ptr<dotk::DOTk_LinearOperator> & operator_,
+DOTk_PrecGenMinResDataMng::DOTk_PrecGenMinResDataMng(const std::shared_ptr<dotk::DOTk_Primal> & primal_,
+                                                     const std::shared_ptr<dotk::DOTk_LinearOperator> & operator_,
                                                      size_t max_num_itr_) :
         dotk::DOTk_KrylovSolverDataMng(primal_, operator_),
         m_LeftPreconditioner(new dotk::DOTk_LeftPreconditioner(dotk::types::LEFT_PRECONDITIONER_DISABLED)),
@@ -40,14 +40,14 @@ DOTk_PrecGenMinResDataMng::~DOTk_PrecGenMinResDataMng()
 {
 }
 
-void DOTk_PrecGenMinResDataMng::setArnoldiProjection(const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_)
+void DOTk_PrecGenMinResDataMng::setArnoldiProjection(const std::shared_ptr<dotk::DOTk_Primal> & primal_)
 {
     size_t krylov_subspace_dim = dotk::DOTk_KrylovSolverDataMng::getMaxNumSolverItr();
     dotk::DOTk_OrthogonalProjectionFactory factory(krylov_subspace_dim, dotk::types::ARNOLDI);
     factory.build(primal_, m_OrthogonalProjection);
 }
 
-void DOTk_PrecGenMinResDataMng::setGramSchmidtProjection(const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_)
+void DOTk_PrecGenMinResDataMng::setGramSchmidtProjection(const std::shared_ptr<dotk::DOTk_Primal> & primal_)
 {
     size_t krylov_subspace_dim = dotk::DOTk_KrylovSolverDataMng::getMaxNumSolverItr();
     dotk::DOTk_OrthogonalProjectionFactory factory(krylov_subspace_dim, dotk::types::GRAM_SCHMIDT);
@@ -96,37 +96,37 @@ void DOTk_PrecGenMinResDataMng::setRightPreconditioner(dotk::types::right_prec_t
     factory.build(dotk::DOTk_KrylovSolverDataMng::getSolution(), m_RightPreconditioner);
 }
 
-const std::tr1::shared_ptr<dotk::DOTk_OrthogonalProjection> &
+const std::shared_ptr<dotk::DOTk_OrthogonalProjection> &
 DOTk_PrecGenMinResDataMng::getProjection() const
 {
     return (m_OrthogonalProjection);
 }
 
-const std::tr1::shared_ptr<dotk::DOTk_LeftPreconditioner> &
+const std::shared_ptr<dotk::DOTk_LeftPreconditioner> &
 DOTk_PrecGenMinResDataMng::getLeftPrec() const
 {
     return (m_LeftPreconditioner);
 }
 
-const std::tr1::shared_ptr<dotk::DOTk_RightPreconditioner> &
+const std::shared_ptr<dotk::DOTk_RightPreconditioner> &
 DOTk_PrecGenMinResDataMng::getRightPrec() const
 {
     return (m_RightPreconditioner);
 }
 
-const std::tr1::shared_ptr<dotk::Vector<Real> > &
+const std::shared_ptr<dotk::Vector<Real> > &
 DOTk_PrecGenMinResDataMng::getLeftPrecTimesVector() const
 {
     return (m_LeftPrecTimesResidual);
 }
 
-const std::tr1::shared_ptr<dotk::Vector<Real> > &
+const std::shared_ptr<dotk::Vector<Real> > &
 DOTk_PrecGenMinResDataMng::getRightPrecTimesVector() const
 {
     return (m_RightPrecTimesResidual);
 }
 
-void DOTk_PrecGenMinResDataMng::allocate(const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_)
+void DOTk_PrecGenMinResDataMng::allocate(const std::shared_ptr<dotk::DOTk_Primal> & primal_)
 {
     bool is_dual_allocated = primal_->dual().use_count() > 0;
     bool is_state_allocated = primal_->state().use_count() > 0;

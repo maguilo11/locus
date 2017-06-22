@@ -8,7 +8,7 @@
 #ifndef DOTK_UTILSCCSA_HPP_
 #define DOTK_UTILSCCSA_HPP_
 
-#include <tr1/memory>
+#include <memory>
 
 #include "DOTk_Types.hpp"
 
@@ -47,9 +47,9 @@ enum stopping_criterion_t
     NOT_CONVERGED = 10,
 };
 
-Real computeResidualNorm(const std::tr1::shared_ptr<dotk::Vector<Real> > & primal_,
-                         const std::tr1::shared_ptr<dotk::Vector<Real> > & dual_,
-                         const std::tr1::shared_ptr<dotk::DOTk_DataMngCCSA> & data_mng_);
+Real computeResidualNorm(const std::shared_ptr<dotk::Vector<Real> > & primal_,
+                         const std::shared_ptr<dotk::Vector<Real> > & dual_,
+                         const std::shared_ptr<dotk::DOTk_DataMngCCSA> & data_mng_);
 
 }
 

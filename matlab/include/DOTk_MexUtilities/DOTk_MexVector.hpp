@@ -71,7 +71,7 @@ public:
     //! Returns the number of elements in the vector.
     size_t size() const;
     //! Clones memory for an object of type dotk::Vector
-    std::tr1::shared_ptr<dotk::Vector<double> > clone() const;
+    std::shared_ptr<dotk::Vector<double> > clone() const;
     //! Operator overloads the square bracket operator
     double & operator [](size_t index_);
     //! Operator overloads the square bracket operator

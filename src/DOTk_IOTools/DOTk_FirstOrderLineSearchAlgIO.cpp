@@ -74,8 +74,8 @@ void DOTk_FirstOrderLineSearchAlgIO::closeFile()
     m_DiagnosticsFile.close();
 }
 
-void DOTk_FirstOrderLineSearchAlgIO::printDiagnosticsReport(const std::tr1::shared_ptr<dotk::DOTk_LineSearchStepMng> & step_,
-                                                            const std::tr1::shared_ptr<dotk::DOTk_LineSearchAlgorithmsDataMng> & mng_)
+void DOTk_FirstOrderLineSearchAlgIO::printDiagnosticsReport(const std::shared_ptr<dotk::DOTk_LineSearchStepMng> & step_,
+                                                            const std::shared_ptr<dotk::DOTk_LineSearchAlgorithmsDataMng> & mng_)
 {
     if(this->display() == dotk::types::display_t::OFF)
     {

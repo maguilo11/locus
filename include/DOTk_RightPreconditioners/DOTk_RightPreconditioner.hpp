@@ -8,7 +8,7 @@
 #ifndef DOTK_RIGHTPRECONDITIONER_HPP_
 #define DOTK_RIGHTPRECONDITIONER_HPP_
 
-#include <tr1/memory>
+#include <memory>
 #include "DOTk_Types.hpp"
 
 namespace dotk
@@ -28,9 +28,9 @@ public:
     void setRightPreconditionerType(dotk::types::right_prec_t type_);
     dotk::types::right_prec_t getRightPreconditionerType() const;
 
-    virtual void apply(const std::tr1::shared_ptr<dotk::DOTk_OptimizationDataMng> & opt_prob_mng_,
-                       const std::tr1::shared_ptr<dotk::Vector<Real> > & vec_,
-                       const std::tr1::shared_ptr<dotk::Vector<Real> > & matrix_times_vec_);
+    virtual void apply(const std::shared_ptr<dotk::DOTk_OptimizationDataMng> & opt_prob_mng_,
+                       const std::shared_ptr<dotk::Vector<Real> > & vec_,
+                       const std::shared_ptr<dotk::Vector<Real> > & matrix_times_vec_);
 
 private:
     dotk::types::right_prec_t mRightPreconditionerType;

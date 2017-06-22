@@ -8,7 +8,7 @@
 #ifndef DOTK_FIRSTORDERALGORITHM_HPP_
 #define DOTK_FIRSTORDERALGORITHM_HPP_
 
-#include <tr1/memory>
+#include <memory>
 
 #include "DOTk_Types.hpp"
 
@@ -42,8 +42,8 @@ public:
     void setStoppingCriterion(dotk::types::stop_criterion_t flag_);
     dotk::types::stop_criterion_t getStoppingCriterion() const;
 
-    bool checkStoppingCriteria(const std::tr1::shared_ptr<dotk::DOTk_OptimizationDataMng> & mng_);
-    void resetCurrentStateToFormer(const std::tr1::shared_ptr<dotk::DOTk_OptimizationDataMng> & mng_);
+    bool checkStoppingCriteria(const std::shared_ptr<dotk::DOTk_OptimizationDataMng> & mng_);
+    void resetCurrentStateToFormer(const std::shared_ptr<dotk::DOTk_OptimizationDataMng> & mng_);
 
 private:
     size_t mMaxNumItr;

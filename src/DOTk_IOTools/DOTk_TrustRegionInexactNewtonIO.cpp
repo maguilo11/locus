@@ -90,8 +90,8 @@ bool DOTk_TrustRegionInexactNewtonIO::didTrustRegionSubProblemConverged() const
 }
 
 void DOTk_TrustRegionInexactNewtonIO::printDiagnosticReport(const dotk::DOTk_TrustRegionInexactNewton * const alg_,
-                                                            const std::tr1::shared_ptr<dotk::DOTk_KrylovSolver> & solver_,
-                                                            const std::tr1::shared_ptr<dotk::DOTk_TrustRegionAlgorithmsDataMng> & opt_mng_,
+                                                            const std::shared_ptr<dotk::DOTk_KrylovSolver> & solver_,
+                                                            const std::shared_ptr<dotk::DOTk_TrustRegionAlgorithmsDataMng> & opt_mng_,
                                                             bool did_trust_region_subproblem_converged_)
 {
     this->setTrustRegionSubProblemConvergedFlag(did_trust_region_subproblem_converged_);
@@ -143,8 +143,8 @@ void DOTk_TrustRegionInexactNewtonIO::writeHeader()
 }
 
 void DOTk_TrustRegionInexactNewtonIO::writeDiagnostics(const dotk::DOTk_TrustRegionInexactNewton * const alg_,
-                                                       const std::tr1::shared_ptr<dotk::DOTk_KrylovSolver> & solver_,
-                                                       const std::tr1::shared_ptr<dotk::DOTk_TrustRegionAlgorithmsDataMng> & mng_)
+                                                       const std::shared_ptr<dotk::DOTk_KrylovSolver> & solver_,
+                                                       const std::shared_ptr<dotk::DOTk_TrustRegionAlgorithmsDataMng> & mng_)
 {
     size_t num_opt_itr_done = alg_->getNumItrDone();
     size_t num_trust_region_subproblem_itr = mng_->getTrustRegion()->getNumTrustRegionSubProblemItrDone();
@@ -178,7 +178,7 @@ void DOTk_TrustRegionInexactNewtonIO::writeDiagnostics(const dotk::DOTk_TrustReg
 
 void DOTk_TrustRegionInexactNewtonIO::writeInitialDiagnostics
 (const dotk::DOTk_TrustRegionInexactNewton * const alg_,
- const std::tr1::shared_ptr<dotk::DOTk_TrustRegionAlgorithmsDataMng> & mng_)
+ const std::shared_ptr<dotk::DOTk_TrustRegionAlgorithmsDataMng> & mng_)
 {
     Real norm_grad = mng_->getNormNewGradient();
     Real objective_func_value = mng_->getNewObjectiveFunctionValue();
@@ -206,8 +206,8 @@ void DOTk_TrustRegionInexactNewtonIO::writeInitialDiagnostics
 
 void DOTk_TrustRegionInexactNewtonIO::writeTrustRegionSubProblemDiagnostics
 (const dotk::DOTk_TrustRegionInexactNewton * const alg_,
- const std::tr1::shared_ptr<dotk::DOTk_KrylovSolver> & solver_,
- const std::tr1::shared_ptr<dotk::DOTk_TrustRegionAlgorithmsDataMng> & mng_)
+ const std::shared_ptr<dotk::DOTk_KrylovSolver> & solver_,
+ const std::shared_ptr<dotk::DOTk_TrustRegionAlgorithmsDataMng> & mng_)
 {
     Real trust_region_radius = mng_->getTrustRegionRadius();
     Real actual_reduction = mng_->getTrustRegion()->getActualReduction();
@@ -238,8 +238,8 @@ void DOTk_TrustRegionInexactNewtonIO::writeTrustRegionSubProblemDiagnostics
 
 void DOTk_TrustRegionInexactNewtonIO::writeFullTrustRegionSubProblemDiagnostics
 (const dotk::DOTk_TrustRegionInexactNewton * const alg_,
- const std::tr1::shared_ptr<dotk::DOTk_KrylovSolver> & solver_,
- const std::tr1::shared_ptr<dotk::DOTk_TrustRegionAlgorithmsDataMng> & mng_)
+ const std::shared_ptr<dotk::DOTk_KrylovSolver> & solver_,
+ const std::shared_ptr<dotk::DOTk_TrustRegionAlgorithmsDataMng> & mng_)
 {
     Real norm_grad = mng_->getNormNewGradient();
     Real norm_trial_step = mng_->getNormTrialStep();

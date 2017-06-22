@@ -8,8 +8,6 @@
 #ifndef DOTK_ROSENBROCK_HPP_
 #define DOTK_ROSENBROCK_HPP_
 
-#include <tr1/memory>
-
 #include "DOTk_ObjectiveFunction.hpp"
 
 namespace dotk
@@ -25,12 +23,12 @@ public:
     virtual ~DOTk_Rosenbrock();
 
     Real value(const dotk::Vector<Real> & primal_);
-    void value(const std::vector<std::tr1::shared_ptr<dotk::Vector<Real> > > & primal_,
-               const std::tr1::shared_ptr<dotk::Vector<Real> > & values_);
-    void value(const std::vector<std::tr1::shared_ptr<dotk::Vector<Real> > > & primal_plus_,
-               const std::vector<std::tr1::shared_ptr<dotk::Vector<Real> > > & primal_minus_,
-               const std::tr1::shared_ptr<dotk::Vector<Real> > & values_plus_,
-               const std::tr1::shared_ptr<dotk::Vector<Real> > & values_minus_);
+    void value(const std::vector<std::shared_ptr<dotk::Vector<Real> > > & primal_,
+               const std::shared_ptr<dotk::Vector<Real> > & values_);
+    void value(const std::vector<std::shared_ptr<dotk::Vector<Real> > > & primal_plus_,
+               const std::vector<std::shared_ptr<dotk::Vector<Real> > > & primal_minus_,
+               const std::shared_ptr<dotk::Vector<Real> > & values_plus_,
+               const std::shared_ptr<dotk::Vector<Real> > & values_minus_);
     void gradient(const dotk::Vector<Real> & primal_, dotk::Vector<Real> & gradient_);
     void hessian(const dotk::Vector<Real> & primal_, const dotk::Vector<Real> & vector_, dotk::Vector<Real> & output_);
 

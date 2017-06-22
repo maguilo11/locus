@@ -18,13 +18,13 @@
 namespace dotk
 {
 
-DOTk_LineSearchMngTypeULP::DOTk_LineSearchMngTypeULP(const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_) :
+DOTk_LineSearchMngTypeULP::DOTk_LineSearchMngTypeULP(const std::shared_ptr<dotk::DOTk_Primal> & primal_) :
         dotk::DOTk_LineSearchAlgorithmsDataMng(primal_)
 {
 }
 
-DOTk_LineSearchMngTypeULP::DOTk_LineSearchMngTypeULP(const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_,
-                                                     const std::tr1::shared_ptr<dotk::DOTk_ObjectiveFunction<Real> > & operators_) :
+DOTk_LineSearchMngTypeULP::DOTk_LineSearchMngTypeULP(const std::shared_ptr<dotk::DOTk_Primal> & primal_,
+                                                     const std::shared_ptr<dotk::DOTk_ObjectiveFunction<Real> > & operators_) :
         dotk::DOTk_LineSearchAlgorithmsDataMng(primal_)
 {
     m_RoutinesMng.reset(new dotk::DOTk_RoutinesTypeULP(operators_));

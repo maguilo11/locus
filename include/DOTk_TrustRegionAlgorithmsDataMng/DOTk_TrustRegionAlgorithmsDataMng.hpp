@@ -26,7 +26,7 @@ class Vector;
 class DOTk_TrustRegionAlgorithmsDataMng: public dotk::DOTk_OptimizationDataMng
 {
 public:
-    explicit DOTk_TrustRegionAlgorithmsDataMng(const std::tr1::shared_ptr<dotk::DOTk_Primal> & variable_);
+    explicit DOTk_TrustRegionAlgorithmsDataMng(const std::shared_ptr<dotk::DOTk_Primal> & variable_);
     virtual ~DOTk_TrustRegionAlgorithmsDataMng();
 
     size_t getObjectiveFuncEvalCounter() const;
@@ -54,36 +54,36 @@ public:
 
     void invalidCurvatureDetected(bool invalid_curvature_detected_);
 
-    const std::tr1::shared_ptr<dotk::DOTk_TrustRegion> & getTrustRegion() const;
+    const std::shared_ptr<dotk::DOTk_TrustRegion> & getTrustRegion() const;
     Real computeDoglegRoot(Real trust_region_radius_,
-                           const std::tr1::shared_ptr<dotk::Vector<Real> > & vector1_,
-                           const std::tr1::shared_ptr<dotk::Vector<Real> > & vector2_);
+                           const std::shared_ptr<dotk::Vector<Real> > & vector1_,
+                           const std::shared_ptr<dotk::Vector<Real> > & vector2_);
 
     void setUserDefinedGradient();
     void checkTrustRegionPtr(std::ostringstream & msg_);
     void setCauchyTrustRegionMethod(Real trust_region_radius_ = 1e4);
     void setDoglegTrustRegionMethod(Real trust_region_radius_ = 1e4);
-    void setDoubleDoglegTrustRegionMethod(const std::tr1::shared_ptr<dotk::Vector<Real> > & vector_,
+    void setDoubleDoglegTrustRegionMethod(const std::shared_ptr<dotk::Vector<Real> > & vector_,
                                           Real trust_region_radius_ = 1e4);
 
     virtual void updateState(const Real new_objective_function_value_,
-                             const std::tr1::shared_ptr<dotk::Vector<Real> > & new_primal_);
+                             const std::shared_ptr<dotk::Vector<Real> > & new_primal_);
     virtual void computeScaledInexactNewtonStep(const bool invalid_curvature_detected_,
-                                                const std::tr1::shared_ptr<dotk::Vector<Real> > & descent_direction_);
+                                                const std::shared_ptr<dotk::Vector<Real> > & descent_direction_);
 
     virtual Real evaluateObjective();
-    virtual Real evaluateObjective(const std::tr1::shared_ptr<dotk::Vector<Real> > & input_);
+    virtual Real evaluateObjective(const std::shared_ptr<dotk::Vector<Real> > & input_);
     virtual void computeGradient();
-    virtual void computeGradient(const std::tr1::shared_ptr<dotk::Vector<Real> > & input_,
-                                 const std::tr1::shared_ptr<dotk::Vector<Real> > & gradient_);
-    virtual const std::tr1::shared_ptr<dotk::DOTk_AssemblyManager> & getRoutinesMng() const;
+    virtual void computeGradient(const std::shared_ptr<dotk::Vector<Real> > & input_,
+                                 const std::shared_ptr<dotk::Vector<Real> > & gradient_);
+    virtual const std::shared_ptr<dotk::DOTk_AssemblyManager> & getRoutinesMng() const;
 
 protected:
-    std::tr1::shared_ptr<dotk::DOTk_AssemblyManager> m_RoutinesMng;
-    std::tr1::shared_ptr<dotk::DOTk_FirstOrderOperator> m_FirstOrderOperator;
+    std::shared_ptr<dotk::DOTk_AssemblyManager> m_RoutinesMng;
+    std::shared_ptr<dotk::DOTk_FirstOrderOperator> m_FirstOrderOperator;
 
 private:
-    std::tr1::shared_ptr<dotk::DOTk_TrustRegion> m_TrustRegion;
+    std::shared_ptr<dotk::DOTk_TrustRegion> m_TrustRegion;
 
 private:
     // unimplemented

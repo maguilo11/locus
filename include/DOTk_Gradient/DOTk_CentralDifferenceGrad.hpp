@@ -22,19 +22,19 @@ class Vector;
 class DOTk_CentralDifferenceGrad : public dotk::DOTk_FirstOrderOperator
 {
 public:
-    explicit DOTk_CentralDifferenceGrad(const std::tr1::shared_ptr<dotk::Vector<Real> > & vector_);
+    explicit DOTk_CentralDifferenceGrad(const std::shared_ptr<dotk::Vector<Real> > & vector_);
     virtual ~DOTk_CentralDifferenceGrad();
 
-    const std::tr1::shared_ptr<dotk::Vector<Real> > & getFiniteDiffPerturbationVec() const;
+    const std::shared_ptr<dotk::Vector<Real> > & getFiniteDiffPerturbationVec() const;
     virtual void setFiniteDiffPerturbationVec(const dotk::Vector<Real> & input_);
 
-    void getGradient(const std::tr1::shared_ptr<dotk::DOTk_AssemblyManager> & interface_,
-                     const std::tr1::shared_ptr<dotk::Vector<Real> > & primal_,
-                     const std::tr1::shared_ptr<dotk::Vector<Real> > & grad_);
+    void getGradient(const std::shared_ptr<dotk::DOTk_AssemblyManager> & interface_,
+                     const std::shared_ptr<dotk::Vector<Real> > & primal_,
+                     const std::shared_ptr<dotk::Vector<Real> > & grad_);
     virtual void gradient(const dotk::DOTk_OptimizationDataMng * const mng_);
 
 private:
-    std::tr1::shared_ptr<dotk::Vector<Real> > m_FiniteDiffPerturbationVec;
+    std::shared_ptr<dotk::Vector<Real> > m_FiniteDiffPerturbationVec;
 
 private:
     DOTk_CentralDifferenceGrad(const dotk::DOTk_CentralDifferenceGrad &);

@@ -23,7 +23,7 @@
 namespace dotk
 {
 
-DOTk_DualSolverNLCG::DOTk_DualSolverNLCG(const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_) :
+DOTk_DualSolverNLCG::DOTk_DualSolverNLCG(const std::shared_ptr<dotk::DOTk_Primal> & primal_) :
         dotk::DOTk_DualSolverCCSA(dotk::ccsa::dual_solver_t::NONLINEAR_CG),
         m_NonlinearCgType(dotk::types::POLAK_RIBIERE_NLCG),
         m_TrialDual(primal_->dual()->clone()),
@@ -137,8 +137,8 @@ void DOTk_DualSolverNLCG::reset()
 {
     m_DataMng->reset();
 }
-void DOTk_DualSolverNLCG::solve(const std::tr1::shared_ptr<dotk::DOTk_ObjectiveFunction<Real> > & objective_,
-                                const std::tr1::shared_ptr<dotk::Vector<Real> > & solution_)
+void DOTk_DualSolverNLCG::solve(const std::shared_ptr<dotk::DOTk_ObjectiveFunction<Real> > & objective_,
+                                const std::shared_ptr<dotk::Vector<Real> > & solution_)
 {
     m_DataMng->m_NewDual->update(1., *solution_, 0.);
     m_DataMng->m_NewObjectiveFunctionValue = objective_->value(*m_DataMng->m_NewDual);
@@ -199,7 +199,7 @@ void DOTk_DualSolverNLCG::solve(const std::tr1::shared_ptr<dotk::DOTk_ObjectiveF
     solution_->update(1., *m_DataMng->m_NewDual, 0.);
 }
 
-void DOTk_DualSolverNLCG::step(const std::tr1::shared_ptr<dotk::DOTk_ObjectiveFunction<Real> > & objective_)
+void DOTk_DualSolverNLCG::step(const std::shared_ptr<dotk::DOTk_ObjectiveFunction<Real> > & objective_)
 {
     Real alpha = 1e-4;
     std::vector<Real> step_values(2, 0.);
@@ -213,8 +213,8 @@ void DOTk_DualSolverNLCG::step(const std::tr1::shared_ptr<dotk::DOTk_ObjectiveFu
     step_values[1] = std::min(static_cast<Real>(1.),
                               static_cast<Real>(100.) / (static_cast<Real>(1.) + norm_trial_step));
 
-    m_TrialDual->update(1., *m_DataMng->m_NewDual, 0.);
-    m_TrialDual->update(step_values[1], *m_DataMng->m_NewTrialStep, 1.);
+    m_TrialDual->update(static_cast<Real>(1.), *m_DataMng->m_NewDual, static_cast<Real>(0.));
+    m_TrialDual->update(step_values[1], *m_DataMng->m_NewTrialStep, static_cast<Real>(1.));
     m_Bounds->project(*m_DualLowerBound, *m_DualUpperBound, *m_TrialDual);
     m_Bounds->computeProjectedStep(*m_TrialDual, *m_DataMng->m_NewDual, *m_ProjectedStep);
 
@@ -234,8 +234,8 @@ void DOTk_DualSolverNLCG::step(const std::tr1::shared_ptr<dotk::DOTk_ObjectiveFu
                                                     initial_projected_step_dot_gradient);
         step_values[1] = new_step;
 
-        m_TrialDual->update(1., *m_DataMng->m_NewDual, 0.);
-        m_TrialDual->update(step_values[1], *m_DataMng->m_NewTrialStep, 1.);
+        m_TrialDual->update(static_cast<Real>(1.), *m_DataMng->m_NewDual, static_cast<Real>(0.));
+        m_TrialDual->update(step_values[1], *m_DataMng->m_NewTrialStep, static_cast<Real>(1.));
         m_Bounds->project(*m_DualLowerBound, *m_DualUpperBound, *m_TrialDual);
         m_Bounds->computeProjectedStep(*m_TrialDual, *m_DataMng->m_NewDual, *m_ProjectedStep);
 
@@ -314,7 +314,7 @@ Real DOTk_DualSolverNLCG::computeScaling()
     return (scale);
 }
 
-void DOTk_DualSolverNLCG::initialize(const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_)
+void DOTk_DualSolverNLCG::initialize(const std::shared_ptr<dotk::DOTk_Primal> & primal_)
 {
     if(primal_->getDualLowerBound().use_count() < 1)
     {

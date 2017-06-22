@@ -8,7 +8,7 @@
 #ifndef DOTK_NUMERICALDIFFERENTIATIONFACTORY_HPP_
 #define DOTK_NUMERICALDIFFERENTIATIONFACTORY_HPP_
 
-#include <tr1/memory>
+#include <memory>
 #include "DOTk_Types.hpp"
 
 namespace dotk
@@ -30,18 +30,18 @@ public:
     void type(dotk::types::numerical_integration_t type_);
 
     void buildForwardDifferenceHessian(const dotk::Vector<Real> & input_,
-                                       std::tr1::shared_ptr<dotk::DOTk_NumericalDifferentiation> & output_);
+                                       std::shared_ptr<dotk::DOTk_NumericalDifferentiation> & output_);
     void buildBackwardDifferenceHessian(const dotk::Vector<Real> & input_,
-                                        std::tr1::shared_ptr<dotk::DOTk_NumericalDifferentiation> & output_);
+                                        std::shared_ptr<dotk::DOTk_NumericalDifferentiation> & output_);
     void buildCentralDifferenceHessian(const dotk::Vector<Real> & input_,
-                                       std::tr1::shared_ptr<dotk::DOTk_NumericalDifferentiation> & output_);
+                                       std::shared_ptr<dotk::DOTk_NumericalDifferentiation> & output_);
     void buildSecondOrderForwardDifferenceHessian(const dotk::Vector<Real> & input_,
-                                                  std::tr1::shared_ptr<dotk::DOTk_NumericalDifferentiation> & output_);
+                                                  std::shared_ptr<dotk::DOTk_NumericalDifferentiation> & output_);
     void buildThirdOrderForwardDifferenceHessian(const dotk::Vector<Real> & input_,
-                                                 std::tr1::shared_ptr<dotk::DOTk_NumericalDifferentiation> & output_);
+                                                 std::shared_ptr<dotk::DOTk_NumericalDifferentiation> & output_);
     void buildThirdOrderBackwardDifferenceHessian(const dotk::Vector<Real> & input_,
-                                                  std::tr1::shared_ptr<dotk::DOTk_NumericalDifferentiation> & output_);
-    void build(const dotk::Vector<Real> & input_, std::tr1::shared_ptr<dotk::DOTk_NumericalDifferentiation> & output_);
+                                                  std::shared_ptr<dotk::DOTk_NumericalDifferentiation> & output_);
+    void build(const dotk::Vector<Real> & input_, std::shared_ptr<dotk::DOTk_NumericalDifferentiation> & output_);
 
 private:
     dotk::types::numerical_integration_t m_Type;

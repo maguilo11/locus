@@ -16,7 +16,7 @@
 namespace dotk
 {
 
-DOTk_ProjectedStep::DOTk_ProjectedStep(const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_) :
+DOTk_ProjectedStep::DOTk_ProjectedStep(const std::shared_ptr<dotk::DOTk_Primal> & primal_) :
         m_WorkVector(primal_->control()->clone()),
         m_LowerBound(primal_->control()->clone()),
         m_UpperBound(primal_->control()->clone()),
@@ -33,7 +33,7 @@ DOTk_ProjectedStep::~DOTk_ProjectedStep()
 {
 }
 
-void DOTk_ProjectedStep::setArmijoLineSearch(const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_,
+void DOTk_ProjectedStep::setArmijoLineSearch(const std::shared_ptr<dotk::DOTk_Primal> & primal_,
                                              Real contraction_factor_)
 {
     dotk::DOTk_LineSearchFactory factory;
@@ -41,7 +41,7 @@ void DOTk_ProjectedStep::setArmijoLineSearch(const std::tr1::shared_ptr<dotk::DO
     m_LineSearch->setContractionFactor(contraction_factor_);
 }
 
-void DOTk_ProjectedStep::setGoldsteinLineSearch(const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_,
+void DOTk_ProjectedStep::setGoldsteinLineSearch(const std::shared_ptr<dotk::DOTk_Primal> & primal_,
                                                 Real constant_,
                                                 Real contraction_factor_)
 {
@@ -51,7 +51,7 @@ void DOTk_ProjectedStep::setGoldsteinLineSearch(const std::tr1::shared_ptr<dotk:
     m_LineSearch->setConstant(constant_);
 }
 
-void DOTk_ProjectedStep::setCubicLineSearch(const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_,
+void DOTk_ProjectedStep::setCubicLineSearch(const std::shared_ptr<dotk::DOTk_Primal> & primal_,
                                             Real contraction_factor_)
 {
     dotk::DOTk_LineSearchFactory factory;
@@ -59,7 +59,7 @@ void DOTk_ProjectedStep::setCubicLineSearch(const std::tr1::shared_ptr<dotk::DOT
     m_LineSearch->setContractionFactor(contraction_factor_);
 }
 
-void DOTk_ProjectedStep::setGoldenSectionLineSearch(const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_,
+void DOTk_ProjectedStep::setGoldenSectionLineSearch(const std::shared_ptr<dotk::DOTk_Primal> & primal_,
                                                     Real contraction_factor_)
 {
     dotk::DOTk_LineSearchFactory factory;
@@ -92,14 +92,14 @@ size_t DOTk_ProjectedStep::iterations() const
     return (m_LineSearch->getNumLineSearchItrDone());
 }
 
-void DOTk_ProjectedStep::build(const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_,
+void DOTk_ProjectedStep::build(const std::shared_ptr<dotk::DOTk_Primal> & primal_,
                                dotk::types::line_search_t type_)
 {
     dotk::DOTk_LineSearchFactory factory(type_);
     factory.build(primal_->control(), m_LineSearch);
 }
 
-void DOTk_ProjectedStep::solveSubProblem(const std::tr1::shared_ptr<dotk::DOTk_OptimizationDataMng> & mng_)
+void DOTk_ProjectedStep::solveSubProblem(const std::shared_ptr<dotk::DOTk_OptimizationDataMng> & mng_)
 {
     m_WorkVector->update(1., *mng_->getNewPrimal(), 0.);
     m_WorkVector->update(1., *mng_->getTrialStep(), 1.);

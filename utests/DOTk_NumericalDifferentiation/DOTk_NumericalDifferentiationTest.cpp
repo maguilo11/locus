@@ -22,23 +22,23 @@ namespace DOTkNumericalIntegrationTest
 TEST(NumericalDerivative, ForwardFiniteDifference)
 {
     size_t num_controls = 2;
-    std::tr1::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
     primal->allocateSerialControlArray(num_controls, 2);
 
-    std::tr1::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
-    std::tr1::shared_ptr< dotk::Vector<Real> > current_gradient(new dotk::StdVector<Real>(num_controls, 0.));
+    std::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
+    std::shared_ptr< dotk::Vector<Real> > current_gradient(new dotk::StdVector<Real>(num_controls, 0.));
     objective->gradient(*primal->control(), *current_gradient);
 
     dotk::NumericallyDifferentiatedHessian hessian(primal, objective);
     hessian.setForwardDifference(*primal->control());
 
-    std::tr1::shared_ptr< dotk::Vector<Real> > output(new dotk::StdVector<Real>(num_controls, 0.));
-    std::tr1::shared_ptr< dotk::Vector<Real> > direction(new dotk::StdVector<Real>(num_controls, 0.1));
+    std::shared_ptr< dotk::Vector<Real> > output(new dotk::StdVector<Real>(num_controls, 0.));
+    std::shared_ptr< dotk::Vector<Real> > direction(new dotk::StdVector<Real>(num_controls, 0.1));
     hessian.apply(primal->control(), current_gradient, direction, output);
 
     // Check results with gold values (i.e. true hessian)
     dotk::lp::ObjectiveFunctionSecondDerivative true_hessian(dotk::types::variable_t::CONTROL);
-    std::tr1::shared_ptr< dotk::Vector<Real> > gold(new dotk::StdVector<Real>(num_controls, 0.));
+    std::shared_ptr< dotk::Vector<Real> > gold(new dotk::StdVector<Real>(num_controls, 0.));
     true_hessian(objective, primal->control(), direction, gold);
 
     Real tolerance = 5e-5;
@@ -48,21 +48,21 @@ TEST(NumericalDerivative, ForwardFiniteDifference)
 TEST(NumericalDerivative, BackwardFiniteDifference)
 {
     size_t num_controls = 2;
-    std::tr1::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
     primal->allocateSerialControlArray(num_controls, 2);
 
-    std::tr1::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
-    std::tr1::shared_ptr< dotk::Vector<Real> > current_gradient(new dotk::StdVector<Real>(num_controls, 0.));
+    std::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
+    std::shared_ptr< dotk::Vector<Real> > current_gradient(new dotk::StdVector<Real>(num_controls, 0.));
     objective->gradient(*primal->control(), *current_gradient);
 
     // DEFAULT = BACKWARD DIFFERENCE
     dotk::NumericallyDifferentiatedHessian hessian(primal, objective);
-    std::tr1::shared_ptr< dotk::Vector<Real> > output(new dotk::StdVector<Real>(num_controls, 0.));
-    std::tr1::shared_ptr< dotk::Vector<Real> > direction(new dotk::StdVector<Real>(num_controls, 0.1));
+    std::shared_ptr< dotk::Vector<Real> > output(new dotk::StdVector<Real>(num_controls, 0.));
+    std::shared_ptr< dotk::Vector<Real> > direction(new dotk::StdVector<Real>(num_controls, 0.1));
     hessian.apply(primal->control(), current_gradient, direction, output);
 
     dotk::lp::ObjectiveFunctionSecondDerivative true_hessian(dotk::types::variable_t::CONTROL);
-    std::tr1::shared_ptr< dotk::Vector<Real> > gold(new dotk::StdVector<Real>(num_controls, 0.));
+    std::shared_ptr< dotk::Vector<Real> > gold(new dotk::StdVector<Real>(num_controls, 0.));
     true_hessian(objective, primal->control(), direction, gold);
 
     Real tolerance = 5e-5;
@@ -72,22 +72,22 @@ TEST(NumericalDerivative, BackwardFiniteDifference)
 TEST(NumericalDerivative, CentralFiniteDifference)
 {
     size_t num_controls = 2;
-    std::tr1::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
     primal->allocateSerialControlArray(num_controls, 2);
 
-    std::tr1::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
-    std::tr1::shared_ptr< dotk::Vector<Real> > current_gradient(new dotk::StdVector<Real>(num_controls, 0.));
+    std::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
+    std::shared_ptr< dotk::Vector<Real> > current_gradient(new dotk::StdVector<Real>(num_controls, 0.));
     objective->gradient(*primal->control(), *current_gradient);
 
     dotk::NumericallyDifferentiatedHessian hessian(primal, objective);
     hessian.setCentralDifference(*primal->control());
 
-    std::tr1::shared_ptr< dotk::Vector<Real> > output(new dotk::StdVector<Real>(num_controls, 0.));
-    std::tr1::shared_ptr< dotk::Vector<Real> > direction(new dotk::StdVector<Real>(num_controls, 0.1));
+    std::shared_ptr< dotk::Vector<Real> > output(new dotk::StdVector<Real>(num_controls, 0.));
+    std::shared_ptr< dotk::Vector<Real> > direction(new dotk::StdVector<Real>(num_controls, 0.1));
     hessian.apply(primal->control(), current_gradient, direction, output);
 
     dotk::lp::ObjectiveFunctionSecondDerivative true_hessian(dotk::types::variable_t::CONTROL);
-    std::tr1::shared_ptr< dotk::Vector<Real> > gold(new dotk::StdVector<Real>(num_controls, 0.));
+    std::shared_ptr< dotk::Vector<Real> > gold(new dotk::StdVector<Real>(num_controls, 0.));
     true_hessian(objective, primal->control(),direction, gold);
 
     Real tolerance = 1e-6;
@@ -97,22 +97,22 @@ TEST(NumericalDerivative, CentralFiniteDifference)
 TEST(NumericalDerivative, SecondOrderForwardFiniteDifference)
 {
     size_t num_controls = 2;
-    std::tr1::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
     primal->allocateSerialControlArray(num_controls, 2);
 
-    std::tr1::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
-    std::tr1::shared_ptr< dotk::Vector<Real> > current_gradient(new dotk::StdVector<Real>(num_controls, 0.));
+    std::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
+    std::shared_ptr< dotk::Vector<Real> > current_gradient(new dotk::StdVector<Real>(num_controls, 0.));
     objective->gradient(*primal->control(), *current_gradient);
 
     dotk::NumericallyDifferentiatedHessian hessian(primal, objective);
     hessian.setSecondOrderForwardDifference(*primal->control());
 
-    std::tr1::shared_ptr< dotk::Vector<Real> > direction(new dotk::StdVector<Real>(num_controls, 0.1));
-    std::tr1::shared_ptr< dotk::Vector<Real> > output(new dotk::StdVector<Real>(num_controls, 0.));
+    std::shared_ptr< dotk::Vector<Real> > direction(new dotk::StdVector<Real>(num_controls, 0.1));
+    std::shared_ptr< dotk::Vector<Real> > output(new dotk::StdVector<Real>(num_controls, 0.));
     hessian.apply(primal->control(), current_gradient, direction, output);
 
     dotk::lp::ObjectiveFunctionSecondDerivative true_hessian(dotk::types::variable_t::CONTROL);
-    std::tr1::shared_ptr< dotk::Vector<Real> > gold(new dotk::StdVector<Real>(num_controls, 0.));
+    std::shared_ptr< dotk::Vector<Real> > gold(new dotk::StdVector<Real>(num_controls, 0.));
     true_hessian(objective, primal->control(),direction, gold);
 
     Real tolerance = 5e-6;
@@ -122,22 +122,22 @@ TEST(NumericalDerivative, SecondOrderForwardFiniteDifference)
 TEST(NumericalDerivative, ThirdOrderForwardFiniteDifference)
 {
     size_t num_controls = 2;
-    std::tr1::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
     primal->allocateSerialControlArray(num_controls, 2);
 
-    std::tr1::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
-    std::tr1::shared_ptr< dotk::Vector<Real> > current_gradient(new dotk::StdVector<Real>(num_controls, 0.));
+    std::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
+    std::shared_ptr< dotk::Vector<Real> > current_gradient(new dotk::StdVector<Real>(num_controls, 0.));
     objective->gradient(*primal->control(), *current_gradient);
 
     dotk::NumericallyDifferentiatedHessian hessian(primal, objective);
     hessian.setThirdOrderForwardDifference(*primal->control());
 
-    std::tr1::shared_ptr< dotk::Vector<Real> > direction(new dotk::StdVector<Real>(num_controls, 0.1));
-    std::tr1::shared_ptr< dotk::Vector<Real> > output(new dotk::StdVector<Real>(num_controls, 0.));
+    std::shared_ptr< dotk::Vector<Real> > direction(new dotk::StdVector<Real>(num_controls, 0.1));
+    std::shared_ptr< dotk::Vector<Real> > output(new dotk::StdVector<Real>(num_controls, 0.));
     hessian.apply(primal->control(), current_gradient, direction, output);
 
     dotk::lp::ObjectiveFunctionSecondDerivative true_hessian(dotk::types::variable_t::CONTROL);
-    std::tr1::shared_ptr< dotk::Vector<Real> > gold(new dotk::StdVector<Real>(num_controls, 0.));
+    std::shared_ptr< dotk::Vector<Real> > gold(new dotk::StdVector<Real>(num_controls, 0.));
     true_hessian(objective, primal->control(),direction, gold);
 
     Real tolerance = 1e-6;
@@ -147,22 +147,22 @@ TEST(NumericalDerivative, ThirdOrderForwardFiniteDifference)
 TEST(NumericalDerivative, ThirdOrderBackwardFiniteDifference)
 {
     size_t num_controls = 2;
-    std::tr1::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
     primal->allocateSerialControlArray(num_controls, 2);
 
-    std::tr1::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
-    std::tr1::shared_ptr< dotk::Vector<Real> > current_gradient(new dotk::StdVector<Real>(num_controls, 0.));
+    std::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
+    std::shared_ptr< dotk::Vector<Real> > current_gradient(new dotk::StdVector<Real>(num_controls, 0.));
     objective->gradient(*primal->control(), *current_gradient);
 
     dotk::NumericallyDifferentiatedHessian hessian(primal, objective);
     hessian.setThirdOrderBackwardDifference(*primal->control());
 
-    std::tr1::shared_ptr< dotk::Vector<Real> > output(new dotk::StdVector<Real>(num_controls, 0.));
-    std::tr1::shared_ptr< dotk::Vector<Real> > direction(new dotk::StdVector<Real>(num_controls, 0.1));
+    std::shared_ptr< dotk::Vector<Real> > output(new dotk::StdVector<Real>(num_controls, 0.));
+    std::shared_ptr< dotk::Vector<Real> > direction(new dotk::StdVector<Real>(num_controls, 0.1));
     hessian.apply(primal->control(), current_gradient, direction, output);
 
     dotk::lp::ObjectiveFunctionSecondDerivative true_hessian(dotk::types::variable_t::CONTROL);
-    std::tr1::shared_ptr< dotk::Vector<Real> > gold(new dotk::StdVector<Real>(num_controls, 0.));
+    std::shared_ptr< dotk::Vector<Real> > gold(new dotk::StdVector<Real>(num_controls, 0.));
     true_hessian(objective, primal->control(),direction, gold);
 
     Real tolerance = 5e-7;
@@ -172,11 +172,11 @@ TEST(NumericalDerivative, ThirdOrderBackwardFiniteDifference)
 TEST(NumericalDerivative, apply)
 {
     size_t ncontrols = 2;
-    std::tr1::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
     primal->allocateSerialControlArray(ncontrols, 2);
 
-    std::tr1::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
-    std::tr1::shared_ptr<dotk::DOTk_LineSearchMngTypeULP> mng(new dotk::DOTk_LineSearchMngTypeULP(primal, objective));
+    std::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
+    std::shared_ptr<dotk::DOTk_LineSearchMngTypeULP> mng(new dotk::DOTk_LineSearchMngTypeULP(primal, objective));
 
     dotk::NumericallyDifferentiatedHessian hessian(primal, objective);
     hessian.setCentralDifference(*primal->control());
@@ -187,7 +187,7 @@ TEST(NumericalDerivative, apply)
     (*mng->getNewGradient())[1] = -400.;
     hessian.apply(mng, mng->getTrialStep(), mng->getMatrixTimesVector());
 
-    std::tr1::shared_ptr<dotk::Vector<Real> > gold = primal->control()->clone();
+    std::shared_ptr<dotk::Vector<Real> > gold = primal->control()->clone();
     (*gold)[0] = 320.2;
     (*gold)[1] = -60.;
     Real tolerance = 1e-6;

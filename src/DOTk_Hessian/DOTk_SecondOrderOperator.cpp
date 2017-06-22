@@ -121,8 +121,8 @@ void DOTk_SecondOrderOperator::setInvHessianType(dotk::types::invhessian_t type_
     m_InvHessianType = type_;
 }
 
-Real DOTk_SecondOrderOperator::getBarzilaiBorweinStep(const std::tr1::shared_ptr<dotk::Vector<Real> > & dprimal_,
-                                                      const std::tr1::shared_ptr<dotk::Vector<Real> > & dgrad_)
+Real DOTk_SecondOrderOperator::getBarzilaiBorweinStep(const std::shared_ptr<dotk::Vector<Real> > & dprimal_,
+                                                      const std::shared_ptr<dotk::Vector<Real> > & dgrad_)
 {
     Real step = 0.;
     if(this->getNumOptimizationItrDone() % 2 == 0)
@@ -138,9 +138,9 @@ Real DOTk_SecondOrderOperator::getBarzilaiBorweinStep(const std::tr1::shared_ptr
     return (step);
 }
 
-void DOTk_SecondOrderOperator::computeDeltaPrimal(const std::tr1::shared_ptr<dotk::Vector<Real> > & new_primal_,
-                                                  const std::tr1::shared_ptr<dotk::Vector<Real> > & old_primal_,
-                                                  std::tr1::shared_ptr<dotk::Vector<Real> > & delta_primal_)
+void DOTk_SecondOrderOperator::computeDeltaPrimal(const std::shared_ptr<dotk::Vector<Real> > & new_primal_,
+                                                  const std::shared_ptr<dotk::Vector<Real> > & old_primal_,
+                                                  std::shared_ptr<dotk::Vector<Real> > & delta_primal_)
 {
     if(this->updateSecondOrderOperator() == true)
     {
@@ -149,9 +149,9 @@ void DOTk_SecondOrderOperator::computeDeltaPrimal(const std::tr1::shared_ptr<dot
     }
 }
 
-void DOTk_SecondOrderOperator::computeDeltaGradient(const std::tr1::shared_ptr<dotk::Vector<Real> > & new_gradient_,
-                                                    const std::tr1::shared_ptr<dotk::Vector<Real> > & old_gradient_,
-                                                    std::tr1::shared_ptr<dotk::Vector<Real> > & delta_gradient_)
+void DOTk_SecondOrderOperator::computeDeltaGradient(const std::shared_ptr<dotk::Vector<Real> > & new_gradient_,
+                                                    const std::shared_ptr<dotk::Vector<Real> > & old_gradient_,
+                                                    std::shared_ptr<dotk::Vector<Real> > & delta_gradient_)
 {
     if(this->updateSecondOrderOperator() == true)
     {
@@ -160,23 +160,23 @@ void DOTk_SecondOrderOperator::computeDeltaGradient(const std::tr1::shared_ptr<d
     }
 }
 
-void DOTk_SecondOrderOperator::updateSecantStorage(const std::tr1::shared_ptr<dotk::Vector<Real> > & dprimal_,
-                                                   const std::tr1::shared_ptr<dotk::Vector<Real> > & dgrad_,
-                                                   std::tr1::shared_ptr<dotk::matrix<Real> > & dprimal_storage_,
-                                                   std::tr1::shared_ptr<dotk::matrix<Real> > & dgrad_storage_)
+void DOTk_SecondOrderOperator::updateSecantStorage(const std::shared_ptr<dotk::Vector<Real> > & dprimal_,
+                                                   const std::shared_ptr<dotk::Vector<Real> > & dgrad_,
+                                                   std::shared_ptr<dotk::matrix<Real> > & dprimal_storage_,
+                                                   std::shared_ptr<dotk::matrix<Real> > & dgrad_storage_)
 {
     /// Update limited memory sorage. The work set is later used to approximate the limited memory \n
     /// second-order operator \n
     /// In: \n
     ///     delta_primal_ = difference between current and previous primal solution, unchanged on exist. \n
-    ///     std::tr1::shared_ptr<dotk::Vector<Real> > \n
+    ///     std::shared_ptr<dotk::Vector<Real> > \n
     ///     delta_gradient_ = difference between current and previous gradient_, unchanged on exist . \n
-    ///     std::tr1::shared_ptr<dotk::Vector<Real> > \n
+    ///     std::shared_ptr<dotk::Vector<Real> > \n
     /// In/Out: \n
     ///     delta_primal_storage_ = limited limited memory storage of deltaPrimal \n
-    ///     std::tr1::shared_ptr<dotk::matrix<Real> > \n
+    ///     std::shared_ptr<dotk::matrix<Real> > \n
     ///     delta_gradient_storage_ = limited limited memory storage of deltaGradient \n
-    ///     std::tr1::shared_ptr<dotk::matrix<Real> > \n
+    ///     std::shared_ptr<dotk::matrix<Real> > \n
     /// \n
     bool is_this_the_first_optimization_iteration = this->getNumOptimizationItrDone() == 1 ? true : false;
     if(is_this_the_first_optimization_iteration || !(this->updateSecondOrderOperator()))
@@ -212,26 +212,26 @@ void DOTk_SecondOrderOperator::updateSecantStorage(const std::tr1::shared_ptr<do
     }
 }
 
-void DOTk_SecondOrderOperator::updateSecantStorage(const std::tr1::shared_ptr<dotk::Vector<Real> > & dprimal_,
-                                                   const std::tr1::shared_ptr<dotk::Vector<Real> > & dgrad_,
+void DOTk_SecondOrderOperator::updateSecantStorage(const std::shared_ptr<dotk::Vector<Real> > & dprimal_,
+                                                   const std::shared_ptr<dotk::Vector<Real> > & dgrad_,
                                                    std::vector<Real> & rho_storage_,
-                                                   std::tr1::shared_ptr<dotk::matrix<Real> > & dprimal_storage_,
-                                                   std::tr1::shared_ptr<dotk::matrix<Real> > & dgrad_storage_)
+                                                   std::shared_ptr<dotk::matrix<Real> > & dprimal_storage_,
+                                                   std::shared_ptr<dotk::matrix<Real> > & dgrad_storage_)
 {
     /// Update limited memory sorage. The work set is later used to approximate the limited memory \n
     /// second-order operator \n
     /// In: \n
     ///     delta_primal_ = difference between current and previous primal solution, unchanged on exist. \n
-    ///     std::tr1::shared_ptr<dotk::Vector<Real> > \n
+    ///     std::shared_ptr<dotk::Vector<Real> > \n
     ///     delta_gradient_ = difference between current and previous gradient_, unchanged on exist . \n
-    ///     std::tr1::shared_ptr<dotk::Vector<Real> > \n
+    ///     std::shared_ptr<dotk::Vector<Real> > \n
     /// In/Out: \n
     ///     rho_storage_ = limited memory storage of inner product between deltaGradient and deltaPrimal. \n
-    ///     std::tr1::shared_ptr<dotk::Vector<Real> > \n
+    ///     std::shared_ptr<dotk::Vector<Real> > \n
     ///     delta_primal_storage_ = limited limited memory storage of deltaPrimal \n
-    ///     std::tr1::shared_ptr<dotk::matrix<Real> > \n
+    ///     std::shared_ptr<dotk::matrix<Real> > \n
     ///     delta_gradient_storage_ = limited limited memory storage of deltaGradient \n
-    ///     std::tr1::shared_ptr<dotk::matrix<Real> > \n
+    ///     std::shared_ptr<dotk::matrix<Real> > \n
     /// \n
     bool is_this_the_first_optimization_iteration = this->getNumOptimizationItrDone() == 1 ? true : false;
     if(is_this_the_first_optimization_iteration || !(this->updateSecondOrderOperator()))
@@ -274,8 +274,8 @@ void DOTk_SecondOrderOperator::updateSecantStorage(const std::tr1::shared_ptr<do
     }
 }
 
-void DOTk_SecondOrderOperator::apply(const std::tr1::shared_ptr<dotk::DOTk_OptimizationDataMng> & mng_,
-                                     const std::tr1::shared_ptr<dotk::Vector<Real> > & vec_,
-                                     const std::tr1::shared_ptr<dotk::Vector<Real> > & matrix_times_vec_)
+void DOTk_SecondOrderOperator::apply(const std::shared_ptr<dotk::DOTk_OptimizationDataMng> & mng_,
+                                     const std::shared_ptr<dotk::Vector<Real> > & vec_,
+                                     const std::shared_ptr<dotk::Vector<Real> > & matrix_times_vec_)
 {
 }

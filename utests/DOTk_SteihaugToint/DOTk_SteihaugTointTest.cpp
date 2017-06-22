@@ -23,8 +23,8 @@ namespace DOTkSteinhaugTointTest
 TEST(SteihaugTointDataMng, getAndSetFunctions)
 {
     size_t ncontrol = 8;
-    std::tr1::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
-    std::tr1::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
+    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
     primal->allocateSerialControlVector(ncontrol, 0.5);
 
     dotk::DOTk_SteihaugTointDataMng mng(primal, objective);
@@ -36,9 +36,9 @@ TEST(SteihaugTointDataMng, getAndSetFunctions)
 TEST(SteihaugTointStepMng, updateAdaptiveGradientInexactnessTolerance)
 {
     size_t ncontrols = 2;
-    std::tr1::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
     primal->allocateSerialControlArray(ncontrols, 2);
-    std::tr1::shared_ptr<dotk::DOTk_Hessian> hessian(new dotk::DOTk_Hessian);
+    std::shared_ptr<dotk::DOTk_Hessian> hessian(new dotk::DOTk_Hessian);
     dotk::DOTk_SteihaugTointStepMng mng(primal, hessian);
 
     // TEST 1: MIN Value = norm of the gradient
@@ -56,9 +56,9 @@ TEST(SteihaugTointStepMng, updateAdaptiveGradientInexactnessTolerance)
 TEST(SteihaugTointStepMng, updateAdaptiveObjectiveInexactnessTolerance)
 {
     size_t ncontrols = 2;
-    std::tr1::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
     primal->allocateSerialControlArray(ncontrols, 2);
-    std::tr1::shared_ptr<dotk::DOTk_Hessian> hessian(new dotk::DOTk_Hessian);
+    std::shared_ptr<dotk::DOTk_Hessian> hessian(new dotk::DOTk_Hessian);
     dotk::DOTk_SteihaugTointStepMng mng(primal, hessian);
 
     mng.setActualOverPredictedReduction(0.1);
@@ -71,9 +71,9 @@ TEST(SteihaugTointStepMng, updateAdaptiveObjectiveInexactnessTolerance)
 TEST(SteihaugTointStepMng, getAndSetFunctions)
 {
     size_t ncontrols = 2;
-    std::tr1::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
     primal->allocateSerialControlArray(ncontrols, 2);
-    std::tr1::shared_ptr<dotk::DOTk_Hessian> hessian(new dotk::DOTk_Hessian);
+    std::shared_ptr<dotk::DOTk_Hessian> hessian(new dotk::DOTk_Hessian);
     dotk::DOTk_SteihaugTointStepMng mng(primal, hessian);
 
     // TEST DEFAULT VALUES
@@ -118,12 +118,12 @@ TEST(SteihaugTointStepMng, getAndSetFunctions)
 TEST(Hessian, apply)
 {
     size_t ncontrols = 2;
-    std::tr1::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
     primal->allocateSerialControlArray(ncontrols, 2);
-    std::tr1::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
-    std::tr1::shared_ptr<dotk::DOTk_SteihaugTointDataMng> mng(new dotk::DOTk_SteihaugTointDataMng(primal,objective));
+    std::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
+    std::shared_ptr<dotk::DOTk_SteihaugTointDataMng> mng(new dotk::DOTk_SteihaugTointDataMng(primal,objective));
 
-    std::tr1::shared_ptr<dotk::DOTk_Hessian> hessian(new dotk::DOTk_Hessian);
+    std::shared_ptr<dotk::DOTk_Hessian> hessian(new dotk::DOTk_Hessian);
     mng->getTrialStep()->fill(1.);
     hessian->apply(mng, mng->getTrialStep(), mng->getMatrixTimesVector());
 
@@ -136,14 +136,14 @@ TEST(Hessian, apply)
 TEST(SteihaugTointLinMore, getAndSetFunctions)
 {
     size_t ncontrols = 2;
-    std::tr1::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
     primal->allocateSerialControlArray(ncontrols, 2);
-    std::tr1::shared_ptr<dotk::DOTk_Hessian> hessian(new dotk::DOTk_Hessian);
-    std::tr1::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
-    std::tr1::shared_ptr<dotk::DOTk_SteihaugTointDataMng> mng(new dotk::DOTk_SteihaugTointDataMng(primal,objective));
+    std::shared_ptr<dotk::DOTk_Hessian> hessian(new dotk::DOTk_Hessian);
+    std::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
+    std::shared_ptr<dotk::DOTk_SteihaugTointDataMng> mng(new dotk::DOTk_SteihaugTointDataMng(primal,objective));
 
     mng->setUserDefinedGradient();
-    std::tr1::shared_ptr<dotk::DOTk_SteihaugTointStepMng> step(new dotk::DOTk_SteihaugTointStepMng(primal,hessian));
+    std::shared_ptr<dotk::DOTk_SteihaugTointStepMng> step(new dotk::DOTk_SteihaugTointStepMng(primal,hessian));
     dotk::DOTk_SteihaugTointLinMore alg(mng, step);
 
     // TEST DEFAULT VALUES
@@ -173,14 +173,14 @@ TEST(SteihaugTointLinMore, getAndSetFunctions)
 TEST(SteihaugTointLinMore, getMin_UsrDefGrad_UsrDefHess_Rosenbrock)
 {
     size_t ncontrols = 2;
-    std::tr1::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
     primal->allocateSerialControlArray(ncontrols, 2);
-    std::tr1::shared_ptr<dotk::DOTk_Hessian> hessian(new dotk::DOTk_Hessian);
-    std::tr1::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
-    std::tr1::shared_ptr<dotk::DOTk_SteihaugTointDataMng> mng(new dotk::DOTk_SteihaugTointDataMng(primal,objective));
+    std::shared_ptr<dotk::DOTk_Hessian> hessian(new dotk::DOTk_Hessian);
+    std::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
+    std::shared_ptr<dotk::DOTk_SteihaugTointDataMng> mng(new dotk::DOTk_SteihaugTointDataMng(primal,objective));
 
     mng->setUserDefinedGradient();
-    std::tr1::shared_ptr<dotk::DOTk_SteihaugTointStepMng> step(new dotk::DOTk_SteihaugTointStepMng(primal,hessian));
+    std::shared_ptr<dotk::DOTk_SteihaugTointStepMng> step(new dotk::DOTk_SteihaugTointStepMng(primal,hessian));
     dotk::DOTk_SteihaugTointLinMore alg(mng, step);
     alg.getMin();
 
@@ -193,16 +193,16 @@ TEST(SteihaugTointLinMore, getMin_UsrDefGrad_UsrDefHess_Rosenbrock)
 TEST(SteihaugTointLinMore, getMin_UsrDefGrad_HessLDFP_Rosenbrock)
 {
     size_t ncontrols = 2;
-    std::tr1::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
     primal->allocateSerialControlArray(ncontrols, 2);
-    std::tr1::shared_ptr<dotk::DOTk_Hessian> hessian(new dotk::DOTk_Hessian);
-    std::tr1::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
-    std::tr1::shared_ptr<dotk::DOTk_SteihaugTointDataMng> mng(new dotk::DOTk_SteihaugTointDataMng(primal,objective));
+    std::shared_ptr<dotk::DOTk_Hessian> hessian(new dotk::DOTk_Hessian);
+    std::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
+    std::shared_ptr<dotk::DOTk_SteihaugTointDataMng> mng(new dotk::DOTk_SteihaugTointDataMng(primal,objective));
 
     mng->setUserDefinedGradient();
     hessian->setLdfpHessian(*primal->control(), 2);
     EXPECT_EQ(dotk::types::LDFP_HESS, hessian->hessianType());
-    std::tr1::shared_ptr<dotk::DOTk_SteihaugTointStepMng> step(new dotk::DOTk_SteihaugTointStepMng(primal,hessian));
+    std::shared_ptr<dotk::DOTk_SteihaugTointStepMng> step(new dotk::DOTk_SteihaugTointStepMng(primal,hessian));
     dotk::DOTk_SteihaugTointLinMore alg(mng, step);
     alg.getMin();
 
@@ -215,16 +215,16 @@ TEST(SteihaugTointLinMore, getMin_UsrDefGrad_HessLDFP_Rosenbrock)
 TEST(SteihaugTointLinMore, getMin_UsrDefGrad_HessLSR1_Rosenbrock)
 {
     size_t ncontrols = 2;
-    std::tr1::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
     primal->allocateSerialControlArray(ncontrols, 2);
-    std::tr1::shared_ptr<dotk::DOTk_Hessian> hessian(new dotk::DOTk_Hessian);
-    std::tr1::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
-    std::tr1::shared_ptr<dotk::DOTk_SteihaugTointDataMng> mng(new dotk::DOTk_SteihaugTointDataMng(primal,objective));
+    std::shared_ptr<dotk::DOTk_Hessian> hessian(new dotk::DOTk_Hessian);
+    std::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
+    std::shared_ptr<dotk::DOTk_SteihaugTointDataMng> mng(new dotk::DOTk_SteihaugTointDataMng(primal,objective));
 
     mng->setUserDefinedGradient();
     hessian->setLsr1Hessian(*primal->control(), 2);
     EXPECT_EQ(dotk::types::LSR1_HESS, hessian->hessianType());
-    std::tr1::shared_ptr<dotk::DOTk_SteihaugTointStepMng> step(new dotk::DOTk_SteihaugTointStepMng(primal,hessian));
+    std::shared_ptr<dotk::DOTk_SteihaugTointStepMng> step(new dotk::DOTk_SteihaugTointStepMng(primal,hessian));
     dotk::DOTk_SteihaugTointLinMore alg(mng, step);
     alg.getMin();
 
@@ -237,15 +237,15 @@ TEST(SteihaugTointLinMore, getMin_UsrDefGrad_HessLSR1_Rosenbrock)
 TEST(SteihaugTointLinMore, getMin_GradFD_UsrDefHess_Rosenbrock)
 {
     size_t ncontrols = 2;
-    std::tr1::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
     primal->allocateSerialControlArray(ncontrols, 2);
-    std::tr1::shared_ptr<dotk::DOTk_Hessian> hessian(new dotk::DOTk_Hessian);
-    std::tr1::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
-    std::tr1::shared_ptr<dotk::DOTk_SteihaugTointDataMng> mng(new dotk::DOTk_SteihaugTointDataMng(primal,objective));
+    std::shared_ptr<dotk::DOTk_Hessian> hessian(new dotk::DOTk_Hessian);
+    std::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
+    std::shared_ptr<dotk::DOTk_SteihaugTointDataMng> mng(new dotk::DOTk_SteihaugTointDataMng(primal,objective));
 
     primal->control()->fill(1e-7);
     mng->setForwardFiniteDiffGradient(*primal->control());
-    std::tr1::shared_ptr<dotk::DOTk_SteihaugTointStepMng> step(new dotk::DOTk_SteihaugTointStepMng(primal,hessian));
+    std::shared_ptr<dotk::DOTk_SteihaugTointStepMng> step(new dotk::DOTk_SteihaugTointStepMng(primal,hessian));
     dotk::DOTk_SteihaugTointLinMore alg(mng, step);
     alg.getMin();
 
@@ -258,15 +258,15 @@ TEST(SteihaugTointLinMore, getMin_GradFD_UsrDefHess_Rosenbrock)
 TEST(SteihaugTointLinMore, getMin_GradBD_UsrDefHess_Rosenbrock)
 {
     size_t ncontrols = 2;
-    std::tr1::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
     primal->allocateSerialControlArray(ncontrols, 2);
-    std::tr1::shared_ptr<dotk::DOTk_Hessian> hessian(new dotk::DOTk_Hessian);
-    std::tr1::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
-    std::tr1::shared_ptr<dotk::DOTk_SteihaugTointDataMng> mng(new dotk::DOTk_SteihaugTointDataMng(primal,objective));
+    std::shared_ptr<dotk::DOTk_Hessian> hessian(new dotk::DOTk_Hessian);
+    std::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
+    std::shared_ptr<dotk::DOTk_SteihaugTointDataMng> mng(new dotk::DOTk_SteihaugTointDataMng(primal,objective));
 
     primal->control()->fill(1e-8);
     mng->setBackwardFiniteDiffGradient(*primal->control());
-    std::tr1::shared_ptr<dotk::DOTk_SteihaugTointStepMng> step(new dotk::DOTk_SteihaugTointStepMng(primal,hessian));
+    std::shared_ptr<dotk::DOTk_SteihaugTointStepMng> step(new dotk::DOTk_SteihaugTointStepMng(primal,hessian));
     dotk::DOTk_SteihaugTointLinMore alg(mng, step);
     alg.getMin();
 
@@ -279,15 +279,15 @@ TEST(SteihaugTointLinMore, getMin_GradBD_UsrDefHess_Rosenbrock)
 TEST(SteihaugTointLinMore, getMin_GradCD_UsrDefHess_Rosenbrock)
 {
     size_t ncontrols = 2;
-    std::tr1::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
     primal->allocateSerialControlArray(ncontrols, 2);
-    std::tr1::shared_ptr<dotk::DOTk_Hessian> hessian(new dotk::DOTk_Hessian);
-    std::tr1::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
-    std::tr1::shared_ptr<dotk::DOTk_SteihaugTointDataMng> mng(new dotk::DOTk_SteihaugTointDataMng(primal,objective));
+    std::shared_ptr<dotk::DOTk_Hessian> hessian(new dotk::DOTk_Hessian);
+    std::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
+    std::shared_ptr<dotk::DOTk_SteihaugTointDataMng> mng(new dotk::DOTk_SteihaugTointDataMng(primal,objective));
 
     primal->control()->fill(1e-9);
     mng->setCentralFiniteDiffGradient(*primal->control());
-    std::tr1::shared_ptr<dotk::DOTk_SteihaugTointStepMng> step(new dotk::DOTk_SteihaugTointStepMng(primal,hessian));
+    std::shared_ptr<dotk::DOTk_SteihaugTointStepMng> step(new dotk::DOTk_SteihaugTointStepMng(primal,hessian));
     dotk::DOTk_SteihaugTointLinMore alg(mng, step);
     alg.getMin();
 
@@ -300,15 +300,15 @@ TEST(SteihaugTointLinMore, getMin_GradCD_UsrDefHess_Rosenbrock)
 TEST(SteihaugTointLinMore, getMin_GradPFD_UsrDefHess_Rosenbrock)
 {
     size_t ncontrols = 2;
-    std::tr1::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
     primal->allocateSerialControlArray(ncontrols, 2);
-    std::tr1::shared_ptr<dotk::DOTk_Hessian> hessian(new dotk::DOTk_Hessian);
-    std::tr1::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
-    std::tr1::shared_ptr<dotk::DOTk_SteihaugTointDataMng> mng(new dotk::DOTk_SteihaugTointDataMng(primal,objective));
+    std::shared_ptr<dotk::DOTk_Hessian> hessian(new dotk::DOTk_Hessian);
+    std::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
+    std::shared_ptr<dotk::DOTk_SteihaugTointDataMng> mng(new dotk::DOTk_SteihaugTointDataMng(primal,objective));
 
     primal->control()->fill(1e-8);
     mng->setParallelForwardFiniteDiffGradient(*primal->control());
-    std::tr1::shared_ptr<dotk::DOTk_SteihaugTointStepMng> step(new dotk::DOTk_SteihaugTointStepMng(primal,hessian));
+    std::shared_ptr<dotk::DOTk_SteihaugTointStepMng> step(new dotk::DOTk_SteihaugTointStepMng(primal,hessian));
     dotk::DOTk_SteihaugTointLinMore alg(mng, step);
     alg.getMin();
 
@@ -321,15 +321,15 @@ TEST(SteihaugTointLinMore, getMin_GradPFD_UsrDefHess_Rosenbrock)
 TEST(SteihaugTointLinMore, getMin_GradPBD_UsrDefHess_Rosenbrock)
 {
     size_t ncontrols = 2;
-    std::tr1::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
     primal->allocateSerialControlArray(ncontrols, 2);
-    std::tr1::shared_ptr<dotk::DOTk_Hessian> hessian(new dotk::DOTk_Hessian);
-    std::tr1::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
-    std::tr1::shared_ptr<dotk::DOTk_SteihaugTointDataMng> mng(new dotk::DOTk_SteihaugTointDataMng(primal,objective));
+    std::shared_ptr<dotk::DOTk_Hessian> hessian(new dotk::DOTk_Hessian);
+    std::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
+    std::shared_ptr<dotk::DOTk_SteihaugTointDataMng> mng(new dotk::DOTk_SteihaugTointDataMng(primal,objective));
 
     primal->control()->fill(1e-8);
     mng->setParallelBackwardFiniteDiffGradient(*primal->control());
-    std::tr1::shared_ptr<dotk::DOTk_SteihaugTointStepMng> step(new dotk::DOTk_SteihaugTointStepMng(primal,hessian));
+    std::shared_ptr<dotk::DOTk_SteihaugTointStepMng> step(new dotk::DOTk_SteihaugTointStepMng(primal,hessian));
     dotk::DOTk_SteihaugTointLinMore alg(mng, step);
     alg.getMin();
 
@@ -342,15 +342,15 @@ TEST(SteihaugTointLinMore, getMin_GradPBD_UsrDefHess_Rosenbrock)
 TEST(SteihaugTointLinMore, getMin_GradPCD_UsrDefHess_Rosenbrock)
 {
     size_t ncontrols = 2;
-    std::tr1::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
     primal->allocateSerialControlArray(ncontrols, 2);
-    std::tr1::shared_ptr<dotk::DOTk_Hessian> hessian(new dotk::DOTk_Hessian);
-    std::tr1::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
-    std::tr1::shared_ptr<dotk::DOTk_SteihaugTointDataMng> mng(new dotk::DOTk_SteihaugTointDataMng(primal,objective));
+    std::shared_ptr<dotk::DOTk_Hessian> hessian(new dotk::DOTk_Hessian);
+    std::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
+    std::shared_ptr<dotk::DOTk_SteihaugTointDataMng> mng(new dotk::DOTk_SteihaugTointDataMng(primal,objective));
 
     primal->control()->fill(1e-9);
     mng->setParallelCentralFiniteDiffGradient(*primal->control());
-    std::tr1::shared_ptr<dotk::DOTk_SteihaugTointStepMng> step(new dotk::DOTk_SteihaugTointStepMng(primal,hessian));
+    std::shared_ptr<dotk::DOTk_SteihaugTointStepMng> step(new dotk::DOTk_SteihaugTointStepMng(primal,hessian));
     dotk::DOTk_SteihaugTointLinMore alg(mng, step);
     alg.getMin();
 
@@ -363,14 +363,14 @@ TEST(SteihaugTointLinMore, getMin_GradPCD_UsrDefHess_Rosenbrock)
 TEST(SteihaugTointLinMore, getMin_UserDefGrad_NumDiffHessBD_Rosenbrock)
 {
     size_t ncontrols = 2;
-    std::tr1::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
     primal->allocateSerialControlArray(ncontrols, 2);
 
-    std::tr1::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
-    std::tr1::shared_ptr<dotk::DOTk_SteihaugTointDataMng> mng(new dotk::DOTk_SteihaugTointDataMng(primal,objective));
-    std::tr1::shared_ptr<dotk::NumericallyDifferentiatedHessian> hessian(new dotk::NumericallyDifferentiatedHessian(primal, objective));
+    std::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
+    std::shared_ptr<dotk::DOTk_SteihaugTointDataMng> mng(new dotk::DOTk_SteihaugTointDataMng(primal,objective));
+    std::shared_ptr<dotk::NumericallyDifferentiatedHessian> hessian(new dotk::NumericallyDifferentiatedHessian(primal, objective));
     hessian->setBackwardDifference(*primal->control());
-    std::tr1::shared_ptr<dotk::DOTk_SteihaugTointStepMng> step(new dotk::DOTk_SteihaugTointStepMng(primal,hessian));
+    std::shared_ptr<dotk::DOTk_SteihaugTointStepMng> step(new dotk::DOTk_SteihaugTointStepMng(primal,hessian));
 
     dotk::DOTk_SteihaugTointLinMore alg(mng, step);
     alg.getMin();
@@ -384,15 +384,15 @@ TEST(SteihaugTointLinMore, getMin_UserDefGrad_NumDiffHessBD_Rosenbrock)
 TEST(SteihaugTointLinMore, getMin_UserDefGrad_NumDiffHessFD_Rosenbrock)
 {
     size_t ncontrols = 2;
-    std::tr1::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
     primal->allocateSerialControlArray(ncontrols, 2);
 
-    std::tr1::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
-    std::tr1::shared_ptr<dotk::DOTk_SteihaugTointDataMng> mng(new dotk::DOTk_SteihaugTointDataMng(primal,objective));
-    std::tr1::shared_ptr<dotk::NumericallyDifferentiatedHessian> hessian(new dotk::NumericallyDifferentiatedHessian(primal, objective));
+    std::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
+    std::shared_ptr<dotk::DOTk_SteihaugTointDataMng> mng(new dotk::DOTk_SteihaugTointDataMng(primal,objective));
+    std::shared_ptr<dotk::NumericallyDifferentiatedHessian> hessian(new dotk::NumericallyDifferentiatedHessian(primal, objective));
 
     hessian->setForwardDifference(*primal->control(), 1e-8);
-    std::tr1::shared_ptr<dotk::DOTk_SteihaugTointStepMng> step(new dotk::DOTk_SteihaugTointStepMng(primal,hessian));
+    std::shared_ptr<dotk::DOTk_SteihaugTointStepMng> step(new dotk::DOTk_SteihaugTointStepMng(primal,hessian));
     dotk::DOTk_SteihaugTointLinMore alg(mng, step);
     alg.getMin();
 
@@ -405,15 +405,15 @@ TEST(SteihaugTointLinMore, getMin_UserDefGrad_NumDiffHessFD_Rosenbrock)
 TEST(SteihaugTointLinMore, getMin_UserDefGrad_NumDiffHessCD_Rosenbrock)
 {
     size_t ncontrols = 2;
-    std::tr1::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
     primal->allocateSerialControlArray(ncontrols, 2);
 
-    std::tr1::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
-    std::tr1::shared_ptr<dotk::DOTk_SteihaugTointDataMng> mng(new dotk::DOTk_SteihaugTointDataMng(primal,objective));
-    std::tr1::shared_ptr<dotk::NumericallyDifferentiatedHessian> hessian(new dotk::NumericallyDifferentiatedHessian(primal, objective));
+    std::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
+    std::shared_ptr<dotk::DOTk_SteihaugTointDataMng> mng(new dotk::DOTk_SteihaugTointDataMng(primal,objective));
+    std::shared_ptr<dotk::NumericallyDifferentiatedHessian> hessian(new dotk::NumericallyDifferentiatedHessian(primal, objective));
 
     hessian->setCentralDifference(*primal->control());
-    std::tr1::shared_ptr<dotk::DOTk_SteihaugTointStepMng> step(new dotk::DOTk_SteihaugTointStepMng(primal,hessian));
+    std::shared_ptr<dotk::DOTk_SteihaugTointStepMng> step(new dotk::DOTk_SteihaugTointStepMng(primal,hessian));
     dotk::DOTk_SteihaugTointLinMore alg(mng, step);
     alg.getMin();
 
@@ -426,15 +426,15 @@ TEST(SteihaugTointLinMore, getMin_UserDefGrad_NumDiffHessCD_Rosenbrock)
 TEST(SteihaugTointLinMore, getMin_UserDefGrad_NumDiffHessSFD_Rosenbrock)
 {
     size_t ncontrols = 2;
-    std::tr1::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
     primal->allocateSerialControlArray(ncontrols, 2);
 
-    std::tr1::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
-    std::tr1::shared_ptr<dotk::DOTk_SteihaugTointDataMng> mng(new dotk::DOTk_SteihaugTointDataMng(primal,objective));
-    std::tr1::shared_ptr<dotk::NumericallyDifferentiatedHessian> hessian(new dotk::NumericallyDifferentiatedHessian(primal, objective));
+    std::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
+    std::shared_ptr<dotk::DOTk_SteihaugTointDataMng> mng(new dotk::DOTk_SteihaugTointDataMng(primal,objective));
+    std::shared_ptr<dotk::NumericallyDifferentiatedHessian> hessian(new dotk::NumericallyDifferentiatedHessian(primal, objective));
 
     hessian->setSecondOrderForwardDifference(*primal->control(), 1e-8);
-    std::tr1::shared_ptr<dotk::DOTk_SteihaugTointStepMng> step(new dotk::DOTk_SteihaugTointStepMng(primal,hessian));
+    std::shared_ptr<dotk::DOTk_SteihaugTointStepMng> step(new dotk::DOTk_SteihaugTointStepMng(primal,hessian));
     dotk::DOTk_SteihaugTointLinMore alg(mng, step);
     alg.getMin();
 
@@ -447,15 +447,15 @@ TEST(SteihaugTointLinMore, getMin_UserDefGrad_NumDiffHessSFD_Rosenbrock)
 TEST(SteihaugTointLinMore, getMin_UserDefGrad_NumDiffHessTFD_Rosenbrock)
 {
     size_t ncontrols = 2;
-    std::tr1::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
     primal->allocateSerialControlArray(ncontrols, 2);
 
-    std::tr1::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
-    std::tr1::shared_ptr<dotk::DOTk_SteihaugTointDataMng> mng(new dotk::DOTk_SteihaugTointDataMng(primal,objective));
-    std::tr1::shared_ptr<dotk::NumericallyDifferentiatedHessian> hessian(new dotk::NumericallyDifferentiatedHessian(primal, objective));
+    std::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
+    std::shared_ptr<dotk::DOTk_SteihaugTointDataMng> mng(new dotk::DOTk_SteihaugTointDataMng(primal,objective));
+    std::shared_ptr<dotk::NumericallyDifferentiatedHessian> hessian(new dotk::NumericallyDifferentiatedHessian(primal, objective));
 
     hessian->setThirdOrderForwardDifference(*primal->control());
-    std::tr1::shared_ptr<dotk::DOTk_SteihaugTointStepMng> step(new dotk::DOTk_SteihaugTointStepMng(primal,hessian));
+    std::shared_ptr<dotk::DOTk_SteihaugTointStepMng> step(new dotk::DOTk_SteihaugTointStepMng(primal,hessian));
     dotk::DOTk_SteihaugTointLinMore alg(mng, step);
     alg.getMin();
 
@@ -468,15 +468,15 @@ TEST(SteihaugTointLinMore, getMin_UserDefGrad_NumDiffHessTFD_Rosenbrock)
 TEST(SteihaugTointLinMore, getMin_UserDefGrad_NumDiffHessTBD_Rosenbrock)
 {
     size_t ncontrols = 2;
-    std::tr1::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
     primal->allocateSerialControlArray(ncontrols, 2);
 
-    std::tr1::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
-    std::tr1::shared_ptr<dotk::DOTk_SteihaugTointDataMng> mng(new dotk::DOTk_SteihaugTointDataMng(primal,objective));
-    std::tr1::shared_ptr<dotk::NumericallyDifferentiatedHessian> hessian(new dotk::NumericallyDifferentiatedHessian(primal, objective));
+    std::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
+    std::shared_ptr<dotk::DOTk_SteihaugTointDataMng> mng(new dotk::DOTk_SteihaugTointDataMng(primal,objective));
+    std::shared_ptr<dotk::NumericallyDifferentiatedHessian> hessian(new dotk::NumericallyDifferentiatedHessian(primal, objective));
 
     hessian->setThirdOrderBackwardDifference(*primal->control(), 1e-6);
-    std::tr1::shared_ptr<dotk::DOTk_SteihaugTointStepMng> step(new dotk::DOTk_SteihaugTointStepMng(primal,hessian));
+    std::shared_ptr<dotk::DOTk_SteihaugTointStepMng> step(new dotk::DOTk_SteihaugTointStepMng(primal,hessian));
     dotk::DOTk_SteihaugTointLinMore alg(mng, step);
     alg.getMin();
 
@@ -489,17 +489,17 @@ TEST(SteihaugTointLinMore, getMin_UserDefGrad_NumDiffHessTBD_Rosenbrock)
 TEST(SteihaugTointLinMore, getMin_GradFD_NumDiffHessCD_Rosenbrock)
 {
     size_t ncontrols = 2;
-    std::tr1::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
     primal->allocateSerialControlArray(ncontrols, 2);
 
-    std::tr1::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
-    std::tr1::shared_ptr<dotk::DOTk_SteihaugTointDataMng> mng(new dotk::DOTk_SteihaugTointDataMng(primal,objective));
-    std::tr1::shared_ptr<dotk::NumericallyDifferentiatedHessian> hessian(new dotk::NumericallyDifferentiatedHessian(primal, objective));
+    std::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
+    std::shared_ptr<dotk::DOTk_SteihaugTointDataMng> mng(new dotk::DOTk_SteihaugTointDataMng(primal,objective));
+    std::shared_ptr<dotk::NumericallyDifferentiatedHessian> hessian(new dotk::NumericallyDifferentiatedHessian(primal, objective));
 
     primal->control()->fill(1e-7);
     mng->setForwardFiniteDiffGradient(*primal->control());
     hessian->setCentralDifference(*primal->control());
-    std::tr1::shared_ptr<dotk::DOTk_SteihaugTointStepMng> step(new dotk::DOTk_SteihaugTointStepMng(primal,hessian));
+    std::shared_ptr<dotk::DOTk_SteihaugTointStepMng> step(new dotk::DOTk_SteihaugTointStepMng(primal,hessian));
     dotk::DOTk_SteihaugTointLinMore alg(mng, step);
     alg.getMin();
 
@@ -512,17 +512,17 @@ TEST(SteihaugTointLinMore, getMin_GradFD_NumDiffHessCD_Rosenbrock)
 TEST(SteihaugTointLinMore, getMin_GradBD_NumDiffHessCD_Rosenbrock)
 {
     size_t ncontrols = 2;
-    std::tr1::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
     primal->allocateSerialControlArray(ncontrols, 2);
 
-    std::tr1::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
-    std::tr1::shared_ptr<dotk::DOTk_SteihaugTointDataMng> mng(new dotk::DOTk_SteihaugTointDataMng(primal,objective));
-    std::tr1::shared_ptr<dotk::NumericallyDifferentiatedHessian> hessian(new dotk::NumericallyDifferentiatedHessian(primal, objective));
+    std::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
+    std::shared_ptr<dotk::DOTk_SteihaugTointDataMng> mng(new dotk::DOTk_SteihaugTointDataMng(primal,objective));
+    std::shared_ptr<dotk::NumericallyDifferentiatedHessian> hessian(new dotk::NumericallyDifferentiatedHessian(primal, objective));
 
     primal->control()->fill(1e-8);
     mng->setBackwardFiniteDiffGradient(*primal->control());
     hessian->setCentralDifference(*primal->control());
-    std::tr1::shared_ptr<dotk::DOTk_SteihaugTointStepMng> step(new dotk::DOTk_SteihaugTointStepMng(primal,hessian));
+    std::shared_ptr<dotk::DOTk_SteihaugTointStepMng> step(new dotk::DOTk_SteihaugTointStepMng(primal,hessian));
     dotk::DOTk_SteihaugTointLinMore alg(mng, step);
     alg.getMin();
 
@@ -535,17 +535,17 @@ TEST(SteihaugTointLinMore, getMin_GradBD_NumDiffHessCD_Rosenbrock)
 TEST(SteihaugTointLinMore, getMin_GradCD_NumDiffHessCD_Rosenbrock)
 {
     size_t ncontrols = 2;
-    std::tr1::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
     primal->allocateSerialControlArray(ncontrols, 2);
 
-    std::tr1::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
-    std::tr1::shared_ptr<dotk::DOTk_SteihaugTointDataMng> mng(new dotk::DOTk_SteihaugTointDataMng(primal,objective));
-    std::tr1::shared_ptr<dotk::NumericallyDifferentiatedHessian> hessian(new dotk::NumericallyDifferentiatedHessian(primal, objective));
+    std::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
+    std::shared_ptr<dotk::DOTk_SteihaugTointDataMng> mng(new dotk::DOTk_SteihaugTointDataMng(primal,objective));
+    std::shared_ptr<dotk::NumericallyDifferentiatedHessian> hessian(new dotk::NumericallyDifferentiatedHessian(primal, objective));
 
     primal->control()->fill(1e-6);
     mng->setCentralFiniteDiffGradient(*primal->control());
     hessian->setCentralDifference(*primal->control());
-    std::tr1::shared_ptr<dotk::DOTk_SteihaugTointStepMng> step(new dotk::DOTk_SteihaugTointStepMng(primal,hessian));
+    std::shared_ptr<dotk::DOTk_SteihaugTointStepMng> step(new dotk::DOTk_SteihaugTointStepMng(primal,hessian));
     dotk::DOTk_SteihaugTointLinMore alg(mng, step);
     alg.getMin();
 
@@ -558,17 +558,17 @@ TEST(SteihaugTointLinMore, getMin_GradCD_NumDiffHessCD_Rosenbrock)
 TEST(SteihaugTointLinMore, getMin_GradPFD_NumDiffHessCD_Rosenbrock)
 {
     size_t ncontrols = 2;
-    std::tr1::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
     primal->allocateSerialControlArray(ncontrols, 2);
 
-    std::tr1::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
-    std::tr1::shared_ptr<dotk::DOTk_SteihaugTointDataMng> mng(new dotk::DOTk_SteihaugTointDataMng(primal,objective));
-    std::tr1::shared_ptr<dotk::NumericallyDifferentiatedHessian> hessian(new dotk::NumericallyDifferentiatedHessian(primal, objective));
+    std::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
+    std::shared_ptr<dotk::DOTk_SteihaugTointDataMng> mng(new dotk::DOTk_SteihaugTointDataMng(primal,objective));
+    std::shared_ptr<dotk::NumericallyDifferentiatedHessian> hessian(new dotk::NumericallyDifferentiatedHessian(primal, objective));
 
     primal->control()->fill(1e-7);
     mng->setParallelForwardFiniteDiffGradient(*primal->control());
     hessian->setCentralDifference(*primal->control());
-    std::tr1::shared_ptr<dotk::DOTk_SteihaugTointStepMng> step(new dotk::DOTk_SteihaugTointStepMng(primal,hessian));
+    std::shared_ptr<dotk::DOTk_SteihaugTointStepMng> step(new dotk::DOTk_SteihaugTointStepMng(primal,hessian));
     dotk::DOTk_SteihaugTointLinMore alg(mng, step);
     alg.getMin();
 
@@ -581,17 +581,17 @@ TEST(SteihaugTointLinMore, getMin_GradPFD_NumDiffHessCD_Rosenbrock)
 TEST(SteihaugTointLinMore, getMin_GradPBD_NumDiffHessCD_Rosenbrock)
 {
     size_t ncontrols = 2;
-    std::tr1::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
     primal->allocateSerialControlArray(ncontrols, 2);
 
-    std::tr1::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
-    std::tr1::shared_ptr<dotk::DOTk_SteihaugTointDataMng> mng(new dotk::DOTk_SteihaugTointDataMng(primal,objective));
-    std::tr1::shared_ptr<dotk::NumericallyDifferentiatedHessian> hessian(new dotk::NumericallyDifferentiatedHessian(primal, objective));
+    std::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
+    std::shared_ptr<dotk::DOTk_SteihaugTointDataMng> mng(new dotk::DOTk_SteihaugTointDataMng(primal,objective));
+    std::shared_ptr<dotk::NumericallyDifferentiatedHessian> hessian(new dotk::NumericallyDifferentiatedHessian(primal, objective));
 
     primal->control()->fill(1e-8);
     mng->setParallelBackwardFiniteDiffGradient(*primal->control());
     hessian->setCentralDifference(*primal->control());
-    std::tr1::shared_ptr<dotk::DOTk_SteihaugTointStepMng> step(new dotk::DOTk_SteihaugTointStepMng(primal,hessian));
+    std::shared_ptr<dotk::DOTk_SteihaugTointStepMng> step(new dotk::DOTk_SteihaugTointStepMng(primal,hessian));
     dotk::DOTk_SteihaugTointLinMore alg(mng, step);
     alg.getMin();
 
@@ -604,17 +604,17 @@ TEST(SteihaugTointLinMore, getMin_GradPBD_NumDiffHessCD_Rosenbrock)
 TEST(SteihaugTointLinMore, getMin_GradCD_NumDiffHessPCD_Rosenbrock)
 {
     size_t ncontrols = 2;
-    std::tr1::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
     primal->allocateSerialControlArray(ncontrols, 2);
 
-    std::tr1::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
-    std::tr1::shared_ptr<dotk::DOTk_SteihaugTointDataMng> mng(new dotk::DOTk_SteihaugTointDataMng(primal,objective));
-    std::tr1::shared_ptr<dotk::NumericallyDifferentiatedHessian> hessian(new dotk::NumericallyDifferentiatedHessian(primal, objective));
+    std::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
+    std::shared_ptr<dotk::DOTk_SteihaugTointDataMng> mng(new dotk::DOTk_SteihaugTointDataMng(primal,objective));
+    std::shared_ptr<dotk::NumericallyDifferentiatedHessian> hessian(new dotk::NumericallyDifferentiatedHessian(primal, objective));
 
     primal->control()->fill(1e-6);
     mng->setParallelCentralFiniteDiffGradient(*primal->control());
     hessian->setCentralDifference(*primal->control());
-    std::tr1::shared_ptr<dotk::DOTk_SteihaugTointStepMng> step(new dotk::DOTk_SteihaugTointStepMng(primal,hessian));
+    std::shared_ptr<dotk::DOTk_SteihaugTointStepMng> step(new dotk::DOTk_SteihaugTointStepMng(primal,hessian));
     dotk::DOTk_SteihaugTointLinMore alg(mng, step);
     alg.getMin();
 

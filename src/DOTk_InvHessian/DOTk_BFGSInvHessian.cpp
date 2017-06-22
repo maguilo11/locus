@@ -16,7 +16,7 @@
 namespace dotk
 {
 
-DOTk_BFGSInvHessian::DOTk_BFGSInvHessian(const std::tr1::shared_ptr<dotk::Vector<Real> > & vector_) :
+DOTk_BFGSInvHessian::DOTk_BFGSInvHessian(const std::shared_ptr<dotk::Vector<Real> > & vector_) :
         dotk::DOTk_SecondOrderOperator(),
         mDeltaPrimal(vector_->clone()),
         mDeltaGradient(vector_->clone()),
@@ -29,18 +29,18 @@ DOTk_BFGSInvHessian::~DOTk_BFGSInvHessian()
 {
 }
 
-const std::tr1::shared_ptr<dotk::Vector<Real> > & DOTk_BFGSInvHessian::getDeltaGrad() const
+const std::shared_ptr<dotk::Vector<Real> > & DOTk_BFGSInvHessian::getDeltaGrad() const
 {
     return (mDeltaGradient);
 }
 
-const std::tr1::shared_ptr<dotk::Vector<Real> > & DOTk_BFGSInvHessian::getDeltaPrimal() const
+const std::shared_ptr<dotk::Vector<Real> > & DOTk_BFGSInvHessian::getDeltaPrimal() const
 {
     return (mDeltaPrimal);
 }
 
-void DOTk_BFGSInvHessian::getInvHessian(const std::tr1::shared_ptr<dotk::Vector<Real> > & vector_,
-                                        const std::tr1::shared_ptr<dotk::Vector<Real> > & inv_hess_times_vector_)
+void DOTk_BFGSInvHessian::getInvHessian(const std::shared_ptr<dotk::Vector<Real> > & vector_,
+                                        const std::shared_ptr<dotk::Vector<Real> > & inv_hess_times_vector_)
 {
     inv_hess_times_vector_->update(1., *vector_, 0.);
     Real dprimal_dot_vec = mDeltaPrimal->dot(*vector_);
@@ -73,9 +73,9 @@ void DOTk_BFGSInvHessian::getInvHessian(const std::tr1::shared_ptr<dotk::Vector<
     }
 }
 
-void DOTk_BFGSInvHessian::apply(const std::tr1::shared_ptr<dotk::DOTk_OptimizationDataMng> & mng_,
-                                const std::tr1::shared_ptr<dotk::Vector<Real> > & vector_,
-                                const std::tr1::shared_ptr<dotk::Vector<Real> > & matrix_times_vector_)
+void DOTk_BFGSInvHessian::apply(const std::shared_ptr<dotk::DOTk_OptimizationDataMng> & mng_,
+                                const std::shared_ptr<dotk::Vector<Real> > & vector_,
+                                const std::shared_ptr<dotk::Vector<Real> > & matrix_times_vector_)
 {
     dotk::DOTk_SecondOrderOperator::computeDeltaPrimal(mng_->getNewPrimal(), mng_->getOldPrimal(), mDeltaPrimal);
     dotk::DOTk_SecondOrderOperator::computeDeltaGradient(mng_->getNewGradient(),

@@ -9,7 +9,7 @@
 #define DOTK_DIRECTSOLVERFACTORY_HPP_
 
 #include <string>
-#include <tr1/memory>
+#include <memory>
 
 namespace dotk
 {
@@ -28,9 +28,9 @@ public:
     void setFactoryType(dotk::types::direct_solver_t type_);
     dotk::types::direct_solver_t getFactoryType() const;
 
-    void buildLowerTriangularDirectSolver(std::tr1::shared_ptr<dotk::DOTk_DirectSolver> & direct_solver_);
-    void buildUpperTriangularDirectSolver(std::tr1::shared_ptr<dotk::DOTk_DirectSolver> & direct_solver_);
-    void build(std::tr1::shared_ptr<dotk::DOTk_DirectSolver> & direct_solver_);
+    void buildLowerTriangularDirectSolver(std::shared_ptr<dotk::DOTk_DirectSolver> & direct_solver_);
+    void buildUpperTriangularDirectSolver(std::shared_ptr<dotk::DOTk_DirectSolver> & direct_solver_);
+    void build(std::shared_ptr<dotk::DOTk_DirectSolver> & direct_solver_);
 
 private:
     std::string mErrorMsg;

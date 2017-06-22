@@ -8,7 +8,7 @@
 #ifndef DOTK_STEIHAUGTOINTSOLVER_HPP_
 #define DOTK_STEIHAUGTOINTSOLVER_HPP_
 
-#include <tr1/memory>
+#include <memory>
 #include "DOTk_Types.hpp"
 
 namespace dotk
@@ -46,18 +46,18 @@ public:
     void setStoppingCriterion(dotk::types::solver_stop_criterion_t input_);
     dotk::types::solver_stop_criterion_t getStoppingCriterion() const;
 
-    Real computeSteihaugTointStep(const std::tr1::shared_ptr<dotk::Vector<Real> > & newton_step_,
-                                  const std::tr1::shared_ptr<dotk::Vector<Real> > & conjugate_dir_,
-                                  const std::tr1::shared_ptr<dotk::Vector<Real> > & prec_times_newton_step_,
-                                  const std::tr1::shared_ptr<dotk::Vector<Real> > & prec_times_conjugate_dir_);
+    Real computeSteihaugTointStep(const std::shared_ptr<dotk::Vector<Real> > & newton_step_,
+                                  const std::shared_ptr<dotk::Vector<Real> > & conjugate_dir_,
+                                  const std::shared_ptr<dotk::Vector<Real> > & prec_times_newton_step_,
+                                  const std::shared_ptr<dotk::Vector<Real> > & prec_times_conjugate_dir_);
     bool invalidCurvatureDetected(const Real & input_);
     bool toleranceSatisfied(const Real & input_);
 
-    virtual const std::tr1::shared_ptr<dotk::Vector<Real> > & getActiveSet() const;
-    virtual const std::tr1::shared_ptr<dotk::Vector<Real> > & getInactiveSet() const;
-    virtual void solve(const std::tr1::shared_ptr<dotk::DOTk_Preconditioner> & preconditioner_,
-                       const std::tr1::shared_ptr<dotk::DOTk_LinearOperator> & linear_operator_,
-                       const std::tr1::shared_ptr<dotk::DOTk_OptimizationDataMng> & mng_) = 0;
+    virtual const std::shared_ptr<dotk::Vector<Real> > & getActiveSet() const;
+    virtual const std::shared_ptr<dotk::Vector<Real> > & getInactiveSet() const;
+    virtual void solve(const std::shared_ptr<dotk::DOTk_Preconditioner> & preconditioner_,
+                       const std::shared_ptr<dotk::DOTk_LinearOperator> & linear_operator_,
+                       const std::shared_ptr<dotk::DOTk_OptimizationDataMng> & mng_) = 0;
 
 private:
     size_t m_MaxNumItr;

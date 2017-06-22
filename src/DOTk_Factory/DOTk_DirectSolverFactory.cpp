@@ -53,19 +53,19 @@ dotk::types::direct_solver_t DOTk_DirectSolverFactory::getFactoryType() const
     return (mFactoryType);
 }
 
-void DOTk_DirectSolverFactory::buildLowerTriangularDirectSolver(std::tr1::shared_ptr<dotk::DOTk_DirectSolver> & direct_solver_)
+void DOTk_DirectSolverFactory::buildLowerTriangularDirectSolver(std::shared_ptr<dotk::DOTk_DirectSolver> & direct_solver_)
 {
     direct_solver_.reset(new dotk::DOTk_LowerTriangularDirectSolver());
     this->setFactoryType(dotk::types::LOWER_TRIANGULAR_DIRECT_SOLVER);
 }
 
-void DOTk_DirectSolverFactory::buildUpperTriangularDirectSolver(std::tr1::shared_ptr<dotk::DOTk_DirectSolver> & direct_solver_)
+void DOTk_DirectSolverFactory::buildUpperTriangularDirectSolver(std::shared_ptr<dotk::DOTk_DirectSolver> & direct_solver_)
 {
     direct_solver_.reset(new dotk::DOTk_UpperTriangularDirectSolver());
     this->setFactoryType(dotk::types::UPPER_TRIANGULAR_DIRECT_SOLVER);
 }
 
-void DOTk_DirectSolverFactory::build(std::tr1::shared_ptr<dotk::DOTk_DirectSolver> & direct_solver_)
+void DOTk_DirectSolverFactory::build(std::shared_ptr<dotk::DOTk_DirectSolver> & direct_solver_)
 {
     switch(this->getFactoryType())
     {

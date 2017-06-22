@@ -50,51 +50,51 @@ dotk::types::left_prec_t DOTk_LeftPreconditioner::getLeftPreconditionerType() co
     return (m_LeftPreconditionerType);
 }
 
-void DOTk_LeftPreconditioner::setLeftPrecCgSolver(const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_,
+void DOTk_LeftPreconditioner::setLeftPrecCgSolver(const std::shared_ptr<dotk::DOTk_Primal> & primal_,
                                                   size_t max_num_itr_)
 {
     std::perror("\n**** DOTk ERROR in DOTk_LeftPreconditioner::setLeftPrecCgSolver. User did not allocate data. ABORT. ****\n");
     std::abort();
 }
 
-void DOTk_LeftPreconditioner::setLeftPrecCrSolver(const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_,
+void DOTk_LeftPreconditioner::setLeftPrecCrSolver(const std::shared_ptr<dotk::DOTk_Primal> & primal_,
                                                   size_t max_num_itr_)
 {
     std::perror("\n**** DOTk ERROR in DOTk_LeftPreconditioner::setLeftPrecCrSolver. User did not allocate data. ABORT. ****\n");
     std::abort();
 }
 
-void DOTk_LeftPreconditioner::setLeftPrecGcrSolver(const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_,
+void DOTk_LeftPreconditioner::setLeftPrecGcrSolver(const std::shared_ptr<dotk::DOTk_Primal> & primal_,
                                                    size_t max_num_itr_)
 {
     std::perror("\n**** DOTk ERROR in DOTk_LeftPreconditioner::setLeftPrecGcrSolver. User did not allocate data. ABORT. ****\n");
     std::abort();
 }
 
-void DOTk_LeftPreconditioner::setLeftPrecCgneSolver(const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_,
+void DOTk_LeftPreconditioner::setLeftPrecCgneSolver(const std::shared_ptr<dotk::DOTk_Primal> & primal_,
                                                     size_t max_num_itr_)
 {
     std::perror("\n**** DOTk ERROR in DOTk_LeftPreconditioner::setLeftPrecCgneSolver. User did not allocate data. ABORT. ****\n");
     std::abort();
 }
 
-void DOTk_LeftPreconditioner::setLeftPrecCgnrSolver(const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_,
+void DOTk_LeftPreconditioner::setLeftPrecCgnrSolver(const std::shared_ptr<dotk::DOTk_Primal> & primal_,
                                                     size_t max_num_itr_)
 {
     std::perror("\n**** DOTk ERROR in DOTk_LeftPreconditioner::setLeftPrecCgnrSolver. User did not allocate data. ABORT. ****\n");
     std::abort();
 }
 
-void DOTk_LeftPreconditioner::setPrecGmresSolver(const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_,
+void DOTk_LeftPreconditioner::setPrecGmresSolver(const std::shared_ptr<dotk::DOTk_Primal> & primal_,
                                                  size_t max_num_itr_)
 {
     std::perror("\n**** DOTk ERROR in DOTk_LeftPreconditioner::setPrecGmresSolver. User did not allocate data. ABORT. ****\n");
     std::abort();
 }
 
-void DOTk_LeftPreconditioner::apply(const std::tr1::shared_ptr<dotk::DOTk_OptimizationDataMng> & mng_,
-                                    const std::tr1::shared_ptr<dotk::Vector<Real> > & vec_,
-                                    const std::tr1::shared_ptr<dotk::Vector<Real> > & matrix_times_vec_)
+void DOTk_LeftPreconditioner::apply(const std::shared_ptr<dotk::DOTk_OptimizationDataMng> & mng_,
+                                    const std::shared_ptr<dotk::Vector<Real> > & vec_,
+                                    const std::shared_ptr<dotk::Vector<Real> > & matrix_times_vec_)
 {
     matrix_times_vec_->update(1., *vec_, 0.);
 }

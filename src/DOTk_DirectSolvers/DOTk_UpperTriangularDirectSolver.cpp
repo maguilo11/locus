@@ -26,7 +26,7 @@ DOTk_UpperTriangularDirectSolver::~DOTk_UpperTriangularDirectSolver()
 {
 }
 
-void DOTk_UpperTriangularDirectSolver::backwardSolve(const std::tr1::shared_ptr<dotk::matrix<Real> > matrix_,
+void DOTk_UpperTriangularDirectSolver::backwardSolve(const std::shared_ptr<dotk::matrix<Real> > matrix_,
                                                      const std::vector<Real> & rhs_vec_,
                                                      std::vector<Real> & solution_vec_) const
 {
@@ -45,7 +45,7 @@ void DOTk_UpperTriangularDirectSolver::backwardSolve(const std::tr1::shared_ptr<
     }
 }
 
-void DOTk_UpperTriangularDirectSolver::solve(const std::tr1::shared_ptr<dotk::matrix<Real> > matrix_,
+void DOTk_UpperTriangularDirectSolver::solve(const std::shared_ptr<dotk::matrix<Real> > matrix_,
                                              const std::vector<Real> & rhs_vec_,
                                              std::vector<Real> & solution_vec_)
 {

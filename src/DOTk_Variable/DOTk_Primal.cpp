@@ -32,47 +32,47 @@ dotk::types::variable_t DOTk_Primal::type() const
     return (dotk::types::PRIMAL);
 }
 
-const std::tr1::shared_ptr<dotk::Vector<Real> > & DOTk_Primal::dual() const
+const std::shared_ptr<dotk::Vector<Real> > & DOTk_Primal::dual() const
 {
     return (m_Dual->data());
 }
 
-const std::tr1::shared_ptr<dotk::Vector<Real> > & DOTk_Primal::state() const
+const std::shared_ptr<dotk::Vector<Real> > & DOTk_Primal::state() const
 {
     return (m_State->data());
 }
 
-const std::tr1::shared_ptr<dotk::Vector<Real> > & DOTk_Primal::control() const
+const std::shared_ptr<dotk::Vector<Real> > & DOTk_Primal::control() const
 {
     return (m_Control->data());
 }
 
-const std::tr1::shared_ptr<dotk::Vector<Real> > & DOTk_Primal::getDualLowerBound() const
+const std::shared_ptr<dotk::Vector<Real> > & DOTk_Primal::getDualLowerBound() const
 {
     return (m_Dual->lowerBound());
 }
 
-const std::tr1::shared_ptr<dotk::Vector<Real> > & DOTk_Primal::getDualUpperBound() const
+const std::shared_ptr<dotk::Vector<Real> > & DOTk_Primal::getDualUpperBound() const
 {
     return (m_Dual->upperBound());
 }
 
-const std::tr1::shared_ptr<dotk::Vector<Real> > & DOTk_Primal::getStateLowerBound() const
+const std::shared_ptr<dotk::Vector<Real> > & DOTk_Primal::getStateLowerBound() const
 {
     return (m_State->lowerBound());
 }
 
-const std::tr1::shared_ptr<dotk::Vector<Real> > & DOTk_Primal::getStateUpperBound() const
+const std::shared_ptr<dotk::Vector<Real> > & DOTk_Primal::getStateUpperBound() const
 {
     return (m_State->upperBound());
 }
 
-const std::tr1::shared_ptr<dotk::Vector<Real> > & DOTk_Primal::getControlLowerBound() const
+const std::shared_ptr<dotk::Vector<Real> > & DOTk_Primal::getControlLowerBound() const
 {
     return (m_Control->lowerBound());
 }
 
-const std::tr1::shared_ptr<dotk::Vector<Real> > & DOTk_Primal::getControlUpperBound() const
+const std::shared_ptr<dotk::Vector<Real> > & DOTk_Primal::getControlUpperBound() const
 {
     return (m_Control->upperBound());
 }

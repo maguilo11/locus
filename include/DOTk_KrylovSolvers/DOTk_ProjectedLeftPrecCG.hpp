@@ -26,9 +26,9 @@ class Vector;
 class DOTk_ProjectedLeftPrecCG: public dotk::DOTk_KrylovSolver
 {
 public:
-    explicit DOTk_ProjectedLeftPrecCG(const std::tr1::shared_ptr<dotk::DOTk_KrylovSolverDataMng> & mng_);
-    DOTk_ProjectedLeftPrecCG(const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_,
-                             const std::tr1::shared_ptr<dotk::DOTk_LinearOperator> & operator_,
+    explicit DOTk_ProjectedLeftPrecCG(const std::shared_ptr<dotk::DOTk_KrylovSolverDataMng> & mng_);
+    DOTk_ProjectedLeftPrecCG(const std::shared_ptr<dotk::DOTk_Primal> & primal_,
+                             const std::shared_ptr<dotk::DOTk_LinearOperator> & operator_,
                              size_t max_num_itr_ = 200);
     virtual ~DOTk_ProjectedLeftPrecCG();
 
@@ -39,20 +39,20 @@ public:
     Real getOrthogonalityMeasure(size_t row_, size_t column_) const;
 
     virtual void setMaxNumKrylovSolverItr(size_t itr_);
-    virtual const std::tr1::shared_ptr<dotk::DOTk_KrylovSolverDataMng> & getDataMng() const;
-    virtual const std::tr1::shared_ptr<dotk::DOTk_LinearOperator> & getLinearOperator() const;
-    virtual const std::tr1::shared_ptr<dotk::Vector<Real> > &
+    virtual const std::shared_ptr<dotk::DOTk_KrylovSolverDataMng> & getDataMng() const;
+    virtual const std::shared_ptr<dotk::DOTk_LinearOperator> & getLinearOperator() const;
+    virtual const std::shared_ptr<dotk::Vector<Real> > &
     getDescentDirection();
 
     bool checkOrthogonalityMeasure();
-    void initialize(const std::tr1::shared_ptr<dotk::Vector<Real> > & rhs_vec_,
-                    const std::tr1::shared_ptr<dotk::DOTk_OptimizationDataMng> & mng_);
-    void ppcg(const std::tr1::shared_ptr<dotk::Vector<Real> > & rhs_vec_,
-              const std::tr1::shared_ptr<dotk::DOTk_KrylovSolverStoppingCriterion> & criterion_,
-              const std::tr1::shared_ptr<dotk::DOTk_OptimizationDataMng> & mng_);
-    virtual void solve(const std::tr1::shared_ptr<dotk::Vector<Real> > & rhs_vec_,
-                       const std::tr1::shared_ptr<dotk::DOTk_KrylovSolverStoppingCriterion> & criterion_,
-                       const std::tr1::shared_ptr<dotk::DOTk_OptimizationDataMng> & mng_);
+    void initialize(const std::shared_ptr<dotk::Vector<Real> > & rhs_vec_,
+                    const std::shared_ptr<dotk::DOTk_OptimizationDataMng> & mng_);
+    void ppcg(const std::shared_ptr<dotk::Vector<Real> > & rhs_vec_,
+              const std::shared_ptr<dotk::DOTk_KrylovSolverStoppingCriterion> & criterion_,
+              const std::shared_ptr<dotk::DOTk_OptimizationDataMng> & mng_);
+    virtual void solve(const std::shared_ptr<dotk::Vector<Real> > & rhs_vec_,
+                       const std::shared_ptr<dotk::DOTk_KrylovSolverStoppingCriterion> & criterion_,
+                       const std::shared_ptr<dotk::DOTk_OptimizationDataMng> & mng_);
 
 private:
     void setProjectedConjugateDirection();
@@ -69,8 +69,8 @@ private:
 
     std::vector<std::vector<Real> > m_OrthogonalityMeasure;
     std::vector<Real> m_OneOverNormPreconditionerTimesResidual;
-    std::tr1::shared_ptr<dotk::DOTk_KrylovSolverDataMng> m_DataMng;
-    std::tr1::shared_ptr<dotk::Vector<Real> > m_ProjectedConjugateDirection;
+    std::shared_ptr<dotk::DOTk_KrylovSolverDataMng> m_DataMng;
+    std::shared_ptr<dotk::Vector<Real> > m_ProjectedConjugateDirection;
 
 private:
     DOTk_ProjectedLeftPrecCG(const dotk::DOTk_ProjectedLeftPrecCG &);

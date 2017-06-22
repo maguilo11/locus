@@ -117,7 +117,7 @@ void DOTk_MexOptimalityCriteria::solve(const mxArray* input_[], mxArray* output_
     mxDestroyArray(mx_initial_control);
 
     // Allocate DOTk data structures
-    std::tr1::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
     primal->allocateUserDefinedDual(duals);
     primal->allocateUserDefinedState(states);
     primal->allocateUserDefinedControl(controls);
@@ -136,11 +136,11 @@ void DOTk_MexOptimalityCriteria::solve(const mxArray* input_[], mxArray* output_
 
     // Set objective, equality, and inequality operators
     dotk::types::problem_t type = this->getProblemType();
-    std::tr1::shared_ptr<dotk::DOTk_MexObjectiveFunction>
+    std::shared_ptr<dotk::DOTk_MexObjectiveFunction>
         objective(new dotk::DOTk_MexObjectiveFunction(m_ObjectiveFunction, type));
-    std::tr1::shared_ptr<dotk::DOTk_MexEqualityConstraint>
+    std::shared_ptr<dotk::DOTk_MexEqualityConstraint>
         equality(new dotk::DOTk_MexEqualityConstraint(m_EqualityConstraint, type));
-    std::tr1::shared_ptr<dotk::DOTk_MexInequalityConstraint>
+    std::shared_ptr<dotk::DOTk_MexInequalityConstraint>
         inequality(new dotk::DOTk_MexInequalityConstraint(m_InequalityConstraint, type));
 
     // Set optimization algorithm

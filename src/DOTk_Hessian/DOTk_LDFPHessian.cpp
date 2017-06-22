@@ -33,18 +33,18 @@ DOTk_LDFPHessian::~DOTk_LDFPHessian()
 {
 }
 
-const std::tr1::shared_ptr<dotk::Vector<Real> > & DOTk_LDFPHessian::getDeltaGradStorage(size_t at_) const
+const std::shared_ptr<dotk::Vector<Real> > & DOTk_LDFPHessian::getDeltaGradStorage(size_t at_) const
 {
     return (m_DeltaGradientStorage->basis(at_));
 }
 
-const std::tr1::shared_ptr<dotk::Vector<Real> > & DOTk_LDFPHessian::getDeltaPrimalStorage(size_t at_) const
+const std::shared_ptr<dotk::Vector<Real> > & DOTk_LDFPHessian::getDeltaPrimalStorage(size_t at_) const
 {
     return (m_DeltaPrimalStorage->basis(at_));
 }
 
-void DOTk_LDFPHessian::getHessian(const std::tr1::shared_ptr<dotk::Vector<Real> > & vector_,
-                                  const std::tr1::shared_ptr<dotk::Vector<Real> > & hess_times_vec_)
+void DOTk_LDFPHessian::getHessian(const std::shared_ptr<dotk::Vector<Real> > & vector_,
+                                  const std::shared_ptr<dotk::Vector<Real> > & hess_times_vec_)
 {
     Int storage_size = dotk::DOTk_SecondOrderOperator::getNumUpdatesStored() - 1;
     m_Alpha.assign(m_Alpha.size(), 0.);
@@ -52,7 +52,7 @@ void DOTk_LDFPHessian::getHessian(const std::tr1::shared_ptr<dotk::Vector<Real> 
     for(Int index = storage_size; index >= 0; index--)
     {
         m_Alpha[index] = m_RhoStorage[index] * m_DeltaGradientStorage->basis(index)->dot(*hess_times_vec_);
-        hess_times_vec_->update(-m_Alpha[index], *m_DeltaPrimalStorage->basis(index), 1.);
+        hess_times_vec_->update(-m_Alpha[index], *(m_DeltaPrimalStorage->basis(index)), static_cast<Real>(1.));
     }
     for(Int index = 0; index <= storage_size; ++index)
     {
@@ -68,9 +68,9 @@ void DOTk_LDFPHessian::getHessian(const std::tr1::shared_ptr<dotk::Vector<Real> 
     }
 }
 
-void DOTk_LDFPHessian::apply(const std::tr1::shared_ptr<dotk::DOTk_OptimizationDataMng> & mng_,
-                             const std::tr1::shared_ptr<dotk::Vector<Real> > & vector_,
-                             const std::tr1::shared_ptr<dotk::Vector<Real> > & matrix_times_vec_)
+void DOTk_LDFPHessian::apply(const std::shared_ptr<dotk::DOTk_OptimizationDataMng> & mng_,
+                             const std::shared_ptr<dotk::Vector<Real> > & vector_,
+                             const std::shared_ptr<dotk::Vector<Real> > & matrix_times_vec_)
 {
     dotk::DOTk_SecondOrderOperator::computeDeltaPrimal(mng_->getNewPrimal(), mng_->getOldPrimal(), m_DeltaPrimal);
     dotk::DOTk_SecondOrderOperator::computeDeltaGradient(mng_->getNewGradient(), mng_->getOldGradient(), m_DeltaGradient);

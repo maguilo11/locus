@@ -23,7 +23,7 @@ DOTk_RowMatrix<ScalarType>::DOTk_RowMatrix(const dotk::Vector<ScalarType> & row_
         m_Size(row_.size() * num_rows_),
         m_NumRows(num_rows_),
         m_NumColumns(row_.size()),
-        m_MatrixData(new std::tr1::shared_ptr<dotk::Vector<ScalarType> >[num_rows_])
+        m_MatrixData(new std::shared_ptr<dotk::Vector<ScalarType> >[num_rows_])
 {
     this->initialize(row_);
 }
@@ -620,7 +620,7 @@ size_t DOTk_RowMatrix<ScalarType>::basisDimension() const
 }
 
 template<typename ScalarType>
-std::tr1::shared_ptr<dotk::Vector<ScalarType> > & DOTk_RowMatrix<ScalarType>::basis(const size_t & index_)
+std::shared_ptr<dotk::Vector<ScalarType> > & DOTk_RowMatrix<ScalarType>::basis(const size_t & index_)
 {
     assert(index_ < this->nrows());
 
@@ -644,12 +644,12 @@ const ScalarType & DOTk_RowMatrix<ScalarType>::operator ()(const size_t & row_in
 }
 
 template<typename ScalarType>
-std::tr1::shared_ptr<dotk::matrix<ScalarType> > DOTk_RowMatrix<ScalarType>::clone() const
+std::shared_ptr<dotk::matrix<ScalarType> > DOTk_RowMatrix<ScalarType>::clone() const
 {
 
     size_t basis_dim = this->basisDimension();
-    std::tr1::shared_ptr<dotk::Vector<ScalarType> > & basis_vector = m_MatrixData[0];
-    std::tr1::shared_ptr<dotk::serial::DOTk_RowMatrix<ScalarType> >
+    std::shared_ptr<dotk::Vector<ScalarType> > & basis_vector = m_MatrixData[0];
+    std::shared_ptr<dotk::serial::DOTk_RowMatrix<ScalarType> >
         matrix(new dotk::serial::DOTk_RowMatrix<ScalarType>(*basis_vector, basis_dim));
 
     return (matrix);

@@ -8,8 +8,9 @@
 #ifndef DOTK_STEIHAUGTOINTNEWTONIO_HPP_
 #define DOTK_STEIHAUGTOINTNEWTONIO_HPP_
 
+#include <memory>
 #include <fstream>
-#include <tr1/memory>
+
 #include "DOTk_Types.hpp"
 
 namespace dotk
@@ -39,24 +40,24 @@ public:
     void openFile(const char * const name_);
     void closeFile();
 
-    void printInitialDiagnostics(const std::tr1::shared_ptr<dotk::DOTk_OptimizationDataMng> & data_mng_);
-    void printSolution(const std::tr1::shared_ptr<dotk::Vector<Real> > & primal_);
-    void printConvergedDiagnostics(const std::tr1::shared_ptr<dotk::DOTk_OptimizationDataMng> & data_mng_,
-                                   const std::tr1::shared_ptr<dotk::DOTk_SteihaugTointSolver> & solver_,
+    void printInitialDiagnostics(const std::shared_ptr<dotk::DOTk_OptimizationDataMng> & data_mng_);
+    void printSolution(const std::shared_ptr<dotk::Vector<Real> > & primal_);
+    void printConvergedDiagnostics(const std::shared_ptr<dotk::DOTk_OptimizationDataMng> & data_mng_,
+                                   const std::shared_ptr<dotk::DOTk_SteihaugTointSolver> & solver_,
                                    const dotk::DOTk_TrustRegionStepMng * const step_mng_);
-    void printTrustRegionSubProblemDiagnostics(const std::tr1::shared_ptr<dotk::DOTk_OptimizationDataMng> & data_mng_,
-                                               const std::tr1::shared_ptr<dotk::DOTk_SteihaugTointSolver> & solver_,
+    void printTrustRegionSubProblemDiagnostics(const std::shared_ptr<dotk::DOTk_OptimizationDataMng> & data_mng_,
+                                               const std::shared_ptr<dotk::DOTk_SteihaugTointSolver> & solver_,
                                                const dotk::DOTk_TrustRegionStepMng * const step_mng_);
 
 private:
     void printHeader();
-    void printSubProblemDiagnostics(const std::tr1::shared_ptr<dotk::DOTk_OptimizationDataMng> & data_mng_,
-                                    const std::tr1::shared_ptr<dotk::DOTk_SteihaugTointSolver> & solver_,
+    void printSubProblemDiagnostics(const std::shared_ptr<dotk::DOTk_OptimizationDataMng> & data_mng_,
+                                    const std::shared_ptr<dotk::DOTk_SteihaugTointSolver> & solver_,
                                     const dotk::DOTk_TrustRegionStepMng * const step_mng_);
-    void printSubProblemFirstItrDiagnostics(const std::tr1::shared_ptr<dotk::DOTk_OptimizationDataMng> & data_mng_,
-                                            const std::tr1::shared_ptr<dotk::DOTk_SteihaugTointSolver> & solver_,
+    void printSubProblemFirstItrDiagnostics(const std::shared_ptr<dotk::DOTk_OptimizationDataMng> & data_mng_,
+                                            const std::shared_ptr<dotk::DOTk_SteihaugTointSolver> & solver_,
                                             const dotk::DOTk_TrustRegionStepMng * const step_mng_);
-    void printCurrentSolution(const std::tr1::shared_ptr<dotk::Vector<Real> > & primal_);
+    void printCurrentSolution(const std::shared_ptr<dotk::Vector<Real> > & primal_);
 
 private:
     size_t m_NumOptimizationItrDone;

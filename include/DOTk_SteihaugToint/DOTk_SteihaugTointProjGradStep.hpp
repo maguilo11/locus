@@ -28,11 +28,11 @@ class Vector;
 class DOTk_SteihaugTointProjGradStep : public dotk::DOTk_TrustRegionStepMng
 {
 public:
-    DOTk_SteihaugTointProjGradStep(const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_,
-                                   const std::tr1::shared_ptr<dotk::DOTk_LinearOperator> & linear_operator_);
-    DOTk_SteihaugTointProjGradStep(const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_,
-                                   const std::tr1::shared_ptr<dotk::DOTk_LinearOperator> & linear_operator_,
-                                   const std::tr1::shared_ptr<dotk::DOTk_Preconditioner> & preconditioner_);
+    DOTk_SteihaugTointProjGradStep(const std::shared_ptr<dotk::DOTk_Primal> & primal_,
+                                   const std::shared_ptr<dotk::DOTk_LinearOperator> & linear_operator_);
+    DOTk_SteihaugTointProjGradStep(const std::shared_ptr<dotk::DOTk_Primal> & primal_,
+                                   const std::shared_ptr<dotk::DOTk_LinearOperator> & linear_operator_,
+                                   const std::shared_ptr<dotk::DOTk_Preconditioner> & preconditioner_);
     virtual ~DOTk_SteihaugTointProjGradStep();
 
     void setMaxNumProjections(size_t value_);
@@ -43,16 +43,16 @@ public:
     Real getControlUpdateRoutineConstant() const;
 
     virtual void setNumOptimizationItrDone(const size_t & itr_);
-    virtual void solveSubProblem(const std::tr1::shared_ptr<dotk::DOTk_OptimizationDataMng> & mng_,
-                                 const std::tr1::shared_ptr<dotk::DOTk_SteihaugTointSolver> & solver_,
-                                 const std::tr1::shared_ptr<dotk::DOTk_SteihaugTointNewtonIO> & io_);
+    virtual void solveSubProblem(const std::shared_ptr<dotk::DOTk_OptimizationDataMng> & mng_,
+                                 const std::shared_ptr<dotk::DOTk_SteihaugTointSolver> & solver_,
+                                 const std::shared_ptr<dotk::DOTk_SteihaugTointNewtonIO> & io_);
 
 private:
-    void bounds(const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_);
-    void initialize(const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_);
-    void updateControl(const std::tr1::shared_ptr<dotk::DOTk_OptimizationDataMng> & mng_);
-    void updateDataManager(const std::tr1::shared_ptr<dotk::DOTk_OptimizationDataMng> & mng_);
-    void computeProjectedCauchyStep(const std::tr1::shared_ptr<dotk::DOTk_OptimizationDataMng> & mng_);
+    void bounds(const std::shared_ptr<dotk::DOTk_Primal> & primal_);
+    void initialize(const std::shared_ptr<dotk::DOTk_Primal> & primal_);
+    void updateControl(const std::shared_ptr<dotk::DOTk_OptimizationDataMng> & mng_);
+    void updateDataManager(const std::shared_ptr<dotk::DOTk_OptimizationDataMng> & mng_);
+    void computeProjectedCauchyStep(const std::shared_ptr<dotk::DOTk_OptimizationDataMng> & mng_);
 
 private:
     size_t m_MaxNumProjections;
@@ -60,17 +60,17 @@ private:
     Real m_ControlUpdateRoutineConstant;
     Real m_PredictedReductionBasedOnCauchyStep;
 
-    std::tr1::shared_ptr<dotk::DOTk_LinearOperator> m_LinearOperator;
-    std::tr1::shared_ptr<dotk::DOTk_Preconditioner> m_Preconditioner;
-    std::tr1::shared_ptr<dotk::DOTk_BoundConstraints> m_BoundConstraint;
+    std::shared_ptr<dotk::DOTk_LinearOperator> m_LinearOperator;
+    std::shared_ptr<dotk::DOTk_Preconditioner> m_Preconditioner;
+    std::shared_ptr<dotk::DOTk_BoundConstraints> m_BoundConstraint;
 
-    std::tr1::shared_ptr<dotk::Vector<Real> > m_ActiveSet;
-    std::tr1::shared_ptr<dotk::Vector<Real> > m_LowerBound;
-    std::tr1::shared_ptr<dotk::Vector<Real> > m_UpperBound;
-    std::tr1::shared_ptr<dotk::Vector<Real> > m_WorkVector;
-    std::tr1::shared_ptr<dotk::Vector<Real> > m_CurrentPrimal;
-    std::tr1::shared_ptr<dotk::Vector<Real> > m_ProjectedTrialStep;
-    std::tr1::shared_ptr<dotk::Vector<Real> > m_ProjectedCauchyStep;
+    std::shared_ptr<dotk::Vector<Real> > m_ActiveSet;
+    std::shared_ptr<dotk::Vector<Real> > m_LowerBound;
+    std::shared_ptr<dotk::Vector<Real> > m_UpperBound;
+    std::shared_ptr<dotk::Vector<Real> > m_WorkVector;
+    std::shared_ptr<dotk::Vector<Real> > m_CurrentPrimal;
+    std::shared_ptr<dotk::Vector<Real> > m_ProjectedTrialStep;
+    std::shared_ptr<dotk::Vector<Real> > m_ProjectedCauchyStep;
 
 private:
     DOTk_SteihaugTointProjGradStep(const dotk::DOTk_SteihaugTointProjGradStep &);

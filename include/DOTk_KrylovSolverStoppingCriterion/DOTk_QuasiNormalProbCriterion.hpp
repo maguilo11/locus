@@ -32,7 +32,7 @@ public:
     void setTrustRegionRadiusPenaltyParameter(Real penalty_);
 
     virtual Real evaluate(const dotk::DOTk_KrylovSolver* const solver_,
-                          const std::tr1::shared_ptr<dotk::Vector<Real> > & kernel_vector_);
+                          const std::shared_ptr<dotk::Vector<Real> > & kernel_vector_);
 
 private:
     void initialize();

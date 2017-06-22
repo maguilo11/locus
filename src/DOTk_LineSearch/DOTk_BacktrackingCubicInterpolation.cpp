@@ -14,7 +14,7 @@
 namespace dotk
 {
 
-DOTk_BacktrackingCubicInterpolation::DOTk_BacktrackingCubicInterpolation(const std::tr1::shared_ptr<dotk::Vector<Real> > & vector_) :
+DOTk_BacktrackingCubicInterpolation::DOTk_BacktrackingCubicInterpolation(const std::shared_ptr<dotk::Vector<Real> > & vector_) :
         dotk::DOTk_LineSearch(dotk::types::line_search_t::BACKTRACKING_CUBIC_INTRP),
         m_ArmijoRuleConstant(1e-4),
         m_TrialPrimal(vector_->clone())
@@ -71,7 +71,7 @@ void DOTk_BacktrackingCubicInterpolation::checkBacktrackingStep(std::vector<Real
     }
 }
 
-void DOTk_BacktrackingCubicInterpolation::step(const std::tr1::shared_ptr<dotk::DOTk_OptimizationDataMng> & mng_)
+void DOTk_BacktrackingCubicInterpolation::step(const std::shared_ptr<dotk::DOTk_OptimizationDataMng> & mng_)
 {
     Real initial_step = 1;
     m_TrialPrimal->update(1., *mng_->getOldPrimal(), 0.);

@@ -12,7 +12,7 @@
 namespace dotk
 {
 
-DOTk_GoldsteinLineSearch::DOTk_GoldsteinLineSearch(const std::tr1::shared_ptr<dotk::Vector<Real> > & vector_) :
+DOTk_GoldsteinLineSearch::DOTk_GoldsteinLineSearch(const std::shared_ptr<dotk::Vector<Real> > & vector_) :
         dotk::DOTk_LineSearch(dotk::types::line_search_t::BACKTRACKING_GOLDSTEIN),
         m_GoldsteinConstant(0.9),
         m_TrialPrimal(vector_->clone())
@@ -33,7 +33,7 @@ void DOTk_GoldsteinLineSearch::setConstant(Real value_)
     m_GoldsteinConstant = value_;
 }
 
-void DOTk_GoldsteinLineSearch::step(const std::tr1::shared_ptr<dotk::DOTk_OptimizationDataMng> & mng_)
+void DOTk_GoldsteinLineSearch::step(const std::shared_ptr<dotk::DOTk_OptimizationDataMng> & mng_)
 {
     Real step = 1;
     m_TrialPrimal->update(1., *mng_->getOldPrimal(), 0.);

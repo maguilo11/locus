@@ -24,7 +24,7 @@ class Vector;
 class DOTk_DiagnosticsObjectiveTypeNP : public dotk::DOTk_DerivativeDiagnosticsTool
 {
 public:
-    DOTk_DiagnosticsObjectiveTypeNP(const std::tr1::shared_ptr<dotk::DOTk_ObjectiveFunction<Real> > & objective_);
+    DOTk_DiagnosticsObjectiveTypeNP(const std::shared_ptr<dotk::DOTk_ObjectiveFunction<Real> > & objective_);
     ~DOTk_DiagnosticsObjectiveTypeNP();
 
     void checkPartialDerivativeControl(const dotk::DOTk_State & state_,
@@ -48,19 +48,19 @@ public:
 
 private:
     template<typename ScalarValuedFunction, typename ScalarValuedFunctionFirstDerivative>
-    void checkScalarValuedFunctionFirstDerivative(const std::tr1::shared_ptr<dotk::Vector<Real> > & perturbation_vec_,
+    void checkScalarValuedFunctionFirstDerivative(const std::shared_ptr<dotk::Vector<Real> > & perturbation_vec_,
                                                   const ScalarValuedFunction & function_,
                                                   const ScalarValuedFunctionFirstDerivative & first_derivative_,
                                                   dotk::nlp::variables & variables_);
     template<typename ScalarValuedFunctionFirstDerivative, typename ScalarValuedFunctionSecondDerivative>
-    void checkScalarValuedFunctionSecondDerivative(const std::tr1::shared_ptr<dotk::Vector<Real> > & perturbation_vec_,
+    void checkScalarValuedFunctionSecondDerivative(const std::shared_ptr<dotk::Vector<Real> > & perturbation_vec_,
                                                    const ScalarValuedFunctionFirstDerivative & first_derivative_,
                                                    const ScalarValuedFunctionSecondDerivative & second_derivative_,
                                                    dotk::nlp::variables & variables_);
 
 private:
-    std::tr1::shared_ptr<dotk::Vector<Real> > m_OriginalField;
-    std::tr1::shared_ptr<dotk::DOTk_ObjectiveFunction<Real> > m_ObjectiveFunction;
+    std::shared_ptr<dotk::Vector<Real> > m_OriginalField;
+    std::shared_ptr<dotk::DOTk_ObjectiveFunction<Real> > m_ObjectiveFunction;
 
 private:
     DOTk_DiagnosticsObjectiveTypeNP(const dotk::DOTk_DiagnosticsObjectiveTypeNP &);

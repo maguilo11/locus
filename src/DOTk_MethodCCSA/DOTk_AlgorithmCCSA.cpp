@@ -20,8 +20,8 @@
 namespace dotk
 {
 
-DOTk_AlgorithmCCSA::DOTk_AlgorithmCCSA(const std::tr1::shared_ptr<dotk::DOTk_DataMngCCSA> & data_mng_,
-                                       const std::tr1::shared_ptr<dotk::DOTk_SubProblemCCSA> & sub_problem_) :
+DOTk_AlgorithmCCSA::DOTk_AlgorithmCCSA(const std::shared_ptr<dotk::DOTk_DataMngCCSA> & data_mng_,
+                                       const std::shared_ptr<dotk::DOTk_SubProblemCCSA> & sub_problem_) :
         m_StoppingCriterion(dotk::ccsa::stopping_criterion_t::NOT_CONVERGED),
         m_IterationCount(0),
         m_MaxNumIterations(100),

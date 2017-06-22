@@ -15,7 +15,7 @@
 namespace dotk
 {
 
-DOTk_LineSearchAlgorithmsDataMng::DOTk_LineSearchAlgorithmsDataMng(const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_) :
+DOTk_LineSearchAlgorithmsDataMng::DOTk_LineSearchAlgorithmsDataMng(const std::shared_ptr<dotk::DOTk_Primal> & primal_) :
         dotk::DOTk_OptimizationDataMng(primal_),
         m_RoutinesMng(),
         m_FirstOrderOperator()
@@ -69,19 +69,19 @@ Real DOTk_LineSearchAlgorithmsDataMng::evaluateObjective()
     return (value);
 }
 
-Real DOTk_LineSearchAlgorithmsDataMng::evaluateObjective(const std::tr1::shared_ptr<dotk::Vector<Real> > & input_)
+Real DOTk_LineSearchAlgorithmsDataMng::evaluateObjective(const std::shared_ptr<dotk::Vector<Real> > & input_)
 {
     Real value = m_RoutinesMng->objective(input_);
     return (value);
 }
 
-void DOTk_LineSearchAlgorithmsDataMng::computeGradient(const std::tr1::shared_ptr<dotk::Vector<Real> > & input_,
-                                                       const std::tr1::shared_ptr<dotk::Vector<Real> > & gradient_)
+void DOTk_LineSearchAlgorithmsDataMng::computeGradient(const std::shared_ptr<dotk::Vector<Real> > & input_,
+                                                       const std::shared_ptr<dotk::Vector<Real> > & gradient_)
 {
     m_RoutinesMng->gradient(input_, gradient_);
 }
 
-const std::tr1::shared_ptr<dotk::DOTk_AssemblyManager> & DOTk_LineSearchAlgorithmsDataMng::getRoutinesMng() const
+const std::shared_ptr<dotk::DOTk_AssemblyManager> & DOTk_LineSearchAlgorithmsDataMng::getRoutinesMng() const
 {
     return (m_RoutinesMng);
 }

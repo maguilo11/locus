@@ -8,7 +8,7 @@
 #ifndef DOTK_LEFTPRECONDITIONER_HPP_
 #define DOTK_LEFTPRECONDITIONER_HPP_
 
-#include <tr1/memory>
+#include <memory>
 #include "DOTk_Types.hpp"
 
 namespace dotk
@@ -33,19 +33,19 @@ public:
 
     dotk::types::left_prec_t getLeftPreconditionerType() const;
 
-    virtual void setLeftPrecCgSolver(const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_,
+    virtual void setLeftPrecCgSolver(const std::shared_ptr<dotk::DOTk_Primal> & primal_,
                                      size_t max_num_itr_ = 200);
-    virtual void setLeftPrecCrSolver(const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_,
+    virtual void setLeftPrecCrSolver(const std::shared_ptr<dotk::DOTk_Primal> & primal_,
                                      size_t max_num_itr_ = 200);
-    virtual void setLeftPrecGcrSolver(const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_,
+    virtual void setLeftPrecGcrSolver(const std::shared_ptr<dotk::DOTk_Primal> & primal_,
                                       size_t max_num_itr_ = 200);
-    virtual void setLeftPrecCgneSolver(const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_, size_t max_num_itr_ = 200);
-    virtual void setLeftPrecCgnrSolver(const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_, size_t max_num_itr_ = 200);
-    virtual void setPrecGmresSolver(const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_, size_t max_num_itr_ = 200);
+    virtual void setLeftPrecCgneSolver(const std::shared_ptr<dotk::DOTk_Primal> & primal_, size_t max_num_itr_ = 200);
+    virtual void setLeftPrecCgnrSolver(const std::shared_ptr<dotk::DOTk_Primal> & primal_, size_t max_num_itr_ = 200);
+    virtual void setPrecGmresSolver(const std::shared_ptr<dotk::DOTk_Primal> & primal_, size_t max_num_itr_ = 200);
 
-    virtual void apply(const std::tr1::shared_ptr<dotk::DOTk_OptimizationDataMng> & mng_,
-                       const std::tr1::shared_ptr<dotk::Vector<Real> > & vec_,
-                       const std::tr1::shared_ptr<dotk::Vector<Real> > & matrix_times_vec_);
+    virtual void apply(const std::shared_ptr<dotk::DOTk_OptimizationDataMng> & mng_,
+                       const std::shared_ptr<dotk::Vector<Real> > & vec_,
+                       const std::shared_ptr<dotk::Vector<Real> > & matrix_times_vec_);
 
 private:
     size_t m_NumOptimizationItrDone;

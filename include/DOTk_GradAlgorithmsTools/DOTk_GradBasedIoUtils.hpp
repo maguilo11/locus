@@ -8,6 +8,8 @@
 #ifndef DOTK_GRADBASEDIOUTILS_HPP_
 #define DOTK_GRADBASEDIOUTILS_HPP_
 
+#include <memory>
+
 #include "DOTk_Types.hpp"
 
 namespace dotk
@@ -25,7 +27,7 @@ bool printMessage(std::ostringstream & msg_);
 void getLicenseMessage(std::ostringstream & msg_);
 void checkType(dotk::types::variable_t input_type_, dotk::types::variable_t primal_type_);
 void getSolverExitCriterion(dotk::types::solver_stop_criterion_t type_, std::ostringstream & criterion_);
-void checkDataPtr(const std::tr1::shared_ptr<dotk::Vector<Real> > & data_, std::ostringstream & data_type_);
+void checkDataPtr(const std::shared_ptr<dotk::Vector<Real> > & data_, std::ostringstream & data_type_);
 
 }
 

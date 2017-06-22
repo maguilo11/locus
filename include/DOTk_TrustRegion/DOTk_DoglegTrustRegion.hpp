@@ -24,14 +24,14 @@ public:
     DOTk_DoglegTrustRegion();
     virtual ~DOTk_DoglegTrustRegion();
 
-    void dogleg(const std::tr1::shared_ptr<dotk::Vector<Real> > & grad_,
-                const std::tr1::shared_ptr<dotk::Vector<Real> > & matrix_times_grad_,
-                const std::tr1::shared_ptr<dotk::Vector<Real> > & cauchy_dir_,
-                const std::tr1::shared_ptr<dotk::Vector<Real> > & newton_dir_);
+    void dogleg(const std::shared_ptr<dotk::Vector<Real> > & grad_,
+                const std::shared_ptr<dotk::Vector<Real> > & matrix_times_grad_,
+                const std::shared_ptr<dotk::Vector<Real> > & cauchy_dir_,
+                const std::shared_ptr<dotk::Vector<Real> > & newton_dir_);
 
     virtual void step(const dotk::DOTk_OptimizationDataMng * const mng_,
-                      const std::tr1::shared_ptr<dotk::Vector<Real> > & cauchy_direction_,
-                      const std::tr1::shared_ptr<dotk::Vector<Real> > & scaled_direction_);
+                      const std::shared_ptr<dotk::Vector<Real> > & cauchy_direction_,
+                      const std::shared_ptr<dotk::Vector<Real> > & scaled_direction_);
 
 private:
     DOTk_DoglegTrustRegion(const dotk::DOTk_DoglegTrustRegion &);

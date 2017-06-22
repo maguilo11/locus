@@ -18,7 +18,7 @@
 namespace dotk
 {
 
-DOTk_TrustRegionAlgorithmsDataMng::DOTk_TrustRegionAlgorithmsDataMng(const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_) :
+DOTk_TrustRegionAlgorithmsDataMng::DOTk_TrustRegionAlgorithmsDataMng(const std::shared_ptr<dotk::DOTk_Primal> & primal_) :
         dotk::DOTk_OptimizationDataMng(primal_),
         m_RoutinesMng(),
         m_FirstOrderOperator(),
@@ -142,15 +142,15 @@ void DOTk_TrustRegionAlgorithmsDataMng::invalidCurvatureDetected(bool invalid_cu
     m_TrustRegion->invalidCurvatureDetected(flag);
 }
 
-const std::tr1::shared_ptr<dotk::DOTk_TrustRegion> & DOTk_TrustRegionAlgorithmsDataMng::getTrustRegion() const
+const std::shared_ptr<dotk::DOTk_TrustRegion> & DOTk_TrustRegionAlgorithmsDataMng::getTrustRegion() const
 {
     return (m_TrustRegion);
 }
 
 Real DOTk_TrustRegionAlgorithmsDataMng::computeDoglegRoot
 (Real trust_region_radius_,
- const std::tr1::shared_ptr<dotk::Vector<Real> > & vector1_,
- const std::tr1::shared_ptr<dotk::Vector<Real> > & vector2_)
+ const std::shared_ptr<dotk::Vector<Real> > & vector1_,
+ const std::shared_ptr<dotk::Vector<Real> > & vector2_)
 {
     Real root = m_TrustRegion->computeDoglegRoot(trust_region_radius_, vector1_, vector2_);
     return (root);
@@ -171,7 +171,7 @@ void DOTk_TrustRegionAlgorithmsDataMng::setDoglegTrustRegionMethod(Real trust_re
 }
 
 void DOTk_TrustRegionAlgorithmsDataMng::setDoubleDoglegTrustRegionMethod
-(const std::tr1::shared_ptr<dotk::Vector<Real> > & vector_,
+(const std::shared_ptr<dotk::Vector<Real> > & vector_,
  Real trust_region_radius_)
 {
     dotk::DOTk_TrustRegionFactory factory;
@@ -180,7 +180,7 @@ void DOTk_TrustRegionAlgorithmsDataMng::setDoubleDoglegTrustRegionMethod
 }
 
 void DOTk_TrustRegionAlgorithmsDataMng::updateState(const Real new_objective_function_value_,
-                                                    const std::tr1::shared_ptr<dotk::Vector<Real> > & new_primal_)
+                                                    const std::shared_ptr<dotk::Vector<Real> > & new_primal_)
 {
     Real old_objective_func_value = dotk::DOTk_OptimizationDataMng::getNewObjectiveFunctionValue();
     dotk::DOTk_OptimizationDataMng::setOldObjectiveFunctionValue(old_objective_func_value);
@@ -200,7 +200,7 @@ void DOTk_TrustRegionAlgorithmsDataMng::updateState(const Real new_objective_fun
 }
 
 void DOTk_TrustRegionAlgorithmsDataMng::computeScaledInexactNewtonStep(const bool invalid_curvature_detected_,
-                                                                       const std::tr1::shared_ptr<dotk::Vector<Real> > & descent_direction_)
+                                                                       const std::shared_ptr<dotk::Vector<Real> > & descent_direction_)
 {
     m_TrustRegion->invalidCurvatureDetected(invalid_curvature_detected_);
     m_TrustRegion->step(this, descent_direction_, dotk::DOTk_OptimizationDataMng::getTrialStep());
@@ -229,7 +229,7 @@ Real DOTk_TrustRegionAlgorithmsDataMng::evaluateObjective()
     return (value);
 }
 
-Real DOTk_TrustRegionAlgorithmsDataMng::evaluateObjective(const std::tr1::shared_ptr<dotk::Vector<Real> > & input_)
+Real DOTk_TrustRegionAlgorithmsDataMng::evaluateObjective(const std::shared_ptr<dotk::Vector<Real> > & input_)
 {
     Real value = m_RoutinesMng->objective(input_);
     return (value);
@@ -240,13 +240,13 @@ void DOTk_TrustRegionAlgorithmsDataMng::computeGradient()
     m_FirstOrderOperator->gradient(this);
 }
 
-void DOTk_TrustRegionAlgorithmsDataMng::computeGradient(const std::tr1::shared_ptr<dotk::Vector<Real> > & input_,
-                                                        const std::tr1::shared_ptr<dotk::Vector<Real> > & gradient_)
+void DOTk_TrustRegionAlgorithmsDataMng::computeGradient(const std::shared_ptr<dotk::Vector<Real> > & input_,
+                                                        const std::shared_ptr<dotk::Vector<Real> > & gradient_)
 {
     m_RoutinesMng->gradient(input_, gradient_);
 }
 
-const std::tr1::shared_ptr<dotk::DOTk_AssemblyManager> & DOTk_TrustRegionAlgorithmsDataMng::getRoutinesMng() const
+const std::shared_ptr<dotk::DOTk_AssemblyManager> & DOTk_TrustRegionAlgorithmsDataMng::getRoutinesMng() const
 {
     return (m_RoutinesMng);
 }

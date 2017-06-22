@@ -23,9 +23,9 @@ class DOTk_ObjectiveFunction;
 class DOTk_LineSearchMngTypeULP : public dotk::DOTk_LineSearchAlgorithmsDataMng
 {
 public:
-    explicit DOTk_LineSearchMngTypeULP(const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_);
-    DOTk_LineSearchMngTypeULP(const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_,
-                              const std::tr1::shared_ptr<dotk::DOTk_ObjectiveFunction<Real> > & operators_);
+    explicit DOTk_LineSearchMngTypeULP(const std::shared_ptr<dotk::DOTk_Primal> & primal_);
+    DOTk_LineSearchMngTypeULP(const std::shared_ptr<dotk::DOTk_Primal> & primal_,
+                              const std::shared_ptr<dotk::DOTk_ObjectiveFunction<Real> > & operators_);
     virtual ~DOTk_LineSearchMngTypeULP();
 
     void setForwardFiniteDiffGradient(const dotk::Vector<Real> & input_);

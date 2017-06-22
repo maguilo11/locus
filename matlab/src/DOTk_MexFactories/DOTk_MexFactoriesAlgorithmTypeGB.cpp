@@ -29,7 +29,7 @@ namespace mex
 
 template<typename Algorithm>
 void buildKrylovSolver(const mxArray* options_,
-                       const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_,
+                       const std::shared_ptr<dotk::DOTk_Primal> & primal_,
                        Algorithm & algorithm_)
 {
     size_t iterations = dotk::mex::parseMaxNumKrylovSolverItr(options_);

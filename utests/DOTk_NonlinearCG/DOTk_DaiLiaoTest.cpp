@@ -33,9 +33,9 @@ TEST(DOTk_DaiLiao, setAndGetConstant)
 TEST(DOTk_DaiLiao, computeScaleFactor)
 {
     size_t ncontrols = 2;
-    std::tr1::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
     primal->allocateSerialControlArray(ncontrols, 2);
-    std::tr1::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
+    std::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
     dotk::DOTk_LineSearchMngTypeULP mng(primal, objective);
 
     (*primal->control())[0] = 1.;
@@ -68,9 +68,9 @@ TEST(DOTk_DaiLiao, computeScaleFactor)
 TEST(DOTk_DaiLiao, getDirection)
 {
     size_t ncontrols = 2;
-    std::tr1::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
     primal->allocateSerialControlArray(ncontrols, 2);
-    std::tr1::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
+    std::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
     dotk::DOTk_LineSearchMngTypeULP mng(primal, objective);
 
     (*primal->control())[0] = 1.;
@@ -97,7 +97,7 @@ TEST(DOTk_DaiLiao, getDirection)
                      mng.getNewPrimal(),
                      mng.getTrialStep());
 
-    std::tr1::shared_ptr<dotk::Vector<Real> > gold = primal->control()->clone();
+    std::shared_ptr<dotk::Vector<Real> > gold = primal->control()->clone();
     (*gold)[0] = 31.3892857142857;
     (*gold)[1] = 18.7785714285714;
     Real tol = 1e-8;
@@ -108,10 +108,10 @@ TEST(DOTk_DaiLiao, getDirection)
 TEST(DOTk_DaiLiao, direction)
 {
     size_t ncontrols = 2;
-    std::tr1::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
     primal->allocateSerialControlArray(ncontrols, 2);
-    std::tr1::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
-    std::tr1::shared_ptr<dotk::DOTk_LineSearchMngTypeULP> mng(new dotk::DOTk_LineSearchMngTypeULP(primal, objective));
+    std::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
+    std::shared_ptr<dotk::DOTk_LineSearchMngTypeULP> mng(new dotk::DOTk_LineSearchMngTypeULP(primal, objective));
 
     (*primal->control())[0] = 1.;
     (*primal->control())[1] = 2.;
@@ -133,7 +133,7 @@ TEST(DOTk_DaiLiao, direction)
     EXPECT_EQ(dotk::types::DAI_LIAO_NLCG, dir.getNonlinearCGType());
     dir.direction(mng);
 
-    std::tr1::shared_ptr<dotk::Vector<Real> > gold = primal->control()->clone();
+    std::shared_ptr<dotk::Vector<Real> > gold = primal->control()->clone();
     (*gold)[0] = 31.3892857142857;
     (*gold)[1] = 18.7785714285714;
     Real tol = 1e-8;

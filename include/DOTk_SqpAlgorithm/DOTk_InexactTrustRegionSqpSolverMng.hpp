@@ -8,7 +8,7 @@
 #ifndef DOTK_INEXACTTRUSTREGIONSQPSOLVERMNG_HPP_
 #define DOTK_INEXACTTRUSTREGIONSQPSOLVERMNG_HPP_
 
-#include <tr1/memory>
+#include <memory>
 #include "DOTk_Types.hpp"
 
 namespace dotk
@@ -30,8 +30,8 @@ class vector;
 class DOTk_InexactTrustRegionSqpSolverMng
 {
 public:
-    DOTk_InexactTrustRegionSqpSolverMng(const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_,
-                                        const std::tr1::shared_ptr<dotk::DOTk_TrustRegionMngTypeELP> & mng_);
+    DOTk_InexactTrustRegionSqpSolverMng(const std::shared_ptr<dotk::DOTk_Primal> & primal_,
+                                        const std::shared_ptr<dotk::DOTk_TrustRegionMngTypeELP> & mng_);
     ~DOTk_InexactTrustRegionSqpSolverMng();
 
     Real getDualProbResidualNorm() const;
@@ -68,23 +68,23 @@ public:
 
     void setDualDotGradientTolerance(Real tolerance_);
     void setQuasiNormalProblemTrustRegionRadiusPenaltyParameter(Real parameter_);
-    void setDefaultKrylovSolvers(const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_,
-                                 const std::tr1::shared_ptr<dotk::DOTk_LinearOperator> & hessian_);
+    void setDefaultKrylovSolvers(const std::shared_ptr<dotk::DOTk_Primal> & primal_,
+                                 const std::shared_ptr<dotk::DOTk_LinearOperator> & hessian_);
 
-    dotk::types::solver_stop_criterion_t solveDualProb(const std::tr1::shared_ptr<dotk::DOTk_TrustRegionMngTypeELP> & mng_);
-    dotk::types::solver_stop_criterion_t solveTangentialProb(const std::tr1::shared_ptr<dotk::DOTk_TrustRegionMngTypeELP> & mng_);
-    dotk::types::solver_stop_criterion_t solveQuasiNormalProb(const std::tr1::shared_ptr<dotk::DOTk_TrustRegionMngTypeELP> & mng_);
-    dotk::types::solver_stop_criterion_t solveTangentialSubProb(const std::tr1::shared_ptr<dotk::DOTk_TrustRegionMngTypeELP> & mng_);
+    dotk::types::solver_stop_criterion_t solveDualProb(const std::shared_ptr<dotk::DOTk_TrustRegionMngTypeELP> & mng_);
+    dotk::types::solver_stop_criterion_t solveTangentialProb(const std::shared_ptr<dotk::DOTk_TrustRegionMngTypeELP> & mng_);
+    dotk::types::solver_stop_criterion_t solveQuasiNormalProb(const std::shared_ptr<dotk::DOTk_TrustRegionMngTypeELP> & mng_);
+    dotk::types::solver_stop_criterion_t solveTangentialSubProb(const std::shared_ptr<dotk::DOTk_TrustRegionMngTypeELP> & mng_);
 
     bool adjustSolversTolerance();
 
 private:
-    void initialize(const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_);
-    void buildTangentialSubProblemSolver(const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_,
-                                         const std::tr1::shared_ptr<dotk::DOTk_LinearOperator> & hessian_);
-    void computeNormalCauchyStep(const std::tr1::shared_ptr<dotk::DOTk_TrustRegionMngTypeELP> & mng_);
-    void computeScaledQuasiNormalStep(const std::tr1::shared_ptr<dotk::DOTk_TrustRegionMngTypeELP> & mng_);
-    void computeScaledProjectedTangentialStep(const std::tr1::shared_ptr<dotk::DOTk_TrustRegionMngTypeELP> & mng_);
+    void initialize(const std::shared_ptr<dotk::DOTk_Primal> & primal_);
+    void buildTangentialSubProblemSolver(const std::shared_ptr<dotk::DOTk_Primal> & primal_,
+                                         const std::shared_ptr<dotk::DOTk_LinearOperator> & hessian_);
+    void computeNormalCauchyStep(const std::shared_ptr<dotk::DOTk_TrustRegionMngTypeELP> & mng_);
+    void computeScaledQuasiNormalStep(const std::shared_ptr<dotk::DOTk_TrustRegionMngTypeELP> & mng_);
+    void computeScaledProjectedTangentialStep(const std::shared_ptr<dotk::DOTk_TrustRegionMngTypeELP> & mng_);
 
 private:
     Real m_ToleranceContractionFactor;
@@ -94,18 +94,18 @@ private:
     size_t m_MaxNumQuasiNormalProblemItr;
     size_t m_MaxNumTangentialSubProblemItr;
 
-    std::tr1::shared_ptr<dotk::Vector<Real> > m_DualWorkVector;
-    std::tr1::shared_ptr<dotk::DOTk_KrylovSolver> m_DualProbSolver;
-    std::tr1::shared_ptr<dotk::DOTk_KrylovSolver> m_TangentialProbSolver;
-    std::tr1::shared_ptr<dotk::DOTk_KrylovSolver> m_QuasiNormalProbSolver;
-    std::tr1::shared_ptr<dotk::DOTk_KrylovSolver> m_TangentialSubProbSolver;
+    std::shared_ptr<dotk::Vector<Real> > m_DualWorkVector;
+    std::shared_ptr<dotk::DOTk_KrylovSolver> m_DualProbSolver;
+    std::shared_ptr<dotk::DOTk_KrylovSolver> m_TangentialProbSolver;
+    std::shared_ptr<dotk::DOTk_KrylovSolver> m_QuasiNormalProbSolver;
+    std::shared_ptr<dotk::DOTk_KrylovSolver> m_TangentialSubProbSolver;
 
-    std::tr1::shared_ptr<dotk::DOTk_LinearOperator> m_AugmentedSystem;
-    std::tr1::shared_ptr<dotk::DOTk_LeftPreconditioner> m_TangSubProbLeftPrec;
-    std::tr1::shared_ptr<dotk::DOTk_FixedCriterion> m_TangentialSubProbCriterion;
-    std::tr1::shared_ptr<dotk::DOTk_SqpDualProblemCriterion> m_DualProblemCriterion;
-    std::tr1::shared_ptr<dotk::DOTk_QuasiNormalProbCriterion> m_QuasiNormalProbCriterion;
-    std::tr1::shared_ptr<dotk::DOTk_TangentialProblemCriterion> m_TangentialProblemCriterion;
+    std::shared_ptr<dotk::DOTk_LinearOperator> m_AugmentedSystem;
+    std::shared_ptr<dotk::DOTk_LeftPreconditioner> m_TangSubProbLeftPrec;
+    std::shared_ptr<dotk::DOTk_FixedCriterion> m_TangentialSubProbCriterion;
+    std::shared_ptr<dotk::DOTk_SqpDualProblemCriterion> m_DualProblemCriterion;
+    std::shared_ptr<dotk::DOTk_QuasiNormalProbCriterion> m_QuasiNormalProbCriterion;
+    std::shared_ptr<dotk::DOTk_TangentialProblemCriterion> m_TangentialProblemCriterion;
 
 private:
     DOTk_InexactTrustRegionSqpSolverMng(const dotk::DOTk_InexactTrustRegionSqpSolverMng &);

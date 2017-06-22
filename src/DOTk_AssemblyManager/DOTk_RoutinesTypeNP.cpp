@@ -20,10 +20,10 @@
 namespace dotk
 {
 
-DOTk_RoutinesTypeNP::DOTk_RoutinesTypeNP(const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_,
-                                         const std::tr1::shared_ptr<dotk::DOTk_ObjectiveFunction<Real> > & objective_,
-                                         const std::tr1::shared_ptr<dotk::DOTk_EqualityConstraint<Real> > & equality_,
-                                         const std::vector<std::tr1::shared_ptr<dotk::DOTk_InequalityConstraint<Real> > > & inequality_) :
+DOTk_RoutinesTypeNP::DOTk_RoutinesTypeNP(const std::shared_ptr<dotk::DOTk_Primal> & primal_,
+                                         const std::shared_ptr<dotk::DOTk_ObjectiveFunction<Real> > & objective_,
+                                         const std::shared_ptr<dotk::DOTk_EqualityConstraint<Real> > & equality_,
+                                         const std::vector<std::shared_ptr<dotk::DOTk_InequalityConstraint<Real> > > & inequality_) :
         m_State(),
         m_StateWorkVec(),
         m_ControlWorkVec(),
@@ -39,7 +39,7 @@ DOTk_RoutinesTypeNP::~DOTk_RoutinesTypeNP()
 {
 }
 
-Real DOTk_RoutinesTypeNP::objective(const std::tr1::shared_ptr<dotk::Vector<Real> > & control_)
+Real DOTk_RoutinesTypeNP::objective(const std::shared_ptr<dotk::Vector<Real> > & control_)
 {
     m_State->fill(0.);
     m_StateWorkVec->fill(0.);
@@ -52,8 +52,8 @@ Real DOTk_RoutinesTypeNP::objective(const std::tr1::shared_ptr<dotk::Vector<Real
     return (objective_function_value);
 }
 
-void DOTk_RoutinesTypeNP::gradient(const std::tr1::shared_ptr<dotk::Vector<Real> > & control_,
-                                   const std::tr1::shared_ptr<dotk::Vector<Real> > & gradient_)
+void DOTk_RoutinesTypeNP::gradient(const std::shared_ptr<dotk::Vector<Real> > & control_,
+                                   const std::shared_ptr<dotk::Vector<Real> > & gradient_)
 {
     m_StateWorkVec->fill(0.);
     m_ObjectiveFunction->partialDerivativeState(*m_State, *control_, *m_StateWorkVec);
@@ -89,22 +89,22 @@ Real DOTk_RoutinesTypeNP::inequalityBound(const size_t index_)
 }
 
 Real DOTk_RoutinesTypeNP::inequalityValue(const size_t index_,
-                                             const std::tr1::shared_ptr<dotk::Vector<Real> > & control_)
+                                             const std::shared_ptr<dotk::Vector<Real> > & control_)
 {
     Real value = m_InequalityConstraint[index_]->value(*m_State, *control_);
     return (value);
 }
 
 void DOTk_RoutinesTypeNP::inequalityGradient(const size_t index_,
-                                             const std::tr1::shared_ptr<dotk::Vector<Real> > & control_,
-                                             const std::tr1::shared_ptr<dotk::Vector<Real> > & gradient_)
+                                             const std::shared_ptr<dotk::Vector<Real> > & control_,
+                                             const std::shared_ptr<dotk::Vector<Real> > & gradient_)
 {
     gradient_->fill(0.);
     m_InequalityConstraint[index_]->partialDerivativeControl(*m_State, *control_, *gradient_);
     DOTk_AssemblyManager::updateInequalityConstraintGradientCounter();
 }
 
-void DOTk_RoutinesTypeNP::initialize(const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_)
+void DOTk_RoutinesTypeNP::initialize(const std::shared_ptr<dotk::DOTk_Primal> & primal_)
 {
     if(primal_->state().use_count() > 0)
     {

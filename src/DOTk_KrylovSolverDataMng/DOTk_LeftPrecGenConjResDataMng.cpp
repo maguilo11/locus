@@ -19,8 +19,8 @@
 namespace dotk
 {
 
-DOTk_LeftPrecGenConjResDataMng::DOTk_LeftPrecGenConjResDataMng(const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_,
-                                                               const std::tr1::shared_ptr<dotk::DOTk_LinearOperator> & linear_operator_,
+DOTk_LeftPrecGenConjResDataMng::DOTk_LeftPrecGenConjResDataMng(const std::shared_ptr<dotk::DOTk_Primal> & primal_,
+                                                               const std::shared_ptr<dotk::DOTk_LinearOperator> & linear_operator_,
                                                                size_t max_num_itr_) :
         dotk::DOTk_KrylovSolverDataMng(primal_, linear_operator_),
         m_LeftPrecTimesResidual(),
@@ -71,17 +71,17 @@ void DOTk_LeftPrecGenConjResDataMng::setBarzilaiBorweinSecantLeftPreconditioner(
     factory.buildBarzilaiBorweinSecantPreconditioner(dotk::DOTk_KrylovSolverDataMng::getSolution(), m_LeftPreconditioner);
 }
 
-const std::tr1::shared_ptr<dotk::DOTk_LeftPreconditioner> & DOTk_LeftPrecGenConjResDataMng::getLeftPrec() const
+const std::shared_ptr<dotk::DOTk_LeftPreconditioner> & DOTk_LeftPrecGenConjResDataMng::getLeftPrec() const
 {
     return (m_LeftPreconditioner);
 }
 
-const std::tr1::shared_ptr<dotk::Vector<Real> > & DOTk_LeftPrecGenConjResDataMng::getLeftPrecTimesVector() const
+const std::shared_ptr<dotk::Vector<Real> > & DOTk_LeftPrecGenConjResDataMng::getLeftPrecTimesVector() const
 {
     return (m_LeftPrecTimesResidual);
 }
 
-void DOTk_LeftPrecGenConjResDataMng::allocate(const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_)
+void DOTk_LeftPrecGenConjResDataMng::allocate(const std::shared_ptr<dotk::DOTk_Primal> & primal_)
 {
     bool is_dual_allocated = primal_->dual().use_count() > 0;
     bool is_state_allocated = primal_->state().use_count() > 0;

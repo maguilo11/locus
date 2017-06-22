@@ -19,9 +19,9 @@
 namespace dotk
 {
 
-DOTk_LineSearchMngTypeUNP::DOTk_LineSearchMngTypeUNP(const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_,
-                                                     const std::tr1::shared_ptr<dotk::DOTk_ObjectiveFunction<Real> > & objective_,
-                                                     const std::tr1::shared_ptr<dotk::DOTk_EqualityConstraint<Real> > & equality_) :
+DOTk_LineSearchMngTypeUNP::DOTk_LineSearchMngTypeUNP(const std::shared_ptr<dotk::DOTk_Primal> & primal_,
+                                                     const std::shared_ptr<dotk::DOTk_ObjectiveFunction<Real> > & objective_,
+                                                     const std::shared_ptr<dotk::DOTk_EqualityConstraint<Real> > & equality_) :
         dotk::DOTk_LineSearchAlgorithmsDataMng(primal_)
 {
     m_RoutinesMng.reset(new dotk::DOTk_RoutinesTypeUNP(primal_, objective_, equality_));

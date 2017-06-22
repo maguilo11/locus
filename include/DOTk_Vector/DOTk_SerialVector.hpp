@@ -9,7 +9,7 @@
 #define DOTK_SERIALVECTOR_HPP_
 
 #include <cmath>
-#include <Vector>
+#include <vector>
 #include <cassert>
 #include <algorithm>
 
@@ -140,10 +140,10 @@ public:
         return (dim);
     }
     // Clones memory for an object of ScalarType dotk::Vector
-    std::tr1::shared_ptr<dotk::Vector<ScalarType> > clone() const
+    std::shared_ptr<dotk::Vector<ScalarType> > clone() const
     {
         size_t dim = this->size();
-        std::tr1::shared_ptr<dotk::StdVector<ScalarType> > output(new dotk::StdVector<ScalarType>(dim, 0.));
+        std::shared_ptr<dotk::StdVector<ScalarType> > output(new dotk::StdVector<ScalarType>(dim, 0.));
         return (output);
     }
     // Operator overloads the square bracket operator

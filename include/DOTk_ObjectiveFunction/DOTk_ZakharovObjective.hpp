@@ -27,7 +27,7 @@ public:
     void hessian(const dotk::Vector<Real> & primal_, const dotk::Vector<Real> & vector_, dotk::Vector<Real> & output_);
 
 private:
-    std::tr1::shared_ptr<dotk::Vector<Real> > m_Data;
+    std::shared_ptr<dotk::Vector<Real> > m_Data;
 
 private:
     DOTk_ZakharovObjective(const dotk::DOTk_ZakharovObjective&);

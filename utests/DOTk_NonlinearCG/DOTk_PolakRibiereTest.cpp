@@ -23,10 +23,10 @@ namespace DOTkNonlinearConjugateGradientTest
 TEST(DOTk_Daniels, getDirection)
 {
     size_t ncontrols = 2;
-    std::tr1::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
     primal->allocateSerialControlArray(ncontrols, 2);
-    std::tr1::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
-    std::tr1::shared_ptr<dotk::DOTk_LineSearchMngTypeULP> mng(new dotk::DOTk_LineSearchMngTypeULP(primal, objective));
+    std::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
+    std::shared_ptr<dotk::DOTk_LineSearchMngTypeULP> mng(new dotk::DOTk_LineSearchMngTypeULP(primal, objective));
 
     objective->gradient(*primal->control(), *mng->getNewGradient());
     mng->getTrialStep()->update(1., *mng->getNewGradient(), 0.);
@@ -42,7 +42,7 @@ TEST(DOTk_Daniels, getDirection)
     (*mng->getTrialStep())[0] = -1.;
     (*mng->getTrialStep())[1] = 1.;
 
-    std::tr1::shared_ptr<dotk::NumericallyDifferentiatedHessian> hessian(new dotk::NumericallyDifferentiatedHessian(primal, objective));
+    std::shared_ptr<dotk::NumericallyDifferentiatedHessian> hessian(new dotk::NumericallyDifferentiatedHessian(primal, objective));
     hessian->setForwardDifference(*primal->control());
     hessian->apply(mng, mng->getTrialStep(), mng->getMatrixTimesVector());
     EXPECT_NEAR(-4801.9971998201072, (*mng->getMatrixTimesVector())[0], tolerance);
@@ -61,10 +61,10 @@ TEST(DOTk_Daniels, getDirection)
 TEST(DOTk_Daniels, direction_TakeSteepestDescent)
 {
     size_t ncontrols = 2;
-    std::tr1::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
     primal->allocateSerialControlArray(ncontrols, 2);
-    std::tr1::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
-    std::tr1::shared_ptr<dotk::DOTk_LineSearchMngTypeULP> mng(new dotk::DOTk_LineSearchMngTypeULP(primal, objective));
+    std::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
+    std::shared_ptr<dotk::DOTk_LineSearchMngTypeULP> mng(new dotk::DOTk_LineSearchMngTypeULP(primal, objective));
 
     objective->gradient(*primal->control(), *mng->getNewGradient());
     mng->getTrialStep()->update(1., *mng->getNewGradient(), 0.);
@@ -76,7 +76,7 @@ TEST(DOTk_Daniels, direction_TakeSteepestDescent)
     (*mng->getTrialStep())[0] = -1.;
     (*mng->getTrialStep())[1] = 1.;
 
-    std::tr1::shared_ptr<dotk::NumericallyDifferentiatedHessian> hessian(new dotk::NumericallyDifferentiatedHessian(primal, objective));
+    std::shared_ptr<dotk::NumericallyDifferentiatedHessian> hessian(new dotk::NumericallyDifferentiatedHessian(primal, objective));
     hessian->setForwardDifference(*primal->control());
     dotk::DOTk_Daniels nlcg(hessian);
     nlcg.direction(mng);
@@ -93,9 +93,9 @@ TEST(DOTk_Daniels, direction_TakeSteepestDescent)
 TEST(DOTk_PolakRibiere, computeScaleFactor)
 {
     size_t ncontrols = 2;
-    std::tr1::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
     primal->allocateSerialControlArray(ncontrols, 2);
-    std::tr1::shared_ptr<dotk::DOTk_Rosenbrock> operators(new dotk::DOTk_Rosenbrock);
+    std::shared_ptr<dotk::DOTk_Rosenbrock> operators(new dotk::DOTk_Rosenbrock);
     dotk::DOTk_LineSearchMngTypeULP mng(primal, operators);
 
     (*primal->control())[0] = 1.;
@@ -115,9 +115,9 @@ TEST(DOTk_PolakRibiere, computeScaleFactor)
 TEST(DOTk_PolakRibiere, getDirection)
 {
     size_t ncontrols = 2;
-    std::tr1::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
     primal->allocateSerialControlArray(ncontrols, 2);
-    std::tr1::shared_ptr<dotk::DOTk_Rosenbrock> operators(new dotk::DOTk_Rosenbrock);
+    std::shared_ptr<dotk::DOTk_Rosenbrock> operators(new dotk::DOTk_Rosenbrock);
     dotk::DOTk_LineSearchMngTypeULP mng(primal, operators);
 
     (*primal->control())[0] = 1.;
@@ -135,7 +135,7 @@ TEST(DOTk_PolakRibiere, getDirection)
     dir.getDirection(mng.getOldGradient(), mng.getNewGradient(), mng.getTrialStep());
 
     Real tol = 1e-8;
-    std::tr1::shared_ptr<dotk::Vector<Real> > gold = dotk::gtest::allocateControl();
+    std::shared_ptr<dotk::Vector<Real> > gold = dotk::gtest::allocateControl();
     (*gold)[0] = -103.4;
     (*gold)[1] = -250.8;
     dotk::gtest::checkResults(*mng.getTrialStep(), *gold);
@@ -145,10 +145,10 @@ TEST(DOTk_PolakRibiere, getDirection)
 TEST(DOTk_PolakRibiere, direction)
 {
     size_t ncontrols = 2;
-    std::tr1::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
     primal->allocateSerialControlArray(ncontrols, 2);
-    std::tr1::shared_ptr<dotk::DOTk_Rosenbrock> operators(new dotk::DOTk_Rosenbrock);
-    std::tr1::shared_ptr<dotk::DOTk_LineSearchMngTypeULP>
+    std::shared_ptr<dotk::DOTk_Rosenbrock> operators(new dotk::DOTk_Rosenbrock);
+    std::shared_ptr<dotk::DOTk_LineSearchMngTypeULP>
     mng(new dotk::DOTk_LineSearchMngTypeULP(primal, operators));
 
     (*primal->control())[0] = 1.;
@@ -165,7 +165,7 @@ TEST(DOTk_PolakRibiere, direction)
     EXPECT_EQ(dotk::types::POLAK_RIBIERE_NLCG, dir.getNonlinearCGType());
     dir.direction(mng);
 
-    std::tr1::shared_ptr<dotk::Vector<Real> > gold = dotk::gtest::allocateControl();
+    std::shared_ptr<dotk::Vector<Real> > gold = dotk::gtest::allocateControl();
     (*gold)[0] = -103.4;
     (*gold)[1] = -250.8;
     Real tol = 1e-8;

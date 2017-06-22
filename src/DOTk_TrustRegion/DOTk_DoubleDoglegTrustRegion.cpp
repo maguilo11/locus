@@ -12,7 +12,7 @@
 namespace dotk
 {
 
-DOTk_DoubleDoglegTrustRegion::DOTk_DoubleDoglegTrustRegion(const std::tr1::shared_ptr<dotk::Vector<Real> > & vector_) :
+DOTk_DoubleDoglegTrustRegion::DOTk_DoubleDoglegTrustRegion(const std::shared_ptr<dotk::Vector<Real> > & vector_) :
         dotk::DOTk_TrustRegion(dotk::types::trustregion_t::TRUST_REGION_DOUBLE_DOGLEG),
         mParamPromoteMonotonicallyDecreasingQuadraticModel(0.8),
         mCauchyPoint(vector_->clone()),
@@ -34,9 +34,9 @@ void DOTk_DoubleDoglegTrustRegion::setParamPromotesMonotonicallyDecreasingQuadra
     mParamPromoteMonotonicallyDecreasingQuadraticModel = value_;
 }
 
-Real DOTk_DoubleDoglegTrustRegion::computeDoubleDoglegRoot(const std::tr1::shared_ptr<dotk::Vector<Real> > & grad_,
-                                                           const std::tr1::shared_ptr<dotk::Vector<Real> > & newton_direction_,
-                                                           const std::tr1::shared_ptr<dotk::Vector<Real> > & matrix_times_grad_)
+Real DOTk_DoubleDoglegTrustRegion::computeDoubleDoglegRoot(const std::shared_ptr<dotk::Vector<Real> > & grad_,
+                                                           const std::shared_ptr<dotk::Vector<Real> > & newton_direction_,
+                                                           const std::shared_ptr<dotk::Vector<Real> > & matrix_times_grad_)
 {
     /// Computes point in the Newton direction at which the reduction of the \n
     /// quadratic approximation to the objectivte function resulting from \n
@@ -56,9 +56,9 @@ Real DOTk_DoubleDoglegTrustRegion::computeDoubleDoglegRoot(const std::tr1::share
 }
 
 void DOTk_DoubleDoglegTrustRegion::doubleDogleg(const Real & trust_region_radius_,
-                                                const std::tr1::shared_ptr<dotk::Vector<Real> > & grad_,
-                                                const std::tr1::shared_ptr<dotk::Vector<Real> > & matrix_times_grad_,
-                                                const std::tr1::shared_ptr<dotk::Vector<Real> > & newton_step_)
+                                                const std::shared_ptr<dotk::Vector<Real> > & grad_,
+                                                const std::shared_ptr<dotk::Vector<Real> > & matrix_times_grad_,
+                                                const std::shared_ptr<dotk::Vector<Real> > & newton_step_)
 {
     Real norm_newton_step = newton_step_->norm();
     if(dotk::DOTk_TrustRegion::isCurvatureInvalid() == true)
@@ -104,23 +104,23 @@ void DOTk_DoubleDoglegTrustRegion::doubleDogleg(const Real & trust_region_radius
 }
 
 void DOTk_DoubleDoglegTrustRegion::step(const dotk::DOTk_OptimizationDataMng * const mng_,
-                                        const std::tr1::shared_ptr<dotk::Vector<Real> > & matrix_times_grad_,
-                                        const std::tr1::shared_ptr<dotk::Vector<Real> > & scaled_direction_)
+                                        const std::shared_ptr<dotk::Vector<Real> > & matrix_times_grad_,
+                                        const std::shared_ptr<dotk::Vector<Real> > & scaled_direction_)
 {
     Real trust_region = dotk::DOTk_TrustRegion::getTrustRegionRadius();
     this->doubleDogleg(trust_region, mng_->getNewGradient(), matrix_times_grad_, scaled_direction_);
 }
 
-void DOTk_DoubleDoglegTrustRegion::computeScaledNewtonStep(const std::tr1::shared_ptr<dotk::Vector<Real> > & grad_,
-                                                           const std::tr1::shared_ptr<dotk::Vector<Real> > & matrix_times_grad_,
-                                                           const std::tr1::shared_ptr<dotk::Vector<Real> > & newton_step_)
+void DOTk_DoubleDoglegTrustRegion::computeScaledNewtonStep(const std::shared_ptr<dotk::Vector<Real> > & grad_,
+                                                           const std::shared_ptr<dotk::Vector<Real> > & matrix_times_grad_,
+                                                           const std::shared_ptr<dotk::Vector<Real> > & newton_step_)
 {
     Real double_dogleg_root = this->computeDoubleDoglegRoot(grad_, newton_step_, matrix_times_grad_);
     mScaledNewtonStep->update(double_dogleg_root, *newton_step_, 0.);
 }
 
 void DOTk_DoubleDoglegTrustRegion::computeConvexCombinationBetweenCauchyAndDoglegStep
-(const Real & trust_region_radius_, const std::tr1::shared_ptr<dotk::Vector<Real> > & newton_step_)
+(const Real & trust_region_radius_, const std::shared_ptr<dotk::Vector<Real> > & newton_step_)
 {
     mScaledNewtonStep->update(-1., *mCauchyPoint, 1.);
     Real dogleg_root = dotk::DOTk_TrustRegion::computeDoglegRoot(trust_region_radius_,

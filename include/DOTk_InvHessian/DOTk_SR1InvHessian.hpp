@@ -21,22 +21,22 @@ class Vector;
 class DOTk_SR1InvHessian : public dotk::DOTk_SecondOrderOperator
 {
 public:
-    explicit DOTk_SR1InvHessian(const std::tr1::shared_ptr<dotk::Vector<Real> > & vector_);
+    explicit DOTk_SR1InvHessian(const std::shared_ptr<dotk::Vector<Real> > & vector_);
     virtual ~DOTk_SR1InvHessian();
 
-    const std::tr1::shared_ptr<dotk::Vector<Real> > & getDeltaGrad() const;
-    const std::tr1::shared_ptr<dotk::Vector<Real> > & getDeltaPrimal() const;
+    const std::shared_ptr<dotk::Vector<Real> > & getDeltaGrad() const;
+    const std::shared_ptr<dotk::Vector<Real> > & getDeltaPrimal() const;
 
-    void getInvHessian(const std::tr1::shared_ptr<dotk::Vector<Real> > & vector_,
-                       const std::tr1::shared_ptr<dotk::Vector<Real> > & inv_hess_times_vector_);
-    virtual void apply(const std::tr1::shared_ptr<dotk::DOTk_OptimizationDataMng> & mng_,
-                       const std::tr1::shared_ptr<dotk::Vector<Real> > & vector_,
-                       const std::tr1::shared_ptr<dotk::Vector<Real> > & matrix_times_vector_);
+    void getInvHessian(const std::shared_ptr<dotk::Vector<Real> > & vector_,
+                       const std::shared_ptr<dotk::Vector<Real> > & inv_hess_times_vector_);
+    virtual void apply(const std::shared_ptr<dotk::DOTk_OptimizationDataMng> & mng_,
+                       const std::shared_ptr<dotk::Vector<Real> > & vector_,
+                       const std::shared_ptr<dotk::Vector<Real> > & matrix_times_vector_);
 
 private:
-    std::tr1::shared_ptr<dotk::Vector<Real> > m_DeltaPrimal;
-    std::tr1::shared_ptr<dotk::Vector<Real> > m_DeltaGradient;
-    std::tr1::shared_ptr<dotk::Vector<Real> > m_InvHessTimesVec;
+    std::shared_ptr<dotk::Vector<Real> > m_DeltaPrimal;
+    std::shared_ptr<dotk::Vector<Real> > m_DeltaGradient;
+    std::shared_ptr<dotk::Vector<Real> > m_InvHessTimesVec;
 
 private:
     DOTk_SR1InvHessian(const dotk::DOTk_SR1InvHessian &);

@@ -80,26 +80,26 @@ TEST(SecondOrderOperator, getAndSetInvHessianType)
 
 TEST(SecondOrderOperator, updateSecantStorage)
 {
-    std::tr1::shared_ptr<dotk::Vector<Real> > delta_grad = dotk::gtest::allocateData(2);
+    std::shared_ptr<dotk::Vector<Real> > delta_grad = dotk::gtest::allocateData(2);
     (*delta_grad)[0] = -1151;
     (*delta_grad)[1] = 250;
 
     size_t storage = 2;
     std::vector<Real> rho(storage, 0.);
-    std::tr1::shared_ptr<dotk::matrix<Real> > dgrad_storage(new dotk::serial::DOTk_RowMatrix<Real>(*delta_grad, storage));
-    std::tr1::shared_ptr<dotk::matrix<Real> > dprimal_storage(new dotk::serial::DOTk_RowMatrix<Real>(*delta_grad, storage));
+    std::shared_ptr<dotk::matrix<Real> > dgrad_storage(new dotk::serial::DOTk_RowMatrix<Real>(*delta_grad, storage));
+    std::shared_ptr<dotk::matrix<Real> > dprimal_storage(new dotk::serial::DOTk_RowMatrix<Real>(*delta_grad, storage));
 
     // Test 1: SECANT STORAGE IS NOT FULL, STORE DATA INTO FIRST ENTRY
     dotk::DOTk_SecondOrderOperator hess(storage);
     hess.setUpdateSecondOrderOperator(true);
-    std::tr1::shared_ptr<dotk::Vector<Real> > delta_primal = delta_grad->clone();
+    std::shared_ptr<dotk::Vector<Real> > delta_primal = delta_grad->clone();
     delta_primal->fill(-0.5);
     hess.updateSecantStorage(delta_primal, delta_grad, rho, dprimal_storage, dgrad_storage);
     EXPECT_EQ(1, hess.getNumUpdatesStored());
 
     std::vector<Real> rho_gold(rho.size(), 0.);
-    std::tr1::shared_ptr<dotk::matrix<Real> > dgrad_sotrage_gold = dgrad_storage->clone();
-    std::tr1::shared_ptr<dotk::matrix<Real> > dprimal_storage_gold = dprimal_storage->clone();
+    std::shared_ptr<dotk::matrix<Real> > dgrad_sotrage_gold = dgrad_storage->clone();
+    std::shared_ptr<dotk::matrix<Real> > dprimal_storage_gold = dprimal_storage->clone();
     rho_gold[0] = 0.00221975582686;
     (*dgrad_sotrage_gold)(0,0) = -1151.;
     (*dgrad_sotrage_gold)(0,1) = 250.;
@@ -154,13 +154,13 @@ TEST(SecondOrderOperator, updateSecantStorage)
 TEST(SecondOrderOperator, computeStatePerturbation)
 {
     size_t ncontrols = 2;
-    std::tr1::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
     primal->allocateSerialControlArray(ncontrols, 2);
-    std::tr1::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
-    std::tr1::shared_ptr<dotk::DOTk_LineSearchMngTypeULP> mng(new dotk::DOTk_LineSearchMngTypeULP(primal, objective));
+    std::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
+    std::shared_ptr<dotk::DOTk_LineSearchMngTypeULP> mng(new dotk::DOTk_LineSearchMngTypeULP(primal, objective));
 
-    std::tr1::shared_ptr<dotk::Vector<Real> > grad = primal->control()->clone();
-    std::tr1::shared_ptr<dotk::Vector<Real> > vector = primal->control()->clone();
+    std::shared_ptr<dotk::Vector<Real> > grad = primal->control()->clone();
+    std::shared_ptr<dotk::Vector<Real> > vector = primal->control()->clone();
 
     mng->getRoutinesMng()->gradient(vector, grad);
 
@@ -168,8 +168,8 @@ TEST(SecondOrderOperator, computeStatePerturbation)
     mng->getNewGradient()->update(1., *grad, 0.);
 
     dotk::DOTk_SecondOrderOperator hess;
-    std::tr1::shared_ptr<dotk::Vector<Real> > dgrad = primal->control()->clone();
-    std::tr1::shared_ptr<dotk::Vector<Real> > dprimal = primal->control()->clone();
+    std::shared_ptr<dotk::Vector<Real> > dgrad = primal->control()->clone();
+    std::shared_ptr<dotk::Vector<Real> > dprimal = primal->control()->clone();
     hess.computeDeltaPrimal(mng->getNewPrimal(), mng->getOldPrimal(), dprimal);
     hess.computeDeltaGradient(mng->getNewGradient(), mng->getOldGradient(), dgrad);
 
@@ -180,16 +180,16 @@ TEST(SecondOrderOperator, computeStatePerturbation)
 TEST(SecondOrderOperator, getBarzilaiBorweinStep)
 {
     size_t ncontrols = 2;
-    std::tr1::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
     primal->allocateSerialControlArray(ncontrols, 2);
-    std::tr1::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
-    std::tr1::shared_ptr<dotk::DOTk_LineSearchMngTypeULP> mng(new dotk::DOTk_LineSearchMngTypeULP(primal, objective));
+    std::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
+    std::shared_ptr<dotk::DOTk_LineSearchMngTypeULP> mng(new dotk::DOTk_LineSearchMngTypeULP(primal, objective));
     dotk::DOTk_SecondOrderOperator hess;
     EXPECT_EQ(dotk::types::HESSIAN_DISABLED, hess.getHessianType());
 
-    std::tr1::shared_ptr<dotk::Vector<Real> > dgrad = primal->control()->clone();
+    std::shared_ptr<dotk::Vector<Real> > dgrad = primal->control()->clone();
     dgrad->fill(2);
-    std::tr1::shared_ptr<dotk::Vector<Real> > dprimal = primal->control()->clone();
+    std::shared_ptr<dotk::Vector<Real> > dprimal = primal->control()->clone();
     dprimal->fill(2);
     mng->getRoutinesMng()->gradient(dprimal, dgrad);
 
@@ -205,17 +205,17 @@ TEST(SecondOrderOperator, getBarzilaiBorweinStep)
 TEST(UserDefinedHessian, apply)
 {
     size_t ncontrols = 2;
-    std::tr1::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
     primal->allocateSerialControlArray(ncontrols, 2);
-    std::tr1::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
-    std::tr1::shared_ptr<dotk::DOTk_LineSearchMngTypeULP> mng(new dotk::DOTk_LineSearchMngTypeULP(primal, objective));
+    std::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
+    std::shared_ptr<dotk::DOTk_LineSearchMngTypeULP> mng(new dotk::DOTk_LineSearchMngTypeULP(primal, objective));
     dotk::DOTk_UserDefinedHessian hess;
     EXPECT_EQ(dotk::types::USER_DEFINED_HESS, hess.getHessianType());
 
     mng->getTrialStep()->fill(1);
     hess.apply(mng, mng->getTrialStep(), mng->getMatrixTimesVector());
 
-    std::tr1::shared_ptr<dotk::Vector<Real> > gold = primal->control()->clone();
+    std::shared_ptr<dotk::Vector<Real> > gold = primal->control()->clone();
     (*gold)[0] = 3202.;
     (*gold)[1] = -600.;
     dotk::gtest::checkResults(*mng->getMatrixTimesVector(), *gold);

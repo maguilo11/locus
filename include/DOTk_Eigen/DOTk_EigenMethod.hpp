@@ -8,6 +8,8 @@
 #ifndef DOTK_EIGENMETHOD_HPP_
 #define DOTK_EIGENMETHOD_HPP_
 
+#include <memory>
+
 #include "DOTk_Types.hpp"
 
 namespace dotk
@@ -25,12 +27,12 @@ public:
     virtual ~DOTk_EigenMethod();
 
     dotk::types::eigen_t type() const;
-    virtual void solve(const std::tr1::shared_ptr<dotk::matrix<Real> > & input_,
-                       std::tr1::shared_ptr<dotk::Vector<Real> > & eigenvalues_,
-                       std::tr1::shared_ptr<dotk::matrix<Real> > & eigenvectors_);
-    virtual void solve(const std::tr1::shared_ptr<dotk::matrix<Real> > & input_,
+    virtual void solve(const std::shared_ptr<dotk::matrix<Real> > & input_,
+                       std::shared_ptr<dotk::Vector<Real> > & eigenvalues_,
+                       std::shared_ptr<dotk::matrix<Real> > & eigenvectors_);
+    virtual void solve(const std::shared_ptr<dotk::matrix<Real> > & input_,
                        Real & eigenvalues_,
-                       std::tr1::shared_ptr<dotk::Vector<Real> > & eigenvectors_);
+                       std::shared_ptr<dotk::Vector<Real> > & eigenvectors_);
 
 private:
     dotk::types::eigen_t m_EigenType;

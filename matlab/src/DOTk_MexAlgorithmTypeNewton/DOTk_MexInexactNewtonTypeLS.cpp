@@ -112,7 +112,7 @@ void DOTk_MexInexactNewtonTypeLS::setAlgorithmParameters(dotk::DOTk_LineSearchIn
 }
 
 void DOTk_MexInexactNewtonTypeLS::setLineSearchMethodParameters
-(const std::tr1::shared_ptr<dotk::DOTk_LineSearchStepMng> & step_)
+(const std::shared_ptr<dotk::DOTk_LineSearchStepMng> & step_)
 {
     size_t max_num_itr = this->getMaxNumLineSearchItr();
     step_->setMaxNumIterations(max_num_itr);
@@ -128,25 +128,25 @@ void DOTk_MexInexactNewtonTypeLS::solveTypeLinearProgramming(const mxArray* inpu
     mxArray* mx_initial_control = dotk::mex::parseInitialControl(input_[0]);
     dotk::MexVector controls(mx_initial_control);
     mxDestroyArray(mx_initial_control);
-    std::tr1::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
     primal->allocateUserDefinedControl(controls);
 
     // Set line search step manager
     dotk::types::line_search_t line_search_type = this->getLineSearchMethod();
-    std::tr1::shared_ptr<dotk::DOTk_LineSearchStep> step(new dotk::DOTk_LineSearchStep(primal));
+    std::shared_ptr<dotk::DOTk_LineSearchStep> step(new dotk::DOTk_LineSearchStep(primal));
     step->build(primal, line_search_type);
     this->setLineSearchMethodParameters(step);
 
     // Set objective function operators
     dotk::types::problem_t problem_type = dotk::DOTk_MexAlgorithmTypeNewton::getProblemType();
-    std::tr1::shared_ptr<dotk::DOTk_MexObjectiveFunction>
+    std::shared_ptr<dotk::DOTk_MexObjectiveFunction>
         objective(new dotk::DOTk_MexObjectiveFunction(m_ObjectiveFunction, problem_type));
 
     // Set line search algorithm data manager, gradient, and Hessian
-    std::tr1::shared_ptr<dotk::DOTk_LineSearchMngTypeULP>
+    std::shared_ptr<dotk::DOTk_LineSearchMngTypeULP>
         mng(new dotk::DOTk_LineSearchMngTypeULP(primal, objective));
     dotk::mex::buildGradient(input_[0], mng);
-    std::tr1::shared_ptr<dotk::NumericallyDifferentiatedHessian>
+    std::shared_ptr<dotk::NumericallyDifferentiatedHessian>
         hessian(new dotk::NumericallyDifferentiatedHessian(primal, objective));
     dotk::mex::buildNumericallyDifferentiatedHessian(input_[0], controls, hessian);
 
@@ -171,29 +171,29 @@ void DOTk_MexInexactNewtonTypeLS::solveTypeNonlinearProgramming(const mxArray* i
     mxDestroyArray(mx_initial_control);
 
     // Allocate DOTk data structures
-    std::tr1::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
     primal->allocateUserDefinedState(states);
     primal->allocateUserDefinedControl(controls);
 
     // Set objective function operators
-    std::tr1::shared_ptr<dotk::DOTk_LineSearchStep> step(new dotk::DOTk_LineSearchStep(primal));
+    std::shared_ptr<dotk::DOTk_LineSearchStep> step(new dotk::DOTk_LineSearchStep(primal));
     dotk::types::line_search_t line_search_type = this->getLineSearchMethod();
     step->build(primal, line_search_type);
     this->setLineSearchMethodParameters(step);
 
     // Set objective funciton and equality constraint operators
     dotk::types::problem_t problem_type = DOTk_MexAlgorithmTypeNewton::getProblemType();
-    std::tr1::shared_ptr<dotk::DOTk_MexObjectiveFunction>
+    std::shared_ptr<dotk::DOTk_MexObjectiveFunction>
         objective(new dotk::DOTk_MexObjectiveFunction(m_ObjectiveFunction, problem_type));
     m_EqualityConstraint = dotk::mex::parseEqualityConstraint(input_[1]);
-    std::tr1::shared_ptr<dotk::DOTk_MexEqualityConstraint>
+    std::shared_ptr<dotk::DOTk_MexEqualityConstraint>
         equality(new dotk::DOTk_MexEqualityConstraint(m_EqualityConstraint, problem_type));
 
     // Set line search algorithm data manager
-    std::tr1::shared_ptr<dotk::DOTk_LineSearchMngTypeUNP>
+    std::shared_ptr<dotk::DOTk_LineSearchMngTypeUNP>
         mng(new dotk::DOTk_LineSearchMngTypeUNP(primal, objective, equality));
     dotk::mex::buildGradient(input_[0], mng);
-    std::tr1::shared_ptr<dotk::NumericallyDifferentiatedHessian>
+    std::shared_ptr<dotk::NumericallyDifferentiatedHessian>
         hessian(new dotk::NumericallyDifferentiatedHessian(primal, objective, equality));
     dotk::mex::buildNumericallyDifferentiatedHessian(input_[0], controls, hessian);
 

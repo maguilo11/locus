@@ -9,8 +9,8 @@
 #define MATRIX_HPP_
 
 #include <limits>
+#include <memory>
 #include <iostream>
-#include <tr1/memory>
 
 #include "DOTk_MatrixTypes.hpp"
 
@@ -89,7 +89,7 @@ public:
     // Returns dotk matrix type
     virtual dotk::types::matrix_t type() const = 0;
     // Clones memory for an object of type dotk::matrix
-    virtual std::tr1::shared_ptr< dotk::matrix<ScalarType> > clone() const = 0;
+    virtual std::shared_ptr< dotk::matrix<ScalarType> > clone() const = 0;
     // Operator overloads the parenthesis operator
     virtual ScalarType & operator () (const size_t & row_index_, const size_t & column_index_) = 0;
     // Operator overloads the parenthesis operator
@@ -102,7 +102,7 @@ public:
         return (0.);
     }
     // Returns a basis vector from the linearly independent spanning set
-    virtual std::tr1::shared_ptr<dotk::Vector<ScalarType> > & basis(const size_t & index_)
+    virtual std::shared_ptr<dotk::Vector<ScalarType> > & basis(const size_t & index_)
     {
         std::string msg(" CALLING UNIMPLEMENTED dotk::matrix::basis **** ");
         std::cerr << " **** ERROR MESSAGE: " << msg.c_str() << std::flush;

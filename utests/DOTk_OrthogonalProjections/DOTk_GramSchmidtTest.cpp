@@ -22,13 +22,13 @@ TEST(DOTk_GramSchmidt, gramSchmidt)
 {
     size_t nduals = 3;
     size_t ncontrols = 5;
-    std::tr1::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
     primal->allocateSerialDualArray(nduals, 0);
     primal->allocateSerialControlArray(ncontrols, 0);
 
     dotk::DOTk_GramSchmidt projection(primal, nduals);
 
-    std::tr1::shared_ptr<dotk::Vector<Real> >
+    std::shared_ptr<dotk::Vector<Real> >
         vector(new dotk::DOTk_MultiVector<Real>(*primal->control(), *primal->dual()));
     size_t index = 0;
     (*vector->control())[0] = -1;
@@ -104,9 +104,9 @@ TEST(DOTk_GramSchmidt, gramSchmidt)
 TEST(DOTk_GramSchmidt, clear)
 {
     size_t ncontrols = 5;
-    std::tr1::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
     primal->allocateSerialControlArray(ncontrols, 0);
-    std::tr1::shared_ptr<dotk::DOTk_TrustRegionAlgorithmsDataMng> mng(new dotk::DOTk_TrustRegionAlgorithmsDataMng(primal));
+    std::shared_ptr<dotk::DOTk_TrustRegionAlgorithmsDataMng> mng(new dotk::DOTk_TrustRegionAlgorithmsDataMng(primal));
 
     size_t num_ortho_vectors = 3;
     dotk::DOTk_GramSchmidt projection(primal, num_ortho_vectors);
@@ -145,7 +145,7 @@ TEST(DOTk_GramSchmidt, clear)
 
     projection.clear();
 
-    std::tr1::shared_ptr<dotk::Vector<Real> > gold = primal->control()->clone();
+    std::shared_ptr<dotk::Vector<Real> > gold = primal->control()->clone();
     dotk::gtest::checkResults(*gold, *projection.getOrthogonalVector(0));
     dotk::gtest::checkResults(*gold, *projection.getLinearOperatorTimesOrthoVector(0));
     dotk::gtest::checkResults(*gold, *projection.getOrthogonalVector(1));

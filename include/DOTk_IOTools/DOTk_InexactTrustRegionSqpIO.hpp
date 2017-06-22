@@ -8,6 +8,7 @@
 #ifndef DOTK_INEXACTTRUSTREGIONSQPIO_HPP_
 #define DOTK_INEXACTTRUSTREGIONSQPIO_HPP_
 
+#include <memory>
 #include <fstream>
 
 namespace dotk
@@ -32,19 +33,19 @@ public:
     void closeFile();
     void openFile(const char * const name_);
     void printDiagnosticsReport(const dotk::DOTk_InexactTrustRegionSQP* const alg_,
-                                const std::tr1::shared_ptr<dotk::DOTk_TrustRegionMngTypeELP> & mng_,
-                                const std::tr1::shared_ptr<dotk::DOTk_InexactTrustRegionSqpSolverMng> & solver_mng_);
+                                const std::shared_ptr<dotk::DOTk_TrustRegionMngTypeELP> & mng_,
+                                const std::shared_ptr<dotk::DOTk_InexactTrustRegionSqpSolverMng> & solver_mng_);
 
 private:
     void writeHeader();
     void writeInitialDiagnostics(const dotk::DOTk_InexactTrustRegionSQP* const alg_,
-                                 const std::tr1::shared_ptr<dotk::DOTk_TrustRegionMngTypeELP> & mng_);
+                                 const std::shared_ptr<dotk::DOTk_TrustRegionMngTypeELP> & mng_);
     void writeFirstTrustRegionSubProblemItrDiagnostics(const dotk::DOTk_InexactTrustRegionSQP* const alg_,
-                                                       const std::tr1::shared_ptr<dotk::DOTk_TrustRegionMngTypeELP> & mng_,
-                                                       const std::tr1::shared_ptr<dotk::DOTk_InexactTrustRegionSqpSolverMng> & solver_);
+                                                       const std::shared_ptr<dotk::DOTk_TrustRegionMngTypeELP> & mng_,
+                                                       const std::shared_ptr<dotk::DOTk_InexactTrustRegionSqpSolverMng> & solver_);
     void writeTrustRegionSubProblemDiagnostics(const dotk::DOTk_InexactTrustRegionSQP* const alg_,
-                                               const std::tr1::shared_ptr<dotk::DOTk_TrustRegionMngTypeELP> & mng_,
-                                               const std::tr1::shared_ptr<dotk::DOTk_InexactTrustRegionSqpSolverMng> & solver_);
+                                               const std::shared_ptr<dotk::DOTk_TrustRegionMngTypeELP> & mng_,
+                                               const std::shared_ptr<dotk::DOTk_InexactTrustRegionSqpSolverMng> & solver_);
 
 private:
     bool m_PrintLicenseFlag;

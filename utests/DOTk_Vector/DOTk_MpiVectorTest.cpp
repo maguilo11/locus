@@ -139,7 +139,7 @@ TEST(DOTk_MpiVectorTest, abs)
         printf("ABS WTime is %f\n", time);
     }
 
-    std::tr1::shared_ptr<dotk::Vector<double> > gold = x.clone();
+    std::shared_ptr<dotk::Vector<double> > gold = x.clone();
     gold->fill(1.);
     int thread_count = 4;
     dotk::gtest::checkResults(*gold, x, thread_count);
@@ -173,7 +173,7 @@ TEST(DOTk_MpiVectorTest, scale)
         printf("WTime is %f\n", time);
     }
 
-    std::tr1::shared_ptr<dotk::Vector<double> > gold = vector.clone();
+    std::shared_ptr<dotk::Vector<double> > gold = vector.clone();
     gold->fill(3.);
     int thread_count = 4;
     dotk::gtest::checkResults(*gold, vector, thread_count);
@@ -207,7 +207,7 @@ TEST(DOTk_MpiVectorTest, elementWiseMultiplication)
         printf("WTime is %f\n", time);
     }
 
-    std::tr1::shared_ptr<dotk::Vector<double> > gold = x.clone();
+    std::shared_ptr<dotk::Vector<double> > gold = x.clone();
     gold->fill(4.);
     int thread_count = 4;
     dotk::gtest::checkResults(*gold, x, thread_count);
@@ -244,7 +244,7 @@ TEST(DOTk_MpiVectorTest, axpy)
         printf("WTime is %f\n", time);
     }
 
-    std::tr1::shared_ptr<dotk::Vector<double> > gold = x.clone();
+    std::shared_ptr<dotk::Vector<double> > gold = x.clone();
     gold->fill(4.);
     int thread_count = 4;
     dotk::gtest::checkResults(*gold, y, thread_count);
@@ -356,7 +356,7 @@ TEST(DOTk_MpiVectorTest, copy)
 {
     int dim = 1e4;
     dotk::MpiVector<double> x(MPI_COMM_WORLD, dim);
-    std::tr1::shared_ptr<dotk::Vector<double> > y = x.clone();
+    std::shared_ptr<dotk::Vector<double> > y = x.clone();
 
     x.fill(1.);
 
@@ -382,7 +382,7 @@ TEST(DOTk_MpiVectorTest, copy)
         printf("WTime is %f\n", time);
     }
 
-    std::tr1::shared_ptr<dotk::Vector<double> > gold = x.clone();
+    std::shared_ptr<dotk::Vector<double> > gold = x.clone();
     gold->fill(1.);
     int thread_count = 4;
     dotk::gtest::checkResults(*gold, *y, thread_count);

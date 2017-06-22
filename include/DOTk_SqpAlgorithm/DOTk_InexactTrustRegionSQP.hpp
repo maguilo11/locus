@@ -22,9 +22,9 @@ class DOTk_InexactTrustRegionSqpSolverMng;
 class DOTk_InexactTrustRegionSQP: public dotk::DOTk_SequentialQuadraticProgramming
 {
 public:
-    DOTk_InexactTrustRegionSQP(const std::tr1::shared_ptr<dotk::DOTk_LinearOperator> & hessian_,
-                               const std::tr1::shared_ptr<dotk::DOTk_TrustRegionMngTypeELP> & data_mng_,
-                               const std::tr1::shared_ptr<dotk::DOTk_InexactTrustRegionSqpSolverMng> & solver_mng_);
+    DOTk_InexactTrustRegionSQP(const std::shared_ptr<dotk::DOTk_LinearOperator> & hessian_,
+                               const std::shared_ptr<dotk::DOTk_TrustRegionMngTypeELP> & data_mng_,
+                               const std::shared_ptr<dotk::DOTk_InexactTrustRegionSqpSolverMng> & solver_mng_);
     virtual ~DOTk_InexactTrustRegionSQP();
 
     void setMaxTrustRegionRadius(Real radius_);
@@ -100,10 +100,10 @@ private:
     dotk::types::solver_stop_criterion_t m_TangentialProbExitCriterion;
     dotk::types::solver_stop_criterion_t m_TangentialSubProbExitCriterion;
 
-    std::tr1::shared_ptr<dotk::DOTk_LinearOperator> m_Hessian;
-    std::tr1::shared_ptr<dotk::DOTk_InexactTrustRegionSqpIO> m_IO;
-    std::tr1::shared_ptr<dotk::DOTk_TrustRegionMngTypeELP> m_SqpDataMng;
-    std::tr1::shared_ptr<dotk::DOTk_InexactTrustRegionSqpSolverMng> m_SqpSolverMng;
+    std::shared_ptr<dotk::DOTk_LinearOperator> m_Hessian;
+    std::shared_ptr<dotk::DOTk_InexactTrustRegionSqpIO> m_IO;
+    std::shared_ptr<dotk::DOTk_TrustRegionMngTypeELP> m_SqpDataMng;
+    std::shared_ptr<dotk::DOTk_InexactTrustRegionSqpSolverMng> m_SqpSolverMng;
 
 private:
     DOTk_InexactTrustRegionSQP(const dotk::DOTk_InexactTrustRegionSQP&);

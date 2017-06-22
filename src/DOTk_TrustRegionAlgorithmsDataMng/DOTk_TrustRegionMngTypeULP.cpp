@@ -20,8 +20,8 @@
 namespace dotk
 {
 
-DOTk_TrustRegionMngTypeULP::DOTk_TrustRegionMngTypeULP(const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_,
-                                                       const std::tr1::shared_ptr<dotk::DOTk_ObjectiveFunction<Real> > & objective_) :
+DOTk_TrustRegionMngTypeULP::DOTk_TrustRegionMngTypeULP(const std::shared_ptr<dotk::DOTk_Primal> & primal_,
+                                                       const std::shared_ptr<dotk::DOTk_ObjectiveFunction<Real> > & objective_) :
         dotk::DOTk_TrustRegionAlgorithmsDataMng(primal_)
 {
     m_RoutinesMng.reset(new dotk::DOTk_RoutinesTypeULP(objective_));

@@ -30,7 +30,7 @@ DOTk_ThirdOrderBackwardFiniteDifference::~DOTk_ThirdOrderBackwardFiniteDifferenc
 {
 }
 
-void DOTk_ThirdOrderBackwardFiniteDifference::differentiate(const std::tr1::shared_ptr<dotk::DOTk_Functor> & functor_,
+void DOTk_ThirdOrderBackwardFiniteDifference::differentiate(const std::shared_ptr<dotk::DOTk_Functor> & functor_,
                                                             const dotk::Vector<Real> & primal_,
                                                             const dotk::Vector<Real> & direction_,
                                                             const dotk::Vector<Real> & first_derivative_,

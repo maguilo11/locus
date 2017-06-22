@@ -93,7 +93,7 @@ void DOTk_MexGCMMA::solveLinearProgrammingProblem(const mxArray* input_[], mxArr
     dotk::MexVector duals(num_duals, 0.);
 
     // Allocate DOTk data structures
-    std::tr1::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
     primal->allocateUserDefinedDual(duals);
     primal->allocateUserDefinedControl(controls);
 
@@ -111,20 +111,20 @@ void DOTk_MexGCMMA::solveLinearProgrammingProblem(const mxArray* input_[], mxArr
 
     // Set objective function, inequality constraint, and data manager
     dotk::types::problem_t problem_type = this->getProblemType();
-    std::tr1::shared_ptr<dotk::DOTk_MexObjectiveFunction>
+    std::shared_ptr<dotk::DOTk_MexObjectiveFunction>
         objective(new dotk::DOTk_MexObjectiveFunction(m_ObjectiveFunction, problem_type));
-    std::tr1::shared_ptr<dotk::DOTk_MexInequalityConstraint>
+    std::shared_ptr<dotk::DOTk_MexInequalityConstraint>
         inequality(new dotk::DOTk_MexInequalityConstraint(m_InequalityConstraint, problem_type));
-    std::vector<std::tr1::shared_ptr<dotk::DOTk_InequalityConstraint<double> > > inequality_vector(1, inequality);
-    std::tr1::shared_ptr<dotk::DOTk_DataMngCCSA> data(new dotk::DOTk_DataMngCCSA(primal, objective, inequality_vector));
+    std::vector<std::shared_ptr<dotk::DOTk_InequalityConstraint<double> > > inequality_vector(1, inequality);
+    std::shared_ptr<dotk::DOTk_DataMngCCSA> data(new dotk::DOTk_DataMngCCSA(primal, objective, inequality_vector));
 
     // Set dual solver
-    std::tr1::shared_ptr<dotk::DOTk_DualSolverNLCG> dual_solver(new dotk::DOTk_DualSolverNLCG(primal));
+    std::shared_ptr<dotk::DOTk_DualSolverNLCG> dual_solver(new dotk::DOTk_DualSolverNLCG(primal));
     dual_solver->setNonlinearCgType(dotk::DOTk_MexMethodCCSA::getNonlinearConjugateGradientType());
     dotk::DOTk_MexMethodCCSA::setDualSolverParameters(dual_solver);
 
     // Set convex conservative separable approximation (CCSA) subproblem
-    std::tr1::shared_ptr<dotk::DOTk_SubProblemGCMMA> subproblem(new dotk::DOTk_SubProblemGCMMA(data, dual_solver));
+    std::shared_ptr<dotk::DOTk_SubProblemGCMMA> subproblem(new dotk::DOTk_SubProblemGCMMA(data, dual_solver));
     subproblem->setMaxNumIterations(m_MaxNumberSubProblemIterations);
     subproblem->setResidualTolerance(m_SubProblemResidualTolerance);
     subproblem->setStagnationTolerance(m_SubProblemStagnationTolerance);
@@ -151,7 +151,7 @@ void DOTk_MexGCMMA::solveNonlinearProgrammingProblem(const mxArray* input_[], mx
     dotk::MexVector states(num_states, 0.);
 
     // Allocate DOTk data structures
-    std::tr1::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
     primal->allocateUserDefinedDual(duals);
     primal->allocateUserDefinedControl(controls);
 
@@ -169,24 +169,24 @@ void DOTk_MexGCMMA::solveNonlinearProgrammingProblem(const mxArray* input_[], mx
 
     // Set objective, equality constraint, inequality constraint, and data manager
     dotk::types::problem_t problem_type = this->getProblemType();
-    std::tr1::shared_ptr<dotk::DOTk_MexObjectiveFunction>
+    std::shared_ptr<dotk::DOTk_MexObjectiveFunction>
         objective(new dotk::DOTk_MexObjectiveFunction(m_ObjectiveFunction, problem_type));
     m_EqualityConstraint = dotk::mex::parseEqualityConstraint(input_[1]);
-    std::tr1::shared_ptr<dotk::DOTk_MexEqualityConstraint>
+    std::shared_ptr<dotk::DOTk_MexEqualityConstraint>
         equality(new dotk::DOTk_MexEqualityConstraint(m_EqualityConstraint, problem_type));
-    std::tr1::shared_ptr<dotk::DOTk_MexInequalityConstraint>
+    std::shared_ptr<dotk::DOTk_MexInequalityConstraint>
         inequality(new dotk::DOTk_MexInequalityConstraint(m_InequalityConstraint, problem_type));
-    std::vector<std::tr1::shared_ptr<dotk::DOTk_InequalityConstraint<double> > > inequality_vector(1, inequality);
-    std::tr1::shared_ptr<dotk::DOTk_DataMngCCSA>
+    std::vector<std::shared_ptr<dotk::DOTk_InequalityConstraint<double> > > inequality_vector(1, inequality);
+    std::shared_ptr<dotk::DOTk_DataMngCCSA>
         data(new dotk::DOTk_DataMngCCSA(primal, objective, equality, inequality_vector));
 
     // Set dual solver
-    std::tr1::shared_ptr<dotk::DOTk_DualSolverNLCG> dual_solver(new dotk::DOTk_DualSolverNLCG(primal));
+    std::shared_ptr<dotk::DOTk_DualSolverNLCG> dual_solver(new dotk::DOTk_DualSolverNLCG(primal));
     dual_solver->setNonlinearCgType(dotk::DOTk_MexMethodCCSA::getNonlinearConjugateGradientType());
     dotk::DOTk_MexMethodCCSA::setDualSolverParameters(dual_solver);
 
     // Set CCSA subproblem
-    std::tr1::shared_ptr<dotk::DOTk_SubProblemGCMMA>
+    std::shared_ptr<dotk::DOTk_SubProblemGCMMA>
         subproblem(new dotk::DOTk_SubProblemGCMMA(data, dual_solver));
     subproblem->setMaxNumIterations(m_MaxNumberSubProblemIterations);
     subproblem->setResidualTolerance(m_SubProblemResidualTolerance);

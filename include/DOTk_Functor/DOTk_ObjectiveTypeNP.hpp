@@ -29,9 +29,9 @@ public:
     {
     }
 
-    Real operator()(const std::tr1::shared_ptr<dotk::DOTk_ObjectiveFunction<Real> > & operators_,
-                    const std::tr1::shared_ptr<dotk::Vector<Real> > & state_,
-                    const std::tr1::shared_ptr<dotk::Vector<Real> > & control_) const
+    Real operator()(const std::shared_ptr<dotk::DOTk_ObjectiveFunction<Real> > & operators_,
+                    const std::shared_ptr<dotk::Vector<Real> > & state_,
+                    const std::shared_ptr<dotk::Vector<Real> > & control_) const
     {
         Real objective_function_value = operators_->value(*state_, *control_);
         return (objective_function_value);
@@ -52,10 +52,10 @@ public:
     {
     }
 
-    void operator()(const std::tr1::shared_ptr<dotk::DOTk_ObjectiveFunction<Real> > & operators_,
-                    const std::tr1::shared_ptr<dotk::Vector<Real> > & state_,
-                    const std::tr1::shared_ptr<dotk::Vector<Real> > & control_,
-                    std::tr1::shared_ptr<dotk::Vector<Real> > & output_) const
+    void operator()(const std::shared_ptr<dotk::DOTk_ObjectiveFunction<Real> > & operators_,
+                    const std::shared_ptr<dotk::Vector<Real> > & state_,
+                    const std::shared_ptr<dotk::Vector<Real> > & control_,
+                    std::shared_ptr<dotk::Vector<Real> > & output_) const
     {
         operators_->partialDerivativeControl(*state_, *control_, *output_);
     }
@@ -75,10 +75,10 @@ public:
     {
     }
 
-    void operator()(const std::tr1::shared_ptr<dotk::DOTk_ObjectiveFunction<Real> > & operators_,
-                    const std::tr1::shared_ptr<dotk::Vector<Real> > & state_,
-                    const std::tr1::shared_ptr<dotk::Vector<Real> > & control_,
-                    std::tr1::shared_ptr<dotk::Vector<Real> > & output_) const
+    void operator()(const std::shared_ptr<dotk::DOTk_ObjectiveFunction<Real> > & operators_,
+                    const std::shared_ptr<dotk::Vector<Real> > & state_,
+                    const std::shared_ptr<dotk::Vector<Real> > & control_,
+                    std::shared_ptr<dotk::Vector<Real> > & output_) const
     {
         operators_->partialDerivativeState(*state_, *control_, *output_);
     }
@@ -98,11 +98,11 @@ public:
     {
     }
 
-    void operator()(const std::tr1::shared_ptr<dotk::DOTk_ObjectiveFunction<Real> > & operators_,
-                    const std::tr1::shared_ptr<dotk::Vector<Real> > & state_,
-                    const std::tr1::shared_ptr<dotk::Vector<Real> > & control_,
-                    const std::tr1::shared_ptr<dotk::Vector<Real> > & delta_state_,
-                    std::tr1::shared_ptr<dotk::Vector<Real> > & output_) const
+    void operator()(const std::shared_ptr<dotk::DOTk_ObjectiveFunction<Real> > & operators_,
+                    const std::shared_ptr<dotk::Vector<Real> > & state_,
+                    const std::shared_ptr<dotk::Vector<Real> > & control_,
+                    const std::shared_ptr<dotk::Vector<Real> > & delta_state_,
+                    std::shared_ptr<dotk::Vector<Real> > & output_) const
     {
         operators_->partialDerivativeStateState(*state_, *control_, *delta_state_, *output_);
     }
@@ -122,11 +122,11 @@ public:
     {
     }
 
-    void operator()(const std::tr1::shared_ptr<dotk::DOTk_ObjectiveFunction<Real> > & operators_,
-                    const std::tr1::shared_ptr<dotk::Vector<Real> > & state_,
-                    const std::tr1::shared_ptr<dotk::Vector<Real> > & control_,
-                    const std::tr1::shared_ptr<dotk::Vector<Real> > & delta_control_,
-                    std::tr1::shared_ptr<dotk::Vector<Real> > & output_) const
+    void operator()(const std::shared_ptr<dotk::DOTk_ObjectiveFunction<Real> > & operators_,
+                    const std::shared_ptr<dotk::Vector<Real> > & state_,
+                    const std::shared_ptr<dotk::Vector<Real> > & control_,
+                    const std::shared_ptr<dotk::Vector<Real> > & delta_control_,
+                    std::shared_ptr<dotk::Vector<Real> > & output_) const
     {
         operators_->partialDerivativeStateControl(*state_, *control_, *delta_control_, *output_);
     }
@@ -146,11 +146,11 @@ public:
     {
     }
 
-    void operator()(const std::tr1::shared_ptr<dotk::DOTk_ObjectiveFunction<Real> > & operators_,
-                    const std::tr1::shared_ptr<dotk::Vector<Real> > & state_,
-                    const std::tr1::shared_ptr<dotk::Vector<Real> > & control_,
-                    const std::tr1::shared_ptr<dotk::Vector<Real> > & delta_control_,
-                    std::tr1::shared_ptr<dotk::Vector<Real> > & output_) const
+    void operator()(const std::shared_ptr<dotk::DOTk_ObjectiveFunction<Real> > & operators_,
+                    const std::shared_ptr<dotk::Vector<Real> > & state_,
+                    const std::shared_ptr<dotk::Vector<Real> > & control_,
+                    const std::shared_ptr<dotk::Vector<Real> > & delta_control_,
+                    std::shared_ptr<dotk::Vector<Real> > & output_) const
     {
         operators_->partialDerivativeControlControl(*state_, *control_, *delta_control_, *output_);
     }
@@ -170,11 +170,11 @@ public:
     {
     }
 
-    void operator()(const std::tr1::shared_ptr<dotk::DOTk_ObjectiveFunction<Real> > & operators_,
-                    const std::tr1::shared_ptr<dotk::Vector<Real> > & state_,
-                    const std::tr1::shared_ptr<dotk::Vector<Real> > & control_,
-                    const std::tr1::shared_ptr<dotk::Vector<Real> > & delta_state_,
-                    std::tr1::shared_ptr<dotk::Vector<Real> > & output_) const
+    void operator()(const std::shared_ptr<dotk::DOTk_ObjectiveFunction<Real> > & operators_,
+                    const std::shared_ptr<dotk::Vector<Real> > & state_,
+                    const std::shared_ptr<dotk::Vector<Real> > & control_,
+                    const std::shared_ptr<dotk::Vector<Real> > & delta_state_,
+                    std::shared_ptr<dotk::Vector<Real> > & output_) const
     {
         operators_->partialDerivativeControlState(*state_, *control_, *delta_state_, *output_);
     }

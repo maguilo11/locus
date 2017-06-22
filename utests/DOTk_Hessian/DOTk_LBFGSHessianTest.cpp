@@ -23,9 +23,9 @@ namespace DOTkLBFGSHessianTest
 TEST(DOTk_LBFGSHessian, getDeltaPrimalStorage)
 {
     size_t ncontrols = 2;
-    std::tr1::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
     primal->allocateSerialControlArray(ncontrols, 2);
-    std::tr1::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
+    std::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
     dotk::DOTk_LineSearchMngTypeULP mng(primal, objective);
 
     size_t secant_storage = 3;
@@ -33,7 +33,7 @@ TEST(DOTk_LBFGSHessian, getDeltaPrimalStorage)
     (*hess.getDeltaPrimalStorage(0))[0] = 1.164953510500657;
     (*hess.getDeltaPrimalStorage(0))[1] = 0.626839082632431;
 
-    std::tr1::shared_ptr<dotk::Vector<Real> > gold = primal->control()->clone();
+    std::shared_ptr<dotk::Vector<Real> > gold = primal->control()->clone();
     (*gold)[0] = 1.164953510500657;
     (*gold)[1] = 0.626839082632431;
     dotk::gtest::checkResults(*hess.getDeltaPrimalStorage(0), *gold);
@@ -42,9 +42,9 @@ TEST(DOTk_LBFGSHessian, getDeltaPrimalStorage)
 TEST(DOTk_LBFGSHessian, getDeltaGradStorage)
 {
     size_t ncontrols = 2;
-    std::tr1::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
     primal->allocateSerialControlArray(ncontrols, 2);
-    std::tr1::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
+    std::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
     dotk::DOTk_LineSearchMngTypeULP mng(primal, objective);
 
     size_t secant_storage = 3;
@@ -52,7 +52,7 @@ TEST(DOTk_LBFGSHessian, getDeltaGradStorage)
     (*hess.getDeltaGradStorage(0))[0] = 0.059059777981351;
     (*hess.getDeltaGradStorage(0))[1] = 1.79707178369482;
 
-    std::tr1::shared_ptr<dotk::Vector<Real> > gold = primal->control()->clone();
+    std::shared_ptr<dotk::Vector<Real> > gold = primal->control()->clone();
     (*gold)[0] = 0.059059777981351;
     (*gold)[1] = 1.79707178369482;
     dotk::gtest::checkResults(*hess.getDeltaGradStorage(0), *gold);
@@ -61,9 +61,9 @@ TEST(DOTk_LBFGSHessian, getDeltaGradStorage)
 TEST(DOTk_LBFGSHessian, getDeltaGradPrimalInnerProductStorage)
 {
     size_t ncontrols = 2;
-    std::tr1::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
     primal->allocateSerialControlArray(ncontrols, 2);
-    std::tr1::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
+    std::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
     dotk::DOTk_LineSearchMngTypeULP mng(primal, objective);
 
     size_t secant_storage = 3;
@@ -83,9 +83,9 @@ TEST(DOTk_LBFGSHessian, getDeltaGradPrimalInnerProductStorage)
 TEST(DOTk_LBFGSHessian, getHessian)
 {
     size_t ncontrols = 2;
-    std::tr1::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
     primal->allocateSerialControlArray(ncontrols, 2);
-    std::tr1::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
+    std::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
     dotk::DOTk_LineSearchMngTypeULP mng(primal, objective);
 
     size_t secant_storage = 3;
@@ -113,12 +113,12 @@ TEST(DOTk_LBFGSHessian, getHessian)
         (*hess.getDeltaGradPrimalInnerProductStorage())[j] =
                 hess.getDeltaGradStorage(j)->dot(*hess.getDeltaPrimalStorage(j));
     }
-    std::tr1::shared_ptr<dotk::Vector<Real> > trial_step = primal->control()->clone();
+    std::shared_ptr<dotk::Vector<Real> > trial_step = primal->control()->clone();
     trial_step->fill(1.);
-    std::tr1::shared_ptr<dotk::Vector<Real> > Hess_times_vec = primal->control()->clone();
+    std::shared_ptr<dotk::Vector<Real> > Hess_times_vec = primal->control()->clone();
     hess.getHessian(trial_step, Hess_times_vec);
 
-    std::tr1::shared_ptr<dotk::Vector<Real> > gold = primal->control()->clone();
+    std::shared_ptr<dotk::Vector<Real> > gold = primal->control()->clone();
     (*gold)[0] = 18.562869970651185;
     (*gold)[1] = 8.888762989742279;
     dotk::gtest::checkResults(*Hess_times_vec, *gold);

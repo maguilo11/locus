@@ -22,9 +22,9 @@ namespace DOTkCentralDifferenceGradTest
 TEST(CentralDifferenceGrad, getFiniteDiffPerturbationVec)
 {
     size_t ncontrols = 2;
-    std::tr1::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
     primal->allocateSerialControlArray(ncontrols, 2);
-    std::tr1::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
+    std::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
     dotk::DOTk_LineSearchMngTypeULP mng(primal, objective);
     dotk::DOTk_CentralDifferenceGrad grad(mng.getNewGradient());
 
@@ -36,9 +36,9 @@ TEST(CentralDifferenceGrad, getFiniteDiffPerturbationVec)
 TEST(CentralDifferenceGrad, setFiniteDiffPerturbationVec)
 {
     size_t ncontrols = 2;
-    std::tr1::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
     primal->allocateSerialControlArray(ncontrols, 2);
-    std::tr1::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
+    std::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
     dotk::DOTk_LineSearchMngTypeULP mng(primal, objective);
     dotk::DOTk_CentralDifferenceGrad grad(mng.getNewGradient());
 
@@ -55,9 +55,9 @@ TEST(CentralDifferenceGrad, setFiniteDiffPerturbationVec)
 TEST(CentralDifferenceGrad, gradient)
 {
     size_t ncontrols = 2;
-    std::tr1::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
     primal->allocateSerialControlArray(ncontrols, 2);
-    std::tr1::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
+    std::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
     dotk::DOTk_LineSearchMngTypeULP mng(primal, objective);
     dotk::DOTk_CentralDifferenceGrad grad(mng.getNewGradient());
     EXPECT_EQ(dotk::types::CENTRAL_DIFF_GRAD, grad.type());
@@ -67,7 +67,7 @@ TEST(CentralDifferenceGrad, gradient)
     mng.setNewObjectiveFunctionValue(objective_function_value);
     grad.gradient(&mng);
 
-    std::tr1::shared_ptr<dotk::Vector<Real> > gold = dotk::gtest::allocateControl();
+    std::shared_ptr<dotk::Vector<Real> > gold = dotk::gtest::allocateControl();
     (*gold)[0] = 1602.;
     (*gold)[1] = -400.;
     dotk::gtest::checkResults(*mng.getNewGradient(), *gold, 1e-6);
@@ -76,16 +76,16 @@ TEST(CentralDifferenceGrad, gradient)
 TEST(CentralDifferenceGrad, getGradient)
 {
     size_t ncontrols = 2;
-    std::tr1::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
     primal->allocateSerialControlArray(ncontrols, 2);
-    std::tr1::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
+    std::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
     dotk::DOTk_LineSearchMngTypeULP mng(primal, objective);
     dotk::DOTk_CentralDifferenceGrad grad(mng.getNewGradient());
     EXPECT_EQ(dotk::types::CENTRAL_DIFF_GRAD, grad.type());
 
     grad.getGradient(mng.getRoutinesMng(), mng.getNewPrimal(), mng.getNewGradient());
 
-    std::tr1::shared_ptr<dotk::Vector<Real> > gold = dotk::gtest::allocateControl();
+    std::shared_ptr<dotk::Vector<Real> > gold = dotk::gtest::allocateControl();
     (*gold)[0] = 1602.;
     (*gold)[1] = -400.;
     dotk::gtest::checkResults(*mng.getNewGradient(), *gold, 1e-6);

@@ -25,15 +25,15 @@ dotk::types::left_prec_t DOTk_Preconditioner::type() const
 {
     return (m_Type);
 }
-void DOTk_Preconditioner::applyPreconditioner(const std::tr1::shared_ptr<dotk::DOTk_OptimizationDataMng> & mng_,
-                                              const std::tr1::shared_ptr<dotk::Vector<Real> > & vector_,
-                                              std::tr1::shared_ptr<dotk::Vector<Real> > & prec_times_vector_)
+void DOTk_Preconditioner::applyPreconditioner(const std::shared_ptr<dotk::DOTk_OptimizationDataMng> & mng_,
+                                              const std::shared_ptr<dotk::Vector<Real> > & vector_,
+                                              std::shared_ptr<dotk::Vector<Real> > & prec_times_vector_)
 {
     prec_times_vector_->update(1., *vector_, 0.);
 }
-void DOTk_Preconditioner::applyInvPreconditioner(const std::tr1::shared_ptr<dotk::DOTk_OptimizationDataMng> & mng_,
-                                                 const std::tr1::shared_ptr<dotk::Vector<Real> > & vector_,
-                                                 std::tr1::shared_ptr<dotk::Vector<Real> > & inv_prec_times_vector_)
+void DOTk_Preconditioner::applyInvPreconditioner(const std::shared_ptr<dotk::DOTk_OptimizationDataMng> & mng_,
+                                                 const std::shared_ptr<dotk::Vector<Real> > & vector_,
+                                                 std::shared_ptr<dotk::Vector<Real> > & inv_prec_times_vector_)
 {
     inv_prec_times_vector_->update(1., *vector_, 0.);
 }

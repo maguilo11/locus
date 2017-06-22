@@ -22,16 +22,16 @@ namespace DOTkDoglegTrustRegionTest
 TEST(DOTk_DoglegTrustRegion, dogleg)
 {
     size_t ncontrols = 2;
-    std::tr1::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
     primal->allocateSerialControlArray(ncontrols, 2);
-    std::tr1::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
+    std::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
     dotk::DOTk_LineSearchMngTypeULP mng(primal, objective);
 
-    std::tr1::shared_ptr<dotk::Vector<Real> > gradient = primal->control()->clone();
-    std::tr1::shared_ptr<dotk::Vector<Real> > vector = primal->control()->clone();
-    std::tr1::shared_ptr<dotk::Vector<Real> > newton_dir = primal->control()->clone();
-    std::tr1::shared_ptr<dotk::Vector<Real> > conjugate_dir = primal->control()->clone();
-    std::tr1::shared_ptr<dotk::Vector<Real> > matrix_times_grad = primal->control()->clone();
+    std::shared_ptr<dotk::Vector<Real> > gradient = primal->control()->clone();
+    std::shared_ptr<dotk::Vector<Real> > vector = primal->control()->clone();
+    std::shared_ptr<dotk::Vector<Real> > newton_dir = primal->control()->clone();
+    std::shared_ptr<dotk::Vector<Real> > conjugate_dir = primal->control()->clone();
+    std::shared_ptr<dotk::Vector<Real> > matrix_times_grad = primal->control()->clone();
 
     vector->fill(2);
     mng.getRoutinesMng()->gradient(vector, gradient);
@@ -42,7 +42,7 @@ TEST(DOTk_DoglegTrustRegion, dogleg)
     EXPECT_EQ(dotk::types::TRUST_REGION_DOGLEG, step.getTrustRegionType());
     step.dogleg(gradient, matrix_times_grad, conjugate_dir, newton_dir);
 
-    std::tr1::shared_ptr<dotk::Vector<Real> > gold = primal->control()->clone();
+    std::shared_ptr<dotk::Vector<Real> > gold = primal->control()->clone();
     (*gold)[0] = -3855.6568684884;
     (*gold)[1] = 962.71082858637;
     dotk::gtest::checkResults(*newton_dir, *gold);
@@ -51,13 +51,13 @@ TEST(DOTk_DoglegTrustRegion, dogleg)
 TEST(DOTk_DoglegTrustRegion, step)
 {
     size_t ncontrols = 2;
-    std::tr1::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
     primal->allocateSerialControlArray(ncontrols, 2);
-    std::tr1::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
+    std::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
     dotk::DOTk_LineSearchMngTypeULP mng(primal, objective);
 
-    std::tr1::shared_ptr<dotk::Vector<Real> > vector = primal->control()->clone();
-    std::tr1::shared_ptr<dotk::Vector<Real> > conjugate_dir = primal->control()->clone();
+    std::shared_ptr<dotk::Vector<Real> > vector = primal->control()->clone();
+    std::shared_ptr<dotk::Vector<Real> > conjugate_dir = primal->control()->clone();
 
     vector->fill(2);
     mng.getRoutinesMng()->gradient(vector, mng.getNewGradient());
@@ -68,7 +68,7 @@ TEST(DOTk_DoglegTrustRegion, step)
     EXPECT_EQ(dotk::types::TRUST_REGION_DOGLEG, step.getTrustRegionType());
     step.step(&mng, conjugate_dir, mng.getTrialStep());
 
-    std::tr1::shared_ptr<dotk::Vector<Real> > gold = primal->control()->clone();
+    std::shared_ptr<dotk::Vector<Real> > gold = primal->control()->clone();
     (*gold)[0] = -3855.6568684884;
     (*gold)[1] = 962.71082858637;
     dotk::gtest::checkResults(*mng.getTrialStep(), *gold);

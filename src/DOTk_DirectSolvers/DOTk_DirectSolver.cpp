@@ -47,7 +47,7 @@ dotk::types::direct_solver_t DOTk_DirectSolver::getDirectSolverType() const
     return (mDirectSolverType);
 }
 
-void DOTk_DirectSolver::solve(const std::tr1::shared_ptr<dotk::matrix<Real> > matrix_,
+void DOTk_DirectSolver::solve(const std::shared_ptr<dotk::matrix<Real> > matrix_,
                               const std::vector<Real> & rhs_vec_,
                               std::vector<Real> & solution_vec_)
 {

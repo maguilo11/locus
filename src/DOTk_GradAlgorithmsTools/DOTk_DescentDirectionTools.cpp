@@ -19,14 +19,14 @@ namespace dotk
 namespace gtools
 {
 
-void getSteepestDescent(const std::tr1::shared_ptr<dotk::Vector<Real> > & input_,
-                        const std::tr1::shared_ptr<dotk::Vector<Real> > & output_)
+void getSteepestDescent(const std::shared_ptr<dotk::Vector<Real> > & input_,
+                        const std::shared_ptr<dotk::Vector<Real> > & output_)
 {
     output_->update(-1., *input_, 0.);
 }
 
-Real computeCosineAngle(const std::tr1::shared_ptr<dotk::Vector<Real> > & grad_,
-                        const std::tr1::shared_ptr<dotk::Vector<Real> > & dir_)
+Real computeCosineAngle(const std::shared_ptr<dotk::Vector<Real> > & grad_,
+                        const std::shared_ptr<dotk::Vector<Real> > & dir_)
 {
     Real norm_dir = dir_->norm();
     Real grad_dot_dir = grad_->dot(*dir_);
@@ -36,8 +36,8 @@ Real computeCosineAngle(const std::tr1::shared_ptr<dotk::Vector<Real> > & grad_,
     return (value);
 }
 
-void checkDescentDirection(const std::tr1::shared_ptr<dotk::Vector<Real> > & grad_,
-                           const std::tr1::shared_ptr<dotk::Vector<Real> > & dir_,
+void checkDescentDirection(const std::shared_ptr<dotk::Vector<Real> > & grad_,
+                           const std::shared_ptr<dotk::Vector<Real> > & dir_,
                            Real tol_)
 {
     Real cosine_angle = dotk::gtools::computeCosineAngle(grad_, dir_);
@@ -55,15 +55,15 @@ void checkDescentDirection(const std::tr1::shared_ptr<dotk::Vector<Real> > & gra
     }
 }
 
-bool didDataChanged(const std::tr1::shared_ptr<dotk::Vector<Real> > & old_data_,
-                    const std::tr1::shared_ptr<dotk::Vector<Real> > & new_data_)
+bool didDataChanged(const std::shared_ptr<dotk::Vector<Real> > & old_data_,
+                    const std::shared_ptr<dotk::Vector<Real> > & new_data_)
 {
     Real dot_old_minus_dot_new = std::abs(old_data_->dot(*old_data_) - new_data_->dot(*new_data_));
     bool did_primal_changed = dot_old_minus_dot_new > std::numeric_limits<Real>::min() ? true: false;
     return (did_primal_changed);
 }
 
-void generateRandomVector(const std::tr1::shared_ptr<dotk::Vector<Real> > & input_)
+void generateRandomVector(const std::shared_ptr<dotk::Vector<Real> > & input_)
 {
     size_t num_entries = input_->size();
     for(size_t i = 0; i < num_entries; ++ i)

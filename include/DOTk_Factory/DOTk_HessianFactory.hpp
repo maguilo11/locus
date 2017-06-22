@@ -8,7 +8,7 @@
 #ifndef DOTK_HESSIANFACTORY_HPP_
 #define DOTK_HESSIANFACTORY_HPP_
 
-#include <tr1/memory>
+#include <memory>
 
 #include "DOTk_Types.hpp"
 
@@ -33,26 +33,26 @@ public:
     void setFactoryType(dotk::types::hessian_t type_);
     dotk::types::hessian_t getFactoryType() const;
 
-    void buildFullSpaceHessian(std::tr1::shared_ptr<dotk::DOTk_SecondOrderOperator> & operator_);
-    void buildReducedSpaceHessian(std::tr1::shared_ptr<dotk::DOTk_SecondOrderOperator> & operator_);
+    void buildFullSpaceHessian(std::shared_ptr<dotk::DOTk_SecondOrderOperator> & operator_);
+    void buildReducedSpaceHessian(std::shared_ptr<dotk::DOTk_SecondOrderOperator> & operator_);
     void buildLbfgsHessian(size_t secant_storage_,
                            const dotk::Vector<Real> & vector_,
-                           std::tr1::shared_ptr<dotk::DOTk_SecondOrderOperator> & operator_);
+                           std::shared_ptr<dotk::DOTk_SecondOrderOperator> & operator_);
     void buildLdfpHessian(size_t secant_storage_,
                           const dotk::Vector<Real> & vector_,
-                          std::tr1::shared_ptr<dotk::DOTk_SecondOrderOperator> & operator_);
+                          std::shared_ptr<dotk::DOTk_SecondOrderOperator> & operator_);
     void buildLsr1Hessian(size_t secant_storage_,
                           const dotk::Vector<Real> & vector_,
-                          std::tr1::shared_ptr<dotk::DOTk_SecondOrderOperator> & operator_);
+                          std::shared_ptr<dotk::DOTk_SecondOrderOperator> & operator_);
     void buildSr1Hessian(const dotk::Vector<Real> & vector_,
-                         std::tr1::shared_ptr<dotk::DOTk_SecondOrderOperator> & operator_);
+                         std::shared_ptr<dotk::DOTk_SecondOrderOperator> & operator_);
     void buildDfpHessian(const dotk::Vector<Real> & vector_,
-                         std::tr1::shared_ptr<dotk::DOTk_SecondOrderOperator> & operator_);
+                         std::shared_ptr<dotk::DOTk_SecondOrderOperator> & operator_);
     void buildBarzilaiBorweinHessian(const dotk::Vector<Real> & vector_,
-                                     std::tr1::shared_ptr<dotk::DOTk_SecondOrderOperator> & operator_);
+                                     std::shared_ptr<dotk::DOTk_SecondOrderOperator> & operator_);
 
     void build(const dotk::DOTk_OptimizationDataMng * const mng_,
-               std::tr1::shared_ptr<dotk::DOTk_SecondOrderOperator> & operator_,
+               std::shared_ptr<dotk::DOTk_SecondOrderOperator> & operator_,
                size_t secant_storage_ = 0);
 
 private:

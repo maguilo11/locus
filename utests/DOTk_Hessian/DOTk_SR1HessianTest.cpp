@@ -22,10 +22,10 @@ namespace DOTkSR1HessianTest
 TEST(SR1Hessian, apply)
 {
     size_t ncontrols = 2;
-    std::tr1::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
     primal->allocateSerialControlArray(ncontrols, 2);
-    std::tr1::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
-    std::tr1::shared_ptr<dotk::DOTk_LineSearchMngTypeULP> mng(new dotk::DOTk_LineSearchMngTypeULP(primal, objective));
+    std::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
+    std::shared_ptr<dotk::DOTk_LineSearchMngTypeULP> mng(new dotk::DOTk_LineSearchMngTypeULP(primal, objective));
 
     dotk::DOTk_SR1Hessian hess(*mng->getMatrixTimesVector());
     EXPECT_EQ(dotk::types::SR1_HESS, hess.getHessianType());
@@ -44,7 +44,7 @@ TEST(SR1Hessian, apply)
     // ODD CASE
     hess.setNumOptimizationItrDone(3);
     hess.apply(mng, mng->getTrialStep(), mng->getMatrixTimesVector());
-    std::tr1::shared_ptr<dotk::Vector<Real> > gold = primal->control()->clone();
+    std::shared_ptr<dotk::Vector<Real> > gold = primal->control()->clone();
     (*gold)[0] = 1280800;
     (*gold)[1] = -640400;
     dotk::gtest::checkResults(*mng->getMatrixTimesVector(), *gold);
@@ -60,9 +60,9 @@ TEST(SR1Hessian, getDeltaPrimal)
 {
 
     size_t ncontrols = 2;
-    std::tr1::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
     primal->allocateSerialControlArray(ncontrols, 2);
-    std::tr1::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
+    std::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
     dotk::DOTk_LineSearchMngTypeULP mng(primal, objective);
 
     dotk::StdVector<Real> control(2, 2.);
@@ -76,7 +76,7 @@ TEST(SR1Hessian, getDeltaPrimal)
     hess.getDeltaPrimal()->update(1., *mng.getNewPrimal(), 0.);
     hess.getDeltaPrimal()->update(-1.0, *mng.getOldPrimal(), 1.);
 
-    std::tr1::shared_ptr<dotk::Vector<Real> > gold = primal->control()->clone();
+    std::shared_ptr<dotk::Vector<Real> > gold = primal->control()->clone();
     (*gold)[0] = -1.;
     (*gold)[1] = 1.;
     dotk::gtest::checkResults(*(hess.getDeltaPrimal()), *(gold));
@@ -85,9 +85,9 @@ TEST(SR1Hessian, getDeltaPrimal)
 TEST(SR1Hessian, getDeltaGrad)
 {
     size_t ncontrols = 2;
-    std::tr1::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
     primal->allocateSerialControlArray(ncontrols, 2);
-    std::tr1::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
+    std::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
     dotk::DOTk_LineSearchMngTypeULP mng(primal, objective);
 
     // vec Information
@@ -106,7 +106,7 @@ TEST(SR1Hessian, getDeltaGrad)
     hess.getDeltaGrad()->update(1., *mng.getNewGradient(), 0.);
     hess.getDeltaGrad()->update(-1.0, *mng.getOldGradient(), 1.);
 
-    std::tr1::shared_ptr<dotk::Vector<Real> > gold = primal->control()->clone();
+    std::shared_ptr<dotk::Vector<Real> > gold = primal->control()->clone();
     (*gold)[0] = -2402.;
     (*gold)[1] = 800.;
 
@@ -116,10 +116,10 @@ TEST(SR1Hessian, getDeltaGrad)
 TEST(SR1Hessian, getHessian)
 {
     size_t ncontrols = 2;
-    std::tr1::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
     primal->allocateSerialControlArray(ncontrols, 2);
-    std::tr1::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
-    std::tr1::shared_ptr<dotk::DOTk_LineSearchMngTypeULP> mng(new dotk::DOTk_LineSearchMngTypeULP(primal, objective));
+    std::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
+    std::shared_ptr<dotk::DOTk_LineSearchMngTypeULP> mng(new dotk::DOTk_LineSearchMngTypeULP(primal, objective));
 
     // vec Information
     dotk::StdVector<Real> control(2, 2.);
@@ -145,7 +145,7 @@ TEST(SR1Hessian, getHessian)
     // EVEN CASE
     hess.getHessian(mng->getTrialStep(), mng->getMatrixTimesVector());
 
-    std::tr1::shared_ptr<dotk::Vector<Real> > gold = primal->control()->clone();
+    std::shared_ptr<dotk::Vector<Real> > gold = primal->control()->clone();
     (*gold)[0] = 1601400.1249219237;
     (*gold)[1] = -800700.06246096187;
     dotk::gtest::checkResults(*mng->getMatrixTimesVector(), *gold);

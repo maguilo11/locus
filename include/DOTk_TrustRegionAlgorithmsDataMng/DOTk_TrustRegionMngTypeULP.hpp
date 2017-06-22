@@ -23,8 +23,8 @@ class Vector;
 class DOTk_TrustRegionMngTypeULP : public dotk::DOTk_TrustRegionAlgorithmsDataMng
 {
 public:
-    DOTk_TrustRegionMngTypeULP(const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_,
-                               const std::tr1::shared_ptr<dotk::DOTk_ObjectiveFunction<Real> > & objective_);
+    DOTk_TrustRegionMngTypeULP(const std::shared_ptr<dotk::DOTk_Primal> & primal_,
+                               const std::shared_ptr<dotk::DOTk_ObjectiveFunction<Real> > & objective_);
     virtual ~DOTk_TrustRegionMngTypeULP();
 
     void setForwardFiniteDiffGradient(const dotk::Vector<Real> & input_);

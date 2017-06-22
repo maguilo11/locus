@@ -8,7 +8,7 @@
 #ifndef DOTK_VARIABLE_HPP_
 #define DOTK_VARIABLE_HPP_
 
-#include <tr1/memory>
+#include <memory>
 
 #include "DOTk_Types.hpp"
 
@@ -31,15 +31,15 @@ public:
 
     size_t size() const;
     dotk::types::variable_t type() const;
-    const std::tr1::shared_ptr<dotk::Vector<Real> > & data() const;
+    const std::shared_ptr<dotk::Vector<Real> > & data() const;
 
     void setLowerBound(Real value_);
     void setLowerBound(const dotk::Vector<Real> & lower_bound_);
-    const std::tr1::shared_ptr<dotk::Vector<Real> > & lowerBound() const;
+    const std::shared_ptr<dotk::Vector<Real> > & lowerBound() const;
 
     void setUpperBound(Real value_);
     void setUpperBound(const dotk::Vector<Real> & upper_bound_);
-    const std::tr1::shared_ptr<dotk::Vector<Real> > & upperBound() const;
+    const std::shared_ptr<dotk::Vector<Real> > & upperBound() const;
 
     void allocate(const dotk::Vector<Real> & input_);
     void allocateSerialArray(size_t size_, Real value_);
@@ -54,9 +54,9 @@ private:
 
 private:
     dotk::types::variable_t m_Type;
-    std::tr1::shared_ptr<dotk::Vector<Real> > m_Data;
-    std::tr1::shared_ptr<dotk::Vector<Real> > m_LowerBound;
-    std::tr1::shared_ptr<dotk::Vector<Real> > m_UpperBound;
+    std::shared_ptr<dotk::Vector<Real> > m_Data;
+    std::shared_ptr<dotk::Vector<Real> > m_LowerBound;
+    std::shared_ptr<dotk::Vector<Real> > m_UpperBound;
 
 private:
     DOTk_Variable(const dotk::DOTk_Variable &);

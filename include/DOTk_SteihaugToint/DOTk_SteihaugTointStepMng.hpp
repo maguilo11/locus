@@ -26,25 +26,25 @@ class Vector;
 class DOTk_SteihaugTointStepMng : public dotk::DOTk_TrustRegionStepMng
 {
 public:
-    DOTk_SteihaugTointStepMng(const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_,
-                              const std::tr1::shared_ptr<dotk::DOTk_LinearOperator> & linear_operator_);
-    DOTk_SteihaugTointStepMng(const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_,
-                              const std::tr1::shared_ptr<dotk::DOTk_LinearOperator> & linear_operator_,
-                              const std::tr1::shared_ptr<dotk::DOTk_Preconditioner> & preconditioner_);
+    DOTk_SteihaugTointStepMng(const std::shared_ptr<dotk::DOTk_Primal> & primal_,
+                              const std::shared_ptr<dotk::DOTk_LinearOperator> & linear_operator_);
+    DOTk_SteihaugTointStepMng(const std::shared_ptr<dotk::DOTk_Primal> & primal_,
+                              const std::shared_ptr<dotk::DOTk_LinearOperator> & linear_operator_,
+                              const std::shared_ptr<dotk::DOTk_Preconditioner> & preconditioner_);
     virtual ~DOTk_SteihaugTointStepMng();
 
     virtual void setNumOptimizationItrDone(const size_t & itr_);
-    virtual void solveSubProblem(const std::tr1::shared_ptr<dotk::DOTk_OptimizationDataMng> & mng_,
-                                 const std::tr1::shared_ptr<dotk::DOTk_SteihaugTointSolver> & solver_,
-                                 const std::tr1::shared_ptr<dotk::DOTk_SteihaugTointNewtonIO> & io_);
+    virtual void solveSubProblem(const std::shared_ptr<dotk::DOTk_OptimizationDataMng> & mng_,
+                                 const std::shared_ptr<dotk::DOTk_SteihaugTointSolver> & solver_,
+                                 const std::shared_ptr<dotk::DOTk_SteihaugTointNewtonIO> & io_);
 
 private:
-    void updateDataManager(const std::tr1::shared_ptr<dotk::DOTk_OptimizationDataMng> & mng_);
+    void updateDataManager(const std::shared_ptr<dotk::DOTk_OptimizationDataMng> & mng_);
 
 private:
-    std::tr1::shared_ptr<dotk::Vector<Real> > m_CurrentPrimal;
-    std::tr1::shared_ptr<dotk::DOTk_LinearOperator> m_LinearOperator;
-    std::tr1::shared_ptr<dotk::DOTk_Preconditioner> m_Preconditioner;
+    std::shared_ptr<dotk::Vector<Real> > m_CurrentPrimal;
+    std::shared_ptr<dotk::DOTk_LinearOperator> m_LinearOperator;
+    std::shared_ptr<dotk::DOTk_Preconditioner> m_Preconditioner;
 
 private:
     DOTk_SteihaugTointStepMng(const dotk::DOTk_SteihaugTointStepMng &);

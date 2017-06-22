@@ -23,12 +23,12 @@ void classicalGramSchmidt(dotk::matrix<Real> & Q_, dotk::matrix<Real> & R_)
 
     for(int jth_dim = 0; jth_dim < basis_dimension; ++jth_dim)
     {
-        const std::tr1::shared_ptr<dotk::Vector<Real> > & vector = Q_.basis(jth_dim);
+        const std::shared_ptr<dotk::Vector<Real> > & vector = Q_.basis(jth_dim);
         for(int ith_dim = 0; ith_dim <= jth_dim - 1; ++ith_dim)
         {
             Real value = Q_.dot(ith_dim, *vector);
             R_.set(ith_dim, jth_dim, value);
-            const std::tr1::shared_ptr<dotk::Vector<Real> > & data = Q_.basis(ith_dim);
+            const std::shared_ptr<dotk::Vector<Real> > & data = Q_.basis(ith_dim);
             Q_.axpy(jth_dim, -value, *data);
         }
         Real value = Q_.norm(jth_dim);
@@ -58,10 +58,10 @@ void modifiedGramSchmidt(dotk::matrix<Real> & Q_, dotk::matrix<Real> & R_)
         Q_.scale(ith_dim, value);
         for(int jth_dim = ith_dim + 1; jth_dim < basis_dimension; ++jth_dim)
         {
-            const std::tr1::shared_ptr<dotk::Vector<Real> > & jth_column_data = Q_.basis(jth_dim);
+            const std::shared_ptr<dotk::Vector<Real> > & jth_column_data = Q_.basis(jth_dim);
             value = Q_.dot(ith_dim, *jth_column_data);
             R_.set(ith_dim, jth_dim, value);
-            const std::tr1::shared_ptr<dotk::Vector<Real> > & ith_column_data = Q_.basis(ith_dim);
+            const std::shared_ptr<dotk::Vector<Real> > & ith_column_data = Q_.basis(ith_dim);
             Q_.axpy(jth_dim, -value, *ith_column_data);
         }
     }
@@ -90,15 +90,15 @@ void arnoldiModifiedGramSchmidt(const dotk::matrix<Real> & A_,
     Q_.basis(0)->fill(1.);
     Real value = static_cast<Real>(1.) / Q_.basis(0)->norm();
     Q_.scale(value);
-    std::tr1::shared_ptr<dotk::Vector<Real> > work = Q_.basis(0)->clone();
+    std::shared_ptr<dotk::Vector<Real> > work = Q_.basis(0)->clone();
 
     for(size_t dim_index = 0; dim_index < A_.basisDimension(); ++dim_index)
     {
-        const std::tr1::shared_ptr<dotk::Vector<Real> > & vector_i = Q_.basis(dim_index);
+        const std::shared_ptr<dotk::Vector<Real> > & vector_i = Q_.basis(dim_index);
         A_.matVec(*vector_i, *work);
         for(size_t jth_index = 0; jth_index <= dim_index; ++jth_index)
         {
-            const std::tr1::shared_ptr<dotk::Vector<Real> > & vector_j = Q_.basis(jth_index);
+            const std::shared_ptr<dotk::Vector<Real> > & vector_j = Q_.basis(jth_index);
             value = work->dot(*vector_j);
             work->update(-value, *vector_j, 1.);
             Hessenberg_(jth_index, dim_index) = value;
@@ -120,7 +120,7 @@ void householder(dotk::matrix<Real> & Q_, dotk::matrix<Real> & R_)
 {
     Real rho, tau, value;
     size_t basis_dimension = R_.basisDimension();
-    std::tr1::shared_ptr<dotk::Vector<Real> > work = Q_.basis(0)->clone();
+    std::shared_ptr<dotk::Vector<Real> > work = Q_.basis(0)->clone();
 
     for(size_t kth_dim = 0; kth_dim < basis_dimension; ++kth_dim)
     {

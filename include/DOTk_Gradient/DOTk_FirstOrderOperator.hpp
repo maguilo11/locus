@@ -8,7 +8,7 @@
 #ifndef DOTK_FIRSTORDEROPERATOR_HPP_
 #define DOTK_FIRSTORDEROPERATOR_HPP_
 
-#include <tr1/memory>
+#include <memory>
 
 #include "DOTk_Types.hpp"
 
@@ -27,8 +27,8 @@ public:
     virtual ~DOTk_FirstOrderOperator();
 
     dotk::types::gradient_t type() const;
-    void checkGrad(const std::tr1::shared_ptr<dotk::Vector<Real> > & old_gradient_,
-                   std::tr1::shared_ptr<dotk::Vector<Real> > & new_gradient_);
+    void checkGrad(const std::shared_ptr<dotk::Vector<Real> > & old_gradient_,
+                   std::shared_ptr<dotk::Vector<Real> > & new_gradient_);
 
     virtual void setFiniteDiffPerturbationVec(const dotk::Vector<Real> & input_);
     virtual void gradient(const dotk::DOTk_OptimizationDataMng * const mng_);

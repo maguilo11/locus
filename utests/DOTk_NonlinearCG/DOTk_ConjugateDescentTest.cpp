@@ -22,9 +22,9 @@ namespace DOTkConjugateDescentTest
 TEST(DOTk_ConjugateDescent, computeScaleFactor)
 {
     size_t ncontrols = 2;
-    std::tr1::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
     primal->allocateSerialControlArray(ncontrols, 2);
-    std::tr1::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock());
+    std::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock());
     dotk::DOTk_LineSearchMngTypeULP mng(primal, objective);
 
     (*primal->control())[0] = 1.;
@@ -49,9 +49,9 @@ TEST(DOTk_ConjugateDescent, computeScaleFactor)
 TEST(DOTk_ConjugateDescent, getDirection)
 {
     size_t ncontrols = 2;
-    std::tr1::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
     primal->allocateSerialControlArray(ncontrols, 2);
-    std::tr1::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
+    std::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
     dotk::DOTk_LineSearchMngTypeULP mng(primal, objective);
 
     (*primal->control())[0] = 1.;
@@ -68,7 +68,7 @@ TEST(DOTk_ConjugateDescent, getDirection)
     EXPECT_EQ(dotk::types::CONJUGATE_DESCENT_NLCG, dir.getNonlinearCGType());
     dir.getDirection(mng.getOldGradient(), mng.getNewGradient(), mng.getTrialStep());
 
-    std::tr1::shared_ptr<dotk::Vector<Real> > gold = dotk::gtest::allocateControl();
+    std::shared_ptr<dotk::Vector<Real> > gold = dotk::gtest::allocateControl();
     (*gold)[0] = -110.;
     (*gold)[1] = -264.;
     dotk::gtest::checkResults(*mng.getTrialStep(), *gold);
@@ -79,10 +79,10 @@ TEST(DOTk_ConjugateDescent, getDirection)
 TEST(DOTk_ConjugateDescent, direction)
 {
     size_t ncontrols = 2;
-    std::tr1::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
     primal->allocateSerialControlArray(ncontrols, 2);
-    std::tr1::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock());
-    std::tr1::shared_ptr<dotk::DOTk_LineSearchMngTypeULP> mng(new dotk::DOTk_LineSearchMngTypeULP(primal, objective));
+    std::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock());
+    std::shared_ptr<dotk::DOTk_LineSearchMngTypeULP> mng(new dotk::DOTk_LineSearchMngTypeULP(primal, objective));
 
     (*primal->control())[0] = 1.;
     (*primal->control())[1] = 2.;
@@ -98,7 +98,7 @@ TEST(DOTk_ConjugateDescent, direction)
     EXPECT_EQ(dotk::types::CONJUGATE_DESCENT_NLCG, dir.getNonlinearCGType());
     dir.direction(mng);
 
-    std::tr1::shared_ptr<dotk::Vector<Real> > gold = dotk::gtest::allocateControl();
+    std::shared_ptr<dotk::Vector<Real> > gold = dotk::gtest::allocateControl();
     (*gold)[0] = -110.;
     (*gold)[1] = -264.;
     dotk::gtest::checkResults(*mng->getTrialStep(), *gold);

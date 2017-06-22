@@ -652,10 +652,10 @@ void DOTk_DenseMatrix<ScalarType>::set(const size_t & row_index_, const size_t &
 }
 
 template<typename ScalarType>
-std::tr1::shared_ptr<dotk::matrix<ScalarType> > DOTk_DenseMatrix<ScalarType>::clone() const
+std::shared_ptr<dotk::matrix<ScalarType> > DOTk_DenseMatrix<ScalarType>::clone() const
 {
     size_t num_rows = this->nrows();
-    std::tr1::shared_ptr<dotk::serial::DOTk_DenseMatrix<ScalarType> >
+    std::shared_ptr<dotk::serial::DOTk_DenseMatrix<ScalarType> >
         matrix(new dotk::serial::DOTk_DenseMatrix<ScalarType>(num_rows, 0.));
     return (matrix);
 }

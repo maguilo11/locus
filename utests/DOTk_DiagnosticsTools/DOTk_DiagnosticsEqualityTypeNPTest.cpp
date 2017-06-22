@@ -34,7 +34,7 @@ TEST(DOTk_DiagnosticsEqualityTypeNP, checkPartialDerivativeState)
     srand(0);
     // TEST 1: CHECK DERIVATIVE OPERATOR
     std::ostringstream msg;
-    std::tr1::shared_ptr<dotk::DOTk_NocedalAndWrightEqualityNLP> equality(new dotk::DOTk_NocedalAndWrightEqualityNLP());
+    std::shared_ptr<dotk::DOTk_NocedalAndWrightEqualityNLP> equality(new dotk::DOTk_NocedalAndWrightEqualityNLP());
     dotk::DOTk_DiagnosticsEqualityTypeNP operators(equality);
     operators.checkPartialDerivativeState(state, control, msg);
     EXPECT_EQ(dotk::types::STATE, operators.getCodomain());
@@ -66,7 +66,7 @@ TEST(DOTk_DiagnosticsEqualityTypeNP, checkPartialDerivativeControl)
     dotk::StdVector<Real> control_data(num_controls, 0.);
     dotk::DOTk_Control control(control_data);
 
-    std::tr1::shared_ptr<dotk::DOTk_NocedalAndWrightEqualityNLP> equality(new dotk::DOTk_NocedalAndWrightEqualityNLP());
+    std::shared_ptr<dotk::DOTk_NocedalAndWrightEqualityNLP> equality(new dotk::DOTk_NocedalAndWrightEqualityNLP());
     dotk::DOTk_DiagnosticsEqualityTypeNP operators(equality);
 
     srand(0);
@@ -93,7 +93,7 @@ TEST(DOTk_DiagnosticsEqualityTypeNP, checkAdjointPartialDerivativeState)
     dotk::StdVector<Real> control_data(num_controls, 0.);
     dotk::DOTk_Control control(control_data);
 
-    std::tr1::shared_ptr<dotk::DOTk_NocedalAndWrightEqualityNLP> equality(new dotk::DOTk_NocedalAndWrightEqualityNLP());
+    std::shared_ptr<dotk::DOTk_NocedalAndWrightEqualityNLP> equality(new dotk::DOTk_NocedalAndWrightEqualityNLP());
     dotk::DOTk_DiagnosticsEqualityTypeNP operators(equality);
 
     srand(0);
@@ -141,7 +141,7 @@ TEST(DOTk_DiagnosticsEqualityTypeNP, checkAdjointPartialDerivativeControl)
     dotk::DOTk_Control control;
     control.allocateSerialVector(num_controls, 0.);
 
-    std::tr1::shared_ptr<dotk::DOTk_NocedalAndWrightEqualityNLP> equality(new dotk::DOTk_NocedalAndWrightEqualityNLP());
+    std::shared_ptr<dotk::DOTk_NocedalAndWrightEqualityNLP> equality(new dotk::DOTk_NocedalAndWrightEqualityNLP());
     dotk::DOTk_DiagnosticsEqualityTypeNP operators(equality);
 
     srand(0);
@@ -172,7 +172,7 @@ TEST(DOTk_DiagnosticsEqualityTypeNP, checkAdjointPartialDerivativeControlControl
     dotk::StdVector<Real> control_data(num_controls, 0.);
     dotk::DOTk_Control control(control_data);
 
-    std::tr1::shared_ptr<dotk::DOTk_NocedalAndWrightEqualityNLP> equality(new dotk::DOTk_NocedalAndWrightEqualityNLP());
+    std::shared_ptr<dotk::DOTk_NocedalAndWrightEqualityNLP> equality(new dotk::DOTk_NocedalAndWrightEqualityNLP());
     dotk::DOTk_DiagnosticsEqualityTypeNP operators(equality);
 
     srand(0);
@@ -203,7 +203,7 @@ TEST(DOTk_DiagnosticsEqualityTypeNP, checkAdjointPartialDerivativeControlState)
     dotk::StdVector<Real> control_data(num_controls, 0.);
     dotk::DOTk_Control control(control_data);
 
-    std::tr1::shared_ptr<dotk::DOTk_NocedalAndWrightEqualityNLP> equality(new dotk::DOTk_NocedalAndWrightEqualityNLP());
+    std::shared_ptr<dotk::DOTk_NocedalAndWrightEqualityNLP> equality(new dotk::DOTk_NocedalAndWrightEqualityNLP());
     dotk::DOTk_DiagnosticsEqualityTypeNP operators(equality);
 
     srand(0);
@@ -231,7 +231,7 @@ TEST(DOTk_DiagnosticsEqualityTypeNP, checkAdjointPartialDerivativeStateState)
     dotk::StdVector<Real> control_data(num_controls, 0.);
     dotk::DOTk_Control control(control_data);
 
-    std::tr1::shared_ptr<dotk::DOTk_NocedalAndWrightEqualityNLP> equality(new dotk::DOTk_NocedalAndWrightEqualityNLP());
+    std::shared_ptr<dotk::DOTk_NocedalAndWrightEqualityNLP> equality(new dotk::DOTk_NocedalAndWrightEqualityNLP());
     dotk::DOTk_DiagnosticsEqualityTypeNP operators(equality);
 
     srand(0);
@@ -276,7 +276,7 @@ TEST(DOTk_DiagnosticsEqualityTypeNP, checkAdjointPartialDerivativeStateControl)
     dotk::StdVector<Real> control_data(num_controls, 0.);
     dotk::DOTk_Control control(control_data);
 
-    std::tr1::shared_ptr<dotk::DOTk_NocedalAndWrightEqualityNLP> equality(new dotk::DOTk_NocedalAndWrightEqualityNLP());
+    std::shared_ptr<dotk::DOTk_NocedalAndWrightEqualityNLP> equality(new dotk::DOTk_NocedalAndWrightEqualityNLP());
     dotk::DOTk_DiagnosticsEqualityTypeNP operators(equality);
 
     srand(0);

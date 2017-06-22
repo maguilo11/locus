@@ -17,7 +17,7 @@
 namespace dotk
 {
 
-DOTk_SteihaugTointPcg::DOTk_SteihaugTointPcg(const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_) :
+DOTk_SteihaugTointPcg::DOTk_SteihaugTointPcg(const std::shared_ptr<dotk::DOTk_Primal> & primal_) :
         dotk::DOTk_SteihaugTointSolver(),
         m_NewtonStep(primal_->control()->clone()),
         m_CauchyStep(primal_->control()->clone()),
@@ -36,9 +36,9 @@ DOTk_SteihaugTointPcg::~DOTk_SteihaugTointPcg()
 {
 }
 
-void DOTk_SteihaugTointPcg::solve(const std::tr1::shared_ptr<dotk::DOTk_Preconditioner> & preconditioner_,
-                                  const std::tr1::shared_ptr<dotk::DOTk_LinearOperator> & linear_operator_,
-                                  const std::tr1::shared_ptr<dotk::DOTk_OptimizationDataMng> & mng_)
+void DOTk_SteihaugTointPcg::solve(const std::shared_ptr<dotk::DOTk_Preconditioner> & preconditioner_,
+                                  const std::shared_ptr<dotk::DOTk_LinearOperator> & linear_operator_,
+                                  const std::shared_ptr<dotk::DOTk_OptimizationDataMng> & mng_)
 {
     m_NewtonStep->fill(0.);
     m_OldDescentDirection->update(1., *mng_->getNewGradient(), 0.);
@@ -101,7 +101,7 @@ void DOTk_SteihaugTointPcg::solve(const std::tr1::shared_ptr<dotk::DOTk_Precondi
     mng_->getTrialStep()->update(1., *m_NewtonStep, 0.);
 }
 
-void DOTk_SteihaugTointPcg::computeStoppingTolerance(const std::tr1::shared_ptr<dotk::Vector<Real> > & gradient_)
+void DOTk_SteihaugTointPcg::computeStoppingTolerance(const std::shared_ptr<dotk::Vector<Real> > & gradient_)
 {
     Real relative_tolerance = this->getRelativeTolerance();
     Real relative_tolerance_exponential = this->getRelativeToleranceExponential();
@@ -112,8 +112,8 @@ void DOTk_SteihaugTointPcg::computeStoppingTolerance(const std::tr1::shared_ptr<
     this->setSolverTolerance(stopping_tolerance);
 }
 
-Real DOTk_SteihaugTointPcg::step(const std::tr1::shared_ptr<dotk::DOTk_OptimizationDataMng> & mng_,
-                                 const std::tr1::shared_ptr<dotk::DOTk_Preconditioner> & preconditioner_)
+Real DOTk_SteihaugTointPcg::step(const std::shared_ptr<dotk::DOTk_OptimizationDataMng> & mng_,
+                                 const std::shared_ptr<dotk::DOTk_Preconditioner> & preconditioner_)
 {
     preconditioner_->applyPreconditioner(mng_, m_NewtonStep, m_PrecTimesNewtonStep);
     preconditioner_->applyPreconditioner(mng_, m_ConjugateDirection, m_PrecTimesConjugateDirection);

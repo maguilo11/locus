@@ -27,11 +27,11 @@ class DOTk_EqualityConstraint;
 class DOTk_SteihaugTointDataMng : public dotk::DOTk_OptimizationDataMng
 {
 public:
-    DOTk_SteihaugTointDataMng(const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_,
-                              const std::tr1::shared_ptr<dotk::DOTk_ObjectiveFunction<Real> > & objective_);
-    DOTk_SteihaugTointDataMng(const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_,
-                              const std::tr1::shared_ptr<dotk::DOTk_ObjectiveFunction<Real> > & objective_,
-                              const std::tr1::shared_ptr<dotk::DOTk_EqualityConstraint<Real> > & equality_);
+    DOTk_SteihaugTointDataMng(const std::shared_ptr<dotk::DOTk_Primal> & primal_,
+                              const std::shared_ptr<dotk::DOTk_ObjectiveFunction<Real> > & objective_);
+    DOTk_SteihaugTointDataMng(const std::shared_ptr<dotk::DOTk_Primal> & primal_,
+                              const std::shared_ptr<dotk::DOTk_ObjectiveFunction<Real> > & objective_,
+                              const std::shared_ptr<dotk::DOTk_EqualityConstraint<Real> > & equality_);
     virtual ~DOTk_SteihaugTointDataMng();
 
     void setUserDefinedGradient();
@@ -44,19 +44,19 @@ public:
 
     virtual void computeGradient();
     virtual Real evaluateObjective();
-    virtual Real evaluateObjective(const std::tr1::shared_ptr<dotk::Vector<Real> > & input_);
+    virtual Real evaluateObjective(const std::shared_ptr<dotk::Vector<Real> > & input_);
     virtual size_t getObjectiveFunctionEvaluationCounter() const;
-    virtual const std::tr1::shared_ptr<dotk::DOTk_Primal> & getPrimalStruc() const;
-    virtual const std::tr1::shared_ptr<dotk::DOTk_AssemblyManager> & getRoutinesMng() const;
+    virtual const std::shared_ptr<dotk::DOTk_Primal> & getPrimalStruc() const;
+    virtual const std::shared_ptr<dotk::DOTk_AssemblyManager> & getRoutinesMng() const;
 
 private:
     void initialize();
     void setFiniteDiffPerturbationVector(const dotk::Vector<Real> & input_);
 
 private:
-    std::tr1::shared_ptr<dotk::DOTk_Primal> m_PrimalStruc;
-    std::tr1::shared_ptr<dotk::DOTk_FirstOrderOperator> m_Gradient;
-    std::tr1::shared_ptr<dotk::DOTk_AssemblyManager> m_AssemblyMng;
+    std::shared_ptr<dotk::DOTk_Primal> m_PrimalStruc;
+    std::shared_ptr<dotk::DOTk_FirstOrderOperator> m_Gradient;
+    std::shared_ptr<dotk::DOTk_AssemblyManager> m_AssemblyMng;
 
 private:
     DOTk_SteihaugTointDataMng(const dotk::DOTk_SteihaugTointDataMng &);

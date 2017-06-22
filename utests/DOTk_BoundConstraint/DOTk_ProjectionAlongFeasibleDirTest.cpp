@@ -24,18 +24,18 @@ namespace DOTkProjectionAlongFeasibleDirTest
 TEST(DOTk_ProjectionAlongFeasibleDir, getDirection)
 {
     size_t ncontrols = 2;
-    std::tr1::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
     primal->allocateSerialControlArray(ncontrols, 2);
     primal->setControlLowerBound(1);
     primal->setControlUpperBound(4);
-    std::tr1::shared_ptr<dotk::Vector<Real> > dir = primal->control()->clone();
+    std::shared_ptr<dotk::Vector<Real> > dir = primal->control()->clone();
     dir->fill(7.);
 
     // TEST 1: DIRECTION IS NOT FEASIBLE, PROJECT DIRECTION
     dotk::DOTk_ProjectionAlongFeasibleDir bound(primal);
     EXPECT_EQ(dotk::types::PROJECTION_ALONG_FEASIBLE_DIR, bound.type());
     bound.getDirection(primal->control(), dir);
-    std::tr1::shared_ptr<dotk::Vector<Real> > gold = primal->control()->clone();
+    std::shared_ptr<dotk::Vector<Real> > gold = primal->control()->clone();
     gold->fill(2);
     dotk::gtest::checkResults(*dir, *gold);
 
@@ -49,13 +49,13 @@ TEST(DOTk_ProjectionAlongFeasibleDir, getDirection)
 TEST(DOTk_ProjectionAlongFeasibleDir, constraint)
 {
     size_t ncontrols = 2;
-    std::tr1::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
     primal->allocateSerialControlArray(ncontrols, 2);
     primal->setControlLowerBound(1);
     primal->setControlUpperBound(4);
-    std::tr1::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
-    std::tr1::shared_ptr<dotk::DOTk_ArmijoLineSearch> step(new dotk::DOTk_ArmijoLineSearch(primal->control()));
-    std::tr1::shared_ptr<dotk::DOTk_LineSearchMngTypeULP> mng(new dotk::DOTk_LineSearchMngTypeULP(primal, objective));
+    std::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
+    std::shared_ptr<dotk::DOTk_ArmijoLineSearch> step(new dotk::DOTk_ArmijoLineSearch(primal->control()));
+    std::shared_ptr<dotk::DOTk_LineSearchMngTypeULP> mng(new dotk::DOTk_LineSearchMngTypeULP(primal, objective));
 
     mng->setUserDefinedGradient();
     primal->control()->fill(7.);
@@ -67,7 +67,7 @@ TEST(DOTk_ProjectionAlongFeasibleDir, constraint)
 
     // TEST 1: DIRECTION IS NOT FEASIBLE, SCALE AND PROJECT DIRECTION
     bound.constraint(step, mng);
-    std::tr1::shared_ptr<dotk::Vector<Real> > gold = primal->control()->clone();
+    std::shared_ptr<dotk::Vector<Real> > gold = primal->control()->clone();
     gold->fill(5.2154064178466797e-08);
     dotk::gtest::checkResults(*mng->getTrialStep(), *gold);
 

@@ -127,8 +127,8 @@ void DOTk_InexactNewtonAlgorithms::setRelativeStoppingCriterion(Real relative_to
     m_Criterion.reset(new dotk::DOTk_RelativeCriterion(relative_tolerance_));
 }
 
-void DOTk_InexactNewtonAlgorithms::setTrialStep(const std::tr1::shared_ptr<dotk::DOTk_KrylovSolver> & solver_,
-                                                const std::tr1::shared_ptr<dotk::DOTk_OptimizationDataMng> & mng_)
+void DOTk_InexactNewtonAlgorithms::setTrialStep(const std::shared_ptr<dotk::DOTk_KrylovSolver> & solver_,
+                                                const std::shared_ptr<dotk::DOTk_OptimizationDataMng> & mng_)
 {
     switch(solver_->getSolverStopCriterion())
     {
@@ -155,12 +155,12 @@ void DOTk_InexactNewtonAlgorithms::setTrialStep(const std::tr1::shared_ptr<dotk:
     }
 }
 
-bool DOTk_InexactNewtonAlgorithms::checkStoppingCriteria(const std::tr1::shared_ptr<dotk::DOTk_OptimizationDataMng> & mng_)
+bool DOTk_InexactNewtonAlgorithms::checkStoppingCriteria(const std::shared_ptr<dotk::DOTk_OptimizationDataMng> & mng_)
 {
     /// Check reduced space algorithm convergence.\n
     /// Input: \n
     ///    mng_ = shared pointer to gradient based class data manager. \n
-    ///      (const std::tr1::shared_ptr<dotk::DOTk_OptimizationDataMng>)\n
+    ///      (const std::shared_ptr<dotk::DOTk_OptimizationDataMng>)\n
     ///
     bool converged = false;
     if(this->getNumItrDone() < 1)
@@ -204,7 +204,7 @@ bool DOTk_InexactNewtonAlgorithms::checkStoppingCriteria(const std::tr1::shared_
     return (converged);
 }
 
-void DOTk_InexactNewtonAlgorithms::resetCurrentStateToFormer(const std::tr1::shared_ptr<dotk::DOTk_OptimizationDataMng> & mng_)
+void DOTk_InexactNewtonAlgorithms::resetCurrentStateToFormer(const std::shared_ptr<dotk::DOTk_OptimizationDataMng> & mng_)
 {
     mng_->getNewPrimal()->update(1., *mng_->getOldPrimal(), 0.);
     mng_->getNewGradient()->update(1., *mng_->getOldGradient(), 0.);

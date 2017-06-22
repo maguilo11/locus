@@ -8,7 +8,7 @@
 #ifndef DOTK_DATAMNGNONLINEARCG_HPP_
 #define DOTK_DATAMNGNONLINEARCG_HPP_
 
-#include <tr1/memory>
+#include <memory>
 
 #include "DOTk_Types.hpp"
 
@@ -21,7 +21,7 @@ class Vector;
 class DOTk_DataMngNonlinearCG
 {
 public:
-    explicit DOTk_DataMngNonlinearCG(const std::tr1::shared_ptr<dotk::Vector<Real> > & dual_);
+    explicit DOTk_DataMngNonlinearCG(const std::shared_ptr<dotk::Vector<Real> > & dual_);
     virtual ~DOTk_DataMngNonlinearCG();
 
     void reset();
@@ -31,14 +31,14 @@ public:
     Real m_NewObjectiveFunctionValue;
     Real m_OldObjectiveFunctionValue;
 
-    std::tr1::shared_ptr<dotk::Vector<Real> > m_NewDual;
-    std::tr1::shared_ptr<dotk::Vector<Real> > m_OldDual;
-    std::tr1::shared_ptr<dotk::Vector<Real> > m_NewGradient;
-    std::tr1::shared_ptr<dotk::Vector<Real> > m_OldGradient;
-    std::tr1::shared_ptr<dotk::Vector<Real> > m_NewTrialStep;
-    std::tr1::shared_ptr<dotk::Vector<Real> > m_OldTrialStep;
-    std::tr1::shared_ptr<dotk::Vector<Real> > m_NewSteepestDescent;
-    std::tr1::shared_ptr<dotk::Vector<Real> > m_OldSteepestDescent;
+    std::shared_ptr<dotk::Vector<Real> > m_NewDual;
+    std::shared_ptr<dotk::Vector<Real> > m_OldDual;
+    std::shared_ptr<dotk::Vector<Real> > m_NewGradient;
+    std::shared_ptr<dotk::Vector<Real> > m_OldGradient;
+    std::shared_ptr<dotk::Vector<Real> > m_NewTrialStep;
+    std::shared_ptr<dotk::Vector<Real> > m_OldTrialStep;
+    std::shared_ptr<dotk::Vector<Real> > m_NewSteepestDescent;
+    std::shared_ptr<dotk::Vector<Real> > m_OldSteepestDescent;
 
 private:
     DOTk_DataMngNonlinearCG(const dotk::DOTk_DataMngNonlinearCG &);

@@ -214,18 +214,18 @@ void DOTk_TrustRegion::computeActualReduction(Real new_objective_func_val_, Real
     mActualReduction = old_objective_func_val_ - new_objective_func_val_;
 }
 
-void DOTk_TrustRegion::computePredictedReduction(const std::tr1::shared_ptr<dotk::Vector<Real> > & new_grad_,
-                                                 const std::tr1::shared_ptr<dotk::Vector<Real> > & trial_step_,
-                                                 const std::tr1::shared_ptr<dotk::Vector<Real> > & matrix_times_trial_step_)
+void DOTk_TrustRegion::computePredictedReduction(const std::shared_ptr<dotk::Vector<Real> > & new_grad_,
+                                                 const std::shared_ptr<dotk::Vector<Real> > & trial_step_,
+                                                 const std::shared_ptr<dotk::Vector<Real> > & matrix_times_trial_step_)
 {
     Real curvature = trial_step_->dot(*matrix_times_trial_step_);
     Real current_gradient_dot_trial_step = new_grad_->dot(*trial_step_);
     mPredictedReduction = static_cast<Real>(-1.) * (current_gradient_dot_trial_step + (static_cast<Real>(0.5) * curvature));
 }
 
-void DOTk_TrustRegion::computeCauchyPoint(const std::tr1::shared_ptr<dotk::Vector<Real> > & grad_,
-                                          const std::tr1::shared_ptr<dotk::Vector<Real> > & matrix_times_grad_,
-                                          const std::tr1::shared_ptr<dotk::Vector<Real> > & cauchy_point_)
+void DOTk_TrustRegion::computeCauchyPoint(const std::shared_ptr<dotk::Vector<Real> > & grad_,
+                                          const std::shared_ptr<dotk::Vector<Real> > & matrix_times_grad_,
+                                          const std::shared_ptr<dotk::Vector<Real> > & cauchy_point_)
 {
     Real cauchy_pt_scale_factor = 1.;
     Real norm_grad = grad_->norm();
@@ -247,8 +247,8 @@ void DOTk_TrustRegion::computeCauchyPoint(const std::tr1::shared_ptr<dotk::Vecto
 }
 
 Real DOTk_TrustRegion::computeDoglegRoot(const Real & trust_region_radius_,
-                                         const std::tr1::shared_ptr<dotk::Vector<Real> > & vector1_,
-                                         const std::tr1::shared_ptr<dotk::Vector<Real> > & vector2_)
+                                         const std::shared_ptr<dotk::Vector<Real> > & vector1_,
+                                         const std::shared_ptr<dotk::Vector<Real> > & vector2_)
 {
     Real norm_vector1 = vector1_->norm();
     Real vector1_dot_vector1 = norm_vector1 * norm_vector1;
@@ -285,7 +285,7 @@ bool DOTk_TrustRegion::isTrustRegionStepInvalid(Real step_)
     return (invalid_step);
 }
 
-bool DOTk_TrustRegion::acceptTrustRegionRadius(const std::tr1::shared_ptr<dotk::Vector<Real> > & trial_step_)
+bool DOTk_TrustRegion::acceptTrustRegionRadius(const std::shared_ptr<dotk::Vector<Real> > & trial_step_)
 {
     bool accept_trust_region = false;
     if(this->actualOverPredictedReductionViolated() == true)
@@ -301,7 +301,7 @@ bool DOTk_TrustRegion::acceptTrustRegionRadius(const std::tr1::shared_ptr<dotk::
 }
 
 Real DOTk_TrustRegion::computeAlternateStep(const Real & trust_region_radius_,
-                                            const std::tr1::shared_ptr<dotk::Vector<Real> > & vector_)
+                                            const std::shared_ptr<dotk::Vector<Real> > & vector_)
 {
     Real step = 0.;
     Real norm_vector = vector_->norm();
@@ -317,8 +317,8 @@ Real DOTk_TrustRegion::computeAlternateStep(const Real & trust_region_radius_,
 }
 
 void DOTk_TrustRegion::step(const dotk::DOTk_OptimizationDataMng * const mng_,
-                            const std::tr1::shared_ptr<dotk::Vector<Real> > & method_specific_required_data_,
-                            const std::tr1::shared_ptr<dotk::Vector<Real> > & scaled_direction_)
+                            const std::shared_ptr<dotk::Vector<Real> > & method_specific_required_data_,
+                            const std::shared_ptr<dotk::Vector<Real> > & scaled_direction_)
 {
     this->computeCauchyPoint(mng_->getNewGradient(), method_specific_required_data_, scaled_direction_);
     Real trust_region = this->getTrustRegionRadius();
@@ -332,7 +332,7 @@ void DOTk_TrustRegion::shrinkTrustRegionRadius()
     this->setTrustRegionRadius(trust_region_radius);
 }
 
-void DOTk_TrustRegion::expandTrustRegionRadius(const std::tr1::shared_ptr<dotk::Vector<Real> > & trial_step_)
+void DOTk_TrustRegion::expandTrustRegionRadius(const std::shared_ptr<dotk::Vector<Real> > & trial_step_)
 {
     Real trust_region_radius = this->getTrustRegionRadius();
     Real norm_trial_step = trial_step_->norm();

@@ -23,7 +23,7 @@ class DOTk_Hessian : public dotk::DOTk_LinearOperator
 {
 public:
     DOTk_Hessian(); // DEFAULT SET TO REDUCED HESSIAN (I.E. USER DEFINED HESSIAN FOR A REDUCED SPACE FORMULATION)
-    explicit DOTk_Hessian(const std::tr1::shared_ptr<dotk::DOTk_SecondOrderOperator> & hessian_);
+    explicit DOTk_Hessian(const std::shared_ptr<dotk::DOTk_SecondOrderOperator> & hessian_);
     virtual ~DOTk_Hessian();
 
     dotk::types::hessian_t hessianType() const;
@@ -39,13 +39,13 @@ public:
 
     virtual void setNumOtimizationItrDone(size_t itr_);
     virtual void updateLimitedMemoryStorage(bool update_);
-    virtual void apply(const std::tr1::shared_ptr<dotk::DOTk_OptimizationDataMng> & mng_,
-                       const std::tr1::shared_ptr<dotk::Vector<Real> > & vector_,
-                       const std::tr1::shared_ptr<dotk::Vector<Real> > & output_);
+    virtual void apply(const std::shared_ptr<dotk::DOTk_OptimizationDataMng> & mng_,
+                       const std::shared_ptr<dotk::Vector<Real> > & vector_,
+                       const std::shared_ptr<dotk::Vector<Real> > & output_);
 
 private:
     dotk::types::hessian_t m_Type;
-    std::tr1::shared_ptr<dotk::DOTk_SecondOrderOperator> m_Hessian;
+    std::shared_ptr<dotk::DOTk_SecondOrderOperator> m_Hessian;
 
 private:
     DOTk_Hessian(const dotk::DOTk_Hessian &);

@@ -15,7 +15,7 @@
 namespace dotk
 {
 
-DOTk_RayleighRitz::DOTk_RayleighRitz(const std::tr1::shared_ptr<dotk::DOTk_OrthogonalFactorization> & qr_method_) :
+DOTk_RayleighRitz::DOTk_RayleighRitz(const std::shared_ptr<dotk::DOTk_OrthogonalFactorization> & qr_method_) :
         dotk::DOTk_EigenMethod(dotk::types::RAYLEIGH_RITZ_METHOD),
         m_WorkMatrix(),
         m_ReducedMatrix(),
@@ -26,8 +26,8 @@ DOTk_RayleighRitz::DOTk_RayleighRitz(const std::tr1::shared_ptr<dotk::DOTk_Ortho
 {
 }
 
-DOTk_RayleighRitz::DOTk_RayleighRitz(const std::tr1::shared_ptr<dotk::DOTk_OrthogonalFactorization> & qr_method_,
-                                     const std::tr1::shared_ptr<dotk::DOTk_EigenMethod> & eigen_solver_) :
+DOTk_RayleighRitz::DOTk_RayleighRitz(const std::shared_ptr<dotk::DOTk_OrthogonalFactorization> & qr_method_,
+                                     const std::shared_ptr<dotk::DOTk_EigenMethod> & eigen_solver_) :
         dotk::DOTk_EigenMethod(dotk::types::RAYLEIGH_RITZ_METHOD),
         m_WorkMatrix(),
         m_ReducedMatrix(),
@@ -42,9 +42,9 @@ DOTk_RayleighRitz::~DOTk_RayleighRitz()
 {
 }
 
-void DOTk_RayleighRitz::solve(const std::tr1::shared_ptr<dotk::matrix<Real> > & matrix_,
-                              std::tr1::shared_ptr<dotk::Vector<Real> > & eigenvalues_,
-                              std::tr1::shared_ptr<dotk::matrix<Real> > & eigenvectors_)
+void DOTk_RayleighRitz::solve(const std::shared_ptr<dotk::matrix<Real> > & matrix_,
+                              std::shared_ptr<dotk::Vector<Real> > & eigenvalues_,
+                              std::shared_ptr<dotk::matrix<Real> > & eigenvectors_)
 {
     this->initialize(eigenvectors_);
 
@@ -75,7 +75,7 @@ private ( index )
     }
 }
 
-void DOTk_RayleighRitz::initialize(const std::tr1::shared_ptr<dotk::matrix<Real> > & eigenvectors_)
+void DOTk_RayleighRitz::initialize(const std::shared_ptr<dotk::matrix<Real> > & eigenvectors_)
 {
     if(m_OrthonormalBasis.use_count() <= 0)
     {

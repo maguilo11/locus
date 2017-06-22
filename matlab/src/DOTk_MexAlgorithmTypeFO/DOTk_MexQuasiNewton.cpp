@@ -96,22 +96,22 @@ void DOTk_MexQuasiNewton::solveTypeLinearProgramming(const mxArray* input_[], mx
     mxArray* mx_initial_control = dotk::mex::parseInitialControl(input_[0]);
     dotk::MexVector controls(mx_initial_control);
     mxDestroyArray(mx_initial_control);
-    std::tr1::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
     primal->allocateUserDefinedControl(controls);
 
     // Set line search step manager
     dotk::types::line_search_t step_type = this->getLineSearchMethod();
-    std::tr1::shared_ptr<dotk::DOTk_LineSearchStep> step(new dotk::DOTk_LineSearchStep(primal));
+    std::shared_ptr<dotk::DOTk_LineSearchStep> step(new dotk::DOTk_LineSearchStep(primal));
     step->build(primal, step_type);
     DOTk_MexAlgorithmTypeFO::setLineSearchStepMng(*step);
 
     // Set objective function operators
     dotk::types::problem_t type = dotk::DOTk_MexAlgorithmTypeFO::getProblemType();
-    std::tr1::shared_ptr<dotk::DOTk_MexObjectiveFunction>
+    std::shared_ptr<dotk::DOTk_MexObjectiveFunction>
         objective(new dotk::DOTk_MexObjectiveFunction(m_ObjectiveFunction, type));
 
     // Set line search based algorithm data manager
-    std::tr1::shared_ptr<dotk::DOTk_LineSearchMngTypeULP>
+    std::shared_ptr<dotk::DOTk_LineSearchMngTypeULP>
         mng(new dotk::DOTk_LineSearchMngTypeULP(primal, objective));
     dotk::mex::buildGradient(input_[0], mng);
 
@@ -128,26 +128,26 @@ void DOTk_MexQuasiNewton::solveTypeNonlinearProgramming(const mxArray* input_[],
     mxDestroyArray(mx_initial_control);
 
     // Allocate DOTk data structures
-    std::tr1::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
     primal->allocateUserDefinedState(states);
     primal->allocateUserDefinedControl(controls);
 
     // Set objective function and equality constraint operators
     dotk::types::problem_t problem_type = dotk::DOTk_MexAlgorithmTypeFO::getProblemType();
-    std::tr1::shared_ptr<dotk::DOTk_MexObjectiveFunction>
+    std::shared_ptr<dotk::DOTk_MexObjectiveFunction>
         objective(new dotk::DOTk_MexObjectiveFunction(m_ObjectiveFunction, problem_type));
     m_EqualityConstraint = dotk::mex::parseEqualityConstraint(input_[1]);
-    std::tr1::shared_ptr<dotk::DOTk_MexEqualityConstraint>
+    std::shared_ptr<dotk::DOTk_MexEqualityConstraint>
         equality(new dotk::DOTk_MexEqualityConstraint(m_EqualityConstraint, problem_type));
 
     // Set line search step manager
-    std::tr1::shared_ptr<dotk::DOTk_LineSearchStep> step(new dotk::DOTk_LineSearchStep(primal));
+    std::shared_ptr<dotk::DOTk_LineSearchStep> step(new dotk::DOTk_LineSearchStep(primal));
     dotk::types::line_search_t step_type = this->getLineSearchMethod();
     step->build(primal, step_type);
     DOTk_MexAlgorithmTypeFO::setLineSearchStepMng(*step);
 
     // Set line search based algorithm manager
-    std::tr1::shared_ptr<dotk::DOTk_LineSearchMngTypeUNP>
+    std::shared_ptr<dotk::DOTk_LineSearchMngTypeUNP>
         mng(new dotk::DOTk_LineSearchMngTypeUNP(primal, objective, equality));
     dotk::mex::buildGradient(input_[0], mng);
 
@@ -162,7 +162,7 @@ void DOTk_MexQuasiNewton::solveTypeBoundLinearProgramming(const mxArray* input_[
     mxDestroyArray(mx_initial_control);
 
     // Allocate DOTk data structures
-    std::tr1::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
     primal->allocateUserDefinedControl(controls);
 
     // Set lower bounds on control variables
@@ -179,16 +179,16 @@ void DOTk_MexQuasiNewton::solveTypeBoundLinearProgramming(const mxArray* input_[
 
     // Set line search step manager
     dotk::types::line_search_t step_type = this->getLineSearchMethod();
-    std::tr1::shared_ptr<dotk::DOTk_ProjectedLineSearchStep> step(new dotk::DOTk_ProjectedLineSearchStep(primal));
+    std::shared_ptr<dotk::DOTk_ProjectedLineSearchStep> step(new dotk::DOTk_ProjectedLineSearchStep(primal));
     step->build(primal, step_type);
     DOTk_MexAlgorithmTypeFO::setLineSearchStepMng(*step);
     DOTk_MexAlgorithmTypeFO::setBoundConstraintMethod(input_[0], primal, step);
 
     // Set objective function operators and line search based algorithm data manager
     dotk::types::problem_t type = dotk::DOTk_MexAlgorithmTypeFO::getProblemType();
-    std::tr1::shared_ptr<dotk::DOTk_MexObjectiveFunction>
+    std::shared_ptr<dotk::DOTk_MexObjectiveFunction>
         objective(new dotk::DOTk_MexObjectiveFunction(m_ObjectiveFunction, type));
-    std::tr1::shared_ptr<dotk::DOTk_LineSearchMngTypeULP> mng(new dotk::DOTk_LineSearchMngTypeULP(primal, objective));
+    std::shared_ptr<dotk::DOTk_LineSearchMngTypeULP> mng(new dotk::DOTk_LineSearchMngTypeULP(primal, objective));
     dotk::mex::buildGradient(input_[0], mng);
 
     this->optimize(step, mng, input_, output_);
@@ -204,7 +204,7 @@ void DOTk_MexQuasiNewton::solveTypeBoundNonlinearProgramming(const mxArray* inpu
     mxDestroyArray(mx_initial_control);
 
     // Allocate DOTk data structures
-    std::tr1::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
     primal->allocateUserDefinedState(states);
     primal->allocateUserDefinedControl(controls);
 
@@ -220,7 +220,7 @@ void DOTk_MexQuasiNewton::solveTypeBoundNonlinearProgramming(const mxArray* inpu
     mxDestroyArray(mx_upper_bound);
     primal->setControlUpperBound(upper_bound);
 
-    std::tr1::shared_ptr<dotk::DOTk_ProjectedLineSearchStep> step(new dotk::DOTk_ProjectedLineSearchStep(primal));
+    std::shared_ptr<dotk::DOTk_ProjectedLineSearchStep> step(new dotk::DOTk_ProjectedLineSearchStep(primal));
     dotk::types::line_search_t step_type = this->getLineSearchMethod();
     step->build(primal, step_type);
     DOTk_MexAlgorithmTypeFO::setLineSearchStepMng(*step);
@@ -228,14 +228,14 @@ void DOTk_MexQuasiNewton::solveTypeBoundNonlinearProgramming(const mxArray* inpu
 
     // Set objective function and equality constraint operators
     dotk::types::problem_t type = dotk::DOTk_MexAlgorithmTypeFO::getProblemType();
-    std::tr1::shared_ptr<dotk::DOTk_MexObjectiveFunction>
+    std::shared_ptr<dotk::DOTk_MexObjectiveFunction>
         objective(new dotk::DOTk_MexObjectiveFunction(m_ObjectiveFunction, type));
     m_EqualityConstraint = dotk::mex::parseEqualityConstraint(input_[1]);
-    std::tr1::shared_ptr<dotk::DOTk_MexEqualityConstraint>
+    std::shared_ptr<dotk::DOTk_MexEqualityConstraint>
         equality(new dotk::DOTk_MexEqualityConstraint(m_EqualityConstraint, type));
 
     // Set line search based optimization algorithm data manager
-    std::tr1::shared_ptr<dotk::DOTk_LineSearchMngTypeUNP>
+    std::shared_ptr<dotk::DOTk_LineSearchMngTypeUNP>
         mng(new dotk::DOTk_LineSearchMngTypeUNP(primal, objective, equality));
     dotk::mex::buildGradient(input_[0], mng);
 
@@ -265,8 +265,8 @@ void DOTk_MexQuasiNewton::initialize(const mxArray* options_[])
     m_ObjectiveFunction = dotk::mex::parseObjectiveFunction(options_[1]);
 }
 
-void DOTk_MexQuasiNewton::optimize(const std::tr1::shared_ptr<dotk::DOTk_LineSearchStepMng> & step_,
-                                   const std::tr1::shared_ptr<dotk::DOTk_LineSearchAlgorithmsDataMng> & mng_,
+void DOTk_MexQuasiNewton::optimize(const std::shared_ptr<dotk::DOTk_LineSearchStepMng> & step_,
+                                   const std::shared_ptr<dotk::DOTk_LineSearchAlgorithmsDataMng> & mng_,
                                    const mxArray* input_[],
                                    mxArray* output_[])
 {

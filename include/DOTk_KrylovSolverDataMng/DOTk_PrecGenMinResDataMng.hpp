@@ -25,14 +25,14 @@ class Vector;
 class DOTk_PrecGenMinResDataMng : public dotk::DOTk_KrylovSolverDataMng
 {
 public:
-    DOTk_PrecGenMinResDataMng(const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_,
-                              const std::tr1::shared_ptr<dotk::DOTk_LinearOperator> & operator_,
+    DOTk_PrecGenMinResDataMng(const std::shared_ptr<dotk::DOTk_Primal> & primal_,
+                              const std::shared_ptr<dotk::DOTk_LinearOperator> & operator_,
                               size_t max_num_itr_ = 200);
     virtual ~DOTk_PrecGenMinResDataMng();
 
     void setDirectSolver(dotk::types::direct_solver_t type_);
-    void setArnoldiProjection(const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_);
-    void setGramSchmidtProjection(const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_);
+    void setArnoldiProjection(const std::shared_ptr<dotk::DOTk_Primal> & primal_);
+    void setGramSchmidtProjection(const std::shared_ptr<dotk::DOTk_Primal> & primal_);
 
     void setLbfgsSecantLeftPreconditioner(size_t secant_storage_);
     void setLdfpSecantLeftPreconditioner(size_t secant_storage_);
@@ -43,23 +43,23 @@ public:
 
     void setRightPreconditioner(dotk::types::right_prec_t type_);
 
-    virtual const std::tr1::shared_ptr<dotk::DOTk_OrthogonalProjection> & getProjection() const;
-    virtual const std::tr1::shared_ptr<dotk::DOTk_LeftPreconditioner> & getLeftPrec() const;
-    virtual const std::tr1::shared_ptr<dotk::DOTk_RightPreconditioner> & getRightPrec() const;
+    virtual const std::shared_ptr<dotk::DOTk_OrthogonalProjection> & getProjection() const;
+    virtual const std::shared_ptr<dotk::DOTk_LeftPreconditioner> & getLeftPrec() const;
+    virtual const std::shared_ptr<dotk::DOTk_RightPreconditioner> & getRightPrec() const;
 
-    virtual const std::tr1::shared_ptr<dotk::Vector<Real> > & getLeftPrecTimesVector() const;
-    virtual const std::tr1::shared_ptr<dotk::Vector<Real> > & getRightPrecTimesVector() const;
-
-private:
-    std::tr1::shared_ptr<dotk::DOTk_LeftPreconditioner> m_LeftPreconditioner;
-    std::tr1::shared_ptr<dotk::DOTk_RightPreconditioner> m_RightPreconditioner;
-    std::tr1::shared_ptr<dotk::DOTk_OrthogonalProjection> m_OrthogonalProjection;
-
-    std::tr1::shared_ptr<dotk::Vector<Real> > m_LeftPrecTimesResidual;
-    std::tr1::shared_ptr<dotk::Vector<Real> > m_RightPrecTimesResidual;
+    virtual const std::shared_ptr<dotk::Vector<Real> > & getLeftPrecTimesVector() const;
+    virtual const std::shared_ptr<dotk::Vector<Real> > & getRightPrecTimesVector() const;
 
 private:
-    void allocate(const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_);
+    std::shared_ptr<dotk::DOTk_LeftPreconditioner> m_LeftPreconditioner;
+    std::shared_ptr<dotk::DOTk_RightPreconditioner> m_RightPreconditioner;
+    std::shared_ptr<dotk::DOTk_OrthogonalProjection> m_OrthogonalProjection;
+
+    std::shared_ptr<dotk::Vector<Real> > m_LeftPrecTimesResidual;
+    std::shared_ptr<dotk::Vector<Real> > m_RightPrecTimesResidual;
+
+private:
+    void allocate(const std::shared_ptr<dotk::DOTk_Primal> & primal_);
 
 private:
     DOTk_PrecGenMinResDataMng(const dotk::DOTk_PrecGenMinResDataMng &);

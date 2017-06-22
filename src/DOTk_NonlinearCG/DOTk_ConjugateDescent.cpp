@@ -21,9 +21,9 @@ DOTk_ConjugateDescent::~DOTk_ConjugateDescent()
 {
 }
 
-Real DOTk_ConjugateDescent::computeScaleFactor(const std::tr1::shared_ptr<dotk::Vector<Real> > & old_grad_,
-                                               const std::tr1::shared_ptr<dotk::Vector<Real> > & new_grad_,
-                                               const std::tr1::shared_ptr<dotk::Vector<Real> > & dir_)
+Real DOTk_ConjugateDescent::computeScaleFactor(const std::shared_ptr<dotk::Vector<Real> > & old_grad_,
+                                               const std::shared_ptr<dotk::Vector<Real> > & new_grad_,
+                                               const std::shared_ptr<dotk::Vector<Real> > & dir_)
 {
     Real new_grad_dot_new_grad = new_grad_->dot(*new_grad_);
     Real dir_dot_old_grad = dir_->dot(*old_grad_);
@@ -32,15 +32,15 @@ Real DOTk_ConjugateDescent::computeScaleFactor(const std::tr1::shared_ptr<dotk::
     return (beta);
 }
 
-void DOTk_ConjugateDescent::getDirection(const std::tr1::shared_ptr<dotk::Vector<Real> > & old_grad_,
-                                         const std::tr1::shared_ptr<dotk::Vector<Real> > & new_grad_,
-                                         const std::tr1::shared_ptr<dotk::Vector<Real> > & dir_)
+void DOTk_ConjugateDescent::getDirection(const std::shared_ptr<dotk::Vector<Real> > & old_grad_,
+                                         const std::shared_ptr<dotk::Vector<Real> > & new_grad_,
+                                         const std::shared_ptr<dotk::Vector<Real> > & dir_)
 {
     Real beta = this->computeScaleFactor(old_grad_, new_grad_, dir_);
     dir_->update(static_cast<Real>(-1.0), *new_grad_, beta);
 }
 
-void DOTk_ConjugateDescent::direction(const std::tr1::shared_ptr<dotk::DOTk_OptimizationDataMng> & mng_)
+void DOTk_ConjugateDescent::direction(const std::shared_ptr<dotk::DOTk_OptimizationDataMng> & mng_)
 {
     Real value = dotk::DOTk_DescentDirection::computeCosineAngle(mng_->getOldGradient(), mng_->getTrialStep());
     if( dotk::DOTk_DescentDirection::isTrialStepOrthogonalToSteepestDescent(value) == true )

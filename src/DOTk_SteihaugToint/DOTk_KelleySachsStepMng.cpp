@@ -21,8 +21,8 @@
 namespace dotk
 {
 
-DOTk_KelleySachsStepMng::DOTk_KelleySachsStepMng(const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_,
-                                                 const std::tr1::shared_ptr<dotk::DOTk_LinearOperator> & linear_operator_) :
+DOTk_KelleySachsStepMng::DOTk_KelleySachsStepMng(const std::shared_ptr<dotk::DOTk_Primal> & primal_,
+                                                 const std::shared_ptr<dotk::DOTk_LinearOperator> & linear_operator_) :
         m_Eta(0),
         m_Epsilon(0),
         m_StationarityMeasure(0),
@@ -47,9 +47,9 @@ DOTk_KelleySachsStepMng::DOTk_KelleySachsStepMng(const std::tr1::shared_ptr<dotk
     this->initialize(primal_);
 }
 
-DOTk_KelleySachsStepMng::DOTk_KelleySachsStepMng(const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_,
-                                                 const std::tr1::shared_ptr<dotk::DOTk_LinearOperator> & linear_operator_,
-                                                 const std::tr1::shared_ptr<dotk::DOTk_Preconditioner> & preconditioner_) :
+DOTk_KelleySachsStepMng::DOTk_KelleySachsStepMng(const std::shared_ptr<dotk::DOTk_Primal> & primal_,
+                                                 const std::shared_ptr<dotk::DOTk_LinearOperator> & linear_operator_,
+                                                 const std::shared_ptr<dotk::DOTk_Preconditioner> & preconditioner_) :
         m_Eta(0),
         m_Epsilon(0),
         m_StationarityMeasure(0),
@@ -112,7 +112,7 @@ Real DOTk_KelleySachsStepMng::getMidObejectiveFunctionValue() const
     return (m_MidObjectiveFunctionValue);
 }
 
-const std::tr1::shared_ptr<dotk::Vector<Real> > & DOTk_KelleySachsStepMng::getMidPrimal() const
+const std::shared_ptr<dotk::Vector<Real> > & DOTk_KelleySachsStepMng::getMidPrimal() const
 {
     return (m_MidPrimal);
 }
@@ -122,9 +122,9 @@ void DOTk_KelleySachsStepMng::setNumOptimizationItrDone(const size_t & input_)
     m_LinearOperator->setNumOtimizationItrDone(input_);
 }
 
-void DOTk_KelleySachsStepMng::solveSubProblem(const std::tr1::shared_ptr<dotk::DOTk_OptimizationDataMng> & mng_,
-                                              const std::tr1::shared_ptr<dotk::DOTk_SteihaugTointSolver> & solver_,
-                                              const std::tr1::shared_ptr<dotk::DOTk_SteihaugTointNewtonIO> & io_)
+void DOTk_KelleySachsStepMng::solveSubProblem(const std::shared_ptr<dotk::DOTk_OptimizationDataMng> & mng_,
+                                              const std::shared_ptr<dotk::DOTk_SteihaugTointSolver> & solver_,
+                                              const std::shared_ptr<dotk::DOTk_SteihaugTointNewtonIO> & io_)
 {
     m_TrustRegionRadiusFlag = false;
     this->setNumTrustRegionSubProblemItrDone(1);
@@ -191,7 +191,7 @@ void DOTk_KelleySachsStepMng::solveSubProblem(const std::tr1::shared_ptr<dotk::D
     m_LinearOperator->updateLimitedMemoryStorage(true);
 }
 
-void DOTk_KelleySachsStepMng::bounds(const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_)
+void DOTk_KelleySachsStepMng::bounds(const std::shared_ptr<dotk::DOTk_Primal> & primal_)
 {
     bool control_bounds_active = (primal_->getControlLowerBound().use_count() > 0)
             && (primal_->getControlUpperBound().use_count() > 0);
@@ -205,7 +205,7 @@ void DOTk_KelleySachsStepMng::bounds(const std::tr1::shared_ptr<dotk::DOTk_Prima
     m_UpperBound->update(1., *primal_->getControlUpperBound(), 0.);
 }
 
-void DOTk_KelleySachsStepMng::initialize(const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_)
+void DOTk_KelleySachsStepMng::initialize(const std::shared_ptr<dotk::DOTk_Primal> & primal_)
 {
     if(primal_->control().use_count() > 0)
     {
@@ -218,7 +218,7 @@ void DOTk_KelleySachsStepMng::initialize(const std::tr1::shared_ptr<dotk::DOTk_P
     }
 }
 
-bool DOTk_KelleySachsStepMng::updateTrustRegionRadius(const std::tr1::shared_ptr<dotk::DOTk_OptimizationDataMng> & mng_)
+bool DOTk_KelleySachsStepMng::updateTrustRegionRadius(const std::shared_ptr<dotk::DOTk_OptimizationDataMng> & mng_)
 {
     Real actual_reduction = dotk::DOTk_TrustRegionStepMng::getActualReduction();
     Real actual_over_pred_red = dotk::DOTk_TrustRegionStepMng::getActualOverPredictedReduction();
@@ -271,8 +271,8 @@ bool DOTk_KelleySachsStepMng::updateTrustRegionRadius(const std::tr1::shared_ptr
     return (stop_trust_region_sub_problem);
 }
 
-void DOTk_KelleySachsStepMng::applyProjectedTrialStepToHessian(const std::tr1::shared_ptr<dotk::DOTk_OptimizationDataMng> & mng_,
-                                                               const std::tr1::shared_ptr<dotk::DOTk_SteihaugTointSolver> & solver_)
+void DOTk_KelleySachsStepMng::applyProjectedTrialStepToHessian(const std::shared_ptr<dotk::DOTk_OptimizationDataMng> & mng_,
+                                                               const std::shared_ptr<dotk::DOTk_SteihaugTointSolver> & solver_)
 {
     // Compute active and inactive projected trial step
     m_ActiveProjectedTrialStep->update(1., *m_ProjectedTrialStep, 0.);
@@ -289,7 +289,7 @@ void DOTk_KelleySachsStepMng::applyProjectedTrialStepToHessian(const std::tr1::s
     mng_->getMatrixTimesVector()->update(static_cast<Real>(1.), *m_ActiveProjectedTrialStep, 1.);
 }
 
-Real DOTk_KelleySachsStepMng::computeActualReductionLowerBound(const std::tr1::shared_ptr<dotk::DOTk_OptimizationDataMng> & mng_)
+Real DOTk_KelleySachsStepMng::computeActualReductionLowerBound(const std::shared_ptr<dotk::DOTk_OptimizationDataMng> & mng_)
 {
     Real condition_one = dotk::DOTk_TrustRegionStepMng::getTrustRegionRadius() /
             (m_NormInactiveGradient + std::numeric_limits<Real>::epsilon());
@@ -307,8 +307,8 @@ Real DOTk_KelleySachsStepMng::computeActualReductionLowerBound(const std::tr1::s
     return (lower_bound);
 }
 
-void DOTk_KelleySachsStepMng::computeActiveAndInactiveSet(const std::tr1::shared_ptr<dotk::DOTk_OptimizationDataMng> & mng_,
-                                                          const std::tr1::shared_ptr<dotk::DOTk_SteihaugTointSolver> & solver_)
+void DOTk_KelleySachsStepMng::computeActiveAndInactiveSet(const std::shared_ptr<dotk::DOTk_OptimizationDataMng> & mng_,
+                                                          const std::shared_ptr<dotk::DOTk_SteihaugTointSolver> & solver_)
 {
     m_WorkVector->update(1., *mng_->getNewGradient(), 0.);
     m_WorkVector->elementWiseMultiplication(*solver_->getInactiveSet());

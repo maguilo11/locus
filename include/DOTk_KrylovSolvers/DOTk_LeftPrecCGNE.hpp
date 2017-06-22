@@ -25,34 +25,34 @@ class Vector;
 class DOTk_LeftPrecCGNE : public dotk::DOTk_KrylovSolver
 {
 public:
-    explicit DOTk_LeftPrecCGNE(const std::tr1::shared_ptr<dotk::DOTk_KrylovSolverDataMng> & mng_);
-    DOTk_LeftPrecCGNE(const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_,
-                      const std::tr1::shared_ptr<dotk::DOTk_LinearOperator> & linear_operator_);
+    explicit DOTk_LeftPrecCGNE(const std::shared_ptr<dotk::DOTk_KrylovSolverDataMng> & mng_);
+    DOTk_LeftPrecCGNE(const std::shared_ptr<dotk::DOTk_Primal> & primal_,
+                      const std::shared_ptr<dotk::DOTk_LinearOperator> & linear_operator_);
     virtual ~DOTk_LeftPrecCGNE();
 
-    void initialize(const std::tr1::shared_ptr<dotk::Vector<Real> > & rhs_vec_,
-                    const std::tr1::shared_ptr<dotk::DOTk_KrylovSolverStoppingCriterion> & criterion_,
-                    const std::tr1::shared_ptr<dotk::DOTk_OptimizationDataMng> & opt_mng_);
-    void cgne(const std::tr1::shared_ptr<dotk::Vector<Real> > & rhs_vec_,
-              const std::tr1::shared_ptr<dotk::DOTk_KrylovSolverStoppingCriterion> & criterion_,
-              const std::tr1::shared_ptr<dotk::DOTk_OptimizationDataMng> & opt_mng_);
+    void initialize(const std::shared_ptr<dotk::Vector<Real> > & rhs_vec_,
+                    const std::shared_ptr<dotk::DOTk_KrylovSolverStoppingCriterion> & criterion_,
+                    const std::shared_ptr<dotk::DOTk_OptimizationDataMng> & opt_mng_);
+    void cgne(const std::shared_ptr<dotk::Vector<Real> > & rhs_vec_,
+              const std::shared_ptr<dotk::DOTk_KrylovSolverStoppingCriterion> & criterion_,
+              const std::shared_ptr<dotk::DOTk_OptimizationDataMng> & opt_mng_);
 
     virtual void setMaxNumKrylovSolverItr(size_t itr_);
-    virtual const std::tr1::shared_ptr<dotk::DOTk_KrylovSolverDataMng> & getDataMng() const;
-    virtual const std::tr1::shared_ptr<dotk::DOTk_LinearOperator> & getLinearOperator() const;
-    virtual const std::tr1::shared_ptr<dotk::Vector<Real> > & getDescentDirection();
-    virtual void solve(const std::tr1::shared_ptr<dotk::Vector<Real> > & rhs_vec_,
-                       const std::tr1::shared_ptr<dotk::DOTk_KrylovSolverStoppingCriterion> & criterion_,
-                       const std::tr1::shared_ptr<dotk::DOTk_OptimizationDataMng> & opt_mng_);
+    virtual const std::shared_ptr<dotk::DOTk_KrylovSolverDataMng> & getDataMng() const;
+    virtual const std::shared_ptr<dotk::DOTk_LinearOperator> & getLinearOperator() const;
+    virtual const std::shared_ptr<dotk::Vector<Real> > & getDescentDirection();
+    virtual void solve(const std::shared_ptr<dotk::Vector<Real> > & rhs_vec_,
+                       const std::shared_ptr<dotk::DOTk_KrylovSolverStoppingCriterion> & criterion_,
+                       const std::shared_ptr<dotk::DOTk_OptimizationDataMng> & opt_mng_);
 
 private:
-    std::tr1::shared_ptr<dotk::DOTk_KrylovSolverDataMng> m_DataMng;
-    std::tr1::shared_ptr<dotk::Vector<Real> > m_AuxiliaryVector;
-    std::tr1::shared_ptr<dotk::Vector<Real> > m_ConjugateDirection;
-    std::tr1::shared_ptr<dotk::Vector<Real> > m_ConjugateDirectionNormalEq;
+    std::shared_ptr<dotk::DOTk_KrylovSolverDataMng> m_DataMng;
+    std::shared_ptr<dotk::Vector<Real> > m_AuxiliaryVector;
+    std::shared_ptr<dotk::Vector<Real> > m_ConjugateDirection;
+    std::shared_ptr<dotk::Vector<Real> > m_ConjugateDirectionNormalEq;
 
 private:
-    void initialize(const std::tr1::shared_ptr<dotk::Vector<Real> > vec_);
+    void initialize(const std::shared_ptr<dotk::Vector<Real> > vec_);
 
 private:
     DOTk_LeftPrecCGNE(const dotk::DOTk_LeftPrecCGNE &);

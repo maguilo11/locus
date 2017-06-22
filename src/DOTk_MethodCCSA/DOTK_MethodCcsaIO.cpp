@@ -85,7 +85,7 @@ void DOTK_MethodCcsaIO::printHeader()
             << "\n" << std::flush;
 }
 
-void DOTK_MethodCcsaIO::printSolution(const std::tr1::shared_ptr<dotk::DOTk_DataMngCCSA> & data_mng_)
+void DOTK_MethodCcsaIO::printSolution(const std::shared_ptr<dotk::DOTk_DataMngCCSA> & data_mng_)
 {
     if(this->getDisplayOption() == dotk::types::OFF)
     {
@@ -97,7 +97,7 @@ void DOTK_MethodCcsaIO::printSolution(const std::tr1::shared_ptr<dotk::DOTk_Data
 }
 
 void DOTK_MethodCcsaIO::print(const dotk::DOTk_AlgorithmCCSA* const algorithm_,
-           const std::tr1::shared_ptr<dotk::DOTk_DataMngCCSA> & data_mng_)
+           const std::shared_ptr<dotk::DOTk_DataMngCCSA> & data_mng_)
 {
     if(this->getDisplayOption() == dotk::types::OFF)
     {

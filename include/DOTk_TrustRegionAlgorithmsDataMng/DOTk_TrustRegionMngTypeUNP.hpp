@@ -25,9 +25,9 @@ class DOTk_EqualityConstraint;
 class DOTk_TrustRegionMngTypeUNP : public dotk::DOTk_TrustRegionAlgorithmsDataMng
 {
 public:
-    DOTk_TrustRegionMngTypeUNP(const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_,
-                               const std::tr1::shared_ptr<dotk::DOTk_ObjectiveFunction<Real> > & objective_,
-                               const std::tr1::shared_ptr<dotk::DOTk_EqualityConstraint<Real> > & equality_);
+    DOTk_TrustRegionMngTypeUNP(const std::shared_ptr<dotk::DOTk_Primal> & primal_,
+                               const std::shared_ptr<dotk::DOTk_ObjectiveFunction<Real> > & objective_,
+                               const std::shared_ptr<dotk::DOTk_EqualityConstraint<Real> > & equality_);
     virtual ~DOTk_TrustRegionMngTypeUNP();
 
     dotk::types::variable_t getPrimalType() const;

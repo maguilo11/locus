@@ -8,7 +8,7 @@
 #ifndef DOTK_MEXNEWTONTYPELS_HPP_
 #define DOTK_MEXNEWTONTYPELS_HPP_
 
-#include <tr1/memory>
+#include <memory>
 
 #include "DOTk_MexAlgorithmTypeNewton.hpp"
 
@@ -39,7 +39,7 @@ private:
     void solveTypeNonlinearProgramming(const mxArray* input_[], mxArray* output_[]);
 
     void setAlgorithmParameters(dotk::DOTk_LineSearchInexactNewton & algorithm_);
-    void setLineSearchMethodParameters(const std::tr1::shared_ptr<dotk::DOTk_LineSearchStepMng> & step_);
+    void setLineSearchMethodParameters(const std::shared_ptr<dotk::DOTk_LineSearchStepMng> & step_);
 
 private:
     size_t m_MaxNumLineSearchItr;

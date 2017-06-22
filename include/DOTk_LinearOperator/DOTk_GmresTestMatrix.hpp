@@ -25,20 +25,20 @@ class DOTk_OptimizationDataMng;
 class DOTk_GmresTestMatrix : public dotk::DOTk_LinearOperator
 {
 public:
-    explicit DOTk_GmresTestMatrix(const std::tr1::shared_ptr<dotk::DOTk_MultiVector<Real> > & vector_);
+    explicit DOTk_GmresTestMatrix(const std::shared_ptr<dotk::DOTk_MultiVector<Real> > & vector_);
     virtual ~DOTk_GmresTestMatrix();
 
-    void apply(const std::tr1::shared_ptr<dotk::Vector<Real> > & vec_,
-               const std::tr1::shared_ptr<dotk::Vector<Real> > & matrix_times_vec_);
-    void apply(const std::tr1::shared_ptr<dotk::DOTk_OptimizationDataMng> & mng_,
-               const std::tr1::shared_ptr<dotk::Vector<Real> > & vec_,
-               const std::tr1::shared_ptr<dotk::Vector<Real> > & matrix_times_vec_);
+    void apply(const std::shared_ptr<dotk::Vector<Real> > & vec_,
+               const std::shared_ptr<dotk::Vector<Real> > & matrix_times_vec_);
+    void apply(const std::shared_ptr<dotk::DOTk_OptimizationDataMng> & mng_,
+               const std::shared_ptr<dotk::Vector<Real> > & vec_,
+               const std::shared_ptr<dotk::Vector<Real> > & matrix_times_vec_);
 
 private:
-    std::tr1::shared_ptr<dotk::matrix<Real> > m_Matrix;
+    std::shared_ptr<dotk::matrix<Real> > m_Matrix;
 
 private:
-    void allocate(const std::tr1::shared_ptr<dotk::DOTk_MultiVector<Real> > & vector_);
+    void allocate(const std::shared_ptr<dotk::DOTk_MultiVector<Real> > & vector_);
 
 private:
     DOTk_GmresTestMatrix(const dotk::DOTk_GmresTestMatrix &);

@@ -9,8 +9,8 @@
 #define VECTOR_HPP_
 
 #include <cstdio>
+#include <memory>
 #include <cstdlib>
-#include <tr1/memory>
 
 namespace dotk
 {
@@ -50,26 +50,26 @@ public:
     //! Returns the number of elements in the vector.
     virtual size_t size() const = 0;
     //! Clones memory for an object of type dotk::Vector
-    virtual std::tr1::shared_ptr< dotk::Vector<ScalarType> > clone() const = 0;
+    virtual std::shared_ptr< dotk::Vector<ScalarType> > clone() const = 0;
     //! Operator overloads the square bracket operator
     virtual ScalarType & operator [](size_t index_) = 0;
     //! Operator overloads the square bracket operator
     virtual const ScalarType & operator [](size_t index_) const = 0;
 
     //! Returns shared pointer to dual vector
-    virtual const std::tr1::shared_ptr<dotk::Vector<ScalarType> > & dual() const
+    virtual const std::shared_ptr<dotk::Vector<ScalarType> > & dual() const
     {
         std::perror("\n**** Unimplemented Function dotk::Vector::dual. ABORT. ****\n");
         std::abort();
     }
     //! Returns shared pointer to state vector
-    virtual const std::tr1::shared_ptr<dotk::Vector<ScalarType> > & state() const
+    virtual const std::shared_ptr<dotk::Vector<ScalarType> > & state() const
     {
         std::perror("\n**** Unimplemented Function dotk::Vector::state. ABORT. ****\n");
         std::abort();
     }
     //! Returns shared pointer to control vector
-    virtual const std::tr1::shared_ptr<dotk::Vector<ScalarType> > & control() const
+    virtual const std::shared_ptr<dotk::Vector<ScalarType> > & control() const
     {
         std::perror("\n**** Unimplemented Function dotk::Vector::control. ABORT. ****\n");
         std::abort();

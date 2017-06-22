@@ -12,7 +12,6 @@
 #include <vector>
 #include <typeinfo>
 #include <algorithm>
-#include <tr1/memory>
 
 #include "vector.hpp"
 #include "DOTk_ParallelUtils.hpp"
@@ -170,9 +169,9 @@ public:
         return (dim);
     }
     // Clones memory for an object of ScalarType dotk::Vector
-    std::tr1::shared_ptr<dotk::Vector<ScalarType> > clone() const
+    std::shared_ptr<dotk::Vector<ScalarType> > clone() const
     {
-        std::tr1::shared_ptr < dotk::MpiVector<ScalarType> > output(new dotk::MpiVector<ScalarType>(m_Comm, m_GlobalDim));
+        std::shared_ptr < dotk::MpiVector<ScalarType> > output(new dotk::MpiVector<ScalarType>(m_Comm, m_GlobalDim));
         return (output);
     }
     // Operator overloads the square bracket operator

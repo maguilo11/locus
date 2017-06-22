@@ -58,66 +58,66 @@ void DOTk_KrylovSolverFactory::setFactoryType(dotk::types::krylov_solver_t type_
     mFactoryType = type_;
 }
 
-void DOTk_KrylovSolverFactory::buildPrecGmresSolver(const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_,
-                                                    const std::tr1::shared_ptr<dotk::DOTk_LinearOperator> & linear_operator_,
+void DOTk_KrylovSolverFactory::buildPrecGmresSolver(const std::shared_ptr<dotk::DOTk_Primal> & primal_,
+                                                    const std::shared_ptr<dotk::DOTk_LinearOperator> & linear_operator_,
                                                     size_t max_num_itr_,
-                                                    std::tr1::shared_ptr<dotk::DOTk_KrylovSolver> & solver_)
+                                                    std::shared_ptr<dotk::DOTk_KrylovSolver> & solver_)
 {
     solver_.reset(new dotk::DOTk_PrecGMRES(primal_, linear_operator_, max_num_itr_));
     this->setFactoryType(dotk::types::PREC_GMRES);
 }
-void DOTk_KrylovSolverFactory::buildLeftPrecCgSolver(const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_,
-                                                     const std::tr1::shared_ptr<dotk::DOTk_LinearOperator> & linear_operator_,
-                                                     std::tr1::shared_ptr<dotk::DOTk_KrylovSolver> & solver_)
+void DOTk_KrylovSolverFactory::buildLeftPrecCgSolver(const std::shared_ptr<dotk::DOTk_Primal> & primal_,
+                                                     const std::shared_ptr<dotk::DOTk_LinearOperator> & linear_operator_,
+                                                     std::shared_ptr<dotk::DOTk_KrylovSolver> & solver_)
 {
     solver_.reset(new dotk::DOTk_LeftPrecCG(primal_, linear_operator_));
     this->setFactoryType(dotk::types::LEFT_PREC_CG);
 }
 
-void DOTk_KrylovSolverFactory::buildLeftPrecCrSolver(const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_,
-                                                     const std::tr1::shared_ptr<dotk::DOTk_LinearOperator> & linear_operator_,
-                                                     std::tr1::shared_ptr<dotk::DOTk_KrylovSolver> & solver_)
+void DOTk_KrylovSolverFactory::buildLeftPrecCrSolver(const std::shared_ptr<dotk::DOTk_Primal> & primal_,
+                                                     const std::shared_ptr<dotk::DOTk_LinearOperator> & linear_operator_,
+                                                     std::shared_ptr<dotk::DOTk_KrylovSolver> & solver_)
 {
     solver_.reset(new dotk::DOTk_LeftPrecCR(primal_, linear_operator_));
     this->setFactoryType(dotk::types::LEFT_PREC_CGNE);
 }
 
-void DOTk_KrylovSolverFactory::buildLeftPrecGcrSolver(const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_,
-                                                      const std::tr1::shared_ptr<dotk::DOTk_LinearOperator> & linear_operator_,
+void DOTk_KrylovSolverFactory::buildLeftPrecGcrSolver(const std::shared_ptr<dotk::DOTk_Primal> & primal_,
+                                                      const std::shared_ptr<dotk::DOTk_LinearOperator> & linear_operator_,
                                                       size_t max_num_itr_,
-                                                      std::tr1::shared_ptr<dotk::DOTk_KrylovSolver> & solver_)
+                                                      std::shared_ptr<dotk::DOTk_KrylovSolver> & solver_)
 {
     solver_.reset(new dotk::DOTk_LeftPrecGCR(primal_, linear_operator_, max_num_itr_));
     this->setFactoryType(dotk::types::LEFT_PREC_CGNE);
 }
 
-void DOTk_KrylovSolverFactory::buildLeftPrecCgneSolver(const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_,
-                                                       const std::tr1::shared_ptr<dotk::DOTk_LinearOperator> & linear_operator_,
-                                                       std::tr1::shared_ptr<dotk::DOTk_KrylovSolver> & solver_)
+void DOTk_KrylovSolverFactory::buildLeftPrecCgneSolver(const std::shared_ptr<dotk::DOTk_Primal> & primal_,
+                                                       const std::shared_ptr<dotk::DOTk_LinearOperator> & linear_operator_,
+                                                       std::shared_ptr<dotk::DOTk_KrylovSolver> & solver_)
 {
     solver_.reset(new dotk::DOTk_LeftPrecCGNE(primal_, linear_operator_));
     this->setFactoryType(dotk::types::LEFT_PREC_CGNE);
 }
 
-void DOTk_KrylovSolverFactory::buildLeftPrecCgnrSolver(const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_,
-                                                       const std::tr1::shared_ptr<dotk::DOTk_LinearOperator> & linear_operator_,
-                                                       std::tr1::shared_ptr<dotk::DOTk_KrylovSolver> & solver_)
+void DOTk_KrylovSolverFactory::buildLeftPrecCgnrSolver(const std::shared_ptr<dotk::DOTk_Primal> & primal_,
+                                                       const std::shared_ptr<dotk::DOTk_LinearOperator> & linear_operator_,
+                                                       std::shared_ptr<dotk::DOTk_KrylovSolver> & solver_)
 {
     solver_.reset(new dotk::DOTk_LeftPrecCGNR(primal_, linear_operator_));
     this->setFactoryType(dotk::types::LEFT_PREC_CGNE);
 }
 
-void DOTk_KrylovSolverFactory::buildProjLeftPrecCgSolver(const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_,
-                                                         const std::tr1::shared_ptr<dotk::DOTk_LinearOperator> & linear_operator_,
+void DOTk_KrylovSolverFactory::buildProjLeftPrecCgSolver(const std::shared_ptr<dotk::DOTk_Primal> & primal_,
+                                                         const std::shared_ptr<dotk::DOTk_LinearOperator> & linear_operator_,
                                                          size_t max_num_itr_,
-                                                         std::tr1::shared_ptr<dotk::DOTk_KrylovSolver> & solver_)
+                                                         std::shared_ptr<dotk::DOTk_KrylovSolver> & solver_)
 {
     solver_.reset(new dotk::DOTk_ProjectedLeftPrecCG(primal_, linear_operator_, max_num_itr_));
     this->setFactoryType(dotk::types::PROJECTED_PREC_CG);
 }
 
-void DOTk_KrylovSolverFactory::build(const std::tr1::shared_ptr<dotk::DOTk_KrylovSolverDataMng> & mng_,
-                                     std::tr1::shared_ptr<dotk::DOTk_KrylovSolver> & solver_)
+void DOTk_KrylovSolverFactory::build(const std::shared_ptr<dotk::DOTk_KrylovSolverDataMng> & mng_,
+                                     std::shared_ptr<dotk::DOTk_KrylovSolver> & solver_)
 {
     switch(this->getFactoryType())
     {

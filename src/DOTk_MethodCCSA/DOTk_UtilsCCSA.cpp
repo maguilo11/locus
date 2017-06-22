@@ -19,9 +19,9 @@ namespace dotk
 namespace ccsa
 {
 
-Real computeResidualNorm(const std::tr1::shared_ptr<dotk::Vector<Real> > & primal_,
-                         const std::tr1::shared_ptr<dotk::Vector<Real> > & dual_,
-                         const std::tr1::shared_ptr<dotk::DOTk_DataMngCCSA> & data_mng_)
+Real computeResidualNorm(const std::shared_ptr<dotk::Vector<Real> > & primal_,
+                         const std::shared_ptr<dotk::Vector<Real> > & dual_,
+                         const std::shared_ptr<dotk::DOTk_DataMngCCSA> & data_mng_)
 {
     data_mng_->m_CurrentInequalityGradients->matVec(*dual_, *data_mng_->m_WorkVector, true);
     // Compute optimality contribution to residual

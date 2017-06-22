@@ -25,8 +25,8 @@ class Vector;
 class DOTk_NonlinearCG : public dotk::DOTk_FirstOrderAlgorithm
 {
 public:
-    DOTk_NonlinearCG(const std::tr1::shared_ptr<dotk::DOTk_LineSearchStepMng> & step_,
-                     const std::tr1::shared_ptr<dotk::DOTk_LineSearchAlgorithmsDataMng> & mng_);
+    DOTk_NonlinearCG(const std::shared_ptr<dotk::DOTk_LineSearchStepMng> & step_,
+                     const std::shared_ptr<dotk::DOTk_LineSearchAlgorithmsDataMng> & mng_);
     ~DOTk_NonlinearCG();
 
     Real getLineSearchStepSize() const;
@@ -42,7 +42,7 @@ public:
     void setDaiYuanHybridNlcg();
     void setPerryShannoNlcg();
     void setLiuStoreyNlcg();
-    void setDanielsNlcg(const std::tr1::shared_ptr<dotk::DOTk_LinearOperator> & hessian_);
+    void setDanielsNlcg(const std::shared_ptr<dotk::DOTk_LinearOperator> & hessian_);
 
     void printDiagnosticsAndSolutionEveryItr();
     void printDiagnosticsEveryItrAndSolutionAtTheEnd();
@@ -53,10 +53,10 @@ private:
     void initialize();
 
 private:
-    std::tr1::shared_ptr<dotk::DOTk_LineSearchStepMng> m_LineSearch;
-    std::tr1::shared_ptr<dotk::DOTk_FirstOrderLineSearchAlgIO> m_IO;
-    std::tr1::shared_ptr<dotk::DOTk_DescentDirection> m_DescentDirection;
-    std::tr1::shared_ptr<dotk::DOTk_LineSearchAlgorithmsDataMng> m_DataMng;
+    std::shared_ptr<dotk::DOTk_LineSearchStepMng> m_LineSearch;
+    std::shared_ptr<dotk::DOTk_FirstOrderLineSearchAlgIO> m_IO;
+    std::shared_ptr<dotk::DOTk_DescentDirection> m_DescentDirection;
+    std::shared_ptr<dotk::DOTk_LineSearchAlgorithmsDataMng> m_DataMng;
 
 private:
     DOTk_NonlinearCG(const dotk::DOTk_NonlinearCG &);

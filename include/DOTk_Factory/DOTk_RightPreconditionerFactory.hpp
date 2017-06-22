@@ -9,7 +9,7 @@
 #define DOTK_RIGHTPRECONDITIONERFACTORY_HPP_
 
 #include <string>
-#include <tr1/memory>
+#include <memory>
 #include <DOTk_Types.hpp>
 
 namespace dotk
@@ -31,8 +31,8 @@ public:
     void setFactoryType(dotk::types::right_prec_t type_);
     dotk::types::right_prec_t getFactoryType() const;
 
-    void build(const std::tr1::shared_ptr<dotk::Vector<Real> > & vec_template_,
-               std::tr1::shared_ptr<dotk::DOTk_RightPreconditioner> & right_prec_);
+    void build(const std::shared_ptr<dotk::Vector<Real> > & vec_template_,
+               std::shared_ptr<dotk::DOTk_RightPreconditioner> & right_prec_);
 
 private:
     std::string mWarningMsg;

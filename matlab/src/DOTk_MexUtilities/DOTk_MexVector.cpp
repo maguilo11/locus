@@ -158,10 +158,10 @@ size_t MexVector::size() const
     return (mxGetNumberOfElements(m_Data));
 }
 
-std::tr1::shared_ptr<dotk::Vector<double> > MexVector::clone() const
+std::shared_ptr<dotk::Vector<double> > MexVector::clone() const
 {
     size_t this_length = this->size();
-    std::tr1::shared_ptr<dotk::MexVector> this_copy(new dotk::MexVector(this_length, 0.));
+    std::shared_ptr<dotk::MexVector> this_copy(new dotk::MexVector(this_length, 0.));
     return (this_copy);
 }
 

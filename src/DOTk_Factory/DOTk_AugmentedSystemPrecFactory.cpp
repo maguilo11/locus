@@ -24,48 +24,48 @@ DOTk_AugmentedSystemPrecFactory::~DOTk_AugmentedSystemPrecFactory()
 }
 
 void DOTk_AugmentedSystemPrecFactory::buildAugmentedSystemPrecWithPcgSolver
-(const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_,
- std::tr1::shared_ptr<dotk::DOTk_LeftPreconditioner> & prec_)
+(const std::shared_ptr<dotk::DOTk_Primal> & primal_,
+ std::shared_ptr<dotk::DOTk_LeftPreconditioner> & prec_)
 {
     prec_.reset(new dotk::DOTk_AugmentedSystemLeftPrec(primal_));
     prec_->setLeftPrecCgSolver(primal_, m_MaxNumSolverItr);
 }
 
 void DOTk_AugmentedSystemPrecFactory::buildAugmentedSystemPrecWithGcrSolver
-(const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_,
- std::tr1::shared_ptr<dotk::DOTk_LeftPreconditioner> & prec_)
+(const std::shared_ptr<dotk::DOTk_Primal> & primal_,
+ std::shared_ptr<dotk::DOTk_LeftPreconditioner> & prec_)
 {
     prec_.reset(new dotk::DOTk_AugmentedSystemLeftPrec(primal_));
     prec_->setLeftPrecGcrSolver(primal_, m_MaxNumSolverItr);
 }
 
 void DOTk_AugmentedSystemPrecFactory::buildAugmentedSystemPrecWithCrSolver
-(const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_,
- std::tr1::shared_ptr<dotk::DOTk_LeftPreconditioner> & prec_)
+(const std::shared_ptr<dotk::DOTk_Primal> & primal_,
+ std::shared_ptr<dotk::DOTk_LeftPreconditioner> & prec_)
 {
     prec_.reset(new dotk::DOTk_AugmentedSystemLeftPrec(primal_));
     prec_->setLeftPrecCrSolver(primal_, m_MaxNumSolverItr);
 }
 
 void DOTk_AugmentedSystemPrecFactory::buildAugmentedSystemPrecWithCgneSolver
-(const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_,
- std::tr1::shared_ptr<dotk::DOTk_LeftPreconditioner> & prec_)
+(const std::shared_ptr<dotk::DOTk_Primal> & primal_,
+ std::shared_ptr<dotk::DOTk_LeftPreconditioner> & prec_)
 {
     prec_.reset(new dotk::DOTk_AugmentedSystemLeftPrec(primal_));
     prec_->setLeftPrecCgneSolver(primal_, m_MaxNumSolverItr);
 }
 
 void DOTk_AugmentedSystemPrecFactory::buildAugmentedSystemPrecWithCgnrSolver
-(const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_,
- std::tr1::shared_ptr<dotk::DOTk_LeftPreconditioner> & prec_)
+(const std::shared_ptr<dotk::DOTk_Primal> & primal_,
+ std::shared_ptr<dotk::DOTk_LeftPreconditioner> & prec_)
 {
     prec_.reset(new dotk::DOTk_AugmentedSystemLeftPrec(primal_));
     prec_->setLeftPrecCgnrSolver(primal_, m_MaxNumSolverItr);
 }
 
 void DOTk_AugmentedSystemPrecFactory::buildAugmentedSystemPrecWithGmresSolver
-(const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_,
- std::tr1::shared_ptr<dotk::DOTk_LeftPreconditioner> & prec_)
+(const std::shared_ptr<dotk::DOTk_Primal> & primal_,
+ std::shared_ptr<dotk::DOTk_LeftPreconditioner> & prec_)
 {
     prec_.reset(new dotk::DOTk_AugmentedSystemLeftPrec(primal_));
     prec_->setPrecGmresSolver(primal_, m_MaxNumSolverItr);

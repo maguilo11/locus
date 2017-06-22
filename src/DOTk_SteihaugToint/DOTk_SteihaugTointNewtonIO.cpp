@@ -79,7 +79,7 @@ void DOTk_SteihaugTointNewtonIO::closeFile()
     m_DiagnosticsFile.close();
 }
 
-void DOTk_SteihaugTointNewtonIO::printInitialDiagnostics(const std::tr1::shared_ptr<dotk::DOTk_OptimizationDataMng> & data_mng_)
+void DOTk_SteihaugTointNewtonIO::printInitialDiagnostics(const std::shared_ptr<dotk::DOTk_OptimizationDataMng> & data_mng_)
 {
     if(this->getDisplayOption() == dotk::types::OFF)
     {
@@ -110,7 +110,7 @@ void DOTk_SteihaugTointNewtonIO::printInitialDiagnostics(const std::tr1::shared_
             << "\n" << std::flush;
 }
 
-void DOTk_SteihaugTointNewtonIO::printSolution(const std::tr1::shared_ptr<dotk::Vector<Real> > & primal_)
+void DOTk_SteihaugTointNewtonIO::printSolution(const std::shared_ptr<dotk::Vector<Real> > & primal_)
 {
     if(this->getDisplayOption() == dotk::types::OFF)
     {
@@ -119,15 +119,15 @@ void DOTk_SteihaugTointNewtonIO::printSolution(const std::tr1::shared_ptr<dotk::
     dotk::printSolution(primal_);
 }
 
-void DOTk_SteihaugTointNewtonIO::printConvergedDiagnostics(const std::tr1::shared_ptr<dotk::DOTk_OptimizationDataMng> & data_mng_,
-                                                           const std::tr1::shared_ptr<dotk::DOTk_SteihaugTointSolver> & solver_,
+void DOTk_SteihaugTointNewtonIO::printConvergedDiagnostics(const std::shared_ptr<dotk::DOTk_OptimizationDataMng> & data_mng_,
+                                                           const std::shared_ptr<dotk::DOTk_SteihaugTointSolver> & solver_,
                                                            const dotk::DOTk_TrustRegionStepMng * const step_mng_)
 {
     this->printSubProblemFirstItrDiagnostics(data_mng_, solver_, step_mng_);
 }
 
-void DOTk_SteihaugTointNewtonIO::printTrustRegionSubProblemDiagnostics(const std::tr1::shared_ptr<dotk::DOTk_OptimizationDataMng> & data_mng_,
-                                                                       const std::tr1::shared_ptr<dotk::DOTk_SteihaugTointSolver> & solver_,
+void DOTk_SteihaugTointNewtonIO::printTrustRegionSubProblemDiagnostics(const std::shared_ptr<dotk::DOTk_OptimizationDataMng> & data_mng_,
+                                                                       const std::shared_ptr<dotk::DOTk_SteihaugTointSolver> & solver_,
                                                                        const dotk::DOTk_TrustRegionStepMng * const step_mng_)
 {
     size_t num_opt_itr_done = this->getNumOptimizationItrDone();
@@ -165,8 +165,8 @@ void DOTk_SteihaugTointNewtonIO::printHeader()
             << std::setw(15) << std::right << "Krylov-Exit"
             << "\n" << std::flush;
 }
-void DOTk_SteihaugTointNewtonIO::printSubProblemDiagnostics(const std::tr1::shared_ptr<dotk::DOTk_OptimizationDataMng> & data_mng_,
-                                                            const std::tr1::shared_ptr<dotk::DOTk_SteihaugTointSolver> & solver_,
+void DOTk_SteihaugTointNewtonIO::printSubProblemDiagnostics(const std::shared_ptr<dotk::DOTk_OptimizationDataMng> & data_mng_,
+                                                            const std::shared_ptr<dotk::DOTk_SteihaugTointSolver> & solver_,
                                                             const dotk::DOTk_TrustRegionStepMng * const step_mng_)
 {
     Real actual_reduction = step_mng_->getActualReduction();
@@ -195,8 +195,8 @@ void DOTk_SteihaugTointNewtonIO::printSubProblemDiagnostics(const std::tr1::shar
             << "\n" << std::flush;
 }
 
-void DOTk_SteihaugTointNewtonIO::printSubProblemFirstItrDiagnostics(const std::tr1::shared_ptr<dotk::DOTk_OptimizationDataMng> & data_mng_,
-                                                                    const std::tr1::shared_ptr<dotk::DOTk_SteihaugTointSolver> & solver_,
+void DOTk_SteihaugTointNewtonIO::printSubProblemFirstItrDiagnostics(const std::shared_ptr<dotk::DOTk_OptimizationDataMng> & data_mng_,
+                                                                    const std::shared_ptr<dotk::DOTk_SteihaugTointSolver> & solver_,
                                                                     const dotk::DOTk_TrustRegionStepMng * const step_mng_)
 {
     Real norm_grad = data_mng_->getNormNewGradient();
@@ -233,7 +233,7 @@ void DOTk_SteihaugTointNewtonIO::printSubProblemFirstItrDiagnostics(const std::t
 }
 
 void DOTk_SteihaugTointNewtonIO::printCurrentSolution
-(const std::tr1::shared_ptr<dotk::Vector<Real> > & primal_)
+(const std::shared_ptr<dotk::Vector<Real> > & primal_)
 {
     if(this->getDisplayOption() == dotk::types::OFF)
     {

@@ -19,15 +19,15 @@
 namespace dotk
 {
 
-DOTk_LeftPrecCG::DOTk_LeftPrecCG(const std::tr1::shared_ptr<dotk::DOTk_KrylovSolverDataMng> & solver_mng_) :
+DOTk_LeftPrecCG::DOTk_LeftPrecCG(const std::shared_ptr<dotk::DOTk_KrylovSolverDataMng> & solver_mng_) :
         dotk::DOTk_KrylovSolver(dotk::types::LEFT_PREC_CG),
         m_DataMng(solver_mng_),
         m_ConjugateDirection(solver_mng_->getSolution()->clone())
 {
 }
 
-DOTk_LeftPrecCG::DOTk_LeftPrecCG(const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_,
-                                 const std::tr1::shared_ptr<dotk::DOTk_LinearOperator> & linear_operator_) :
+DOTk_LeftPrecCG::DOTk_LeftPrecCG(const std::shared_ptr<dotk::DOTk_Primal> & primal_,
+                                 const std::shared_ptr<dotk::DOTk_LinearOperator> & linear_operator_) :
         dotk::DOTk_KrylovSolver(dotk::types::LEFT_PREC_CG),
         m_DataMng(new dotk::DOTk_LeftPrecConjGradDataMng(primal_, linear_operator_)),
         m_ConjugateDirection()
@@ -44,24 +44,24 @@ void DOTk_LeftPrecCG::setMaxNumKrylovSolverItr(size_t itr_)
     m_DataMng->setMaxNumSolverItr(itr_);
 }
 
-const std::tr1::shared_ptr<dotk::DOTk_KrylovSolverDataMng> & DOTk_LeftPrecCG::getDataMng() const
+const std::shared_ptr<dotk::DOTk_KrylovSolverDataMng> & DOTk_LeftPrecCG::getDataMng() const
 {
     return (m_DataMng);
 }
 
-const std::tr1::shared_ptr<dotk::DOTk_LinearOperator> & DOTk_LeftPrecCG::getLinearOperator() const
+const std::shared_ptr<dotk::DOTk_LinearOperator> & DOTk_LeftPrecCG::getLinearOperator() const
 {
     return (m_DataMng->getLinearOperator());
 }
 
-const std::tr1::shared_ptr<dotk::Vector<Real> > & DOTk_LeftPrecCG::getDescentDirection()
+const std::shared_ptr<dotk::Vector<Real> > & DOTk_LeftPrecCG::getDescentDirection()
 {
     return (m_ConjugateDirection);
 }
 
-void DOTk_LeftPrecCG::initialize(const std::tr1::shared_ptr<dotk::Vector<Real> > & rhs_vec_,
-                                 const std::tr1::shared_ptr<dotk::DOTk_KrylovSolverStoppingCriterion> & criterion_,
-                                 const std::tr1::shared_ptr<dotk::DOTk_OptimizationDataMng> & opt_mng_)
+void DOTk_LeftPrecCG::initialize(const std::shared_ptr<dotk::Vector<Real> > & rhs_vec_,
+                                 const std::shared_ptr<dotk::DOTk_KrylovSolverStoppingCriterion> & criterion_,
+                                 const std::shared_ptr<dotk::DOTk_OptimizationDataMng> & opt_mng_)
 {
     dotk::DOTk_KrylovSolver::setNumSolverItrDone(0);
     dotk::DOTk_KrylovSolver::trustRegionViolation(false);
@@ -78,9 +78,9 @@ void DOTk_LeftPrecCG::initialize(const std::tr1::shared_ptr<dotk::Vector<Real> >
     dotk::DOTk_KrylovSolver::setInitialStoppingTolerance(stopping_tolerance);
 }
 
-void DOTk_LeftPrecCG::pcg(const std::tr1::shared_ptr<dotk::Vector<Real> > & rhs_vec_,
-                          const std::tr1::shared_ptr<dotk::DOTk_KrylovSolverStoppingCriterion> & criterion_,
-                          const std::tr1::shared_ptr<dotk::DOTk_OptimizationDataMng> & opt_mng_)
+void DOTk_LeftPrecCG::pcg(const std::shared_ptr<dotk::Vector<Real> > & rhs_vec_,
+                          const std::shared_ptr<dotk::DOTk_KrylovSolverStoppingCriterion> & criterion_,
+                          const std::shared_ptr<dotk::DOTk_OptimizationDataMng> & opt_mng_)
 {
     this->initialize(rhs_vec_, criterion_, opt_mng_);
     if(dotk::DOTk_KrylovSolver::checkCurvature(dotk::DOTk_KrylovSolver::getSolverResidualNorm()) == true)
@@ -131,9 +131,9 @@ void DOTk_LeftPrecCG::pcg(const std::tr1::shared_ptr<dotk::Vector<Real> > & rhs_
     }
 }
 
-void DOTk_LeftPrecCG::solve(const std::tr1::shared_ptr<dotk::Vector<Real> > & rhs_vec_,
-                            const std::tr1::shared_ptr<dotk::DOTk_KrylovSolverStoppingCriterion> & criterion_,
-                            const std::tr1::shared_ptr<dotk::DOTk_OptimizationDataMng> & opt_mng_)
+void DOTk_LeftPrecCG::solve(const std::shared_ptr<dotk::Vector<Real> > & rhs_vec_,
+                            const std::shared_ptr<dotk::DOTk_KrylovSolverStoppingCriterion> & criterion_,
+                            const std::shared_ptr<dotk::DOTk_OptimizationDataMng> & opt_mng_)
 {
     this->pcg(rhs_vec_, criterion_, opt_mng_);
 }

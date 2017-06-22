@@ -13,7 +13,7 @@
 namespace dotk
 {
 
-DOTk_ForwardDifferenceGrad::DOTk_ForwardDifferenceGrad(const std::tr1::shared_ptr<dotk::Vector<Real> > & vector_) :
+DOTk_ForwardDifferenceGrad::DOTk_ForwardDifferenceGrad(const std::shared_ptr<dotk::Vector<Real> > & vector_) :
         dotk::DOTk_FirstOrderOperator(dotk::types::FORWARD_DIFF_GRAD),
         m_FiniteDiffPerturbationVec(vector_->clone())
 {
@@ -24,7 +24,7 @@ DOTk_ForwardDifferenceGrad::~DOTk_ForwardDifferenceGrad()
 {
 }
 
-const std::tr1::shared_ptr<dotk::Vector<Real> > & DOTk_ForwardDifferenceGrad::getFiniteDiffPerturbationVec() const
+const std::shared_ptr<dotk::Vector<Real> > & DOTk_ForwardDifferenceGrad::getFiniteDiffPerturbationVec() const
 {
     return (m_FiniteDiffPerturbationVec);
 }
@@ -35,21 +35,21 @@ void DOTk_ForwardDifferenceGrad::setFiniteDiffPerturbationVec(const dotk::Vector
 }
 
 void DOTk_ForwardDifferenceGrad::getGradient(Real fval_,
-                                             const std::tr1::shared_ptr<dotk::DOTk_AssemblyManager> & interface_,
-                                             const std::tr1::shared_ptr<dotk::Vector<Real> > & primal_,
-                                             const std::tr1::shared_ptr<dotk::Vector<Real> > & grad_)
+                                             const std::shared_ptr<dotk::DOTk_AssemblyManager> & interface_,
+                                             const std::shared_ptr<dotk::Vector<Real> > & primal_,
+                                             const std::shared_ptr<dotk::Vector<Real> > & grad_)
 {
     /// Forward difference approximation of the gradient operator, of the form f(x + b) − f(x) / h. \n
     /// Inputs: \n
     ///        fval_ = Objective function value at primal_, fval_ = evaluate(primal_). \n
     ///        (Real). \n
     ///        interface_ = instance to dotk::DOTk_AssemblyManager class \n
-    ///        (std::tr1::shared_ptr<dotk::DOTk_AssemblyManager>)
+    ///        (std::shared_ptr<dotk::DOTk_AssemblyManager>)
     ///        primal_ = Vector of state solution at the i-th optimization iteration. \n
-    ///        (std::tr1::shared_ptr<dotk::Vector<Real> >) \n
+    ///        (std::shared_ptr<dotk::Vector<Real> >) \n
     /// Output: \n
     ///        gradient_ = backward difference approximation of the gradient operator at the i-th optimization iteration \n
-    ///        (std::tr1::shared_ptr<dotk::Vector<Real> >)
+    ///        (std::shared_ptr<dotk::Vector<Real> >)
     for(size_t index = 0; index < primal_->size(); ++index)
     {
         // update original state solution i-th element

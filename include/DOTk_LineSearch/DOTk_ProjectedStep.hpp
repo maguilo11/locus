@@ -24,16 +24,16 @@ class Vector;
 class DOTk_ProjectedStep : public dotk::DOTk_LineSearchStepMng
 {
 public:
-    explicit DOTk_ProjectedStep(const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_);
+    explicit DOTk_ProjectedStep(const std::shared_ptr<dotk::DOTk_Primal> & primal_);
     virtual ~DOTk_ProjectedStep();
 
 
-    void setArmijoLineSearch(const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_, Real contraction_factor_ = 0.5);
-    void setGoldsteinLineSearch(const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_,
+    void setArmijoLineSearch(const std::shared_ptr<dotk::DOTk_Primal> & primal_, Real contraction_factor_ = 0.5);
+    void setGoldsteinLineSearch(const std::shared_ptr<dotk::DOTk_Primal> & primal_,
                                 Real constant_ = 0.9,
                                 Real contraction_factor_ = 0.5);
-    void setCubicLineSearch(const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_, Real contraction_factor_ = 0.5);
-    void setGoldenSectionLineSearch(const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_, Real contraction_factor_ = 0.5);
+    void setCubicLineSearch(const std::shared_ptr<dotk::DOTk_Primal> & primal_, Real contraction_factor_ = 0.5);
+    void setGoldenSectionLineSearch(const std::shared_ptr<dotk::DOTk_Primal> & primal_, Real contraction_factor_ = 0.5);
 
     void setContractionFactor(Real input_);
     void setMaxNumIterations(size_t input_);
@@ -41,15 +41,15 @@ public:
 
     Real step() const;
     size_t iterations() const;
-    void build(const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_, dotk::types::line_search_t type_);
-    void solveSubProblem(const std::tr1::shared_ptr<dotk::DOTk_OptimizationDataMng> & mng_);
+    void build(const std::shared_ptr<dotk::DOTk_Primal> & primal_, dotk::types::line_search_t type_);
+    void solveSubProblem(const std::shared_ptr<dotk::DOTk_OptimizationDataMng> & mng_);
 
 private:
-    std::tr1::shared_ptr<dotk::Vector<Real> > m_WorkVector;
-    std::tr1::shared_ptr<dotk::Vector<Real> > m_LowerBound;
-    std::tr1::shared_ptr<dotk::Vector<Real> > m_UpperBound;
-    std::tr1::shared_ptr<dotk::DOTk_LineSearch> m_LineSearch;
-    std::tr1::shared_ptr<dotk::DOTk_BoundConstraints> m_BoundConstraint;
+    std::shared_ptr<dotk::Vector<Real> > m_WorkVector;
+    std::shared_ptr<dotk::Vector<Real> > m_LowerBound;
+    std::shared_ptr<dotk::Vector<Real> > m_UpperBound;
+    std::shared_ptr<dotk::DOTk_LineSearch> m_LineSearch;
+    std::shared_ptr<dotk::DOTk_BoundConstraints> m_BoundConstraint;
 
 private:
     DOTk_ProjectedStep(const dotk::DOTk_ProjectedStep &);

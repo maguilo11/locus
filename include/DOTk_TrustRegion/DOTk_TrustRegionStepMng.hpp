@@ -8,7 +8,7 @@
 #ifndef DOTK_TRUSTREGIONSTEPMNG_HPP_
 #define DOTK_TRUSTREGIONSTEPMNG_HPP_
 
-#include <tr1/memory>
+#include <memory>
 #include "DOTk_Types.hpp"
 
 namespace dotk
@@ -74,9 +74,9 @@ public:
 
     virtual bool updateTrustRegionRadius();
     virtual void setNumOptimizationItrDone(const size_t & itr_) = 0;
-    virtual void solveSubProblem(const std::tr1::shared_ptr<dotk::DOTk_OptimizationDataMng> & mng_,
-                                 const std::tr1::shared_ptr<dotk::DOTk_SteihaugTointSolver> & solver_,
-                                 const std::tr1::shared_ptr<dotk::DOTk_SteihaugTointNewtonIO> & io_) = 0;
+    virtual void solveSubProblem(const std::shared_ptr<dotk::DOTk_OptimizationDataMng> & mng_,
+                                 const std::shared_ptr<dotk::DOTk_SteihaugTointSolver> & solver_,
+                                 const std::shared_ptr<dotk::DOTk_SteihaugTointNewtonIO> & io_) = 0;
 
 private:
     Real m_ActualReduction;

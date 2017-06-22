@@ -8,7 +8,7 @@
 #ifndef DOTK_ORTHOGONALFACTORIZATION_HPP_
 #define DOTK_ORTHOGONALFACTORIZATION_HPP_
 
-#include <tr1/memory>
+#include <memory>
 
 #include "DOTk_Types.hpp"
 
@@ -25,9 +25,9 @@ public:
     virtual ~DOTk_OrthogonalFactorization();
 
     dotk::types::qr_t type() const;
-    virtual void factorization(const std::tr1::shared_ptr<dotk::matrix<Real> > & input_,
-                               std::tr1::shared_ptr<dotk::matrix<Real> > & Q_,
-                               std::tr1::shared_ptr<dotk::matrix<Real> > & R_) = 0;
+    virtual void factorization(const std::shared_ptr<dotk::matrix<Real> > & input_,
+                               std::shared_ptr<dotk::matrix<Real> > & Q_,
+                               std::shared_ptr<dotk::matrix<Real> > & R_) = 0;
 
 private:
     dotk::types::qr_t m_OrthogonalFactorizationType;

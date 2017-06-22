@@ -8,7 +8,7 @@
 #ifndef DOTK_FIRSTORDEROPERATORFACTORY_HPP_
 #define DOTK_FIRSTORDEROPERATORFACTORY_HPP_
 
-#include <tr1/memory>
+#include <memory>
 #include <DOTk_Types.hpp>
 
 namespace dotk
@@ -30,21 +30,21 @@ public:
     void setFactoryType(dotk::types::gradient_t type_);
     dotk::types::gradient_t getFactoryType() const;
 
-    void buildForwardFiniteDiffGradient(const std::tr1::shared_ptr<dotk::Vector<Real> > & vector_,
-                                        std::tr1::shared_ptr<dotk::DOTk_FirstOrderOperator> & grad_);
-    void buildBackwardFiniteDiffGradient(const std::tr1::shared_ptr<dotk::Vector<Real> > & vector_,
-                                         std::tr1::shared_ptr<dotk::DOTk_FirstOrderOperator> & grad_);
-    void buildCentralFiniteDiffGradient(const std::tr1::shared_ptr<dotk::Vector<Real> > & vector_,
-                                        std::tr1::shared_ptr<dotk::DOTk_FirstOrderOperator> & grad_);
-    void buildUserDefinedGradient(std::tr1::shared_ptr<dotk::DOTk_FirstOrderOperator> & grad_);
-    void buildParallelForwardFiniteDiffGradient(const std::tr1::shared_ptr<dotk::Vector<Real> > & vector_,
-                                                std::tr1::shared_ptr<dotk::DOTk_FirstOrderOperator> & grad_);
-    void buildParallelBackwardFiniteDiffGradient(const std::tr1::shared_ptr<dotk::Vector<Real> > & vector_,
-                                                 std::tr1::shared_ptr<dotk::DOTk_FirstOrderOperator> & grad_);
-    void buildParallelCentralFiniteDiffGradient(const std::tr1::shared_ptr<dotk::Vector<Real> > & vector_,
-                                                std::tr1::shared_ptr<dotk::DOTk_FirstOrderOperator> & grad_);
+    void buildForwardFiniteDiffGradient(const std::shared_ptr<dotk::Vector<Real> > & vector_,
+                                        std::shared_ptr<dotk::DOTk_FirstOrderOperator> & grad_);
+    void buildBackwardFiniteDiffGradient(const std::shared_ptr<dotk::Vector<Real> > & vector_,
+                                         std::shared_ptr<dotk::DOTk_FirstOrderOperator> & grad_);
+    void buildCentralFiniteDiffGradient(const std::shared_ptr<dotk::Vector<Real> > & vector_,
+                                        std::shared_ptr<dotk::DOTk_FirstOrderOperator> & grad_);
+    void buildUserDefinedGradient(std::shared_ptr<dotk::DOTk_FirstOrderOperator> & grad_);
+    void buildParallelForwardFiniteDiffGradient(const std::shared_ptr<dotk::Vector<Real> > & vector_,
+                                                std::shared_ptr<dotk::DOTk_FirstOrderOperator> & grad_);
+    void buildParallelBackwardFiniteDiffGradient(const std::shared_ptr<dotk::Vector<Real> > & vector_,
+                                                 std::shared_ptr<dotk::DOTk_FirstOrderOperator> & grad_);
+    void buildParallelCentralFiniteDiffGradient(const std::shared_ptr<dotk::Vector<Real> > & vector_,
+                                                std::shared_ptr<dotk::DOTk_FirstOrderOperator> & grad_);
     void build(const dotk::DOTk_OptimizationDataMng * const mng_,
-               std::tr1::shared_ptr<dotk::DOTk_FirstOrderOperator> & grad_);
+               std::shared_ptr<dotk::DOTk_FirstOrderOperator> & grad_);
 private:
     dotk::types::gradient_t mFactoryType;
 

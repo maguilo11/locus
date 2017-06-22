@@ -8,7 +8,7 @@
 #ifndef DOTK_MEXINEXACTNEWTONTYPETR_HPP_
 #define DOTK_MEXINEXACTNEWTONTYPETR_HPP_
 
-#include <tr1/memory>
+#include <memory>
 
 #include "DOTk_MexAlgorithmTypeNewton.hpp"
 
@@ -43,7 +43,7 @@ private:
     void solveTypeNonlinearProgramming(const mxArray* input_[], mxArray* output_[]);
 
     void setAlgorithmParameters(dotk::DOTk_TrustRegionInexactNewton & algorithm_);
-    void setTrustRegionMethodParameters(const std::tr1::shared_ptr<dotk::DOTk_TrustRegionAlgorithmsDataMng> & mng_);
+    void setTrustRegionMethodParameters(const std::shared_ptr<dotk::DOTk_TrustRegionAlgorithmsDataMng> & mng_);
 
 private:
     size_t m_MaxNumTrustRegionSubProblemItr;

@@ -44,8 +44,8 @@ dotk::types::right_prec_t DOTk_RightPreconditionerFactory::getFactoryType() cons
     return (mFactoryType);
 }
 
-void DOTk_RightPreconditionerFactory::build(const std::tr1::shared_ptr<dotk::Vector<Real> > & vec_template_,
-                                            std::tr1::shared_ptr<dotk::DOTk_RightPreconditioner> & right_prec_)
+void DOTk_RightPreconditionerFactory::build(const std::shared_ptr<dotk::Vector<Real> > & vec_template_,
+                                            std::shared_ptr<dotk::DOTk_RightPreconditioner> & right_prec_)
 {
 }
 

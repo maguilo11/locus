@@ -13,7 +13,7 @@
 namespace dotk
 {
 
-DOTk_DataMngNonlinearCG::DOTk_DataMngNonlinearCG(const std::tr1::shared_ptr<dotk::Vector<Real> > & dual_) :
+DOTk_DataMngNonlinearCG::DOTk_DataMngNonlinearCG(const std::shared_ptr<dotk::Vector<Real> > & dual_) :
         m_NewObjectiveFunctionValue(std::numeric_limits<Real>::max()),
         m_OldObjectiveFunctionValue(std::numeric_limits<Real>::max()),
         m_NewDual(dual_->clone()),

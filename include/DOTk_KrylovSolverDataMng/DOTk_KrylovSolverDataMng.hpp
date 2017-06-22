@@ -8,7 +8,7 @@
 #ifndef DOTK_KRYLOVSOLVERDATAMNG_HPP_
 #define DOTK_KRYLOVSOLVERDATAMNG_HPP_
 
-#include <tr1/memory>
+#include <memory>
 
 #include "DOTk_Types.hpp"
 
@@ -28,8 +28,8 @@ class Vector;
 class DOTk_KrylovSolverDataMng
 {
 public:
-    DOTk_KrylovSolverDataMng(const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_,
-                             const std::tr1::shared_ptr<dotk::DOTk_LinearOperator> & linear_operator_);
+    DOTk_KrylovSolverDataMng(const std::shared_ptr<dotk::DOTk_Primal> & primal_,
+                             const std::shared_ptr<dotk::DOTk_LinearOperator> & linear_operator_);
     virtual ~DOTk_KrylovSolverDataMng();
 
     void setSolverType(dotk::types::krylov_solver_t type_);
@@ -37,44 +37,44 @@ public:
 
     void setMaxNumSolverItr(size_t max_num_itr_);
     size_t getMaxNumSolverItr() const;
-    const std::tr1::shared_ptr<dotk::DOTk_LinearOperator> & getLinearOperator() const;
+    const std::shared_ptr<dotk::DOTk_LinearOperator> & getLinearOperator() const;
 
-    const std::tr1::shared_ptr<dotk::Vector<Real> > & getSolution() const;
-    const std::tr1::shared_ptr<dotk::Vector<Real> > & getFirstSolution() const;
-    const std::tr1::shared_ptr<dotk::Vector<Real> > & getPreviousSolution() const;
+    const std::shared_ptr<dotk::Vector<Real> > & getSolution() const;
+    const std::shared_ptr<dotk::Vector<Real> > & getFirstSolution() const;
+    const std::shared_ptr<dotk::Vector<Real> > & getPreviousSolution() const;
 
-    void setResidual(dotk::types::variable_t type_, const std::tr1::shared_ptr<dotk::Vector<Real> > & vec_);
-    void setResidual(const std::tr1::shared_ptr<dotk::Vector<Real> > & vec_);
-    const std::tr1::shared_ptr<dotk::Vector<Real> > & getResidual() const;
-    virtual const std::tr1::shared_ptr<dotk::Vector<Real> > & getResidual(size_t index_) const;
+    void setResidual(dotk::types::variable_t type_, const std::shared_ptr<dotk::Vector<Real> > & vec_);
+    void setResidual(const std::shared_ptr<dotk::Vector<Real> > & vec_);
+    const std::shared_ptr<dotk::Vector<Real> > & getResidual() const;
+    virtual const std::shared_ptr<dotk::Vector<Real> > & getResidual(size_t index_) const;
 
-    const std::tr1::shared_ptr<dotk::Vector<Real> > & getMatrixTimesVector() const;
+    const std::shared_ptr<dotk::Vector<Real> > & getMatrixTimesVector() const;
 
-    virtual const std::tr1::shared_ptr<dotk::Vector<Real> > & getLeftPrecTimesVector() const;
-    virtual const std::tr1::shared_ptr<dotk::Vector<Real> > & getLeftPrecTimesVector(size_t index_) const;
-    virtual const std::tr1::shared_ptr<dotk::Vector<Real> > & getRightPrecTimesVector() const;
+    virtual const std::shared_ptr<dotk::Vector<Real> > & getLeftPrecTimesVector() const;
+    virtual const std::shared_ptr<dotk::Vector<Real> > & getLeftPrecTimesVector(size_t index_) const;
+    virtual const std::shared_ptr<dotk::Vector<Real> > & getRightPrecTimesVector() const;
 
-    virtual void setProjection(const std::tr1::shared_ptr<dotk::DOTk_OrthogonalProjection> & projection_);
-    virtual const std::tr1::shared_ptr<dotk::DOTk_OrthogonalProjection> & getProjection() const;
-    virtual void setLeftPrec(const std::tr1::shared_ptr<dotk::DOTk_LeftPreconditioner> & preconditioner_);
-    virtual const std::tr1::shared_ptr<dotk::DOTk_LeftPreconditioner> & getLeftPrec() const;
-    virtual void setRightPrec(const std::tr1::shared_ptr<dotk::DOTk_RightPreconditioner> & preconditioner_);
-    virtual const std::tr1::shared_ptr<dotk::DOTk_RightPreconditioner> & getRightPrec() const;
+    virtual void setProjection(const std::shared_ptr<dotk::DOTk_OrthogonalProjection> & projection_);
+    virtual const std::shared_ptr<dotk::DOTk_OrthogonalProjection> & getProjection() const;
+    virtual void setLeftPrec(const std::shared_ptr<dotk::DOTk_LeftPreconditioner> & preconditioner_);
+    virtual const std::shared_ptr<dotk::DOTk_LeftPreconditioner> & getLeftPrec() const;
+    virtual void setRightPrec(const std::shared_ptr<dotk::DOTk_RightPreconditioner> & preconditioner_);
+    virtual const std::shared_ptr<dotk::DOTk_RightPreconditioner> & getRightPrec() const;
 
 private:
     size_t m_MaxNumSolverItr;
     dotk::types::krylov_solver_t m_SolverType;
 
-    std::tr1::shared_ptr<dotk::Vector<Real> > m_Solution;
-    std::tr1::shared_ptr<dotk::Vector<Real> > m_Residual;
-    std::tr1::shared_ptr<dotk::Vector<Real> > m_FirstSolution;
-    std::tr1::shared_ptr<dotk::Vector<Real> > m_PreviousSolution;
-    std::tr1::shared_ptr<dotk::Vector<Real> > m_MatrixTimesVector;
+    std::shared_ptr<dotk::Vector<Real> > m_Solution;
+    std::shared_ptr<dotk::Vector<Real> > m_Residual;
+    std::shared_ptr<dotk::Vector<Real> > m_FirstSolution;
+    std::shared_ptr<dotk::Vector<Real> > m_PreviousSolution;
+    std::shared_ptr<dotk::Vector<Real> > m_MatrixTimesVector;
 
-    std::tr1::shared_ptr<dotk::DOTk_LinearOperator> m_LinearOperator;
+    std::shared_ptr<dotk::DOTk_LinearOperator> m_LinearOperator;
 
 private:
-    void initialize(const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_);
+    void initialize(const std::shared_ptr<dotk::DOTk_Primal> & primal_);
 
 private:
     DOTk_KrylovSolverDataMng(const dotk::DOTk_KrylovSolverDataMng &);

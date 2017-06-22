@@ -9,7 +9,7 @@
 #define DOTK_MEXGRADIENTPROJECTION_HPP_
 
 #include <mex.h>
-#include <tr1/memory>
+#include <memory>
 
 #include "DOTk_Types.hpp"
 

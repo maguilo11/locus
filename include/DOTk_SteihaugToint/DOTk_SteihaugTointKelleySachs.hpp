@@ -8,7 +8,7 @@
 #ifndef DOTK_STEIHAUGTOINTKELLEYSACHS_HPP_
 #define DOTK_STEIHAUGTOINTKELLEYSACHS_HPP_
 
-#include <tr1/memory>
+#include <memory>
 #include "DOTk_SteihaugTointNewton.hpp"
 
 namespace dotk
@@ -26,8 +26,8 @@ class Vector;
 class DOTk_SteihaugTointKelleySachs : public dotk::DOTk_SteihaugTointNewton
 {
 public:
-    DOTk_SteihaugTointKelleySachs(const std::tr1::shared_ptr<dotk::DOTk_OptimizationDataMng> & data_mng_,
-                                  const std::tr1::shared_ptr<dotk::DOTk_KelleySachsStepMng> & step_mng);
+    DOTk_SteihaugTointKelleySachs(const std::shared_ptr<dotk::DOTk_OptimizationDataMng> & data_mng_,
+                                  const std::shared_ptr<dotk::DOTk_KelleySachsStepMng> & step_mng);
     virtual ~DOTk_SteihaugTointKelleySachs();
 
     void setMaxNumUpdates(size_t input_);
@@ -50,13 +50,13 @@ private:
 private:
     size_t m_MaxNumUpdates;
     Real m_StationarityMeasure;
-    std::tr1::shared_ptr<dotk::Vector<Real> > m_WorkVector;
+    std::shared_ptr<dotk::Vector<Real> > m_WorkVector;
 
-    std::tr1::shared_ptr<dotk::DOTk_SteihaugTointNewtonIO> m_IO;
-    std::tr1::shared_ptr<dotk::DOTk_KelleySachsStepMng> m_StepMng;
-    std::tr1::shared_ptr<dotk::DOTk_OptimizationDataMng> m_DataMng;
-    std::tr1::shared_ptr<dotk::DOTk_BoundConstraints> m_BoundConstraint;
-    std::tr1::shared_ptr<dotk::DOTk_ProjectedSteihaugTointPcg> m_Solver;
+    std::shared_ptr<dotk::DOTk_SteihaugTointNewtonIO> m_IO;
+    std::shared_ptr<dotk::DOTk_KelleySachsStepMng> m_StepMng;
+    std::shared_ptr<dotk::DOTk_OptimizationDataMng> m_DataMng;
+    std::shared_ptr<dotk::DOTk_BoundConstraints> m_BoundConstraint;
+    std::shared_ptr<dotk::DOTk_ProjectedSteihaugTointPcg> m_Solver;
 
 private:
     DOTk_SteihaugTointKelleySachs(const dotk::DOTk_SteihaugTointKelleySachs &);

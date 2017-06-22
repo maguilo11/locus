@@ -9,7 +9,7 @@
 #define DOTK_KRYLOVSOLVERSTOPPINGCRITERION_HPP_
 
 #include <map>
-#include <tr1/memory>
+#include <memory>
 
 #include "DOTk_Types.hpp"
 
@@ -33,7 +33,7 @@ public:
     Real get(dotk::types::stopping_criterion_param_t type_) const;
 
     virtual Real evaluate(const dotk::DOTk_KrylovSolver* const solver_,
-                          const std::tr1::shared_ptr<dotk::Vector<Real> > & kernel_vector_) = 0;
+                          const std::shared_ptr<dotk::Vector<Real> > & kernel_vector_) = 0;
 
 private:
     dotk::types::stopping_criterion_t m_Type;

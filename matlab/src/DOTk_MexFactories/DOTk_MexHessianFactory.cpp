@@ -21,7 +21,7 @@ namespace mex
 {
 
 void buildHessian(const mxArray* options_,
-                  std::tr1::shared_ptr<dotk::DOTk_Hessian> & hessian_)
+                  std::shared_ptr<dotk::DOTk_Hessian> & hessian_)
 {
     dotk::types::hessian_t type = dotk::mex::parseHessianComputationMethod(options_);
     switch(type)

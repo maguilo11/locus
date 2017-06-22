@@ -16,7 +16,7 @@
 namespace dotk
 {
 
-DOTk_SubProblemMMA::DOTk_SubProblemMMA(const std::tr1::shared_ptr<dotk::DOTk_DataMngCCSA> & data_mng_) :
+DOTk_SubProblemMMA::DOTk_SubProblemMMA(const std::shared_ptr<dotk::DOTk_DataMngCCSA> & data_mng_) :
         dotk::DOTk_SubProblemCCSA(dotk::ccsa::subproblem_t::MMA),
         m_ObjectiveFunctionRho(0),
         m_InequalityConstraintRho(data_mng_->m_Dual->clone()),
@@ -27,8 +27,8 @@ DOTk_SubProblemMMA::DOTk_SubProblemMMA(const std::tr1::shared_ptr<dotk::DOTk_Dat
     m_InequalityConstraintRho->fill(0.);
 }
 
-DOTk_SubProblemMMA::DOTk_SubProblemMMA(const std::tr1::shared_ptr<dotk::DOTk_DataMngCCSA> & data_mng_,
-                   const std::tr1::shared_ptr<dotk::DOTk_DualSolverCCSA> & dual_solver_) :
+DOTk_SubProblemMMA::DOTk_SubProblemMMA(const std::shared_ptr<dotk::DOTk_DataMngCCSA> & data_mng_,
+                   const std::shared_ptr<dotk::DOTk_DualSolverCCSA> & dual_solver_) :
         dotk::DOTk_SubProblemCCSA(dotk::ccsa::subproblem_t::MMA),
         m_ObjectiveFunctionRho(0),
         m_InequalityConstraintRho(data_mng_->m_Dual->clone()),
@@ -53,7 +53,7 @@ void DOTk_SubProblemMMA::setDualObjectiveEpsilonParameter(Real input_)
     m_DualObjectiveFunction->setEpsilon(input_);
 }
 
-void DOTk_SubProblemMMA::solve(const std::tr1::shared_ptr<dotk::DOTk_DataMngCCSA> & data_mng_)
+void DOTk_SubProblemMMA::solve(const std::shared_ptr<dotk::DOTk_DataMngCCSA> & data_mng_)
 {
     Real scale = dotk::DOTk_SubProblemCCSA::getDualObjectiveTrialControlBoundScaling();
     m_DualObjectiveFunction->updateMovingAsymptotes(data_mng_->m_CurrentControl, data_mng_->m_CurrentSigma);

@@ -8,7 +8,7 @@
 #ifndef DOTK_DUALSOLVERCCSA_HPP_
 #define DOTK_DUALSOLVERCCSA_HPP_
 
-#include <tr1/memory>
+#include <memory>
 
 #include "DOTk_UtilsCCSA.hpp"
 
@@ -56,8 +56,8 @@ public:
     void setLineSearchStepUpperBound(Real input_);
 
     virtual void reset() = 0;
-    virtual void solve(const std::tr1::shared_ptr<dotk::DOTk_ObjectiveFunction<Real> > & objective_,
-                       const std::tr1::shared_ptr<dotk::Vector<Real> > & solution_) = 0;
+    virtual void solve(const std::shared_ptr<dotk::DOTk_ObjectiveFunction<Real> > & objective_,
+                       const std::shared_ptr<dotk::Vector<Real> > & solution_) = 0;
 
 private:
     dotk::ccsa::dual_solver_t m_DualSolverType;

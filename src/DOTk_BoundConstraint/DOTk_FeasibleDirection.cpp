@@ -14,7 +14,7 @@
 namespace dotk
 {
 
-DOTk_FeasibleDirection::DOTk_FeasibleDirection(const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_) :
+DOTk_FeasibleDirection::DOTk_FeasibleDirection(const std::shared_ptr<dotk::DOTk_Primal> & primal_) :
         dotk::DOTk_BoundConstraint(primal_, dotk::types::constraint_method_t::FEASIBLE_DIR),
         m_LowerBounds(primal_->control()->clone()),
         m_UpperBounds(primal_->control()->clone()),
@@ -27,8 +27,8 @@ DOTk_FeasibleDirection::~DOTk_FeasibleDirection()
 {
 }
 
-void DOTk_FeasibleDirection::getDirection(const std::tr1::shared_ptr<dotk::Vector<Real> > & primal_,
-                                          const std::tr1::shared_ptr<dotk::Vector<Real> > & feasible_dir_)
+void DOTk_FeasibleDirection::getDirection(const std::shared_ptr<dotk::Vector<Real> > & primal_,
+                                          const std::shared_ptr<dotk::Vector<Real> > & feasible_dir_)
 {
     Real factor = 1.;
     m_TrialPrimal->update(1., *primal_, 0.);
@@ -51,15 +51,15 @@ void DOTk_FeasibleDirection::getDirection(const std::tr1::shared_ptr<dotk::Vecto
     }
 }
 
-void DOTk_FeasibleDirection::constraint(const std::tr1::shared_ptr<dotk::DOTk_LineSearch> & step_,
-                                        const std::tr1::shared_ptr<dotk::DOTk_OptimizationDataMng> & mng_)
+void DOTk_FeasibleDirection::constraint(const std::shared_ptr<dotk::DOTk_LineSearch> & step_,
+                                        const std::shared_ptr<dotk::DOTk_OptimizationDataMng> & mng_)
 {
     this->getDirection(mng_->getNewPrimal(), mng_->getTrialStep());
     step_->step(mng_);
     mng_->setNewObjectiveFunctionValue(step_->getNewObjectiveFunctionValue());
 }
 
-void DOTk_FeasibleDirection::initialize(const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_)
+void DOTk_FeasibleDirection::initialize(const std::shared_ptr<dotk::DOTk_Primal> & primal_)
 {
     if(primal_->getControlLowerBound().use_count() > 0)
     {

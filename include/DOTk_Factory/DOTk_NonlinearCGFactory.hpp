@@ -8,7 +8,7 @@
 #ifndef DOTK_NONLINEARCGFACTORY_HPP_
 #define DOTK_NONLINEARCGFACTORY_HPP_
 
-#include <tr1/memory>
+#include <memory>
 #include "DOTk_Types.hpp"
 
 namespace dotk
@@ -23,18 +23,18 @@ public:
     DOTk_NonlinearCGFactory();
     ~DOTk_NonlinearCGFactory();
 
-    void buildDanielsNlcg(const std::tr1::shared_ptr<dotk::DOTk_LinearOperator> & hessian_,
-                          std::tr1::shared_ptr<dotk::DOTk_DescentDirection> & dir_);
-    void buildFletcherReevesNlcg(std::tr1::shared_ptr<dotk::DOTk_DescentDirection> & dir_);
-    void buildPolakRibiereNlcg(std::tr1::shared_ptr<dotk::DOTk_DescentDirection> & dir_);
-    void buildHestenesStiefelNlcg(std::tr1::shared_ptr<dotk::DOTk_DescentDirection> & dir_);
-    void buildConjugateDescentNlcg(std::tr1::shared_ptr<dotk::DOTk_DescentDirection> & dir_);
-    void buildHagerZhangNlcg(std::tr1::shared_ptr<dotk::DOTk_DescentDirection> & dir_);
-    void buildDaiLiaoNlcg(std::tr1::shared_ptr<dotk::DOTk_DescentDirection> & dir_);
-    void buildDaiYuanNlcg(std::tr1::shared_ptr<dotk::DOTk_DescentDirection> & dir_);
-    void buildDaiYuanHybridNlcg(std::tr1::shared_ptr<dotk::DOTk_DescentDirection> & dir_);
-    void buildPerryShannoNlcg(std::tr1::shared_ptr<dotk::DOTk_DescentDirection> & dir_);
-    void buildLiuStoreyNlcg(std::tr1::shared_ptr<dotk::DOTk_DescentDirection> & dir_);
+    void buildDanielsNlcg(const std::shared_ptr<dotk::DOTk_LinearOperator> & hessian_,
+                          std::shared_ptr<dotk::DOTk_DescentDirection> & dir_);
+    void buildFletcherReevesNlcg(std::shared_ptr<dotk::DOTk_DescentDirection> & dir_);
+    void buildPolakRibiereNlcg(std::shared_ptr<dotk::DOTk_DescentDirection> & dir_);
+    void buildHestenesStiefelNlcg(std::shared_ptr<dotk::DOTk_DescentDirection> & dir_);
+    void buildConjugateDescentNlcg(std::shared_ptr<dotk::DOTk_DescentDirection> & dir_);
+    void buildHagerZhangNlcg(std::shared_ptr<dotk::DOTk_DescentDirection> & dir_);
+    void buildDaiLiaoNlcg(std::shared_ptr<dotk::DOTk_DescentDirection> & dir_);
+    void buildDaiYuanNlcg(std::shared_ptr<dotk::DOTk_DescentDirection> & dir_);
+    void buildDaiYuanHybridNlcg(std::shared_ptr<dotk::DOTk_DescentDirection> & dir_);
+    void buildPerryShannoNlcg(std::shared_ptr<dotk::DOTk_DescentDirection> & dir_);
+    void buildLiuStoreyNlcg(std::shared_ptr<dotk::DOTk_DescentDirection> & dir_);
 
 private:
     DOTk_NonlinearCGFactory(const dotk::DOTk_NonlinearCGFactory &);

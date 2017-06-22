@@ -8,6 +8,7 @@
 #ifndef DOTK_LINESEARCHSTEPMNG_HPP_
 #define DOTK_LINESEARCHSTEPMNG_HPP_
 
+#include <memory>
 #include "DOTk_Types.hpp"
 
 namespace dotk
@@ -29,8 +30,8 @@ public:
 
     virtual Real step() const = 0;
     virtual size_t iterations() const = 0;
-    virtual void build(const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_, dotk::types::line_search_t type_) = 0;
-    virtual void solveSubProblem(const std::tr1::shared_ptr<dotk::DOTk_OptimizationDataMng> & mng_) = 0;
+    virtual void build(const std::shared_ptr<dotk::DOTk_Primal> & primal_, dotk::types::line_search_t type_) = 0;
+    virtual void solveSubProblem(const std::shared_ptr<dotk::DOTk_OptimizationDataMng> & mng_) = 0;
 };
 
 }

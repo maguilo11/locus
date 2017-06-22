@@ -22,7 +22,7 @@
 namespace dotk
 {
 
-DOTk_PrecGMRES::DOTk_PrecGMRES(const std::tr1::shared_ptr<dotk::DOTk_KrylovSolverDataMng> & mng_) :
+DOTk_PrecGMRES::DOTk_PrecGMRES(const std::shared_ptr<dotk::DOTk_KrylovSolverDataMng> & mng_) :
         dotk::DOTk_KrylovSolver(dotk::types::PREC_GMRES),
         m_DataMng(mng_),
         m_ProjectionOperatorTimesVec(mng_->getSolution()->clone())
@@ -30,8 +30,8 @@ DOTk_PrecGMRES::DOTk_PrecGMRES(const std::tr1::shared_ptr<dotk::DOTk_KrylovSolve
     this->allocate(m_DataMng->getSolution());
 }
 
-DOTk_PrecGMRES::DOTk_PrecGMRES(const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_,
-                                   const std::tr1::shared_ptr<dotk::DOTk_LinearOperator> & linear_operator_,
+DOTk_PrecGMRES::DOTk_PrecGMRES(const std::shared_ptr<dotk::DOTk_Primal> & primal_,
+                                   const std::shared_ptr<dotk::DOTk_LinearOperator> & linear_operator_,
                                    size_t max_num_itr_) :
         dotk::DOTk_KrylovSolver(dotk::types::LEFT_PREC_GCR),
         m_DataMng(new dotk::DOTk_PrecGenMinResDataMng(primal_, linear_operator_, max_num_itr_)),
@@ -44,9 +44,9 @@ DOTk_PrecGMRES::~DOTk_PrecGMRES()
 {
 }
 
-void DOTk_PrecGMRES::initialize(const std::tr1::shared_ptr<dotk::Vector<Real> > & rhs_vec_,
-                                const std::tr1::shared_ptr<dotk::DOTk_KrylovSolverStoppingCriterion> & criterion_,
-                                const std::tr1::shared_ptr<dotk::DOTk_OptimizationDataMng> & opt_prob_mng_)
+void DOTk_PrecGMRES::initialize(const std::shared_ptr<dotk::Vector<Real> > & rhs_vec_,
+                                const std::shared_ptr<dotk::DOTk_KrylovSolverStoppingCriterion> & criterion_,
+                                const std::shared_ptr<dotk::DOTk_OptimizationDataMng> & opt_prob_mng_)
 {
     m_DataMng->getProjection()->clear();
     dotk::DOTk_KrylovSolver::setNumSolverItrDone(0);
@@ -67,9 +67,9 @@ void DOTk_PrecGMRES::initialize(const std::tr1::shared_ptr<dotk::Vector<Real> > 
     dotk::DOTk_KrylovSolver::setInitialStoppingTolerance(stopping_tolerance);
 }
 
-void DOTk_PrecGMRES::gmres(const std::tr1::shared_ptr<dotk::Vector<Real> > & rhs_vec_,
-                           const std::tr1::shared_ptr<dotk::DOTk_KrylovSolverStoppingCriterion> & criterion_,
-                           const std::tr1::shared_ptr<dotk::DOTk_OptimizationDataMng> & opt_mng_)
+void DOTk_PrecGMRES::gmres(const std::shared_ptr<dotk::Vector<Real> > & rhs_vec_,
+                           const std::shared_ptr<dotk::DOTk_KrylovSolverStoppingCriterion> & criterion_,
+                           const std::shared_ptr<dotk::DOTk_OptimizationDataMng> & opt_mng_)
 {
     this->initialize(rhs_vec_, criterion_, opt_mng_);
     if(dotk::DOTk_KrylovSolver::checkCurvature(dotk::DOTk_KrylovSolver::getSolverResidualNorm()) == true)
@@ -133,29 +133,29 @@ void DOTk_PrecGMRES::setMaxNumKrylovSolverItr(size_t itr_)
     m_DataMng->setMaxNumSolverItr(itr_);
 }
 
-void DOTk_PrecGMRES::solve(const std::tr1::shared_ptr<dotk::Vector<Real> > & rhs_vec_,
-                           const std::tr1::shared_ptr<dotk::DOTk_KrylovSolverStoppingCriterion> & criterion_,
-                           const std::tr1::shared_ptr<dotk::DOTk_OptimizationDataMng> & opt_prob_mng_)
+void DOTk_PrecGMRES::solve(const std::shared_ptr<dotk::Vector<Real> > & rhs_vec_,
+                           const std::shared_ptr<dotk::DOTk_KrylovSolverStoppingCriterion> & criterion_,
+                           const std::shared_ptr<dotk::DOTk_OptimizationDataMng> & opt_prob_mng_)
 {
     this->gmres(rhs_vec_, criterion_, opt_prob_mng_);
 }
 
-const std::tr1::shared_ptr<dotk::DOTk_KrylovSolverDataMng> & DOTk_PrecGMRES::getDataMng() const
+const std::shared_ptr<dotk::DOTk_KrylovSolverDataMng> & DOTk_PrecGMRES::getDataMng() const
 {
     return (m_DataMng);
 }
 
-const std::tr1::shared_ptr<dotk::DOTk_LinearOperator> & DOTk_PrecGMRES::getLinearOperator() const
+const std::shared_ptr<dotk::DOTk_LinearOperator> & DOTk_PrecGMRES::getLinearOperator() const
 {
     return (m_DataMng->getLinearOperator());
 }
 
-const std::tr1::shared_ptr<dotk::Vector<Real> > & DOTk_PrecGMRES::getDescentDirection()
+const std::shared_ptr<dotk::Vector<Real> > & DOTk_PrecGMRES::getDescentDirection()
 {
     return (m_ProjectionOperatorTimesVec);
 }
 
-void DOTk_PrecGMRES::allocate(const std::tr1::shared_ptr<dotk::Vector<Real> > vec_)
+void DOTk_PrecGMRES::allocate(const std::shared_ptr<dotk::Vector<Real> > vec_)
 {
     m_ProjectionOperatorTimesVec = vec_->clone();
 }

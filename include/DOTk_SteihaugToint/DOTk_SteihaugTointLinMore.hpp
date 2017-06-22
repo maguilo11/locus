@@ -8,7 +8,7 @@
 #ifndef DOTK_STEIHAUGTOINTLINMORE_HPP_
 #define DOTK_STEIHAUGTOINTLINMORE_HPP_
 
-#include <tr1/memory>
+#include <memory>
 #include "DOTk_SteihaugTointNewton.hpp"
 
 namespace dotk
@@ -22,8 +22,8 @@ class DOTk_OptimizationDataMng;
 class DOTk_SteihaugTointLinMore : public dotk::DOTk_SteihaugTointNewton
 {
 public:
-    DOTk_SteihaugTointLinMore(const std::tr1::shared_ptr<dotk::DOTk_OptimizationDataMng> & data_mng_,
-                              const std::tr1::shared_ptr<dotk::DOTk_TrustRegionStepMng> & step_mng);
+    DOTk_SteihaugTointLinMore(const std::shared_ptr<dotk::DOTk_OptimizationDataMng> & data_mng_,
+                              const std::shared_ptr<dotk::DOTk_TrustRegionStepMng> & step_mng);
     virtual ~DOTk_SteihaugTointLinMore();
 
     void setSolverMaxNumItr(size_t input_);
@@ -44,10 +44,10 @@ private:
     void resetCurrentStateToPreviousState();
 
 private:
-    std::tr1::shared_ptr<dotk::DOTk_SteihaugTointPcg> m_Solver;
-    std::tr1::shared_ptr<dotk::DOTk_SteihaugTointNewtonIO> m_IO;
-    std::tr1::shared_ptr<dotk::DOTk_TrustRegionStepMng> m_StepMng;
-    std::tr1::shared_ptr<dotk::DOTk_OptimizationDataMng> m_DataMng;
+    std::shared_ptr<dotk::DOTk_SteihaugTointPcg> m_Solver;
+    std::shared_ptr<dotk::DOTk_SteihaugTointNewtonIO> m_IO;
+    std::shared_ptr<dotk::DOTk_TrustRegionStepMng> m_StepMng;
+    std::shared_ptr<dotk::DOTk_OptimizationDataMng> m_DataMng;
 
 private:
     DOTk_SteihaugTointLinMore(const dotk::DOTk_SteihaugTointLinMore &);

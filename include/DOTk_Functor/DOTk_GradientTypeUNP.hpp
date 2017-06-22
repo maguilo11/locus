@@ -23,25 +23,25 @@ class Vector;
 class DOTk_GradientTypeUNP : public DOTk_Functor
 {
 public:
-    DOTk_GradientTypeUNP(const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_,
-                         const std::tr1::shared_ptr<dotk::DOTk_ObjectiveFunction<Real> > & objective_,
-                         const std::tr1::shared_ptr<dotk::DOTk_EqualityConstraint<Real> > & equality_);
+    DOTk_GradientTypeUNP(const std::shared_ptr<dotk::DOTk_Primal> & primal_,
+                         const std::shared_ptr<dotk::DOTk_ObjectiveFunction<Real> > & objective_,
+                         const std::shared_ptr<dotk::DOTk_EqualityConstraint<Real> > & equality_);
     virtual ~DOTk_GradientTypeUNP();
 
     virtual void operator()(const dotk::Vector<Real> & control_, dotk::Vector<Real> & gradient_);
 
 private:
-    void initialize(const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_);
-    void allocate(dotk::types::variable_t type_, const std::tr1::shared_ptr<dotk::Vector<Real> > & data_);
+    void initialize(const std::shared_ptr<dotk::DOTk_Primal> & primal_);
+    void allocate(dotk::types::variable_t type_, const std::shared_ptr<dotk::Vector<Real> > & data_);
 
 private:
-    std::tr1::shared_ptr<dotk::Vector<Real> > m_Dual;
-    std::tr1::shared_ptr<dotk::Vector<Real> > m_State;
-    std::tr1::shared_ptr<dotk::Vector<Real> > m_StateWorkVec;
-    std::tr1::shared_ptr<dotk::Vector<Real> > m_ControlWorkVec;
+    std::shared_ptr<dotk::Vector<Real> > m_Dual;
+    std::shared_ptr<dotk::Vector<Real> > m_State;
+    std::shared_ptr<dotk::Vector<Real> > m_StateWorkVec;
+    std::shared_ptr<dotk::Vector<Real> > m_ControlWorkVec;
 
-    std::tr1::shared_ptr<dotk::DOTk_ObjectiveFunction<Real> > m_ObjectiveFunction;
-    std::tr1::shared_ptr<dotk::DOTk_EqualityConstraint<Real> > m_EqualityContraint;
+    std::shared_ptr<dotk::DOTk_ObjectiveFunction<Real> > m_ObjectiveFunction;
+    std::shared_ptr<dotk::DOTk_EqualityConstraint<Real> > m_EqualityContraint;
 
 private:
     DOTk_GradientTypeUNP(const dotk::DOTk_GradientTypeUNP&);

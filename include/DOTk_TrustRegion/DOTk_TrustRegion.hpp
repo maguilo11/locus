@@ -8,7 +8,7 @@
 #ifndef DOTK_TRUSTREGION_HPP_
 #define DOTK_TRUSTREGION_HPP_
 
-#include <tr1/memory>
+#include <memory>
 #include "DOTk_Types.hpp"
 
 namespace dotk
@@ -62,28 +62,28 @@ public:
     void setTrustRegionType(dotk::types::trustregion_t type_);
 
     void computeActualReduction(Real new_objective_func_val_, Real old_objective_func_val_);
-    void computePredictedReduction(const std::tr1::shared_ptr<dotk::Vector<Real> > & new_grad_,
-                                   const std::tr1::shared_ptr<dotk::Vector<Real> > & trial_step_,
-                                   const std::tr1::shared_ptr<dotk::Vector<Real> > & matrix_times_trial_step_);
-    void computeCauchyPoint(const std::tr1::shared_ptr<dotk::Vector<Real> > & grad_,
-                            const std::tr1::shared_ptr<dotk::Vector<Real> > & matrix_times_grad_,
-                            const std::tr1::shared_ptr<dotk::Vector<Real> > & cauchy_point_);
+    void computePredictedReduction(const std::shared_ptr<dotk::Vector<Real> > & new_grad_,
+                                   const std::shared_ptr<dotk::Vector<Real> > & trial_step_,
+                                   const std::shared_ptr<dotk::Vector<Real> > & matrix_times_trial_step_);
+    void computeCauchyPoint(const std::shared_ptr<dotk::Vector<Real> > & grad_,
+                            const std::shared_ptr<dotk::Vector<Real> > & matrix_times_grad_,
+                            const std::shared_ptr<dotk::Vector<Real> > & cauchy_point_);
 
     bool isTrustRegionStepInvalid(Real step_);
-    bool acceptTrustRegionRadius(const std::tr1::shared_ptr<dotk::Vector<Real> > & trial_step_);
+    bool acceptTrustRegionRadius(const std::shared_ptr<dotk::Vector<Real> > & trial_step_);
 
     Real computeDoglegRoot(const Real & trust_region_radius_,
-                           const std::tr1::shared_ptr<dotk::Vector<Real> > & vector1_,
-                           const std::tr1::shared_ptr<dotk::Vector<Real> > & vector2_);
-    Real computeAlternateStep(const Real & trust_region_radius_, const std::tr1::shared_ptr<dotk::Vector<Real> > & vector_);
+                           const std::shared_ptr<dotk::Vector<Real> > & vector1_,
+                           const std::shared_ptr<dotk::Vector<Real> > & vector2_);
+    Real computeAlternateStep(const Real & trust_region_radius_, const std::shared_ptr<dotk::Vector<Real> > & vector_);
 
     virtual void step(const dotk::DOTk_OptimizationDataMng * const mng_,
-                      const std::tr1::shared_ptr<dotk::Vector<Real> > & method_specific_required_data_,
-                      const std::tr1::shared_ptr<dotk::Vector<Real> > & scaled_direction_);
+                      const std::shared_ptr<dotk::Vector<Real> > & method_specific_required_data_,
+                      const std::shared_ptr<dotk::Vector<Real> > & scaled_direction_);
 
 private:
     void shrinkTrustRegionRadius();
-    void expandTrustRegionRadius(const std::tr1::shared_ptr<dotk::Vector<Real> > & trial_step_);
+    void expandTrustRegionRadius(const std::shared_ptr<dotk::Vector<Real> > & trial_step_);
     bool actualOverPredictedReductionViolated();
 
 private:

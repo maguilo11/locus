@@ -28,7 +28,7 @@ DOTk_BackwardFiniteDifference::~DOTk_BackwardFiniteDifference()
 {
 }
 
-void DOTk_BackwardFiniteDifference::differentiate(const std::tr1::shared_ptr<dotk::DOTk_Functor> & functor_,
+void DOTk_BackwardFiniteDifference::differentiate(const std::shared_ptr<dotk::DOTk_Functor> & functor_,
                                                   const dotk::Vector<Real> & primal_,
                                                   const dotk::Vector<Real> & direction_,
                                                   const dotk::Vector<Real> & first_derivative_,

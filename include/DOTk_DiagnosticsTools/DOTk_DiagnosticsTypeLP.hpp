@@ -31,12 +31,12 @@ class DOTk_InequalityConstraint;
 class DOTk_DiagnosticsTypeLP : public dotk::DOTk_DerivativeDiagnosticsTool
 {
 public:
-    explicit DOTk_DiagnosticsTypeLP(const std::tr1::shared_ptr<dotk::DOTk_ObjectiveFunction<Real> > & objective_);
-    DOTk_DiagnosticsTypeLP(const std::tr1::shared_ptr<dotk::DOTk_ObjectiveFunction<Real> > & objective_,
-                           const std::tr1::shared_ptr<dotk::DOTk_EqualityConstraint<Real> > & equality_);
-    DOTk_DiagnosticsTypeLP(const std::tr1::shared_ptr<dotk::DOTk_ObjectiveFunction<Real> > & objective_,
-                           const std::tr1::shared_ptr<dotk::DOTk_EqualityConstraint<Real> > & equality_,
-                           const std::vector<std::tr1::shared_ptr<dotk::DOTk_InequalityConstraint<Real> > > & inequality_);
+    explicit DOTk_DiagnosticsTypeLP(const std::shared_ptr<dotk::DOTk_ObjectiveFunction<Real> > & objective_);
+    DOTk_DiagnosticsTypeLP(const std::shared_ptr<dotk::DOTk_ObjectiveFunction<Real> > & objective_,
+                           const std::shared_ptr<dotk::DOTk_EqualityConstraint<Real> > & equality_);
+    DOTk_DiagnosticsTypeLP(const std::shared_ptr<dotk::DOTk_ObjectiveFunction<Real> > & objective_,
+                           const std::shared_ptr<dotk::DOTk_EqualityConstraint<Real> > & equality_,
+                           const std::vector<std::shared_ptr<dotk::DOTk_InequalityConstraint<Real> > > & inequality_);
     ~DOTk_DiagnosticsTypeLP();
 
     void checkObjectiveGradient(const dotk::DOTk_Variable & primal_, std::ostringstream & msg_);
@@ -52,37 +52,37 @@ public:
 
 private:
     template<typename Functor, typename DerivativeOperators>
-    void checkScalarValuedFunctionFirstDerivative(const std::tr1::shared_ptr<dotk::Vector<Real> > & primal_,
-                                                  const std::tr1::shared_ptr<dotk::Vector<Real> > & delta_primal_,
+    void checkScalarValuedFunctionFirstDerivative(const std::shared_ptr<dotk::Vector<Real> > & primal_,
+                                                  const std::shared_ptr<dotk::Vector<Real> > & delta_primal_,
                                                   const Functor & functor_,
                                                   const DerivativeOperators & operators_);
     template<typename Functor, typename DerivativeOperators>
-    void checkScalarValuedFunctionSecondDerivative(const std::tr1::shared_ptr<dotk::Vector<Real> > & primal_,
-                                                   const std::tr1::shared_ptr<dotk::Vector<Real> > & delta_primal_,
+    void checkScalarValuedFunctionSecondDerivative(const std::shared_ptr<dotk::Vector<Real> > & primal_,
+                                                   const std::shared_ptr<dotk::Vector<Real> > & delta_primal_,
                                                    const Functor & first_derivative_,
                                                    const DerivativeOperators & second_derivative_);
-    void checkVectorValuedFunctionFirstDerivative(const std::tr1::shared_ptr<dotk::Vector<Real> > & delta_primal_,
+    void checkVectorValuedFunctionFirstDerivative(const std::shared_ptr<dotk::Vector<Real> > & delta_primal_,
                                                   const dotk::lp::EqualityConstraintResidual & function_,
                                                   const dotk::lp::EqualityConstraintFirstDerivative & first_derivative_,
-                                                  const std::tr1::shared_ptr<dotk::Vector<Real> > & primal_);
-    Real checkAdjointFirstDerivativeVectorValuedFunction(const std::tr1::shared_ptr<dotk::Vector<Real> > & delta_primal_,
+                                                  const std::shared_ptr<dotk::Vector<Real> > & primal_);
+    Real checkAdjointFirstDerivativeVectorValuedFunction(const std::shared_ptr<dotk::Vector<Real> > & delta_primal_,
                                                          const dotk::lp::EqualityConstraintFirstDerivative & first_derivative_,
                                                          const dotk::lp::EqualityConstraintAdjointFirstDerivative & adjoint_first_derivative_,
-                                                         const std::tr1::shared_ptr<dotk::Vector<Real> > & primal_,
-                                                         const std::tr1::shared_ptr<dotk::Vector<Real> > & dual_);
-    void checkSecondDerivativeVectorValuedFunction(const std::tr1::shared_ptr<dotk::Vector<Real> > & delta_primal_,
+                                                         const std::shared_ptr<dotk::Vector<Real> > & primal_,
+                                                         const std::shared_ptr<dotk::Vector<Real> > & dual_);
+    void checkSecondDerivativeVectorValuedFunction(const std::shared_ptr<dotk::Vector<Real> > & delta_primal_,
                                                    const dotk::lp::EqualityConstraintAdjointFirstDerivative & adjoint_first_derivative_,
                                                    const dotk::lp::EqualityConstraintSecondDerivative & adjoint_second_derivative_,
-                                                   const std::tr1::shared_ptr<dotk::Vector<Real> > & primal_,
-                                                   const std::tr1::shared_ptr<dotk::Vector<Real> > & dual_);
+                                                   const std::shared_ptr<dotk::Vector<Real> > & primal_,
+                                                   const std::shared_ptr<dotk::Vector<Real> > & dual_);
 
 private:
-    std::tr1::shared_ptr<dotk::Vector<Real> > m_TrueDerivative;
-    std::tr1::shared_ptr<dotk::Vector<Real> > m_OriginalPrimal;
+    std::shared_ptr<dotk::Vector<Real> > m_TrueDerivative;
+    std::shared_ptr<dotk::Vector<Real> > m_OriginalPrimal;
 
-    std::tr1::shared_ptr<dotk::DOTk_ObjectiveFunction<Real> > m_ObjectiveFunction;
-    std::tr1::shared_ptr<dotk::DOTk_EqualityConstraint<Real> > m_EqualityConstraint;
-    std::vector<std::tr1::shared_ptr<dotk::DOTk_InequalityConstraint<Real> > > m_InequalityConstraint;
+    std::shared_ptr<dotk::DOTk_ObjectiveFunction<Real> > m_ObjectiveFunction;
+    std::shared_ptr<dotk::DOTk_EqualityConstraint<Real> > m_EqualityConstraint;
+    std::vector<std::shared_ptr<dotk::DOTk_InequalityConstraint<Real> > > m_InequalityConstraint;
 
 private:
     DOTk_DiagnosticsTypeLP(const dotk::DOTk_DiagnosticsTypeLP &);

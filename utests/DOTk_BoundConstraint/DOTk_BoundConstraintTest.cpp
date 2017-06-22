@@ -28,7 +28,7 @@ namespace DOTkBoundConstraintTest
 TEST(BoundConstraint, setAndGetStepSize)
 {
     size_t ncontrols = 2;
-    std::tr1::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
     primal->allocateSerialControlArray(ncontrols, 2);
     primal->setControlLowerBound(0);
     primal->setControlUpperBound(5);
@@ -43,7 +43,7 @@ TEST(BoundConstraint, setAndGetStepSize)
 TEST(BoundConstraint, setAndGetStagnationTol)
 {
     size_t ncontrols = 2;
-    std::tr1::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
     primal->allocateSerialControlArray(ncontrols, 2);
     primal->setControlLowerBound(0);
     primal->setControlUpperBound(5);
@@ -58,7 +58,7 @@ TEST(BoundConstraint, setAndGetStagnationTol)
 TEST(BoundConstraint, setAndGetBoundStepType)
 {
     size_t ncontrols = 2;
-    std::tr1::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
     primal->allocateSerialControlArray(ncontrols, 2);
     primal->setControlLowerBound(0);
     primal->setControlUpperBound(5);
@@ -72,12 +72,12 @@ TEST(BoundConstraint, setAndGetBoundStepType)
 TEST(BoundConstraint, getMinReductionStep)
 {
     size_t ncontrols = 2;
-    std::tr1::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
     primal->allocateSerialControlArray(ncontrols, 2);
     primal->setControlLowerBound(0);
     primal->setControlUpperBound(5);
-    std::tr1::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
-    std::tr1::shared_ptr<dotk::DOTk_LineSearchMngTypeULP> mng(new dotk::DOTk_LineSearchMngTypeULP(primal, objective));
+    std::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
+    std::shared_ptr<dotk::DOTk_LineSearchMngTypeULP> mng(new dotk::DOTk_LineSearchMngTypeULP(primal, objective));
 
     mng->setOldPrimal(*primal->control());
     mng->setOldObjectiveFunctionValue(mng->evaluateObjective(mng->getNewPrimal()));
@@ -100,13 +100,13 @@ TEST(BoundConstraint, getMinReductionStep)
 TEST(BoundConstraint, getStep_Armijo)
 {
     size_t ncontrols = 2;
-    std::tr1::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
     primal->allocateSerialControlArray(ncontrols, 2);
     primal->setControlLowerBound(0);
     primal->setControlUpperBound(5);
-    std::tr1::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
-    std::tr1::shared_ptr<dotk::DOTk_ArmijoLineSearch> line_search(new dotk::DOTk_ArmijoLineSearch(primal->control()));
-    std::tr1::shared_ptr<dotk::DOTk_LineSearchMngTypeULP> mng(new dotk::DOTk_LineSearchMngTypeULP(primal, objective));
+    std::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
+    std::shared_ptr<dotk::DOTk_ArmijoLineSearch> line_search(new dotk::DOTk_ArmijoLineSearch(primal->control()));
+    std::shared_ptr<dotk::DOTk_LineSearchMngTypeULP> mng(new dotk::DOTk_LineSearchMngTypeULP(primal, objective));
 
     mng->setOldPrimal(*primal->control());
     mng->setOldObjectiveFunctionValue(mng->getRoutinesMng()->objective(mng->getNewPrimal()));
@@ -131,13 +131,13 @@ TEST(BoundConstraint, getStep_Armijo)
 TEST(BoundConstraint, getStep_MinReduction)
 {
     size_t ncontrols = 2;
-    std::tr1::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
     primal->allocateSerialControlArray(ncontrols, 2);
     primal->setControlLowerBound(0);
     primal->setControlUpperBound(5);
-    std::tr1::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
-    std::tr1::shared_ptr<dotk::DOTk_ArmijoLineSearch> line_search(new dotk::DOTk_ArmijoLineSearch(primal->control()));
-    std::tr1::shared_ptr<dotk::DOTk_LineSearchMngTypeULP> mng(new dotk::DOTk_LineSearchMngTypeULP(primal, objective));
+    std::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
+    std::shared_ptr<dotk::DOTk_ArmijoLineSearch> line_search(new dotk::DOTk_ArmijoLineSearch(primal->control()));
+    std::shared_ptr<dotk::DOTk_LineSearchMngTypeULP> mng(new dotk::DOTk_LineSearchMngTypeULP(primal, objective));
 
     mng->setOldPrimal(*primal->control());
     mng->setOldObjectiveFunctionValue(mng->getRoutinesMng()->objective(mng->getNewPrimal()));
@@ -163,13 +163,13 @@ TEST(BoundConstraint, getStep_MinReduction)
 TEST(BoundConstraint, getStep_Constant)
 {
     size_t ncontrols = 2;
-    std::tr1::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
     primal->allocateSerialControlArray(ncontrols, 2);
     primal->setControlLowerBound(0);
     primal->setControlUpperBound(5);
-    std::tr1::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
-    std::tr1::shared_ptr<dotk::DOTk_ArmijoLineSearch> line_search(new dotk::DOTk_ArmijoLineSearch(primal->control()));
-    std::tr1::shared_ptr<dotk::DOTk_LineSearchMngTypeULP> mng(new dotk::DOTk_LineSearchMngTypeULP(primal, objective));
+    std::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
+    std::shared_ptr<dotk::DOTk_ArmijoLineSearch> line_search(new dotk::DOTk_ArmijoLineSearch(primal->control()));
+    std::shared_ptr<dotk::DOTk_LineSearchMngTypeULP> mng(new dotk::DOTk_LineSearchMngTypeULP(primal, objective));
 
     mng->setOldPrimal(*primal->control());
     mng->setOldObjectiveFunctionValue(mng->getRoutinesMng()->objective(mng->getNewPrimal()));
@@ -198,7 +198,7 @@ TEST(BoundConstraint, getStep_Constant)
 TEST(BoundConstraint, setAndGetContractionStep)
 {
     size_t ncontrols = 2;
-    std::tr1::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
     primal->allocateSerialControlArray(ncontrols, 2);
     primal->setControlLowerBound(0);
     primal->setControlUpperBound(5);
@@ -213,7 +213,7 @@ TEST(BoundConstraint, setAndGetContractionStep)
 TEST(BoundConstraint, setAndGetNumFeasibleItr)
 {
     size_t ncontrols = 2;
-    std::tr1::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
     primal->allocateSerialControlArray(ncontrols, 2);
     primal->setControlLowerBound(0);
     primal->setControlUpperBound(5);
@@ -227,7 +227,7 @@ TEST(BoundConstraint, setAndGetNumFeasibleItr)
 TEST(BoundConstraint, active)
 {
     size_t ncontrols = 2;
-    std::tr1::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
     primal->allocateSerialControlArray(ncontrols, 2);
     primal->setControlLowerBound(0);
     primal->setControlUpperBound(5);
@@ -241,7 +241,7 @@ TEST(BoundConstraint, active)
 TEST(BoundConstraint, isPrimalStationary1)
 {
     size_t ncontrols = 2;
-    std::tr1::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
     primal->allocateSerialControlArray(ncontrols, 2);
     primal->setControlLowerBound(0);
     primal->setControlUpperBound(5);
@@ -270,7 +270,7 @@ TEST(BoundConstraint, isPrimalStationary1)
 TEST(BoundConstraint, computeActiveSet)
 {
     size_t ncontrols = 10;
-    std::tr1::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
     primal->allocateSerialControlArray(ncontrols, 3);
     primal->setControlLowerBound(1);
     primal->setControlUpperBound(5);
@@ -282,7 +282,7 @@ TEST(BoundConstraint, computeActiveSet)
     dotk::DOTk_BoundConstraint bounds(primal);
     bounds.computeActiveSet(primal->getControlLowerBound(), primal->getControlUpperBound(), primal->control());
 
-    std::tr1::shared_ptr<dotk::Vector<Real> > gold = primal->control()->clone();
+    std::shared_ptr<dotk::Vector<Real> > gold = primal->control()->clone();
     (*gold)[0] = 1;
     (*gold)[4] = 1;
     (*gold)[8] = 1;
@@ -293,7 +293,7 @@ TEST(BoundConstraint, computeActiveSet)
 TEST(BoundConstraint, pruneActive)
 {
     size_t nvars = 10;
-    std::tr1::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
     primal->allocateSerialControlArray(nvars);
     dotk::DOTk_BoundConstraint bounds(primal);
 
@@ -301,10 +301,10 @@ TEST(BoundConstraint, pruneActive)
     (*bounds.activeSet())[4] = 1;
     (*bounds.activeSet())[8] = 1;
     (*bounds.activeSet())[9] = 1;
-    std::tr1::shared_ptr<dotk::Vector<Real> > gradient = dotk::gtest::allocateData(nvars, 3);
+    std::shared_ptr<dotk::Vector<Real> > gradient = dotk::gtest::allocateData(nvars, 3);
     bounds.pruneActive(gradient);
 
-    std::tr1::shared_ptr<dotk::Vector<Real> > gold = gradient->clone();
+    std::shared_ptr<dotk::Vector<Real> > gold = gradient->clone();
     gold->fill(3);
     (*gold)[0] = 0;
     (*gold)[4] = 0;
@@ -316,12 +316,12 @@ TEST(BoundConstraint, pruneActive)
 TEST(BoundConstraint, project)
 {
     size_t ncontrols = 2;
-    std::tr1::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
     primal->allocateSerialControlArray(ncontrols, 2);
     primal->setControlLowerBound(1);
     primal->setControlUpperBound(4);
-    std::tr1::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
-    std::tr1::shared_ptr<dotk::DOTk_LineSearchMngTypeULP> mng(new dotk::DOTk_LineSearchMngTypeULP(primal, objective));
+    std::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
+    std::shared_ptr<dotk::DOTk_LineSearchMngTypeULP> mng(new dotk::DOTk_LineSearchMngTypeULP(primal, objective));
 
     // TEST 1: PRIMAL INSIDE FEASIBLE REGION
     dotk::DOTk_BoundConstraint bound(primal);

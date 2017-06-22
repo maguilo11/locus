@@ -26,36 +26,36 @@ class Vector;
 class DOTk_LeftPrecGCR : public dotk::DOTk_KrylovSolver
 {
 public:
-    explicit DOTk_LeftPrecGCR(const std::tr1::shared_ptr<dotk::DOTk_KrylovSolverDataMng> & solver_mng_);
-    DOTk_LeftPrecGCR(const std::tr1::shared_ptr<dotk::DOTk_Primal> & variable_,
-                     const std::tr1::shared_ptr<dotk::DOTk_LinearOperator> & linear_operator_,
+    explicit DOTk_LeftPrecGCR(const std::shared_ptr<dotk::DOTk_KrylovSolverDataMng> & solver_mng_);
+    DOTk_LeftPrecGCR(const std::shared_ptr<dotk::DOTk_Primal> & variable_,
+                     const std::shared_ptr<dotk::DOTk_LinearOperator> & linear_operator_,
                      size_t max_num_itr_ = 200);
     virtual ~DOTk_LeftPrecGCR();
 
-    void initialize(const std::tr1::shared_ptr<dotk::Vector<Real> > & rhs_vec_,
-                    const std::tr1::shared_ptr<dotk::DOTk_KrylovSolverStoppingCriterion> & criterion_,
-                    const std::tr1::shared_ptr<dotk::DOTk_OptimizationDataMng> & opt_mng_);
-    void pgcr(const std::tr1::shared_ptr<dotk::Vector<Real> > & rhs_vec_,
-              const std::tr1::shared_ptr<dotk::DOTk_KrylovSolverStoppingCriterion> & criterion_,
-              const std::tr1::shared_ptr<dotk::DOTk_OptimizationDataMng> & opt_mng_);
+    void initialize(const std::shared_ptr<dotk::Vector<Real> > & rhs_vec_,
+                    const std::shared_ptr<dotk::DOTk_KrylovSolverStoppingCriterion> & criterion_,
+                    const std::shared_ptr<dotk::DOTk_OptimizationDataMng> & opt_mng_);
+    void pgcr(const std::shared_ptr<dotk::Vector<Real> > & rhs_vec_,
+              const std::shared_ptr<dotk::DOTk_KrylovSolverStoppingCriterion> & criterion_,
+              const std::shared_ptr<dotk::DOTk_OptimizationDataMng> & opt_mng_);
 
     virtual void setMaxNumKrylovSolverItr(size_t itr_);
-    virtual const std::tr1::shared_ptr<dotk::DOTk_KrylovSolverDataMng> & getDataMng() const;
-    virtual const std::tr1::shared_ptr<dotk::DOTk_LinearOperator> & getLinearOperator() const;
-    virtual const std::tr1::shared_ptr<dotk::Vector<Real> > & getDescentDirection();
-    virtual void solve(const std::tr1::shared_ptr<dotk::Vector<Real> > & rhs_vec_,
-                       const std::tr1::shared_ptr<dotk::DOTk_KrylovSolverStoppingCriterion> & criterion_,
-                       const std::tr1::shared_ptr<dotk::DOTk_OptimizationDataMng> & opt_mng_);
+    virtual const std::shared_ptr<dotk::DOTk_KrylovSolverDataMng> & getDataMng() const;
+    virtual const std::shared_ptr<dotk::DOTk_LinearOperator> & getLinearOperator() const;
+    virtual const std::shared_ptr<dotk::Vector<Real> > & getDescentDirection();
+    virtual void solve(const std::shared_ptr<dotk::Vector<Real> > & rhs_vec_,
+                       const std::shared_ptr<dotk::DOTk_KrylovSolverStoppingCriterion> & criterion_,
+                       const std::shared_ptr<dotk::DOTk_OptimizationDataMng> & opt_mng_);
 
 private:
-    std::tr1::shared_ptr<dotk::DOTk_KrylovSolverDataMng> m_DataMng;
+    std::shared_ptr<dotk::DOTk_KrylovSolverDataMng> m_DataMng;
 
     std::vector<Real> mBetaCoefficients;
-    std::vector< std::tr1::shared_ptr<dotk::Vector<Real> > > mConjugateDirectionStorage;
-    std::vector< std::tr1::shared_ptr<dotk::Vector<Real> > > mLinearOperatorTimesConjugateDirStorage;
+    std::vector< std::shared_ptr<dotk::Vector<Real> > > mConjugateDirectionStorage;
+    std::vector< std::shared_ptr<dotk::Vector<Real> > > mLinearOperatorTimesConjugateDirStorage;
 
 private:
-    void initialize(const std::tr1::shared_ptr<dotk::Vector<Real> > vec_template_);
+    void initialize(const std::shared_ptr<dotk::Vector<Real> > vec_template_);
     void updateBetaCoefficientStorage(size_t current_itr_);
     void updateConjugateDirectionStorage(size_t current_itr_);
     void updateLinearOperatorTimesConjugateDirStorage(size_t current_itr_);

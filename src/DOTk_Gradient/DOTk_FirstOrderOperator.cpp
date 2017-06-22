@@ -30,8 +30,8 @@ dotk::types::gradient_t DOTk_FirstOrderOperator::type() const
     return (m_GradientType);
 }
 
-void DOTk_FirstOrderOperator::checkGrad(const std::tr1::shared_ptr<dotk::Vector<Real> > & old_gradient_,
-                                        std::tr1::shared_ptr<dotk::Vector<Real> > & new_gradient_)
+void DOTk_FirstOrderOperator::checkGrad(const std::shared_ptr<dotk::Vector<Real> > & old_gradient_,
+                                        std::shared_ptr<dotk::Vector<Real> > & new_gradient_)
 {
     Real norm_new_grad = new_gradient_->norm();
 

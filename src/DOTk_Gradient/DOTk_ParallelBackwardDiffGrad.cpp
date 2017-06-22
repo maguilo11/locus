@@ -13,7 +13,7 @@
 namespace dotk
 {
 
-DOTk_ParallelBackwardDiffGrad::DOTk_ParallelBackwardDiffGrad(const std::tr1::shared_ptr<dotk::Vector<Real> > & vector_) :
+DOTk_ParallelBackwardDiffGrad::DOTk_ParallelBackwardDiffGrad(const std::shared_ptr<dotk::Vector<Real> > & vector_) :
         dotk::DOTk_FirstOrderOperator(dotk::types::PARALLEL_BACKWARD_DIFF_GRAD),
         m_Fval(vector_->clone()),
         m_FiniteDiffPerturbationVec(vector_->clone()),
@@ -26,7 +26,7 @@ DOTk_ParallelBackwardDiffGrad::~DOTk_ParallelBackwardDiffGrad()
 {
 }
 
-const std::tr1::shared_ptr<dotk::Vector<Real> > & DOTk_ParallelBackwardDiffGrad::getFiniteDiffPerturbationVec() const
+const std::shared_ptr<dotk::Vector<Real> > & DOTk_ParallelBackwardDiffGrad::getFiniteDiffPerturbationVec() const
 {
     return (m_FiniteDiffPerturbationVec);
 }
@@ -37,21 +37,21 @@ void DOTk_ParallelBackwardDiffGrad::setFiniteDiffPerturbationVec(const dotk::Vec
 }
 
 void DOTk_ParallelBackwardDiffGrad::getGradient(Real fval_,
-                                                const std::tr1::shared_ptr<dotk::DOTk_AssemblyManager> & interface_,
-                                                const std::tr1::shared_ptr<dotk::Vector<Real> > & primal_,
-                                                const std::tr1::shared_ptr<dotk::Vector<Real> > & gradient_)
+                                                const std::shared_ptr<dotk::DOTk_AssemblyManager> & interface_,
+                                                const std::shared_ptr<dotk::Vector<Real> > & primal_,
+                                                const std::shared_ptr<dotk::Vector<Real> > & gradient_)
 {
     /// Forward difference approximation of the gradient operator, of the form f(x + b) − f(x) / h. \n
     /// Inputs: \n
     ///        fval_ = Objective function value at primal_, fval_ = objective(primal_). \n
     ///        (Real). \n
     ///        interface_ = instance to dotk::DOTk_AssemblyManager class \n
-    ///        (std::tr1::shared_ptr<dotk::DOTk_AssemblyManager>)
+    ///        (std::shared_ptr<dotk::DOTk_AssemblyManager>)
     ///        primal_ = Vector of state solution at the i-th optimization iteration. \n
-    ///        (std::tr1::shared_ptr<dotk::Vector<Real> >) \n
+    ///        (std::shared_ptr<dotk::Vector<Real> >) \n
     /// Output: \n
     ///        gradient_ = backward difference approximation of the gradient operator at the i-th optimization iteration \n
-    ///        (std::tr1::shared_ptr<dotk::Vector<Real> >)
+    ///        (std::shared_ptr<dotk::Vector<Real> >)
 
     // Perturb primal values
     m_Fval->fill(static_cast<Real>(0.));
@@ -81,7 +81,7 @@ void DOTk_ParallelBackwardDiffGrad::gradient(const dotk::DOTk_OptimizationDataMn
                       mng_->getNewGradient());
 }
 
-void DOTk_ParallelBackwardDiffGrad::initialize(const std::tr1::shared_ptr<dotk::Vector<Real> > & vector_)
+void DOTk_ParallelBackwardDiffGrad::initialize(const std::shared_ptr<dotk::Vector<Real> > & vector_)
 {
     m_FiniteDiffPerturbationVec->fill(1e-6);
 

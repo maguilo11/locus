@@ -274,9 +274,9 @@ public:
         return (m_Data.size());
     }
     // Clones memory for an object of ScalarType dotk::Vector
-    std::tr1::shared_ptr<dotk::Vector<ScalarType> > clone() const
+    std::shared_ptr<dotk::Vector<ScalarType> > clone() const
     {
-        std::tr1::shared_ptr< dotk::MpiX_Vector<ScalarType> >
+        std::shared_ptr< dotk::MpiX_Vector<ScalarType> >
             output(new dotk::MpiX_Vector<ScalarType>(m_Comm, m_GlobalDim, m_NumThreads));
         return (output);
     }

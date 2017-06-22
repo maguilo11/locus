@@ -27,9 +27,9 @@ class DOTk_EqualityConstraint;
 class DOTk_TrustRegionMngTypeELP : public dotk::DOTk_OptimizationDataMng
 {
 public:
-    DOTk_TrustRegionMngTypeELP(const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_,
-                               const std::tr1::shared_ptr<dotk::DOTk_ObjectiveFunction<Real> > & objective_,
-                               const std::tr1::shared_ptr<dotk::DOTk_EqualityConstraint<Real> > & equality_);
+    DOTk_TrustRegionMngTypeELP(const std::shared_ptr<dotk::DOTk_Primal> & primal_,
+                               const std::shared_ptr<dotk::DOTk_ObjectiveFunction<Real> > & objective_,
+                               const std::shared_ptr<dotk::DOTk_EqualityConstraint<Real> > & equality_);
     virtual ~DOTk_TrustRegionMngTypeELP();
 
     virtual void setNewObjectiveFunctionValue(Real value_);
@@ -37,44 +37,44 @@ public:
     virtual Real getNewObjectiveFunctionValue() const;
     virtual Real getOldObjectiveFunctionValue() const;
 
-    virtual const std::tr1::shared_ptr<dotk::Vector<Real> > & getOldDual() const;
-    virtual const std::tr1::shared_ptr<dotk::Vector<Real> > & getNewDual() const;
-    virtual const std::tr1::shared_ptr<dotk::Vector<Real> > & getMatrixTimesVector() const;
+    virtual const std::shared_ptr<dotk::Vector<Real> > & getOldDual() const;
+    virtual const std::shared_ptr<dotk::Vector<Real> > & getNewDual() const;
+    virtual const std::shared_ptr<dotk::Vector<Real> > & getMatrixTimesVector() const;
 
     virtual void setTrialStep(const dotk::Vector<Real> & input_);
-    virtual const std::tr1::shared_ptr<dotk::Vector<Real> > & getTrialStep() const;
+    virtual const std::shared_ptr<dotk::Vector<Real> > & getTrialStep() const;
 
     virtual void setNewPrimal(const dotk::Vector<Real> & input_);
     virtual void setOldPrimal(const dotk::Vector<Real> & input_);
-    virtual const std::tr1::shared_ptr<dotk::Vector<Real> > & getNewPrimal() const;
-    virtual const std::tr1::shared_ptr<dotk::Vector<Real> > & getOldPrimal() const;
+    virtual const std::shared_ptr<dotk::Vector<Real> > & getNewPrimal() const;
+    virtual const std::shared_ptr<dotk::Vector<Real> > & getOldPrimal() const;
 
     virtual void setNewGradient(const dotk::Vector<Real> & input_);
     virtual void setOldGradient(const dotk::Vector<Real> & input_);
-    virtual const std::tr1::shared_ptr<dotk::Vector<Real> > & getNewGradient() const;
-    virtual const std::tr1::shared_ptr<dotk::Vector<Real> > & getOldGradient() const;
+    virtual const std::shared_ptr<dotk::Vector<Real> > & getNewGradient() const;
+    virtual const std::shared_ptr<dotk::Vector<Real> > & getOldGradient() const;
 
-    virtual const std::tr1::shared_ptr<dotk::DOTk_AssemblyManager> & getRoutinesMng() const;
+    virtual const std::shared_ptr<dotk::DOTk_AssemblyManager> & getRoutinesMng() const;
 
-    const std::tr1::shared_ptr<dotk::Vector<Real> > & getDeltaDual() const;
-    const std::tr1::shared_ptr<dotk::Vector<Real> > & getLinearizedEqConstraint() const;
-    const std::tr1::shared_ptr<dotk::Vector<Real> > & getJacobianTimesTangentialStep() const;
+    const std::shared_ptr<dotk::Vector<Real> > & getDeltaDual() const;
+    const std::shared_ptr<dotk::Vector<Real> > & getLinearizedEqConstraint() const;
+    const std::shared_ptr<dotk::Vector<Real> > & getJacobianTimesTangentialStep() const;
 
-    const std::tr1::shared_ptr<dotk::Vector<Real> > & getOldEqualityConstraintResidual() const;
-    const std::tr1::shared_ptr<dotk::Vector<Real> > & getNewEqualityConstraintResidual() const;
+    const std::shared_ptr<dotk::Vector<Real> > & getOldEqualityConstraintResidual() const;
+    const std::shared_ptr<dotk::Vector<Real> > & getNewEqualityConstraintResidual() const;
 
-    const std::tr1::shared_ptr<dotk::Vector<Real> > & getNormalStep() const;
-    const std::tr1::shared_ptr<dotk::Vector<Real> > & getDeltaPrimal() const;
-    const std::tr1::shared_ptr<dotk::Vector<Real> > & getTangentialStep() const;
-    const std::tr1::shared_ptr<dotk::Vector<Real> > & getNormalCauchyStep() const;
-    const std::tr1::shared_ptr<dotk::Vector<Real> > & getProjectedGradient() const;
-    const std::tr1::shared_ptr<dotk::Vector<Real> > & getHessTimesNormalStep() const;
-    const std::tr1::shared_ptr<dotk::Vector<Real> > & getTangentialStepResidual() const;
-    const std::tr1::shared_ptr<dotk::Vector<Real> > & getProjTangentialCauchyStep() const;
-    const std::tr1::shared_ptr<dotk::Vector<Real> > & getAugmentedSystemLeftHandSide() const;
-    const std::tr1::shared_ptr<dotk::Vector<Real> > & getAugmentedSystemRightHandSide() const;
-    const std::tr1::shared_ptr<dotk::Vector<Real> > & getProjectedTangentialStep() const;
-    const std::tr1::shared_ptr<dotk::Vector<Real> > & getTangentialSubProblemRhs() const;
+    const std::shared_ptr<dotk::Vector<Real> > & getNormalStep() const;
+    const std::shared_ptr<dotk::Vector<Real> > & getDeltaPrimal() const;
+    const std::shared_ptr<dotk::Vector<Real> > & getTangentialStep() const;
+    const std::shared_ptr<dotk::Vector<Real> > & getNormalCauchyStep() const;
+    const std::shared_ptr<dotk::Vector<Real> > & getProjectedGradient() const;
+    const std::shared_ptr<dotk::Vector<Real> > & getHessTimesNormalStep() const;
+    const std::shared_ptr<dotk::Vector<Real> > & getTangentialStepResidual() const;
+    const std::shared_ptr<dotk::Vector<Real> > & getProjTangentialCauchyStep() const;
+    const std::shared_ptr<dotk::Vector<Real> > & getAugmentedSystemLeftHandSide() const;
+    const std::shared_ptr<dotk::Vector<Real> > & getAugmentedSystemRightHandSide() const;
+    const std::shared_ptr<dotk::Vector<Real> > & getProjectedTangentialStep() const;
+    const std::shared_ptr<dotk::Vector<Real> > & getTangentialSubProblemRhs() const;
 
     size_t getObjectiveFunctionEvaluationCounter() const;
 
@@ -92,51 +92,51 @@ public:
     Real getMinActualOverPredictedReductionAllowed() const;
 
     Real computeDoglegRoot(const Real & trust_region_radius_,
-                           const std::tr1::shared_ptr<dotk::Vector<Real> > & x_,
-                           const std::tr1::shared_ptr<dotk::Vector<Real> > & y_);
+                           const std::shared_ptr<dotk::Vector<Real> > & x_,
+                           const std::shared_ptr<dotk::Vector<Real> > & y_);
     void invalidCurvatureDetected(bool invalid_curvature_detected_);
 
-    const std::tr1::shared_ptr<dotk::DOTk_TrustRegion> & getTrustRegion() const;
+    const std::shared_ptr<dotk::DOTk_TrustRegion> & getTrustRegion() const;
 
 public:
-    std::tr1::shared_ptr<dotk::Vector<Real> > m_DeltaDual;
-    std::tr1::shared_ptr<dotk::Vector<Real> > m_NormalStep;
-    std::tr1::shared_ptr<dotk::Vector<Real> > m_DeltaPrimal;
-    std::tr1::shared_ptr<dotk::Vector<Real> > m_TangentialStep;
-    std::tr1::shared_ptr<dotk::Vector<Real> > m_NormalCauchyStep;
-    std::tr1::shared_ptr<dotk::Vector<Real> > m_ProjectedGradient;
-    std::tr1::shared_ptr<dotk::Vector<Real> > m_HessTimesNormalStep;
-    std::tr1::shared_ptr<dotk::Vector<Real> > m_NewEqualityConstraint;
-    std::tr1::shared_ptr<dotk::Vector<Real> > m_OldEqualityConstraint;
-    std::tr1::shared_ptr<dotk::Vector<Real> > m_LinearizedEqConstraint;
-    std::tr1::shared_ptr<dotk::Vector<Real> > m_TangentialStepResidual;
-    std::tr1::shared_ptr<dotk::Vector<Real> > m_ProjectedTangentialStep;
-    std::tr1::shared_ptr<dotk::Vector<Real> > m_TangentialSubProblemRhs;
-    std::tr1::shared_ptr<dotk::Vector<Real> > m_JacobianTimesTangentialStep;
-    std::tr1::shared_ptr<dotk::Vector<Real> > m_AugmentedSystemLeftHandSide;
-    std::tr1::shared_ptr<dotk::Vector<Real> > m_AugmentedSystemRightHandSide;
-    std::tr1::shared_ptr<dotk::Vector<Real> > m_ProjectedTangentialCauchyStep;
+    std::shared_ptr<dotk::Vector<Real> > m_DeltaDual;
+    std::shared_ptr<dotk::Vector<Real> > m_NormalStep;
+    std::shared_ptr<dotk::Vector<Real> > m_DeltaPrimal;
+    std::shared_ptr<dotk::Vector<Real> > m_TangentialStep;
+    std::shared_ptr<dotk::Vector<Real> > m_NormalCauchyStep;
+    std::shared_ptr<dotk::Vector<Real> > m_ProjectedGradient;
+    std::shared_ptr<dotk::Vector<Real> > m_HessTimesNormalStep;
+    std::shared_ptr<dotk::Vector<Real> > m_NewEqualityConstraint;
+    std::shared_ptr<dotk::Vector<Real> > m_OldEqualityConstraint;
+    std::shared_ptr<dotk::Vector<Real> > m_LinearizedEqConstraint;
+    std::shared_ptr<dotk::Vector<Real> > m_TangentialStepResidual;
+    std::shared_ptr<dotk::Vector<Real> > m_ProjectedTangentialStep;
+    std::shared_ptr<dotk::Vector<Real> > m_TangentialSubProblemRhs;
+    std::shared_ptr<dotk::Vector<Real> > m_JacobianTimesTangentialStep;
+    std::shared_ptr<dotk::Vector<Real> > m_AugmentedSystemLeftHandSide;
+    std::shared_ptr<dotk::Vector<Real> > m_AugmentedSystemRightHandSide;
+    std::shared_ptr<dotk::Vector<Real> > m_ProjectedTangentialCauchyStep;
 
 private:
-    void initialize(const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_,
-                    const std::tr1::shared_ptr<dotk::DOTk_ObjectiveFunction<Real> > & objective_,
-                    const std::tr1::shared_ptr<dotk::DOTk_EqualityConstraint<Real> > & equality_);
+    void initialize(const std::shared_ptr<dotk::DOTk_Primal> & primal_,
+                    const std::shared_ptr<dotk::DOTk_ObjectiveFunction<Real> > & objective_,
+                    const std::shared_ptr<dotk::DOTk_EqualityConstraint<Real> > & equality_);
 
 private:
     Real m_OldObjectiveFunction;
     Real m_NewObjectiveFunction;
 
-    std::tr1::shared_ptr<dotk::Vector<Real> > m_OldDual;
-    std::tr1::shared_ptr<dotk::Vector<Real> > m_NewDual;
-    std::tr1::shared_ptr<dotk::Vector<Real> > m_TrialStep;
-    std::tr1::shared_ptr<dotk::Vector<Real> > m_OldPrimal;
-    std::tr1::shared_ptr<dotk::Vector<Real> > m_NewPrimal;
-    std::tr1::shared_ptr<dotk::Vector<Real> > m_OldGradient;
-    std::tr1::shared_ptr<dotk::Vector<Real> > m_NewGradient;
-    std::tr1::shared_ptr<dotk::Vector<Real> > m_MatrixTimesVector;
+    std::shared_ptr<dotk::Vector<Real> > m_OldDual;
+    std::shared_ptr<dotk::Vector<Real> > m_NewDual;
+    std::shared_ptr<dotk::Vector<Real> > m_TrialStep;
+    std::shared_ptr<dotk::Vector<Real> > m_OldPrimal;
+    std::shared_ptr<dotk::Vector<Real> > m_NewPrimal;
+    std::shared_ptr<dotk::Vector<Real> > m_OldGradient;
+    std::shared_ptr<dotk::Vector<Real> > m_NewGradient;
+    std::shared_ptr<dotk::Vector<Real> > m_MatrixTimesVector;
 
-    std::tr1::shared_ptr<dotk::DOTk_TrustRegion> m_TrustRegion;
-    std::tr1::shared_ptr<dotk::DOTk_AssemblyManager> m_RoutinesMng;
+    std::shared_ptr<dotk::DOTk_TrustRegion> m_TrustRegion;
+    std::shared_ptr<dotk::DOTk_AssemblyManager> m_RoutinesMng;
 
 private:
     // unimplemented

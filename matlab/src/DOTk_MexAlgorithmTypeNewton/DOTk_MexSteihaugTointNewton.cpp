@@ -144,7 +144,7 @@ void DOTk_MexSteihaugTointNewton::setAlgorithmParameters(dotk::DOTk_SteihaugToin
     algorithm_.setTrialStepTolerance(trial_step_tolerance);
 }
 
-void DOTk_MexSteihaugTointNewton::setTrustRegionStepParameters(const std::tr1::shared_ptr<dotk::DOTk_TrustRegionStepMng> & mng_)
+void DOTk_MexSteihaugTointNewton::setTrustRegionStepParameters(const std::shared_ptr<dotk::DOTk_TrustRegionStepMng> & mng_)
 {
     size_t itr = this->getMaxNumSubProblemItr();
     mng_->setMaxNumTrustRegionSubProblemItr(itr);

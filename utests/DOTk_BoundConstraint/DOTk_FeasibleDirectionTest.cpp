@@ -23,12 +23,12 @@ namespace DOTkFeasibleDirectionTest
 TEST(DOTk_FeasibleDirection, getDirection)
 {
     size_t ncontrols = 2;
-    std::tr1::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
     primal->allocateSerialControlArray(ncontrols, 2);
     primal->setControlLowerBound(1);
     primal->setControlUpperBound(4);
 
-    std::tr1::shared_ptr<dotk::Vector<Real> > dir = primal->control()->clone();
+    std::shared_ptr<dotk::Vector<Real> > dir = primal->control()->clone();
     dir->fill(7.);
 
     // TEST 1: NOT FEASIBLE
@@ -39,7 +39,7 @@ TEST(DOTk_FeasibleDirection, getDirection)
     Real tol = 1e-8;
     EXPECT_EQ(3, bound.getNumFeasibleItr());
     EXPECT_NEAR(0.5, bound.getContractionStep(), tol);
-    std::tr1::shared_ptr<dotk::Vector<Real> > gold = primal->control()->clone();
+    std::shared_ptr<dotk::Vector<Real> > gold = primal->control()->clone();
     gold->fill(1.75);
     dotk::gtest::checkResults(*dir, *gold);
 
@@ -53,17 +53,17 @@ TEST(DOTk_FeasibleDirection, getDirection)
 TEST(DOTk_FeasibleDirection, constraint)
 {
     size_t ncontrols = 2;
-    std::tr1::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
     primal->allocateSerialControlArray(ncontrols, 2);
     primal->setControlLowerBound(1);
     primal->setControlUpperBound(4);
-    std::tr1::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
-    std::tr1::shared_ptr<dotk::DOTk_ArmijoLineSearch> step(new dotk::DOTk_ArmijoLineSearch(primal->control()));
-    std::tr1::shared_ptr<dotk::DOTk_LineSearchMngTypeULP> mng(new dotk::DOTk_LineSearchMngTypeULP(primal, objective));
+    std::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
+    std::shared_ptr<dotk::DOTk_ArmijoLineSearch> step(new dotk::DOTk_ArmijoLineSearch(primal->control()));
+    std::shared_ptr<dotk::DOTk_LineSearchMngTypeULP> mng(new dotk::DOTk_LineSearchMngTypeULP(primal, objective));
 
     mng->setUserDefinedGradient();
     mng->setNewPrimal(*primal->control());
-    std::tr1::shared_ptr<dotk::Vector<Real> > dir = primal->control()->clone();
+    std::shared_ptr<dotk::Vector<Real> > dir = primal->control()->clone();
     dir->fill(7.);
     mng->setTrialStep(*dir);
 

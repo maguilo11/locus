@@ -16,9 +16,9 @@
 namespace dotk
 {
 
-DOTk_RoutinesTypeELP::DOTk_RoutinesTypeELP(const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_,
-                                           const std::tr1::shared_ptr<dotk::DOTk_ObjectiveFunction<Real> >& objective_,
-                                           const std::tr1::shared_ptr<dotk::DOTk_EqualityConstraint<Real> >& constraint_) :
+DOTk_RoutinesTypeELP::DOTk_RoutinesTypeELP(const std::shared_ptr<dotk::DOTk_Primal> & primal_,
+                                           const std::shared_ptr<dotk::DOTk_ObjectiveFunction<Real> >& objective_,
+                                           const std::shared_ptr<dotk::DOTk_EqualityConstraint<Real> >& constraint_) :
         dotk::DOTk_AssemblyManager(),
         m_WorkVector(primal_->control()->clone()),
         m_ObjectiveFunction(objective_),
@@ -30,7 +30,7 @@ DOTk_RoutinesTypeELP::~DOTk_RoutinesTypeELP()
 {
 }
 
-Real DOTk_RoutinesTypeELP::objective(const std::tr1::shared_ptr<dotk::Vector<Real> > & primal_)
+Real DOTk_RoutinesTypeELP::objective(const std::shared_ptr<dotk::Vector<Real> > & primal_)
 {
     /// DOTk interface: Objective function for linear programming problems. \n
     ///
@@ -40,8 +40,8 @@ Real DOTk_RoutinesTypeELP::objective(const std::tr1::shared_ptr<dotk::Vector<Rea
     return (value);
 }
 
-void DOTk_RoutinesTypeELP::equalityConstraint(const std::tr1::shared_ptr<dotk::Vector<Real> > & primal_,
-                                              const std::tr1::shared_ptr<dotk::Vector<Real> > & output_)
+void DOTk_RoutinesTypeELP::equalityConstraint(const std::shared_ptr<dotk::Vector<Real> > & primal_,
+                                              const std::shared_ptr<dotk::Vector<Real> > & output_)
 {
     /// DOTk interface: Evaluate equality constraint for linear programming problems. \n
     ///
@@ -51,9 +51,9 @@ void DOTk_RoutinesTypeELP::equalityConstraint(const std::tr1::shared_ptr<dotk::V
     dotk::DOTk_AssemblyManager::updateEqualityConstraintEvaluationCounter();
 }
 
-void DOTk_RoutinesTypeELP::gradient(const std::tr1::shared_ptr<dotk::Vector<Real> > & primal_,
-                                    const std::tr1::shared_ptr<dotk::Vector<Real> > & dual_,
-                                    const std::tr1::shared_ptr<dotk::Vector<Real> > & output_)
+void DOTk_RoutinesTypeELP::gradient(const std::shared_ptr<dotk::Vector<Real> > & primal_,
+                                    const std::shared_ptr<dotk::Vector<Real> > & dual_,
+                                    const std::shared_ptr<dotk::Vector<Real> > & output_)
 {
     /// DOTk interface: Assemble gradient operator for linear programming problems. \n
     ///
@@ -68,9 +68,9 @@ void DOTk_RoutinesTypeELP::gradient(const std::tr1::shared_ptr<dotk::Vector<Real
     dotk::DOTk_AssemblyManager::updateGradientEvaluationCounter();
 }
 
-void DOTk_RoutinesTypeELP::jacobian(const std::tr1::shared_ptr<dotk::Vector<Real> > & primal_,
-                                    const std::tr1::shared_ptr<dotk::Vector<Real> > & delta_primal_,
-                                    const std::tr1::shared_ptr<dotk::Vector<Real> > & output_)
+void DOTk_RoutinesTypeELP::jacobian(const std::shared_ptr<dotk::Vector<Real> > & primal_,
+                                    const std::shared_ptr<dotk::Vector<Real> > & delta_primal_,
+                                    const std::shared_ptr<dotk::Vector<Real> > & output_)
 {
     /// DOTk interface: Compute the application of the perturbation vector to the Jacobian operator \n
     ///                 for linear programming problems. \n
@@ -81,9 +81,9 @@ void DOTk_RoutinesTypeELP::jacobian(const std::tr1::shared_ptr<dotk::Vector<Real
     dotk::DOTk_AssemblyManager::updateJacobianEvaluationCounter();
 }
 
-void DOTk_RoutinesTypeELP::adjointJacobian(const std::tr1::shared_ptr<dotk::Vector<Real> > & primal_,
-                                           const std::tr1::shared_ptr<dotk::Vector<Real> > & dual_,
-                                           const std::tr1::shared_ptr<dotk::Vector<Real> > & output_)
+void DOTk_RoutinesTypeELP::adjointJacobian(const std::shared_ptr<dotk::Vector<Real> > & primal_,
+                                           const std::shared_ptr<dotk::Vector<Real> > & dual_,
+                                           const std::shared_ptr<dotk::Vector<Real> > & output_)
 {
     /// DOTk interface: Compute the application of the perturbation vector to the Jacobian operator \n
     ///                  for linear programming problems. \n
@@ -94,10 +94,10 @@ void DOTk_RoutinesTypeELP::adjointJacobian(const std::tr1::shared_ptr<dotk::Vect
     dotk::DOTk_AssemblyManager::updateAdjointJacobianEvaluationCounter();
 }
 
-void DOTk_RoutinesTypeELP::hessian(const std::tr1::shared_ptr<dotk::Vector<Real> > & primal_,
-                                   const std::tr1::shared_ptr<dotk::Vector<Real> > & dual_,
-                                   const std::tr1::shared_ptr<dotk::Vector<Real> > & delta_primal_,
-                                   const std::tr1::shared_ptr<dotk::Vector<Real> > & output_)
+void DOTk_RoutinesTypeELP::hessian(const std::shared_ptr<dotk::Vector<Real> > & primal_,
+                                   const std::shared_ptr<dotk::Vector<Real> > & dual_,
+                                   const std::shared_ptr<dotk::Vector<Real> > & delta_primal_,
+                                   const std::shared_ptr<dotk::Vector<Real> > & output_)
 {
     /// DOTk interface: Compute the application of the perturbation vector to the Hessian operator \n
     ///                 for linear programming problems. \n

@@ -25,10 +25,10 @@ namespace dotk
 {
 
 DOTk_OptimalityCriteria::DOTk_OptimalityCriteria
-(const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_,
- const std::tr1::shared_ptr<dotk::DOTk_ObjectiveFunction<Real> > & objective_,
- const std::tr1::shared_ptr<dotk::DOTk_EqualityConstraint<Real> > & equality_,
- const std::tr1::shared_ptr<dotk::DOTk_InequalityConstraint<Real> > & inequality_) :
+(const std::shared_ptr<dotk::DOTk_Primal> & primal_,
+ const std::shared_ptr<dotk::DOTk_ObjectiveFunction<Real> > & objective_,
+ const std::shared_ptr<dotk::DOTk_EqualityConstraint<Real> > & equality_,
+ const std::shared_ptr<dotk::DOTk_InequalityConstraint<Real> > & inequality_) :
         m_LastTime(false),
         m_NumItrDone(0),
         m_PrintDiagnostics(false),

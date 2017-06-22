@@ -24,8 +24,8 @@
 namespace dotk
 {
 
-DOTk_LineSearchQuasiNewton::DOTk_LineSearchQuasiNewton(const std::tr1::shared_ptr<dotk::DOTk_LineSearchStepMng> & step_,
-                                                       const std::tr1::shared_ptr<dotk::DOTk_LineSearchAlgorithmsDataMng> & mng_) :
+DOTk_LineSearchQuasiNewton::DOTk_LineSearchQuasiNewton(const std::shared_ptr<dotk::DOTk_LineSearchStepMng> & step_,
+                                                       const std::shared_ptr<dotk::DOTk_LineSearchAlgorithmsDataMng> & mng_) :
         dotk::DOTk_FirstOrderAlgorithm(dotk::types::LINE_SEARCH_QUASI_NEWTON),
         m_InvHessianTimesVector(mng_->getNewPrimal()->clone()),
         m_IO(new dotk::DOTk_FirstOrderLineSearchAlgIO),
@@ -40,7 +40,7 @@ DOTk_LineSearchQuasiNewton::~DOTk_LineSearchQuasiNewton()
 {
 }
 
-const std::tr1::shared_ptr<dotk::DOTk_SecondOrderOperator> & DOTk_LineSearchQuasiNewton::getInvHessianPtr() const
+const std::shared_ptr<dotk::DOTk_SecondOrderOperator> & DOTk_LineSearchQuasiNewton::getInvHessianPtr() const
 {
     return (m_InvHessian);
 }

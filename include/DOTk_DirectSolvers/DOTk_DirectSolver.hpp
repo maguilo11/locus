@@ -9,7 +9,7 @@
 #define DOTK_DIRECTSOLVER_HPP_
 
 #include <vector>
-#include <tr1/memory>
+#include <memory>
 
 #include "DOTk_Types.hpp"
 
@@ -33,7 +33,7 @@ public:
     void setDirectSolverType(dotk::types::direct_solver_t type_);
     dotk::types::direct_solver_t getDirectSolverType() const;
 
-    virtual void solve(const std::tr1::shared_ptr<dotk::matrix<Real> > matrix_,
+    virtual void solve(const std::shared_ptr<dotk::matrix<Real> > matrix_,
                        const std::vector<Real> & rhs_vec_,
                        std::vector<Real> & solution_vec_);
 

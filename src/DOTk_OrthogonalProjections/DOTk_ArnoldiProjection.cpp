@@ -18,7 +18,7 @@
 namespace dotk
 {
 
-DOTk_ArnoldiProjection::DOTk_ArnoldiProjection(const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_,
+DOTk_ArnoldiProjection::DOTk_ArnoldiProjection(const std::shared_ptr<dotk::DOTk_Primal> & primal_,
                                                size_t krylov_subspace_dim_) :
         dotk::DOTk_OrthogonalProjection::DOTk_OrthogonalProjection(dotk::types::ARNOLDI, krylov_subspace_dim_),
         m_Sine(krylov_subspace_dim_, 0.),
@@ -47,12 +47,12 @@ Real DOTk_ArnoldiProjection::getInitialResidual() const
 }
 
 void DOTk_ArnoldiProjection::setOrthogonalVector(size_t index_,
-                                                 const std::tr1::shared_ptr<dotk::Vector<Real> > & vector_)
+                                                 const std::shared_ptr<dotk::Vector<Real> > & vector_)
 {
     m_OrthogonalBasis[index_]->update(1., *vector_, 0.);
 }
 
-const std::tr1::shared_ptr<dotk::Vector<Real> > &
+const std::shared_ptr<dotk::Vector<Real> > &
 DOTk_ArnoldiProjection::getOrthogonalVector(size_t index_) const
 {
     return (m_OrthogonalBasis[index_]);
@@ -80,7 +80,7 @@ void DOTk_ArnoldiProjection::applyGivensRotationsToHessenbergMatrix(int current_
     }
 }
 void DOTk_ArnoldiProjection::updateHessenbergMatrix(size_t current_itr_,
-                                                    const std::tr1::shared_ptr<dotk::Vector<Real> > & left_prec_times_vec_)
+                                                    const std::shared_ptr<dotk::Vector<Real> > & left_prec_times_vec_)
 {
     for(size_t index = 0; index <= current_itr_; ++ index)
     {
@@ -91,7 +91,7 @@ void DOTk_ArnoldiProjection::updateHessenbergMatrix(size_t current_itr_,
 }
 
 void DOTk_ArnoldiProjection::apply(const dotk::DOTk_KrylovSolver * const solver_,
-                                   const std::tr1::shared_ptr<dotk::Vector<Real> > & kernel_vector_)
+                                   const std::shared_ptr<dotk::Vector<Real> > & kernel_vector_)
 {
     size_t current_solver_itr = solver_->getNumSolverItrDone();
     size_t current_orthogonal_vector_index = current_solver_itr - 1;
@@ -99,7 +99,7 @@ void DOTk_ArnoldiProjection::apply(const dotk::DOTk_KrylovSolver * const solver_
 }
 
 void DOTk_ArnoldiProjection::arnoldi(size_t ortho_vector_index_,
-                                     const std::tr1::shared_ptr<dotk::Vector<Real> > & kernel_vector_)
+                                     const std::shared_ptr<dotk::Vector<Real> > & kernel_vector_)
 {
     this->updateHessenbergMatrix(ortho_vector_index_, kernel_vector_);
     Real scaling = kernel_vector_->norm();
@@ -129,7 +129,7 @@ void DOTk_ArnoldiProjection::arnoldi(size_t ortho_vector_index_,
     }
 }
 
-void DOTk_ArnoldiProjection::initialize(const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_)
+void DOTk_ArnoldiProjection::initialize(const std::shared_ptr<dotk::DOTk_Primal> & primal_)
 {
     bool is_dual_allocated = primal_->dual().use_count() > 0;
     bool is_state_allocated = primal_->state().use_count() > 0;

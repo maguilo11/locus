@@ -13,7 +13,7 @@
 namespace dotk
 {
 
-DOTk_EigenQR::DOTk_EigenQR(std::tr1::shared_ptr<dotk::DOTk_OrthogonalFactorization> qr_method_,
+DOTk_EigenQR::DOTk_EigenQR(std::shared_ptr<dotk::DOTk_OrthogonalFactorization> qr_method_,
                            size_t max_num_qr_iterations_) :
         dotk::DOTk_EigenMethod(dotk::types::QR_EIGEN_METHOD),
         m_MaxNumItr(max_num_qr_iterations_),
@@ -39,9 +39,9 @@ size_t DOTk_EigenQR::getMaxNumItr() const
     return (m_MaxNumItr);
 }
 
-void DOTk_EigenQR::solve(const std::tr1::shared_ptr<dotk::matrix<Real> > & matrix_,
-                         std::tr1::shared_ptr<dotk::Vector<Real> > & eigenvalues_,
-                         std::tr1::shared_ptr<dotk::matrix<Real> > & eigenvectors_)
+void DOTk_EigenQR::solve(const std::shared_ptr<dotk::matrix<Real> > & matrix_,
+                         std::shared_ptr<dotk::Vector<Real> > & eigenvalues_,
+                         std::shared_ptr<dotk::matrix<Real> > & eigenvectors_)
 {
     this->initialize(matrix_);
 
@@ -60,7 +60,7 @@ void DOTk_EigenQR::solve(const std::tr1::shared_ptr<dotk::matrix<Real> > & matri
     m_Matrix->diag(*eigenvalues_);
 }
 
-void DOTk_EigenQR::initialize(const std::tr1::shared_ptr<dotk::matrix<Real> > & input_)
+void DOTk_EigenQR::initialize(const std::shared_ptr<dotk::matrix<Real> > & input_)
 {
     if(m_Q.use_count() <= 0)
     {

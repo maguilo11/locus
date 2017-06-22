@@ -19,9 +19,9 @@
 namespace dotk
 {
 
-DOTk_TrustRegionMngTypeUNP::DOTk_TrustRegionMngTypeUNP(const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_,
-                                                       const std::tr1::shared_ptr<dotk::DOTk_ObjectiveFunction<Real> > & objective_,
-                                                       const std::tr1::shared_ptr<dotk::DOTk_EqualityConstraint<Real> > & equality_) :
+DOTk_TrustRegionMngTypeUNP::DOTk_TrustRegionMngTypeUNP(const std::shared_ptr<dotk::DOTk_Primal> & primal_,
+                                                       const std::shared_ptr<dotk::DOTk_ObjectiveFunction<Real> > & objective_,
+                                                       const std::shared_ptr<dotk::DOTk_EqualityConstraint<Real> > & equality_) :
         dotk::DOTk_TrustRegionAlgorithmsDataMng(primal_)
 {
     m_RoutinesMng.reset(new dotk::DOTk_RoutinesTypeUNP(primal_, objective_, equality_));

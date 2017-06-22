@@ -30,7 +30,7 @@ DOTk_FixedCriterion::~DOTk_FixedCriterion()
 }
 
 Real DOTk_FixedCriterion::evaluate(const dotk::DOTk_KrylovSolver * const solver_,
-                                   const std::tr1::shared_ptr<dotk::Vector<Real> > & kernel_vector_)
+                                   const std::shared_ptr<dotk::Vector<Real> > & kernel_vector_)
 {
     Real tolerance = dotk::DOTk_KrylovSolverStoppingCriterion::get(dotk::types::FIX_TOLERANCE);
     return (tolerance);

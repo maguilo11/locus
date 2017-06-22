@@ -2,11 +2,13 @@
  * DOTk_NonLinearProgrammingUtils.hpp
  *
  *  Created on: Dec 3, 2014
- *      Author: Miguel A. Aguilo Valentin (maguilo@sandia.gov)
+ *      Author: Miguel A. Aguilo Valentin
  */
 
 #ifndef DOTK_NONLINEARPROGRAMMINGUTILS_HPP_
 #define DOTK_NONLINEARPROGRAMMINGUTILS_HPP_
+
+#include <memory>
 
 #include "DOTk_Types.hpp"
 
@@ -41,9 +43,9 @@ public:
         mControl->update(1., control_, 0.);
     }
 
-    std::tr1::shared_ptr<dotk::Vector<Real> > mDual;
-    std::tr1::shared_ptr<dotk::Vector<Real> > mState;
-    std::tr1::shared_ptr<dotk::Vector<Real> > mControl;
+    std::shared_ptr<dotk::Vector<Real> > mDual;
+    std::shared_ptr<dotk::Vector<Real> > mState;
+    std::shared_ptr<dotk::Vector<Real> > mControl;
 
 private:
     variables(const dotk::nlp::variables&);
@@ -51,7 +53,7 @@ private:
 
 };
 
-std::tr1::shared_ptr<dotk::Vector<Real> > clone(dotk::nlp::variables & variables_, dotk::types::variable_t codomain_);
+std::shared_ptr<dotk::Vector<Real> > clone(dotk::nlp::variables & variables_, dotk::types::variable_t codomain_);
 
 void resetField(const dotk::Vector<Real> & data_, dotk::nlp::variables & variables_, dotk::types::derivative_t type_);
 

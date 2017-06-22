@@ -8,7 +8,7 @@
 #ifndef DOTK_BOUNDCONSTRAINTFACTORY_HPP_
 #define DOTK_BOUNDCONSTRAINTFACTORY_HPP_
 
-#include <tr1/memory>
+#include <memory>
 #include "DOTk_Types.hpp"
 
 namespace dotk
@@ -26,13 +26,13 @@ public:
     void setFactoryType(dotk::types::constraint_method_t type_);
     dotk::types::constraint_method_t getFactoryType() const;
 
-    void buildFeasibleDirection(const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_,
-                                std::tr1::shared_ptr<dotk::DOTk_BoundConstraint> & bound_);
-    void buildProjectionAlongFeasibleDirection(const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_,
-                                               std::tr1::shared_ptr<dotk::DOTk_BoundConstraint> & bound_);
+    void buildFeasibleDirection(const std::shared_ptr<dotk::DOTk_Primal> & primal_,
+                                std::shared_ptr<dotk::DOTk_BoundConstraint> & bound_);
+    void buildProjectionAlongFeasibleDirection(const std::shared_ptr<dotk::DOTk_Primal> & primal_,
+                                               std::shared_ptr<dotk::DOTk_BoundConstraint> & bound_);
 
-    void build(const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_,
-               std::tr1::shared_ptr<dotk::DOTk_BoundConstraint> & bound_) const;
+    void build(const std::shared_ptr<dotk::DOTk_Primal> & primal_,
+               std::shared_ptr<dotk::DOTk_BoundConstraint> & bound_) const;
 
 private:
     dotk::types::constraint_method_t m_Type;

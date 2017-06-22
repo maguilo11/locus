@@ -21,8 +21,8 @@
 namespace dotk
 {
 
-DOTk_LeftPrecConjGradDataMng::DOTk_LeftPrecConjGradDataMng(const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_,
-                                                           const std::tr1::shared_ptr<dotk::DOTk_LinearOperator> & linear_operator_) :
+DOTk_LeftPrecConjGradDataMng::DOTk_LeftPrecConjGradDataMng(const std::shared_ptr<dotk::DOTk_Primal> & primal_,
+                                                           const std::shared_ptr<dotk::DOTk_LinearOperator> & linear_operator_) :
         dotk::DOTk_KrylovSolverDataMng::DOTk_KrylovSolverDataMng(primal_, linear_operator_),
         m_LeftPreconditioner(new dotk::DOTk_LeftPreconditioner(dotk::types::LEFT_PRECONDITIONER_DISABLED)),
         m_LeftPrecTimesResidual()
@@ -71,17 +71,17 @@ void DOTk_LeftPrecConjGradDataMng::setBarzilaiBorweinSecantLeftPreconditioner()
     factory.buildBarzilaiBorweinSecantPreconditioner(dotk::DOTk_KrylovSolverDataMng::getSolution(), m_LeftPreconditioner);
 }
 
-const std::tr1::shared_ptr<dotk::DOTk_LeftPreconditioner> & DOTk_LeftPrecConjGradDataMng::getLeftPrec() const
+const std::shared_ptr<dotk::DOTk_LeftPreconditioner> & DOTk_LeftPrecConjGradDataMng::getLeftPrec() const
 {
     return (m_LeftPreconditioner);
 }
 
-const std::tr1::shared_ptr<dotk::Vector<Real> > & DOTk_LeftPrecConjGradDataMng::getLeftPrecTimesVector() const
+const std::shared_ptr<dotk::Vector<Real> > & DOTk_LeftPrecConjGradDataMng::getLeftPrecTimesVector() const
 {
     return (m_LeftPrecTimesResidual);
 }
 
-void DOTk_LeftPrecConjGradDataMng::allocate(const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_)
+void DOTk_LeftPrecConjGradDataMng::allocate(const std::shared_ptr<dotk::DOTk_Primal> & primal_)
 {
     bool is_dual_allocated = primal_->dual().use_count() > 0;
     bool is_state_allocated = primal_->state().use_count() > 0;

@@ -21,16 +21,16 @@ class Vector;
 class DOTk_ArmijoLineSearch : public dotk::DOTk_LineSearch
 {
 public:
-    explicit DOTk_ArmijoLineSearch(const std::tr1::shared_ptr<dotk::Vector<Real> > & vector_);
+    explicit DOTk_ArmijoLineSearch(const std::shared_ptr<dotk::Vector<Real> > & vector_);
     virtual ~DOTk_ArmijoLineSearch();
 
     virtual Real getConstant() const;
     virtual void setConstant(Real value_);
-    virtual void step(const std::tr1::shared_ptr<dotk::DOTk_OptimizationDataMng> & mng_);
+    virtual void step(const std::shared_ptr<dotk::DOTk_OptimizationDataMng> & mng_);
 
 private:
     Real m_ArmijoRuleConstant;
-    std::tr1::shared_ptr<dotk::Vector<Real> > m_TrialPrimal;
+    std::shared_ptr<dotk::Vector<Real> > m_TrialPrimal;
 
 private:
     // unimplemented

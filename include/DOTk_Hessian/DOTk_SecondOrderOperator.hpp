@@ -9,7 +9,7 @@
 #define DOTK_SECONDORDEROPERATOR_HPP_
 
 #include <vector>
-#include <tr1/memory>
+#include <memory>
 
 #include "DOTk_Types.hpp"
 
@@ -51,29 +51,29 @@ public:
     dotk::types::invhessian_t getInvHessianType() const;
     void setInvHessianType(dotk::types::invhessian_t type_);
 
-    Real getBarzilaiBorweinStep(const std::tr1::shared_ptr<dotk::Vector<Real> > & dprimal_,
-                                const std::tr1::shared_ptr<dotk::Vector<Real> > & dgrad_);
+    Real getBarzilaiBorweinStep(const std::shared_ptr<dotk::Vector<Real> > & dprimal_,
+                                const std::shared_ptr<dotk::Vector<Real> > & dgrad_);
 
-    void computeDeltaPrimal(const std::tr1::shared_ptr<dotk::Vector<Real> > & new_primal_,
-                            const std::tr1::shared_ptr<dotk::Vector<Real> > & old_primal_,
-                            std::tr1::shared_ptr<dotk::Vector<Real> > & delta_primal_);
-    void computeDeltaGradient(const std::tr1::shared_ptr<dotk::Vector<Real> > & new_gradient_,
-                              const std::tr1::shared_ptr<dotk::Vector<Real> > & old_gradient_,
-                              std::tr1::shared_ptr<dotk::Vector<Real> > & delta_gradient_);
+    void computeDeltaPrimal(const std::shared_ptr<dotk::Vector<Real> > & new_primal_,
+                            const std::shared_ptr<dotk::Vector<Real> > & old_primal_,
+                            std::shared_ptr<dotk::Vector<Real> > & delta_primal_);
+    void computeDeltaGradient(const std::shared_ptr<dotk::Vector<Real> > & new_gradient_,
+                              const std::shared_ptr<dotk::Vector<Real> > & old_gradient_,
+                              std::shared_ptr<dotk::Vector<Real> > & delta_gradient_);
 
-    void updateSecantStorage(const std::tr1::shared_ptr<dotk::Vector<Real> > & dprimal_,
-                             const std::tr1::shared_ptr<dotk::Vector<Real> > & dgrad_,
-                             std::tr1::shared_ptr<dotk::matrix<Real> > & dprimal_storage_,
-                             std::tr1::shared_ptr<dotk::matrix<Real> > & dgrad_storage_);
-    void updateSecantStorage(const std::tr1::shared_ptr<dotk::Vector<Real> > & dprimal_,
-                             const std::tr1::shared_ptr<dotk::Vector<Real> > & dgrad_,
+    void updateSecantStorage(const std::shared_ptr<dotk::Vector<Real> > & dprimal_,
+                             const std::shared_ptr<dotk::Vector<Real> > & dgrad_,
+                             std::shared_ptr<dotk::matrix<Real> > & dprimal_storage_,
+                             std::shared_ptr<dotk::matrix<Real> > & dgrad_storage_);
+    void updateSecantStorage(const std::shared_ptr<dotk::Vector<Real> > & dprimal_,
+                             const std::shared_ptr<dotk::Vector<Real> > & dgrad_,
                              std::vector<Real> & rho_storage_,
-                             std::tr1::shared_ptr<dotk::matrix<Real> > & dprimal_storage_,
-                             std::tr1::shared_ptr<dotk::matrix<Real> > & dgrad_storage_);
+                             std::shared_ptr<dotk::matrix<Real> > & dprimal_storage_,
+                             std::shared_ptr<dotk::matrix<Real> > & dgrad_storage_);
 
-    virtual void apply(const std::tr1::shared_ptr<dotk::DOTk_OptimizationDataMng> & mng_,
-                       const std::tr1::shared_ptr<dotk::Vector<Real> > & vec_,
-                       const std::tr1::shared_ptr<dotk::Vector<Real> > & matrix_times_vec_);
+    virtual void apply(const std::shared_ptr<dotk::DOTk_OptimizationDataMng> & mng_,
+                       const std::shared_ptr<dotk::Vector<Real> > & vec_,
+                       const std::shared_ptr<dotk::Vector<Real> > & matrix_times_vec_);
 
 private:
     size_t m_NumUpdatesStored;

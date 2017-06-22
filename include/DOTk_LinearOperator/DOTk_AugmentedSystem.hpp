@@ -24,9 +24,9 @@ public:
     DOTk_AugmentedSystem();
     virtual ~DOTk_AugmentedSystem();
 
-    virtual void apply(const std::tr1::shared_ptr<dotk::DOTk_OptimizationDataMng> & mng_,
-                       const std::tr1::shared_ptr<dotk::Vector<Real> > & data_,
-                       const std::tr1::shared_ptr<dotk::Vector<Real> > & output_);
+    virtual void apply(const std::shared_ptr<dotk::DOTk_OptimizationDataMng> & mng_,
+                       const std::shared_ptr<dotk::Vector<Real> > & data_,
+                       const std::shared_ptr<dotk::Vector<Real> > & output_);
 
 private:
     DOTk_AugmentedSystem(const dotk::DOTk_AugmentedSystem &);

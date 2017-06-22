@@ -54,7 +54,7 @@ void DOTk_QuasiNormalProbCriterion::setTrustRegionRadiusPenaltyParameter(Real pe
 }
 
 Real DOTk_QuasiNormalProbCriterion::evaluate(const dotk::DOTk_KrylovSolver * const solver_,
-                                             const std::tr1::shared_ptr<dotk::Vector<Real> > & kernel_vector_)
+                                             const std::shared_ptr<dotk::Vector<Real> > & kernel_vector_)
 {
     Real stopping_tolerance = this->getStoppingTolerance();
     return (stopping_tolerance);

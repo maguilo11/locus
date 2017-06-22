@@ -123,14 +123,14 @@ void DOTk_MexInexactNewtonTypeTR::solveTypeLinearProgramming(const mxArray* inpu
     mxArray* mx_initial_control = dotk::mex::parseInitialControl(input_[0]);
     dotk::MexVector controls(mx_initial_control);
     mxDestroyArray(mx_initial_control);
-    std::tr1::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
     primal->allocateUserDefinedControl(controls);
 
     // Set objective function operators and trust region data manager
     dotk::types::problem_t problem_type = DOTk_MexAlgorithmTypeNewton::getProblemType();
-    std::tr1::shared_ptr<dotk::DOTk_MexObjectiveFunction>
+    std::shared_ptr<dotk::DOTk_MexObjectiveFunction>
         objective(new dotk::DOTk_MexObjectiveFunction(m_ObjectiveFunction, problem_type));
-    std::tr1::shared_ptr<dotk::DOTk_TrustRegionMngTypeULP>
+    std::shared_ptr<dotk::DOTk_TrustRegionMngTypeULP>
         mng(new dotk::DOTk_TrustRegionMngTypeULP(primal, objective));
 
     // Set trust region and gradient computation method
@@ -139,7 +139,7 @@ void DOTk_MexInexactNewtonTypeTR::solveTypeLinearProgramming(const mxArray* inpu
     this->setTrustRegionMethodParameters(mng);
 
     // Set numerically differentiated Hessian
-    std::tr1::shared_ptr<dotk::NumericallyDifferentiatedHessian>
+    std::shared_ptr<dotk::NumericallyDifferentiatedHessian>
         hessian(new dotk::NumericallyDifferentiatedHessian(primal, objective));
     dotk::mex::buildNumericallyDifferentiatedHessian(input_[0], controls, hessian);
 
@@ -164,18 +164,18 @@ void DOTk_MexInexactNewtonTypeTR::solveTypeNonlinearProgramming(const mxArray* i
     mxDestroyArray(mx_initial_control);
 
     // Allocate DOTk data structures
-    std::tr1::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
     primal->allocateUserDefinedState(states);
     primal->allocateUserDefinedControl(controls);
 
     // Set objective function, equality constraint, and trust region data manager
     dotk::types::problem_t problem_type = dotk::DOTk_MexAlgorithmTypeNewton::getProblemType();
-    std::tr1::shared_ptr<dotk::DOTk_MexObjectiveFunction>
+    std::shared_ptr<dotk::DOTk_MexObjectiveFunction>
         objective(new dotk::DOTk_MexObjectiveFunction(m_ObjectiveFunction, problem_type));
     m_EqualityConstraint = dotk::mex::parseEqualityConstraint(input_[1]);
-    std::tr1::shared_ptr<dotk::DOTk_MexEqualityConstraint>
+    std::shared_ptr<dotk::DOTk_MexEqualityConstraint>
         equality(new dotk::DOTk_MexEqualityConstraint(m_EqualityConstraint, problem_type));
-    std::tr1::shared_ptr<dotk::DOTk_TrustRegionMngTypeUNP>
+    std::shared_ptr<dotk::DOTk_TrustRegionMngTypeUNP>
         mng(new dotk::DOTk_TrustRegionMngTypeUNP(primal, objective, equality));
 
     // Set trust region and gradient computation method
@@ -184,7 +184,7 @@ void DOTk_MexInexactNewtonTypeTR::solveTypeNonlinearProgramming(const mxArray* i
     this->setTrustRegionMethodParameters(mng);
 
     // Set numerically differentiated Hessian
-    std::tr1::shared_ptr<dotk::NumericallyDifferentiatedHessian>
+    std::shared_ptr<dotk::NumericallyDifferentiatedHessian>
         hessian(new dotk::NumericallyDifferentiatedHessian(primal, objective, equality));
     dotk::mex::buildNumericallyDifferentiatedHessian(input_[0], controls, hessian);
 
@@ -214,7 +214,7 @@ void DOTk_MexInexactNewtonTypeTR::setAlgorithmParameters(dotk::DOTk_TrustRegionI
 }
 
 void DOTk_MexInexactNewtonTypeTR::setTrustRegionMethodParameters
-(const std::tr1::shared_ptr<dotk::DOTk_TrustRegionAlgorithmsDataMng> & mng_)
+(const std::shared_ptr<dotk::DOTk_TrustRegionAlgorithmsDataMng> & mng_)
 {
     double value = this->getMaxTrustRegionRadius();
     mng_->setMaxTrustRegionRadius(value);

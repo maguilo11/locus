@@ -8,7 +8,7 @@
 #ifndef DOTK_DESCENTDIRECTION_HPP_
 #define DOTK_DESCENTDIRECTION_HPP_
 
-#include <tr1/memory>
+#include <memory>
 #include "DOTk_Types.hpp"
 
 namespace dotk
@@ -33,13 +33,13 @@ public:
     void setNonlinearCGType(dotk::types::nonlinearcg_t type_);
     dotk::types::nonlinearcg_t getNonlinearCGType() const;
 
-    Real computeCosineAngle(const std::tr1::shared_ptr<dotk::Vector<Real> > & grad_,
-                            const std::tr1::shared_ptr<dotk::Vector<Real> > & dir_);
+    Real computeCosineAngle(const std::shared_ptr<dotk::Vector<Real> > & grad_,
+                            const std::shared_ptr<dotk::Vector<Real> > & dir_);
     bool isTrialStepOrthogonalToSteepestDescent(Real cosine_val_);
-    void steepestDescent(const std::tr1::shared_ptr<dotk::Vector<Real> > & grad_,
-                         const std::tr1::shared_ptr<dotk::Vector<Real> > & dir_);
+    void steepestDescent(const std::shared_ptr<dotk::Vector<Real> > & grad_,
+                         const std::shared_ptr<dotk::Vector<Real> > & dir_);
 
-    virtual void direction(const std::tr1::shared_ptr<dotk::DOTk_OptimizationDataMng> & mng_) = 0;
+    virtual void direction(const std::shared_ptr<dotk::DOTk_OptimizationDataMng> & mng_) = 0;
 
 private:
     Real mScaleFactor;

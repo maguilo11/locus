@@ -9,7 +9,7 @@
 #define DOTK_MEXHESSIANFACTORY_HPP_
 
 #include <mex.h>
-#include <tr1/memory>
+#include <memory>
 
 namespace dotk
 {
@@ -19,8 +19,7 @@ class DOTk_Hessian;
 namespace mex
 {
 
-void buildHessian(const mxArray* options_,
-                  std::tr1::shared_ptr<dotk::DOTk_Hessian> & hessian_);
+void buildHessian(const mxArray* options_, std::shared_ptr<dotk::DOTk_Hessian> & hessian_);
 
 }
 

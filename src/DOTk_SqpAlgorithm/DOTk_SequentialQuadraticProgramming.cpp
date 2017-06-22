@@ -107,7 +107,7 @@ dotk::types::stop_criterion_t DOTk_SequentialQuadraticProgramming::getStoppingCr
 }
 
 bool DOTk_SequentialQuadraticProgramming::checkStoppingCriteria
-(const std::tr1::shared_ptr<dotk::DOTk_TrustRegionMngTypeELP> & mng_)
+(const std::shared_ptr<dotk::DOTk_TrustRegionMngTypeELP> & mng_)
 {
     size_t itr = this->getNumItrDone();
     size_t max_num_itr = this->getMaxNumItr();
@@ -154,7 +154,7 @@ bool DOTk_SequentialQuadraticProgramming::checkStoppingCriteria
 }
 
 void DOTk_SequentialQuadraticProgramming::storePreviousSolution
-(const std::tr1::shared_ptr<dotk::DOTk_TrustRegionMngTypeELP> & mng_)
+(const std::shared_ptr<dotk::DOTk_TrustRegionMngTypeELP> & mng_)
 {
     mng_->setOldObjectiveFunctionValue(mng_->getNewObjectiveFunctionValue());
     mng_->getOldDual()->update(1., *mng_->getNewDual(), 0.);
@@ -164,7 +164,7 @@ void DOTk_SequentialQuadraticProgramming::storePreviousSolution
 }
 
 void DOTk_SequentialQuadraticProgramming::resetCurrentStateToFormer
-(const std::tr1::shared_ptr<dotk::DOTk_TrustRegionMngTypeELP> & mng_)
+(const std::shared_ptr<dotk::DOTk_TrustRegionMngTypeELP> & mng_)
 {
     mng_->getNewPrimal()->update(1., *mng_->getOldPrimal(), 0.);
     mng_->getNewGradient()->update(1., *mng_->getOldGradient(), 0.);

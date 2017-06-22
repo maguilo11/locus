@@ -25,9 +25,9 @@
 namespace dotk
 {
 
-DOTk_DataMngCCSA::DOTk_DataMngCCSA(const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_,
-                                   const std::tr1::shared_ptr<dotk::DOTk_ObjectiveFunction<Real> > & objective_,
-                                   const std::vector<std::tr1::shared_ptr<dotk::DOTk_InequalityConstraint<Real> > > & inequality_) :
+DOTk_DataMngCCSA::DOTk_DataMngCCSA(const std::shared_ptr<dotk::DOTk_Primal> & primal_,
+                                   const std::shared_ptr<dotk::DOTk_ObjectiveFunction<Real> > & objective_,
+                                   const std::vector<std::shared_ptr<dotk::DOTk_InequalityConstraint<Real> > > & inequality_) :
         m_ObjectiveCoefficientsA(1),
         m_InitialAuxiliaryVariableZ(0),
         m_CurrentObjectiveFunctionValue(std::numeric_limits<Real>::max()),
@@ -55,10 +55,10 @@ DOTk_DataMngCCSA::DOTk_DataMngCCSA(const std::tr1::shared_ptr<dotk::DOTk_Primal>
     this->initialize(primal_);
 }
 
-DOTk_DataMngCCSA::DOTk_DataMngCCSA(const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_,
-                                   const std::tr1::shared_ptr<dotk::DOTk_ObjectiveFunction<Real> > & objective_,
-                                   const std::tr1::shared_ptr<dotk::DOTk_EqualityConstraint<Real> > & equality_,
-                                   const std::vector<std::tr1::shared_ptr<dotk::DOTk_InequalityConstraint<Real> > > & inequality_) :
+DOTk_DataMngCCSA::DOTk_DataMngCCSA(const std::shared_ptr<dotk::DOTk_Primal> & primal_,
+                                   const std::shared_ptr<dotk::DOTk_ObjectiveFunction<Real> > & objective_,
+                                   const std::shared_ptr<dotk::DOTk_EqualityConstraint<Real> > & equality_,
+                                   const std::vector<std::shared_ptr<dotk::DOTk_InequalityConstraint<Real> > > & inequality_) :
         m_ObjectiveCoefficientsA(1),
         m_InitialAuxiliaryVariableZ(0),
         m_CurrentObjectiveFunctionValue(std::numeric_limits<Real>::max()),
@@ -151,7 +151,7 @@ void DOTk_DataMngCCSA::initializeAuxiliaryVariables()
     Real max_a_coeff_value = m_InputInequalityCoefficientsA->max();
     if(max_a_coeff_value > static_cast<Real>(0))
     {
-        std::tr1::shared_ptr<dotk::Vector<Real> > initial_candidates_for_auxiliary_vars_z =
+        std::shared_ptr<dotk::Vector<Real> > initial_candidates_for_auxiliary_vars_z =
                 m_InputInequalityCoefficientsA->clone();
         for(size_t index = 0; index < m_NumInequalityConstraints; ++index)
         {
@@ -183,15 +183,15 @@ void DOTk_DataMngCCSA::initializeAuxiliaryVariables()
     }
 }
 
-Real DOTk_DataMngCCSA::evaluateObjectiveFunction(const std::tr1::shared_ptr<dotk::Vector<Real> > & primal_)
+Real DOTk_DataMngCCSA::evaluateObjectiveFunction(const std::shared_ptr<dotk::Vector<Real> > & primal_)
 {
     Real value = m_AssemblyMng->objective(primal_);
     return (value);
 }
 
-void DOTk_DataMngCCSA::evaluateInequalityConstraints(const std::tr1::shared_ptr<dotk::Vector<Real> > & control_,
-                                                     const std::tr1::shared_ptr<dotk::Vector<Real> > & residual_,
-                                                     const std::tr1::shared_ptr<dotk::Vector<Real> > & feasibility_measure_)
+void DOTk_DataMngCCSA::evaluateInequalityConstraints(const std::shared_ptr<dotk::Vector<Real> > & control_,
+                                                     const std::shared_ptr<dotk::Vector<Real> > & residual_,
+                                                     const std::shared_ptr<dotk::Vector<Real> > & feasibility_measure_)
 {
     for(size_t index = 0; index < m_NumInequalityConstraints; ++index)
     {
@@ -201,7 +201,7 @@ void DOTk_DataMngCCSA::evaluateInequalityConstraints(const std::tr1::shared_ptr<
     }
 }
 
-void DOTk_DataMngCCSA::initialize(const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_)
+void DOTk_DataMngCCSA::initialize(const std::shared_ptr<dotk::DOTk_Primal> & primal_)
 {
     this->checkInputs(primal_);
 
@@ -243,7 +243,7 @@ void DOTk_DataMngCCSA::checkInitialAuxiliaryVariables()
     }
 }
 
-void DOTk_DataMngCCSA::checkInputs(const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_)
+void DOTk_DataMngCCSA::checkInputs(const std::shared_ptr<dotk::DOTk_Primal> & primal_)
 {
     assert(primal_->dual()->size() == m_NumInequalityConstraints);
 

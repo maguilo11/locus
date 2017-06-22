@@ -17,17 +17,17 @@ namespace dotk
 namespace gtest
 {
 
-std::tr1::shared_ptr<dotk::Vector<Real> > allocateControl()
+std::shared_ptr<dotk::Vector<Real> > allocateControl()
 {
     size_t num_controls = 2;
     std::vector<Real> data(num_controls, 2.);
-    std::tr1::shared_ptr<dotk::Vector<Real> > vector(new dotk::StdVector<Real>(data));
+    std::shared_ptr<dotk::Vector<Real> > vector(new dotk::StdVector<Real>(data));
     return (vector);
 }
 
-std::tr1::shared_ptr<dotk::Vector<Real> > allocateData(size_t dim_, Real value_)
+std::shared_ptr<dotk::Vector<Real> > allocateData(size_t dim_, Real value_)
 {
-    std::tr1::shared_ptr<dotk::Vector<Real> > vector(new dotk::StdVector<Real>(dim_, value_));
+    std::shared_ptr<dotk::Vector<Real> > vector(new dotk::StdVector<Real>(dim_, value_));
     return (vector);
 }
 
@@ -43,9 +43,9 @@ void checkResults(const dotk::Vector<Real>& results_, const dotk::Vector<Real>& 
 void checkResults(const std::vector<Real> & results_, const std::vector<Real> & gold_, Real tol_)
 {
     assert(results_.size() == gold_.size());
-    for(size_t i = 0; i < results_.size(); ++i)
+    for(size_t tIndex = 0; tIndex < results_.size(); ++tIndex)
     {
-        EXPECT_NEAR(gold_[i], results_[i], tol_);
+        EXPECT_NEAR(gold_.operator [](tIndex), results_.operator [](tIndex), tol_);
     }
 }
 

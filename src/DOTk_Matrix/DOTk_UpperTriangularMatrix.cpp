@@ -578,11 +578,11 @@ const ScalarType & DOTk_UpperTriangularMatrix<ScalarType>::operator ()(const siz
 }
 
 template<typename ScalarType>
-std::tr1::shared_ptr<dotk::matrix<ScalarType> > DOTk_UpperTriangularMatrix<ScalarType>::clone() const
+std::shared_ptr<dotk::matrix<ScalarType> > DOTk_UpperTriangularMatrix<ScalarType>::clone() const
 {
 
     size_t num_rows = this->nrows();
-    std::tr1::shared_ptr<dotk::serial::DOTk_UpperTriangularMatrix<ScalarType> >
+    std::shared_ptr<dotk::serial::DOTk_UpperTriangularMatrix<ScalarType> >
         matrix(new dotk::serial::DOTk_UpperTriangularMatrix<ScalarType>(num_rows));
 
     return (matrix);

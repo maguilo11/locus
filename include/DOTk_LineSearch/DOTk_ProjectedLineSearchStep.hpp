@@ -24,23 +24,23 @@ class Vector;
 class DOTk_ProjectedLineSearchStep : public dotk::DOTk_LineSearchStepMng
 {
 public:
-    explicit DOTk_ProjectedLineSearchStep(const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_);
-    DOTk_ProjectedLineSearchStep(const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_,
-                                 const std::tr1::shared_ptr<dotk::DOTk_LineSearch> & step_);
+    explicit DOTk_ProjectedLineSearchStep(const std::shared_ptr<dotk::DOTk_Primal> & primal_);
+    DOTk_ProjectedLineSearchStep(const std::shared_ptr<dotk::DOTk_Primal> & primal_,
+                                 const std::shared_ptr<dotk::DOTk_LineSearch> & step_);
     virtual ~DOTk_ProjectedLineSearchStep();
 
     void setMaxNumFeasibleItr(size_t itr_);
     void setArmijoBoundConstraintMethodStep();
     void setBoundConstraintMethodContractionStep(Real input_);
-    void setFeasibleDirectionConstraint(const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_);
-    void setProjectionAlongFeasibleDirConstraint(const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_);
+    void setFeasibleDirectionConstraint(const std::shared_ptr<dotk::DOTk_Primal> & primal_);
+    void setProjectionAlongFeasibleDirConstraint(const std::shared_ptr<dotk::DOTk_Primal> & primal_);
 
-    void setArmijoLineSearch(const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_, Real contraction_factor_ = 0.5);
-    void setGoldsteinLineSearch(const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_,
+    void setArmijoLineSearch(const std::shared_ptr<dotk::DOTk_Primal> & primal_, Real contraction_factor_ = 0.5);
+    void setGoldsteinLineSearch(const std::shared_ptr<dotk::DOTk_Primal> & primal_,
                                 Real constant_ = 0.9,
                                 Real contraction_factor_ = 0.5);
-    void setCubicLineSearch(const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_, Real contraction_factor_ = 0.5);
-    void setGoldenSectionLineSearch(const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_,
+    void setCubicLineSearch(const std::shared_ptr<dotk::DOTk_Primal> & primal_, Real contraction_factor_ = 0.5);
+    void setGoldenSectionLineSearch(const std::shared_ptr<dotk::DOTk_Primal> & primal_,
                                     Real contraction_factor_ = 0.5);
 
     void setContractionFactor(Real input_);
@@ -49,12 +49,12 @@ public:
 
     Real step() const;
     size_t iterations() const;
-    void build(const std::tr1::shared_ptr<dotk::DOTk_Primal> & primal_, dotk::types::line_search_t type_);
-    void solveSubProblem(const std::tr1::shared_ptr<dotk::DOTk_OptimizationDataMng> & mng_);
+    void build(const std::shared_ptr<dotk::DOTk_Primal> & primal_, dotk::types::line_search_t type_);
+    void solveSubProblem(const std::shared_ptr<dotk::DOTk_OptimizationDataMng> & mng_);
 
 private:
-    std::tr1::shared_ptr<dotk::DOTk_LineSearch> m_LineSearch;
-    std::tr1::shared_ptr<dotk::DOTk_BoundConstraint> m_BoundConstraint;
+    std::shared_ptr<dotk::DOTk_LineSearch> m_LineSearch;
+    std::shared_ptr<dotk::DOTk_BoundConstraint> m_BoundConstraint;
 
 private:
     DOTk_ProjectedLineSearchStep(const dotk::DOTk_ProjectedLineSearchStep &);

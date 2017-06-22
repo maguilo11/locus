@@ -8,7 +8,7 @@
 #ifndef DOTK_SEQUENTIALQUADRATICPROGRAMMING_HPP_
 #define DOTK_SEQUENTIALQUADRATICPROGRAMMING_HPP_
 
-#include <tr1/memory>
+#include <memory>
 #include "DOTk_Types.hpp"
 
 namespace dotk
@@ -41,11 +41,11 @@ public:
     void setStoppingCriterion(dotk::types::stop_criterion_t flag_);
     dotk::types::stop_criterion_t getStoppingCriterion() const;
 
-    bool checkStoppingCriteria(const std::tr1::shared_ptr<dotk::DOTk_TrustRegionMngTypeELP> & mng_);
-    void storePreviousSolution(const std::tr1::shared_ptr<dotk::DOTk_TrustRegionMngTypeELP> & mng_);
+    bool checkStoppingCriteria(const std::shared_ptr<dotk::DOTk_TrustRegionMngTypeELP> & mng_);
+    void storePreviousSolution(const std::shared_ptr<dotk::DOTk_TrustRegionMngTypeELP> & mng_);
 
 private:
-    void resetCurrentStateToFormer(const std::tr1::shared_ptr<dotk::DOTk_TrustRegionMngTypeELP> & mng_);
+    void resetCurrentStateToFormer(const std::shared_ptr<dotk::DOTk_TrustRegionMngTypeELP> & mng_);
 
 private:
     size_t m_MaxNumOptItr;

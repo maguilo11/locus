@@ -26,7 +26,7 @@ class Vector;
 class DOTk_DiagnosticsInequalityTypeNP : public dotk::DOTk_DerivativeDiagnosticsTool
 {
 public:
-    explicit DOTk_DiagnosticsInequalityTypeNP(const std::vector<std::tr1::shared_ptr<dotk::DOTk_InequalityConstraint<Real> > > & inequality_);
+    explicit DOTk_DiagnosticsInequalityTypeNP(const std::vector<std::shared_ptr<dotk::DOTk_InequalityConstraint<Real> > > & inequality_);
     ~DOTk_DiagnosticsInequalityTypeNP();
 
     void checkPartialDerivativeControl(const dotk::DOTk_State & state_,
@@ -42,11 +42,11 @@ private:
                                                   const dotk::Vector<Real> & perturbation_,
                                                   const dotk::Vector<Real> & true_partial_derivative_,
                                                   dotk::nlp::variables & variables_,
-                                                  std::tr1::shared_ptr<dotk::DOTk_InequalityConstraint<Real> > inequality_);
+                                                  std::shared_ptr<dotk::DOTk_InequalityConstraint<Real> > inequality_);
 
 private:
-    std::tr1::shared_ptr<dotk::Vector<Real> > m_OriginalField;
-    std::vector<std::tr1::shared_ptr<dotk::DOTk_InequalityConstraint<Real> > > m_InequalityConstraint;
+    std::shared_ptr<dotk::Vector<Real> > m_OriginalField;
+    std::vector<std::shared_ptr<dotk::DOTk_InequalityConstraint<Real> > > m_InequalityConstraint;
 
 private:
     DOTk_DiagnosticsInequalityTypeNP(const dotk::DOTk_DiagnosticsInequalityTypeNP &);
