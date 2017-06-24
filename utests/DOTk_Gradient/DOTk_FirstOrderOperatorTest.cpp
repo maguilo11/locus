@@ -35,9 +35,9 @@ TEST(DOTk_FirstOrderOperator, checkGrad)
 TEST(DOTk_UserDefinedGrad, gradient)
 {
     size_t ncontrols = 2;
-    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal = std::make_shared<dotk::DOTk_Primal>();
     primal->allocateSerialControlArray(ncontrols, 2);
-    std::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
+    std::shared_ptr<dotk::DOTk_Rosenbrock> objective = std::make_shared<dotk::DOTk_Rosenbrock>();
     dotk::DOTk_LineSearchMngTypeULP mng(primal, objective);
 
     dotk::DOTk_UserDefinedGrad grad;

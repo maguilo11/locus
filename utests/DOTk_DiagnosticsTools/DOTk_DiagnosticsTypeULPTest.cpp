@@ -25,7 +25,7 @@ TEST(DOTk_DerivativeDiagnosticsTool, checkCodomainDimensions)
 
     std::ostringstream msg;
     size_t num_controls = 0;
-    std::shared_ptr< dotk::Vector<Real> > field(new dotk::StdVector<Real>(num_controls, 0.));
+    std::shared_ptr< dotk::Vector<Real> > field = std::make_shared<dotk::StdVector<Real>>(num_controls);
     std::string function_name("FUNCTION NAME");
     diagnostic.checkCodomainDimensions(field, function_name, msg);
 
@@ -39,7 +39,7 @@ TEST(DOTk_DerivativeDiagnosticsTool, checkDomainDimensions)
 
     std::ostringstream msg;
     size_t num_controls = 0;
-    std::shared_ptr< dotk::Vector<Real> > field(new dotk::StdVector<Real>(num_controls, 0.));
+    std::shared_ptr< dotk::Vector<Real> > field = std::make_shared<dotk::StdVector<Real>>(num_controls);
     std::string function_name("FUNCTION NAME");
     diagnostic.checkDomainDimensions(field, function_name, msg);
 
@@ -49,7 +49,7 @@ TEST(DOTk_DerivativeDiagnosticsTool, checkDomainDimensions)
 
 TEST(DOTk_DiagnosticsTypeLP, printFiniteDifferenceDiagnostics)
 {
-    std::shared_ptr<dotk::DOTk_Rosenbrock> operators(new dotk::DOTk_Rosenbrock());
+    std::shared_ptr<dotk::DOTk_Rosenbrock> operators = std::make_shared<dotk::DOTk_Rosenbrock>();
     dotk::DOTk_DiagnosticsTypeLP diagnostic(operators);
     EXPECT_FALSE(diagnostic.willFiniteDifferenceDiagnosticsBePrinted());
 
@@ -59,7 +59,7 @@ TEST(DOTk_DiagnosticsTypeLP, printFiniteDifferenceDiagnostics)
 
 TEST(DOTk_DiagnosticsTypeLP, checkFirstDerivative)
 {
-    std::shared_ptr<dotk::DOTk_Rosenbrock> operators(new dotk::DOTk_Rosenbrock());
+    std::shared_ptr<dotk::DOTk_Rosenbrock> operators = std::make_shared<dotk::DOTk_Rosenbrock>();
     dotk::DOTk_DiagnosticsTypeLP objective_function(operators);
 
     srand(0);
@@ -90,7 +90,7 @@ TEST(DOTk_DiagnosticsTypeLP, checkFirstDerivative)
 
 TEST(DOTk_DiagnosticsTypeLP, checkSecondDerivative)
 {
-    std::shared_ptr<dotk::DOTk_Rosenbrock> operators(new dotk::DOTk_Rosenbrock());
+    std::shared_ptr<dotk::DOTk_Rosenbrock> operators = std::make_shared<dotk::DOTk_Rosenbrock>();
     dotk::DOTk_DiagnosticsTypeLP objective_function(operators);
 
     srand(0);

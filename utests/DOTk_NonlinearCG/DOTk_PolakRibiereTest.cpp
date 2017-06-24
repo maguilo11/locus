@@ -151,8 +151,7 @@ TEST(DOTk_PolakRibiere, direction)
     std::shared_ptr<dotk::DOTk_Primal> primal = std::make_shared<dotk::DOTk_Primal>();
     primal->allocateSerialControlArray(ncontrols, 2);
     std::shared_ptr<dotk::DOTk_Rosenbrock> operators = std::make_shared<dotk::DOTk_Rosenbrock>();
-    std::shared_ptr<dotk::DOTk_LineSearchMngTypeULP>
-    mng(new dotk::DOTk_LineSearchMngTypeULP(primal, operators));
+    std::shared_ptr<dotk::DOTk_LineSearchMngTypeULP> mng = std::make_shared<dotk::DOTk_LineSearchMngTypeULP>(primal, operators);
 
     (*primal->control())[0] = 1.;
     (*primal->control())[1] = 2.;

@@ -33,8 +33,8 @@ TEST(DOTk_DiagnosticsTypeELP, checkObjectiveGradient)
     dotk::StdVector<Real> state_data(num_state, 1.);
     dotk::DOTk_State state(state_data);
 
-    std::shared_ptr<dotk::DOTk_NocedalAndWrightEquality> equality(new dotk::DOTk_NocedalAndWrightEquality());
-    std::shared_ptr<dotk::DOTk_NocedalAndWrightObjective> objective(new dotk::DOTk_NocedalAndWrightObjective());
+    std::shared_ptr<dotk::DOTk_NocedalAndWrightEquality> equality = std::make_shared<dotk::DOTk_NocedalAndWrightEquality>();
+    std::shared_ptr<dotk::DOTk_NocedalAndWrightObjective> objective = std::make_shared<dotk::DOTk_NocedalAndWrightObjective>();
     dotk::DOTk_DiagnosticsTypeLP diagnostics(objective, equality);
 
     srand(0);
@@ -56,8 +56,8 @@ TEST(DOTk_DiagnosticsTypeELP, checkObjectiveHessian)
     dotk::StdVector<Real> state_data(num_state, 1.);
     dotk::DOTk_State state(state_data);
 
-    std::shared_ptr<dotk::DOTk_NocedalAndWrightEquality> equality(new dotk::DOTk_NocedalAndWrightEquality());
-    std::shared_ptr<dotk::DOTk_NocedalAndWrightObjective> objective(new dotk::DOTk_NocedalAndWrightObjective());
+    std::shared_ptr<dotk::DOTk_NocedalAndWrightEquality> equality = std::make_shared<dotk::DOTk_NocedalAndWrightEquality>();
+    std::shared_ptr<dotk::DOTk_NocedalAndWrightObjective> objective = std::make_shared<dotk::DOTk_NocedalAndWrightObjective>();
     dotk::DOTk_DiagnosticsTypeLP diagnostics(objective, equality);
 
     srand(0);
@@ -74,8 +74,8 @@ TEST(DOTk_DiagnosticsTypeELP, checkEqualityConstraintJacobian)
     dotk::DOTk_State state;
     state.allocateSerialVector(num_state, 1.);
 
-    std::shared_ptr<dotk::DOTk_NocedalAndWrightEquality> equality(new dotk::DOTk_NocedalAndWrightEquality());
-    std::shared_ptr<dotk::DOTk_NocedalAndWrightObjective> objective(new dotk::DOTk_NocedalAndWrightObjective());
+    std::shared_ptr<dotk::DOTk_NocedalAndWrightEquality> equality = std::make_shared<dotk::DOTk_NocedalAndWrightEquality>();
+    std::shared_ptr<dotk::DOTk_NocedalAndWrightObjective> objective = std::make_shared<dotk::DOTk_NocedalAndWrightObjective>();
     dotk::DOTk_DiagnosticsTypeLP diagnostics(objective, equality);
 
     srand(0);
@@ -97,8 +97,8 @@ TEST(DOTk_DiagnosticsTypeELP, checkEqualityConstraintAdjointJacobian)
     dotk::StdVector<Real> state_data(num_state, 1.);
     dotk::DOTk_State state(state_data);
 
-    std::shared_ptr<dotk::DOTk_NocedalAndWrightEquality> equality(new dotk::DOTk_NocedalAndWrightEquality());
-    std::shared_ptr<dotk::DOTk_NocedalAndWrightObjective> objective(new dotk::DOTk_NocedalAndWrightObjective());
+    std::shared_ptr<dotk::DOTk_NocedalAndWrightEquality> equality = std::make_shared<dotk::DOTk_NocedalAndWrightEquality>();
+    std::shared_ptr<dotk::DOTk_NocedalAndWrightObjective> objective = std::make_shared<dotk::DOTk_NocedalAndWrightObjective>();
     dotk::DOTk_DiagnosticsTypeLP diagnostics(objective, equality);
 
     srand(0);
@@ -121,8 +121,8 @@ TEST(DOTk_DiagnosticsTypeELP, checkEqualityConstraintJacobianDerivative)
     dotk::StdVector<Real> state_data(num_state, 1.);
     dotk::DOTk_State state(state_data);
 
-    std::shared_ptr<dotk::DOTk_NocedalAndWrightEquality> equality(new dotk::DOTk_NocedalAndWrightEquality());
-    std::shared_ptr<dotk::DOTk_NocedalAndWrightObjective> objective(new dotk::DOTk_NocedalAndWrightObjective());
+    std::shared_ptr<dotk::DOTk_NocedalAndWrightEquality> equality = std::make_shared<dotk::DOTk_NocedalAndWrightEquality>();
+    std::shared_ptr<dotk::DOTk_NocedalAndWrightObjective> objective = std::make_shared<dotk::DOTk_NocedalAndWrightObjective>();
     dotk::DOTk_DiagnosticsTypeLP diagnostics(objective, equality);
 
     srand(0);
@@ -141,7 +141,7 @@ TEST(DOTk_DiagnosticsTypeLP, checkGcmmaTestObjectiveFunctionFirstDerivative)
 
     srand(0);
     std::ostringstream msg;
-    std::shared_ptr<dotk::DOTk_GcmmaTestObjectiveFunction> objective(new dotk::DOTk_GcmmaTestObjectiveFunction());
+    std::shared_ptr<dotk::DOTk_GcmmaTestObjectiveFunction> objective = std::make_shared<dotk::DOTk_GcmmaTestObjectiveFunction>();
     dotk::DOTk_DiagnosticsTypeLP diagnostics(objective);
 
     diagnostics.setFiniteDifferenceDiagnosticsSuperScripts(-2, 6);

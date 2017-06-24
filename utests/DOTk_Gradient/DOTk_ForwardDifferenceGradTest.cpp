@@ -22,9 +22,9 @@ namespace DOTkForwardDifferenceGradTest
 TEST(ForwardDifferenceGrad, getFiniteDiffPerturbationVec)
 {
     size_t ncontrols = 2;
-    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal = std::make_shared<dotk::DOTk_Primal>();
     primal->allocateSerialControlArray(ncontrols, 2);
-    std::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
+    std::shared_ptr<dotk::DOTk_Rosenbrock> objective = std::make_shared<dotk::DOTk_Rosenbrock>();
     dotk::DOTk_LineSearchMngTypeULP mng(primal, objective);
 
     dotk::DOTk_ForwardDifferenceGrad grad(mng.getNewGradient());
@@ -38,9 +38,9 @@ TEST(ForwardDifferenceGrad, getFiniteDiffPerturbationVec)
 TEST(ForwardDifferenceGrad, setFiniteDiffPerturbationVec)
 {
     size_t ncontrols = 2;
-    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal = std::make_shared<dotk::DOTk_Primal>();
     primal->allocateSerialControlArray(ncontrols, 2);
-    std::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
+    std::shared_ptr<dotk::DOTk_Rosenbrock> objective = std::make_shared<dotk::DOTk_Rosenbrock>();
     dotk::DOTk_LineSearchMngTypeULP mng(primal, objective);
     dotk::DOTk_ForwardDifferenceGrad grad(mng.getNewGradient());
 
@@ -57,9 +57,9 @@ TEST(ForwardDifferenceGrad, setFiniteDiffPerturbationVec)
 TEST(ForwardDifferenceGrad, gradient)
 {
     size_t ncontrols = 2;
-    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal = std::make_shared<dotk::DOTk_Primal>();
     primal->allocateSerialControlArray(ncontrols, 2);
-    std::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
+    std::shared_ptr<dotk::DOTk_Rosenbrock> objective = std::make_shared<dotk::DOTk_Rosenbrock>();
     dotk::DOTk_LineSearchMngTypeULP mng(primal, objective);
     dotk::DOTk_ForwardDifferenceGrad grad(mng.getNewGradient());
     EXPECT_EQ(dotk::types::FORWARD_DIFF_GRAD, grad.type());
@@ -78,9 +78,9 @@ TEST(ForwardDifferenceGrad, gradient)
 TEST(ForwardDifferenceGrad, getGradient)
 {
     size_t ncontrols = 2;
-    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal = std::make_shared<dotk::DOTk_Primal>();
     primal->allocateSerialControlArray(ncontrols, 2);
-    std::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
+    std::shared_ptr<dotk::DOTk_Rosenbrock> objective = std::make_shared<dotk::DOTk_Rosenbrock>();
     dotk::DOTk_LineSearchMngTypeULP mng(primal, objective);
     dotk::DOTk_ForwardDifferenceGrad grad(mng.getNewGradient());
     EXPECT_EQ(dotk::types::FORWARD_DIFF_GRAD, grad.type());

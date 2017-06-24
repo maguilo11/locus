@@ -167,7 +167,7 @@ TEST(DOTk_DiagnosticsObjectiveTypeNP, checkPartialDerivativeState)
     dotk::StdVector<Real> control_data(num_controls, 0.);
     dotk::DOTk_Control control(control_data);
 
-    std::shared_ptr<dotk::DOTk_NocedalAndWrightObjectiveNLP> objective(new dotk::DOTk_NocedalAndWrightObjectiveNLP());
+    std::shared_ptr<dotk::DOTk_NocedalAndWrightObjectiveNLP> objective = std::make_shared<dotk::DOTk_NocedalAndWrightObjectiveNLP>();
     dotk::DOTk_DiagnosticsObjectiveTypeNP operators(objective);
 
     srand(0);
@@ -204,7 +204,7 @@ TEST(DOTk_DiagnosticsObjectiveTypeNP, checkPartialDerivativeControl)
     dotk::StdVector<Real> control_data(num_controls, 0.);
     dotk::DOTk_Control control(control_data);
 
-    std::shared_ptr<dotk::DOTk_NocedalAndWrightObjectiveNLP> objective(new dotk::DOTk_NocedalAndWrightObjectiveNLP());
+    std::shared_ptr<dotk::DOTk_NocedalAndWrightObjectiveNLP> objective = std::make_shared<dotk::DOTk_NocedalAndWrightObjectiveNLP>();
     dotk::DOTk_DiagnosticsObjectiveTypeNP operators(objective);
 
     srand(0);
@@ -228,7 +228,7 @@ TEST(DOTk_DiagnosticsObjectiveTypeNP, checkPartialDerivativeStateState)
     dotk::StdVector<Real> control_data(num_controls, 0.);
     dotk::DOTk_Control control(control_data);
 
-    std::shared_ptr<dotk::DOTk_NocedalAndWrightObjectiveNLP> objective(new dotk::DOTk_NocedalAndWrightObjectiveNLP());
+    std::shared_ptr<dotk::DOTk_NocedalAndWrightObjectiveNLP> objective = std::make_shared<dotk::DOTk_NocedalAndWrightObjectiveNLP>();
     dotk::DOTk_DiagnosticsObjectiveTypeNP operators(objective);
 
     srand(0);
@@ -265,7 +265,7 @@ TEST(DOTk_DiagnosticsObjectiveTypeNP, checkPartialDerivativeStateControl)
     dotk::StdVector<Real> control_data(num_controls, 0.);
     dotk::DOTk_Control control(control_data);
 
-    std::shared_ptr<dotk::DOTk_NocedalAndWrightObjectiveNLP> objective(new dotk::DOTk_NocedalAndWrightObjectiveNLP());
+    std::shared_ptr<dotk::DOTk_NocedalAndWrightObjectiveNLP> objective = std::make_shared<dotk::DOTk_NocedalAndWrightObjectiveNLP>();
     dotk::DOTk_DiagnosticsObjectiveTypeNP operators(objective);
 
     srand(0);
@@ -289,7 +289,7 @@ TEST(DOTk_DiagnosticsObjectiveTypeNP, checkPartialDerivativeControlControl)
     dotk::StdVector<Real> control_data(num_controls, 0.);
     dotk::DOTk_Control control(control_data);
 
-    std::shared_ptr<dotk::DOTk_NocedalAndWrightObjectiveNLP> objective(new dotk::DOTk_NocedalAndWrightObjectiveNLP());
+    std::shared_ptr<dotk::DOTk_NocedalAndWrightObjectiveNLP> objective = std::make_shared<dotk::DOTk_NocedalAndWrightObjectiveNLP>();
     dotk::DOTk_DiagnosticsObjectiveTypeNP operators(objective);
 
     srand(0);
@@ -313,7 +313,7 @@ TEST(DOTk_DiagnosticsObjectiveTypeNP, checkPartialDerivativeControlState)
     dotk::StdVector<Real> control_data(num_controls, 0.);
     dotk::DOTk_Control control(control_data);
 
-    std::shared_ptr<dotk::DOTk_NocedalAndWrightObjectiveNLP> objective(new dotk::DOTk_NocedalAndWrightObjectiveNLP());
+    std::shared_ptr<dotk::DOTk_NocedalAndWrightObjectiveNLP> objective = std::make_shared<dotk::DOTk_NocedalAndWrightObjectiveNLP>();
     dotk::DOTk_DiagnosticsObjectiveTypeNP operators(objective);
 
     srand(0);

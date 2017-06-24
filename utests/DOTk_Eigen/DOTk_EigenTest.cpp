@@ -97,9 +97,9 @@ TEST(Eigen, RayleighQuotientMethod)
 TEST(Eigen, QR)
 {
     size_t ncols = 4;
-    std::shared_ptr<dotk::Vector<Real> > eigenvalues(new dotk::StdArray<Real>(ncols));
-    std::shared_ptr<dotk::matrix<Real> > matrix(new dotk::serial::DOTk_ColumnMatrix<Real>(*eigenvalues, ncols));
-    std::shared_ptr<dotk::matrix<Real> > eigenvectors(new dotk::serial::DOTk_ColumnMatrix<Real>(*eigenvalues, ncols));
+    std::shared_ptr<dotk::Vector<Real> > eigenvalues = std::make_shared<dotk::StdArray<Real>>(ncols);
+    std::shared_ptr<dotk::matrix<Real> > matrix = std::make_shared<dotk::serial::DOTk_ColumnMatrix<Real>>(*eigenvalues, ncols);
+    std::shared_ptr<dotk::matrix<Real> > eigenvectors = std::make_shared<dotk::serial::DOTk_ColumnMatrix<Real>>(*eigenvalues, ncols);
     // basis 1
     (*matrix)(0, 0) = 10.;
     (*matrix)(1, 0) = -1.;
@@ -121,7 +121,7 @@ TEST(Eigen, QR)
     (*matrix)(2, 3) = -1.;
     (*matrix)(3, 3) = 8.;
 
-    std::shared_ptr<dotk::DOTk_OrthogonalFactorization> qr(new dotk::DOTk_Householder);
+    std::shared_ptr<dotk::DOTk_OrthogonalFactorization> qr = std::make_shared<dotk::DOTk_Householder>();
     dotk::DOTk_EigenQR eigen(qr);
     EXPECT_EQ(dotk::types::QR_EIGEN_METHOD, eigen.type());
     EXPECT_EQ(25u, eigen.getMaxNumItr());
@@ -164,7 +164,7 @@ TEST(Eigen, QR)
     EXPECT_NEAR(5.964026100329862, (*eigenvalues)[3], tolerance);
 
     // Check Q^t * Q = I
-    std::shared_ptr<dotk::matrix<Real> > I(new dotk::serial::DOTk_ColumnMatrix<Real>(*eigenvalues, ncols));
+    std::shared_ptr<dotk::matrix<Real> > I = std::make_shared<dotk::serial::DOTk_ColumnMatrix<Real>>(*eigenvalues, ncols);
     eigenvectors->gemm(true, false, 1., *eigenvectors, 0., *I);
     Real eye[] = {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1};
     std::vector<Real> data(I->size(), 0.);
@@ -175,8 +175,8 @@ TEST(Eigen, QR)
 TEST(Eigen, Power)
 {
     size_t nrows = 3;
-    std::shared_ptr<dotk::Vector<Real> > eigenvector(new dotk::StdArray<Real>(nrows));
-    std::shared_ptr<dotk::matrix<Real> > A(new dotk::serial::DOTk_DenseMatrix<Real>(nrows));
+    std::shared_ptr<dotk::Vector<Real> > eigenvector = std::make_shared<dotk::StdArray<Real>>(nrows);
+    std::shared_ptr<dotk::matrix<Real> > A = std::make_shared<dotk::serial::DOTk_DenseMatrix<Real>>(nrows);
     // basis 1
     (*A)(0, 0) = 7.;
     (*A)(1, 0) = 4.;
@@ -213,8 +213,8 @@ TEST(Eigen, Power)
 TEST(Eigen, RayleighQuotient)
 {
     size_t nrows = 3;
-    std::shared_ptr<dotk::Vector<Real> > eigenvector(new dotk::StdArray<Real>(nrows));
-    std::shared_ptr<dotk::matrix<Real> > A(new dotk::serial::DOTk_DenseMatrix<Real>(nrows));
+    std::shared_ptr<dotk::Vector<Real> > eigenvector = std::make_shared<dotk::StdArray<Real>>(nrows);
+    std::shared_ptr<dotk::matrix<Real> > A = std::make_shared<dotk::serial::DOTk_DenseMatrix<Real>>(nrows);
     // basis 1
     (*A)(0, 0) = 7.;
     (*A)(1, 0) = 4.;
@@ -251,9 +251,9 @@ TEST(Eigen, RayleighQuotient)
 TEST(Eigen, RayleighRitz)
 {
     size_t ncols = 4;
-    std::shared_ptr<dotk::Vector<Real> > eigenvalues(new dotk::StdArray<Real>(ncols));
-    std::shared_ptr<dotk::matrix<Real> > matrix(new dotk::serial::DOTk_ColumnMatrix<Real>(*eigenvalues, ncols));
-    std::shared_ptr<dotk::matrix<Real> > eigenvectors(new dotk::serial::DOTk_ColumnMatrix<Real>(*eigenvalues, ncols));
+    std::shared_ptr<dotk::Vector<Real> > eigenvalues = std::make_shared<dotk::StdArray<Real>>(ncols);
+    std::shared_ptr<dotk::matrix<Real> > matrix = std::make_shared<dotk::serial::DOTk_ColumnMatrix<Real>>(*eigenvalues, ncols);
+    std::shared_ptr<dotk::matrix<Real> > eigenvectors = std::make_shared<dotk::serial::DOTk_ColumnMatrix<Real>>(*eigenvalues, ncols);
     // basis 1
     (*matrix)(0, 0) = 10.;
     (*matrix)(1, 0) = -1.;
@@ -275,8 +275,8 @@ TEST(Eigen, RayleighRitz)
     (*matrix)(2, 3) = -1.;
     (*matrix)(3, 3) = 8.;
 
-    std::shared_ptr<dotk::DOTk_OrthogonalFactorization> qr(new dotk::DOTk_Householder);
-    std::shared_ptr<dotk::DOTk_EigenQR> eigen(new dotk::DOTk_EigenQR(qr));
+    std::shared_ptr<dotk::DOTk_OrthogonalFactorization> qr = std::make_shared<dotk::DOTk_Householder>();
+    std::shared_ptr<dotk::DOTk_EigenQR> eigen = std::make_shared<dotk::DOTk_EigenQR>(qr);
     dotk::DOTk_RayleighRitz method(qr, eigen);
 
     EXPECT_EQ(dotk::types::RAYLEIGH_RITZ_METHOD, method.type());

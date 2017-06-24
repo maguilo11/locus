@@ -23,15 +23,15 @@ namespace
 TEST(GradientProjectionMethod, Rosenbrock_GoldsteinLineSearch)
 {
     size_t num_controls = 2;
-    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal = std::make_shared<dotk::DOTk_Primal>();
     primal->allocateSerialControlArray(num_controls, 2);
     primal->setControlLowerBound(0.);
     primal->setControlUpperBound(5.);
 
-    std::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
-    std::shared_ptr<dotk::DOTk_LineSearchStep> step(new dotk::DOTk_LineSearchStep(primal));
+    std::shared_ptr<dotk::DOTk_Rosenbrock> objective = std::make_shared<dotk::DOTk_Rosenbrock>();
+    std::shared_ptr<dotk::DOTk_LineSearchStep> step = std::make_shared<dotk::DOTk_LineSearchStep>(primal);
     step->setGoldsteinLineSearch(primal);
-    std::shared_ptr<dotk::DOTk_LineSearchMngTypeULP> mng(new dotk::DOTk_LineSearchMngTypeULP(primal, objective));
+    std::shared_ptr<dotk::DOTk_LineSearchMngTypeULP> mng = std::make_shared<dotk::DOTk_LineSearchMngTypeULP>(primal, objective);
     mng->setUserDefinedGradient();
 
     dotk::GradientProjectionMethod algorithm(primal, step, mng);
@@ -47,15 +47,15 @@ TEST(GradientProjectionMethod, Rosenbrock_GoldsteinLineSearch)
 TEST(GradientProjectionMethod, Beale_GoldsteinLineSearch)
 {
     size_t num_controls = 2;
-    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal = std::make_shared<dotk::DOTk_Primal>();
     primal->allocateSerialControlArray(num_controls, 1);
     primal->setControlLowerBound(0.);
     primal->setControlUpperBound(5.);
 
-    std::shared_ptr<dotk::DOTk_BealeObjective> objective(new dotk::DOTk_BealeObjective);
-    std::shared_ptr<dotk::DOTk_LineSearchStep> step(new dotk::DOTk_LineSearchStep(primal));
+    std::shared_ptr<dotk::DOTk_BealeObjective> objective = std::make_shared<dotk::DOTk_BealeObjective>();
+    std::shared_ptr<dotk::DOTk_LineSearchStep> step = std::make_shared<dotk::DOTk_LineSearchStep>(primal);
     step->setGoldsteinLineSearch(primal);
-    std::shared_ptr<dotk::DOTk_LineSearchMngTypeULP> mng(new dotk::DOTk_LineSearchMngTypeULP(primal, objective));
+    std::shared_ptr<dotk::DOTk_LineSearchMngTypeULP> mng = std::make_shared<dotk::DOTk_LineSearchMngTypeULP>(primal, objective);
     mng->setUserDefinedGradient();
 
     dotk::GradientProjectionMethod algorithm(primal, step, mng);
@@ -71,15 +71,15 @@ TEST(GradientProjectionMethod, Beale_GoldsteinLineSearch)
 TEST(GradientProjectionMethod, Beale_CubicLineSearch)
 {
     size_t num_controls = 2;
-    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal = std::make_shared<dotk::DOTk_Primal>();
     primal->allocateSerialControlArray(num_controls, 1);
     primal->setControlLowerBound(0.);
     primal->setControlUpperBound(5.);
 
-    std::shared_ptr<dotk::DOTk_BealeObjective> objective(new dotk::DOTk_BealeObjective);
-    std::shared_ptr<dotk::DOTk_LineSearchStep> step(new dotk::DOTk_LineSearchStep(primal));
+    std::shared_ptr<dotk::DOTk_BealeObjective> objective = std::make_shared<dotk::DOTk_BealeObjective>();
+    std::shared_ptr<dotk::DOTk_LineSearchStep> step = std::make_shared<dotk::DOTk_LineSearchStep>(primal);
     step->setCubicLineSearch(primal);
-    std::shared_ptr<dotk::DOTk_LineSearchMngTypeULP> mng(new dotk::DOTk_LineSearchMngTypeULP(primal, objective));
+    std::shared_ptr<dotk::DOTk_LineSearchMngTypeULP> mng = std::make_shared<dotk::DOTk_LineSearchMngTypeULP>(primal, objective);
     mng->setUserDefinedGradient();
 
     dotk::GradientProjectionMethod algorithm(primal, step, mng);
@@ -95,15 +95,15 @@ TEST(GradientProjectionMethod, Beale_CubicLineSearch)
 TEST(GradientProjectionMethod, Beale_ArmijoLineSearch)
 {
     size_t num_controls = 2;
-    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal = std::make_shared<dotk::DOTk_Primal>();
     primal->allocateSerialControlArray(num_controls, 1);
     primal->setControlLowerBound(0.);
     primal->setControlUpperBound(5.);
 
-    std::shared_ptr<dotk::DOTk_BealeObjective> objective(new dotk::DOTk_BealeObjective);
-    std::shared_ptr<dotk::DOTk_LineSearchStep> step(new dotk::DOTk_LineSearchStep(primal));
+    std::shared_ptr<dotk::DOTk_BealeObjective> objective = std::make_shared<dotk::DOTk_BealeObjective>();
+    std::shared_ptr<dotk::DOTk_LineSearchStep> step = std::make_shared<dotk::DOTk_LineSearchStep>(primal);
     step->setArmijoLineSearch(primal);
-    std::shared_ptr<dotk::DOTk_LineSearchMngTypeULP> mng(new dotk::DOTk_LineSearchMngTypeULP(primal, objective));
+    std::shared_ptr<dotk::DOTk_LineSearchMngTypeULP> mng = std::make_shared<dotk::DOTk_LineSearchMngTypeULP>(primal, objective);
     mng->setUserDefinedGradient();
 
     dotk::GradientProjectionMethod algorithm(primal, step, mng);

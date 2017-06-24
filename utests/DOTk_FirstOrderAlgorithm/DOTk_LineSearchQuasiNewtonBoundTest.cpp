@@ -22,13 +22,13 @@ namespace DOTk_LineSearchQuasiNewtonBoundTest
 TEST(LineSearchQuasiNewtonBound, LBFGArmijoLS_ProjectFeasibleDirBound)
 {
     size_t ncontrols = 2;
-    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal = std::make_shared<dotk::DOTk_Primal>();
     primal->allocateSerialControlArray(ncontrols, 2);
     primal->setControlLowerBound(0);
     primal->setControlUpperBound(5);
-    std::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
-    std::shared_ptr<dotk::DOTk_ProjectedLineSearchStep> step(new dotk::DOTk_ProjectedLineSearchStep(primal));
-    std::shared_ptr<dotk::DOTk_LineSearchMngTypeULP> mng(new dotk::DOTk_LineSearchMngTypeULP(primal, objective));
+    std::shared_ptr<dotk::DOTk_Rosenbrock> objective = std::make_shared<dotk::DOTk_Rosenbrock>();
+    std::shared_ptr<dotk::DOTk_ProjectedLineSearchStep> step = std::make_shared<dotk::DOTk_ProjectedLineSearchStep>(primal);
+    std::shared_ptr<dotk::DOTk_LineSearchMngTypeULP> mng = std::make_shared<dotk::DOTk_LineSearchMngTypeULP>(primal, objective);
 
     mng->setUserDefinedGradient();
     step->setArmijoLineSearch(primal);
@@ -50,13 +50,13 @@ TEST(LineSearchQuasiNewtonBound, LBFGArmijoLS_ProjectFeasibleDirBound)
 TEST(LineSearchQuasiNewtonBound, LDFPArmijoLS_ProjectFeasibleDirBound)
 {
     size_t ncontrols = 2;
-    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal = std::make_shared<dotk::DOTk_Primal>();
     primal->allocateSerialControlArray(ncontrols, 2);
     primal->setControlLowerBound(0);
     primal->setControlUpperBound(5);
-    std::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
-    std::shared_ptr<dotk::DOTk_ProjectedLineSearchStep> step(new dotk::DOTk_ProjectedLineSearchStep(primal));
-    std::shared_ptr<dotk::DOTk_LineSearchMngTypeULP> mng(new dotk::DOTk_LineSearchMngTypeULP(primal, objective));
+    std::shared_ptr<dotk::DOTk_Rosenbrock> objective = std::make_shared<dotk::DOTk_Rosenbrock>();
+    std::shared_ptr<dotk::DOTk_ProjectedLineSearchStep> step = std::make_shared<dotk::DOTk_ProjectedLineSearchStep>(primal);
+    std::shared_ptr<dotk::DOTk_LineSearchMngTypeULP> mng = std::make_shared<dotk::DOTk_LineSearchMngTypeULP>(primal, objective);
 
     mng->setUserDefinedGradient();
     step->setArmijoLineSearch(primal);
@@ -77,13 +77,13 @@ TEST(LineSearchQuasiNewtonBound, LDFPArmijoLS_ProjectFeasibleDirBound)
 TEST(LineSearchQuasiNewtonBound, LSR1ArmijoLS_FeasibleDirBound)
 {
     size_t ncontrols = 2;
-    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal = std::make_shared<dotk::DOTk_Primal>();
     primal->allocateSerialControlArray(ncontrols, 2);
     primal->setControlLowerBound(0);
     primal->setControlUpperBound(5);
-    std::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
-    std::shared_ptr<dotk::DOTk_ProjectedLineSearchStep> step(new dotk::DOTk_ProjectedLineSearchStep(primal));
-    std::shared_ptr<dotk::DOTk_LineSearchMngTypeULP> mng(new dotk::DOTk_LineSearchMngTypeULP(primal, objective));
+    std::shared_ptr<dotk::DOTk_Rosenbrock> objective = std::make_shared<dotk::DOTk_Rosenbrock>();
+    std::shared_ptr<dotk::DOTk_ProjectedLineSearchStep> step = std::make_shared<dotk::DOTk_ProjectedLineSearchStep>(primal);
+    std::shared_ptr<dotk::DOTk_LineSearchMngTypeULP> mng = std::make_shared<dotk::DOTk_LineSearchMngTypeULP>(primal, objective);
 
     mng->setUserDefinedGradient();
     step->setArmijoLineSearch(primal);
@@ -104,13 +104,13 @@ TEST(LineSearchQuasiNewtonBound, LSR1ArmijoLS_FeasibleDirBound)
 TEST(LineSearchQuasiNewtonBound, LSR1ArmijoLS_ProjectFeasibleDirBound)
 {
     size_t ncontrols = 2;
-    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal = std::make_shared<dotk::DOTk_Primal>();
     primal->allocateSerialControlArray(ncontrols, 2);
     primal->setControlLowerBound(0);
     primal->setControlUpperBound(5);
-    std::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
-    std::shared_ptr<dotk::DOTk_ProjectedLineSearchStep> step(new dotk::DOTk_ProjectedLineSearchStep(primal));
-    std::shared_ptr<dotk::DOTk_LineSearchMngTypeULP> mng(new dotk::DOTk_LineSearchMngTypeULP(primal, objective));
+    std::shared_ptr<dotk::DOTk_Rosenbrock> objective = std::make_shared<dotk::DOTk_Rosenbrock>();
+    std::shared_ptr<dotk::DOTk_ProjectedLineSearchStep> step = std::make_shared<dotk::DOTk_ProjectedLineSearchStep>(primal);
+    std::shared_ptr<dotk::DOTk_LineSearchMngTypeULP> mng = std::make_shared<dotk::DOTk_LineSearchMngTypeULP>(primal, objective);
 
     mng->setUserDefinedGradient();
     step->setArmijoLineSearch(primal);
@@ -131,13 +131,13 @@ TEST(LineSearchQuasiNewtonBound, LSR1ArmijoLS_ProjectFeasibleDirBound)
 TEST(LineSearchQuasiNewtonBound, SR1ArmijoLS_FeasibleDirBound)
 {
     size_t ncontrols = 2;
-    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal = std::make_shared<dotk::DOTk_Primal>();
     primal->allocateSerialControlArray(ncontrols, 2);
     primal->setControlLowerBound(0);
     primal->setControlUpperBound(5);
-    std::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
-    std::shared_ptr<dotk::DOTk_ProjectedLineSearchStep> step(new dotk::DOTk_ProjectedLineSearchStep(primal));
-    std::shared_ptr<dotk::DOTk_LineSearchMngTypeULP> mng(new dotk::DOTk_LineSearchMngTypeULP(primal, objective));
+    std::shared_ptr<dotk::DOTk_Rosenbrock> objective = std::make_shared<dotk::DOTk_Rosenbrock>();
+    std::shared_ptr<dotk::DOTk_ProjectedLineSearchStep> step = std::make_shared<dotk::DOTk_ProjectedLineSearchStep>(primal);
+    std::shared_ptr<dotk::DOTk_LineSearchMngTypeULP> mng = std::make_shared<dotk::DOTk_LineSearchMngTypeULP>(primal, objective);
 
     mng->setUserDefinedGradient();
     step->setArmijoLineSearch(primal);
@@ -156,13 +156,13 @@ TEST(LineSearchQuasiNewtonBound, SR1ArmijoLS_FeasibleDirBound)
 TEST(LineSearchQuasiNewtonBound, SR1ArmijoLS_ProjectFeasibleDirBound)
 {
     size_t ncontrols = 2;
-    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal = std::make_shared<dotk::DOTk_Primal>();
     primal->allocateSerialControlArray(ncontrols, 2);
     primal->setControlLowerBound(0);
     primal->setControlUpperBound(5);
-    std::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
-    std::shared_ptr<dotk::DOTk_ProjectedLineSearchStep> step(new dotk::DOTk_ProjectedLineSearchStep(primal));
-    std::shared_ptr<dotk::DOTk_LineSearchMngTypeULP> mng(new dotk::DOTk_LineSearchMngTypeULP(primal, objective));
+    std::shared_ptr<dotk::DOTk_Rosenbrock> objective = std::make_shared<dotk::DOTk_Rosenbrock>();
+    std::shared_ptr<dotk::DOTk_ProjectedLineSearchStep> step = std::make_shared<dotk::DOTk_ProjectedLineSearchStep>(primal);
+    std::shared_ptr<dotk::DOTk_LineSearchMngTypeULP> mng = std::make_shared<dotk::DOTk_LineSearchMngTypeULP>(primal, objective);
 
     mng->setUserDefinedGradient();
     step->setArmijoLineSearch(primal);
@@ -183,13 +183,13 @@ TEST(LineSearchQuasiNewtonBound, SR1ArmijoLS_ProjectFeasibleDirBound)
 TEST(LineSearchQuasiNewtonBound, BBArmijoLS_FeasibleDirBound)
 {
     size_t ncontrols = 2;
-    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal = std::make_shared<dotk::DOTk_Primal>();
     primal->allocateSerialControlArray(ncontrols, 2);
     primal->setControlLowerBound(0);
     primal->setControlUpperBound(5);
-    std::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
-    std::shared_ptr<dotk::DOTk_ProjectedLineSearchStep> step(new dotk::DOTk_ProjectedLineSearchStep(primal));
-    std::shared_ptr<dotk::DOTk_LineSearchMngTypeULP> mng(new dotk::DOTk_LineSearchMngTypeULP(primal, objective));
+    std::shared_ptr<dotk::DOTk_Rosenbrock> objective = std::make_shared<dotk::DOTk_Rosenbrock>();
+    std::shared_ptr<dotk::DOTk_ProjectedLineSearchStep> step = std::make_shared<dotk::DOTk_ProjectedLineSearchStep>(primal);
+    std::shared_ptr<dotk::DOTk_LineSearchMngTypeULP> mng = std::make_shared<dotk::DOTk_LineSearchMngTypeULP>(primal, objective);
 
     mng->setUserDefinedGradient();
     step->setArmijoLineSearch(primal);
@@ -209,13 +209,13 @@ TEST(LineSearchQuasiNewtonBound, BBArmijoLS_FeasibleDirBound)
 TEST(LineSearchQuasiNewtonBound, BBArmijoLS_ProjectFeasibleDirBound)
 {
     size_t ncontrols = 2;
-    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal = std::make_shared<dotk::DOTk_Primal>();
     primal->allocateSerialControlArray(ncontrols, 2);
     primal->setControlLowerBound(0);
     primal->setControlUpperBound(5);
-    std::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
-    std::shared_ptr<dotk::DOTk_ProjectedLineSearchStep> step(new dotk::DOTk_ProjectedLineSearchStep(primal));
-    std::shared_ptr<dotk::DOTk_LineSearchMngTypeULP> mng(new dotk::DOTk_LineSearchMngTypeULP(primal, objective));
+    std::shared_ptr<dotk::DOTk_Rosenbrock> objective = std::make_shared<dotk::DOTk_Rosenbrock>();
+    std::shared_ptr<dotk::DOTk_ProjectedLineSearchStep> step = std::make_shared<dotk::DOTk_ProjectedLineSearchStep>(primal);
+    std::shared_ptr<dotk::DOTk_LineSearchMngTypeULP> mng = std::make_shared<dotk::DOTk_LineSearchMngTypeULP>(primal, objective);
 
     mng->setUserDefinedGradient();
     step->setArmijoLineSearch(primal);

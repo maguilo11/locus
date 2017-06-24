@@ -29,8 +29,8 @@ TEST(DOTk_BoundLineSearchInexactNewtonPCG, getMin_UsrDefGrad_UsrDefHess_ArmijoLS
     primal->setControlUpperBound(5);
 
     std::shared_ptr<dotk::DOTk_Rosenbrock> objective = std::make_shared<dotk::DOTk_Rosenbrock>();
-    std::shared_ptr<dotk::DOTk_ProjectedLineSearchStep> step(new dotk::DOTk_ProjectedLineSearchStep(primal));
-    std::shared_ptr<dotk::DOTk_LineSearchMngTypeULP> mng(new dotk::DOTk_LineSearchMngTypeULP(primal, objective));
+    std::shared_ptr<dotk::DOTk_ProjectedLineSearchStep> step = std::make_shared<dotk::DOTk_ProjectedLineSearchStep>(primal);
+    std::shared_ptr<dotk::DOTk_LineSearchMngTypeULP> mng = std::make_shared<dotk::DOTk_LineSearchMngTypeULP>(primal, objective);
     std::shared_ptr<dotk::DOTk_Hessian> hessian = std::make_shared<dotk::DOTk_Hessian>();
 
     step->setFeasibleDirectionConstraint(primal);
@@ -55,8 +55,8 @@ TEST(DOTk_BoundLineSearchInexactNewtonPCG, getMin_UsrDefGrad_UsrDefHess_ArmijoLS
     primal->setControlUpperBound(5);
 
     std::shared_ptr<dotk::DOTk_Rosenbrock> objective = std::make_shared<dotk::DOTk_Rosenbrock>();
-    std::shared_ptr<dotk::DOTk_ProjectedLineSearchStep> step(new dotk::DOTk_ProjectedLineSearchStep(primal));
-    std::shared_ptr<dotk::DOTk_LineSearchMngTypeULP> mng(new dotk::DOTk_LineSearchMngTypeULP(primal, objective));
+    std::shared_ptr<dotk::DOTk_ProjectedLineSearchStep> step = std::make_shared<dotk::DOTk_ProjectedLineSearchStep>(primal);
+    std::shared_ptr<dotk::DOTk_LineSearchMngTypeULP> mng = std::make_shared<dotk::DOTk_LineSearchMngTypeULP>(primal, objective);
     std::shared_ptr<dotk::DOTk_Hessian> hessian = std::make_shared<dotk::DOTk_Hessian>();
 
     step->setProjectionAlongFeasibleDirConstraint(primal);
@@ -80,8 +80,8 @@ TEST(DOTk_BoundLineSearchInexactNewtonPCG, getMin_UsrDefGrad_LDFPHess_ArmijoLS_N
     primal->setControlLowerBound(0);
     primal->setControlUpperBound(5);
     std::shared_ptr<dotk::DOTk_Rosenbrock> objective = std::make_shared<dotk::DOTk_Rosenbrock>();
-    std::shared_ptr<dotk::DOTk_ProjectedLineSearchStep> step(new dotk::DOTk_ProjectedLineSearchStep(primal));
-    std::shared_ptr<dotk::DOTk_LineSearchMngTypeULP> mng(new dotk::DOTk_LineSearchMngTypeULP(primal, objective));
+    std::shared_ptr<dotk::DOTk_ProjectedLineSearchStep> step = std::make_shared<dotk::DOTk_ProjectedLineSearchStep>(primal);
+    std::shared_ptr<dotk::DOTk_LineSearchMngTypeULP> mng = std::make_shared<dotk::DOTk_LineSearchMngTypeULP>(primal, objective);
     std::shared_ptr<dotk::DOTk_Hessian> hessian = std::make_shared<dotk::DOTk_Hessian>();
 
     step->setFeasibleDirectionConstraint(primal);
@@ -107,8 +107,8 @@ TEST(DOTk_BoundLineSearchInexactNewtonPCG, getMin_UsrDefGrad_LDFPHess_ArmijoLS_N
     primal->setControlLowerBound(0);
     primal->setControlUpperBound(5);
     std::shared_ptr<dotk::DOTk_Rosenbrock> objective = std::make_shared<dotk::DOTk_Rosenbrock>();
-    std::shared_ptr<dotk::DOTk_ProjectedLineSearchStep> step(new dotk::DOTk_ProjectedLineSearchStep(primal));
-    std::shared_ptr<dotk::DOTk_LineSearchMngTypeULP> mng(new dotk::DOTk_LineSearchMngTypeULP(primal, objective));
+    std::shared_ptr<dotk::DOTk_ProjectedLineSearchStep> step = std::make_shared<dotk::DOTk_ProjectedLineSearchStep>(primal);
+    std::shared_ptr<dotk::DOTk_LineSearchMngTypeULP> mng = std::make_shared<dotk::DOTk_LineSearchMngTypeULP>(primal, objective);
     std::shared_ptr<dotk::DOTk_Hessian> hessian = std::make_shared<dotk::DOTk_Hessian>();
 
     step->setProjectionAlongFeasibleDirConstraint(primal);
@@ -135,8 +135,8 @@ TEST(DOTk_BoundLineSearchInexactNewtonPCG, getMin_UsrDefGrad_LSR1Hess_ArmijoLS_N
     primal->setControlLowerBound(0);
     primal->setControlUpperBound(5);
     std::shared_ptr<dotk::DOTk_Rosenbrock> objective = std::make_shared<dotk::DOTk_Rosenbrock>();
-    std::shared_ptr<dotk::DOTk_ProjectedLineSearchStep> step(new dotk::DOTk_ProjectedLineSearchStep(primal));
-    std::shared_ptr<dotk::DOTk_LineSearchMngTypeULP> mng(new dotk::DOTk_LineSearchMngTypeULP(primal, objective));
+    std::shared_ptr<dotk::DOTk_ProjectedLineSearchStep> step = std::make_shared<dotk::DOTk_ProjectedLineSearchStep>(primal);
+    std::shared_ptr<dotk::DOTk_LineSearchMngTypeULP> mng = std::make_shared<dotk::DOTk_LineSearchMngTypeULP>(primal, objective);
     std::shared_ptr<dotk::DOTk_Hessian> hessian = std::make_shared<dotk::DOTk_Hessian>();
 
     step->setFeasibleDirectionConstraint(primal);
@@ -162,8 +162,8 @@ TEST(DOTk_BoundLineSearchInexactNewtonPCG, getMin_UsrDefGrad_LSR1Hess_ArmijoLS_N
     primal->setControlLowerBound(0);
     primal->setControlUpperBound(5);
     std::shared_ptr<dotk::DOTk_Rosenbrock> objective = std::make_shared<dotk::DOTk_Rosenbrock>();
-    std::shared_ptr<dotk::DOTk_ProjectedLineSearchStep> step(new dotk::DOTk_ProjectedLineSearchStep(primal));
-    std::shared_ptr<dotk::DOTk_LineSearchMngTypeULP> mng(new dotk::DOTk_LineSearchMngTypeULP(primal, objective));
+    std::shared_ptr<dotk::DOTk_ProjectedLineSearchStep> step = std::make_shared<dotk::DOTk_ProjectedLineSearchStep>(primal);
+    std::shared_ptr<dotk::DOTk_LineSearchMngTypeULP> mng = std::make_shared<dotk::DOTk_LineSearchMngTypeULP>(primal, objective);
     std::shared_ptr<dotk::DOTk_Hessian> hessian = std::make_shared<dotk::DOTk_Hessian>();
 
     step->setProjectionAlongFeasibleDirConstraint(primal);
@@ -189,8 +189,8 @@ TEST(DOTk_BoundLineSearchInexactNewtonPCG, getMin_UsrDefGrad_DFPHess_ArmijoLS_No
     primal->setControlLowerBound(0);
     primal->setControlUpperBound(5);
     std::shared_ptr<dotk::DOTk_Rosenbrock> objective = std::make_shared<dotk::DOTk_Rosenbrock>();
-    std::shared_ptr<dotk::DOTk_ProjectedLineSearchStep> step(new dotk::DOTk_ProjectedLineSearchStep(primal));
-    std::shared_ptr<dotk::DOTk_LineSearchMngTypeULP> mng(new dotk::DOTk_LineSearchMngTypeULP(primal, objective));
+    std::shared_ptr<dotk::DOTk_ProjectedLineSearchStep> step = std::make_shared<dotk::DOTk_ProjectedLineSearchStep>(primal);
+    std::shared_ptr<dotk::DOTk_LineSearchMngTypeULP> mng = std::make_shared<dotk::DOTk_LineSearchMngTypeULP>(primal, objective);
     std::shared_ptr<dotk::DOTk_Hessian> hessian = std::make_shared<dotk::DOTk_Hessian>();
 
     step->setFeasibleDirectionConstraint(primal);
@@ -215,8 +215,8 @@ TEST(DOTk_BoundLineSearchInexactNewtonPCG, getMin_UsrDefGrad_DFPHess_ArmijoLS_No
     primal->setControlLowerBound(0);
     primal->setControlUpperBound(5);
     std::shared_ptr<dotk::DOTk_Rosenbrock> objective = std::make_shared<dotk::DOTk_Rosenbrock>();
-    std::shared_ptr<dotk::DOTk_ProjectedLineSearchStep> step(new dotk::DOTk_ProjectedLineSearchStep(primal));
-    std::shared_ptr<dotk::DOTk_LineSearchMngTypeULP> mng(new dotk::DOTk_LineSearchMngTypeULP(primal, objective));
+    std::shared_ptr<dotk::DOTk_ProjectedLineSearchStep> step = std::make_shared<dotk::DOTk_ProjectedLineSearchStep>(primal);
+    std::shared_ptr<dotk::DOTk_LineSearchMngTypeULP> mng = std::make_shared<dotk::DOTk_LineSearchMngTypeULP>(primal, objective);
     std::shared_ptr<dotk::DOTk_Hessian> hessian = std::make_shared<dotk::DOTk_Hessian>();
 
     step->setProjectionAlongFeasibleDirConstraint(primal);
@@ -242,8 +242,8 @@ TEST(DOTk_BoundLineSearchInexactNewtonPCG, getMin_UsrDefGrad_BBHess_ArmijoLS_NoP
     primal->setControlLowerBound(0);
     primal->setControlUpperBound(5);
     std::shared_ptr<dotk::DOTk_Rosenbrock> objective = std::make_shared<dotk::DOTk_Rosenbrock>();
-    std::shared_ptr<dotk::DOTk_ProjectedLineSearchStep> step(new dotk::DOTk_ProjectedLineSearchStep(primal));
-    std::shared_ptr<dotk::DOTk_LineSearchMngTypeULP> mng(new dotk::DOTk_LineSearchMngTypeULP(primal, objective));
+    std::shared_ptr<dotk::DOTk_ProjectedLineSearchStep> step = std::make_shared<dotk::DOTk_ProjectedLineSearchStep>(primal);
+    std::shared_ptr<dotk::DOTk_LineSearchMngTypeULP> mng = std::make_shared<dotk::DOTk_LineSearchMngTypeULP>(primal, objective);
     std::shared_ptr<dotk::DOTk_Hessian> hessian = std::make_shared<dotk::DOTk_Hessian>();
 
     step->setFeasibleDirectionConstraint(primal);
@@ -268,8 +268,8 @@ TEST(DOTk_BoundLineSearchInexactNewtonPCG, getMin_UsrDefGrad_BBHess_ArmijoLS_NoP
     primal->setControlLowerBound(0);
     primal->setControlUpperBound(5);
     std::shared_ptr<dotk::DOTk_Rosenbrock> objective = std::make_shared<dotk::DOTk_Rosenbrock>();
-    std::shared_ptr<dotk::DOTk_ProjectedLineSearchStep> step(new dotk::DOTk_ProjectedLineSearchStep(primal));
-    std::shared_ptr<dotk::DOTk_LineSearchMngTypeULP> mng(new dotk::DOTk_LineSearchMngTypeULP(primal, objective));
+    std::shared_ptr<dotk::DOTk_ProjectedLineSearchStep> step = std::make_shared<dotk::DOTk_ProjectedLineSearchStep>(primal);
+    std::shared_ptr<dotk::DOTk_LineSearchMngTypeULP> mng = std::make_shared<dotk::DOTk_LineSearchMngTypeULP>(primal, objective);
     std::shared_ptr<dotk::DOTk_Hessian> hessian = std::make_shared<dotk::DOTk_Hessian>();
 
     step->setProjectionAlongFeasibleDirConstraint(primal);
@@ -294,8 +294,8 @@ TEST(DOTk_BoundLineSearchInexactNewtonPCG, getMin_UsrDefGrad_SR1Hess_ArmijoLS_No
     primal->setControlLowerBound(0);
     primal->setControlUpperBound(5);
     std::shared_ptr<dotk::DOTk_Rosenbrock> objective = std::make_shared<dotk::DOTk_Rosenbrock>();
-    std::shared_ptr<dotk::DOTk_ProjectedLineSearchStep> step(new dotk::DOTk_ProjectedLineSearchStep(primal));
-    std::shared_ptr<dotk::DOTk_LineSearchMngTypeULP> mng(new dotk::DOTk_LineSearchMngTypeULP(primal, objective));
+    std::shared_ptr<dotk::DOTk_ProjectedLineSearchStep> step = std::make_shared<dotk::DOTk_ProjectedLineSearchStep>(primal);
+    std::shared_ptr<dotk::DOTk_LineSearchMngTypeULP> mng = std::make_shared<dotk::DOTk_LineSearchMngTypeULP>(primal, objective);
     std::shared_ptr<dotk::DOTk_Hessian> hessian = std::make_shared<dotk::DOTk_Hessian>();
 
     step->setFeasibleDirectionConstraint(primal);
@@ -320,8 +320,8 @@ TEST(DOTk_BoundLineSearchInexactNewtonPCG, getMin_UsrDefGrad_SR1Hess_ArmijoLS_No
     primal->setControlLowerBound(0);
     primal->setControlUpperBound(5);
     std::shared_ptr<dotk::DOTk_Rosenbrock> objective = std::make_shared<dotk::DOTk_Rosenbrock>();
-    std::shared_ptr<dotk::DOTk_ProjectedLineSearchStep> step(new dotk::DOTk_ProjectedLineSearchStep(primal));
-    std::shared_ptr<dotk::DOTk_LineSearchMngTypeULP> mng(new dotk::DOTk_LineSearchMngTypeULP(primal, objective));
+    std::shared_ptr<dotk::DOTk_ProjectedLineSearchStep> step = std::make_shared<dotk::DOTk_ProjectedLineSearchStep>(primal);
+    std::shared_ptr<dotk::DOTk_LineSearchMngTypeULP> mng = std::make_shared<dotk::DOTk_LineSearchMngTypeULP>(primal, objective);
     std::shared_ptr<dotk::DOTk_Hessian> hessian = std::make_shared<dotk::DOTk_Hessian>();
 
     step->setProjectionAlongFeasibleDirConstraint(primal);

@@ -26,20 +26,20 @@ namespace DOTkLeftPrecCrTest
 TEST(DOTk_LeftPrecCR, setProblem)
 {
     size_t ncontrols = 2;
-    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal = std::make_shared<dotk::DOTk_Primal>();
     primal->allocateSerialControlArray(ncontrols, 2);
-    std::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
-    std::shared_ptr<dotk::DOTk_LineSearchMngTypeULP> mng(new dotk::DOTk_LineSearchMngTypeULP(primal, objective));
-    std::shared_ptr<dotk::DOTk_Hessian> hessian(new dotk::DOTk_Hessian);
+    std::shared_ptr<dotk::DOTk_Rosenbrock> objective = std::make_shared<dotk::DOTk_Rosenbrock>();
+    std::shared_ptr<dotk::DOTk_LineSearchMngTypeULP> mng = std::make_shared<dotk::DOTk_LineSearchMngTypeULP>(primal, objective);
+    std::shared_ptr<dotk::DOTk_Hessian> hessian = std::make_shared<dotk::DOTk_Hessian>();
 
     mng->computeGradient();
     std::shared_ptr<dotk::Vector<Real> > vec = primal->control()->clone();
     vec->update(-1., *mng->getNewGradient(), 0.);
-    std::shared_ptr<dotk::DOTk_LeftPrecConjResDataMng> solver_mng(new dotk::DOTk_LeftPrecConjResDataMng(primal, hessian));
+    std::shared_ptr<dotk::DOTk_LeftPrecConjResDataMng> solver_mng = std::make_shared<dotk::DOTk_LeftPrecConjResDataMng>(primal, hessian);
     dotk::DOTk_LeftPrecCR solver(solver_mng);
 
     Real relative_tolerance = 1e-2;
-    std::shared_ptr<dotk::DOTk_RelativeCriterion> criterion(new dotk::DOTk_RelativeCriterion(relative_tolerance));
+    std::shared_ptr<dotk::DOTk_RelativeCriterion> criterion = std::make_shared<dotk::DOTk_RelativeCriterion>(relative_tolerance);
     solver.initialize(vec, criterion, mng);
 
     (*vec)[0] = -1602.;
@@ -58,20 +58,20 @@ TEST(DOTk_LeftPrecCR, setProblem)
 TEST(DOTk_LeftPrecCR, pcr)
 {
     size_t ncontrols = 2;
-    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal = std::make_shared<dotk::DOTk_Primal>();
     primal->allocateSerialControlArray(ncontrols, 2);
-    std::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
-    std::shared_ptr<dotk::DOTk_LineSearchMngTypeULP> mng(new dotk::DOTk_LineSearchMngTypeULP(primal, objective));
-    std::shared_ptr<dotk::DOTk_Hessian> hessian(new dotk::DOTk_Hessian);
+    std::shared_ptr<dotk::DOTk_Rosenbrock> objective = std::make_shared<dotk::DOTk_Rosenbrock>();
+    std::shared_ptr<dotk::DOTk_LineSearchMngTypeULP> mng = std::make_shared<dotk::DOTk_LineSearchMngTypeULP>(primal, objective);
+    std::shared_ptr<dotk::DOTk_Hessian> hessian = std::make_shared<dotk::DOTk_Hessian>();
 
     mng->computeGradient();
     std::shared_ptr<dotk::Vector<Real> > vec = primal->control()->clone();
     dotk::gtools::getSteepestDescent(mng->getNewGradient(), vec);
-    std::shared_ptr<dotk::DOTk_LeftPrecConjResDataMng> solver_mng(new dotk::DOTk_LeftPrecConjResDataMng(primal, hessian));
+    std::shared_ptr<dotk::DOTk_LeftPrecConjResDataMng> solver_mng = std::make_shared<dotk::DOTk_LeftPrecConjResDataMng>(primal, hessian);
     dotk::DOTk_LeftPrecCR solver(solver_mng);
 
     Real relative_tolerance = 1e-2;
-    std::shared_ptr<dotk::DOTk_RelativeCriterion> criterion(new dotk::DOTk_RelativeCriterion(relative_tolerance));
+    std::shared_ptr<dotk::DOTk_RelativeCriterion> criterion = std::make_shared<dotk::DOTk_RelativeCriterion>(relative_tolerance);
     solver.pcr(vec, criterion, mng);
 
     EXPECT_EQ(dotk::types::SOLVER_TOLERANCE_SATISFIED, solver.getSolverStopCriterion());
@@ -83,20 +83,20 @@ TEST(DOTk_LeftPrecCR, pcr)
 TEST(DOTk_LeftPrecCR, solve)
 {
     size_t ncontrols = 2;
-    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal = std::make_shared<dotk::DOTk_Primal>();
     primal->allocateSerialControlArray(ncontrols, 2);
-    std::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
-    std::shared_ptr<dotk::DOTk_LineSearchMngTypeULP> mng(new dotk::DOTk_LineSearchMngTypeULP(primal, objective));
-    std::shared_ptr<dotk::DOTk_Hessian> hessian(new dotk::DOTk_Hessian);
+    std::shared_ptr<dotk::DOTk_Rosenbrock> objective = std::make_shared<dotk::DOTk_Rosenbrock>();
+    std::shared_ptr<dotk::DOTk_LineSearchMngTypeULP> mng = std::make_shared<dotk::DOTk_LineSearchMngTypeULP>(primal, objective);
+    std::shared_ptr<dotk::DOTk_Hessian> hessian = std::make_shared<dotk::DOTk_Hessian>();
 
     mng->computeGradient();
     std::shared_ptr<dotk::Vector<Real> > vec = primal->control()->clone();
     dotk::gtools::getSteepestDescent(mng->getNewGradient(), vec);
-    std::shared_ptr<dotk::DOTk_LeftPrecConjResDataMng> solver_mng(new dotk::DOTk_LeftPrecConjResDataMng(primal, hessian));
+    std::shared_ptr<dotk::DOTk_LeftPrecConjResDataMng> solver_mng = std::make_shared<dotk::DOTk_LeftPrecConjResDataMng>(primal, hessian);
     dotk::DOTk_LeftPrecCR solver(solver_mng);
 
     Real relative_tolerance = 1e-2;
-    std::shared_ptr<dotk::DOTk_RelativeCriterion> criterion(new dotk::DOTk_RelativeCriterion(relative_tolerance));
+    std::shared_ptr<dotk::DOTk_RelativeCriterion> criterion = std::make_shared<dotk::DOTk_RelativeCriterion>(relative_tolerance);
     solver.solve(vec, criterion, mng);
 
     EXPECT_EQ(dotk::types::SOLVER_TOLERANCE_SATISFIED, solver.getSolverStopCriterion());

@@ -21,13 +21,13 @@ std::shared_ptr<dotk::Vector<Real> > allocateControl()
 {
     size_t num_controls = 2;
     std::vector<Real> data(num_controls, 2.);
-    std::shared_ptr<dotk::Vector<Real> > vector(new dotk::StdVector<Real>(data));
+    std::shared_ptr<dotk::Vector<Real> > vector = std::make_shared<dotk::StdVector<Real>>(data);
     return (vector);
 }
 
 std::shared_ptr<dotk::Vector<Real> > allocateData(size_t dim_, Real value_)
 {
-    std::shared_ptr<dotk::Vector<Real> > vector(new dotk::StdVector<Real>(dim_, value_));
+    std::shared_ptr<dotk::Vector<Real> > vector = std::make_shared<dotk::StdVector<Real>>(dim_, value_);
     return (vector);
 }
 

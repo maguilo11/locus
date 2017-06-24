@@ -22,16 +22,16 @@ namespace DOTkBoundLineSearchIxNewtonGmresNumIntgHessTest
 TEST(DOTk_BoundLineSearchIxNewtonGmresNumIntgHess, getMin_UsrDefGrad_NumIntgHessFD_CubicLS_NoPrec_FeasibleDirBound)
 {
     size_t ncontrols = 2;
-    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal = std::make_shared<dotk::DOTk_Primal>();
     primal->allocateSerialControlArray(ncontrols, 2);
     primal->setControlLowerBound(0);
     primal->setControlUpperBound(5);
 
-    std::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
-    std::shared_ptr<dotk::DOTk_ProjectedLineSearchStep> step(new dotk::DOTk_ProjectedLineSearchStep(primal));
-    std::shared_ptr<dotk::DOTk_LineSearchMngTypeULP> mng(new dotk::DOTk_LineSearchMngTypeULP(primal, objective));
+    std::shared_ptr<dotk::DOTk_Rosenbrock> objective = std::make_shared<dotk::DOTk_Rosenbrock>();
+    std::shared_ptr<dotk::DOTk_ProjectedLineSearchStep> step = std::make_shared<dotk::DOTk_ProjectedLineSearchStep>(primal);
+    std::shared_ptr<dotk::DOTk_LineSearchMngTypeULP> mng = std::make_shared<dotk::DOTk_LineSearchMngTypeULP>(primal, objective);
     mng->setUserDefinedGradient();
-    std::shared_ptr<dotk::NumericallyDifferentiatedHessian> hessian(new dotk::NumericallyDifferentiatedHessian(primal, objective));
+    std::shared_ptr<dotk::NumericallyDifferentiatedHessian> hessian = std::make_shared<dotk::NumericallyDifferentiatedHessian>(primal, objective);
     hessian->setForwardDifference(*primal->control());
 
     dotk::DOTk_LineSearchInexactNewton alg(hessian, step, mng);
@@ -47,16 +47,16 @@ TEST(DOTk_BoundLineSearchIxNewtonGmresNumIntgHess, getMin_UsrDefGrad_NumIntgHess
 TEST(DOTk_BoundLineSearchIxNewtonGmresNumIntgHess, getMin_UsrDefGrad_NumIntgHessBD_CubicLS_NoPrec_FeasibleDirBound)
 {
     size_t ncontrols = 2;
-    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal = std::make_shared<dotk::DOTk_Primal>();
     primal->allocateSerialControlArray(ncontrols, 2);
     primal->setControlLowerBound(0);
     primal->setControlUpperBound(5);
 
-    std::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
-    std::shared_ptr<dotk::DOTk_ProjectedLineSearchStep> step(new dotk::DOTk_ProjectedLineSearchStep(primal));
-    std::shared_ptr<dotk::DOTk_LineSearchMngTypeULP> mng(new dotk::DOTk_LineSearchMngTypeULP(primal, objective));
+    std::shared_ptr<dotk::DOTk_Rosenbrock> objective = std::make_shared<dotk::DOTk_Rosenbrock>();
+    std::shared_ptr<dotk::DOTk_ProjectedLineSearchStep> step = std::make_shared<dotk::DOTk_ProjectedLineSearchStep>(primal);
+    std::shared_ptr<dotk::DOTk_LineSearchMngTypeULP> mng = std::make_shared<dotk::DOTk_LineSearchMngTypeULP>(primal, objective);
     mng->setUserDefinedGradient();
-    std::shared_ptr<dotk::NumericallyDifferentiatedHessian> hessian(new dotk::NumericallyDifferentiatedHessian(primal, objective));
+    std::shared_ptr<dotk::NumericallyDifferentiatedHessian> hessian = std::make_shared<dotk::NumericallyDifferentiatedHessian>(primal, objective);
     hessian->setBackwardDifference(*primal->control(), 5e-6);
 
     dotk::DOTk_LineSearchInexactNewton alg(hessian, step, mng);
@@ -72,16 +72,16 @@ TEST(DOTk_BoundLineSearchIxNewtonGmresNumIntgHess, getMin_UsrDefGrad_NumIntgHess
 TEST(DOTk_BoundLineSearchIxNewtonGmresNumIntgHess, getMin_UsrDefGrad_NumIntgHessCD_CubicLS_NoPrec_FeasibleDirBound)
 {
     size_t ncontrols = 2;
-    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal = std::make_shared<dotk::DOTk_Primal>();
     primal->allocateSerialControlArray(ncontrols, 2);
     primal->setControlLowerBound(0);
     primal->setControlUpperBound(5);
 
-    std::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
-    std::shared_ptr<dotk::DOTk_ProjectedLineSearchStep> step(new dotk::DOTk_ProjectedLineSearchStep(primal));
-    std::shared_ptr<dotk::DOTk_LineSearchMngTypeULP> mng(new dotk::DOTk_LineSearchMngTypeULP(primal, objective));
+    std::shared_ptr<dotk::DOTk_Rosenbrock> objective = std::make_shared<dotk::DOTk_Rosenbrock>();
+    std::shared_ptr<dotk::DOTk_ProjectedLineSearchStep> step = std::make_shared<dotk::DOTk_ProjectedLineSearchStep>(primal);
+    std::shared_ptr<dotk::DOTk_LineSearchMngTypeULP> mng = std::make_shared<dotk::DOTk_LineSearchMngTypeULP>(primal, objective);
     mng->setUserDefinedGradient();
-    std::shared_ptr<dotk::NumericallyDifferentiatedHessian> hessian(new dotk::NumericallyDifferentiatedHessian(primal, objective));
+    std::shared_ptr<dotk::NumericallyDifferentiatedHessian> hessian = std::make_shared<dotk::NumericallyDifferentiatedHessian>(primal, objective);
     hessian->setCentralDifference(*primal->control());
 
     dotk::DOTk_LineSearchInexactNewton alg(hessian, step, mng);
@@ -97,16 +97,16 @@ TEST(DOTk_BoundLineSearchIxNewtonGmresNumIntgHess, getMin_UsrDefGrad_NumIntgHess
 TEST(DOTk_BoundLineSearchIxNewtonGmresNumIntgHess, getMin_UsrDefGrad_NumIntgHessSoFD_CubicLS_NoPrec_FeasibleDirBound)
 {
     size_t ncontrols = 2;
-    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal = std::make_shared<dotk::DOTk_Primal>();
     primal->allocateSerialControlArray(ncontrols, 2);
     primal->setControlLowerBound(0);
     primal->setControlUpperBound(5);
 
-    std::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
-    std::shared_ptr<dotk::DOTk_ProjectedLineSearchStep> step(new dotk::DOTk_ProjectedLineSearchStep(primal));
-    std::shared_ptr<dotk::DOTk_LineSearchMngTypeULP> mng(new dotk::DOTk_LineSearchMngTypeULP(primal, objective));
+    std::shared_ptr<dotk::DOTk_Rosenbrock> objective = std::make_shared<dotk::DOTk_Rosenbrock>();
+    std::shared_ptr<dotk::DOTk_ProjectedLineSearchStep> step = std::make_shared<dotk::DOTk_ProjectedLineSearchStep>(primal);
+    std::shared_ptr<dotk::DOTk_LineSearchMngTypeULP> mng = std::make_shared<dotk::DOTk_LineSearchMngTypeULP>(primal, objective);
     mng->setUserDefinedGradient();
-    std::shared_ptr<dotk::NumericallyDifferentiatedHessian> hessian(new dotk::NumericallyDifferentiatedHessian(primal, objective));
+    std::shared_ptr<dotk::NumericallyDifferentiatedHessian> hessian = std::make_shared<dotk::NumericallyDifferentiatedHessian>(primal, objective);
     hessian->setSecondOrderForwardDifference(*primal->control());
 
     dotk::DOTk_LineSearchInexactNewton alg(hessian, step, mng);
@@ -122,16 +122,16 @@ TEST(DOTk_BoundLineSearchIxNewtonGmresNumIntgHess, getMin_UsrDefGrad_NumIntgHess
 TEST(DOTk_BoundLineSearchIxNewtonGmresNumIntgHess, getMin_UsrDefGrad_NumIntgHessToFD_CubicLS_NoPrec_FeasibleDirBound)
 {
     size_t ncontrols = 2;
-    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal = std::make_shared<dotk::DOTk_Primal>();
     primal->allocateSerialControlArray(ncontrols, 2);
     primal->setControlLowerBound(0);
     primal->setControlUpperBound(5);
 
-    std::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
-    std::shared_ptr<dotk::DOTk_ProjectedLineSearchStep> step(new dotk::DOTk_ProjectedLineSearchStep(primal));
-    std::shared_ptr<dotk::DOTk_LineSearchMngTypeULP> mng(new dotk::DOTk_LineSearchMngTypeULP(primal, objective));
+    std::shared_ptr<dotk::DOTk_Rosenbrock> objective = std::make_shared<dotk::DOTk_Rosenbrock>();
+    std::shared_ptr<dotk::DOTk_ProjectedLineSearchStep> step = std::make_shared<dotk::DOTk_ProjectedLineSearchStep>(primal);
+    std::shared_ptr<dotk::DOTk_LineSearchMngTypeULP> mng = std::make_shared<dotk::DOTk_LineSearchMngTypeULP>(primal, objective);
     mng->setUserDefinedGradient();
-    std::shared_ptr<dotk::NumericallyDifferentiatedHessian> hessian(new dotk::NumericallyDifferentiatedHessian(primal, objective));
+    std::shared_ptr<dotk::NumericallyDifferentiatedHessian> hessian = std::make_shared<dotk::NumericallyDifferentiatedHessian>(primal, objective);
     hessian->setThirdOrderForwardDifference(*primal->control());
 
     dotk::DOTk_LineSearchInexactNewton alg(hessian, step, mng);
@@ -147,16 +147,16 @@ TEST(DOTk_BoundLineSearchIxNewtonGmresNumIntgHess, getMin_UsrDefGrad_NumIntgHess
 TEST(DOTk_BoundLineSearchIxNewtonGmresNumIntgHess, getMin_UsrDefGrad_NumIntgHessToBD_CubicLS_NoPrec_FeasibleDirBound)
 {
     size_t ncontrols = 2;
-    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal = std::make_shared<dotk::DOTk_Primal>();
     primal->allocateSerialControlArray(ncontrols, 2);
     primal->setControlLowerBound(0);
     primal->setControlUpperBound(5);
 
-    std::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
-    std::shared_ptr<dotk::DOTk_ProjectedLineSearchStep> step(new dotk::DOTk_ProjectedLineSearchStep(primal));
-    std::shared_ptr<dotk::DOTk_LineSearchMngTypeULP> mng(new dotk::DOTk_LineSearchMngTypeULP(primal, objective));
+    std::shared_ptr<dotk::DOTk_Rosenbrock> objective = std::make_shared<dotk::DOTk_Rosenbrock>();
+    std::shared_ptr<dotk::DOTk_ProjectedLineSearchStep> step = std::make_shared<dotk::DOTk_ProjectedLineSearchStep>(primal);
+    std::shared_ptr<dotk::DOTk_LineSearchMngTypeULP> mng = std::make_shared<dotk::DOTk_LineSearchMngTypeULP>(primal, objective);
     mng->setUserDefinedGradient();
-    std::shared_ptr<dotk::NumericallyDifferentiatedHessian> hessian(new dotk::NumericallyDifferentiatedHessian(primal, objective));
+    std::shared_ptr<dotk::NumericallyDifferentiatedHessian> hessian = std::make_shared<dotk::NumericallyDifferentiatedHessian>(primal, objective);
     hessian->setThirdOrderBackwardDifference(*primal->control(), 1e-5);
 
     dotk::DOTk_LineSearchInexactNewton alg(hessian, step, mng);
@@ -172,17 +172,17 @@ TEST(DOTk_BoundLineSearchIxNewtonGmresNumIntgHess, getMin_UsrDefGrad_NumIntgHess
 TEST(DOTk_BoundLineSearchIxNewtonGmresNumIntgHess, getMin_UsrDefGrad_NumIntgHessFD_CubicLS_NoPrec_ProjFeasibleDirBound)
 {
     size_t ncontrols = 2;
-    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal = std::make_shared<dotk::DOTk_Primal>();
     primal->allocateSerialControlArray(ncontrols, 2);
     primal->setControlLowerBound(0);
     primal->setControlUpperBound(5);
 
-    std::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
-    std::shared_ptr<dotk::DOTk_ProjectedLineSearchStep> step(new dotk::DOTk_ProjectedLineSearchStep(primal));
+    std::shared_ptr<dotk::DOTk_Rosenbrock> objective = std::make_shared<dotk::DOTk_Rosenbrock>();
+    std::shared_ptr<dotk::DOTk_ProjectedLineSearchStep> step = std::make_shared<dotk::DOTk_ProjectedLineSearchStep>(primal);
     step->setProjectionAlongFeasibleDirConstraint(primal);
-    std::shared_ptr<dotk::DOTk_LineSearchMngTypeULP> mng(new dotk::DOTk_LineSearchMngTypeULP(primal, objective));
+    std::shared_ptr<dotk::DOTk_LineSearchMngTypeULP> mng = std::make_shared<dotk::DOTk_LineSearchMngTypeULP>(primal, objective);
     mng->setUserDefinedGradient();
-    std::shared_ptr<dotk::NumericallyDifferentiatedHessian> hessian(new dotk::NumericallyDifferentiatedHessian(primal, objective));
+    std::shared_ptr<dotk::NumericallyDifferentiatedHessian> hessian = std::make_shared<dotk::NumericallyDifferentiatedHessian>(primal, objective);
     hessian->setForwardDifference(*primal->control());
 
     mng->setUserDefinedGradient();
@@ -199,17 +199,17 @@ TEST(DOTk_BoundLineSearchIxNewtonGmresNumIntgHess, getMin_UsrDefGrad_NumIntgHess
 TEST(DOTk_BoundLineSearchIxNewtonGmresNumIntgHess, getMin_UsrDefGrad_NumIntgHessBD_CubicLS_NoPrec_ProjFeasibleDirBound)
 {
     size_t ncontrols = 2;
-    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal = std::make_shared<dotk::DOTk_Primal>();
     primal->allocateSerialControlArray(ncontrols, 2);
     primal->setControlLowerBound(0);
     primal->setControlUpperBound(5);
 
-    std::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
-    std::shared_ptr<dotk::DOTk_ProjectedLineSearchStep> step(new dotk::DOTk_ProjectedLineSearchStep(primal));
+    std::shared_ptr<dotk::DOTk_Rosenbrock> objective = std::make_shared<dotk::DOTk_Rosenbrock>();
+    std::shared_ptr<dotk::DOTk_ProjectedLineSearchStep> step = std::make_shared<dotk::DOTk_ProjectedLineSearchStep>(primal);
     step->setProjectionAlongFeasibleDirConstraint(primal);
-    std::shared_ptr<dotk::DOTk_LineSearchMngTypeULP> mng(new dotk::DOTk_LineSearchMngTypeULP(primal, objective));
+    std::shared_ptr<dotk::DOTk_LineSearchMngTypeULP> mng = std::make_shared<dotk::DOTk_LineSearchMngTypeULP>(primal, objective);
     mng->setUserDefinedGradient();
-    std::shared_ptr<dotk::NumericallyDifferentiatedHessian> hessian(new dotk::NumericallyDifferentiatedHessian(primal, objective));
+    std::shared_ptr<dotk::NumericallyDifferentiatedHessian> hessian = std::make_shared<dotk::NumericallyDifferentiatedHessian>(primal, objective);
     hessian->setBackwardDifference(*primal->control());
 
     dotk::DOTk_LineSearchInexactNewton alg(hessian, step, mng);
@@ -225,17 +225,17 @@ TEST(DOTk_BoundLineSearchIxNewtonGmresNumIntgHess, getMin_UsrDefGrad_NumIntgHess
 TEST(DOTk_BoundLineSearchIxNewtonGmresNumIntgHess, getMin_UsrDefGrad_NumIntgHessCD_CubicLS_NoPrec_ProjFeasibleDirBound)
 {
     size_t ncontrols = 2;
-    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal = std::make_shared<dotk::DOTk_Primal>();
     primal->allocateSerialControlArray(ncontrols, 2);
     primal->setControlLowerBound(0);
     primal->setControlUpperBound(5);
 
-    std::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
-    std::shared_ptr<dotk::DOTk_ProjectedLineSearchStep> step(new dotk::DOTk_ProjectedLineSearchStep(primal));
+    std::shared_ptr<dotk::DOTk_Rosenbrock> objective = std::make_shared<dotk::DOTk_Rosenbrock>();
+    std::shared_ptr<dotk::DOTk_ProjectedLineSearchStep> step = std::make_shared<dotk::DOTk_ProjectedLineSearchStep>(primal);
     step->setProjectionAlongFeasibleDirConstraint(primal);
-    std::shared_ptr<dotk::DOTk_LineSearchMngTypeULP> mng(new dotk::DOTk_LineSearchMngTypeULP(primal, objective));
+    std::shared_ptr<dotk::DOTk_LineSearchMngTypeULP> mng = std::make_shared<dotk::DOTk_LineSearchMngTypeULP>(primal, objective);
     mng->setUserDefinedGradient();
-    std::shared_ptr<dotk::NumericallyDifferentiatedHessian> hessian(new dotk::NumericallyDifferentiatedHessian(primal, objective));
+    std::shared_ptr<dotk::NumericallyDifferentiatedHessian> hessian = std::make_shared<dotk::NumericallyDifferentiatedHessian>(primal, objective);
     hessian->setCentralDifference(*primal->control());
 
     dotk::DOTk_LineSearchInexactNewton alg(hessian, step, mng);
@@ -251,17 +251,17 @@ TEST(DOTk_BoundLineSearchIxNewtonGmresNumIntgHess, getMin_UsrDefGrad_NumIntgHess
 TEST(DOTk_BoundLineSearchIxNewtonGmresNumIntgHess, getMin_UsrDefGrad_NumIntgHessSoFD_CubicLS_NoPrec_ProjFeasibleDirBound)
 {
     size_t ncontrols = 2;
-    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal = std::make_shared<dotk::DOTk_Primal>();
     primal->allocateSerialControlArray(ncontrols, 2);
     primal->setControlLowerBound(0);
     primal->setControlUpperBound(5);
 
-    std::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
-    std::shared_ptr<dotk::DOTk_ProjectedLineSearchStep> step(new dotk::DOTk_ProjectedLineSearchStep(primal));
+    std::shared_ptr<dotk::DOTk_Rosenbrock> objective = std::make_shared<dotk::DOTk_Rosenbrock>();
+    std::shared_ptr<dotk::DOTk_ProjectedLineSearchStep> step = std::make_shared<dotk::DOTk_ProjectedLineSearchStep>(primal);
     step->setProjectionAlongFeasibleDirConstraint(primal);
-    std::shared_ptr<dotk::DOTk_LineSearchMngTypeULP> mng(new dotk::DOTk_LineSearchMngTypeULP(primal, objective));
+    std::shared_ptr<dotk::DOTk_LineSearchMngTypeULP> mng = std::make_shared<dotk::DOTk_LineSearchMngTypeULP>(primal, objective);
     mng->setUserDefinedGradient();
-    std::shared_ptr<dotk::NumericallyDifferentiatedHessian> hessian(new dotk::NumericallyDifferentiatedHessian(primal, objective));
+    std::shared_ptr<dotk::NumericallyDifferentiatedHessian> hessian = std::make_shared<dotk::NumericallyDifferentiatedHessian>(primal, objective);
     hessian->setSecondOrderForwardDifference(*primal->control());
 
     dotk::DOTk_LineSearchInexactNewton alg(hessian, step, mng);
@@ -277,17 +277,17 @@ TEST(DOTk_BoundLineSearchIxNewtonGmresNumIntgHess, getMin_UsrDefGrad_NumIntgHess
 TEST(DOTk_BoundLineSearchIxNewtonGmresNumIntgHess, getMin_UsrDefGrad_NumIntgHessToFD_CubicLS_NoPrec_ProjFeasibleDirBound)
 {
     size_t ncontrols = 2;
-    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal = std::make_shared<dotk::DOTk_Primal>();
     primal->allocateSerialControlArray(ncontrols, 2);
     primal->setControlLowerBound(0);
     primal->setControlUpperBound(5);
 
-    std::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
-    std::shared_ptr<dotk::DOTk_ProjectedLineSearchStep> step(new dotk::DOTk_ProjectedLineSearchStep(primal));
+    std::shared_ptr<dotk::DOTk_Rosenbrock> objective = std::make_shared<dotk::DOTk_Rosenbrock>();
+    std::shared_ptr<dotk::DOTk_ProjectedLineSearchStep> step = std::make_shared<dotk::DOTk_ProjectedLineSearchStep>(primal);
     step->setProjectionAlongFeasibleDirConstraint(primal);
-    std::shared_ptr<dotk::DOTk_LineSearchMngTypeULP> mng(new dotk::DOTk_LineSearchMngTypeULP(primal, objective));
+    std::shared_ptr<dotk::DOTk_LineSearchMngTypeULP> mng = std::make_shared<dotk::DOTk_LineSearchMngTypeULP>(primal, objective);
     mng->setUserDefinedGradient();
-    std::shared_ptr<dotk::NumericallyDifferentiatedHessian> hessian(new dotk::NumericallyDifferentiatedHessian(primal, objective));
+    std::shared_ptr<dotk::NumericallyDifferentiatedHessian> hessian = std::make_shared<dotk::NumericallyDifferentiatedHessian>(primal, objective);
     hessian->setThirdOrderForwardDifference(*primal->control(), 1e-5);
 
     dotk::DOTk_LineSearchInexactNewton alg(hessian, step, mng);
@@ -303,17 +303,17 @@ TEST(DOTk_BoundLineSearchIxNewtonGmresNumIntgHess, getMin_UsrDefGrad_NumIntgHess
 TEST(DOTk_BoundLineSearchIxNewtonGmresNumIntgHess, getMin_UsrDefGrad_NumIntgHessToBD_CubicLS_NoPrec_ProjFeasibleDirBound)
 {
     size_t ncontrols = 2;
-    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal = std::make_shared<dotk::DOTk_Primal>();
     primal->allocateSerialControlArray(ncontrols, 2);
     primal->setControlLowerBound(0);
     primal->setControlUpperBound(5);
 
-    std::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
-    std::shared_ptr<dotk::DOTk_ProjectedLineSearchStep> step(new dotk::DOTk_ProjectedLineSearchStep(primal));
+    std::shared_ptr<dotk::DOTk_Rosenbrock> objective = std::make_shared<dotk::DOTk_Rosenbrock>();
+    std::shared_ptr<dotk::DOTk_ProjectedLineSearchStep> step = std::make_shared<dotk::DOTk_ProjectedLineSearchStep>(primal);
     step->setProjectionAlongFeasibleDirConstraint(primal);
-    std::shared_ptr<dotk::DOTk_LineSearchMngTypeULP> mng(new dotk::DOTk_LineSearchMngTypeULP(primal, objective));
+    std::shared_ptr<dotk::DOTk_LineSearchMngTypeULP> mng = std::make_shared<dotk::DOTk_LineSearchMngTypeULP>(primal, objective);
     mng->setUserDefinedGradient();
-    std::shared_ptr<dotk::NumericallyDifferentiatedHessian> hessian(new dotk::NumericallyDifferentiatedHessian(primal, objective));
+    std::shared_ptr<dotk::NumericallyDifferentiatedHessian> hessian = std::make_shared<dotk::NumericallyDifferentiatedHessian>(primal, objective);
     hessian->setThirdOrderBackwardDifference(*primal->control(), 1e-5);
 
     dotk::DOTk_LineSearchInexactNewton alg(hessian, step, mng);

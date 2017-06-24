@@ -24,7 +24,7 @@ namespace DOTkProjectionAlongFeasibleDirTest
 TEST(DOTk_ProjectionAlongFeasibleDir, getDirection)
 {
     size_t ncontrols = 2;
-    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal = std::make_shared<dotk::DOTk_Primal>();
     primal->allocateSerialControlArray(ncontrols, 2);
     primal->setControlLowerBound(1);
     primal->setControlUpperBound(4);
@@ -49,13 +49,13 @@ TEST(DOTk_ProjectionAlongFeasibleDir, getDirection)
 TEST(DOTk_ProjectionAlongFeasibleDir, constraint)
 {
     size_t ncontrols = 2;
-    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal = std::make_shared<dotk::DOTk_Primal>();
     primal->allocateSerialControlArray(ncontrols, 2);
     primal->setControlLowerBound(1);
     primal->setControlUpperBound(4);
-    std::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
-    std::shared_ptr<dotk::DOTk_ArmijoLineSearch> step(new dotk::DOTk_ArmijoLineSearch(primal->control()));
-    std::shared_ptr<dotk::DOTk_LineSearchMngTypeULP> mng(new dotk::DOTk_LineSearchMngTypeULP(primal, objective));
+    std::shared_ptr<dotk::DOTk_Rosenbrock> objective = std::make_shared<dotk::DOTk_Rosenbrock>();
+    std::shared_ptr<dotk::DOTk_ArmijoLineSearch> step = std::make_shared<dotk::DOTk_ArmijoLineSearch>(primal->control());
+    std::shared_ptr<dotk::DOTk_LineSearchMngTypeULP> mng = std::make_shared<dotk::DOTk_LineSearchMngTypeULP>(primal, objective);
 
     mng->setUserDefinedGradient();
     primal->control()->fill(7.);

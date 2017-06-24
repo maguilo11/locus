@@ -385,8 +385,8 @@ TEST(DOTk_GcmmaTestOperators, objective)
 
 TEST(DOTk_RoutinesTypeLP, gcmma)
 {
-    std::shared_ptr<dotk::DOTk_GcmmaTestObjectiveFunction> objective(new dotk::DOTk_GcmmaTestObjectiveFunction);
-    std::shared_ptr<dotk::DOTk_GcmmaTestInequalityConstraint> shared_ptr(new dotk::DOTk_GcmmaTestInequalityConstraint);
+    std::shared_ptr<dotk::DOTk_GcmmaTestObjectiveFunction> objective = std::make_shared<dotk::DOTk_GcmmaTestObjectiveFunction>();
+    std::shared_ptr<dotk::DOTk_GcmmaTestInequalityConstraint> shared_ptr = std::make_shared<dotk::DOTk_GcmmaTestInequalityConstraint>();
     std::vector<std::shared_ptr<dotk::DOTk_InequalityConstraint<Real> > > inequality(1, shared_ptr);
     dotk::DOTk_RoutinesTypeLP assembly(objective, inequality);
 
@@ -431,8 +431,8 @@ TEST(DOTk_DataMngCCSA, computeFunctionGradients)
     primal->setControlUpperBound(1.);
     primal->setControlLowerBound(1e-2);
 
-    std::shared_ptr<dotk::DOTk_GcmmaTestObjectiveFunction> objective(new dotk::DOTk_GcmmaTestObjectiveFunction);
-    std::shared_ptr<dotk::DOTk_GcmmaTestInequalityConstraint> shared_ptr(new dotk::DOTk_GcmmaTestInequalityConstraint);
+    std::shared_ptr<dotk::DOTk_GcmmaTestObjectiveFunction> objective = std::make_shared<dotk::DOTk_GcmmaTestObjectiveFunction>();
+    std::shared_ptr<dotk::DOTk_GcmmaTestInequalityConstraint> shared_ptr = std::make_shared<dotk::DOTk_GcmmaTestInequalityConstraint>();
     std::vector<std::shared_ptr<dotk::DOTk_InequalityConstraint<Real> > > inequality(1, shared_ptr);
 
     dotk::DOTk_DataMngCCSA mng(primal, objective, inequality);
@@ -467,8 +467,8 @@ TEST(DOTk_DataMngCCSA, evaluateFunctionValues)
     primal->setControlUpperBound(1.);
     primal->setControlLowerBound(1e-2);
 
-    std::shared_ptr<dotk::DOTk_GcmmaTestObjectiveFunction> objective(new dotk::DOTk_GcmmaTestObjectiveFunction);
-    std::shared_ptr<dotk::DOTk_GcmmaTestInequalityConstraint> shared_ptr(new dotk::DOTk_GcmmaTestInequalityConstraint);
+    std::shared_ptr<dotk::DOTk_GcmmaTestObjectiveFunction> objective = std::make_shared<dotk::DOTk_GcmmaTestObjectiveFunction>();
+    std::shared_ptr<dotk::DOTk_GcmmaTestInequalityConstraint> shared_ptr = std::make_shared<dotk::DOTk_GcmmaTestInequalityConstraint>();
     std::vector<std::shared_ptr<dotk::DOTk_InequalityConstraint<Real> > > inequality(1, shared_ptr);
     dotk::DOTk_DataMngCCSA mng(primal, objective, inequality);
 
@@ -496,8 +496,8 @@ TEST(DOTk_DataMngCCSA, evaluateInequalityConstraint)
     primal->setControlUpperBound(1.);
     primal->setControlLowerBound(1e-2);
 
-    std::shared_ptr<dotk::DOTk_GcmmaTestObjectiveFunction> objective(new dotk::DOTk_GcmmaTestObjectiveFunction);
-    std::shared_ptr<dotk::DOTk_GcmmaTestInequalityConstraint> shared_ptr(new dotk::DOTk_GcmmaTestInequalityConstraint);
+    std::shared_ptr<dotk::DOTk_GcmmaTestObjectiveFunction> objective = std::make_shared<dotk::DOTk_GcmmaTestObjectiveFunction>();
+    std::shared_ptr<dotk::DOTk_GcmmaTestInequalityConstraint> shared_ptr = std::make_shared<dotk::DOTk_GcmmaTestInequalityConstraint>();
     std::vector<std::shared_ptr<dotk::DOTk_InequalityConstraint<Real> > > inequality(1, shared_ptr);
     dotk::DOTk_DataMngCCSA mng(primal, objective, inequality);
 
@@ -520,10 +520,10 @@ TEST(DOTk_DualObjectiveFunctionMMA, updateMovingAsymptotes)
     primal->setControlUpperBound(1.);
     primal->setControlLowerBound(1e-2);
 
-    std::shared_ptr<dotk::DOTk_GcmmaTestObjectiveFunction> objective(new dotk::DOTk_GcmmaTestObjectiveFunction);
-    std::shared_ptr<dotk::DOTk_GcmmaTestInequalityConstraint> shared_ptr(new dotk::DOTk_GcmmaTestInequalityConstraint);
+    std::shared_ptr<dotk::DOTk_GcmmaTestObjectiveFunction> objective = std::make_shared<dotk::DOTk_GcmmaTestObjectiveFunction>();
+    std::shared_ptr<dotk::DOTk_GcmmaTestInequalityConstraint> shared_ptr = std::make_shared<dotk::DOTk_GcmmaTestInequalityConstraint>();
     std::vector<std::shared_ptr<dotk::DOTk_InequalityConstraint<Real> > > inequality(1, shared_ptr);
-    std::shared_ptr<dotk::DOTk_DataMngCCSA> mng(new dotk::DOTk_DataMngCCSA(primal, objective, inequality));
+    std::shared_ptr<dotk::DOTk_DataMngCCSA> mng = std::make_shared<dotk::DOTk_DataMngCCSA>(primal, objective, inequality);
 
     dotk::DOTk_DualObjectiveFunctionMMA dual_objective(mng);
 
@@ -550,10 +550,10 @@ TEST(DOTk_DualObjectiveFunctionMMA, updateTrialControlBounds)
     primal->setControlUpperBound(1.);
     primal->setControlLowerBound(1e-2);
 
-    std::shared_ptr<dotk::DOTk_GcmmaTestObjectiveFunction> objective(new dotk::DOTk_GcmmaTestObjectiveFunction);
-    std::shared_ptr<dotk::DOTk_GcmmaTestInequalityConstraint> shared_ptr(new dotk::DOTk_GcmmaTestInequalityConstraint);
+    std::shared_ptr<dotk::DOTk_GcmmaTestObjectiveFunction> objective = std::make_shared<dotk::DOTk_GcmmaTestObjectiveFunction>();
+    std::shared_ptr<dotk::DOTk_GcmmaTestInequalityConstraint> shared_ptr = std::make_shared<dotk::DOTk_GcmmaTestInequalityConstraint>();
     std::vector<std::shared_ptr<dotk::DOTk_InequalityConstraint<Real> > > inequality(1, shared_ptr);
-    std::shared_ptr<dotk::DOTk_DataMngCCSA> mng(new dotk::DOTk_DataMngCCSA(primal, objective, inequality));
+    std::shared_ptr<dotk::DOTk_DataMngCCSA> mng = std::make_shared<dotk::DOTk_DataMngCCSA>(primal, objective, inequality);
 
     dotk::DOTk_DualObjectiveFunctionMMA dual_objective(mng);
 
@@ -580,10 +580,10 @@ TEST(DOTk_DualObjectiveFunctionMMA, updateObjectiveCoefficientVectors)
     primal->setControlUpperBound(1.);
     primal->setControlLowerBound(1e-2);
 
-    std::shared_ptr<dotk::DOTk_GcmmaTestObjectiveFunction> objective(new dotk::DOTk_GcmmaTestObjectiveFunction);
-    std::shared_ptr<dotk::DOTk_GcmmaTestInequalityConstraint> shared_ptr(new dotk::DOTk_GcmmaTestInequalityConstraint);
+    std::shared_ptr<dotk::DOTk_GcmmaTestObjectiveFunction> objective = std::make_shared<dotk::DOTk_GcmmaTestObjectiveFunction>();
+    std::shared_ptr<dotk::DOTk_GcmmaTestInequalityConstraint> shared_ptr = std::make_shared<dotk::DOTk_GcmmaTestInequalityConstraint>();
     std::vector<std::shared_ptr<dotk::DOTk_InequalityConstraint<Real> > > inequality(1, shared_ptr);
-    std::shared_ptr<dotk::DOTk_DataMngCCSA> mng(new dotk::DOTk_DataMngCCSA(primal, objective, inequality));
+    std::shared_ptr<dotk::DOTk_DataMngCCSA> mng = std::make_shared<dotk::DOTk_DataMngCCSA>(primal, objective, inequality);
 
     Real globalization_scale = 0.5;
     mng->m_CurrentSigma->fill(0.1);
@@ -618,10 +618,10 @@ TEST(DOTk_DualObjectiveFunctionMMA, updateInequalityCoefficientVectors)
     primal->setControlUpperBound(1.);
     primal->setControlLowerBound(1e-2);
 
-    std::shared_ptr<dotk::DOTk_GcmmaTestObjectiveFunction> objective(new dotk::DOTk_GcmmaTestObjectiveFunction);
-    std::shared_ptr<dotk::DOTk_GcmmaTestInequalityConstraint> shared_ptr(new dotk::DOTk_GcmmaTestInequalityConstraint);
+    std::shared_ptr<dotk::DOTk_GcmmaTestObjectiveFunction> objective = std::make_shared<dotk::DOTk_GcmmaTestObjectiveFunction>();
+    std::shared_ptr<dotk::DOTk_GcmmaTestInequalityConstraint> shared_ptr = std::make_shared<dotk::DOTk_GcmmaTestInequalityConstraint>();
     std::vector<std::shared_ptr<dotk::DOTk_InequalityConstraint<Real> > > inequality(1, shared_ptr);
-    std::shared_ptr<dotk::DOTk_DataMngCCSA> mng(new dotk::DOTk_DataMngCCSA(primal, objective, inequality));
+    std::shared_ptr<dotk::DOTk_DataMngCCSA> mng = std::make_shared<dotk::DOTk_DataMngCCSA>(primal, objective, inequality);
 
     mng->m_CurrentSigma->fill(0.1);
     mng->m_CurrentInequalityGradients->basis(0)->fill(1);
@@ -661,10 +661,10 @@ TEST(DOTk_DualObjectiveFunctionMMA, evaluate)
     primal->setControlUpperBound(1.);
     primal->setControlLowerBound(1e-2);
 
-    std::shared_ptr<dotk::DOTk_GcmmaTestObjectiveFunction> objective(new dotk::DOTk_GcmmaTestObjectiveFunction);
-    std::shared_ptr<dotk::DOTk_GcmmaTestInequalityConstraint> shared_ptr(new dotk::DOTk_GcmmaTestInequalityConstraint);
+    std::shared_ptr<dotk::DOTk_GcmmaTestObjectiveFunction> objective = std::make_shared<dotk::DOTk_GcmmaTestObjectiveFunction>();
+    std::shared_ptr<dotk::DOTk_GcmmaTestInequalityConstraint> shared_ptr = std::make_shared<dotk::DOTk_GcmmaTestInequalityConstraint>();
     std::vector<std::shared_ptr<dotk::DOTk_InequalityConstraint<Real> > > inequality(1, shared_ptr);
-    std::shared_ptr<dotk::DOTk_DataMngCCSA> mng(new dotk::DOTk_DataMngCCSA(primal, objective, inequality));
+    std::shared_ptr<dotk::DOTk_DataMngCCSA> mng = std::make_shared<dotk::DOTk_DataMngCCSA>(primal, objective, inequality);
 
     mng->m_CurrentSigma->fill(0.1);
     mng->m_CurrentObjectiveGradient->fill(1.);
@@ -714,10 +714,10 @@ TEST(DOTk_DualObjectiveFunctionMMA, gradient)
     primal->setControlUpperBound(1.);
     primal->setControlLowerBound(1e-2);
 
-    std::shared_ptr<dotk::DOTk_GcmmaTestObjectiveFunction> objective(new dotk::DOTk_GcmmaTestObjectiveFunction);
-    std::shared_ptr<dotk::DOTk_GcmmaTestInequalityConstraint> shared_ptr(new dotk::DOTk_GcmmaTestInequalityConstraint);
+    std::shared_ptr<dotk::DOTk_GcmmaTestObjectiveFunction> objective = std::make_shared<dotk::DOTk_GcmmaTestObjectiveFunction>();
+    std::shared_ptr<dotk::DOTk_GcmmaTestInequalityConstraint> shared_ptr = std::make_shared<dotk::DOTk_GcmmaTestInequalityConstraint>();
     std::vector<std::shared_ptr<dotk::DOTk_InequalityConstraint<Real> > > inequality(1, shared_ptr);
-    std::shared_ptr<dotk::DOTk_DataMngCCSA> mng(new dotk::DOTk_DataMngCCSA(primal, objective, inequality));
+    std::shared_ptr<dotk::DOTk_DataMngCCSA> mng = std::make_shared<dotk::DOTk_DataMngCCSA>(primal, objective, inequality);
 
     mng->m_CurrentSigma->fill(0.1);
     mng->m_CurrentObjectiveGradient->fill(1.);
@@ -768,10 +768,10 @@ TEST(CCSA, computeResidualNorm)
     primal->setControlUpperBound(1.);
     primal->setControlLowerBound(1e-2);
 
-    std::shared_ptr<dotk::DOTk_GcmmaTestObjectiveFunction> objective(new dotk::DOTk_GcmmaTestObjectiveFunction);
-    std::shared_ptr<dotk::DOTk_GcmmaTestInequalityConstraint> shared_ptr(new dotk::DOTk_GcmmaTestInequalityConstraint);
+    std::shared_ptr<dotk::DOTk_GcmmaTestObjectiveFunction> objective = std::make_shared<dotk::DOTk_GcmmaTestObjectiveFunction>();
+    std::shared_ptr<dotk::DOTk_GcmmaTestInequalityConstraint> shared_ptr = std::make_shared<dotk::DOTk_GcmmaTestInequalityConstraint>();
     std::vector<std::shared_ptr<dotk::DOTk_InequalityConstraint<Real> > > inequality(1, shared_ptr);
-    std::shared_ptr<dotk::DOTk_DataMngCCSA> mng(new dotk::DOTk_DataMngCCSA(primal, objective, inequality));
+    std::shared_ptr<dotk::DOTk_DataMngCCSA> mng = std::make_shared<dotk::DOTk_DataMngCCSA>(primal, objective, inequality);
 
     mng->m_CurrentObjectiveGradient->fill(1.);
     mng->m_CurrentInequalityGradients->basis(0)->fill(1);
@@ -820,10 +820,10 @@ TEST(DOTk_DualSolverNLCG, solve)
     primal->setControlUpperBound(1.);
     primal->setControlLowerBound(1e-2);
 
-    std::shared_ptr<dotk::DOTk_GcmmaTestObjectiveFunction> objective(new dotk::DOTk_GcmmaTestObjectiveFunction);
-    std::shared_ptr<dotk::DOTk_GcmmaTestInequalityConstraint> shared_ptr(new dotk::DOTk_GcmmaTestInequalityConstraint);
+    std::shared_ptr<dotk::DOTk_GcmmaTestObjectiveFunction> objective = std::make_shared<dotk::DOTk_GcmmaTestObjectiveFunction>();
+    std::shared_ptr<dotk::DOTk_GcmmaTestInequalityConstraint> shared_ptr = std::make_shared<dotk::DOTk_GcmmaTestInequalityConstraint>();
     std::vector<std::shared_ptr<dotk::DOTk_InequalityConstraint<Real> > > inequality(1, shared_ptr);
-    std::shared_ptr<dotk::DOTk_DataMngCCSA> mng(new dotk::DOTk_DataMngCCSA(primal, objective, inequality));
+    std::shared_ptr<dotk::DOTk_DataMngCCSA> mng = std::make_shared<dotk::DOTk_DataMngCCSA>(primal, objective, inequality);
 
     mng->m_CurrentSigma->fill(0.1);
     mng->m_CurrentObjectiveGradient->fill(1.);
@@ -831,7 +831,8 @@ TEST(DOTk_DualSolverNLCG, solve)
     (*mng->m_CurrentInequalityGradients)(0, 0) = 2.;
     mng->m_CurrentObjectiveFunctionValue = 0.1;
     mng->m_CurrentInequalityResiduals->fill(0.2);
-    std::shared_ptr<dotk::DOTk_DualObjectiveFunctionMMA> dual_objective(new dotk::DOTk_DualObjectiveFunctionMMA(mng));
+    std::shared_ptr<dotk::DOTk_DualObjectiveFunctionMMA> dual_objective =
+            std::make_shared<dotk::DOTk_DualObjectiveFunctionMMA>(mng);
 
     std::shared_ptr<dotk::Vector<Real> > work = mng->m_Dual->clone();
     work->fill(0.2);
@@ -872,12 +873,12 @@ TEST(DOTk_SubProblemGCMMA, setFunctions)
     primal->setControlUpperBound(1.);
     primal->setControlLowerBound(1e-2);
 
-    std::shared_ptr<dotk::DOTk_GcmmaTestObjectiveFunction> objective(new dotk::DOTk_GcmmaTestObjectiveFunction);
-    std::shared_ptr<dotk::DOTk_GcmmaTestInequalityConstraint> shared_ptr(new dotk::DOTk_GcmmaTestInequalityConstraint);
+    std::shared_ptr<dotk::DOTk_GcmmaTestObjectiveFunction> objective = std::make_shared<dotk::DOTk_GcmmaTestObjectiveFunction>();
+    std::shared_ptr<dotk::DOTk_GcmmaTestInequalityConstraint> shared_ptr = std::make_shared<dotk::DOTk_GcmmaTestInequalityConstraint>();
     std::vector<std::shared_ptr<dotk::DOTk_InequalityConstraint<Real> > > inequality(1, shared_ptr);
-    std::shared_ptr<dotk::DOTk_DataMngCCSA> mng(new dotk::DOTk_DataMngCCSA(primal, objective, inequality));
+    std::shared_ptr<dotk::DOTk_DataMngCCSA> mng = std::make_shared<dotk::DOTk_DataMngCCSA>(primal, objective, inequality);
 
-    std::shared_ptr<dotk::DOTk_DualSolverNLCG> solver(new dotk::DOTk_DualSolverNLCG(primal));
+    std::shared_ptr<dotk::DOTk_DualSolverNLCG> solver = std::make_shared<dotk::DOTk_DualSolverNLCG>(primal);
     dotk::DOTk_SubProblemGCMMA sub_problem(mng, solver);
     EXPECT_TRUE(dotk::ccsa::subproblem_t::GCMMA == sub_problem.type());
 
@@ -904,10 +905,10 @@ TEST(DOTk_SubProblemGCMMA, solve)
     primal->setControlLowerBound(1e-2);
     primal->setControlUpperBound(1.);
 
-    std::shared_ptr<dotk::DOTk_GcmmaTestObjectiveFunction> objective(new dotk::DOTk_GcmmaTestObjectiveFunction);
-    std::shared_ptr<dotk::DOTk_GcmmaTestInequalityConstraint> shared_ptr(new dotk::DOTk_GcmmaTestInequalityConstraint);
+    std::shared_ptr<dotk::DOTk_GcmmaTestObjectiveFunction> objective = std::make_shared<dotk::DOTk_GcmmaTestObjectiveFunction>();
+    std::shared_ptr<dotk::DOTk_GcmmaTestInequalityConstraint> shared_ptr = std::make_shared<dotk::DOTk_GcmmaTestInequalityConstraint>();
     std::vector<std::shared_ptr<dotk::DOTk_InequalityConstraint<Real> > > inequality(1, shared_ptr);
-    std::shared_ptr<dotk::DOTk_DataMngCCSA> mng(new dotk::DOTk_DataMngCCSA(primal, objective, inequality));
+    std::shared_ptr<dotk::DOTk_DataMngCCSA> mng = std::make_shared<dotk::DOTk_DataMngCCSA>(primal, objective, inequality);
 
     const size_t INEQUALITY_INDEX = 0;
     mng->m_CurrentSigma->fill(0.1);
@@ -916,7 +917,7 @@ TEST(DOTk_SubProblemGCMMA, solve)
     mng->m_CurrentObjectiveFunctionValue = objective->value(*mng->m_CurrentControl);
     (*mng->m_CurrentInequalityResiduals)[0] = shared_ptr->residual(*mng->m_CurrentControl);
 
-    std::shared_ptr<dotk::DOTk_DualSolverNLCG> solver(new dotk::DOTk_DualSolverNLCG(primal));
+    std::shared_ptr<dotk::DOTk_DualSolverNLCG> solver = std::make_shared<dotk::DOTk_DualSolverNLCG>(primal);
     dotk::DOTk_SubProblemGCMMA sub_problem(mng, solver);
     EXPECT_TRUE(dotk::ccsa::subproblem_t::GCMMA == sub_problem.type());
 
@@ -941,13 +942,13 @@ TEST(DOTk_AlgorithmCCSA, solve_GCMMA_POLAK_RIBIERE)
     primal->setControlLowerBound(1e-3);
     primal->setControlUpperBound(10);
 
-    std::shared_ptr<dotk::DOTk_GcmmaTestObjectiveFunction> objective(new dotk::DOTk_GcmmaTestObjectiveFunction);
-    std::shared_ptr<dotk::DOTk_GcmmaTestInequalityConstraint> shared_ptr(new dotk::DOTk_GcmmaTestInequalityConstraint);
+    std::shared_ptr<dotk::DOTk_GcmmaTestObjectiveFunction> objective = std::make_shared<dotk::DOTk_GcmmaTestObjectiveFunction>();
+    std::shared_ptr<dotk::DOTk_GcmmaTestInequalityConstraint> shared_ptr = std::make_shared<dotk::DOTk_GcmmaTestInequalityConstraint>();
     std::vector<std::shared_ptr<dotk::DOTk_InequalityConstraint<Real> > > inequality(1, shared_ptr);
 
-    std::shared_ptr<dotk::DOTk_DataMngCCSA> mng(new dotk::DOTk_DataMngCCSA(primal, objective, inequality));
-    std::shared_ptr<dotk::DOTk_DualSolverNLCG> solver(new dotk::DOTk_DualSolverNLCG(primal));
-    std::shared_ptr<dotk::DOTk_SubProblemGCMMA> sub_problem(new dotk::DOTk_SubProblemGCMMA(mng, solver));
+    std::shared_ptr<dotk::DOTk_DataMngCCSA> mng = std::make_shared<dotk::DOTk_DataMngCCSA>(primal, objective, inequality);
+    std::shared_ptr<dotk::DOTk_DualSolverNLCG> solver = std::make_shared<dotk::DOTk_DualSolverNLCG>(primal);
+    std::shared_ptr<dotk::DOTk_SubProblemGCMMA> sub_problem = std::make_shared<dotk::DOTk_SubProblemGCMMA>(mng, solver);
     dotk::DOTk_AlgorithmCCSA gcmma(mng, sub_problem);
 
     gcmma.getMin();
@@ -978,14 +979,14 @@ TEST(DOTk_AlgorithmCCSA, solve_GCMMA_FLETCHER_REEVES)
     primal->setControlLowerBound(1e-3);
     primal->setControlUpperBound(10);
 
-    std::shared_ptr<dotk::DOTk_GcmmaTestObjectiveFunction> objective(new dotk::DOTk_GcmmaTestObjectiveFunction);
-    std::shared_ptr<dotk::DOTk_GcmmaTestInequalityConstraint> shared_ptr(new dotk::DOTk_GcmmaTestInequalityConstraint);
+    std::shared_ptr<dotk::DOTk_GcmmaTestObjectiveFunction> objective = std::make_shared<dotk::DOTk_GcmmaTestObjectiveFunction>();
+    std::shared_ptr<dotk::DOTk_GcmmaTestInequalityConstraint> shared_ptr = std::make_shared<dotk::DOTk_GcmmaTestInequalityConstraint>();
     std::vector<std::shared_ptr<dotk::DOTk_InequalityConstraint<Real> > > inequality(1, shared_ptr);
 
-    std::shared_ptr<dotk::DOTk_DataMngCCSA> mng(new dotk::DOTk_DataMngCCSA(primal, objective, inequality));
-    std::shared_ptr<dotk::DOTk_DualSolverNLCG> solver(new dotk::DOTk_DualSolverNLCG(primal));
+    std::shared_ptr<dotk::DOTk_DataMngCCSA> mng = std::make_shared<dotk::DOTk_DataMngCCSA>(primal, objective, inequality);
+    std::shared_ptr<dotk::DOTk_DualSolverNLCG> solver = std::make_shared<dotk::DOTk_DualSolverNLCG>(primal);
     solver->setFletcherReevesNLCG();
-    std::shared_ptr<dotk::DOTk_SubProblemGCMMA> sub_problem(new dotk::DOTk_SubProblemGCMMA(mng, solver));
+    std::shared_ptr<dotk::DOTk_SubProblemGCMMA> sub_problem = std::make_shared<dotk::DOTk_SubProblemGCMMA>(mng, solver);
     dotk::DOTk_AlgorithmCCSA gcmma(mng, sub_problem);
 
     gcmma.getMin();
@@ -1016,14 +1017,14 @@ TEST(DOTk_AlgorithmCCSA, solve_GCMMA_DAI_YUAN)
     primal->setControlLowerBound(1e-3);
     primal->setControlUpperBound(10);
 
-    std::shared_ptr<dotk::DOTk_GcmmaTestObjectiveFunction> objective(new dotk::DOTk_GcmmaTestObjectiveFunction);
-    std::shared_ptr<dotk::DOTk_GcmmaTestInequalityConstraint> shared_ptr(new dotk::DOTk_GcmmaTestInequalityConstraint);
+    std::shared_ptr<dotk::DOTk_GcmmaTestObjectiveFunction> objective = std::make_shared<dotk::DOTk_GcmmaTestObjectiveFunction>();
+    std::shared_ptr<dotk::DOTk_GcmmaTestInequalityConstraint> shared_ptr = std::make_shared<dotk::DOTk_GcmmaTestInequalityConstraint>();
     std::vector<std::shared_ptr<dotk::DOTk_InequalityConstraint<Real> > > inequality(1, shared_ptr);
 
-    std::shared_ptr<dotk::DOTk_DataMngCCSA> mng(new dotk::DOTk_DataMngCCSA(primal, objective, inequality));
-    std::shared_ptr<dotk::DOTk_DualSolverNLCG> solver(new dotk::DOTk_DualSolverNLCG(primal));
+    std::shared_ptr<dotk::DOTk_DataMngCCSA> mng = std::make_shared<dotk::DOTk_DataMngCCSA>(primal, objective, inequality);
+    std::shared_ptr<dotk::DOTk_DualSolverNLCG> solver = std::make_shared<dotk::DOTk_DualSolverNLCG>(primal);
     solver->setDaiYuanNLCG();
-    std::shared_ptr<dotk::DOTk_SubProblemGCMMA> sub_problem(new dotk::DOTk_SubProblemGCMMA(mng, solver));
+    std::shared_ptr<dotk::DOTk_SubProblemGCMMA> sub_problem = std::make_shared<dotk::DOTk_SubProblemGCMMA>(mng, solver);
     dotk::DOTk_AlgorithmCCSA gcmma(mng, sub_problem);
 
     gcmma.getMin();
@@ -1054,14 +1055,14 @@ TEST(DOTk_AlgorithmCCSA, solve_GCMMA_HESTENES_STIEFEL)
     primal->setControlLowerBound(1e-3);
     primal->setControlUpperBound(10);
 
-    std::shared_ptr<dotk::DOTk_GcmmaTestObjectiveFunction> objective(new dotk::DOTk_GcmmaTestObjectiveFunction);
-    std::shared_ptr<dotk::DOTk_GcmmaTestInequalityConstraint> shared_ptr(new dotk::DOTk_GcmmaTestInequalityConstraint);
+    std::shared_ptr<dotk::DOTk_GcmmaTestObjectiveFunction> objective = std::make_shared<dotk::DOTk_GcmmaTestObjectiveFunction>();
+    std::shared_ptr<dotk::DOTk_GcmmaTestInequalityConstraint> shared_ptr = std::make_shared<dotk::DOTk_GcmmaTestInequalityConstraint>();
     std::vector<std::shared_ptr<dotk::DOTk_InequalityConstraint<Real> > > inequality(1, shared_ptr);
 
-    std::shared_ptr<dotk::DOTk_DataMngCCSA> mng(new dotk::DOTk_DataMngCCSA(primal, objective, inequality));
-    std::shared_ptr<dotk::DOTk_DualSolverNLCG> solver(new dotk::DOTk_DualSolverNLCG(primal));
+    std::shared_ptr<dotk::DOTk_DataMngCCSA> mng = std::make_shared<dotk::DOTk_DataMngCCSA>(primal, objective, inequality);
+    std::shared_ptr<dotk::DOTk_DualSolverNLCG> solver = std::make_shared<dotk::DOTk_DualSolverNLCG>(primal);
     solver->setHestenesStiefelNLCG();
-    std::shared_ptr<dotk::DOTk_SubProblemGCMMA> sub_problem(new dotk::DOTk_SubProblemGCMMA(mng, solver));
+    std::shared_ptr<dotk::DOTk_SubProblemGCMMA> sub_problem = std::make_shared<dotk::DOTk_SubProblemGCMMA>(mng, solver);
     dotk::DOTk_AlgorithmCCSA gcmma(mng, sub_problem);
 
     gcmma.getMin();
@@ -1092,14 +1093,14 @@ TEST(DOTk_AlgorithmCCSA, solve_GCMMA_CONJUGATE_DESCENT)
     primal->setControlLowerBound(1e-3);
     primal->setControlUpperBound(10);
 
-    std::shared_ptr<dotk::DOTk_GcmmaTestObjectiveFunction> objective(new dotk::DOTk_GcmmaTestObjectiveFunction);
-    std::shared_ptr<dotk::DOTk_GcmmaTestInequalityConstraint> shared_ptr(new dotk::DOTk_GcmmaTestInequalityConstraint);
+    std::shared_ptr<dotk::DOTk_GcmmaTestObjectiveFunction> objective = std::make_shared<dotk::DOTk_GcmmaTestObjectiveFunction>();
+    std::shared_ptr<dotk::DOTk_GcmmaTestInequalityConstraint> shared_ptr = std::make_shared<dotk::DOTk_GcmmaTestInequalityConstraint>();
     std::vector<std::shared_ptr<dotk::DOTk_InequalityConstraint<Real> > > inequality(1, shared_ptr);
 
-    std::shared_ptr<dotk::DOTk_DataMngCCSA> mng(new dotk::DOTk_DataMngCCSA(primal, objective, inequality));
-    std::shared_ptr<dotk::DOTk_DualSolverNLCG> solver(new dotk::DOTk_DualSolverNLCG(primal));
+    std::shared_ptr<dotk::DOTk_DataMngCCSA> mng = std::make_shared<dotk::DOTk_DataMngCCSA>(primal, objective, inequality);
+    std::shared_ptr<dotk::DOTk_DualSolverNLCG> solver = std::make_shared<dotk::DOTk_DualSolverNLCG>(primal);
     solver->setConjugateDescentNLCG();
-    std::shared_ptr<dotk::DOTk_SubProblemGCMMA> sub_problem(new dotk::DOTk_SubProblemGCMMA(mng, solver));
+    std::shared_ptr<dotk::DOTk_SubProblemGCMMA> sub_problem = std::make_shared<dotk::DOTk_SubProblemGCMMA>(mng, solver);
     dotk::DOTk_AlgorithmCCSA gcmma(mng, sub_problem);
 
     gcmma.getMin();
@@ -1130,14 +1131,14 @@ TEST(DOTk_AlgorithmCCSA, solve_GCMMA_LIU_STOREY)
     primal->setControlLowerBound(1e-3);
     primal->setControlUpperBound(10);
 
-    std::shared_ptr<dotk::DOTk_GcmmaTestObjectiveFunction> objective(new dotk::DOTk_GcmmaTestObjectiveFunction);
-    std::shared_ptr<dotk::DOTk_GcmmaTestInequalityConstraint> shared_ptr(new dotk::DOTk_GcmmaTestInequalityConstraint);
+    std::shared_ptr<dotk::DOTk_GcmmaTestObjectiveFunction> objective = std::make_shared<dotk::DOTk_GcmmaTestObjectiveFunction>();
+    std::shared_ptr<dotk::DOTk_GcmmaTestInequalityConstraint> shared_ptr = std::make_shared<dotk::DOTk_GcmmaTestInequalityConstraint>();
     std::vector<std::shared_ptr<dotk::DOTk_InequalityConstraint<Real> > > inequality(1, shared_ptr);
 
-    std::shared_ptr<dotk::DOTk_DataMngCCSA> mng(new dotk::DOTk_DataMngCCSA(primal, objective, inequality));
-    std::shared_ptr<dotk::DOTk_DualSolverNLCG> solver(new dotk::DOTk_DualSolverNLCG(primal));
+    std::shared_ptr<dotk::DOTk_DataMngCCSA> mng = std::make_shared<dotk::DOTk_DataMngCCSA>(primal, objective, inequality);
+    std::shared_ptr<dotk::DOTk_DualSolverNLCG> solver = std::make_shared<dotk::DOTk_DualSolverNLCG>(primal);
     solver->setLiuStoreyNLCG();
-    std::shared_ptr<dotk::DOTk_SubProblemGCMMA> sub_problem(new dotk::DOTk_SubProblemGCMMA(mng, solver));
+    std::shared_ptr<dotk::DOTk_SubProblemGCMMA> sub_problem = std::make_shared<dotk::DOTk_SubProblemGCMMA>(mng, solver);
     dotk::DOTk_AlgorithmCCSA gcmma(mng, sub_problem);
 
     gcmma.getMin();
@@ -1168,14 +1169,14 @@ TEST(DOTk_AlgorithmCCSA, solve_MMA_ConjugateDescent)
     primal->setControlLowerBound(1e-3);
     primal->setControlUpperBound(10);
 
-    std::shared_ptr<dotk::DOTk_GcmmaTestObjectiveFunction> objective(new dotk::DOTk_GcmmaTestObjectiveFunction);
-    std::shared_ptr<dotk::DOTk_GcmmaTestInequalityConstraint> shared_ptr(new dotk::DOTk_GcmmaTestInequalityConstraint);
+    std::shared_ptr<dotk::DOTk_GcmmaTestObjectiveFunction> objective = std::make_shared<dotk::DOTk_GcmmaTestObjectiveFunction>();
+    std::shared_ptr<dotk::DOTk_GcmmaTestInequalityConstraint> shared_ptr = std::make_shared<dotk::DOTk_GcmmaTestInequalityConstraint>();
     std::vector<std::shared_ptr<dotk::DOTk_InequalityConstraint<Real> > > inequality(1, shared_ptr);
 
-    std::shared_ptr<dotk::DOTk_DataMngCCSA> mng(new dotk::DOTk_DataMngCCSA(primal, objective, inequality));
-    std::shared_ptr<dotk::DOTk_DualSolverNLCG> solver(new dotk::DOTk_DualSolverNLCG(primal));
+    std::shared_ptr<dotk::DOTk_DataMngCCSA> mng = std::make_shared<dotk::DOTk_DataMngCCSA>(primal, objective, inequality);
+    std::shared_ptr<dotk::DOTk_DualSolverNLCG> solver = std::make_shared<dotk::DOTk_DualSolverNLCG>(primal);
     solver->setConjugateDescentNLCG();
-    std::shared_ptr<dotk::DOTk_SubProblemMMA> sub_problem(new dotk::DOTk_SubProblemMMA(mng, solver));
+    std::shared_ptr<dotk::DOTk_SubProblemMMA> sub_problem = std::make_shared<dotk::DOTk_SubProblemMMA>(mng, solver);
     dotk::DOTk_AlgorithmCCSA mma(mng, sub_problem);
 
     mma.getMin();
@@ -1206,14 +1207,14 @@ TEST(DOTk_AlgorithmCCSA, solve_MMA_DaiYuan)
     primal->setControlLowerBound(1e-3);
     primal->setControlUpperBound(10);
 
-    std::shared_ptr<dotk::DOTk_GcmmaTestObjectiveFunction> objective(new dotk::DOTk_GcmmaTestObjectiveFunction);
-    std::shared_ptr<dotk::DOTk_GcmmaTestInequalityConstraint> shared_ptr(new dotk::DOTk_GcmmaTestInequalityConstraint);
+    std::shared_ptr<dotk::DOTk_GcmmaTestObjectiveFunction> objective = std::make_shared<dotk::DOTk_GcmmaTestObjectiveFunction>();
+    std::shared_ptr<dotk::DOTk_GcmmaTestInequalityConstraint> shared_ptr = std::make_shared<dotk::DOTk_GcmmaTestInequalityConstraint>();
     std::vector<std::shared_ptr<dotk::DOTk_InequalityConstraint<Real> > > inequality(1, shared_ptr);
 
-    std::shared_ptr<dotk::DOTk_DataMngCCSA> mng(new dotk::DOTk_DataMngCCSA(primal, objective, inequality));
-    std::shared_ptr<dotk::DOTk_DualSolverNLCG> solver(new dotk::DOTk_DualSolverNLCG(primal));
+    std::shared_ptr<dotk::DOTk_DataMngCCSA> mng = std::make_shared<dotk::DOTk_DataMngCCSA>(primal, objective, inequality);
+    std::shared_ptr<dotk::DOTk_DualSolverNLCG> solver = std::make_shared<dotk::DOTk_DualSolverNLCG>(primal);
     solver->setDaiYuanNLCG();
-    std::shared_ptr<dotk::DOTk_SubProblemMMA> sub_problem(new dotk::DOTk_SubProblemMMA(mng, solver));
+    std::shared_ptr<dotk::DOTk_SubProblemMMA> sub_problem = std::make_shared<dotk::DOTk_SubProblemMMA>(mng, solver);
     dotk::DOTk_AlgorithmCCSA mma(mng, sub_problem);
 
     mma.getMin();
@@ -1244,14 +1245,14 @@ TEST(DOTk_AlgorithmCCSA, solve_MMA_LIU_STOREY)
     primal->setControlLowerBound(1e-3);
     primal->setControlUpperBound(10);
 
-    std::shared_ptr<dotk::DOTk_GcmmaTestObjectiveFunction> objective(new dotk::DOTk_GcmmaTestObjectiveFunction);
-    std::shared_ptr<dotk::DOTk_GcmmaTestInequalityConstraint> shared_ptr(new dotk::DOTk_GcmmaTestInequalityConstraint);
+    std::shared_ptr<dotk::DOTk_GcmmaTestObjectiveFunction> objective = std::make_shared<dotk::DOTk_GcmmaTestObjectiveFunction>();
+    std::shared_ptr<dotk::DOTk_GcmmaTestInequalityConstraint> shared_ptr = std::make_shared<dotk::DOTk_GcmmaTestInequalityConstraint>();
     std::vector<std::shared_ptr<dotk::DOTk_InequalityConstraint<Real> > > inequality(1, shared_ptr);
 
-    std::shared_ptr<dotk::DOTk_DataMngCCSA> mng(new dotk::DOTk_DataMngCCSA(primal, objective, inequality));
-    std::shared_ptr<dotk::DOTk_DualSolverNLCG> solver(new dotk::DOTk_DualSolverNLCG(primal));
+    std::shared_ptr<dotk::DOTk_DataMngCCSA> mng = std::make_shared<dotk::DOTk_DataMngCCSA>(primal, objective, inequality);
+    std::shared_ptr<dotk::DOTk_DualSolverNLCG> solver = std::make_shared<dotk::DOTk_DualSolverNLCG>(primal);
     solver->setLiuStoreyNLCG();
-    std::shared_ptr<dotk::DOTk_SubProblemMMA> sub_problem(new dotk::DOTk_SubProblemMMA(mng, solver));
+    std::shared_ptr<dotk::DOTk_SubProblemMMA> sub_problem = std::make_shared<dotk::DOTk_SubProblemMMA>(mng, solver);
     dotk::DOTk_AlgorithmCCSA mma(mng, sub_problem);
 
     mma.getMin();
@@ -1282,14 +1283,14 @@ TEST(DOTk_AlgorithmCCSA, solve_MMA_FletcherReeves)
     primal->setControlLowerBound(1e-3);
     primal->setControlUpperBound(10);
 
-    std::shared_ptr<dotk::DOTk_GcmmaTestObjectiveFunction> objective(new dotk::DOTk_GcmmaTestObjectiveFunction);
-    std::shared_ptr<dotk::DOTk_GcmmaTestInequalityConstraint> shared_ptr(new dotk::DOTk_GcmmaTestInequalityConstraint);
+    std::shared_ptr<dotk::DOTk_GcmmaTestObjectiveFunction> objective = std::make_shared<dotk::DOTk_GcmmaTestObjectiveFunction>();
+    std::shared_ptr<dotk::DOTk_GcmmaTestInequalityConstraint> shared_ptr = std::make_shared<dotk::DOTk_GcmmaTestInequalityConstraint>();
     std::vector<std::shared_ptr<dotk::DOTk_InequalityConstraint<Real> > > inequality(1, shared_ptr);
 
-    std::shared_ptr<dotk::DOTk_DataMngCCSA> mng(new dotk::DOTk_DataMngCCSA(primal, objective, inequality));
-    std::shared_ptr<dotk::DOTk_DualSolverNLCG> solver(new dotk::DOTk_DualSolverNLCG(primal));
+    std::shared_ptr<dotk::DOTk_DataMngCCSA> mng = std::make_shared<dotk::DOTk_DataMngCCSA>(primal, objective, inequality);
+    std::shared_ptr<dotk::DOTk_DualSolverNLCG> solver = std::make_shared<dotk::DOTk_DualSolverNLCG>(primal);
     solver->setFletcherReevesNLCG();
-    std::shared_ptr<dotk::DOTk_SubProblemMMA> sub_problem(new dotk::DOTk_SubProblemMMA(mng, solver));
+    std::shared_ptr<dotk::DOTk_SubProblemMMA> sub_problem = std::make_shared<dotk::DOTk_SubProblemMMA>(mng, solver);
     dotk::DOTk_AlgorithmCCSA mma(mng, sub_problem);
 
     mma.getMin();
@@ -1320,14 +1321,14 @@ TEST(DOTk_AlgorithmCCSA, solve_MMA_HestenesStiefel)
     primal->setControlLowerBound(1e-3);
     primal->setControlUpperBound(10);
 
-    std::shared_ptr<dotk::DOTk_GcmmaTestObjectiveFunction> objective(new dotk::DOTk_GcmmaTestObjectiveFunction);
-    std::shared_ptr<dotk::DOTk_GcmmaTestInequalityConstraint> shared_ptr(new dotk::DOTk_GcmmaTestInequalityConstraint);
+    std::shared_ptr<dotk::DOTk_GcmmaTestObjectiveFunction> objective = std::make_shared<dotk::DOTk_GcmmaTestObjectiveFunction>();
+    std::shared_ptr<dotk::DOTk_GcmmaTestInequalityConstraint> shared_ptr = std::make_shared<dotk::DOTk_GcmmaTestInequalityConstraint>();
     std::vector<std::shared_ptr<dotk::DOTk_InequalityConstraint<Real> > > inequality(1, shared_ptr);
 
-    std::shared_ptr<dotk::DOTk_DataMngCCSA> mng(new dotk::DOTk_DataMngCCSA(primal, objective, inequality));
-    std::shared_ptr<dotk::DOTk_DualSolverNLCG> solver(new dotk::DOTk_DualSolverNLCG(primal));
+    std::shared_ptr<dotk::DOTk_DataMngCCSA> mng = std::make_shared<dotk::DOTk_DataMngCCSA>(primal, objective, inequality);
+    std::shared_ptr<dotk::DOTk_DualSolverNLCG> solver = std::make_shared<dotk::DOTk_DualSolverNLCG>(primal);
     solver->setHestenesStiefelNLCG();
-    std::shared_ptr<dotk::DOTk_SubProblemMMA> sub_problem(new dotk::DOTk_SubProblemMMA(mng, solver));
+    std::shared_ptr<dotk::DOTk_SubProblemMMA> sub_problem = std::make_shared<dotk::DOTk_SubProblemMMA>(mng, solver);
     dotk::DOTk_AlgorithmCCSA mma(mng, sub_problem);
 
     mma.getMin();
@@ -1358,13 +1359,13 @@ TEST(DOTk_AlgorithmCCSA, solve_MMA_PolakRibiere)
     primal->setControlLowerBound(1e-3);
     primal->setControlUpperBound(10);
 
-    std::shared_ptr<dotk::DOTk_GcmmaTestObjectiveFunction> objective(new dotk::DOTk_GcmmaTestObjectiveFunction);
-    std::shared_ptr<dotk::DOTk_GcmmaTestInequalityConstraint> shared_ptr(new dotk::DOTk_GcmmaTestInequalityConstraint);
+    std::shared_ptr<dotk::DOTk_GcmmaTestObjectiveFunction> objective = std::make_shared<dotk::DOTk_GcmmaTestObjectiveFunction>();
+    std::shared_ptr<dotk::DOTk_GcmmaTestInequalityConstraint> shared_ptr = std::make_shared<dotk::DOTk_GcmmaTestInequalityConstraint>();
     std::vector<std::shared_ptr<dotk::DOTk_InequalityConstraint<Real> > > inequality(1, shared_ptr);
 
-    std::shared_ptr<dotk::DOTk_DataMngCCSA> mng(new dotk::DOTk_DataMngCCSA(primal, objective, inequality));
-    std::shared_ptr<dotk::DOTk_DualSolverNLCG> solver(new dotk::DOTk_DualSolverNLCG(primal));
-    std::shared_ptr<dotk::DOTk_SubProblemMMA> sub_problem(new dotk::DOTk_SubProblemMMA(mng, solver));
+    std::shared_ptr<dotk::DOTk_DataMngCCSA> mng = std::make_shared<dotk::DOTk_DataMngCCSA>(primal, objective, inequality);
+    std::shared_ptr<dotk::DOTk_DualSolverNLCG> solver = std::make_shared<dotk::DOTk_DualSolverNLCG>(primal);
+    std::shared_ptr<dotk::DOTk_SubProblemMMA> sub_problem = std::make_shared<dotk::DOTk_SubProblemMMA>(mng, solver);
     dotk::DOTk_AlgorithmCCSA mma(mng, sub_problem);
 
     mma.getMin();

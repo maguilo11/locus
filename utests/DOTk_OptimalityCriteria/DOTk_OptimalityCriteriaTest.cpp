@@ -161,7 +161,7 @@ TEST(DOTkOptimalityCriteriaDataMngTest, DefaultValues)
     size_t ndual = 3;
     size_t nstate = 5;
     size_t ncontrol = 8;
-    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal = std::make_shared<dotk::DOTk_Primal>();
 
     primal->allocateSerialDualVector(ndual);
     primal->allocateSerialStateVector(nstate);
@@ -219,7 +219,7 @@ TEST(DOTkOptimalityCriteriaDataMngTest, SetFunctions)
     size_t ndual = 3;
     size_t nstate = 5;
     size_t ncontrol = 8;
-    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal = std::make_shared<dotk::DOTk_Primal>();
 
     primal->allocateSerialDualVector(ndual);
     primal->allocateSerialStateVector(nstate);

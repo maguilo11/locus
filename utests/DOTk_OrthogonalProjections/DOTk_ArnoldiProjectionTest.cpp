@@ -22,7 +22,7 @@ TEST(DOTk_ArnoldiProjection, setAndGetKrylovSubspaceDim)
 {
     size_t ncontrols = 2;
     size_t krylov_subspace_dim = 200;
-    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal = std::make_shared<dotk::DOTk_Primal>();
     primal->allocateSerialControlArray(ncontrols);
     dotk::DOTk_ArnoldiProjection projection(primal, krylov_subspace_dim);
 
@@ -35,7 +35,7 @@ TEST(DOTk_ArnoldiProjection, setAndGetProjectionType)
 {
     size_t ncontrols = 2;
     size_t krylov_subspace_dim = 200;
-    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal = std::make_shared<dotk::DOTk_Primal>();
     primal->allocateSerialControlArray(ncontrols);
     dotk::DOTk_ArnoldiProjection projection(primal, krylov_subspace_dim);
 
@@ -48,7 +48,7 @@ TEST(DOTk_ArnoldiProjection, setAndGetOrthogonalVector)
 {
     size_t ncontrols = 2;
     size_t krylov_subspace_dim = 2;
-    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal = std::make_shared<dotk::DOTk_Primal>();
     primal->allocateSerialControlArray(ncontrols);
     dotk::DOTk_ArnoldiProjection projection(primal, krylov_subspace_dim);
 
@@ -64,13 +64,13 @@ TEST(DOTk_ArnoldiProjection, arnoldi)
     size_t nduals = 2;
     size_t ncontrols = 2;
     size_t krylov_subspace_dim = 2;
-    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal = std::make_shared<dotk::DOTk_Primal>();
     primal->allocateSerialDualArray(nduals, 0);
     primal->allocateSerialControlArray(ncontrols, 0);
     dotk::DOTk_ArnoldiProjection projection(primal, krylov_subspace_dim);
 
-    std::shared_ptr<dotk::Vector<Real> >
-        ortho_vector(new dotk::DOTk_MultiVector<Real>(*primal->control(), *primal->dual()));
+    std::shared_ptr<dotk::Vector<Real> > ortho_vector =
+            std::make_shared<dotk::DOTk_MultiVector<Real>>(*primal->control(), *primal->dual());
     (*ortho_vector->dual())[0] = 0.443285802300365;
     (*ortho_vector->dual())[1] = 0.380162139476383;
     (*ortho_vector->control())[0] = 0.600561554982781;

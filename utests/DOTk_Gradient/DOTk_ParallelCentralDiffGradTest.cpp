@@ -22,9 +22,9 @@ namespace DOTkParallelCentralDiffGradTest
 TEST(ParallelCentralDiffGrad, getFiniteDiffPerturbationVec)
 {
     size_t ncontrols = 2;
-    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal = std::make_shared<dotk::DOTk_Primal>();
     primal->allocateSerialControlArray(ncontrols, 2);
-    std::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
+    std::shared_ptr<dotk::DOTk_Rosenbrock> objective = std::make_shared<dotk::DOTk_Rosenbrock>();
     dotk::DOTk_LineSearchMngTypeULP mng(primal, objective);
     dotk::DOTk_ParallelCentralDiffGrad grad(mng.getNewGradient());
 
@@ -36,9 +36,9 @@ TEST(ParallelCentralDiffGrad, getFiniteDiffPerturbationVec)
 TEST(ParallelCentralDiffGrad, setFiniteDiffPerturbationVec)
 {
     size_t ncontrols = 2;
-    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal = std::make_shared<dotk::DOTk_Primal>();
     primal->allocateSerialControlArray(ncontrols, 2);
-    std::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
+    std::shared_ptr<dotk::DOTk_Rosenbrock> objective = std::make_shared<dotk::DOTk_Rosenbrock>();
     dotk::DOTk_LineSearchMngTypeULP mng(primal, objective);
     dotk::DOTk_ParallelCentralDiffGrad grad(mng.getNewGradient());
 
@@ -55,9 +55,9 @@ TEST(ParallelCentralDiffGrad, setFiniteDiffPerturbationVec)
 TEST(ParallelCentralDiffGrad, gradient)
 {
     size_t ncontrols = 2;
-    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal = std::make_shared<dotk::DOTk_Primal>();
     primal->allocateSerialControlArray(ncontrols, 2);
-    std::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
+    std::shared_ptr<dotk::DOTk_Rosenbrock> objective = std::make_shared<dotk::DOTk_Rosenbrock>();
     dotk::DOTk_LineSearchMngTypeULP mng(primal, objective);
     dotk::DOTk_ParallelCentralDiffGrad grad(mng.getNewGradient());
     EXPECT_EQ(dotk::types::PARALLEL_CENTRAL_DIFF_GRAD, grad.type());
@@ -76,9 +76,9 @@ TEST(ParallelCentralDiffGrad, gradient)
 TEST(ParallelCentralDiffGrad, getGradient)
 {
     size_t ncontrols = 2;
-    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal = std::make_shared<dotk::DOTk_Primal>();
     primal->allocateSerialControlArray(ncontrols, 2);
-    std::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
+    std::shared_ptr<dotk::DOTk_Rosenbrock> objective = std::make_shared<dotk::DOTk_Rosenbrock>();
     dotk::DOTk_LineSearchMngTypeULP mng(primal, objective);
     dotk::DOTk_ParallelCentralDiffGrad grad(mng.getNewGradient());
     EXPECT_EQ(dotk::types::PARALLEL_CENTRAL_DIFF_GRAD, grad.type());

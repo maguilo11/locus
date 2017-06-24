@@ -42,7 +42,7 @@ TEST(DOTk_DirectSolver, backwardSolve)
     dotk::DOTk_UpperTriangularDirectSolver solver(num_of_unknowns);
     EXPECT_EQ(dotk::types::UPPER_TRIANGULAR_DIRECT_SOLVER, solver.getDirectSolverType());
 
-    std::shared_ptr<dotk::matrix<Real> > matrix(new dotk::serial::DOTk_UpperTriangularMatrix<Real>(num_of_unknowns));
+    std::shared_ptr<dotk::matrix<Real> > matrix = std::make_shared<dotk::serial::DOTk_UpperTriangularMatrix<Real>>(num_of_unknowns);
     (*matrix)(0, 0) = 1.1;
     (*matrix)(0, 1) = 4.9;
     (*matrix)(0, 2) = 7.7;

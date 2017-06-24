@@ -26,9 +26,9 @@ TEST(QR, ClassicalGramSchmidt)
     size_t nrows = 4;
     size_t ncols = 4;
     dotk::StdArray<Real> x(nrows);
-    std::shared_ptr<dotk::matrix<Real> > A(new dotk::serial::DOTk_ColumnMatrix<Real>(x, ncols));
-    std::shared_ptr<dotk::matrix<Real> > Q(new dotk::serial::DOTk_ColumnMatrix<Real>(x, ncols));
-    std::shared_ptr<dotk::matrix<Real> > R(new dotk::serial::DOTk_ColumnMatrix<Real>(x, ncols));
+    std::shared_ptr<dotk::matrix<Real> > A = std::make_shared<dotk::serial::DOTk_ColumnMatrix<Real>>(x, ncols);
+    std::shared_ptr<dotk::matrix<Real> > Q = std::make_shared<dotk::serial::DOTk_ColumnMatrix<Real>>(x, ncols);
+    std::shared_ptr<dotk::matrix<Real> > R = std::make_shared<dotk::serial::DOTk_ColumnMatrix<Real>>(x, ncols);
     // basis 1
     (*A)(0, 0) = 10.;
     (*A)(1, 0) = -1.;
@@ -55,7 +55,7 @@ TEST(QR, ClassicalGramSchmidt)
     qr.factorization(A, Q, R);
 
     // Check Q^t * Q = I
-    std::shared_ptr<dotk::matrix<Real> > I(new dotk::serial::DOTk_ColumnMatrix<Real>(x, ncols));
+    std::shared_ptr<dotk::matrix<Real> > I = std::make_shared<dotk::serial::DOTk_ColumnMatrix<Real>>(x, ncols);
     Q->gemm(true, false, 1., *Q, 0., *I);
     Real eye[] = {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1};
     dotk::StdArray<Real> data(I->size(), 0.);
@@ -63,7 +63,7 @@ TEST(QR, ClassicalGramSchmidt)
     dotk::gtest::checkResults(I->size(), eye, data.size(), &(data[0]));
 
     // Check Q * R = A
-    std::shared_ptr<dotk::matrix<Real> > Ao(new dotk::serial::DOTk_ColumnMatrix<Real>(x, ncols));
+    std::shared_ptr<dotk::matrix<Real> > Ao = std::make_shared<dotk::serial::DOTk_ColumnMatrix<Real>>(x, ncols);
     Q->gemm(false, false, 1., *R, 0., *Ao);
     Real original[] = {10, -1, 2, 0, -1, 11, -1, 3, 2, -1, 10, -1, 0, 3, -1, 8};
     data.fill(0.);
@@ -127,9 +127,9 @@ TEST(QR, ModifiedGramSchmidt)
     size_t nrows = 4;
     size_t ncols = 4;
     dotk::StdArray<Real> x(nrows);
-    std::shared_ptr<dotk::matrix<Real> > A(new dotk::serial::DOTk_ColumnMatrix<Real>(x, ncols));
-    std::shared_ptr<dotk::matrix<Real> > Q(new dotk::serial::DOTk_ColumnMatrix<Real>(x, ncols));
-    std::shared_ptr<dotk::matrix<Real> > R(new dotk::serial::DOTk_ColumnMatrix<Real>(x, ncols));
+    std::shared_ptr<dotk::matrix<Real> > A = std::make_shared<dotk::serial::DOTk_ColumnMatrix<Real>>(x, ncols);
+    std::shared_ptr<dotk::matrix<Real> > Q = std::make_shared<dotk::serial::DOTk_ColumnMatrix<Real>>(x, ncols);
+    std::shared_ptr<dotk::matrix<Real> > R = std::make_shared<dotk::serial::DOTk_ColumnMatrix<Real>>(x, ncols);
     // basis 1
     (*A)(0, 0) = 10.;
     (*A)(1, 0) = -1.;
@@ -156,7 +156,7 @@ TEST(QR, ModifiedGramSchmidt)
     qr.factorization(A, Q, R);
 
     // Check Q^t * Q = I
-    std::shared_ptr<dotk::matrix<Real> > I(new dotk::serial::DOTk_ColumnMatrix<Real>(x, ncols));
+    std::shared_ptr<dotk::matrix<Real> > I = std::make_shared<dotk::serial::DOTk_ColumnMatrix<Real>>(x, ncols);
     Q->gemm(true, false, 1., *Q, 0., *I);
     Real eye[] = {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1};
     dotk::StdArray<Real> data(I->size(), 0.);
@@ -164,7 +164,7 @@ TEST(QR, ModifiedGramSchmidt)
     dotk::gtest::checkResults(I->size(), eye, data.size(), &(data[0]));
 
     // Check Q * R = A
-    std::shared_ptr<dotk::matrix<Real> > Ao(new dotk::serial::DOTk_ColumnMatrix<Real>(x, ncols));
+    std::shared_ptr<dotk::matrix<Real> > Ao = std::make_shared<dotk::serial::DOTk_ColumnMatrix<Real>>(x, ncols);
     Q->gemm(false, false, 1., *R, 0., *Ao);
     Real original[] = {10, -1, 2, 0, -1, 11, -1, 3, 2, -1, 10, -1, 0, 3, -1, 8};
     data.fill(0.);
@@ -228,9 +228,9 @@ TEST(QR, Householder)
     size_t nrows = 4;
     size_t ncols = 4;
     dotk::StdArray<Real> x(nrows);
-    std::shared_ptr<dotk::matrix<Real> > A(new dotk::serial::DOTk_ColumnMatrix<Real>(x, ncols));
-    std::shared_ptr<dotk::matrix<Real> > Q(new dotk::serial::DOTk_ColumnMatrix<Real>(x, ncols));
-    std::shared_ptr<dotk::matrix<Real> > R(new dotk::serial::DOTk_ColumnMatrix<Real>(x, ncols));
+    std::shared_ptr<dotk::matrix<Real> > A = std::make_shared<dotk::serial::DOTk_ColumnMatrix<Real>>(x, ncols);
+    std::shared_ptr<dotk::matrix<Real> > Q = std::make_shared<dotk::serial::DOTk_ColumnMatrix<Real>>(x, ncols);
+    std::shared_ptr<dotk::matrix<Real> > R = std::make_shared<dotk::serial::DOTk_ColumnMatrix<Real>>(x, ncols);
     // basis 1
     (*A)(0, 0) = 10.;
     (*A)(1, 0) = -1.;
@@ -257,7 +257,8 @@ TEST(QR, Householder)
     qr.factorization(A, Q, R);
 
     // Check Q^t * Q = I
-    std::shared_ptr<dotk::matrix<Real> > I(new dotk::serial::DOTk_ColumnMatrix<Real>(x, ncols));
+    std::shared_ptr<dotk::matrix<Real> > I =
+            std::make_shared<dotk::serial::DOTk_ColumnMatrix<Real>>(x, ncols);
     Q->gemm(true, false, 1., *Q, 0., *I);
     Real eye[] = {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1};
     dotk::StdArray<Real> data(I->size(), 0.);
@@ -265,7 +266,8 @@ TEST(QR, Householder)
     dotk::gtest::checkResults(I->size(), eye, data.size(), &(data[0]));
 
     // Check Q * R = A
-    std::shared_ptr<dotk::matrix<Real> > Ao(new dotk::serial::DOTk_ColumnMatrix<Real>(x, ncols));
+    std::shared_ptr<dotk::matrix<Real> > Ao =
+            std::make_shared<dotk::serial::DOTk_ColumnMatrix<Real>>(x, ncols);
     Q->gemm(false, false, 1., *R, 0., *Ao);
     Real original[] = {10, -1, 2, 0, -1, 11, -1, 3, 2, -1, 10, -1, 0, 3, -1, 8};
     data.fill(0.);

@@ -86,8 +86,8 @@ TEST(SecondOrderOperator, updateSecantStorage)
 
     size_t storage = 2;
     std::vector<Real> rho(storage, 0.);
-    std::shared_ptr<dotk::matrix<Real> > dgrad_storage(new dotk::serial::DOTk_RowMatrix<Real>(*delta_grad, storage));
-    std::shared_ptr<dotk::matrix<Real> > dprimal_storage(new dotk::serial::DOTk_RowMatrix<Real>(*delta_grad, storage));
+    std::shared_ptr<dotk::matrix<Real> > dgrad_storage = std::make_shared<dotk::serial::DOTk_RowMatrix<Real>>(*delta_grad, storage);
+    std::shared_ptr<dotk::matrix<Real> > dprimal_storage = std::make_shared<dotk::serial::DOTk_RowMatrix<Real>>(*delta_grad, storage);
 
     // Test 1: SECANT STORAGE IS NOT FULL, STORE DATA INTO FIRST ENTRY
     dotk::DOTk_SecondOrderOperator hess(storage);
@@ -154,10 +154,10 @@ TEST(SecondOrderOperator, updateSecantStorage)
 TEST(SecondOrderOperator, computeStatePerturbation)
 {
     size_t ncontrols = 2;
-    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal = std::make_shared<dotk::DOTk_Primal>();
     primal->allocateSerialControlArray(ncontrols, 2);
-    std::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
-    std::shared_ptr<dotk::DOTk_LineSearchMngTypeULP> mng(new dotk::DOTk_LineSearchMngTypeULP(primal, objective));
+    std::shared_ptr<dotk::DOTk_Rosenbrock> objective = std::make_shared<dotk::DOTk_Rosenbrock>();
+    std::shared_ptr<dotk::DOTk_LineSearchMngTypeULP> mng = std::make_shared<dotk::DOTk_LineSearchMngTypeULP>(primal, objective);
 
     std::shared_ptr<dotk::Vector<Real> > grad = primal->control()->clone();
     std::shared_ptr<dotk::Vector<Real> > vector = primal->control()->clone();
@@ -180,10 +180,10 @@ TEST(SecondOrderOperator, computeStatePerturbation)
 TEST(SecondOrderOperator, getBarzilaiBorweinStep)
 {
     size_t ncontrols = 2;
-    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal = std::make_shared<dotk::DOTk_Primal>();
     primal->allocateSerialControlArray(ncontrols, 2);
-    std::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
-    std::shared_ptr<dotk::DOTk_LineSearchMngTypeULP> mng(new dotk::DOTk_LineSearchMngTypeULP(primal, objective));
+    std::shared_ptr<dotk::DOTk_Rosenbrock> objective = std::make_shared<dotk::DOTk_Rosenbrock>();
+    std::shared_ptr<dotk::DOTk_LineSearchMngTypeULP> mng = std::make_shared<dotk::DOTk_LineSearchMngTypeULP>(primal, objective);
     dotk::DOTk_SecondOrderOperator hess;
     EXPECT_EQ(dotk::types::HESSIAN_DISABLED, hess.getHessianType());
 
@@ -205,10 +205,10 @@ TEST(SecondOrderOperator, getBarzilaiBorweinStep)
 TEST(UserDefinedHessian, apply)
 {
     size_t ncontrols = 2;
-    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal = std::make_shared<dotk::DOTk_Primal>();
     primal->allocateSerialControlArray(ncontrols, 2);
-    std::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
-    std::shared_ptr<dotk::DOTk_LineSearchMngTypeULP> mng(new dotk::DOTk_LineSearchMngTypeULP(primal, objective));
+    std::shared_ptr<dotk::DOTk_Rosenbrock> objective = std::make_shared<dotk::DOTk_Rosenbrock>();
+    std::shared_ptr<dotk::DOTk_LineSearchMngTypeULP> mng = std::make_shared<dotk::DOTk_LineSearchMngTypeULP>(primal, objective);
     dotk::DOTk_UserDefinedHessian hess;
     EXPECT_EQ(dotk::types::USER_DEFINED_HESS, hess.getHessianType());
 

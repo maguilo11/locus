@@ -21,10 +21,10 @@ namespace DOTkArmijoLineSearchTest
 TEST(DOTk_ArmijoLineSearchTest, getAndSetFunctions)
 {
     size_t ncontrols = 2;
-    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal = std::make_shared<dotk::DOTk_Primal>();
     primal->allocateSerialControlArray(ncontrols, 2);
-    std::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
-    std::shared_ptr<dotk::DOTk_LineSearchMngTypeULP>  mng(new dotk::DOTk_LineSearchMngTypeULP(primal, objective));
+    std::shared_ptr<dotk::DOTk_Rosenbrock> objective = std::make_shared<dotk::DOTk_Rosenbrock>();
+    std::shared_ptr<dotk::DOTk_LineSearchMngTypeULP>  mng = std::make_shared<dotk::DOTk_LineSearchMngTypeULP>(primal, objective);
     dotk::DOTk_ArmijoLineSearch step(mng->getTrialStep());
 
     Real tol = 1e-8;
@@ -56,10 +56,10 @@ TEST(DOTk_ArmijoLineSearchTest, getAndSetFunctions)
 TEST(DOTk_ArmijoLineSearchTest, step)
 {
     size_t ncontrols = 2;
-    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal = std::make_shared<dotk::DOTk_Primal>();
     primal->allocateSerialControlArray(ncontrols, 2);
-    std::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
-    std::shared_ptr<dotk::DOTk_LineSearchMngTypeULP>  mng(new dotk::DOTk_LineSearchMngTypeULP(primal, objective));
+    std::shared_ptr<dotk::DOTk_Rosenbrock> objective = std::make_shared<dotk::DOTk_Rosenbrock>();
+    std::shared_ptr<dotk::DOTk_LineSearchMngTypeULP>  mng = std::make_shared<dotk::DOTk_LineSearchMngTypeULP>(primal, objective);
     dotk::DOTk_ArmijoLineSearch line_search(mng->getTrialStep());
 
     const Real tolerance = 1e-6;
