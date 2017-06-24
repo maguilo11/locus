@@ -111,10 +111,10 @@ void DOTk_MexGCMMA::solveLinearProgrammingProblem(const mxArray* input_[], mxArr
 
     // Set objective function, inequality constraint, and data manager
     dotk::types::problem_t problem_type = this->getProblemType();
-    std::shared_ptr<dotk::DOTk_MexObjectiveFunction>
-        objective = std::make_shared<dotk::DOTk_MexObjectiveFunction>(m_ObjectiveFunction, problem_type);
-    std::shared_ptr<dotk::DOTk_MexInequalityConstraint>
-        tInequality = std::make_shared<dotk::DOTk_MexInequalityConstraint>(m_InequalityConstraint, problem_type);
+    std::shared_ptr<dotk::DOTk_MexObjectiveFunction> objective =
+            std::make_shared<dotk::DOTk_MexObjectiveFunction>(m_ObjectiveFunction, problem_type);
+    std::shared_ptr<dotk::DOTk_MexInequalityConstraint> tInequality =
+            std::make_shared<dotk::DOTk_MexInequalityConstraint>(m_InequalityConstraint, problem_type);
     std::vector<std::shared_ptr<dotk::DOTk_InequalityConstraint<double>>> tInequalities(1, tInequality);
     std::shared_ptr<dotk::DOTk_DataMngCCSA> data =
             std::make_shared<dotk::DOTk_DataMngCCSA>(primal, objective, tInequalities);
