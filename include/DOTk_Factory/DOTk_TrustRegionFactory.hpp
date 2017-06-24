@@ -25,19 +25,19 @@ class DOTk_TrustRegionFactory
 {
 public:
     DOTk_TrustRegionFactory();
-    explicit DOTk_TrustRegionFactory(dotk::types::trustregion_t type_);
+    explicit DOTk_TrustRegionFactory(dotk::types::trustregion_t aType);
     ~DOTk_TrustRegionFactory();
 
     dotk::types::trustregion_t getTrustRegionType() const;
-    void setWarningMsg(const std::string & msg_);
+    void setWarningMsg(const std::string & aMsg);
     std::string getWarningMsg() const;
 
-    void buildCauchyTrustRegion(std::shared_ptr<dotk::DOTk_TrustRegion> & trust_region_method_);
-    void buildDoglegTrustRegion(std::shared_ptr<dotk::DOTk_TrustRegion> & trust_region_method_);
-    void buildDoubleDoglegTrustRegion(const std::shared_ptr<dotk::Vector<Real> > & vector_,
-                                      std::shared_ptr<dotk::DOTk_TrustRegion> & trust_region_method_);
-    void build(const std::shared_ptr<dotk::Vector<Real> > & vector_,
-               std::shared_ptr<dotk::DOTk_TrustRegion> & trust_region_step_);
+    void buildCauchyTrustRegion(std::shared_ptr<dotk::DOTk_TrustRegion> & aOutput);
+    void buildDoglegTrustRegion(std::shared_ptr<dotk::DOTk_TrustRegion> & aOutput);
+    void buildDoubleDoglegTrustRegion(const std::shared_ptr<dotk::Vector<Real> > & aVector,
+                                      std::shared_ptr<dotk::DOTk_TrustRegion> & aOutput);
+    void build(const std::shared_ptr<dotk::Vector<Real> > & aVector,
+               std::shared_ptr<dotk::DOTk_TrustRegion> & aOutput);
 
 private:
     std::string mWarningMsg;

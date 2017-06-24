@@ -18,69 +18,69 @@
 namespace dotk
 {
 
-DOTk_LineSearchMngTypeULP::DOTk_LineSearchMngTypeULP(const std::shared_ptr<dotk::DOTk_Primal> & primal_) :
-        dotk::DOTk_LineSearchAlgorithmsDataMng(primal_)
+DOTk_LineSearchMngTypeULP::DOTk_LineSearchMngTypeULP(const std::shared_ptr<dotk::DOTk_Primal> & aPrimal) :
+        dotk::DOTk_LineSearchAlgorithmsDataMng(aPrimal)
 {
 }
 
-DOTk_LineSearchMngTypeULP::DOTk_LineSearchMngTypeULP(const std::shared_ptr<dotk::DOTk_Primal> & primal_,
-                                                     const std::shared_ptr<dotk::DOTk_ObjectiveFunction<Real> > & operators_) :
-        dotk::DOTk_LineSearchAlgorithmsDataMng(primal_)
+DOTk_LineSearchMngTypeULP::DOTk_LineSearchMngTypeULP(const std::shared_ptr<dotk::DOTk_Primal> & aPrimal,
+                                                     const std::shared_ptr<dotk::DOTk_ObjectiveFunction<Real> > & aLinearOperator) :
+        dotk::DOTk_LineSearchAlgorithmsDataMng(aPrimal)
 {
-    m_RoutinesMng.reset(new dotk::DOTk_RoutinesTypeULP(operators_));
+    m_RoutinesMng = std::make_shared<dotk::DOTk_RoutinesTypeULP>(aLinearOperator);
 }
 
 DOTk_LineSearchMngTypeULP::~DOTk_LineSearchMngTypeULP()
 {
 }
 
-void DOTk_LineSearchMngTypeULP::setForwardFiniteDiffGradient(const dotk::Vector<Real> & input_)
+void DOTk_LineSearchMngTypeULP::setForwardFiniteDiffGradient(const dotk::Vector<Real> & aInput)
 {
     dotk::DOTk_FirstOrderOperatorFactory factory;
     factory.buildForwardFiniteDiffGradient(this->getNewGradient(), m_FirstOrderOperator);
-    this->setFiniteDiffPerturbationVector(input_);
+    this->setFiniteDiffPerturbationVector(aInput);
 }
 
-void DOTk_LineSearchMngTypeULP::setCentralFiniteDiffGradient(const dotk::Vector<Real> & input_)
+void DOTk_LineSearchMngTypeULP::setCentralFiniteDiffGradient(const dotk::Vector<Real> & aInput)
 {
     dotk::DOTk_FirstOrderOperatorFactory factory;
     factory.buildCentralFiniteDiffGradient(this->getNewGradient(), m_FirstOrderOperator);
-    this->setFiniteDiffPerturbationVector(input_);
+    this->setFiniteDiffPerturbationVector(aInput);
 }
 
-void DOTk_LineSearchMngTypeULP::setBackwardFiniteDiffGradient(const dotk::Vector<Real> & input_)
+void DOTk_LineSearchMngTypeULP::setBackwardFiniteDiffGradient(const dotk::Vector<Real> & aInput)
 {
     dotk::DOTk_FirstOrderOperatorFactory factory;
     factory.buildBackwardFiniteDiffGradient(this->getNewGradient(), m_FirstOrderOperator);
-    this->setFiniteDiffPerturbationVector(input_);
+    this->setFiniteDiffPerturbationVector(aInput);
 }
 
-void DOTk_LineSearchMngTypeULP::setParallelForwardFiniteDiffGradient(const dotk::Vector<Real> & input_)
+void DOTk_LineSearchMngTypeULP::setParallelForwardFiniteDiffGradient(const dotk::Vector<Real> & aInput)
 {
     dotk::DOTk_FirstOrderOperatorFactory factory;
     factory.buildParallelForwardFiniteDiffGradient(this->getNewGradient(), m_FirstOrderOperator);
-    this->setFiniteDiffPerturbationVector(input_);
+    this->setFiniteDiffPerturbationVector(aInput);
 }
 
-void DOTk_LineSearchMngTypeULP::setParallelCentralFiniteDiffGradient(const dotk::Vector<Real> & input_)
+void DOTk_LineSearchMngTypeULP::setParallelCentralFiniteDiffGradient(const dotk::Vector<Real> & aInput)
 {
     dotk::DOTk_FirstOrderOperatorFactory factory;
     factory.buildParallelCentralFiniteDiffGradient(this->getNewGradient(), m_FirstOrderOperator);
-    this->setFiniteDiffPerturbationVector(input_);
+    this->setFiniteDiffPerturbationVector(aInput);
 }
 
-void DOTk_LineSearchMngTypeULP::setParallelBackwardFiniteDiffGradient(const dotk::Vector<Real> & input_)
+void DOTk_LineSearchMngTypeULP::setParallelBackwardFiniteDiffGradient(const dotk::Vector<Real> & aInput)
 {
     dotk::DOTk_FirstOrderOperatorFactory factory;
     factory.buildParallelBackwardFiniteDiffGradient(this->getNewGradient(), m_FirstOrderOperator);
-    this->setFiniteDiffPerturbationVector(input_);
+    this->setFiniteDiffPerturbationVector(aInput);
 }
 
-void DOTk_LineSearchMngTypeULP::setFiniteDiffPerturbationVector(const dotk::Vector<Real> & input_)
+void DOTk_LineSearchMngTypeULP::setFiniteDiffPerturbationVector(const dotk::Vector<Real> & aInput)
 {
-    if(input_.size() == this->getNewGradient()->size())
+    if(aInput.size() == this->getNewGradient()->size())
     {
-        m_FirstOrderOperator->setFiniteDiffPerturbationVec(input_);
+        m_FirstOrderOperator->setFiniteDiffPerturbationVec(aInput);
     }
     else
     {

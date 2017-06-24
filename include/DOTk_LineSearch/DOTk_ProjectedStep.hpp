@@ -24,25 +24,25 @@ class Vector;
 class DOTk_ProjectedStep : public dotk::DOTk_LineSearchStepMng
 {
 public:
-    explicit DOTk_ProjectedStep(const std::shared_ptr<dotk::DOTk_Primal> & primal_);
+    explicit DOTk_ProjectedStep(const std::shared_ptr<dotk::DOTk_Primal> & aPrimal);
     virtual ~DOTk_ProjectedStep();
 
 
-    void setArmijoLineSearch(const std::shared_ptr<dotk::DOTk_Primal> & primal_, Real contraction_factor_ = 0.5);
-    void setGoldsteinLineSearch(const std::shared_ptr<dotk::DOTk_Primal> & primal_,
-                                Real constant_ = 0.9,
-                                Real contraction_factor_ = 0.5);
-    void setCubicLineSearch(const std::shared_ptr<dotk::DOTk_Primal> & primal_, Real contraction_factor_ = 0.5);
-    void setGoldenSectionLineSearch(const std::shared_ptr<dotk::DOTk_Primal> & primal_, Real contraction_factor_ = 0.5);
+    void setArmijoLineSearch(const std::shared_ptr<dotk::DOTk_Primal> & aPrimal, Real aContractionFactor = 0.5);
+    void setGoldsteinLineSearch(const std::shared_ptr<dotk::DOTk_Primal> & aPrimal,
+                                Real aConstant = 0.9,
+                                Real aContractionFactor = 0.5);
+    void setCubicLineSearch(const std::shared_ptr<dotk::DOTk_Primal> & aPrimal, Real aContractionFactor = 0.5);
+    void setGoldenSectionLineSearch(const std::shared_ptr<dotk::DOTk_Primal> & aPrimal, Real aContractionFactor = 0.5);
 
-    void setContractionFactor(Real input_);
-    void setMaxNumIterations(size_t input_);
-    void setStagnationTolerance(Real input_);
+    void setContractionFactor(Real aInput);
+    void setMaxNumIterations(size_t aInput);
+    void setStagnationTolerance(Real aInput);
 
     Real step() const;
     size_t iterations() const;
-    void build(const std::shared_ptr<dotk::DOTk_Primal> & primal_, dotk::types::line_search_t type_);
-    void solveSubProblem(const std::shared_ptr<dotk::DOTk_OptimizationDataMng> & mng_);
+    void build(const std::shared_ptr<dotk::DOTk_Primal> & aPrimal, dotk::types::line_search_t aType);
+    void solveSubProblem(const std::shared_ptr<dotk::DOTk_OptimizationDataMng> & aMng);
 
 private:
     std::shared_ptr<dotk::Vector<Real> > m_WorkVector;

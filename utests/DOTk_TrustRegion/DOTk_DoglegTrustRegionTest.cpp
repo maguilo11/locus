@@ -22,9 +22,9 @@ namespace DOTkDoglegTrustRegionTest
 TEST(DOTk_DoglegTrustRegion, dogleg)
 {
     size_t ncontrols = 2;
-    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal = std::make_shared<dotk::DOTk_Primal>();
     primal->allocateSerialControlArray(ncontrols, 2);
-    std::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
+    std::shared_ptr<dotk::DOTk_Rosenbrock> objective = std::make_shared<dotk::DOTk_Rosenbrock>();
     dotk::DOTk_LineSearchMngTypeULP mng(primal, objective);
 
     std::shared_ptr<dotk::Vector<Real> > gradient = primal->control()->clone();
@@ -51,9 +51,9 @@ TEST(DOTk_DoglegTrustRegion, dogleg)
 TEST(DOTk_DoglegTrustRegion, step)
 {
     size_t ncontrols = 2;
-    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal = std::make_shared<dotk::DOTk_Primal>();
     primal->allocateSerialControlArray(ncontrols, 2);
-    std::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
+    std::shared_ptr<dotk::DOTk_Rosenbrock> objective = std::make_shared<dotk::DOTk_Rosenbrock>();
     dotk::DOTk_LineSearchMngTypeULP mng(primal, objective);
 
     std::shared_ptr<dotk::Vector<Real> > vector = primal->control()->clone();

@@ -20,17 +20,17 @@ class DOTk_DirectSolverFactory
 {
 public:
     DOTk_DirectSolverFactory();
-    explicit DOTk_DirectSolverFactory(dotk::types::direct_solver_t type_);
+    explicit DOTk_DirectSolverFactory(dotk::types::direct_solver_t aType);
     ~DOTk_DirectSolverFactory();
 
-    void setErrorMsg(const std::string & msg_);
+    void setErrorMsg(const std::string & aMsg);
     std::string getWarningMsg() const;
-    void setFactoryType(dotk::types::direct_solver_t type_);
+    void setFactoryType(dotk::types::direct_solver_t aType);
     dotk::types::direct_solver_t getFactoryType() const;
 
-    void buildLowerTriangularDirectSolver(std::shared_ptr<dotk::DOTk_DirectSolver> & direct_solver_);
-    void buildUpperTriangularDirectSolver(std::shared_ptr<dotk::DOTk_DirectSolver> & direct_solver_);
-    void build(std::shared_ptr<dotk::DOTk_DirectSolver> & direct_solver_);
+    void buildLowerTriangularDirectSolver(std::shared_ptr<dotk::DOTk_DirectSolver> & aDirectSolver);
+    void buildUpperTriangularDirectSolver(std::shared_ptr<dotk::DOTk_DirectSolver> & aDirectSolver);
+    void build(std::shared_ptr<dotk::DOTk_DirectSolver> & aDirectSolver);
 
 private:
     std::string mErrorMsg;

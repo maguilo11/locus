@@ -19,36 +19,36 @@
 namespace dotk
 {
 
-DOTk_LeftPrecConjResDataMng::DOTk_LeftPrecConjResDataMng(const std::shared_ptr<dotk::DOTk_Primal> & primal_,
-                                                         const std::shared_ptr<dotk::DOTk_LinearOperator> & linear_operator_) :
-        dotk::DOTk_KrylovSolverDataMng(primal_, linear_operator_),
+DOTk_LeftPrecConjResDataMng::DOTk_LeftPrecConjResDataMng(const std::shared_ptr<dotk::DOTk_Primal> & aPrimal,
+                                                         const std::shared_ptr<dotk::DOTk_LinearOperator> & aLinearOperator) :
+        dotk::DOTk_KrylovSolverDataMng(aPrimal, aLinearOperator),
         m_LeftPrecTimesResidual(),
-        m_LeftPreconditioner(new dotk::DOTk_LeftPreconditioner(dotk::types::LEFT_PRECONDITIONER_DISABLED))
+        m_LeftPreconditioner(std::make_shared<dotk::DOTk_LeftPreconditioner>(dotk::types::LEFT_PRECONDITIONER_DISABLED))
 {
     dotk::DOTk_KrylovSolverDataMng::setSolverType(dotk::types::LEFT_PREC_CR);
-    this->allocate(primal_);
+    this->allocate(aPrimal);
 }
 
 DOTk_LeftPrecConjResDataMng::~DOTk_LeftPrecConjResDataMng()
 {
 }
 
-void DOTk_LeftPrecConjResDataMng::setLbfgsSecantLeftPreconditioner(size_t secant_storage_)
+void DOTk_LeftPrecConjResDataMng::setLbfgsSecantLeftPreconditioner(size_t aSecantStorageSize)
 {
     dotk::DOTk_SecantLeftPreconditionerFactory factory;
-    factory.buildLbfgsSecantPreconditioner(secant_storage_, dotk::DOTk_KrylovSolverDataMng::getSolution(), m_LeftPreconditioner);
+    factory.buildLbfgsSecantPreconditioner(aSecantStorageSize, dotk::DOTk_KrylovSolverDataMng::getSolution(), m_LeftPreconditioner);
 }
 
-void DOTk_LeftPrecConjResDataMng::setLdfpSecantLeftPreconditioner(size_t secant_storage_)
+void DOTk_LeftPrecConjResDataMng::setLdfpSecantLeftPreconditioner(size_t aSecantStorageSize)
 {
     dotk::DOTk_SecantLeftPreconditionerFactory factory;
-    factory.buildLdfpSecantPreconditioner(secant_storage_, dotk::DOTk_KrylovSolverDataMng::getSolution(), m_LeftPreconditioner);
+    factory.buildLdfpSecantPreconditioner(aSecantStorageSize, dotk::DOTk_KrylovSolverDataMng::getSolution(), m_LeftPreconditioner);
 }
 
-void DOTk_LeftPrecConjResDataMng::setLsr1SecantLeftPreconditioner(size_t secant_storage_)
+void DOTk_LeftPrecConjResDataMng::setLsr1SecantLeftPreconditioner(size_t aSecantStorageSize)
 {
     dotk::DOTk_SecantLeftPreconditionerFactory factory;
-    factory.buildLsr1SecantPreconditioner(secant_storage_, dotk::DOTk_KrylovSolverDataMng::getSolution(), m_LeftPreconditioner);
+    factory.buildLsr1SecantPreconditioner(aSecantStorageSize, dotk::DOTk_KrylovSolverDataMng::getSolution(), m_LeftPreconditioner);
 }
 
 void DOTk_LeftPrecConjResDataMng::setSr1SecantLeftPreconditioner()
@@ -79,19 +79,19 @@ const std::shared_ptr<dotk::Vector<Real> > & DOTk_LeftPrecConjResDataMng::getLef
     return (m_LeftPrecTimesResidual);
 }
 
-void DOTk_LeftPrecConjResDataMng::allocate(const std::shared_ptr<dotk::DOTk_Primal> & primal_)
+void DOTk_LeftPrecConjResDataMng::allocate(const std::shared_ptr<dotk::DOTk_Primal> & aPrimal)
 {
-    bool is_dual_allocated = primal_->dual().use_count() > 0;
-    bool is_state_allocated = primal_->state().use_count() > 0;
-    bool is_control_allocated = primal_->control().use_count() > 0;
+    bool is_dual_allocated = aPrimal->dual().use_count() > 0;
+    bool is_state_allocated = aPrimal->state().use_count() > 0;
+    bool is_control_allocated = aPrimal->control().use_count() > 0;
 
     if( (is_dual_allocated == false) && (is_state_allocated == false) && (is_control_allocated == true) )
     {
-        m_LeftPrecTimesResidual = primal_->control()->clone();
+        m_LeftPrecTimesResidual = aPrimal->control()->clone();
     }
     else
     {
-        m_LeftPrecTimesResidual.reset(new dotk::DOTk_MultiVector<Real>(*primal_));
+        m_LeftPrecTimesResidual = std::make_shared<dotk::DOTk_MultiVector<Real>>(*aPrimal);
         m_LeftPrecTimesResidual->fill(0);
     }
 

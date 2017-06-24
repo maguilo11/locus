@@ -22,10 +22,10 @@ namespace DOTkNumericalIntegrationTest
 TEST(NumericalDerivative, ForwardFiniteDifference)
 {
     size_t num_controls = 2;
-    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal = std::make_shared<dotk::DOTk_Primal>();
     primal->allocateSerialControlArray(num_controls, 2);
 
-    std::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
+    std::shared_ptr<dotk::DOTk_Rosenbrock> objective = std::make_shared<dotk::DOTk_Rosenbrock>();
     std::shared_ptr< dotk::Vector<Real> > current_gradient(new dotk::StdVector<Real>(num_controls, 0.));
     objective->gradient(*primal->control(), *current_gradient);
 
@@ -48,10 +48,10 @@ TEST(NumericalDerivative, ForwardFiniteDifference)
 TEST(NumericalDerivative, BackwardFiniteDifference)
 {
     size_t num_controls = 2;
-    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal = std::make_shared<dotk::DOTk_Primal>();
     primal->allocateSerialControlArray(num_controls, 2);
 
-    std::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
+    std::shared_ptr<dotk::DOTk_Rosenbrock> objective = std::make_shared<dotk::DOTk_Rosenbrock>();
     std::shared_ptr< dotk::Vector<Real> > current_gradient(new dotk::StdVector<Real>(num_controls, 0.));
     objective->gradient(*primal->control(), *current_gradient);
 
@@ -72,10 +72,10 @@ TEST(NumericalDerivative, BackwardFiniteDifference)
 TEST(NumericalDerivative, CentralFiniteDifference)
 {
     size_t num_controls = 2;
-    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal = std::make_shared<dotk::DOTk_Primal>();
     primal->allocateSerialControlArray(num_controls, 2);
 
-    std::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
+    std::shared_ptr<dotk::DOTk_Rosenbrock> objective = std::make_shared<dotk::DOTk_Rosenbrock>();
     std::shared_ptr< dotk::Vector<Real> > current_gradient(new dotk::StdVector<Real>(num_controls, 0.));
     objective->gradient(*primal->control(), *current_gradient);
 
@@ -97,10 +97,10 @@ TEST(NumericalDerivative, CentralFiniteDifference)
 TEST(NumericalDerivative, SecondOrderForwardFiniteDifference)
 {
     size_t num_controls = 2;
-    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal = std::make_shared<dotk::DOTk_Primal>();
     primal->allocateSerialControlArray(num_controls, 2);
 
-    std::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
+    std::shared_ptr<dotk::DOTk_Rosenbrock> objective = std::make_shared<dotk::DOTk_Rosenbrock>();
     std::shared_ptr< dotk::Vector<Real> > current_gradient(new dotk::StdVector<Real>(num_controls, 0.));
     objective->gradient(*primal->control(), *current_gradient);
 
@@ -122,10 +122,10 @@ TEST(NumericalDerivative, SecondOrderForwardFiniteDifference)
 TEST(NumericalDerivative, ThirdOrderForwardFiniteDifference)
 {
     size_t num_controls = 2;
-    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal = std::make_shared<dotk::DOTk_Primal>();
     primal->allocateSerialControlArray(num_controls, 2);
 
-    std::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
+    std::shared_ptr<dotk::DOTk_Rosenbrock> objective = std::make_shared<dotk::DOTk_Rosenbrock>();
     std::shared_ptr< dotk::Vector<Real> > current_gradient(new dotk::StdVector<Real>(num_controls, 0.));
     objective->gradient(*primal->control(), *current_gradient);
 
@@ -147,10 +147,10 @@ TEST(NumericalDerivative, ThirdOrderForwardFiniteDifference)
 TEST(NumericalDerivative, ThirdOrderBackwardFiniteDifference)
 {
     size_t num_controls = 2;
-    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal = std::make_shared<dotk::DOTk_Primal>();
     primal->allocateSerialControlArray(num_controls, 2);
 
-    std::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
+    std::shared_ptr<dotk::DOTk_Rosenbrock> objective = std::make_shared<dotk::DOTk_Rosenbrock>();
     std::shared_ptr< dotk::Vector<Real> > current_gradient(new dotk::StdVector<Real>(num_controls, 0.));
     objective->gradient(*primal->control(), *current_gradient);
 
@@ -172,11 +172,11 @@ TEST(NumericalDerivative, ThirdOrderBackwardFiniteDifference)
 TEST(NumericalDerivative, apply)
 {
     size_t ncontrols = 2;
-    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal = std::make_shared<dotk::DOTk_Primal>();
     primal->allocateSerialControlArray(ncontrols, 2);
 
-    std::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
-    std::shared_ptr<dotk::DOTk_LineSearchMngTypeULP> mng(new dotk::DOTk_LineSearchMngTypeULP(primal, objective));
+    std::shared_ptr<dotk::DOTk_Rosenbrock> objective = std::make_shared<dotk::DOTk_Rosenbrock>();
+    std::shared_ptr<dotk::DOTk_LineSearchMngTypeULP> mng = std::make_shared<dotk::DOTk_LineSearchMngTypeULP>(primal, objective);
 
     dotk::NumericallyDifferentiatedHessian hessian(primal, objective);
     hessian.setCentralDifference(*primal->control());

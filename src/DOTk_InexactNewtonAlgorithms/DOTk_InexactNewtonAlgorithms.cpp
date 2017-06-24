@@ -20,15 +20,15 @@
 namespace dotk
 {
 
-DOTk_InexactNewtonAlgorithms::DOTk_InexactNewtonAlgorithms(dotk::types::algorithm_t type_) :
-        m_Criterion(new dotk::DOTk_RelativeCriterion(1e-2)),
+DOTk_InexactNewtonAlgorithms::DOTk_InexactNewtonAlgorithms(dotk::types::algorithm_t aType) :
+        m_Criterion(std::make_shared<dotk::DOTk_RelativeCriterion>(1e-2)),
         m_MaxNumOptItr(5000),
         m_NumOptItrDone(0),
         m_FvalTol(5.e-12),
         m_GradTol(1.e-8),
         m_StepTol(1.e-12),
         m_MinCosineAngleTol(1e-2),
-        m_AlgorithmType(type_),
+        m_AlgorithmType(aType),
         m_StoppingCriterion(dotk::types::OPT_ALG_HAS_NOT_CONVERGED)
 {
 }
@@ -37,14 +37,14 @@ DOTk_InexactNewtonAlgorithms::~DOTk_InexactNewtonAlgorithms()
 {
 }
 
-void DOTk_InexactNewtonAlgorithms::setRelativeTolerance(Real tolerance_)
+void DOTk_InexactNewtonAlgorithms::setRelativeTolerance(Real aInput)
 {
-    m_Criterion->set(dotk::types::RELATIVE_TOLERANCE, tolerance_);
+    m_Criterion->set(dotk::types::RELATIVE_TOLERANCE, aInput);
 }
 
-void DOTk_InexactNewtonAlgorithms::setMaxNumItr(size_t itr_)
+void DOTk_InexactNewtonAlgorithms::setMaxNumItr(size_t aInput)
 {
-    m_MaxNumOptItr = itr_;
+    m_MaxNumOptItr = aInput;
 }
 
 size_t DOTk_InexactNewtonAlgorithms::getMaxNumItr() const
@@ -52,9 +52,9 @@ size_t DOTk_InexactNewtonAlgorithms::getMaxNumItr() const
     return (m_MaxNumOptItr);
 }
 
-void DOTk_InexactNewtonAlgorithms::setNumItrDone(size_t itr_)
+void DOTk_InexactNewtonAlgorithms::setNumItrDone(size_t aInput)
 {
-    m_NumOptItrDone = itr_;
+    m_NumOptItrDone = aInput;
 }
 
 size_t DOTk_InexactNewtonAlgorithms::getNumItrDone() const
@@ -62,9 +62,9 @@ size_t DOTk_InexactNewtonAlgorithms::getNumItrDone() const
     return (m_NumOptItrDone);
 }
 
-void DOTk_InexactNewtonAlgorithms::setObjectiveFuncTol(Real tol_)
+void DOTk_InexactNewtonAlgorithms::setObjectiveFuncTol(Real aInput)
 {
-    m_FvalTol = tol_;
+    m_FvalTol = aInput;
 }
 
 Real DOTk_InexactNewtonAlgorithms::getObjectiveFuncTol() const
@@ -72,9 +72,9 @@ Real DOTk_InexactNewtonAlgorithms::getObjectiveFuncTol() const
     return (m_FvalTol);
 }
 
-void DOTk_InexactNewtonAlgorithms::setGradientTol(Real tol_)
+void DOTk_InexactNewtonAlgorithms::setGradientTol(Real aInput)
 {
-    m_GradTol = tol_;
+    m_GradTol = aInput;
 }
 
 Real DOTk_InexactNewtonAlgorithms::getGradientTol() const
@@ -82,9 +82,9 @@ Real DOTk_InexactNewtonAlgorithms::getGradientTol() const
     return (m_GradTol);
 }
 
-void DOTk_InexactNewtonAlgorithms::setTrialStepTol(Real tol_)
+void DOTk_InexactNewtonAlgorithms::setTrialStepTol(Real aInput)
 {
-    m_StepTol = tol_;
+    m_StepTol = aInput;
 }
 
 Real DOTk_InexactNewtonAlgorithms::getTrialStepTol() const
@@ -92,9 +92,9 @@ Real DOTk_InexactNewtonAlgorithms::getTrialStepTol() const
     return (m_StepTol);
 }
 
-void DOTk_InexactNewtonAlgorithms::setMinCosineAngleTol(Real tol_)
+void DOTk_InexactNewtonAlgorithms::setMinCosineAngleTol(Real aInput)
 {
-    m_MinCosineAngleTol = tol_;
+    m_MinCosineAngleTol = aInput;
 }
 
 Real DOTk_InexactNewtonAlgorithms::getMinCosineAngleTol() const
@@ -107,9 +107,9 @@ dotk::types::algorithm_t DOTk_InexactNewtonAlgorithms::type() const
     return (m_AlgorithmType);
 }
 
-void DOTk_InexactNewtonAlgorithms::setStoppingCriterion(dotk::types::stop_criterion_t flag_)
+void DOTk_InexactNewtonAlgorithms::setStoppingCriterion(dotk::types::stop_criterion_t aInput)
 {
-    m_StoppingCriterion = flag_;
+    m_StoppingCriterion = aInput;
 }
 
 dotk::types::stop_criterion_t DOTk_InexactNewtonAlgorithms::getStoppingCriterion() const
@@ -117,27 +117,27 @@ dotk::types::stop_criterion_t DOTk_InexactNewtonAlgorithms::getStoppingCriterion
     return (m_StoppingCriterion);
 }
 
-void DOTk_InexactNewtonAlgorithms::setFixedStoppingCriterion(Real fixed_tolerance_)
+void DOTk_InexactNewtonAlgorithms::setFixedStoppingCriterion(Real aInput)
 {
-    m_Criterion.reset(new dotk::DOTk_FixedCriterion(fixed_tolerance_));
+    m_Criterion = std::make_shared<dotk::DOTk_FixedCriterion>(aInput);
 }
 
-void DOTk_InexactNewtonAlgorithms::setRelativeStoppingCriterion(Real relative_tolerance_)
+void DOTk_InexactNewtonAlgorithms::setRelativeStoppingCriterion(Real aInput)
 {
-    m_Criterion.reset(new dotk::DOTk_RelativeCriterion(relative_tolerance_));
+    m_Criterion = std::make_shared<dotk::DOTk_RelativeCriterion>(aInput);
 }
 
-void DOTk_InexactNewtonAlgorithms::setTrialStep(const std::shared_ptr<dotk::DOTk_KrylovSolver> & solver_,
-                                                const std::shared_ptr<dotk::DOTk_OptimizationDataMng> & mng_)
+void DOTk_InexactNewtonAlgorithms::setTrialStep(const std::shared_ptr<dotk::DOTk_KrylovSolver> & aSolver,
+                                                const std::shared_ptr<dotk::DOTk_OptimizationDataMng> & aMng)
 {
-    switch(solver_->getSolverStopCriterion())
+    switch(aSolver->getSolverStopCriterion())
     {
         case dotk::types::NaN_CURVATURE_DETECTED:
         case dotk::types::ZERO_CURVATURE_DETECTED:
         case dotk::types::NEGATIVE_CURVATURE_DETECTED:
         case dotk::types::INF_CURVATURE_DETECTED:
         {
-            dotk::gtools::getSteepestDescent(mng_->getNewGradient(), mng_->getTrialStep());
+            dotk::gtools::getSteepestDescent(aMng->getNewGradient(), aMng->getTrialStep());
             break;
         }
         case dotk::types::TRUST_REGION_VIOLATED:
@@ -149,17 +149,17 @@ void DOTk_InexactNewtonAlgorithms::setTrialStep(const std::shared_ptr<dotk::DOTk
         case dotk::types::INVALID_INEXACTNESS_MEASURE:
         case dotk::types::INVALID_ORTHOGONALITY_MEASURE:
         {
-            mng_->getTrialStep()->update(1., *solver_->getDataMng()->getSolution(), 0.);
+            aMng->getTrialStep()->update(1., *aSolver->getDataMng()->getSolution(), 0.);
             break;
         }
     }
 }
 
-bool DOTk_InexactNewtonAlgorithms::checkStoppingCriteria(const std::shared_ptr<dotk::DOTk_OptimizationDataMng> & mng_)
+bool DOTk_InexactNewtonAlgorithms::checkStoppingCriteria(const std::shared_ptr<dotk::DOTk_OptimizationDataMng> & aMng)
 {
     /// Check reduced space algorithm convergence.\n
     /// Input: \n
-    ///    mng_ = shared pointer to gradient based class data manager. \n
+    ///    aMng = shared pointer to gradient based class data manager. \n
     ///      (const std::shared_ptr<dotk::DOTk_OptimizationDataMng>)\n
     ///
     bool converged = false;
@@ -167,18 +167,18 @@ bool DOTk_InexactNewtonAlgorithms::checkStoppingCriteria(const std::shared_ptr<d
     {
         return (converged);
     }
-    Real grad_norm = mng_->getNormNewGradient();
-    Real trial_step_norm = mng_->getNormTrialStep();
+    Real grad_norm = aMng->getNormNewGradient();
+    Real trial_step_norm = aMng->getNormTrialStep();
     if(std::isnan(trial_step_norm))
     {
         converged = true;
-        this->resetCurrentStateToFormer(mng_);
+        this->resetCurrentStateToFormer(aMng);
         this->setStoppingCriterion(dotk::types::NaN_TRIAL_STEP_NORM);
     }
     else if(std::isnan(grad_norm))
     {
         converged = true;
-        this->resetCurrentStateToFormer(mng_);
+        this->resetCurrentStateToFormer(aMng);
         this->setStoppingCriterion(dotk::types::NaN_GRADIENT_NORM);
     }
     else if(trial_step_norm < this->getTrialStepTol())
@@ -191,7 +191,7 @@ bool DOTk_InexactNewtonAlgorithms::checkStoppingCriteria(const std::shared_ptr<d
         converged = true;
         this->setStoppingCriterion(dotk::types::GRADIENT_TOL_SATISFIED);
     }
-    else if(mng_->getNewObjectiveFunctionValue() < this->getObjectiveFuncTol())
+    else if(aMng->getNewObjectiveFunctionValue() < this->getObjectiveFuncTol())
     {
         converged = true;
         this->setStoppingCriterion(dotk::types::OBJECTIVE_FUNC_TOL_SATISFIED);
@@ -204,11 +204,11 @@ bool DOTk_InexactNewtonAlgorithms::checkStoppingCriteria(const std::shared_ptr<d
     return (converged);
 }
 
-void DOTk_InexactNewtonAlgorithms::resetCurrentStateToFormer(const std::shared_ptr<dotk::DOTk_OptimizationDataMng> & mng_)
+void DOTk_InexactNewtonAlgorithms::resetCurrentStateToFormer(const std::shared_ptr<dotk::DOTk_OptimizationDataMng> & aMng)
 {
-    mng_->getNewPrimal()->update(1., *mng_->getOldPrimal(), 0.);
-    mng_->getNewGradient()->update(1., *mng_->getOldGradient(), 0.);
-    mng_->setNewObjectiveFunctionValue(mng_->getOldObjectiveFunctionValue());
+    aMng->getNewPrimal()->update(1., *aMng->getOldPrimal(), 0.);
+    aMng->getNewGradient()->update(1., *aMng->getOldGradient(), 0.);
+    aMng->setNewObjectiveFunctionValue(aMng->getOldObjectiveFunctionValue());
 }
 
 }

@@ -650,7 +650,7 @@ std::shared_ptr<dotk::matrix<ScalarType> > DOTk_RowMatrix<ScalarType>::clone() c
     size_t basis_dim = this->basisDimension();
     std::shared_ptr<dotk::Vector<ScalarType> > & basis_vector = m_MatrixData[0];
     std::shared_ptr<dotk::serial::DOTk_RowMatrix<ScalarType> >
-        matrix(new dotk::serial::DOTk_RowMatrix<ScalarType>(*basis_vector, basis_dim));
+        matrix(std::make_shared<dotk::serial::DOTk_RowMatrix<ScalarType>>(*basis_vector, basis_dim));
 
     return (matrix);
 }

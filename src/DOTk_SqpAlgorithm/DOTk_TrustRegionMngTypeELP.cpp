@@ -27,33 +27,33 @@ DOTk_TrustRegionMngTypeELP::DOTk_TrustRegionMngTypeELP
  const std::shared_ptr<dotk::DOTk_EqualityConstraint<Real> > & equality_) :
         dotk::DOTk_OptimizationDataMng(),
         m_DeltaDual(primal_->dual()->clone()),
-        m_NormalStep(new dotk::DOTk_PrimalVector<Real>(*primal_)),
-        m_DeltaPrimal(new dotk::DOTk_PrimalVector<Real>(*primal_)),
-        m_TangentialStep(new dotk::DOTk_PrimalVector<Real>(*primal_)),
-        m_NormalCauchyStep(new dotk::DOTk_PrimalVector<Real>(*primal_)),
-        m_ProjectedGradient(new dotk::DOTk_PrimalVector<Real>(*primal_)),
-        m_HessTimesNormalStep(new dotk::DOTk_PrimalVector<Real>(*primal_)),
+        m_NormalStep(std::make_shared<dotk::DOTk_PrimalVector<Real>>(*primal_)),
+        m_DeltaPrimal(std::make_shared<dotk::DOTk_PrimalVector<Real>>(*primal_)),
+        m_TangentialStep(std::make_shared<dotk::DOTk_PrimalVector<Real>>(*primal_)),
+        m_NormalCauchyStep(std::make_shared<dotk::DOTk_PrimalVector<Real>>(*primal_)),
+        m_ProjectedGradient(std::make_shared<dotk::DOTk_PrimalVector<Real>>(*primal_)),
+        m_HessTimesNormalStep(std::make_shared<dotk::DOTk_PrimalVector<Real>>(*primal_)),
         m_NewEqualityConstraint(primal_->dual()->clone()),
         m_OldEqualityConstraint(primal_->dual()->clone()),
         m_LinearizedEqConstraint(primal_->dual()->clone()),
-        m_TangentialStepResidual(new dotk::DOTk_MultiVector<Real>(*primal_)),
-        m_ProjectedTangentialStep(new dotk::DOTk_PrimalVector<Real>(*primal_)),
-        m_TangentialSubProblemRhs(new dotk::DOTk_PrimalVector<Real>(*primal_)),
+        m_TangentialStepResidual(std::make_shared<dotk::DOTk_MultiVector<Real>>(*primal_)),
+        m_ProjectedTangentialStep(std::make_shared<dotk::DOTk_PrimalVector<Real>>(*primal_)),
+        m_TangentialSubProblemRhs(std::make_shared<dotk::DOTk_PrimalVector<Real>>(*primal_)),
         m_JacobianTimesTangentialStep(primal_->dual()->clone()),
-        m_AugmentedSystemLeftHandSide(new dotk::DOTk_MultiVector<Real>(*primal_)),
-        m_AugmentedSystemRightHandSide(new dotk::DOTk_MultiVector<Real>(*primal_)),
-        m_ProjectedTangentialCauchyStep(new dotk::DOTk_PrimalVector<Real>(*primal_)),
+        m_AugmentedSystemLeftHandSide(std::make_shared<dotk::DOTk_MultiVector<Real>>(*primal_)),
+        m_AugmentedSystemRightHandSide(std::make_shared<dotk::DOTk_MultiVector<Real>>(*primal_)),
+        m_ProjectedTangentialCauchyStep(std::make_shared<dotk::DOTk_PrimalVector<Real>>(*primal_)),
         m_OldObjectiveFunction(0),
         m_NewObjectiveFunction(0),
         m_OldDual(primal_->dual()->clone()),
         m_NewDual(primal_->dual()->clone()),
-        m_TrialStep(new dotk::DOTk_PrimalVector<Real>(*primal_)),
-        m_OldPrimal(new dotk::DOTk_PrimalVector<Real>(*primal_)),
-        m_NewPrimal(new dotk::DOTk_PrimalVector<Real>(*primal_)),
-        m_OldGradient(new dotk::DOTk_PrimalVector<Real>(*primal_)),
-        m_NewGradient(new dotk::DOTk_PrimalVector<Real>(*primal_)),
-        m_MatrixTimesVector(new dotk::DOTk_PrimalVector<Real>(*primal_)),
-        m_TrustRegion(new dotk::DOTk_DoglegTrustRegion),
+        m_TrialStep(std::make_shared<dotk::DOTk_PrimalVector<Real>>(*primal_)),
+        m_OldPrimal(std::make_shared<dotk::DOTk_PrimalVector<Real>>(*primal_)),
+        m_NewPrimal(std::make_shared<dotk::DOTk_PrimalVector<Real>>(*primal_)),
+        m_OldGradient(std::make_shared<dotk::DOTk_PrimalVector<Real>>(*primal_)),
+        m_NewGradient(std::make_shared<dotk::DOTk_PrimalVector<Real>>(*primal_)),
+        m_MatrixTimesVector(std::make_shared<dotk::DOTk_PrimalVector<Real>>(*primal_)),
+        m_TrustRegion(std::make_shared<dotk::DOTk_DoglegTrustRegion>()),
         m_RoutinesMng()
 {
     this->initialize(primal_, objective_, equality_);
@@ -373,7 +373,7 @@ void DOTk_TrustRegionMngTypeELP::initialize(const std::shared_ptr<dotk::DOTk_Pri
     m_NewDual->update(1., *primal_->dual(), 0.);
     m_OldDual->update(1., *primal_->dual(), 0.);
 
-    m_RoutinesMng.reset(new dotk::DOTk_RoutinesTypeELP(primal_, objective_, equality_));
+    m_RoutinesMng = std::make_shared<dotk::DOTk_RoutinesTypeELP>(primal_, objective_, equality_);
 }
 
 }

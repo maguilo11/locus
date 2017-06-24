@@ -23,20 +23,20 @@ class DOTk_ObjectiveFunction;
 class DOTk_LineSearchMngTypeULP : public dotk::DOTk_LineSearchAlgorithmsDataMng
 {
 public:
-    explicit DOTk_LineSearchMngTypeULP(const std::shared_ptr<dotk::DOTk_Primal> & primal_);
-    DOTk_LineSearchMngTypeULP(const std::shared_ptr<dotk::DOTk_Primal> & primal_,
-                              const std::shared_ptr<dotk::DOTk_ObjectiveFunction<Real> > & operators_);
+    explicit DOTk_LineSearchMngTypeULP(const std::shared_ptr<dotk::DOTk_Primal> & aPrimal);
+    DOTk_LineSearchMngTypeULP(const std::shared_ptr<dotk::DOTk_Primal> & aPrimal,
+                              const std::shared_ptr<dotk::DOTk_ObjectiveFunction<Real> > & aLinearOperator);
     virtual ~DOTk_LineSearchMngTypeULP();
 
-    void setForwardFiniteDiffGradient(const dotk::Vector<Real> & input_);
-    void setCentralFiniteDiffGradient(const dotk::Vector<Real> & input_);
-    void setBackwardFiniteDiffGradient(const dotk::Vector<Real> & input_);
-    void setParallelForwardFiniteDiffGradient(const dotk::Vector<Real> & input_);
-    void setParallelCentralFiniteDiffGradient(const dotk::Vector<Real> & input_);
-    void setParallelBackwardFiniteDiffGradient(const dotk::Vector<Real> & input_);
+    void setForwardFiniteDiffGradient(const dotk::Vector<Real> & aInput);
+    void setCentralFiniteDiffGradient(const dotk::Vector<Real> & aInput);
+    void setBackwardFiniteDiffGradient(const dotk::Vector<Real> & aInput);
+    void setParallelForwardFiniteDiffGradient(const dotk::Vector<Real> & aInput);
+    void setParallelCentralFiniteDiffGradient(const dotk::Vector<Real> & aInput);
+    void setParallelBackwardFiniteDiffGradient(const dotk::Vector<Real> & aInput);
 
 private:
-    void setFiniteDiffPerturbationVector(const dotk::Vector<Real> & input_);
+    void setFiniteDiffPerturbationVector(const dotk::Vector<Real> & aInput);
 
 private:
     // unimplemented

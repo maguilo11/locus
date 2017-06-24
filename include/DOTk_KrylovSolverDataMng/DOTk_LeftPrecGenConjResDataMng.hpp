@@ -23,15 +23,15 @@ class Vector;
 class DOTk_LeftPrecGenConjResDataMng : public dotk::DOTk_KrylovSolverDataMng
 {
 public:
-    DOTk_LeftPrecGenConjResDataMng(const std::shared_ptr<dotk::DOTk_Primal> & primal_,
+    DOTk_LeftPrecGenConjResDataMng(const std::shared_ptr<dotk::DOTk_Primal> & aPrimal,
                                    const std::shared_ptr<dotk::DOTk_LinearOperator> & linear_operator_,
                                    size_t max_num_itr_ = 200);
 
     virtual ~DOTk_LeftPrecGenConjResDataMng();
 
-    void setLbfgsSecantLeftPreconditioner(size_t secant_storage_);
-    void setLdfpSecantLeftPreconditioner(size_t secant_storage_);
-    void setLsr1SecantLeftPreconditioner(size_t secant_storage_);
+    void setLbfgsSecantLeftPreconditioner(size_t aSecantStorageSize);
+    void setLdfpSecantLeftPreconditioner(size_t aSecantStorageSize);
+    void setLsr1SecantLeftPreconditioner(size_t aSecantStorageSize);
     void setSr1SecantLeftPreconditioner();
     void setBfgsSecantLeftPreconditioner();
     void setBarzilaiBorweinSecantLeftPreconditioner();
@@ -44,7 +44,7 @@ private:
     std::shared_ptr<dotk::DOTk_LeftPreconditioner> m_LeftPreconditioner;
 
 private:
-    void allocate(const std::shared_ptr<dotk::DOTk_Primal> & primal_);
+    void allocate(const std::shared_ptr<dotk::DOTk_Primal> & aPrimal);
 
 private:
     DOTk_LeftPrecGenConjResDataMng(const dotk::DOTk_LeftPrecGenConjResDataMng &);

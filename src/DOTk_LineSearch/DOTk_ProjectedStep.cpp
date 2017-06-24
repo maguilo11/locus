@@ -16,70 +16,70 @@
 namespace dotk
 {
 
-DOTk_ProjectedStep::DOTk_ProjectedStep(const std::shared_ptr<dotk::DOTk_Primal> & primal_) :
-        m_WorkVector(primal_->control()->clone()),
-        m_LowerBound(primal_->control()->clone()),
-        m_UpperBound(primal_->control()->clone()),
+DOTk_ProjectedStep::DOTk_ProjectedStep(const std::shared_ptr<dotk::DOTk_Primal> & aPrimal) :
+        m_WorkVector(aPrimal->control()->clone()),
+        m_LowerBound(aPrimal->control()->clone()),
+        m_UpperBound(aPrimal->control()->clone()),
         m_LineSearch(),
-        m_BoundConstraint(new dotk::DOTk_BoundConstraints)
+        m_BoundConstraint(std::make_shared<dotk::DOTk_BoundConstraints>())
 {
     dotk::DOTk_LineSearchFactory step_factory;
-    step_factory.buildCubicLineSearch(primal_->control(), m_LineSearch);
-    m_LowerBound->update(1., *primal_->getControlLowerBound(), 0.);
-    m_UpperBound->update(1., *primal_->getControlUpperBound(), 0.);
+    step_factory.buildCubicLineSearch(aPrimal->control(), m_LineSearch);
+    m_LowerBound->update(1., *aPrimal->getControlLowerBound(), 0.);
+    m_UpperBound->update(1., *aPrimal->getControlUpperBound(), 0.);
 }
 
 DOTk_ProjectedStep::~DOTk_ProjectedStep()
 {
 }
 
-void DOTk_ProjectedStep::setArmijoLineSearch(const std::shared_ptr<dotk::DOTk_Primal> & primal_,
-                                             Real contraction_factor_)
+void DOTk_ProjectedStep::setArmijoLineSearch(const std::shared_ptr<dotk::DOTk_Primal> & aPrimal,
+                                             Real aContractionFactor)
 {
     dotk::DOTk_LineSearchFactory factory;
-    factory.buildArmijoLineSearch(primal_->control(), m_LineSearch);
-    m_LineSearch->setContractionFactor(contraction_factor_);
+    factory.buildArmijoLineSearch(aPrimal->control(), m_LineSearch);
+    m_LineSearch->setContractionFactor(aContractionFactor);
 }
 
-void DOTk_ProjectedStep::setGoldsteinLineSearch(const std::shared_ptr<dotk::DOTk_Primal> & primal_,
-                                                Real constant_,
-                                                Real contraction_factor_)
+void DOTk_ProjectedStep::setGoldsteinLineSearch(const std::shared_ptr<dotk::DOTk_Primal> & aPrimal,
+                                                Real aConstant,
+                                                Real aContractionFactor)
 {
     dotk::DOTk_LineSearchFactory factory;
-    factory.buildGoldsteinLineSearch(primal_->control(), m_LineSearch);
-    m_LineSearch->setContractionFactor(contraction_factor_);
-    m_LineSearch->setConstant(constant_);
+    factory.buildGoldsteinLineSearch(aPrimal->control(), m_LineSearch);
+    m_LineSearch->setContractionFactor(aContractionFactor);
+    m_LineSearch->setConstant(aConstant);
 }
 
-void DOTk_ProjectedStep::setCubicLineSearch(const std::shared_ptr<dotk::DOTk_Primal> & primal_,
-                                            Real contraction_factor_)
+void DOTk_ProjectedStep::setCubicLineSearch(const std::shared_ptr<dotk::DOTk_Primal> & aPrimal,
+                                            Real aContractionFactor)
 {
     dotk::DOTk_LineSearchFactory factory;
-    factory.buildCubicLineSearch(primal_->control(), m_LineSearch);
-    m_LineSearch->setContractionFactor(contraction_factor_);
+    factory.buildCubicLineSearch(aPrimal->control(), m_LineSearch);
+    m_LineSearch->setContractionFactor(aContractionFactor);
 }
 
-void DOTk_ProjectedStep::setGoldenSectionLineSearch(const std::shared_ptr<dotk::DOTk_Primal> & primal_,
-                                                    Real contraction_factor_)
+void DOTk_ProjectedStep::setGoldenSectionLineSearch(const std::shared_ptr<dotk::DOTk_Primal> & aPrimal,
+                                                    Real aContractionFactor)
 {
     dotk::DOTk_LineSearchFactory factory;
-    factory.buildGoldenSectionLineSearch(primal_->control(), m_LineSearch);
-    m_LineSearch->setContractionFactor(contraction_factor_);
+    factory.buildGoldenSectionLineSearch(aPrimal->control(), m_LineSearch);
+    m_LineSearch->setContractionFactor(aContractionFactor);
 }
 
-void DOTk_ProjectedStep::setContractionFactor(Real input_)
+void DOTk_ProjectedStep::setContractionFactor(Real aInput)
 {
-    m_LineSearch->setContractionFactor(input_);
+    m_LineSearch->setContractionFactor(aInput);
 }
 
-void DOTk_ProjectedStep::setMaxNumIterations(size_t input_)
+void DOTk_ProjectedStep::setMaxNumIterations(size_t aInput)
 {
-    m_LineSearch->setMaxNumLineSearchItr(input_);
+    m_LineSearch->setMaxNumLineSearchItr(aInput);
 }
 
-void DOTk_ProjectedStep::setStagnationTolerance(Real input_)
+void DOTk_ProjectedStep::setStagnationTolerance(Real aInput)
 {
-    m_LineSearch->setStepStagnationTol(input_);
+    m_LineSearch->setStepStagnationTol(aInput);
 }
 
 Real DOTk_ProjectedStep::step() const
@@ -92,31 +92,31 @@ size_t DOTk_ProjectedStep::iterations() const
     return (m_LineSearch->getNumLineSearchItrDone());
 }
 
-void DOTk_ProjectedStep::build(const std::shared_ptr<dotk::DOTk_Primal> & primal_,
-                               dotk::types::line_search_t type_)
+void DOTk_ProjectedStep::build(const std::shared_ptr<dotk::DOTk_Primal> & aPrimal,
+                               dotk::types::line_search_t aType)
 {
-    dotk::DOTk_LineSearchFactory factory(type_);
-    factory.build(primal_->control(), m_LineSearch);
+    dotk::DOTk_LineSearchFactory factory(aType);
+    factory.build(aPrimal->control(), m_LineSearch);
 }
 
-void DOTk_ProjectedStep::solveSubProblem(const std::shared_ptr<dotk::DOTk_OptimizationDataMng> & mng_)
+void DOTk_ProjectedStep::solveSubProblem(const std::shared_ptr<dotk::DOTk_OptimizationDataMng> & aMng)
 {
-    m_WorkVector->update(1., *mng_->getNewPrimal(), 0.);
-    m_WorkVector->update(1., *mng_->getTrialStep(), 1.);
+    m_WorkVector->update(1., *aMng->getNewPrimal(), 0.);
+    m_WorkVector->update(1., *aMng->getTrialStep(), 1.);
     m_BoundConstraint->project(*m_LowerBound, *m_UpperBound, *m_WorkVector);
-    m_WorkVector->update(-1., *mng_->getNewPrimal(), 1.);
-    mng_->getTrialStep()->update(1., *m_WorkVector, 0.);
-    Real norm_trial_step = mng_->getTrialStep()->norm();
-    mng_->setNormTrialStep(norm_trial_step);
+    m_WorkVector->update(-1., *aMng->getNewPrimal(), 1.);
+    aMng->getTrialStep()->update(1., *m_WorkVector, 0.);
+    Real norm_trial_step = aMng->getTrialStep()->norm();
+    aMng->setNormTrialStep(norm_trial_step);
 
-    m_LineSearch->step(mng_);
+    m_LineSearch->step(aMng);
 
     Real new_objective_func_value = m_LineSearch->getNewObjectiveFunctionValue();
-    mng_->setNewObjectiveFunctionValue(new_objective_func_value);
+    aMng->setNewObjectiveFunctionValue(new_objective_func_value);
 
-    mng_->computeGradient();
-    Real norm_new_gradient = mng_->getNewGradient()->norm();
-    mng_->setNormNewGradient(norm_new_gradient);
+    aMng->computeGradient();
+    Real norm_new_gradient = aMng->getNewGradient()->norm();
+    aMng->setNormNewGradient(norm_new_gradient);
 }
 
 }

@@ -25,8 +25,8 @@ DOTk_ArnoldiProjection::DOTk_ArnoldiProjection(const std::shared_ptr<dotk::DOTk_
         m_Cosine(krylov_subspace_dim_, 0.),
         m_ScaleFactorsStorage(krylov_subspace_dim_, 0.),
         m_NormAppxProjectedResidualStorage(krylov_subspace_dim_, 0.),
-        m_DirectSolver(new dotk::DOTk_UpperTriangularDirectSolver(krylov_subspace_dim_)),
-        m_HessenbergMatrix(new dotk::serial::DOTk_UpperTriangularMatrix<Real>(krylov_subspace_dim_)),
+        m_DirectSolver(std::make_shared<dotk::DOTk_UpperTriangularDirectSolver>(krylov_subspace_dim_)),
+        m_HessenbergMatrix(std::make_shared<dotk::serial::DOTk_UpperTriangularMatrix<Real>>(krylov_subspace_dim_)),
         m_OrthogonalBasis(krylov_subspace_dim_ + 1)
 {
     this->initialize(primal_);
@@ -109,7 +109,7 @@ void DOTk_ArnoldiProjection::arnoldi(size_t ortho_vector_index_,
 
     this->applyGivensRotationsToHessenbergMatrix(ortho_vector_index_);
     Real hessenberg_matrix_entry = (*m_HessenbergMatrix)(ortho_vector_index_, ortho_vector_index_);
-    dotk::givens(hessenberg_matrix_entry, scaling, m_Cosine[ortho_vector_index_], m_Sine[ortho_vector_index_]);
+    dotk::givens(hessenberg_matrix_entry, scaling, m_Cosine.operator [](ortho_vector_index_), m_Sine[ortho_vector_index_]);
 
     Real sine_times_norm_projected_residual = static_cast<Real>(-1.) * m_Sine[ortho_vector_index_]
             * m_NormAppxProjectedResidualStorage[ortho_vector_index_];
@@ -125,7 +125,7 @@ void DOTk_ArnoldiProjection::arnoldi(size_t ortho_vector_index_,
     kernel_vector_->fill(0.);
     for(size_t index = 0; index <= ortho_vector_index_; ++ index)
     {
-        kernel_vector_->update(m_ScaleFactorsStorage[index], *m_OrthogonalBasis[index], 1.);
+        kernel_vector_->update(m_ScaleFactorsStorage.operator [](index), *m_OrthogonalBasis[index], 1.);
     }
 }
 
@@ -147,7 +147,7 @@ void DOTk_ArnoldiProjection::initialize(const std::shared_ptr<dotk::DOTk_Primal>
     {
         for(size_t row = 0; row < dimensions; ++ row)
         {
-            m_OrthogonalBasis[row].reset(new dotk::DOTk_MultiVector<Real>(*primal_));
+            m_OrthogonalBasis[row] = std::make_shared<dotk::DOTk_MultiVector<Real>>(*primal_);
             m_OrthogonalBasis[row]->fill(0);
         }
     }

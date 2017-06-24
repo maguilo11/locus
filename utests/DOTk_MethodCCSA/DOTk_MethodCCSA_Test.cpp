@@ -425,7 +425,7 @@ TEST(DOTk_DataMngCCSA, computeFunctionGradients)
 {
     size_t nvars = 5;
     size_t nduals = 1;
-    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal = std::make_shared<dotk::DOTk_Primal>();
     primal->allocateSerialDualArray(nduals, 0);
     primal->allocateSerialControlArray(nvars, 1);
     primal->setControlUpperBound(1.);
@@ -461,7 +461,7 @@ TEST(DOTk_DataMngCCSA, evaluateFunctionValues)
 {
     size_t nvars = 5;
     size_t nduals = 1;
-    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal = std::make_shared<dotk::DOTk_Primal>();
     primal->allocateSerialDualArray(nduals, 0);
     primal->allocateSerialControlArray(nvars, 1);
     primal->setControlUpperBound(1.);
@@ -490,7 +490,7 @@ TEST(DOTk_DataMngCCSA, evaluateInequalityConstraint)
 {
     size_t nvars = 5;
     size_t nduals = 1;
-    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal = std::make_shared<dotk::DOTk_Primal>();
     primal->allocateSerialDualArray(nduals, 0);
     primal->allocateSerialControlArray(nvars, 1);
     primal->setControlUpperBound(1.);
@@ -514,7 +514,7 @@ TEST(DOTk_DualObjectiveFunctionMMA, updateMovingAsymptotes)
 {
     size_t nvars = 5;
     size_t nduals = 1;
-    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal = std::make_shared<dotk::DOTk_Primal>();
     primal->allocateSerialDualArray(nduals);
     primal->allocateSerialControlArray(nvars, 1);
     primal->setControlUpperBound(1.);
@@ -544,7 +544,7 @@ TEST(DOTk_DualObjectiveFunctionMMA, updateTrialControlBounds)
 {
     size_t nvars = 5;
     size_t nduals = 1;
-    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal = std::make_shared<dotk::DOTk_Primal>();
     primal->allocateSerialDualArray(nduals);
     primal->allocateSerialControlArray(nvars, 1);
     primal->setControlUpperBound(1.);
@@ -574,7 +574,7 @@ TEST(DOTk_DualObjectiveFunctionMMA, updateObjectiveCoefficientVectors)
 {
     size_t nvars = 5;
     size_t nduals = 1;
-    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal = std::make_shared<dotk::DOTk_Primal>();
     primal->allocateSerialDualArray(nduals);
     primal->allocateSerialControlArray(nvars, 1);
     primal->setControlUpperBound(1.);
@@ -612,7 +612,7 @@ TEST(DOTk_DualObjectiveFunctionMMA, updateInequalityCoefficientVectors)
 {
     size_t nvars = 5;
     size_t nduals = 1;
-    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal = std::make_shared<dotk::DOTk_Primal>();
     primal->allocateSerialDualArray(nduals);
     primal->allocateSerialControlArray(nvars, 1);
     primal->setControlUpperBound(1.);
@@ -655,7 +655,7 @@ TEST(DOTk_DualObjectiveFunctionMMA, evaluate)
 {
     size_t nvars = 5;
     size_t nduals = 1;
-    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal = std::make_shared<dotk::DOTk_Primal>();
     primal->allocateSerialDualArray(nduals, 1.);
     primal->allocateSerialControlArray(nvars, 1.);
     primal->setControlUpperBound(1.);
@@ -708,7 +708,7 @@ TEST(DOTk_DualObjectiveFunctionMMA, gradient)
 {
     size_t nvars = 5;
     size_t nduals = 1;
-    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal = std::make_shared<dotk::DOTk_Primal>();
     primal->allocateSerialDualArray(nduals, 1.);
     primal->allocateSerialControlArray(nvars, 1.);
     primal->setControlUpperBound(1.);
@@ -762,7 +762,7 @@ TEST(CCSA, computeResidualNorm)
 {
     size_t nvars = 5;
     size_t nduals = 1;
-    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal = std::make_shared<dotk::DOTk_Primal>();
     primal->allocateSerialDualArray(nduals, 0.1);
     primal->allocateSerialControlArray(nvars, 1.);
     primal->setControlUpperBound(1.);
@@ -788,7 +788,7 @@ TEST(DOTk_DualSolverNLCG, setFunctions)
 {
     size_t nvars = 5;
     size_t nduals = 1;
-    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal = std::make_shared<dotk::DOTk_Primal>();
     primal->allocateSerialDualArray(nduals, 0.1);
     primal->allocateSerialControlArray(nvars, 1.);
     primal->setControlUpperBound(1.);
@@ -814,7 +814,7 @@ TEST(DOTk_DualSolverNLCG, solve)
 {
     size_t nvars = 5;
     size_t nduals = 1;
-    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal = std::make_shared<dotk::DOTk_Primal>();
     primal->allocateSerialDualArray(nduals, 0.1);
     primal->allocateSerialControlArray(nvars, 1.);
     primal->setControlUpperBound(1.);
@@ -866,7 +866,7 @@ TEST(DOTk_SubProblemGCMMA, setFunctions)
 {
     size_t nvars = 5;
     size_t nduals = 1;
-    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal = std::make_shared<dotk::DOTk_Primal>();
     primal->allocateSerialDualArray(nduals, 0.1);
     primal->allocateSerialControlArray(nvars, 1.);
     primal->setControlUpperBound(1.);
@@ -898,7 +898,7 @@ TEST(DOTk_SubProblemGCMMA, solve)
 {
     size_t nvars = 5;
     size_t nduals = 1;
-    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal = std::make_shared<dotk::DOTk_Primal>();
     primal->allocateSerialDualArray(nduals, 1);
     primal->allocateSerialControlArray(nvars, 1.);
     primal->setControlLowerBound(1e-2);
@@ -935,7 +935,7 @@ TEST(DOTk_AlgorithmCCSA, solve_GCMMA_POLAK_RIBIERE)
 {
     size_t nvars = 5;
     size_t nduals = 1;
-    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal = std::make_shared<dotk::DOTk_Primal>();
     primal->allocateSerialDualArray(nduals);
     primal->allocateSerialControlArray(nvars, 5.);
     primal->setControlLowerBound(1e-3);
@@ -972,7 +972,7 @@ TEST(DOTk_AlgorithmCCSA, solve_GCMMA_FLETCHER_REEVES)
 {
     size_t nvars = 5;
     size_t nduals = 1;
-    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal = std::make_shared<dotk::DOTk_Primal>();
     primal->allocateSerialDualArray(nduals);
     primal->allocateSerialControlArray(nvars, 5.);
     primal->setControlLowerBound(1e-3);
@@ -1010,7 +1010,7 @@ TEST(DOTk_AlgorithmCCSA, solve_GCMMA_DAI_YUAN)
 {
     size_t nvars = 5;
     size_t nduals = 1;
-    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal = std::make_shared<dotk::DOTk_Primal>();
     primal->allocateSerialDualArray(nduals);
     primal->allocateSerialControlArray(nvars, 5.);
     primal->setControlLowerBound(1e-3);
@@ -1048,7 +1048,7 @@ TEST(DOTk_AlgorithmCCSA, solve_GCMMA_HESTENES_STIEFEL)
 {
     size_t nvars = 5;
     size_t nduals = 1;
-    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal = std::make_shared<dotk::DOTk_Primal>();
     primal->allocateSerialDualArray(nduals);
     primal->allocateSerialControlArray(nvars, 5.);
     primal->setControlLowerBound(1e-3);
@@ -1086,7 +1086,7 @@ TEST(DOTk_AlgorithmCCSA, solve_GCMMA_CONJUGATE_DESCENT)
 {
     size_t nvars = 5;
     size_t nduals = 1;
-    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal = std::make_shared<dotk::DOTk_Primal>();
     primal->allocateSerialDualArray(nduals);
     primal->allocateSerialControlArray(nvars, 5.);
     primal->setControlLowerBound(1e-3);
@@ -1124,7 +1124,7 @@ TEST(DOTk_AlgorithmCCSA, solve_GCMMA_LIU_STOREY)
 {
     size_t nvars = 5;
     size_t nduals = 1;
-    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal = std::make_shared<dotk::DOTk_Primal>();
     primal->allocateSerialDualArray(nduals);
     primal->allocateSerialControlArray(nvars, 5.);
     primal->setControlLowerBound(1e-3);
@@ -1162,7 +1162,7 @@ TEST(DOTk_AlgorithmCCSA, solve_MMA_ConjugateDescent)
 {
     size_t nvars = 5;
     size_t nduals = 1;
-    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal = std::make_shared<dotk::DOTk_Primal>();
     primal->allocateSerialDualArray(nduals);
     primal->allocateSerialControlArray(nvars, 5.);
     primal->setControlLowerBound(1e-3);
@@ -1200,7 +1200,7 @@ TEST(DOTk_AlgorithmCCSA, solve_MMA_DaiYuan)
 {
     size_t nvars = 5;
     size_t nduals = 1;
-    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal = std::make_shared<dotk::DOTk_Primal>();
     primal->allocateSerialDualArray(nduals);
     primal->allocateSerialControlArray(nvars, 5.);
     primal->setControlLowerBound(1e-3);
@@ -1238,7 +1238,7 @@ TEST(DOTk_AlgorithmCCSA, solve_MMA_LIU_STOREY)
 {
     size_t nvars = 5;
     size_t nduals = 1;
-    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal = std::make_shared<dotk::DOTk_Primal>();
     primal->allocateSerialDualArray(nduals);
     primal->allocateSerialControlArray(nvars, 5.);
     primal->setControlLowerBound(1e-3);
@@ -1276,7 +1276,7 @@ TEST(DOTk_AlgorithmCCSA, solve_MMA_FletcherReeves)
 {
     size_t nvars = 5;
     size_t nduals = 1;
-    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal = std::make_shared<dotk::DOTk_Primal>();
     primal->allocateSerialDualArray(nduals);
     primal->allocateSerialControlArray(nvars, 5.);
     primal->setControlLowerBound(1e-3);
@@ -1314,7 +1314,7 @@ TEST(DOTk_AlgorithmCCSA, solve_MMA_HestenesStiefel)
 {
     size_t nvars = 5;
     size_t nduals = 1;
-    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal = std::make_shared<dotk::DOTk_Primal>();
     primal->allocateSerialDualArray(nduals);
     primal->allocateSerialControlArray(nvars, 5.);
     primal->setControlLowerBound(1e-3);
@@ -1352,7 +1352,7 @@ TEST(DOTk_AlgorithmCCSA, solve_MMA_PolakRibiere)
 {
     size_t nvars = 5;
     size_t nduals = 1;
-    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal = std::make_shared<dotk::DOTk_Primal>();
     primal->allocateSerialDualArray(nduals);
     primal->allocateSerialControlArray(nvars, 5.);
     primal->setControlLowerBound(1e-3);

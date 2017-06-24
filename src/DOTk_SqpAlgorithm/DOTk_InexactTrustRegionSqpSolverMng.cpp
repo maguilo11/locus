@@ -42,12 +42,12 @@ DOTk_InexactTrustRegionSqpSolverMng::DOTk_InexactTrustRegionSqpSolverMng
         m_TangentialProbSolver(),
         m_QuasiNormalProbSolver(),
         m_TangentialSubProbSolver(),
-        m_AugmentedSystem(new dotk::DOTk_AugmentedSystem),
+        m_AugmentedSystem(std::make_shared<dotk::DOTk_AugmentedSystem>()),
         m_TangSubProbLeftPrec(),
-        m_TangentialSubProbCriterion(new dotk::DOTk_FixedCriterion),
-        m_DualProblemCriterion(new dotk::DOTk_SqpDualProblemCriterion),
-        m_QuasiNormalProbCriterion(new dotk::DOTk_QuasiNormalProbCriterion),
-        m_TangentialProblemCriterion(new dotk::DOTk_TangentialProblemCriterion(data_mng_->getNewPrimal()))
+        m_TangentialSubProbCriterion(std::make_shared<dotk::DOTk_FixedCriterion>()),
+        m_DualProblemCriterion(std::make_shared<dotk::DOTk_SqpDualProblemCriterion>()),
+        m_QuasiNormalProbCriterion(std::make_shared<dotk::DOTk_QuasiNormalProbCriterion>()),
+        m_TangentialProblemCriterion(std::make_shared<dotk::DOTk_TangentialProblemCriterion>(data_mng_->getNewPrimal()))
 {
     this->initialize(primal_);
 }
@@ -452,14 +452,14 @@ void DOTk_InexactTrustRegionSqpSolverMng::buildTangentialSubProblemSolver(const 
     size_t max_num_itr = this->getMaxNumTangentialSubProblemItr();
     assert(max_num_itr > 0);
 
-    std::shared_ptr<dotk::DOTk_Primal> temp_primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> temp_primal = std::make_shared<dotk::DOTk_Primal>();
     temp_primal->allocateUserDefinedDual(*primal_->dual());
     temp_primal->allocateUserDefinedControl(*primal_->control());
     if(primal_->state().use_count() > 0)
     {
         temp_primal->allocateUserDefinedState(*primal_->state());
     }
-    m_TangentialSubProbSolver.reset(new dotk::DOTk_ProjectedLeftPrecCG(temp_primal, hessian_, max_num_itr));
+    m_TangentialSubProbSolver = std::make_shared<dotk::DOTk_ProjectedLeftPrecCG>(temp_primal, hessian_, max_num_itr);
     m_TangentialSubProbSolver->getDataMng()->setLeftPrec(m_TangSubProbLeftPrec);
 }
 

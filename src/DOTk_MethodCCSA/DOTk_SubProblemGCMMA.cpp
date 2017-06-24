@@ -32,9 +32,9 @@ DOTk_SubProblemGCMMA::DOTk_SubProblemGCMMA(const std::shared_ptr<dotk::DOTk_Data
         m_TrialFeasibilityMeasures(data_mng_->m_Dual->clone()),
         m_TrialInequalityResiduals(data_mng_->m_Dual->clone()),
         m_InequalityConstraintMinRho(data_mng_->m_Dual->clone()),
-        m_Bounds(new dotk::DOTk_BoundConstraints),
-        m_DualSolver(new dotk::DOTk_DualSolverNLCG(data_mng_->m_Primal)),
-        m_DualObjectiveFunction(new dotk::DOTk_DualObjectiveFunctionMMA(data_mng_))
+        m_Bounds(std::make_shared<dotk::DOTk_BoundConstraints>()),
+        m_DualSolver(std::make_shared<dotk::DOTk_DualSolverNLCG>(data_mng_->m_Primal)),
+        m_DualObjectiveFunction(std::make_shared<dotk::DOTk_DualObjectiveFunctionMMA>(data_mng_))
 {
     this->initialize();
 }
@@ -52,9 +52,9 @@ DOTk_SubProblemGCMMA::DOTk_SubProblemGCMMA(const std::shared_ptr<dotk::DOTk_Data
         m_TrialFeasibilityMeasures(data_mng_->m_Dual->clone()),
         m_TrialInequalityResiduals(data_mng_->m_Dual->clone()),
         m_InequalityConstraintMinRho(data_mng_->m_Dual->clone()),
-        m_Bounds(new dotk::DOTk_BoundConstraints),
+        m_Bounds(std::make_shared<dotk::DOTk_BoundConstraints>()),
         m_DualSolver(dual_solver_),
-        m_DualObjectiveFunction(new dotk::DOTk_DualObjectiveFunctionMMA(data_mng_))
+        m_DualObjectiveFunction(std::make_shared<dotk::DOTk_DualObjectiveFunctionMMA>(data_mng_))
 {
     this->initialize();
 }

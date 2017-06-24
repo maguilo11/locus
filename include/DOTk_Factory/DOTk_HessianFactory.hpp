@@ -25,38 +25,38 @@ class DOTk_HessianFactory
 {
 public:
     DOTk_HessianFactory();
-    explicit DOTk_HessianFactory(dotk::types::hessian_t type_);
+    explicit DOTk_HessianFactory(dotk::types::hessian_t aType);
     ~DOTk_HessianFactory();
 
-    void setDefaultSecantSotrage(size_t val_);
+    void setDefaultSecantSotrage(size_t aInput);
     size_t getDefaultSecantSotrage() const;
-    void setFactoryType(dotk::types::hessian_t type_);
+    void setFactoryType(dotk::types::hessian_t aType);
     dotk::types::hessian_t getFactoryType() const;
 
-    void buildFullSpaceHessian(std::shared_ptr<dotk::DOTk_SecondOrderOperator> & operator_);
-    void buildReducedSpaceHessian(std::shared_ptr<dotk::DOTk_SecondOrderOperator> & operator_);
-    void buildLbfgsHessian(size_t secant_storage_,
+    void buildFullSpaceHessian(std::shared_ptr<dotk::DOTk_SecondOrderOperator> & aOutput);
+    void buildReducedSpaceHessian(std::shared_ptr<dotk::DOTk_SecondOrderOperator> & aOutput);
+    void buildLbfgsHessian(size_t aSecantStorageSize,
                            const dotk::Vector<Real> & vector_,
-                           std::shared_ptr<dotk::DOTk_SecondOrderOperator> & operator_);
-    void buildLdfpHessian(size_t secant_storage_,
+                           std::shared_ptr<dotk::DOTk_SecondOrderOperator> & aOutput);
+    void buildLdfpHessian(size_t aSecantStorageSize,
                           const dotk::Vector<Real> & vector_,
-                          std::shared_ptr<dotk::DOTk_SecondOrderOperator> & operator_);
-    void buildLsr1Hessian(size_t secant_storage_,
+                          std::shared_ptr<dotk::DOTk_SecondOrderOperator> & aOutput);
+    void buildLsr1Hessian(size_t aSecantStorageSize,
                           const dotk::Vector<Real> & vector_,
-                          std::shared_ptr<dotk::DOTk_SecondOrderOperator> & operator_);
+                          std::shared_ptr<dotk::DOTk_SecondOrderOperator> & aOutput);
     void buildSr1Hessian(const dotk::Vector<Real> & vector_,
-                         std::shared_ptr<dotk::DOTk_SecondOrderOperator> & operator_);
+                         std::shared_ptr<dotk::DOTk_SecondOrderOperator> & aOutput);
     void buildDfpHessian(const dotk::Vector<Real> & vector_,
-                         std::shared_ptr<dotk::DOTk_SecondOrderOperator> & operator_);
+                         std::shared_ptr<dotk::DOTk_SecondOrderOperator> & aOutput);
     void buildBarzilaiBorweinHessian(const dotk::Vector<Real> & vector_,
-                                     std::shared_ptr<dotk::DOTk_SecondOrderOperator> & operator_);
+                                     std::shared_ptr<dotk::DOTk_SecondOrderOperator> & aOutput);
 
-    void build(const dotk::DOTk_OptimizationDataMng * const mng_,
-               std::shared_ptr<dotk::DOTk_SecondOrderOperator> & operator_,
-               size_t secant_storage_ = 0);
+    void build(const dotk::DOTk_OptimizationDataMng * const aMng,
+               std::shared_ptr<dotk::DOTk_SecondOrderOperator> & aOutput,
+               size_t aSecantStorageSize = 0);
 
 private:
-    size_t checkSecantStorageInput(size_t secant_storage_);
+    size_t checkSecantStorageInput(size_t aSecantStorageSize);
 
 private:
     size_t mDefaultSecantSotrage;

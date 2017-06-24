@@ -22,13 +22,13 @@
 namespace dotk
 {
 
-DOTk_NonlinearCG::DOTk_NonlinearCG(const std::shared_ptr<dotk::DOTk_LineSearchStepMng> & step_,
-                                   const std::shared_ptr<dotk::DOTk_LineSearchAlgorithmsDataMng> & mng_) :
+DOTk_NonlinearCG::DOTk_NonlinearCG(const std::shared_ptr<dotk::DOTk_LineSearchStepMng> & aStep,
+                                   const std::shared_ptr<dotk::DOTk_LineSearchAlgorithmsDataMng> & aMng) :
         dotk::DOTk_FirstOrderAlgorithm(dotk::types::NONLINEAR_CG),
-        m_LineSearch(step_),
-        m_IO(new dotk::DOTk_FirstOrderLineSearchAlgIO),
+        m_LineSearch(aStep),
+        m_IO(std::make_shared<dotk::DOTk_FirstOrderLineSearchAlgIO>()),
         m_DescentDirection(),
-        m_DataMng(mng_)
+        m_DataMng(aMng)
 {
     dotk::DOTk_NonlinearCGFactory factory;
     factory.buildFletcherReevesNlcg(m_DescentDirection);
@@ -38,10 +38,10 @@ DOTk_NonlinearCG::~DOTk_NonlinearCG()
 {
 }
 
-void DOTk_NonlinearCG::setDanielsNlcg(const std::shared_ptr<dotk::DOTk_LinearOperator> & hessian_)
+void DOTk_NonlinearCG::setDanielsNlcg(const std::shared_ptr<dotk::DOTk_LinearOperator> & aInput)
 {
     dotk::DOTk_NonlinearCGFactory factory;
-    factory.buildDanielsNlcg(hessian_, m_DescentDirection);
+    factory.buildDanielsNlcg(aInput, m_DescentDirection);
 }
 
 void DOTk_NonlinearCG::setFletcherReevesNlcg()

@@ -32,18 +32,18 @@ TEST(DOTk_InexactTrustRegionSQPTest, AugmentedSystem)
 {
     size_t nduals = 3;
     size_t ncontrols = 5;
-    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal = std::make_shared<dotk::DOTk_Primal>();
     primal->allocateSerialDualArray(nduals, 1.);
     primal->allocateSerialControlArray(ncontrols);
     setSqpTestInitialGuess(primal);
-    std::shared_ptr<dotk::DOTk_NocedalAndWrightEquality> equality(new dotk::DOTk_NocedalAndWrightEquality);
-    std::shared_ptr<dotk::DOTk_NocedalAndWrightObjective> objective(new dotk::DOTk_NocedalAndWrightObjective);
-    std::shared_ptr<dotk::DOTk_TrustRegionMngTypeELP> mng(new dotk::DOTk_TrustRegionMngTypeELP(primal, objective, equality));
+    std::shared_ptr<dotk::DOTk_NocedalAndWrightEquality> equality = std::make_shared<dotk::DOTk_NocedalAndWrightEquality>();
+    std::shared_ptr<dotk::DOTk_NocedalAndWrightObjective> objective = std::make_shared<dotk::DOTk_NocedalAndWrightObjective>();
+    std::shared_ptr<dotk::DOTk_TrustRegionMngTypeELP> mng = std::make_shared<dotk::DOTk_TrustRegionMngTypeELP>(primal, objective, equality);
 
-    std::shared_ptr<dotk::Vector<Real> > input(new dotk::DOTk_MultiVector<Real>(*primal->control(), *primal->dual()));
+    std::shared_ptr<dotk::Vector<Real> > input = std::make_shared<dotk::DOTk_MultiVector<Real>>(*primal->control(), *primal->dual());
     input->fill(1);
     std::shared_ptr<dotk::Vector<Real> > output = input->clone();
-    std::shared_ptr<dotk::DOTk_AugmentedSystem> augmented_system(new dotk::DOTk_AugmentedSystem);
+    std::shared_ptr<dotk::DOTk_AugmentedSystem> augmented_system = std::make_shared<dotk::DOTk_AugmentedSystem>();
     augmented_system->apply(mng, input, output);
 
     // RESULTS
@@ -63,14 +63,14 @@ TEST(DOTk_InexactTrustRegionSQPTest, solveDualProb)
 {
     size_t nduals = 3;
     size_t ncontrols = 5;
-    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal = std::make_shared<dotk::DOTk_Primal>();
     primal->allocateSerialDualArray(nduals, 1.);
     primal->allocateSerialControlArray(ncontrols);
     setSqpTestInitialGuess(primal);
 
-    std::shared_ptr<dotk::DOTk_NocedalAndWrightEquality> equality(new dotk::DOTk_NocedalAndWrightEquality);
-    std::shared_ptr<dotk::DOTk_NocedalAndWrightObjective> objective(new dotk::DOTk_NocedalAndWrightObjective);
-    std::shared_ptr<dotk::DOTk_TrustRegionMngTypeELP> mng(new dotk::DOTk_TrustRegionMngTypeELP(primal, objective, equality));
+    std::shared_ptr<dotk::DOTk_NocedalAndWrightEquality> equality = std::make_shared<dotk::DOTk_NocedalAndWrightEquality>();
+    std::shared_ptr<dotk::DOTk_NocedalAndWrightObjective> objective = std::make_shared<dotk::DOTk_NocedalAndWrightObjective>();
+    std::shared_ptr<dotk::DOTk_TrustRegionMngTypeELP> mng = std::make_shared<dotk::DOTk_TrustRegionMngTypeELP>(primal, objective, equality);
 
     (*mng->getNewGradient())[0] = -0.737271611192309;
     (*mng->getNewGradient())[1] = -0.755262411678706;
@@ -78,10 +78,10 @@ TEST(DOTk_InexactTrustRegionSQPTest, solveDualProb)
     (*mng->getNewGradient())[3] = 0.112608874817276;
     (*mng->getNewGradient())[4] = 0.112608874817276;
 
-    std::shared_ptr<dotk::DOTk_Hessian> hessian(new dotk::DOTk_Hessian);
+    std::shared_ptr<dotk::DOTk_Hessian> hessian = std::make_shared<dotk::DOTk_Hessian>();
     hessian->setFullSpaceHessian();
     std::shared_ptr<dotk::DOTk_InexactTrustRegionSqpSolverMng>
-        sqp_solver_mng(new dotk::DOTk_InexactTrustRegionSqpSolverMng(primal, mng));
+        sqp_solver_mng = std::make_shared<dotk::DOTk_InexactTrustRegionSqpSolverMng>(primal, mng);
     sqp_solver_mng->setDefaultKrylovSolvers(primal, hessian);
 
     dotk::types::solver_stop_criterion_t criterion = sqp_solver_mng->solveDualProb(mng);
@@ -98,13 +98,13 @@ TEST(DOTk_InexactTrustRegionSQPTest, computeTangentialStep)
 {
     size_t nduals = 3;
     size_t ncontrols = 5;
-    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal = std::make_shared<dotk::DOTk_Primal>();
     primal->allocateSerialDualArray(nduals, 1.);
     primal->allocateSerialControlArray(ncontrols);
     setSqpTestInitialGuess(primal);
-    std::shared_ptr<dotk::DOTk_NocedalAndWrightEquality> equality(new dotk::DOTk_NocedalAndWrightEquality);
-    std::shared_ptr<dotk::DOTk_NocedalAndWrightObjective> objective(new dotk::DOTk_NocedalAndWrightObjective);
-    std::shared_ptr<dotk::DOTk_TrustRegionMngTypeELP> mng(new dotk::DOTk_TrustRegionMngTypeELP(primal, objective, equality));
+    std::shared_ptr<dotk::DOTk_NocedalAndWrightEquality> equality = std::make_shared<dotk::DOTk_NocedalAndWrightEquality>();
+    std::shared_ptr<dotk::DOTk_NocedalAndWrightObjective> objective = std::make_shared<dotk::DOTk_NocedalAndWrightObjective>();
+    std::shared_ptr<dotk::DOTk_TrustRegionMngTypeELP> mng = std::make_shared<dotk::DOTk_TrustRegionMngTypeELP>(primal, objective, equality);
 
     (*mng->getProjectedTangentialStep())[0] = 0.0196000125684081;
     (*mng->getProjectedTangentialStep())[1] = - 0.0219737165126789;
@@ -112,10 +112,10 @@ TEST(DOTk_InexactTrustRegionSQPTest, computeTangentialStep)
     (*mng->getProjectedTangentialStep())[3] = - 0.00246400460771204;
     (*mng->getProjectedTangentialStep())[4] = - 0.00246400460771204;
 
-    std::shared_ptr<dotk::DOTk_Hessian> hessian(new dotk::DOTk_Hessian);
+    std::shared_ptr<dotk::DOTk_Hessian> hessian = std::make_shared<dotk::DOTk_Hessian>();
     hessian->setFullSpaceHessian();
     std::shared_ptr<dotk::DOTk_InexactTrustRegionSqpSolverMng>
-        sqp_solver_mng(new dotk::DOTk_InexactTrustRegionSqpSolverMng(primal, mng));
+        sqp_solver_mng = std::make_shared<dotk::DOTk_InexactTrustRegionSqpSolverMng>(primal, mng);
     sqp_solver_mng->setDefaultKrylovSolvers(primal, hessian);
 
     dotk::types::solver_stop_criterion_t criterion = sqp_solver_mng->solveTangentialProb(mng);
@@ -134,19 +134,19 @@ TEST(DOTk_InexactTrustRegionSQPTest, computeQuasiNormalStep)
 {
     size_t nduals = 3;
     size_t ncontrols = 5;
-    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal = std::make_shared<dotk::DOTk_Primal>();
     primal->allocateSerialDualArray(nduals, 1.);
     primal->allocateSerialControlArray(ncontrols);
     setSqpTestInitialGuess(primal);
-    std::shared_ptr<dotk::DOTk_NocedalAndWrightEquality> equality(new dotk::DOTk_NocedalAndWrightEquality);
-    std::shared_ptr<dotk::DOTk_NocedalAndWrightObjective> objective(new dotk::DOTk_NocedalAndWrightObjective);
-    std::shared_ptr<dotk::DOTk_TrustRegionMngTypeELP> mng(new dotk::DOTk_TrustRegionMngTypeELP(primal, objective, equality));
+    std::shared_ptr<dotk::DOTk_NocedalAndWrightEquality> equality = std::make_shared<dotk::DOTk_NocedalAndWrightEquality>();
+    std::shared_ptr<dotk::DOTk_NocedalAndWrightObjective> objective = std::make_shared<dotk::DOTk_NocedalAndWrightObjective>();
+    std::shared_ptr<dotk::DOTk_TrustRegionMngTypeELP> mng = std::make_shared<dotk::DOTk_TrustRegionMngTypeELP>(primal, objective, equality);
 
     mng->getRoutinesMng()->equalityConstraint(mng->getNewPrimal(), mng->getNewEqualityConstraintResidual());
 
     std::shared_ptr<dotk::DOTk_InexactTrustRegionSqpSolverMng>
-        sqp_solver_mng(new dotk::DOTk_InexactTrustRegionSqpSolverMng(primal, mng));
-    std::shared_ptr<dotk::DOTk_Hessian> hessian(new dotk::DOTk_Hessian);
+        sqp_solver_mng = std::make_shared<dotk::DOTk_InexactTrustRegionSqpSolverMng>(primal, mng);
+    std::shared_ptr<dotk::DOTk_Hessian> hessian = std::make_shared<dotk::DOTk_Hessian>();
     hessian->setFullSpaceHessian();
     sqp_solver_mng->setDefaultKrylovSolvers(primal, hessian);
 
@@ -189,13 +189,13 @@ TEST(DOTk_InexactTrustRegionSQPTest, solveTangentialSubProb)
 {
     size_t nduals = 3;
     size_t ncontrols = 5;
-    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal = std::make_shared<dotk::DOTk_Primal>();
     primal->allocateSerialDualArray(nduals, 1.);
     primal->allocateSerialControlArray(ncontrols);
     setSqpTestInitialGuess(primal);
-    std::shared_ptr<dotk::DOTk_NocedalAndWrightEquality> equality(new dotk::DOTk_NocedalAndWrightEquality);
-    std::shared_ptr<dotk::DOTk_NocedalAndWrightObjective> objective(new dotk::DOTk_NocedalAndWrightObjective);
-    std::shared_ptr<dotk::DOTk_TrustRegionMngTypeELP> mng(new dotk::DOTk_TrustRegionMngTypeELP(primal, objective, equality));
+    std::shared_ptr<dotk::DOTk_NocedalAndWrightEquality> equality = std::make_shared<dotk::DOTk_NocedalAndWrightEquality>();
+    std::shared_ptr<dotk::DOTk_NocedalAndWrightObjective> objective = std::make_shared<dotk::DOTk_NocedalAndWrightObjective>();
+    std::shared_ptr<dotk::DOTk_TrustRegionMngTypeELP> mng = std::make_shared<dotk::DOTk_TrustRegionMngTypeELP>(primal, objective, equality);
 
     (*primal->dual())[0] = 0.0207961931305597;
     (*primal->dual())[1] = -0.019798867645168;
@@ -216,8 +216,8 @@ TEST(DOTk_InexactTrustRegionSQPTest, solveTangentialSubProb)
     mng->getHessTimesNormalStep()->control()->update(1., *primal->control(), 0.);
 
     std::shared_ptr<dotk::DOTk_InexactTrustRegionSqpSolverMng>
-        sqp_solver_mng(new dotk::DOTk_InexactTrustRegionSqpSolverMng(primal, mng));
-    std::shared_ptr<dotk::DOTk_Hessian> hessian(new dotk::DOTk_Hessian);
+        sqp_solver_mng = std::make_shared<dotk::DOTk_InexactTrustRegionSqpSolverMng>(primal, mng);
+    std::shared_ptr<dotk::DOTk_Hessian> hessian = std::make_shared<dotk::DOTk_Hessian>();
     hessian->setFullSpaceHessian();
     sqp_solver_mng->setDefaultKrylovSolvers(primal, hessian);
 
@@ -243,13 +243,13 @@ TEST(DOTk_InexactTrustRegionSQPTest, apply)
 {
     size_t nduals = 3;
     size_t ncontrols = 5;
-    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal = std::make_shared<dotk::DOTk_Primal>();
     primal->allocateSerialDualArray(nduals, 1.);
     primal->allocateSerialControlArray(ncontrols);
     setSqpTestInitialGuess(primal);
-    std::shared_ptr<dotk::DOTk_NocedalAndWrightEquality> equality(new dotk::DOTk_NocedalAndWrightEquality);
-    std::shared_ptr<dotk::DOTk_NocedalAndWrightObjective> objective(new dotk::DOTk_NocedalAndWrightObjective);
-    std::shared_ptr<dotk::DOTk_TrustRegionMngTypeELP> mng(new dotk::DOTk_TrustRegionMngTypeELP(primal, objective, equality));
+    std::shared_ptr<dotk::DOTk_NocedalAndWrightEquality> equality = std::make_shared<dotk::DOTk_NocedalAndWrightEquality>();
+    std::shared_ptr<dotk::DOTk_NocedalAndWrightObjective> objective = std::make_shared<dotk::DOTk_NocedalAndWrightObjective>();
+    std::shared_ptr<dotk::DOTk_TrustRegionMngTypeELP> mng = std::make_shared<dotk::DOTk_TrustRegionMngTypeELP>(primal, objective, equality);
 
     mng->getTrialStep()->fill(1);
     dotk::DOTk_UserDefinedHessianTypeCNP hessian;
@@ -268,18 +268,18 @@ TEST(DOTk_InexactTrustRegionSQPTest, storePreviousSolution)
 {
     size_t nduals = 3;
     size_t ncontrols = 5;
-    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal = std::make_shared<dotk::DOTk_Primal>();
     primal->allocateSerialDualArray(nduals, 1.);
     primal->allocateSerialControlArray(ncontrols);
     setSqpTestInitialGuess(primal);
 
-    std::shared_ptr<dotk::DOTk_NocedalAndWrightEquality> equality(new dotk::DOTk_NocedalAndWrightEquality);
-    std::shared_ptr<dotk::DOTk_NocedalAndWrightObjective> objective(new dotk::DOTk_NocedalAndWrightObjective);
+    std::shared_ptr<dotk::DOTk_NocedalAndWrightEquality> equality = std::make_shared<dotk::DOTk_NocedalAndWrightEquality>();
+    std::shared_ptr<dotk::DOTk_NocedalAndWrightObjective> objective = std::make_shared<dotk::DOTk_NocedalAndWrightObjective>();
     std::shared_ptr<dotk::DOTk_TrustRegionMngTypeELP>
-        mng(new dotk::DOTk_TrustRegionMngTypeELP(primal, objective, equality));
+        mng = std::make_shared<dotk::DOTk_TrustRegionMngTypeELP>(primal, objective, equality);
     std::shared_ptr<dotk::DOTk_InexactTrustRegionSqpSolverMng>
-        solver_mng(new dotk::DOTk_InexactTrustRegionSqpSolverMng(primal, mng));
-    std::shared_ptr<dotk::DOTk_Hessian> hessian(new dotk::DOTk_Hessian);
+        solver_mng = std::make_shared<dotk::DOTk_InexactTrustRegionSqpSolverMng>(primal, mng);
+    std::shared_ptr<dotk::DOTk_Hessian> hessian = std::make_shared<dotk::DOTk_Hessian>();
 
     hessian->setFullSpaceHessian();
     solver_mng->setDefaultKrylovSolvers(primal, hessian);
@@ -310,18 +310,18 @@ TEST(DOTk_InexactTrustRegionSQPTest, checkConvergence)
 {
     size_t nduals = 3;
     size_t ncontrols = 5;
-    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal = std::make_shared<dotk::DOTk_Primal>();
     primal->allocateSerialDualArray(nduals, 1.);
     primal->allocateSerialControlArray(ncontrols);
     setSqpTestInitialGuess(primal);
 
-    std::shared_ptr<dotk::DOTk_NocedalAndWrightEquality> equality(new dotk::DOTk_NocedalAndWrightEquality);
-    std::shared_ptr<dotk::DOTk_NocedalAndWrightObjective> objective(new dotk::DOTk_NocedalAndWrightObjective);
-    std::shared_ptr<dotk::DOTk_TrustRegionMngTypeELP> mng(new dotk::DOTk_TrustRegionMngTypeELP(primal, objective, equality));
-    std::shared_ptr<dotk::DOTk_Hessian> hessian(new dotk::DOTk_Hessian);
+    std::shared_ptr<dotk::DOTk_NocedalAndWrightEquality> equality = std::make_shared<dotk::DOTk_NocedalAndWrightEquality>();
+    std::shared_ptr<dotk::DOTk_NocedalAndWrightObjective> objective = std::make_shared<dotk::DOTk_NocedalAndWrightObjective>();
+    std::shared_ptr<dotk::DOTk_TrustRegionMngTypeELP> mng = std::make_shared<dotk::DOTk_TrustRegionMngTypeELP>(primal, objective, equality);
+    std::shared_ptr<dotk::DOTk_Hessian> hessian = std::make_shared<dotk::DOTk_Hessian>();
     hessian->setFullSpaceHessian();
     std::shared_ptr<dotk::DOTk_InexactTrustRegionSqpSolverMng>
-        solver_mng(new dotk::DOTk_InexactTrustRegionSqpSolverMng(primal, mng));
+        solver_mng = std::make_shared<dotk::DOTk_InexactTrustRegionSqpSolverMng>(primal, mng);
     solver_mng->setDefaultKrylovSolvers(primal, hessian);
     dotk::DOTk_InexactTrustRegionSQP sqp(hessian, mng, solver_mng);
 
@@ -385,20 +385,20 @@ TEST(DOTk_InexactTrustRegionSQPTest, computePartialPredictedReduction)
 {
     size_t nduals = 3;
     size_t ncontrols = 5;
-    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal = std::make_shared<dotk::DOTk_Primal>();
     primal->allocateSerialDualArray(nduals, 1.);
     primal->allocateSerialControlArray(ncontrols);
     setSqpTestInitialGuess(primal);
 
-    std::shared_ptr<dotk::DOTk_NocedalAndWrightEquality> equality(new dotk::DOTk_NocedalAndWrightEquality);
-    std::shared_ptr<dotk::DOTk_NocedalAndWrightObjective> objective(new dotk::DOTk_NocedalAndWrightObjective);
-    std::shared_ptr<dotk::DOTk_TrustRegionMngTypeELP> mng(new dotk::DOTk_TrustRegionMngTypeELP(primal, objective, equality));
+    std::shared_ptr<dotk::DOTk_NocedalAndWrightEquality> equality = std::make_shared<dotk::DOTk_NocedalAndWrightEquality>();
+    std::shared_ptr<dotk::DOTk_NocedalAndWrightObjective> objective = std::make_shared<dotk::DOTk_NocedalAndWrightObjective>();
+    std::shared_ptr<dotk::DOTk_TrustRegionMngTypeELP> mng = std::make_shared<dotk::DOTk_TrustRegionMngTypeELP>(primal, objective, equality);
     setSqpTestData(mng);
 
-    std::shared_ptr<dotk::DOTk_Hessian> hessian(new dotk::DOTk_Hessian);
+    std::shared_ptr<dotk::DOTk_Hessian> hessian = std::make_shared<dotk::DOTk_Hessian>();
     hessian->setFullSpaceHessian();
     std::shared_ptr<dotk::DOTk_InexactTrustRegionSqpSolverMng>
-        solver_mng(new dotk::DOTk_InexactTrustRegionSqpSolverMng(primal, mng));
+        solver_mng = std::make_shared<dotk::DOTk_InexactTrustRegionSqpSolverMng>(primal, mng);
     solver_mng->setDefaultKrylovSolvers(primal, hessian);
     dotk::DOTk_InexactTrustRegionSQP sqp(hessian, mng, solver_mng);
 
@@ -410,18 +410,18 @@ TEST(DOTk_InexactTrustRegionSQPTest, updateMeritFunctionPenaltyParameter)
 {
     size_t nduals = 3;
     size_t ncontrols = 5;
-    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal = std::make_shared<dotk::DOTk_Primal>();
     primal->allocateSerialDualArray(nduals, 1.);
     primal->allocateSerialControlArray(ncontrols);
     setSqpTestInitialGuess(primal);
 
-    std::shared_ptr<dotk::DOTk_NocedalAndWrightEquality> equality(new dotk::DOTk_NocedalAndWrightEquality);
-    std::shared_ptr<dotk::DOTk_NocedalAndWrightObjective> objective(new dotk::DOTk_NocedalAndWrightObjective);
-    std::shared_ptr<dotk::DOTk_TrustRegionMngTypeELP> mng(new dotk::DOTk_TrustRegionMngTypeELP(primal, objective, equality));
-    std::shared_ptr<dotk::DOTk_Hessian> hessian(new dotk::DOTk_Hessian);
+    std::shared_ptr<dotk::DOTk_NocedalAndWrightEquality> equality = std::make_shared<dotk::DOTk_NocedalAndWrightEquality>();
+    std::shared_ptr<dotk::DOTk_NocedalAndWrightObjective> objective = std::make_shared<dotk::DOTk_NocedalAndWrightObjective>();
+    std::shared_ptr<dotk::DOTk_TrustRegionMngTypeELP> mng = std::make_shared<dotk::DOTk_TrustRegionMngTypeELP>(primal, objective, equality);
+    std::shared_ptr<dotk::DOTk_Hessian> hessian = std::make_shared<dotk::DOTk_Hessian>();
     hessian->setFullSpaceHessian();
     std::shared_ptr<dotk::DOTk_InexactTrustRegionSqpSolverMng>
-        solver_mng(new dotk::DOTk_InexactTrustRegionSqpSolverMng(primal, mng));
+        solver_mng = std::make_shared<dotk::DOTk_InexactTrustRegionSqpSolverMng>(primal, mng);
     solver_mng->setDefaultKrylovSolvers(primal, hessian);
     dotk::DOTk_InexactTrustRegionSQP sqp(hessian, mng, solver_mng);
 
@@ -447,18 +447,18 @@ TEST(DOTk_InexactTrustRegionSQPTest, computePredictedReductionResidual)
 {
     size_t nduals = 3;
     size_t ncontrols = 5;
-    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal = std::make_shared<dotk::DOTk_Primal>();
     primal->allocateSerialDualArray(nduals, 1.);
     primal->allocateSerialControlArray(ncontrols);
     setSqpTestInitialGuess(primal);
 
-    std::shared_ptr<dotk::DOTk_NocedalAndWrightEquality> equality(new dotk::DOTk_NocedalAndWrightEquality);
-    std::shared_ptr<dotk::DOTk_NocedalAndWrightObjective> objective(new dotk::DOTk_NocedalAndWrightObjective);
-    std::shared_ptr<dotk::DOTk_TrustRegionMngTypeELP> mng(new dotk::DOTk_TrustRegionMngTypeELP(primal, objective, equality));
-    std::shared_ptr<dotk::DOTk_Hessian> hessian(new dotk::DOTk_Hessian);
+    std::shared_ptr<dotk::DOTk_NocedalAndWrightEquality> equality = std::make_shared<dotk::DOTk_NocedalAndWrightEquality>();
+    std::shared_ptr<dotk::DOTk_NocedalAndWrightObjective> objective = std::make_shared<dotk::DOTk_NocedalAndWrightObjective>();
+    std::shared_ptr<dotk::DOTk_TrustRegionMngTypeELP> mng = std::make_shared<dotk::DOTk_TrustRegionMngTypeELP>(primal, objective, equality);
+    std::shared_ptr<dotk::DOTk_Hessian> hessian = std::make_shared<dotk::DOTk_Hessian>();
     hessian->setFullSpaceHessian();
     std::shared_ptr<dotk::DOTk_InexactTrustRegionSqpSolverMng>
-        solver_mng(new dotk::DOTk_InexactTrustRegionSqpSolverMng(primal, mng));
+        solver_mng = std::make_shared<dotk::DOTk_InexactTrustRegionSqpSolverMng>(primal, mng);
     solver_mng->setDefaultKrylovSolvers(primal, hessian);
     dotk::DOTk_InexactTrustRegionSQP sqp(hessian, mng, solver_mng);
 
@@ -475,18 +475,18 @@ TEST(DOTk_InexactTrustRegionSQPTest, computePredictedReduction)
 {
     size_t nduals = 3;
     size_t ncontrols = 5;
-    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal = std::make_shared<dotk::DOTk_Primal>();
     primal->allocateSerialDualArray(nduals, 1.);
     primal->allocateSerialControlArray(ncontrols);
     setSqpTestInitialGuess(primal);
 
-    std::shared_ptr<dotk::DOTk_NocedalAndWrightEquality> equality(new dotk::DOTk_NocedalAndWrightEquality);
-    std::shared_ptr<dotk::DOTk_NocedalAndWrightObjective> objective(new dotk::DOTk_NocedalAndWrightObjective);
-    std::shared_ptr<dotk::DOTk_TrustRegionMngTypeELP> mng(new dotk::DOTk_TrustRegionMngTypeELP(primal, objective, equality));
-    std::shared_ptr<dotk::DOTk_Hessian> hessian(new dotk::DOTk_Hessian);
+    std::shared_ptr<dotk::DOTk_NocedalAndWrightEquality> equality = std::make_shared<dotk::DOTk_NocedalAndWrightEquality>();
+    std::shared_ptr<dotk::DOTk_NocedalAndWrightObjective> objective = std::make_shared<dotk::DOTk_NocedalAndWrightObjective>();
+    std::shared_ptr<dotk::DOTk_TrustRegionMngTypeELP> mng = std::make_shared<dotk::DOTk_TrustRegionMngTypeELP>(primal, objective, equality);
+    std::shared_ptr<dotk::DOTk_Hessian> hessian = std::make_shared<dotk::DOTk_Hessian>();
     hessian->setFullSpaceHessian();
     std::shared_ptr<dotk::DOTk_InexactTrustRegionSqpSolverMng>
-        solver_mng(new dotk::DOTk_InexactTrustRegionSqpSolverMng(primal, mng));
+        solver_mng = std::make_shared<dotk::DOTk_InexactTrustRegionSqpSolverMng>(primal, mng);
     solver_mng->setDefaultKrylovSolvers(primal, hessian);
     dotk::DOTk_InexactTrustRegionSQP sqp(hessian, mng, solver_mng);
 
@@ -509,19 +509,19 @@ TEST(DOTk_InexactTrustRegionSQPTest, computeActualReduction)
 {
     size_t nduals = 3;
     size_t ncontrols = 5;
-    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal = std::make_shared<dotk::DOTk_Primal>();
     primal->allocateSerialDualArray(nduals, 1.);
     primal->allocateSerialControlArray(ncontrols);
     setSqpTestInitialGuess(primal);
 
-    std::shared_ptr<dotk::DOTk_NocedalAndWrightEquality> equality(new dotk::DOTk_NocedalAndWrightEquality);
-    std::shared_ptr<dotk::DOTk_NocedalAndWrightObjective> objective(new dotk::DOTk_NocedalAndWrightObjective);
-    std::shared_ptr<dotk::DOTk_TrustRegionMngTypeELP> mng(new dotk::DOTk_TrustRegionMngTypeELP(primal, objective, equality));
-    std::shared_ptr<dotk::DOTk_Hessian> hessian(new dotk::DOTk_Hessian);
+    std::shared_ptr<dotk::DOTk_NocedalAndWrightEquality> equality = std::make_shared<dotk::DOTk_NocedalAndWrightEquality>();
+    std::shared_ptr<dotk::DOTk_NocedalAndWrightObjective> objective = std::make_shared<dotk::DOTk_NocedalAndWrightObjective>();
+    std::shared_ptr<dotk::DOTk_TrustRegionMngTypeELP> mng = std::make_shared<dotk::DOTk_TrustRegionMngTypeELP>(primal, objective, equality);
+    std::shared_ptr<dotk::DOTk_Hessian> hessian = std::make_shared<dotk::DOTk_Hessian>();
     hessian->setFullSpaceHessian();
 
     std::shared_ptr<dotk::DOTk_InexactTrustRegionSqpSolverMng>
-        solver_mng(new dotk::DOTk_InexactTrustRegionSqpSolverMng(primal, mng));
+        solver_mng = std::make_shared<dotk::DOTk_InexactTrustRegionSqpSolverMng>(primal, mng);
     solver_mng->setDefaultKrylovSolvers(primal, hessian);
 
     mng->getOldDual()->fill(0.1);
@@ -548,18 +548,16 @@ TEST(DOTk_InexactTrustRegionSQPTest, updateTrustRegionRadius)
 {
     size_t nduals = 3;
     size_t ncontrols = 5;
-    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal = std::make_shared<dotk::DOTk_Primal>();
     primal->allocateSerialDualArray(nduals, 1.);
     primal->allocateSerialControlArray(ncontrols);
     setSqpTestInitialGuess(primal);
 
-    std::shared_ptr<dotk::DOTk_NocedalAndWrightEquality> equality(new dotk::DOTk_NocedalAndWrightEquality);
-    std::shared_ptr<dotk::DOTk_NocedalAndWrightObjective> objective(new dotk::DOTk_NocedalAndWrightObjective);
-    std::shared_ptr<dotk::DOTk_TrustRegionMngTypeELP>
-        mng(new dotk::DOTk_TrustRegionMngTypeELP(primal, objective, equality));
-    std::shared_ptr<dotk::DOTk_InexactTrustRegionSqpSolverMng>
-        solver_mng(new dotk::DOTk_InexactTrustRegionSqpSolverMng(primal, mng));
-    std::shared_ptr<dotk::DOTk_Hessian> hessian(new dotk::DOTk_Hessian);
+    std::shared_ptr<dotk::DOTk_Hessian> hessian = std::make_shared<dotk::DOTk_Hessian>();
+    std::shared_ptr<dotk::DOTk_NocedalAndWrightEquality> equality = std::make_shared<dotk::DOTk_NocedalAndWrightEquality>();
+    std::shared_ptr<dotk::DOTk_NocedalAndWrightObjective> objective = std::make_shared<dotk::DOTk_NocedalAndWrightObjective>();
+    std::shared_ptr<dotk::DOTk_TrustRegionMngTypeELP> mng = std::make_shared<dotk::DOTk_TrustRegionMngTypeELP>(primal, objective, equality);
+    std::shared_ptr<dotk::DOTk_InexactTrustRegionSqpSolverMng> solver_mng = std::make_shared<dotk::DOTk_InexactTrustRegionSqpSolverMng>(primal, mng);
 
     hessian->setFullSpaceHessian();
     solver_mng->setDefaultKrylovSolvers(primal, hessian);
@@ -628,20 +626,20 @@ TEST(DOTk_InexactTrustRegionSQPTest, adjustSolversTolerance)
 {
     size_t nduals = 3;
     size_t ncontrols = 5;
-    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal = std::make_shared<dotk::DOTk_Primal>();
     primal->allocateSerialDualArray(nduals, 1.);
     primal->allocateSerialControlArray(ncontrols);
     setSqpTestInitialGuess(primal);
 
-    std::shared_ptr<dotk::DOTk_NocedalAndWrightEquality> equality(new dotk::DOTk_NocedalAndWrightEquality);
-    std::shared_ptr<dotk::DOTk_NocedalAndWrightObjective> objective(new dotk::DOTk_NocedalAndWrightObjective);
-    std::shared_ptr<dotk::DOTk_TrustRegionMngTypeELP> mng(new dotk::DOTk_TrustRegionMngTypeELP(primal, objective, equality));
-    std::shared_ptr<dotk::DOTk_Hessian> hessian(new dotk::DOTk_Hessian);
+    std::shared_ptr<dotk::DOTk_NocedalAndWrightEquality> equality = std::make_shared<dotk::DOTk_NocedalAndWrightEquality>();
+    std::shared_ptr<dotk::DOTk_NocedalAndWrightObjective> objective = std::make_shared<dotk::DOTk_NocedalAndWrightObjective>();
+    std::shared_ptr<dotk::DOTk_TrustRegionMngTypeELP> mng = std::make_shared<dotk::DOTk_TrustRegionMngTypeELP>(primal, objective, equality);
+    std::shared_ptr<dotk::DOTk_Hessian> hessian = std::make_shared<dotk::DOTk_Hessian>();
     hessian->setFullSpaceHessian();
 
     // TEST 1: TOLERANCES ADJUSTED
     std::shared_ptr<dotk::DOTk_InexactTrustRegionSqpSolverMng>
-        sqp_solver_mng(new dotk::DOTk_InexactTrustRegionSqpSolverMng(primal, mng));
+        sqp_solver_mng = std::make_shared<dotk::DOTk_InexactTrustRegionSqpSolverMng>(primal, mng);
     sqp_solver_mng->setDefaultKrylovSolvers(primal, hessian);
 
     EXPECT_FALSE(sqp_solver_mng->adjustSolversTolerance());
@@ -664,18 +662,16 @@ TEST(DOTk_InexactTrustRegionSQPTest, getMin)
 {
     size_t nduals = 3;
     size_t ncontrols = 5;
-    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal = std::make_shared<dotk::DOTk_Primal>();
     primal->allocateSerialDualArray(nduals, 1.);
     primal->allocateSerialControlArray(ncontrols);
     setSqpTestInitialGuess(primal);
 
-    std::shared_ptr<dotk::DOTk_NocedalAndWrightEquality> equality(new dotk::DOTk_NocedalAndWrightEquality);
-    std::shared_ptr<dotk::DOTk_NocedalAndWrightObjective> objective(new dotk::DOTk_NocedalAndWrightObjective);
-    std::shared_ptr<dotk::DOTk_TrustRegionMngTypeELP>
-        mng(new dotk::DOTk_TrustRegionMngTypeELP(primal, objective, equality));
-    std::shared_ptr<dotk::DOTk_InexactTrustRegionSqpSolverMng>
-        solver_mng(new dotk::DOTk_InexactTrustRegionSqpSolverMng(primal, mng));
-    std::shared_ptr<dotk::DOTk_Hessian> hessian(new dotk::DOTk_Hessian);
+    std::shared_ptr<dotk::DOTk_NocedalAndWrightEquality> equality = std::make_shared<dotk::DOTk_NocedalAndWrightEquality>();
+    std::shared_ptr<dotk::DOTk_NocedalAndWrightObjective> objective = std::make_shared<dotk::DOTk_NocedalAndWrightObjective>();
+    std::shared_ptr<dotk::DOTk_TrustRegionMngTypeELP> mng = std::make_shared<dotk::DOTk_TrustRegionMngTypeELP>(primal, objective, equality);
+    std::shared_ptr<dotk::DOTk_InexactTrustRegionSqpSolverMng> solver_mng = std::make_shared<dotk::DOTk_InexactTrustRegionSqpSolverMng>(primal, mng);
+    std::shared_ptr<dotk::DOTk_Hessian> hessian = std::make_shared<dotk::DOTk_Hessian>();
 
     hessian->setFullSpaceHessian();
     mng->setMaxTrustRegionRadius(1e2);

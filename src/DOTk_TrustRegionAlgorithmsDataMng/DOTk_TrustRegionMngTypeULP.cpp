@@ -24,7 +24,7 @@ DOTk_TrustRegionMngTypeULP::DOTk_TrustRegionMngTypeULP(const std::shared_ptr<dot
                                                        const std::shared_ptr<dotk::DOTk_ObjectiveFunction<Real> > & objective_) :
         dotk::DOTk_TrustRegionAlgorithmsDataMng(primal_)
 {
-    m_RoutinesMng.reset(new dotk::DOTk_RoutinesTypeULP(objective_));
+    m_RoutinesMng = std::make_shared<dotk::DOTk_RoutinesTypeULP>(objective_);
 }
 
 DOTk_TrustRegionMngTypeULP::~DOTk_TrustRegionMngTypeULP()

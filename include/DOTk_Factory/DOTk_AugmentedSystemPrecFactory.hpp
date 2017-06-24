@@ -19,27 +19,27 @@ class DOTk_LeftPreconditioner;
 class DOTk_AugmentedSystemPrecFactory
 {
 public:
-    explicit DOTk_AugmentedSystemPrecFactory(size_t max_num_solver_itr_);
+    explicit DOTk_AugmentedSystemPrecFactory(size_t aMaxNumSolverIterations);
     ~DOTk_AugmentedSystemPrecFactory();
 
     void buildAugmentedSystemPrecWithPcgSolver
-    (const std::shared_ptr<dotk::DOTk_Primal> & primal_,
-     std::shared_ptr<dotk::DOTk_LeftPreconditioner> & prec_);
+    (const std::shared_ptr<dotk::DOTk_Primal> & aPrimal,
+     std::shared_ptr<dotk::DOTk_LeftPreconditioner> & aPreconditioner);
     void buildAugmentedSystemPrecWithGcrSolver
-    (const std::shared_ptr<dotk::DOTk_Primal> & primal_,
-     std::shared_ptr<dotk::DOTk_LeftPreconditioner> & prec_);
+    (const std::shared_ptr<dotk::DOTk_Primal> & aPrimal,
+     std::shared_ptr<dotk::DOTk_LeftPreconditioner> & aPreconditioner);
     void buildAugmentedSystemPrecWithCrSolver
-    (const std::shared_ptr<dotk::DOTk_Primal> & primal_,
-     std::shared_ptr<dotk::DOTk_LeftPreconditioner> & prec_);
+    (const std::shared_ptr<dotk::DOTk_Primal> & aPrimal,
+     std::shared_ptr<dotk::DOTk_LeftPreconditioner> & aPreconditioner);
     void buildAugmentedSystemPrecWithCgneSolver
-    (const std::shared_ptr<dotk::DOTk_Primal> & primal_,
-     std::shared_ptr<dotk::DOTk_LeftPreconditioner> & prec_);
+    (const std::shared_ptr<dotk::DOTk_Primal> & aPrimal,
+     std::shared_ptr<dotk::DOTk_LeftPreconditioner> & aPreconditioner);
     void buildAugmentedSystemPrecWithCgnrSolver
-    (const std::shared_ptr<dotk::DOTk_Primal> & primal_,
-     std::shared_ptr<dotk::DOTk_LeftPreconditioner> & prec_);
+    (const std::shared_ptr<dotk::DOTk_Primal> & aPrimal,
+     std::shared_ptr<dotk::DOTk_LeftPreconditioner> & aPreconditioner);
     void buildAugmentedSystemPrecWithGmresSolver
-    (const std::shared_ptr<dotk::DOTk_Primal> & primal_,
-     std::shared_ptr<dotk::DOTk_LeftPreconditioner> & prec_);
+    (const std::shared_ptr<dotk::DOTk_Primal> & aPrimal,
+     std::shared_ptr<dotk::DOTk_LeftPreconditioner> & aPreconditioner);
 
 private:
     size_t m_MaxNumSolverItr;

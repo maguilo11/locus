@@ -18,8 +18,8 @@ namespace dotk
 {
 
 DOTk_KrylovSolverDataMng::DOTk_KrylovSolverDataMng
-(const std::shared_ptr<dotk::DOTk_Primal> & primal_,
- const std::shared_ptr<dotk::DOTk_LinearOperator> & linear_operator_) :
+(const std::shared_ptr<dotk::DOTk_Primal> & aPrimal,
+ const std::shared_ptr<dotk::DOTk_LinearOperator> & aLinearOperator) :
         m_MaxNumSolverItr(200),
         m_SolverType(dotk::types::KRYLOV_SOLVER_DISABLED),
         m_Solution(),
@@ -27,18 +27,18 @@ DOTk_KrylovSolverDataMng::DOTk_KrylovSolverDataMng
         m_FirstSolution(),
         m_PreviousSolution(),
         m_MatrixTimesVector(),
-        m_LinearOperator(linear_operator_)
+        m_LinearOperator(aLinearOperator)
 {
-    this->initialize(primal_);
+    this->initialize(aPrimal);
 }
 
 DOTk_KrylovSolverDataMng::~DOTk_KrylovSolverDataMng()
 {
 }
 
-void DOTk_KrylovSolverDataMng::setSolverType(dotk::types::krylov_solver_t type_)
+void DOTk_KrylovSolverDataMng::setSolverType(dotk::types::krylov_solver_t aType)
 {
-    m_SolverType = type_;
+    m_SolverType = aType;
 }
 
 dotk::types::krylov_solver_t DOTk_KrylovSolverDataMng::getSolverType() const
@@ -46,9 +46,9 @@ dotk::types::krylov_solver_t DOTk_KrylovSolverDataMng::getSolverType() const
     return (m_SolverType);
 }
 
-void DOTk_KrylovSolverDataMng::setMaxNumSolverItr(size_t max_num_itr_)
+void DOTk_KrylovSolverDataMng::setMaxNumSolverItr(size_t aMaxNumIterations)
 {
-    m_MaxNumSolverItr = max_num_itr_;
+    m_MaxNumSolverItr = aMaxNumIterations;
 }
 
 size_t DOTk_KrylovSolverDataMng::getMaxNumSolverItr() const
@@ -76,9 +76,9 @@ const std::shared_ptr<dotk::Vector<Real> > & DOTk_KrylovSolverDataMng::getPrevio
     return (m_PreviousSolution);
 }
 
-void DOTk_KrylovSolverDataMng::setResidual (const std::shared_ptr<dotk::Vector<Real> > & vec_)
+void DOTk_KrylovSolverDataMng::setResidual (const std::shared_ptr<dotk::Vector<Real> > & aVector)
 {
-    m_Residual->update(1., *vec_, 0.);
+    m_Residual->update(1., *aVector, 0.);
 }
 
 const std::shared_ptr<dotk::Vector<Real> > & DOTk_KrylovSolverDataMng::getResidual() const
@@ -86,7 +86,7 @@ const std::shared_ptr<dotk::Vector<Real> > & DOTk_KrylovSolverDataMng::getResidu
     return (m_Residual);
 }
 
-const std::shared_ptr<dotk::Vector<Real> > & DOTk_KrylovSolverDataMng::getResidual(size_t index_) const
+const std::shared_ptr<dotk::Vector<Real> > & DOTk_KrylovSolverDataMng::getResidual(size_t aIndex) const
 {
     std::perror("\n**** Unimplemented Function DOTk_KrylovSolverDataMng::getResidual(index). ABORT. ****\n");
     std::abort();
@@ -103,7 +103,7 @@ const std::shared_ptr<dotk::Vector<Real> > & DOTk_KrylovSolverDataMng::getLeftPr
     std::abort();
 }
 
-const std::shared_ptr<dotk::Vector<Real> > & DOTk_KrylovSolverDataMng::getLeftPrecTimesVector(size_t index_) const
+const std::shared_ptr<dotk::Vector<Real> > & DOTk_KrylovSolverDataMng::getLeftPrecTimesVector(size_t aIndex) const
 {
     std::perror("\n**** Unimplemented Function DOTk_KrylovSolverDataMng::getLeftPrecTimesVector(index). ABORT. ****\n");
     std::abort();
@@ -116,7 +116,7 @@ const std::shared_ptr<dotk::Vector<Real> > & DOTk_KrylovSolverDataMng::getRightP
 }
 
 void DOTk_KrylovSolverDataMng::setProjection
-(const std::shared_ptr<dotk::DOTk_OrthogonalProjection> & projection_)
+(const std::shared_ptr<dotk::DOTk_OrthogonalProjection> & aProjection)
 {
     std::perror("\n**** Unimplemented Function DOTk_KrylovSolverDataMng::setProjection. ABORT. ****\n");
     std::abort();
@@ -129,7 +129,7 @@ DOTk_KrylovSolverDataMng::getProjection() const
     std::abort();
 }
 
-void DOTk_KrylovSolverDataMng::setLeftPrec(const std::shared_ptr<dotk::DOTk_LeftPreconditioner> & preconditioner_)
+void DOTk_KrylovSolverDataMng::setLeftPrec(const std::shared_ptr<dotk::DOTk_LeftPreconditioner> & aPreconditioner)
 {
     std::perror("\n**** Unimplemented Function DOTk_KrylovSolverDataMng::setLeftPrec. ABORT. ****\n");
     std::abort();
@@ -143,7 +143,7 @@ DOTk_KrylovSolverDataMng::getLeftPrec() const
 }
 
 void DOTk_KrylovSolverDataMng::setRightPrec
-(const std::shared_ptr<dotk::DOTk_RightPreconditioner> & preconditioner_)
+(const std::shared_ptr<dotk::DOTk_RightPreconditioner> & aPreconditioner)
 {
     std::perror("\n**** Unimplemented Function DOTk_KrylovSolverDataMng::setRightPrec. ABORT. ****\n");
     std::abort();
@@ -156,31 +156,31 @@ DOTk_KrylovSolverDataMng::getRightPrec() const
     std::abort();
 }
 
-void DOTk_KrylovSolverDataMng::initialize(const std::shared_ptr<dotk::DOTk_Primal> & primal_)
+void DOTk_KrylovSolverDataMng::initialize(const std::shared_ptr<dotk::DOTk_Primal> & aPrimal)
 {
-    bool is_dual_allocated = primal_->dual().use_count() > 0;
-    bool is_state_allocated = primal_->state().use_count() > 0;
-    bool is_control_allocated = primal_->control().use_count() > 0;
+    bool is_dual_allocated = aPrimal->dual().use_count() > 0;
+    bool is_state_allocated = aPrimal->state().use_count() > 0;
+    bool is_control_allocated = aPrimal->control().use_count() > 0;
 
     if( (is_dual_allocated == false) && (is_state_allocated == false) && (is_control_allocated == true) )
     {
-        m_Solution = primal_->control()->clone();
-        m_Residual = primal_->control()->clone();
-        m_FirstSolution = primal_->control()->clone();
-        m_PreviousSolution = primal_->control()->clone();
-        m_MatrixTimesVector = primal_->control()->clone();
+        m_Solution = aPrimal->control()->clone();
+        m_Residual = aPrimal->control()->clone();
+        m_FirstSolution = aPrimal->control()->clone();
+        m_PreviousSolution = aPrimal->control()->clone();
+        m_MatrixTimesVector = aPrimal->control()->clone();
     }
     else
     {
-        m_Solution.reset(new dotk::DOTk_MultiVector<Real>(*primal_));
+        m_Solution = std::make_shared<dotk::DOTk_MultiVector<Real>>(*aPrimal);
         m_Solution->fill(0);
-        m_Residual.reset(new dotk::DOTk_MultiVector<Real>(*primal_));
+        m_Residual = std::make_shared<dotk::DOTk_MultiVector<Real>>(*aPrimal);
         m_Residual->fill(0);
-        m_FirstSolution.reset(new dotk::DOTk_MultiVector<Real>(*primal_));
+        m_FirstSolution = std::make_shared<dotk::DOTk_MultiVector<Real>>(*aPrimal);
         m_FirstSolution->fill(0);
-        m_PreviousSolution.reset(new dotk::DOTk_MultiVector<Real>(*primal_));
+        m_PreviousSolution = std::make_shared<dotk::DOTk_MultiVector<Real>>(*aPrimal);
         m_PreviousSolution->fill(0);
-        m_MatrixTimesVector.reset(new dotk::DOTk_MultiVector<Real>(*primal_));
+        m_MatrixTimesVector = std::make_shared<dotk::DOTk_MultiVector<Real>>(*aPrimal);
         m_MatrixTimesVector->fill(0);
     }
 

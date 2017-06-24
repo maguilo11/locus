@@ -23,9 +23,9 @@ DOTk_DirectSolverFactory::DOTk_DirectSolverFactory() :
 {
 }
 
-DOTk_DirectSolverFactory::DOTk_DirectSolverFactory(dotk::types::direct_solver_t type_) :
+DOTk_DirectSolverFactory::DOTk_DirectSolverFactory(dotk::types::direct_solver_t aType) :
         mErrorMsg(),
-        mFactoryType(type_)
+        mFactoryType(aType)
 {
 }
 
@@ -33,9 +33,9 @@ DOTk_DirectSolverFactory::~DOTk_DirectSolverFactory()
 {
 }
 
-void DOTk_DirectSolverFactory::setErrorMsg(const std::string & msg_)
+void DOTk_DirectSolverFactory::setErrorMsg(const std::string & aMsg)
 {
-    mErrorMsg.append(msg_);
+    mErrorMsg.append(aMsg);
 }
 
 std::string DOTk_DirectSolverFactory::getWarningMsg() const
@@ -43,9 +43,9 @@ std::string DOTk_DirectSolverFactory::getWarningMsg() const
     return (mErrorMsg);
 }
 
-void DOTk_DirectSolverFactory::setFactoryType(dotk::types::direct_solver_t type_)
+void DOTk_DirectSolverFactory::setFactoryType(dotk::types::direct_solver_t aType)
 {
-    mFactoryType = type_;
+    mFactoryType = aType;
 }
 
 dotk::types::direct_solver_t DOTk_DirectSolverFactory::getFactoryType() const
@@ -53,30 +53,30 @@ dotk::types::direct_solver_t DOTk_DirectSolverFactory::getFactoryType() const
     return (mFactoryType);
 }
 
-void DOTk_DirectSolverFactory::buildLowerTriangularDirectSolver(std::shared_ptr<dotk::DOTk_DirectSolver> & direct_solver_)
+void DOTk_DirectSolverFactory::buildLowerTriangularDirectSolver(std::shared_ptr<dotk::DOTk_DirectSolver> & aDirectSolver)
 {
-    direct_solver_.reset(new dotk::DOTk_LowerTriangularDirectSolver());
+    aDirectSolver = std::make_shared<dotk::DOTk_LowerTriangularDirectSolver>();
     this->setFactoryType(dotk::types::LOWER_TRIANGULAR_DIRECT_SOLVER);
 }
 
-void DOTk_DirectSolverFactory::buildUpperTriangularDirectSolver(std::shared_ptr<dotk::DOTk_DirectSolver> & direct_solver_)
+void DOTk_DirectSolverFactory::buildUpperTriangularDirectSolver(std::shared_ptr<dotk::DOTk_DirectSolver> & aDirectSolver)
 {
-    direct_solver_.reset(new dotk::DOTk_UpperTriangularDirectSolver());
+    aDirectSolver= std::make_shared<dotk::DOTk_UpperTriangularDirectSolver>();
     this->setFactoryType(dotk::types::UPPER_TRIANGULAR_DIRECT_SOLVER);
 }
 
-void DOTk_DirectSolverFactory::build(std::shared_ptr<dotk::DOTk_DirectSolver> & direct_solver_)
+void DOTk_DirectSolverFactory::build(std::shared_ptr<dotk::DOTk_DirectSolver> & aDirectSolver)
 {
     switch(this->getFactoryType())
     {
         case dotk::types::LOWER_TRIANGULAR_DIRECT_SOLVER:
         {
-            direct_solver_.reset(new dotk::DOTk_LowerTriangularDirectSolver());
+            aDirectSolver= std::make_shared<dotk::DOTk_LowerTriangularDirectSolver>();
             break;
         }
         case dotk::types::UPPER_TRIANGULAR_DIRECT_SOLVER:
         {
-            direct_solver_.reset(new dotk::DOTk_UpperTriangularDirectSolver());
+            aDirectSolver= std::make_shared<dotk::DOTk_UpperTriangularDirectSolver>();
             break;
         }
         case dotk::types::DIRECT_SOLVER_DISABLED:

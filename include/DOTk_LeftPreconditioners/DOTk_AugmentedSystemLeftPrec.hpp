@@ -26,30 +26,30 @@ class Vector;
 class DOTk_AugmentedSystemLeftPrec: public dotk::DOTk_LeftPreconditioner
 {
 public:
-    explicit DOTk_AugmentedSystemLeftPrec(const std::shared_ptr<dotk::DOTk_Primal> & primal_);
+    explicit DOTk_AugmentedSystemLeftPrec(const std::shared_ptr<dotk::DOTk_Primal> & aPrimal);
     virtual ~DOTk_AugmentedSystemLeftPrec();
 
     virtual void setParameter(dotk::types::stopping_criterion_param_t type_, Real parameter_);
     virtual Real getParameter(dotk::types::stopping_criterion_param_t type_) const;
-    virtual void setLeftPrecCgSolver(const std::shared_ptr<dotk::DOTk_Primal> & primal_,
-                                     size_t max_num_itr_ = 200);
-    virtual void setLeftPrecCrSolver(const std::shared_ptr<dotk::DOTk_Primal> & primal_,
-                                     size_t max_num_itr_ = 200);
-    virtual void setLeftPrecGcrSolver(const std::shared_ptr<dotk::DOTk_Primal> & primal_,
-                                      size_t max_num_itr_ = 200);
-    virtual void setLeftPrecCgneSolver(const std::shared_ptr<dotk::DOTk_Primal> & primal_,
-                                       size_t max_num_itr_ = 200);
-    virtual void setLeftPrecCgnrSolver(const std::shared_ptr<dotk::DOTk_Primal> & primal_,
-                                       size_t max_num_itr_ = 200);
-    virtual void setPrecGmresSolver(const std::shared_ptr<dotk::DOTk_Primal> & primal_,
-                                    size_t max_num_itr_ = 200);
+    virtual void setLeftPrecCgSolver(const std::shared_ptr<dotk::DOTk_Primal> & aPrimal,
+                                     size_t aMaxNumIterations = 200);
+    virtual void setLeftPrecCrSolver(const std::shared_ptr<dotk::DOTk_Primal> & aPrimal,
+                                     size_t aMaxNumIterations = 200);
+    virtual void setLeftPrecGcrSolver(const std::shared_ptr<dotk::DOTk_Primal> & aPrimal,
+                                      size_t aMaxNumIterations = 200);
+    virtual void setLeftPrecCgneSolver(const std::shared_ptr<dotk::DOTk_Primal> & aPrimal,
+                                       size_t aMaxNumIterations = 200);
+    virtual void setLeftPrecCgnrSolver(const std::shared_ptr<dotk::DOTk_Primal> & aPrimal,
+                                       size_t aMaxNumIterations = 200);
+    virtual void setPrecGmresSolver(const std::shared_ptr<dotk::DOTk_Primal> & aPrimal,
+                                    size_t aMaxNumIterations = 200);
 
-    virtual void apply(const std::shared_ptr<dotk::DOTk_OptimizationDataMng> & mng_,
-                       const std::shared_ptr<dotk::Vector<Real> > & vector_,
-                       const std::shared_ptr<dotk::Vector<Real> > & output_);
+    virtual void apply(const std::shared_ptr<dotk::DOTk_OptimizationDataMng> & aMng,
+                       const std::shared_ptr<dotk::Vector<Real> > & aVector,
+                       const std::shared_ptr<dotk::Vector<Real> > & aOutput);
 
 private:
-    void initialize(const std::shared_ptr<dotk::DOTk_Primal> & primal_);
+    void initialize(const std::shared_ptr<dotk::DOTk_Primal> & aPrimal);
 
 private:
     std::shared_ptr<dotk::DOTk_KrylovSolver> m_Solver;

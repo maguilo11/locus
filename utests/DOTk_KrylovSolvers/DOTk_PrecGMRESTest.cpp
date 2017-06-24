@@ -27,7 +27,7 @@ TEST(DOTk_GmresTestMatrix, apply)
 {
     std::shared_ptr<dotk::Vector<Real> > dual = dotk::gtest::allocateData(2, 1);
     std::shared_ptr<dotk::Vector<Real> > control = dotk::gtest::allocateData(2, 1);
-    std::shared_ptr<dotk::DOTk_MultiVector<Real> > primal(new dotk::DOTk_MultiVector<Real>(*control, *dual));
+    std::shared_ptr<dotk::DOTk_MultiVector<Real> > primal = std::make_shared<dotk::DOTk_MultiVector<Real>>(*control, *dual);
 
     std::shared_ptr<dotk::Vector<Real> > matrix_times_primal = primal->clone();
     dotk::DOTk_GmresTestMatrix matrix(primal);
@@ -45,22 +45,22 @@ TEST(DOTk_PrecGMRES, initialize)
 {
     size_t nduals = 2;
     size_t ncontrols = 2;
-    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal = std::make_shared<dotk::DOTk_Primal>();
     primal->allocateSerialDualArray(nduals);
     primal->allocateSerialControlArray(ncontrols);
-    std::shared_ptr<dotk::DOTk_NocedalAndWrightEquality> equality(new dotk::DOTk_NocedalAndWrightEquality);
-    std::shared_ptr<dotk::DOTk_NocedalAndWrightObjective> objective(new dotk::DOTk_NocedalAndWrightObjective);
+    std::shared_ptr<dotk::DOTk_NocedalAndWrightEquality> equality = std::make_shared<dotk::DOTk_NocedalAndWrightEquality>();
+    std::shared_ptr<dotk::DOTk_NocedalAndWrightObjective> objective = std::make_shared<dotk::DOTk_NocedalAndWrightObjective>();
     std::shared_ptr<dotk::DOTk_TrustRegionMngTypeELP>
-        mng(new dotk::DOTk_TrustRegionMngTypeELP(primal, objective, equality));
+        mng = std::make_shared<dotk::DOTk_TrustRegionMngTypeELP>(primal, objective, equality);
 
-    std::shared_ptr<dotk::DOTk_MultiVector<Real> >
-        multi_vector(new dotk::DOTk_MultiVector<Real>(*primal->control(), *primal->dual()));
+    std::shared_ptr<dotk::DOTk_MultiVector<Real> > multi_vector =
+            std::make_shared<dotk::DOTk_MultiVector<Real>>(*primal->control(), *primal->dual());
     multi_vector->fill(1);
-    std::shared_ptr<dotk::DOTk_GmresTestMatrix> matrix(new dotk::DOTk_GmresTestMatrix(multi_vector));
-    std::shared_ptr<dotk::DOTk_PrecGenMinResDataMng> solver_mng(new dotk::DOTk_PrecGenMinResDataMng(primal, matrix));
+    std::shared_ptr<dotk::DOTk_GmresTestMatrix> matrix = std::make_shared<dotk::DOTk_GmresTestMatrix>(multi_vector);
+    std::shared_ptr<dotk::DOTk_PrecGenMinResDataMng> solver_mng = std::make_shared<dotk::DOTk_PrecGenMinResDataMng>(primal, matrix);
 
     Real relative_tolerance = 1e-2;
-    std::shared_ptr<dotk::DOTk_RelativeCriterion> criterion(new dotk::DOTk_RelativeCriterion(relative_tolerance));
+    std::shared_ptr<dotk::DOTk_RelativeCriterion> criterion = std::make_shared<dotk::DOTk_RelativeCriterion>(relative_tolerance);
     dotk::DOTk_PrecGMRES solver(solver_mng);
     solver.initialize(multi_vector, criterion, mng);
 
@@ -76,26 +76,27 @@ TEST(DOTk_PrecGMRES, gmres)
 {
     size_t nduals = 2;
     size_t ncontrols = 2;
-    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal = std::make_shared<dotk::DOTk_Primal>();
     primal->allocateSerialDualArray(nduals);
     primal->allocateSerialControlArray(ncontrols, 2.);
-    std::shared_ptr<dotk::DOTk_NocedalAndWrightEquality> equality(new dotk::DOTk_NocedalAndWrightEquality);
-    std::shared_ptr<dotk::DOTk_NocedalAndWrightObjective> objective(new dotk::DOTk_NocedalAndWrightObjective);
+    std::shared_ptr<dotk::DOTk_NocedalAndWrightEquality> equality = std::make_shared<dotk::DOTk_NocedalAndWrightEquality>();
+    std::shared_ptr<dotk::DOTk_NocedalAndWrightObjective> objective = std::make_shared<dotk::DOTk_NocedalAndWrightObjective>();
     std::shared_ptr<dotk::DOTk_TrustRegionMngTypeELP>
-        mng(new dotk::DOTk_TrustRegionMngTypeELP(primal, objective, equality));
+        mng = std::make_shared<dotk::DOTk_TrustRegionMngTypeELP>(primal, objective, equality);
 
 
     Real relative_tolerance = 1e-2;
-    std::shared_ptr<dotk::DOTk_RelativeCriterion> criterion(new dotk::DOTk_RelativeCriterion(relative_tolerance));
-    std::shared_ptr<dotk::DOTk_MultiVector<Real> >
-        multi_vector(new dotk::DOTk_MultiVector<Real>(*primal->control(), *primal->dual()));
+    std::shared_ptr<dotk::DOTk_RelativeCriterion> criterion =
+            std::make_shared<dotk::DOTk_RelativeCriterion>(relative_tolerance);
+    std::shared_ptr<dotk::DOTk_MultiVector<Real> > multi_vector =
+            std::make_shared<dotk::DOTk_MultiVector<Real>>(*primal->control(), *primal->dual());
     (*multi_vector->dual())[0] = 0.930436494727822;
     (*multi_vector->dual())[1] = 0.846166890508573;
     (*multi_vector->control())[0] = 0.686772712360496;
     (*multi_vector->control())[1] = 0.588976642856829;
 
-    std::shared_ptr<dotk::DOTk_GmresTestMatrix> matrix(new dotk::DOTk_GmresTestMatrix(multi_vector));
-    std::shared_ptr<dotk::DOTk_PrecGenMinResDataMng> solver_mng(new dotk::DOTk_PrecGenMinResDataMng(primal, matrix));
+    std::shared_ptr<dotk::DOTk_GmresTestMatrix> matrix = std::make_shared<dotk::DOTk_GmresTestMatrix>(multi_vector);
+    std::shared_ptr<dotk::DOTk_PrecGenMinResDataMng> solver_mng = std::make_shared<dotk::DOTk_PrecGenMinResDataMng>(primal, matrix);
     EXPECT_EQ(dotk::types::USER_DEFINED_MATRIX, solver_mng->getLinearOperator()->type());
 
     dotk::DOTk_PrecGMRES solver(solver_mng);

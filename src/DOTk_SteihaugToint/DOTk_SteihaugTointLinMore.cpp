@@ -20,8 +20,8 @@ namespace dotk
 DOTk_SteihaugTointLinMore::DOTk_SteihaugTointLinMore(const std::shared_ptr<dotk::DOTk_OptimizationDataMng> & data_mng_,
                                                      const std::shared_ptr<dotk::DOTk_TrustRegionStepMng> & step_mng) :
         dotk::DOTk_SteihaugTointNewton(),
-        m_Solver(new dotk::DOTk_SteihaugTointPcg(data_mng_->getPrimalStruc())),
-        m_IO(new dotk::DOTk_SteihaugTointNewtonIO),
+        m_Solver(std::make_shared<dotk::DOTk_SteihaugTointPcg>(data_mng_->getPrimalStruc())),
+        m_IO(std::make_shared<dotk::DOTk_SteihaugTointNewtonIO>()),
         m_StepMng(step_mng),
         m_DataMng(data_mng_)
 {

@@ -26,11 +26,11 @@ namespace DOTkLeftPrecCGTest
 TEST(DOTk_LeftPrecCG, setAndGetNumSolverItrDone)
 {
     size_t ncontrols = 2;
-    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal = std::make_shared<dotk::DOTk_Primal>();
     primal->allocateSerialControlArray(ncontrols, 2);
-    std::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
-    std::shared_ptr<dotk::DOTk_LineSearchMngTypeULP> mng(new dotk::DOTk_LineSearchMngTypeULP(primal, objective));
-    std::shared_ptr<dotk::DOTk_Hessian> hessian(new dotk::DOTk_Hessian);
+    std::shared_ptr<dotk::DOTk_Rosenbrock> objective = std::make_shared<dotk::DOTk_Rosenbrock>();
+    std::shared_ptr<dotk::DOTk_LineSearchMngTypeULP> mng = std::make_shared<dotk::DOTk_LineSearchMngTypeULP>(primal, objective);
+    std::shared_ptr<dotk::DOTk_Hessian> hessian = std::make_shared<dotk::DOTk_Hessian>();
     std::shared_ptr<dotk::DOTk_LeftPrecConjGradDataMng> solver_mng(new dotk::DOTk_LeftPrecConjGradDataMng(primal, hessian));
     dotk::DOTk_LeftPrecCG solver(solver_mng);
 
@@ -42,11 +42,11 @@ TEST(DOTk_LeftPrecCG, setAndGetNumSolverItrDone)
 TEST(DOTk_LeftPrecCG, setAndGetTrustRegionRadius)
 {
     size_t ncontrols = 2;
-    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal = std::make_shared<dotk::DOTk_Primal>();
     primal->allocateSerialControlArray(ncontrols, 2);
-    std::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
-    std::shared_ptr<dotk::DOTk_LineSearchMngTypeULP> mng(new dotk::DOTk_LineSearchMngTypeULP(primal, objective));
-    std::shared_ptr<dotk::DOTk_Hessian> hessian(new dotk::DOTk_Hessian);
+    std::shared_ptr<dotk::DOTk_Rosenbrock> objective = std::make_shared<dotk::DOTk_Rosenbrock>();
+    std::shared_ptr<dotk::DOTk_LineSearchMngTypeULP> mng = std::make_shared<dotk::DOTk_LineSearchMngTypeULP>(primal, objective);
+    std::shared_ptr<dotk::DOTk_Hessian> hessian = std::make_shared<dotk::DOTk_Hessian>();
     std::shared_ptr<dotk::DOTk_LeftPrecConjGradDataMng> solver_mng(new dotk::DOTk_LeftPrecConjGradDataMng(primal, hessian));
     dotk::DOTk_LeftPrecCG solver(solver_mng);
 
@@ -59,11 +59,11 @@ TEST(DOTk_LeftPrecCG, setAndGetTrustRegionRadius)
 TEST(DOTk_LeftPrecCG, setAndGetSolverResidualNorm)
 {
     size_t ncontrols = 2;
-    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal = std::make_shared<dotk::DOTk_Primal>();
     primal->allocateSerialControlArray(ncontrols, 2);
-    std::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
-    std::shared_ptr<dotk::DOTk_LineSearchMngTypeULP> mng(new dotk::DOTk_LineSearchMngTypeULP(primal, objective));
-    std::shared_ptr<dotk::DOTk_Hessian> hessian(new dotk::DOTk_Hessian);
+    std::shared_ptr<dotk::DOTk_Rosenbrock> objective = std::make_shared<dotk::DOTk_Rosenbrock>();
+    std::shared_ptr<dotk::DOTk_LineSearchMngTypeULP> mng = std::make_shared<dotk::DOTk_LineSearchMngTypeULP>(primal, objective);
+    std::shared_ptr<dotk::DOTk_Hessian> hessian = std::make_shared<dotk::DOTk_Hessian>();
     std::shared_ptr<dotk::DOTk_LeftPrecConjGradDataMng> solver_mng(new dotk::DOTk_LeftPrecConjGradDataMng(primal, hessian));
     dotk::DOTk_LeftPrecCG solver(solver_mng);
 
@@ -76,11 +76,11 @@ TEST(DOTk_LeftPrecCG, setAndGetSolverResidualNorm)
 TEST(DOTk_LeftPrecCG, setAndGetInitialStoppingTolerance)
 {
     size_t ncontrols = 2;
-    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal = std::make_shared<dotk::DOTk_Primal>();
     primal->allocateSerialControlArray(ncontrols, 2);
-    std::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
-    std::shared_ptr<dotk::DOTk_LineSearchMngTypeULP> mng(new dotk::DOTk_LineSearchMngTypeULP(primal, objective));
-    std::shared_ptr<dotk::DOTk_Hessian> hessian(new dotk::DOTk_Hessian);
+    std::shared_ptr<dotk::DOTk_Rosenbrock> objective = std::make_shared<dotk::DOTk_Rosenbrock>();
+    std::shared_ptr<dotk::DOTk_LineSearchMngTypeULP> mng = std::make_shared<dotk::DOTk_LineSearchMngTypeULP>(primal, objective);
+    std::shared_ptr<dotk::DOTk_Hessian> hessian = std::make_shared<dotk::DOTk_Hessian>();
     std::shared_ptr<dotk::DOTk_LeftPrecConjGradDataMng> solver_mng(new dotk::DOTk_LeftPrecConjGradDataMng(primal, hessian));
     dotk::DOTk_LeftPrecCG solver(solver_mng);
 
@@ -93,11 +93,11 @@ TEST(DOTk_LeftPrecCG, setAndGetInitialStoppingTolerance)
 TEST(DOTk_LeftPrecCG, setAndGetSolverStopCriterion)
 {
     size_t ncontrols = 2;
-    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal = std::make_shared<dotk::DOTk_Primal>();
     primal->allocateSerialControlArray(ncontrols, 2);
-    std::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
-    std::shared_ptr<dotk::DOTk_LineSearchMngTypeULP> mng(new dotk::DOTk_LineSearchMngTypeULP(primal, objective));
-    std::shared_ptr<dotk::DOTk_Hessian> hessian(new dotk::DOTk_Hessian);
+    std::shared_ptr<dotk::DOTk_Rosenbrock> objective = std::make_shared<dotk::DOTk_Rosenbrock>();
+    std::shared_ptr<dotk::DOTk_LineSearchMngTypeULP> mng = std::make_shared<dotk::DOTk_LineSearchMngTypeULP>(primal, objective);
+    std::shared_ptr<dotk::DOTk_Hessian> hessian = std::make_shared<dotk::DOTk_Hessian>();
     std::shared_ptr<dotk::DOTk_LeftPrecConjGradDataMng> solver_mng(new dotk::DOTk_LeftPrecConjGradDataMng(primal, hessian));
     dotk::DOTk_LeftPrecCG solver(solver_mng);
 
@@ -109,11 +109,11 @@ TEST(DOTk_LeftPrecCG, setAndGetSolverStopCriterion)
 TEST(DOTk_LeftPrecCG, isCurvatureInvalid)
 {
     size_t ncontrols = 2;
-    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal = std::make_shared<dotk::DOTk_Primal>();
     primal->allocateSerialControlArray(ncontrols, 2);
-    std::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
-    std::shared_ptr<dotk::DOTk_LineSearchMngTypeULP> mng(new dotk::DOTk_LineSearchMngTypeULP(primal, objective));
-    std::shared_ptr<dotk::DOTk_Hessian> hessian(new dotk::DOTk_Hessian);
+    std::shared_ptr<dotk::DOTk_Rosenbrock> objective = std::make_shared<dotk::DOTk_Rosenbrock>();
+    std::shared_ptr<dotk::DOTk_LineSearchMngTypeULP> mng = std::make_shared<dotk::DOTk_LineSearchMngTypeULP>(primal, objective);
+    std::shared_ptr<dotk::DOTk_Hessian> hessian = std::make_shared<dotk::DOTk_Hessian>();
     std::shared_ptr<dotk::DOTk_LeftPrecConjGradDataMng> solver_mng(new dotk::DOTk_LeftPrecConjGradDataMng(primal, hessian));
     dotk::DOTk_LeftPrecCG solver(solver_mng);
 
@@ -125,11 +125,11 @@ TEST(DOTk_LeftPrecCG, isCurvatureInvalid)
 TEST(DOTk_LeftPrecCG, checkCurvature)
 {
     size_t ncontrols = 2;
-    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal = std::make_shared<dotk::DOTk_Primal>();
     primal->allocateSerialControlArray(ncontrols, 2);
-    std::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
-    std::shared_ptr<dotk::DOTk_LineSearchMngTypeULP> mng(new dotk::DOTk_LineSearchMngTypeULP(primal, objective));
-    std::shared_ptr<dotk::DOTk_Hessian> hessian(new dotk::DOTk_Hessian);
+    std::shared_ptr<dotk::DOTk_Rosenbrock> objective = std::make_shared<dotk::DOTk_Rosenbrock>();
+    std::shared_ptr<dotk::DOTk_LineSearchMngTypeULP> mng = std::make_shared<dotk::DOTk_LineSearchMngTypeULP>(primal, objective);
+    std::shared_ptr<dotk::DOTk_Hessian> hessian = std::make_shared<dotk::DOTk_Hessian>();
     std::shared_ptr<dotk::DOTk_LeftPrecConjGradDataMng> solver_mng(new dotk::DOTk_LeftPrecConjGradDataMng(primal, hessian));
     dotk::DOTk_LeftPrecCG solver(solver_mng);
 
@@ -146,11 +146,11 @@ TEST(DOTk_LeftPrecCG, checkCurvature)
 TEST(DOTk_LeftPrecCG, checkResidualNorm)
 {
     size_t ncontrols = 2;
-    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal = std::make_shared<dotk::DOTk_Primal>();
     primal->allocateSerialControlArray(ncontrols, 2);
-    std::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
-    std::shared_ptr<dotk::DOTk_LineSearchMngTypeULP> mng(new dotk::DOTk_LineSearchMngTypeULP(primal, objective));
-    std::shared_ptr<dotk::DOTk_Hessian> hessian(new dotk::DOTk_Hessian);
+    std::shared_ptr<dotk::DOTk_Rosenbrock> objective = std::make_shared<dotk::DOTk_Rosenbrock>();
+    std::shared_ptr<dotk::DOTk_LineSearchMngTypeULP> mng = std::make_shared<dotk::DOTk_LineSearchMngTypeULP>(primal, objective);
+    std::shared_ptr<dotk::DOTk_Hessian> hessian = std::make_shared<dotk::DOTk_Hessian>();
     std::shared_ptr<dotk::DOTk_LeftPrecConjGradDataMng> solver_mng(new dotk::DOTk_LeftPrecConjGradDataMng(primal, hessian));
     dotk::DOTk_LeftPrecCG solver(solver_mng);
 
@@ -166,14 +166,14 @@ TEST(DOTk_LeftPrecCG, checkResidualNorm)
 TEST(DOTk_LeftPrecCG, initialize)
 {
     size_t ncontrols = 2;
-    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal = std::make_shared<dotk::DOTk_Primal>();
     primal->allocateSerialControlArray(ncontrols, 2);
 
-    std::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
-    std::shared_ptr<dotk::DOTk_LineSearchMngTypeULP> mng(new dotk::DOTk_LineSearchMngTypeULP(primal, objective));
+    std::shared_ptr<dotk::DOTk_Rosenbrock> objective = std::make_shared<dotk::DOTk_Rosenbrock>();
+    std::shared_ptr<dotk::DOTk_LineSearchMngTypeULP> mng = std::make_shared<dotk::DOTk_LineSearchMngTypeULP>(primal, objective);
     mng->computeGradient();
 
-    std::shared_ptr<dotk::DOTk_Hessian> hessian(new dotk::DOTk_Hessian);
+    std::shared_ptr<dotk::DOTk_Hessian> hessian = std::make_shared<dotk::DOTk_Hessian>();
     std::shared_ptr<dotk::DOTk_LeftPrecConjGradDataMng> solver_mng(new dotk::DOTk_LeftPrecConjGradDataMng(primal, hessian));
     dotk::DOTk_LeftPrecCG solver(solver_mng);
     std::shared_ptr<dotk::Vector<Real> > vec = primal->control()->clone();
@@ -194,11 +194,11 @@ TEST(DOTk_LeftPrecCG, initialize)
 TEST(DOTk_LeftPrecCG, pcg)
 {
     size_t ncontrols = 2;
-    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal = std::make_shared<dotk::DOTk_Primal>();
     primal->allocateSerialControlArray(ncontrols, 2);
-    std::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
-    std::shared_ptr<dotk::DOTk_LineSearchMngTypeULP> mng(new dotk::DOTk_LineSearchMngTypeULP(primal, objective));
-    std::shared_ptr<dotk::DOTk_Hessian> hessian(new dotk::DOTk_Hessian);
+    std::shared_ptr<dotk::DOTk_Rosenbrock> objective = std::make_shared<dotk::DOTk_Rosenbrock>();
+    std::shared_ptr<dotk::DOTk_LineSearchMngTypeULP> mng = std::make_shared<dotk::DOTk_LineSearchMngTypeULP>(primal, objective);
+    std::shared_ptr<dotk::DOTk_Hessian> hessian = std::make_shared<dotk::DOTk_Hessian>();
 
     mng->computeGradient();
     std::shared_ptr<dotk::Vector<Real> > vec = primal->control()->clone();
@@ -219,11 +219,11 @@ TEST(DOTk_LeftPrecCG, pcg)
 TEST(DOTk_LeftPrecCG, solve)
 {
     size_t ncontrols = 2;
-    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal = std::make_shared<dotk::DOTk_Primal>();
     primal->allocateSerialControlArray(ncontrols, 2);
-    std::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
-    std::shared_ptr<dotk::DOTk_LineSearchMngTypeULP> mng(new dotk::DOTk_LineSearchMngTypeULP(primal, objective));
-    std::shared_ptr<dotk::DOTk_Hessian> hessian(new dotk::DOTk_Hessian);
+    std::shared_ptr<dotk::DOTk_Rosenbrock> objective = std::make_shared<dotk::DOTk_Rosenbrock>();
+    std::shared_ptr<dotk::DOTk_LineSearchMngTypeULP> mng = std::make_shared<dotk::DOTk_LineSearchMngTypeULP>(primal, objective);
+    std::shared_ptr<dotk::DOTk_Hessian> hessian = std::make_shared<dotk::DOTk_Hessian>();
     std::shared_ptr<dotk::DOTk_LeftPrecConjGradDataMng> solver_mng(new dotk::DOTk_LeftPrecConjGradDataMng(primal, hessian));
 
     mng->computeGradient();

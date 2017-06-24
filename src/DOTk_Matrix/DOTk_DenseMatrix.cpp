@@ -688,7 +688,7 @@ template<typename ScalarType>
 void DOTk_DenseMatrix<ScalarType>::clear()
 {
     delete[] m_MatrixData;
-    m_MatrixData = NULL;
+    m_MatrixData = nullptr;
 }
 
 }

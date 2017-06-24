@@ -27,7 +27,7 @@ DOTk_SteihaugTointDataMng::DOTk_SteihaugTointDataMng(const std::shared_ptr<dotk:
         dotk::DOTk_OptimizationDataMng(primal_),
         m_PrimalStruc(primal_),
         m_Gradient(),
-        m_AssemblyMng(new dotk::DOTk_RoutinesTypeULP(objective_))
+        m_AssemblyMng(std::make_shared<dotk::DOTk_RoutinesTypeULP>(objective_))
 {
     this->initialize();
 }
@@ -38,7 +38,7 @@ DOTk_SteihaugTointDataMng::DOTk_SteihaugTointDataMng(const std::shared_ptr<dotk:
         dotk::DOTk_OptimizationDataMng(primal_),
         m_PrimalStruc(primal_),
         m_Gradient(),
-        m_AssemblyMng(new dotk::DOTk_RoutinesTypeUNP(primal_, objective_, equality_))
+        m_AssemblyMng(std::make_shared<dotk::DOTk_RoutinesTypeUNP>(primal_, objective_, equality_))
 {
     this->initialize();
 }

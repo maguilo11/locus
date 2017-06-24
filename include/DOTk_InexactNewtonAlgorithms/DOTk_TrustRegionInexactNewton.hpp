@@ -26,33 +26,33 @@ class Vector;
 class DOTk_TrustRegionInexactNewton : public dotk::DOTk_InexactNewtonAlgorithms
 {
 public:
-    DOTk_TrustRegionInexactNewton(const std::shared_ptr<dotk::DOTk_LinearOperator> & hessian_,
-                                  const std::shared_ptr<dotk::DOTk_TrustRegionAlgorithmsDataMng> & mng_);
-    DOTk_TrustRegionInexactNewton(const std::shared_ptr<dotk::DOTk_LinearOperator> & hessian_,
-                                  const std::shared_ptr<dotk::DOTk_TrustRegionAlgorithmsDataMng> & mng_,
-                                  const std::shared_ptr<dotk::DOTk_KrylovSolverDataMng> & solver_mng_);
+    DOTk_TrustRegionInexactNewton(const std::shared_ptr<dotk::DOTk_LinearOperator> & aLinearOperator,
+                                  const std::shared_ptr<dotk::DOTk_TrustRegionAlgorithmsDataMng> & aMng);
+    DOTk_TrustRegionInexactNewton(const std::shared_ptr<dotk::DOTk_LinearOperator> & aLinearOperator,
+                                  const std::shared_ptr<dotk::DOTk_TrustRegionAlgorithmsDataMng> & aMng,
+                                  const std::shared_ptr<dotk::DOTk_KrylovSolverDataMng> & aSolverMng);
     virtual ~DOTk_TrustRegionInexactNewton();
 
-    void setNewObjectiveFunctionValue(Real value_);
+    void setNewObjectiveFunctionValue(Real aInput);
     Real getNewObjectiveFunctionValue() const;
 
-    virtual void setNumItrDone(size_t itr_);
-    void setMaxNumKrylovSolverItr(size_t itr_);
+    virtual void setNumItrDone(size_t aInput);
+    void setMaxNumKrylovSolverItr(size_t aInput);
 
-    void setLeftPrecCgKrylovSolver(const std::shared_ptr<dotk::DOTk_Primal> & primal_,
-                                   size_t max_num_itr_ = 200);
-    void setPrecGmresKrylovSolver(const std::shared_ptr<dotk::DOTk_Primal> & primal_,
-                                  size_t max_num_itr_ = 200);
-    void setLeftPrecCgnrKrylovSolver(const std::shared_ptr<dotk::DOTk_Primal> & primal_,
-                                     size_t max_num_itr_ = 200);
-    void setLeftPrecCgneKrylovSolver(const std::shared_ptr<dotk::DOTk_Primal> & primal_,
-                                     size_t max_num_itr_ = 200);
-    void setLeftPrecCrKrylovSolver(const std::shared_ptr<dotk::DOTk_Primal> & primal_,
-                                   size_t max_num_itr_ = 200);
-    void setLeftPrecGcrKrylovSolver(const std::shared_ptr<dotk::DOTk_Primal> & primal_,
-                                    size_t max_num_itr_ = 200);
-    void setProjLeftPrecCgKrylovSolver(const std::shared_ptr<dotk::DOTk_Primal> & primal_,
-                                       size_t max_num_itr_ = 200);
+    void setLeftPrecCgKrylovSolver(const std::shared_ptr<dotk::DOTk_Primal> & aPrimal,
+                                   size_t aMaxNumIterations = 200);
+    void setPrecGmresKrylovSolver(const std::shared_ptr<dotk::DOTk_Primal> & aPrimal,
+                                  size_t aMaxNumIterations = 200);
+    void setLeftPrecCgnrKrylovSolver(const std::shared_ptr<dotk::DOTk_Primal> & aPrimal,
+                                     size_t aMaxNumIterations = 200);
+    void setLeftPrecCgneKrylovSolver(const std::shared_ptr<dotk::DOTk_Primal> & aPrimal,
+                                     size_t aMaxNumIterations = 200);
+    void setLeftPrecCrKrylovSolver(const std::shared_ptr<dotk::DOTk_Primal> & aPrimal,
+                                   size_t aMaxNumIterations = 200);
+    void setLeftPrecGcrKrylovSolver(const std::shared_ptr<dotk::DOTk_Primal> & aPrimal,
+                                    size_t aMaxNumIterations = 200);
+    void setProjLeftPrecCgKrylovSolver(const std::shared_ptr<dotk::DOTk_Primal> & aPrimal,
+                                       size_t aMaxNumIterations = 200);
 
     void printDiagnosticsAndSolutionEveryItr();
     void printDiagnosticsEveryItrAndSolutionAtTheEnd();

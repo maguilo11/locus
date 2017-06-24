@@ -24,30 +24,30 @@ class Vector;
 class DOTk_ProjLeftPrecCgDataMng : public dotk::DOTk_KrylovSolverDataMng
 {
 public:
-    DOTk_ProjLeftPrecCgDataMng(const std::shared_ptr<dotk::DOTk_Primal> & primal_,
-                               const std::shared_ptr<dotk::DOTk_LinearOperator> & operator_,
-                               size_t max_num_itr_);
+    DOTk_ProjLeftPrecCgDataMng(const std::shared_ptr<dotk::DOTk_Primal> & aPrimal,
+                               const std::shared_ptr<dotk::DOTk_LinearOperator> & aLinearOperator,
+                               size_t aMaxNumIterations );
     virtual ~DOTk_ProjLeftPrecCgDataMng();
 
-    virtual const std::shared_ptr<dotk::Vector<Real> > & getResidual(size_t index_) const;
-    virtual const std::shared_ptr<dotk::Vector<Real> > & getLeftPrecTimesVector(size_t index_) const;
+    virtual const std::shared_ptr<dotk::Vector<Real> > & getResidual(size_t aIndex) const;
+    virtual const std::shared_ptr<dotk::Vector<Real> > & getLeftPrecTimesVector(size_t aIndex) const;
 
     const std::shared_ptr<dotk::DOTk_OrthogonalProjection> & getProjection() const;
-    void setArnoldiProjection(const std::shared_ptr<dotk::DOTk_Primal> & primal_);
+    void setArnoldiProjection(const std::shared_ptr<dotk::DOTk_Primal> & aPrimal);
     void setGramSchmidtProjection(const std::shared_ptr<dotk::DOTk_Primal> & primal);
 
     const std::shared_ptr<dotk::DOTk_LeftPreconditioner> & getLeftPrec() const;
-    void setLeftPrec(const std::shared_ptr<dotk::DOTk_LeftPreconditioner> & prec_);
+    void setLeftPrec(const std::shared_ptr<dotk::DOTk_LeftPreconditioner> & aPreconditioner);
 
-    void setAugmentedSystemPrecWithPcgSolver(const std::shared_ptr<dotk::DOTk_Primal> & primal_);
-    void setAugmentedSystemPrecWithGcrSolver(const std::shared_ptr<dotk::DOTk_Primal> & primal_);
-    void setAugmentedSystemPrecWithCrSolver(const std::shared_ptr<dotk::DOTk_Primal> & primal_);
-    void setAugmentedSystemPrecWithCgneSolver(const std::shared_ptr<dotk::DOTk_Primal> & primal_);
-    void setAugmentedSystemPrecWithCgnrSolver(const std::shared_ptr<dotk::DOTk_Primal> & primal_);
-    void setAugmentedSystemPrecWithGmresSolver(const std::shared_ptr<dotk::DOTk_Primal> & primal_);
+    void setAugmentedSystemPrecWithPcgSolver(const std::shared_ptr<dotk::DOTk_Primal> & aPrimal);
+    void setAugmentedSystemPrecWithGcrSolver(const std::shared_ptr<dotk::DOTk_Primal> & aPrimal);
+    void setAugmentedSystemPrecWithCrSolver(const std::shared_ptr<dotk::DOTk_Primal> & aPrimal);
+    void setAugmentedSystemPrecWithCgneSolver(const std::shared_ptr<dotk::DOTk_Primal> & aPrimal);
+    void setAugmentedSystemPrecWithCgnrSolver(const std::shared_ptr<dotk::DOTk_Primal> & aPrimal);
+    void setAugmentedSystemPrecWithGmresSolver(const std::shared_ptr<dotk::DOTk_Primal> & aPrimal);
 
 private:
-    void initialize(size_t max_num_itr_, const std::shared_ptr<dotk::Vector<Real> > vector_);
+    void initialize(size_t aMaxNumIterations , const std::shared_ptr<dotk::Vector<Real> > aVector);
 
 private:
     std::shared_ptr<dotk::DOTk_OrthogonalProjection> m_ProjectionMethod;

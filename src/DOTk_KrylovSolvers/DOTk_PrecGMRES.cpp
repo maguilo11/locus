@@ -22,19 +22,19 @@
 namespace dotk
 {
 
-DOTk_PrecGMRES::DOTk_PrecGMRES(const std::shared_ptr<dotk::DOTk_KrylovSolverDataMng> & mng_) :
+DOTk_PrecGMRES::DOTk_PrecGMRES(const std::shared_ptr<dotk::DOTk_KrylovSolverDataMng> & aSolverDataMng) :
         dotk::DOTk_KrylovSolver(dotk::types::PREC_GMRES),
-        m_DataMng(mng_),
-        m_ProjectionOperatorTimesVec(mng_->getSolution()->clone())
+        m_DataMng(aSolverDataMng),
+        m_ProjectionOperatorTimesVec(aSolverDataMng->getSolution()->clone())
 {
     this->allocate(m_DataMng->getSolution());
 }
 
 DOTk_PrecGMRES::DOTk_PrecGMRES(const std::shared_ptr<dotk::DOTk_Primal> & primal_,
-                                   const std::shared_ptr<dotk::DOTk_LinearOperator> & linear_operator_,
-                                   size_t max_num_itr_) :
+                                   const std::shared_ptr<dotk::DOTk_LinearOperator> & aLinearOperator,
+                                   size_t aMaxNumIterations) :
         dotk::DOTk_KrylovSolver(dotk::types::LEFT_PREC_GCR),
-        m_DataMng(new dotk::DOTk_PrecGenMinResDataMng(primal_, linear_operator_, max_num_itr_)),
+        m_DataMng(std::make_shared<dotk::DOTk_PrecGenMinResDataMng>(primal_, aLinearOperator, aMaxNumIterations)),
         m_ProjectionOperatorTimesVec()
 {
     this->allocate(m_DataMng->getSolution());
@@ -44,17 +44,17 @@ DOTk_PrecGMRES::~DOTk_PrecGMRES()
 {
 }
 
-void DOTk_PrecGMRES::initialize(const std::shared_ptr<dotk::Vector<Real> > & rhs_vec_,
-                                const std::shared_ptr<dotk::DOTk_KrylovSolverStoppingCriterion> & criterion_,
-                                const std::shared_ptr<dotk::DOTk_OptimizationDataMng> & opt_prob_mng_)
+void DOTk_PrecGMRES::initialize(const std::shared_ptr<dotk::Vector<Real> > & aRhsVector,
+                                const std::shared_ptr<dotk::DOTk_KrylovSolverStoppingCriterion> & aCriterion,
+                                const std::shared_ptr<dotk::DOTk_OptimizationDataMng> & aMng)
 {
     m_DataMng->getProjection()->clear();
     dotk::DOTk_KrylovSolver::setNumSolverItrDone(0);
     dotk::DOTk_KrylovSolver::trustRegionViolation(false);
 
     m_DataMng->getSolution()->fill(0.);
-    m_DataMng->getResidual()->update(1., *rhs_vec_, 0.);
-    m_DataMng->getLeftPrec()->apply(opt_prob_mng_,
+    m_DataMng->getResidual()->update(1., *aRhsVector, 0.);
+    m_DataMng->getLeftPrec()->apply(aMng,
                                      m_DataMng->getResidual(),
                                      m_DataMng->getLeftPrecTimesVector());
 
@@ -63,15 +63,15 @@ void DOTk_PrecGMRES::initialize(const std::shared_ptr<dotk::Vector<Real> > & rhs
     dotk::DOTk_KrylovSolver::setSolverResidualNorm(initial_residual_norm);
 
     m_DataMng->getProjection()->setInitialResidual(initial_residual_norm);
-    Real stopping_tolerance = criterion_->evaluate(this, m_DataMng->getSolution());
+    Real stopping_tolerance = aCriterion->evaluate(this, m_DataMng->getSolution());
     dotk::DOTk_KrylovSolver::setInitialStoppingTolerance(stopping_tolerance);
 }
 
-void DOTk_PrecGMRES::gmres(const std::shared_ptr<dotk::Vector<Real> > & rhs_vec_,
-                           const std::shared_ptr<dotk::DOTk_KrylovSolverStoppingCriterion> & criterion_,
+void DOTk_PrecGMRES::gmres(const std::shared_ptr<dotk::Vector<Real> > & aRhsVector,
+                           const std::shared_ptr<dotk::DOTk_KrylovSolverStoppingCriterion> & aCriterion,
                            const std::shared_ptr<dotk::DOTk_OptimizationDataMng> & opt_mng_)
 {
-    this->initialize(rhs_vec_, criterion_, opt_mng_);
+    this->initialize(aRhsVector, aCriterion, opt_mng_);
     if(dotk::DOTk_KrylovSolver::checkCurvature(dotk::DOTk_KrylovSolver::getSolverResidualNorm()) == true)
     {
         return;
@@ -114,11 +114,11 @@ void DOTk_PrecGMRES::gmres(const std::shared_ptr<dotk::Vector<Real> > & rhs_vec_
         {
             break;
         }
-        m_DataMng->getResidual()->update(1., *rhs_vec_, 0.);
+        m_DataMng->getResidual()->update(1., *aRhsVector, 0.);
         m_DataMng->getResidual()->update(static_cast<Real>(-1.), *m_DataMng->getMatrixTimesVector(), 1.);
         Real norm_residual = m_DataMng->getResidual()->norm();
         dotk::DOTk_KrylovSolver::setSolverResidualNorm(norm_residual);
-        Real stopping_tolerance = criterion_->evaluate(this, m_DataMng->getRightPrecTimesVector());
+        Real stopping_tolerance = aCriterion->evaluate(this, m_DataMng->getRightPrecTimesVector());
         if (dotk::DOTk_KrylovSolver::checkResidualNorm(norm_residual, stopping_tolerance) == true)
         {
             break;
@@ -128,16 +128,16 @@ void DOTk_PrecGMRES::gmres(const std::shared_ptr<dotk::Vector<Real> > & rhs_vec_
     m_DataMng->getSolution()->update(1., *m_DataMng->getRightPrecTimesVector(), 0.);
 }
 
-void DOTk_PrecGMRES::setMaxNumKrylovSolverItr(size_t itr_)
+void DOTk_PrecGMRES::setMaxNumKrylovSolverItr(size_t aMaxNumIterations)
 {
-    m_DataMng->setMaxNumSolverItr(itr_);
+    m_DataMng->setMaxNumSolverItr(aMaxNumIterations);
 }
 
-void DOTk_PrecGMRES::solve(const std::shared_ptr<dotk::Vector<Real> > & rhs_vec_,
-                           const std::shared_ptr<dotk::DOTk_KrylovSolverStoppingCriterion> & criterion_,
-                           const std::shared_ptr<dotk::DOTk_OptimizationDataMng> & opt_prob_mng_)
+void DOTk_PrecGMRES::solve(const std::shared_ptr<dotk::Vector<Real> > & aRhsVector,
+                           const std::shared_ptr<dotk::DOTk_KrylovSolverStoppingCriterion> & aCriterion,
+                           const std::shared_ptr<dotk::DOTk_OptimizationDataMng> & aMng)
 {
-    this->gmres(rhs_vec_, criterion_, opt_prob_mng_);
+    this->gmres(aRhsVector, aCriterion, aMng);
 }
 
 const std::shared_ptr<dotk::DOTk_KrylovSolverDataMng> & DOTk_PrecGMRES::getDataMng() const
@@ -155,9 +155,9 @@ const std::shared_ptr<dotk::Vector<Real> > & DOTk_PrecGMRES::getDescentDirection
     return (m_ProjectionOperatorTimesVec);
 }
 
-void DOTk_PrecGMRES::allocate(const std::shared_ptr<dotk::Vector<Real> > vec_)
+void DOTk_PrecGMRES::allocate(const std::shared_ptr<dotk::Vector<Real> > aVector)
 {
-    m_ProjectionOperatorTimesVec = vec_->clone();
+    m_ProjectionOperatorTimesVec = aVector->clone();
 }
 
 }

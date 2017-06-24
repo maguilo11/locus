@@ -26,22 +26,22 @@ class Vector;
 class DOTk_LineSearchInexactNewton : public dotk::DOTk_InexactNewtonAlgorithms
 {
 public:
-    DOTk_LineSearchInexactNewton(const std::shared_ptr<dotk::DOTk_LinearOperator> & hessian_,
-                                 const std::shared_ptr<dotk::DOTk_LineSearchStepMng> & step_,
-                                 const std::shared_ptr<dotk::DOTk_LineSearchAlgorithmsDataMng> & mng_);
+    DOTk_LineSearchInexactNewton(const std::shared_ptr<dotk::DOTk_LinearOperator> & aLinearOperator,
+                                 const std::shared_ptr<dotk::DOTk_LineSearchStepMng> & aStep,
+                                 const std::shared_ptr<dotk::DOTk_LineSearchAlgorithmsDataMng> & aMng);
     virtual ~DOTk_LineSearchInexactNewton();
 
-    virtual void setNumItrDone(size_t itr_);
-    void setMaxNumKrylovSolverItr(size_t itr_);
+    virtual void setNumItrDone(size_t aInput);
+    void setMaxNumKrylovSolverItr(size_t aInput);
 
-    void setPrecGmresKrylovSolver(const std::shared_ptr<dotk::DOTk_Primal> & primal_, size_t max_num_itr_ = 200);
-    void setLeftPrecCgKrylovSolver(const std::shared_ptr<dotk::DOTk_Primal> & primal_, size_t max_num_itr_ = 200);
-    void setLeftPrecCrKrylovSolver(const std::shared_ptr<dotk::DOTk_Primal> & primal_, size_t max_num_itr_ = 200);
-    void setLeftPrecGcrKrylovSolver(const std::shared_ptr<dotk::DOTk_Primal> & primal_, size_t max_num_itr_ = 200);
-    void setLeftPrecCgneKrylovSolver(const std::shared_ptr<dotk::DOTk_Primal> & primal_,
-                                     size_t max_num_itr_ = 200);
-    void setLeftPrecCgnrKrylovSolver(const std::shared_ptr<dotk::DOTk_Primal> & primal_,
-                                     size_t max_num_itr_ = 200);
+    void setPrecGmresKrylovSolver(const std::shared_ptr<dotk::DOTk_Primal> & aPrimal, size_t aMaxNumIterations = 200);
+    void setLeftPrecCgKrylovSolver(const std::shared_ptr<dotk::DOTk_Primal> & aPrimal, size_t aMaxNumIterations = 200);
+    void setLeftPrecCrKrylovSolver(const std::shared_ptr<dotk::DOTk_Primal> & aPrimal, size_t aMaxNumIterations = 200);
+    void setLeftPrecGcrKrylovSolver(const std::shared_ptr<dotk::DOTk_Primal> & aPrimal, size_t aMaxNumIterations = 200);
+    void setLeftPrecCgneKrylovSolver(const std::shared_ptr<dotk::DOTk_Primal> & aPrimal,
+                                     size_t aMaxNumIterations = 200);
+    void setLeftPrecCgnrKrylovSolver(const std::shared_ptr<dotk::DOTk_Primal> & aPrimal,
+                                     size_t aMaxNumIterations = 200);
 
     void printDiagnosticsAndSolutionEveryItr();
     void printDiagnosticsEveryItrAndSolutionAtTheEnd();

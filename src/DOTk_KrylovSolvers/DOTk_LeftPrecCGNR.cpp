@@ -19,19 +19,19 @@
 namespace dotk
 {
 
-DOTk_LeftPrecCGNR::DOTk_LeftPrecCGNR(const std::shared_ptr<dotk::DOTk_KrylovSolverDataMng> & solver_mng_) :
+DOTk_LeftPrecCGNR::DOTk_LeftPrecCGNR(const std::shared_ptr<dotk::DOTk_KrylovSolverDataMng> & aSolverDataMng) :
         dotk::DOTk_KrylovSolver::DOTk_KrylovSolver(dotk::types::LEFT_PREC_CGNR),
-        m_DataMng(solver_mng_),
-        m_AuxiliaryVector(solver_mng_->getSolution()->clone()),
-        m_ConjugateDirection(solver_mng_->getSolution()->clone()),
-        m_ResidualNormalEq(solver_mng_->getSolution()->clone())
+        m_DataMng(aSolverDataMng),
+        m_AuxiliaryVector(aSolverDataMng->getSolution()->clone()),
+        m_ConjugateDirection(aSolverDataMng->getSolution()->clone()),
+        m_ResidualNormalEq(aSolverDataMng->getSolution()->clone())
 {
 }
 
-DOTk_LeftPrecCGNR::DOTk_LeftPrecCGNR(const std::shared_ptr<dotk::DOTk_Primal> & primal_,
-                                     const std::shared_ptr<dotk::DOTk_LinearOperator> & linear_operator_) :
+DOTk_LeftPrecCGNR::DOTk_LeftPrecCGNR(const std::shared_ptr<dotk::DOTk_Primal> & aPrimal,
+                                     const std::shared_ptr<dotk::DOTk_LinearOperator> & aLinearOperator) :
         dotk::DOTk_KrylovSolver::DOTk_KrylovSolver(dotk::types::LEFT_PREC_CGNR),
-        m_DataMng(new dotk::DOTk_LeftPrecCGNResDataMng(primal_, linear_operator_)),
+        m_DataMng(std::make_shared<dotk::DOTk_LeftPrecCGNResDataMng>(aPrimal, aLinearOperator)),
         m_AuxiliaryVector(),
         m_ConjugateDirection(),
         m_ResidualNormalEq()
@@ -43,9 +43,9 @@ DOTk_LeftPrecCGNR::~DOTk_LeftPrecCGNR()
 {
 }
 
-void DOTk_LeftPrecCGNR::setMaxNumKrylovSolverItr(size_t itr_)
+void DOTk_LeftPrecCGNR::setMaxNumKrylovSolverItr(size_t aMaxNumIterations)
 {
-    m_DataMng->setMaxNumSolverItr(itr_);
+    m_DataMng->setMaxNumSolverItr(aMaxNumIterations);
 }
 
 const std::shared_ptr<dotk::DOTk_KrylovSolverDataMng> & DOTk_LeftPrecCGNR::getDataMng() const
@@ -63,31 +63,31 @@ const std::shared_ptr<dotk::Vector<Real> > & DOTk_LeftPrecCGNR::getDescentDirect
     return (m_ConjugateDirection);
 }
 
-void DOTk_LeftPrecCGNR::initialize(const std::shared_ptr<dotk::Vector<Real> > & rhs_vec_,
-                                   const std::shared_ptr<dotk::DOTk_KrylovSolverStoppingCriterion> & criterion_,
-                                   const std::shared_ptr<dotk::DOTk_OptimizationDataMng> & opt_mng_)
+void DOTk_LeftPrecCGNR::initialize(const std::shared_ptr<dotk::Vector<Real> > & aRhsVector,
+                                   const std::shared_ptr<dotk::DOTk_KrylovSolverStoppingCriterion> & aCriterion,
+                                   const std::shared_ptr<dotk::DOTk_OptimizationDataMng> & aMng)
 {
     dotk::DOTk_KrylovSolver::setNumSolverItrDone(0);
     dotk::DOTk_KrylovSolver::trustRegionViolation(false);
 
-    m_DataMng->getResidual()->update(1., *rhs_vec_, 0.);
-    m_DataMng->getLinearOperator()->apply(opt_mng_, m_DataMng->getResidual(), m_ResidualNormalEq);
-    m_DataMng->getLeftPrec()->apply(opt_mng_, m_ResidualNormalEq, m_DataMng->getLeftPrecTimesVector());
+    m_DataMng->getResidual()->update(1., *aRhsVector, 0.);
+    m_DataMng->getLinearOperator()->apply(aMng, m_DataMng->getResidual(), m_ResidualNormalEq);
+    m_DataMng->getLeftPrec()->apply(aMng, m_ResidualNormalEq, m_DataMng->getLeftPrecTimesVector());
     m_ConjugateDirection->update(1., *m_DataMng->getLeftPrecTimesVector(), 0.);
     m_DataMng->getSolution()->fill(0.);
 
     Real normal_eq_res_dot_prec_times_normal_eq_res = m_ResidualNormalEq->dot(*m_DataMng->getLeftPrecTimesVector());
     Real normal_eq_residual_norm = std::sqrt(normal_eq_res_dot_prec_times_normal_eq_res);
     dotk::DOTk_KrylovSolver::setSolverResidualNorm(normal_eq_residual_norm);
-    Real stopping_tolerance = criterion_->evaluate(this, m_DataMng->getLeftPrecTimesVector());
+    Real stopping_tolerance = aCriterion->evaluate(this, m_DataMng->getLeftPrecTimesVector());
     dotk::DOTk_KrylovSolver::setInitialStoppingTolerance(stopping_tolerance);
 }
 
-void DOTk_LeftPrecCGNR::cgnr(const std::shared_ptr<dotk::Vector<Real> > & rhs_vec_,
-                             const std::shared_ptr<dotk::DOTk_KrylovSolverStoppingCriterion> & criterion_,
-                             const std::shared_ptr<dotk::DOTk_OptimizationDataMng> & opt_mng_)
+void DOTk_LeftPrecCGNR::cgnr(const std::shared_ptr<dotk::Vector<Real> > & aRhsVector,
+                             const std::shared_ptr<dotk::DOTk_KrylovSolverStoppingCriterion> & aCriterion,
+                             const std::shared_ptr<dotk::DOTk_OptimizationDataMng> & aMng)
 {
-    this->initialize(rhs_vec_, criterion_, opt_mng_);
+    this->initialize(aRhsVector, aCriterion, aMng);
     if(dotk::DOTk_KrylovSolver::checkCurvature(dotk::DOTk_KrylovSolver::getSolverResidualNorm()) == true)
     {
         return;
@@ -101,7 +101,7 @@ void DOTk_LeftPrecCGNR::cgnr(const std::shared_ptr<dotk::Vector<Real> > & rhs_ve
             break;
         }
         dotk::DOTk_KrylovSolver::setNumSolverItrDone(itr);
-        m_DataMng->getLinearOperator()->apply(opt_mng_, m_ConjugateDirection, m_AuxiliaryVector);
+        m_DataMng->getLinearOperator()->apply(aMng, m_ConjugateDirection, m_AuxiliaryVector);
         Real curvature = m_ConjugateDirection->dot(*m_AuxiliaryVector);
         if (dotk::DOTk_KrylovSolver::checkCurvature(curvature) == true)
         {
@@ -121,13 +121,13 @@ void DOTk_LeftPrecCGNR::cgnr(const std::shared_ptr<dotk::Vector<Real> > & rhs_ve
             break;
         }
         m_DataMng->getResidual()->update(-alpha, *m_AuxiliaryVector, 1.);
-        m_DataMng->getLinearOperator()->apply(opt_mng_, m_DataMng->getResidual(), m_ResidualNormalEq);
-        m_DataMng->getLeftPrec()->apply(opt_mng_, m_ResidualNormalEq, m_DataMng->getLeftPrecTimesVector());
+        m_DataMng->getLinearOperator()->apply(aMng, m_DataMng->getResidual(), m_ResidualNormalEq);
+        m_DataMng->getLeftPrec()->apply(aMng, m_ResidualNormalEq, m_DataMng->getLeftPrecTimesVector());
         Real new_normal_eq_res_dot_prec_times_normal_eq_res =
                 m_ResidualNormalEq->dot(*m_DataMng->getLeftPrecTimesVector());
         Real normal_eq_residual_norm = std::sqrt(new_normal_eq_res_dot_prec_times_normal_eq_res);
         dotk::DOTk_KrylovSolver::setSolverResidualNorm(normal_eq_residual_norm);
-        Real stopping_tolerance = criterion_->evaluate(this, m_DataMng->getLeftPrecTimesVector());
+        Real stopping_tolerance = aCriterion->evaluate(this, m_DataMng->getLeftPrecTimesVector());
         if (dotk::DOTk_KrylovSolver::checkResidualNorm(normal_eq_residual_norm, stopping_tolerance) == true)
         {
             break;
@@ -139,11 +139,11 @@ void DOTk_LeftPrecCGNR::cgnr(const std::shared_ptr<dotk::Vector<Real> > & rhs_ve
     }
 }
 
-void DOTk_LeftPrecCGNR::solve(const std::shared_ptr<dotk::Vector<Real> > & rhs_vec_,
-                              const std::shared_ptr<dotk::DOTk_KrylovSolverStoppingCriterion> & criterion_,
-                              const std::shared_ptr<dotk::DOTk_OptimizationDataMng> & opt_mng_)
+void DOTk_LeftPrecCGNR::solve(const std::shared_ptr<dotk::Vector<Real> > & aRhsVector,
+                              const std::shared_ptr<dotk::DOTk_KrylovSolverStoppingCriterion> & aCriterion,
+                              const std::shared_ptr<dotk::DOTk_OptimizationDataMng> & aMng)
 {
-    this->cgnr(rhs_vec_, criterion_, opt_mng_);
+    this->cgnr(aRhsVector, aCriterion, aMng);
 }
 
 void DOTk_LeftPrecCGNR::initialize(const std::shared_ptr<dotk::Vector<Real> > vector_)

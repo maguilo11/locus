@@ -42,9 +42,9 @@ DOTk_AlgorithmCCSA::DOTk_AlgorithmCCSA(const std::shared_ptr<dotk::DOTk_DataMngC
         m_OldSigma(data_mng_->m_CurrentControl->clone()),
         m_AuxiliaryZcandidates(data_mng_->m_Dual->clone()),
         m_ControlAtIterationIminusTwo(data_mng_->m_CurrentControl->clone()),
-        m_IO(new dotk::DOTK_MethodCcsaIO),
+        m_IO(std::make_shared<dotk::DOTK_MethodCcsaIO>()),
         m_DataMng(data_mng_),
-        m_Bounds(new dotk::DOTk_BoundConstraints),
+        m_Bounds(std::make_shared<dotk::DOTk_BoundConstraints>()),
         m_SubProblem(sub_problem_)
 {
 }

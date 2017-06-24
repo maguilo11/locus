@@ -26,9 +26,9 @@ DOTk_InverseHessianFactory::DOTk_InverseHessianFactory() :
 {
 }
 
-DOTk_InverseHessianFactory::DOTk_InverseHessianFactory(dotk::types::invhessian_t type_) :
+DOTk_InverseHessianFactory::DOTk_InverseHessianFactory(dotk::types::invhessian_t aType) :
         mDefaultSecantSotrage(4),
-        mFactoryType(type_)
+        mFactoryType(aType)
 {
 }
 
@@ -36,9 +36,9 @@ DOTk_InverseHessianFactory::~DOTk_InverseHessianFactory()
 {
 }
 
-void DOTk_InverseHessianFactory::setDefaultSecantSotrage(size_t val_)
+void DOTk_InverseHessianFactory::setDefaultSecantSotrage(size_t aInput)
 {
-    mDefaultSecantSotrage = val_;
+    mDefaultSecantSotrage = aInput;
 }
 
 size_t DOTk_InverseHessianFactory::getDefaultSecantSotrage() const
@@ -46,9 +46,9 @@ size_t DOTk_InverseHessianFactory::getDefaultSecantSotrage() const
     return (mDefaultSecantSotrage);
 }
 
-void DOTk_InverseHessianFactory::setFactoryType(dotk::types::invhessian_t type_)
+void DOTk_InverseHessianFactory::setFactoryType(dotk::types::invhessian_t aType)
 {
-    mFactoryType = type_;
+    mFactoryType = aType;
 }
 
 dotk::types::invhessian_t DOTk_InverseHessianFactory::getFactoryType() const
@@ -57,97 +57,97 @@ dotk::types::invhessian_t DOTk_InverseHessianFactory::getFactoryType() const
 }
 
 void DOTk_InverseHessianFactory::buildLbfgsInvHessian
-(size_t secant_storage_,
- const std::shared_ptr<dotk::Vector<Real> > & vector_,
- std::shared_ptr<dotk::DOTk_SecondOrderOperator> & operator_)
+(size_t aSecantStorageSize,
+ const std::shared_ptr<dotk::Vector<Real> > & aVector,
+ std::shared_ptr<dotk::DOTk_SecondOrderOperator> & aOutput)
 {
-    size_t secant_storage = this->checkSecantStorageInput(secant_storage_);
-    operator_.reset(new dotk::DOTk_LBFGSInvHessian(vector_, secant_storage));
+    size_t secant_storage = this->checkSecantStorageInput(aSecantStorageSize);
+    aOutput = std::make_shared<dotk::DOTk_LBFGSInvHessian>(aVector, secant_storage);
     this->setFactoryType(dotk::types::LBFGS_INV_HESS);
 }
 
 void DOTk_InverseHessianFactory::buildLdfpInvHessian
-(size_t secant_storage_,
- const std::shared_ptr<dotk::Vector<Real> > & vector_,
- std::shared_ptr<dotk::DOTk_SecondOrderOperator> & operator_)
+(size_t aSecantStorageSize,
+ const std::shared_ptr<dotk::Vector<Real> > & aVector,
+ std::shared_ptr<dotk::DOTk_SecondOrderOperator> & aOutput)
 {
-    size_t secant_storage = this->checkSecantStorageInput(secant_storage_);
-    operator_.reset(new dotk::DOTk_LDFPInvHessian(vector_, secant_storage));
+    size_t secant_storage = this->checkSecantStorageInput(aSecantStorageSize);
+    aOutput = std::make_shared<dotk::DOTk_LDFPInvHessian>(aVector, secant_storage);
     this->setFactoryType(dotk::types::LDFP_INV_HESS);
 }
 
 void DOTk_InverseHessianFactory::buildLsr1InvHessian
-(size_t secant_storage_,
- const std::shared_ptr<dotk::Vector<Real> > & vector_,
- std::shared_ptr<dotk::DOTk_SecondOrderOperator> & operator_)
+(size_t aSecantStorageSize,
+ const std::shared_ptr<dotk::Vector<Real> > & aVector,
+ std::shared_ptr<dotk::DOTk_SecondOrderOperator> & aOutput)
 {
-    size_t secant_storage = this->checkSecantStorageInput(secant_storage_);
-    operator_.reset(new dotk::DOTk_LSR1InvHessian(vector_, secant_storage));
+    size_t secant_storage = this->checkSecantStorageInput(aSecantStorageSize);
+    aOutput = std::make_shared<dotk::DOTk_LSR1InvHessian>(aVector, secant_storage);
     this->setFactoryType(dotk::types::LSR1_INV_HESS);
 }
 
 void DOTk_InverseHessianFactory::buildSr1InvHessian
-(const std::shared_ptr<dotk::Vector<Real> > & vector_,
- std::shared_ptr<dotk::DOTk_SecondOrderOperator> & operator_)
+(const std::shared_ptr<dotk::Vector<Real> > & aVector,
+ std::shared_ptr<dotk::DOTk_SecondOrderOperator> & aOutput)
 {
-    operator_.reset(new dotk::DOTk_SR1InvHessian(vector_));
+    aOutput = std::make_shared<dotk::DOTk_SR1InvHessian>(aVector);
     this->setFactoryType(dotk::types::SR1_INV_HESS);
 }
 
 void DOTk_InverseHessianFactory::buildBfgsInvHessian
-(const std::shared_ptr<dotk::Vector<Real> > & vector_,
- std::shared_ptr<dotk::DOTk_SecondOrderOperator> & operator_)
+(const std::shared_ptr<dotk::Vector<Real> > & aVector,
+ std::shared_ptr<dotk::DOTk_SecondOrderOperator> & aOutput)
 {
-    operator_.reset(new dotk::DOTk_BFGSInvHessian(vector_));
+    aOutput = std::make_shared<dotk::DOTk_BFGSInvHessian>(aVector);
     this->setFactoryType(dotk::types::BFGS_INV_HESS);
 }
 
 void DOTk_InverseHessianFactory::buildBarzilaiBorweinInvHessian
-(const std::shared_ptr<dotk::Vector<Real> > & vector_,
- std::shared_ptr<dotk::DOTk_SecondOrderOperator> & operator_)
+(const std::shared_ptr<dotk::Vector<Real> > & aVector,
+ std::shared_ptr<dotk::DOTk_SecondOrderOperator> & aOutput)
 {
-    operator_.reset(new dotk::DOTk_BarzilaiBorweinInvHessian(vector_));
+    aOutput = std::make_shared<dotk::DOTk_BarzilaiBorweinInvHessian>(aVector);
     this->setFactoryType(dotk::types::BARZILAIBORWEIN_INV_HESS);
 }
 
 void DOTk_InverseHessianFactory::build
-(const std::shared_ptr<dotk::Vector<Real> > & vector_,
- std::shared_ptr<dotk::DOTk_SecondOrderOperator> & operator_,
- size_t secant_storage_)
+(const std::shared_ptr<dotk::Vector<Real> > & aVector,
+ std::shared_ptr<dotk::DOTk_SecondOrderOperator> & aOutput,
+ size_t aSecantStorageSize)
 {
     switch(this->getFactoryType())
     {
         case dotk::types::LBFGS_INV_HESS:
         {
-            size_t secant_storage = this->checkSecantStorageInput(secant_storage_);
-            operator_.reset(new dotk::DOTk_LBFGSInvHessian(vector_, secant_storage));
+            size_t secant_storage = this->checkSecantStorageInput(aSecantStorageSize);
+            aOutput = std::make_shared<dotk::DOTk_LBFGSInvHessian>(aVector, secant_storage);
             break;
         }
         case dotk::types::LDFP_INV_HESS:
         {
-            size_t secant_storage = this->checkSecantStorageInput(secant_storage_);
-            operator_.reset(new dotk::DOTk_LDFPInvHessian(vector_, secant_storage));
+            size_t secant_storage = this->checkSecantStorageInput(aSecantStorageSize);
+            aOutput = std::make_shared<dotk::DOTk_LDFPInvHessian>(aVector, secant_storage);
             break;
         }
         case dotk::types::LSR1_INV_HESS:
         {
-            size_t secant_storage = this->checkSecantStorageInput(secant_storage_);
-            operator_.reset(new dotk::DOTk_LSR1InvHessian(vector_, secant_storage));
+            size_t secant_storage = this->checkSecantStorageInput(aSecantStorageSize);
+            aOutput = std::make_shared<dotk::DOTk_LSR1InvHessian>(aVector, secant_storage);
             break;
         }
         case dotk::types::SR1_INV_HESS:
         {
-            operator_.reset(new dotk::DOTk_SR1InvHessian(vector_));
+            aOutput = std::make_shared<dotk::DOTk_SR1InvHessian>(aVector);
             break;
         }
         case dotk::types::BFGS_INV_HESS:
         {
-            operator_.reset(new dotk::DOTk_BFGSInvHessian(vector_));
+            aOutput = std::make_shared<dotk::DOTk_BFGSInvHessian>(aVector);
             break;
         }
         case dotk::types::BARZILAIBORWEIN_INV_HESS:
         {
-            operator_.reset(new dotk::DOTk_BarzilaiBorweinInvHessian(vector_));
+            aOutput = std::make_shared<dotk::DOTk_BarzilaiBorweinInvHessian>(aVector);
             break;
         }
         case dotk::types::INV_HESS_DISABLED:
@@ -158,16 +158,17 @@ void DOTk_InverseHessianFactory::build
         {
             std::cout << "\nDOTk WARNING: Invalid inverse hessian operator type, Default inverse Hessian operator set to LBFGS "
                     << "and the secant storage will be set to 4.\n" << std::flush;
-            operator_.reset(new dotk::DOTk_LBFGSInvHessian(vector_, this->getDefaultSecantSotrage()));
+            size_t tSecantSotrageSize = this->getDefaultSecantSotrage();
+            aOutput = std::make_shared<dotk::DOTk_LBFGSInvHessian>(aVector, tSecantSotrageSize);
             break;
         }
     }
 }
 
-size_t DOTk_InverseHessianFactory::checkSecantStorageInput(size_t secant_storage_)
+size_t DOTk_InverseHessianFactory::checkSecantStorageInput(size_t aSecantStorageSize)
 {
-    size_t secant_storage = secant_storage_;
-    if(secant_storage_ <= 0)
+    size_t secant_storage = aSecantStorageSize;
+    if(aSecantStorageSize <= 0)
     {
         std::cout << "\nDOTk WARNING: Invalid secant storage input. Default secant storage will be set to "
                   << this->getDefaultSecantSotrage() << ".\n\n" << std::flush;

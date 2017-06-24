@@ -183,14 +183,14 @@ std::shared_ptr<dotk::Vector<ScalarType> > DOTk_MultiVector<ScalarType>::clone()
 {
     if(m_State.use_count() > 0)
     {
-        std::shared_ptr<dotk::DOTk_MultiVector<ScalarType> >
-            vector(new dotk::DOTk_MultiVector<ScalarType>(*m_Control, *m_State, *m_Dual));
+        std::shared_ptr<dotk::DOTk_MultiVector<ScalarType> > vector =
+                std::make_shared<dotk::DOTk_MultiVector<ScalarType>>(*m_Control, *m_State, *m_Dual);
         return (vector);
     }
     else
     {
-        std::shared_ptr<dotk::DOTk_MultiVector<ScalarType> >
-            vector(new dotk::DOTk_MultiVector<ScalarType>(*m_Control, *m_Dual));
+        std::shared_ptr<dotk::DOTk_MultiVector<ScalarType> > vector =
+                std::make_shared<dotk::DOTk_MultiVector<ScalarType>>(*m_Control, *m_Dual);
         return (vector);
     }
 }

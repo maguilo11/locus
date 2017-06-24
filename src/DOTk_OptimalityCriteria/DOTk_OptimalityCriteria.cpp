@@ -34,8 +34,8 @@ DOTk_OptimalityCriteria::DOTk_OptimalityCriteria
         m_PrintDiagnostics(false),
         m_ObjectiveFunctionValue(std::numeric_limits<Real>::max()),
         m_OutputStream(),
-        m_DataMng(new dotk::DOTk_OptimalityCriteriaDataMng(primal_)),
-        m_RoutineMng(new dotk::DOTk_OptimalityCriteriaRoutineMng(objective_, equality_, inequality_))
+        m_DataMng(std::make_shared<dotk::DOTk_OptimalityCriteriaDataMng>(primal_)),
+        m_RoutineMng(std::make_shared<dotk::DOTk_OptimalityCriteriaRoutineMng>(objective_, equality_, inequality_))
 {
 }
 

@@ -23,8 +23,8 @@ DOTk_TrustRegionFactory::DOTk_TrustRegionFactory() :
 {
 }
 
-DOTk_TrustRegionFactory::DOTk_TrustRegionFactory(dotk::types::trustregion_t type_) :
-        mTrustRegionType(type_)
+DOTk_TrustRegionFactory::DOTk_TrustRegionFactory(dotk::types::trustregion_t aType) :
+        mTrustRegionType(aType)
 {
 }
 
@@ -37,9 +37,9 @@ dotk::types::trustregion_t DOTk_TrustRegionFactory::getTrustRegionType() const
     return (mTrustRegionType);
 }
 
-void DOTk_TrustRegionFactory::setWarningMsg(const std::string & msg_)
+void DOTk_TrustRegionFactory::setWarningMsg(const std::string & aMsg)
 {
-    mWarningMsg.append(msg_);
+    mWarningMsg.append(aMsg);
 }
 
 std::string DOTk_TrustRegionFactory::getWarningMsg() const
@@ -48,42 +48,44 @@ std::string DOTk_TrustRegionFactory::getWarningMsg() const
 }
 
 void DOTk_TrustRegionFactory::buildCauchyTrustRegion
-(std::shared_ptr<dotk::DOTk_TrustRegion> & trust_region_method_)
+(std::shared_ptr<dotk::DOTk_TrustRegion> & aOutput)
 {
-    trust_region_method_.reset(new dotk::DOTk_TrustRegion(dotk::types::TRUST_REGION_CAUCHY));
+    dotk::types::trustregion_t tType = dotk::types::TRUST_REGION_CAUCHY;
+    aOutput = std::make_shared<dotk::DOTk_TrustRegion>(tType);
 }
 
 void DOTk_TrustRegionFactory::buildDoglegTrustRegion
-(std::shared_ptr<dotk::DOTk_TrustRegion> & trust_region_method_)
+(std::shared_ptr<dotk::DOTk_TrustRegion> & aOutput)
 {
-    trust_region_method_.reset(new dotk::DOTk_DoglegTrustRegion());
+    aOutput = std::make_shared<dotk::DOTk_DoglegTrustRegion>();
 }
 
 void DOTk_TrustRegionFactory::buildDoubleDoglegTrustRegion
-(const std::shared_ptr<dotk::Vector<Real> > & vector_,
- std::shared_ptr<dotk::DOTk_TrustRegion> & trust_region_method_)
+(const std::shared_ptr<dotk::Vector<Real> > & aVector,
+ std::shared_ptr<dotk::DOTk_TrustRegion> & aOutput)
 {
-    trust_region_method_.reset(new dotk::DOTk_DoubleDoglegTrustRegion(vector_));
+    aOutput = std::make_shared<dotk::DOTk_DoubleDoglegTrustRegion>(aVector);
 }
 
-void DOTk_TrustRegionFactory::build(const std::shared_ptr<dotk::Vector<Real> > & vector_,
-                                    std::shared_ptr<dotk::DOTk_TrustRegion> & trust_region_step_)
+void DOTk_TrustRegionFactory::build(const std::shared_ptr<dotk::Vector<Real> > & aVector,
+                                    std::shared_ptr<dotk::DOTk_TrustRegion> & aOutput)
 {
     switch(this->getTrustRegionType())
     {
         case dotk::types::TRUST_REGION_CAUCHY:
         {
-            trust_region_step_.reset(new dotk::DOTk_TrustRegion(dotk::types::TRUST_REGION_CAUCHY));
+            dotk::types::trustregion_t tType = dotk::types::TRUST_REGION_CAUCHY;
+            aOutput = std::make_shared<dotk::DOTk_TrustRegion>(tType);
             break;
         }
         case dotk::types::TRUST_REGION_DOGLEG:
         {
-            trust_region_step_.reset(new dotk::DOTk_DoglegTrustRegion);
+            aOutput = std::make_shared<dotk::DOTk_DoglegTrustRegion>();
             break;
         }
         case dotk::types::TRUST_REGION_DOUBLE_DOGLEG:
         {
-            trust_region_step_.reset(new dotk::DOTk_DoubleDoglegTrustRegion(vector_));
+            aOutput = std::make_shared<dotk::DOTk_DoubleDoglegTrustRegion>(aVector);
             break;
         }
         case dotk::types::TRUST_REGION_DISABLED:
@@ -97,7 +99,7 @@ void DOTk_TrustRegionFactory::build(const std::shared_ptr<dotk::Vector<Real> > &
                     << "Double Dogleg.\n" << std::flush;
             dotk::ioUtils::printMessage(msg);
             this->setWarningMsg(msg.str());
-            trust_region_step_.reset(new dotk::DOTk_DoubleDoglegTrustRegion(vector_));
+            aOutput = std::make_shared<dotk::DOTk_DoubleDoglegTrustRegion>(aVector);
             break;
         }
     }

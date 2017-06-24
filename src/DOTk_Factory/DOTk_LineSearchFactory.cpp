@@ -25,8 +25,8 @@ DOTk_LineSearchFactory::DOTk_LineSearchFactory() :
 {
 }
 
-DOTk_LineSearchFactory::DOTk_LineSearchFactory(dotk::types::line_search_t type_) :
-        m_FactoryType(type_)
+DOTk_LineSearchFactory::DOTk_LineSearchFactory(dotk::types::line_search_t aType) :
+        m_FactoryType(aType)
 {
 }
 
@@ -34,9 +34,9 @@ DOTk_LineSearchFactory::~DOTk_LineSearchFactory()
 {
 }
 
-void DOTk_LineSearchFactory::setFactoryType(dotk::types::line_search_t type_)
+void DOTk_LineSearchFactory::setFactoryType(dotk::types::line_search_t aType)
 {
-    m_FactoryType = type_;
+    m_FactoryType = aType;
 }
 
 dotk::types::line_search_t DOTk_LineSearchFactory::getFactoryType() const
@@ -44,32 +44,32 @@ dotk::types::line_search_t DOTk_LineSearchFactory::getFactoryType() const
     return (m_FactoryType);
 }
 
-void DOTk_LineSearchFactory::buildArmijoLineSearch(const std::shared_ptr<dotk::Vector<Real> > & vector_,
-                                                   std::shared_ptr<dotk::DOTk_LineSearch> & line_search_)
+void DOTk_LineSearchFactory::buildArmijoLineSearch(const std::shared_ptr<dotk::Vector<Real> > & aVector,
+                                                   std::shared_ptr<dotk::DOTk_LineSearch> & aOutput)
 {
-    line_search_.reset(new dotk::DOTk_ArmijoLineSearch(vector_));
+    aOutput = std::make_shared<dotk::DOTk_ArmijoLineSearch>(aVector);
 }
 
-void DOTk_LineSearchFactory::buildGoldsteinLineSearch(const std::shared_ptr<dotk::Vector<Real> > & vector_,
-                                                      std::shared_ptr<dotk::DOTk_LineSearch> & line_search_)
+void DOTk_LineSearchFactory::buildGoldsteinLineSearch(const std::shared_ptr<dotk::Vector<Real> > & aVector,
+                                                      std::shared_ptr<dotk::DOTk_LineSearch> & aOutput)
 {
-    line_search_.reset(new dotk::DOTk_GoldsteinLineSearch(vector_));
+    aOutput = std::make_shared<dotk::DOTk_GoldsteinLineSearch>(aVector);
 }
 
-void DOTk_LineSearchFactory::buildCubicLineSearch(const std::shared_ptr<dotk::Vector<Real> > & vector_,
-                                                  std::shared_ptr<dotk::DOTk_LineSearch> & line_search_)
+void DOTk_LineSearchFactory::buildCubicLineSearch(const std::shared_ptr<dotk::Vector<Real> > & aVector,
+                                                  std::shared_ptr<dotk::DOTk_LineSearch> & aOutput)
 {
-    line_search_.reset(new dotk::DOTk_BacktrackingCubicInterpolation(vector_));
+    aOutput = std::make_shared<dotk::DOTk_BacktrackingCubicInterpolation>(aVector);
 }
 
-void DOTk_LineSearchFactory::buildGoldenSectionLineSearch(const std::shared_ptr<dotk::Vector<Real> > & vector_,
-                                                          std::shared_ptr<dotk::DOTk_LineSearch> & line_search_)
+void DOTk_LineSearchFactory::buildGoldenSectionLineSearch(const std::shared_ptr<dotk::Vector<Real> > & aVector,
+                                                          std::shared_ptr<dotk::DOTk_LineSearch> & aOutput)
 {
-    line_search_.reset(new dotk::DOTk_GoldenSectionLineSearch(vector_));
+    aOutput = std::make_shared<dotk::DOTk_GoldenSectionLineSearch>(aVector);
 }
 
-void DOTk_LineSearchFactory::build(const std::shared_ptr<dotk::Vector<Real> > & vector_,
-                                   std::shared_ptr<dotk::DOTk_LineSearch> & line_search_) const
+void DOTk_LineSearchFactory::build(const std::shared_ptr<dotk::Vector<Real> > & aVector,
+                                   std::shared_ptr<dotk::DOTk_LineSearch> & aOutput) const
 {
     switch(this->getFactoryType())
     {
@@ -79,22 +79,22 @@ void DOTk_LineSearchFactory::build(const std::shared_ptr<dotk::Vector<Real> > & 
         }
         case dotk::types::BACKTRACKING_ARMIJO:
         {
-            line_search_.reset(new dotk::DOTk_ArmijoLineSearch(vector_));
+            aOutput = std::make_shared<dotk::DOTk_ArmijoLineSearch>(aVector);
             break;
         }
         case dotk::types::BACKTRACKING_GOLDSTEIN:
         {
-            line_search_.reset(new dotk::DOTk_GoldsteinLineSearch(vector_));
+            aOutput = std::make_shared<dotk::DOTk_GoldsteinLineSearch>(aVector);
             break;
         }
         case dotk::types::BACKTRACKING_CUBIC_INTRP:
         {
-            line_search_.reset(new dotk::DOTk_BacktrackingCubicInterpolation(vector_));
+            aOutput = std::make_shared<dotk::DOTk_BacktrackingCubicInterpolation>(aVector);
             break;
         }
         case dotk::types::GOLDENSECTION:
         {
-            line_search_.reset(new dotk::DOTk_GoldenSectionLineSearch(vector_));
+            aOutput = std::make_shared<dotk::DOTk_GoldenSectionLineSearch>(aVector);
             break;
         }
         default:
@@ -102,7 +102,7 @@ void DOTk_LineSearchFactory::build(const std::shared_ptr<dotk::Vector<Real> > & 
             std::cout
                     << "\nDOTk WARNING: Invalid line search type, Default step set to Backtracking Cubic Interpolation.\n"
                     << std::flush;
-            line_search_.reset(new dotk::DOTk_BacktrackingCubicInterpolation(vector_));
+            aOutput = std::make_shared<dotk::DOTk_BacktrackingCubicInterpolation>(aVector);
             break;
         }
     }

@@ -24,17 +24,17 @@ class matrix;
 class DOTk_RayleighRitz : public dotk::DOTk_EigenMethod
 {
 public:
-    explicit DOTk_RayleighRitz(const std::shared_ptr<dotk::DOTk_OrthogonalFactorization> & qr_method_);
-    DOTk_RayleighRitz(const std::shared_ptr<dotk::DOTk_OrthogonalFactorization> & qr_method_,
-                      const std::shared_ptr<dotk::DOTk_EigenMethod> & eigen_solver_);
+    explicit DOTk_RayleighRitz(const std::shared_ptr<dotk::DOTk_OrthogonalFactorization> & aQRmethod);
+    DOTk_RayleighRitz(const std::shared_ptr<dotk::DOTk_OrthogonalFactorization> & aQRmethod,
+                      const std::shared_ptr<dotk::DOTk_EigenMethod> & aEigenSolver);
     virtual ~DOTk_RayleighRitz();
 
     virtual void solve(const std::shared_ptr<dotk::matrix<Real> > & matrix_,
-                       std::shared_ptr<dotk::Vector<Real> > & eigenvalues_,
-                       std::shared_ptr<dotk::matrix<Real> > & eigenvectors_);
+                       std::shared_ptr<dotk::Vector<Real> > & aEigenvalues,
+                       std::shared_ptr<dotk::matrix<Real> > & aEigenvectors);
 
 private:
-    void initialize(const std::shared_ptr<dotk::matrix<Real> > & eigenvectors_);
+    void initialize(const std::shared_ptr<dotk::matrix<Real> > & aEigenvectors);
 
 private:
     std::shared_ptr<dotk::matrix<Real> > m_WorkMatrix;

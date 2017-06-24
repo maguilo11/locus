@@ -100,9 +100,9 @@ void DOTk_GramSchmidt::initialize(const std::shared_ptr<dotk::DOTk_Primal> & pri
     {
         for(size_t row = 0; row < dotk::DOTk_OrthogonalProjection::getKrylovSubspaceDim(); ++row)
         {
-            m_OrthogonalBasis[row].reset(new dotk::DOTk_MultiVector<Real>(*primal_));
+            m_OrthogonalBasis[row] = std::make_shared<dotk::DOTk_MultiVector<Real>>(*primal_);
             m_OrthogonalBasis[row]->fill(0);
-            m_LinearOperatorTimesOrthoVector[row].reset(new dotk::DOTk_MultiVector<Real>(*primal_));
+            m_LinearOperatorTimesOrthoVector[row] = std::make_shared<dotk::DOTk_MultiVector<Real>>(*primal_);
             m_LinearOperatorTimesOrthoVector[row]->fill(0);
         }
     }

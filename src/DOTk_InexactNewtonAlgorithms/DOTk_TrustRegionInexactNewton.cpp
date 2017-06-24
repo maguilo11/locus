@@ -28,42 +28,42 @@
 namespace dotk
 {
 
-DOTk_TrustRegionInexactNewton::DOTk_TrustRegionInexactNewton(const std::shared_ptr<dotk::DOTk_LinearOperator> & hessian_,
-                                                             const std::shared_ptr<dotk::DOTk_TrustRegionAlgorithmsDataMng> & mng_) :
+DOTk_TrustRegionInexactNewton::DOTk_TrustRegionInexactNewton(const std::shared_ptr<dotk::DOTk_LinearOperator> & aLinearOperator,
+                                                             const std::shared_ptr<dotk::DOTk_TrustRegionAlgorithmsDataMng> & aMng) :
     dotk::DOTk_InexactNewtonAlgorithms(dotk::types::TRUST_REGION_INEXACT_NEWTON),
     m_NewObjectiveFuncValue(0.),
     m_KrylovSolver(),
-    m_IO(new dotk::DOTk_TrustRegionInexactNewtonIO),
-    m_LinearOperator(hessian_),
-    m_DataMng(mng_),
-    m_WorkVector(mng_->getTrialStep()->clone()),
-    m_HessTimesTrialStep(mng_->getTrialStep()->clone())
+    m_IO(std::make_shared<dotk::DOTk_TrustRegionInexactNewtonIO>()),
+    m_LinearOperator(aLinearOperator),
+    m_DataMng(aMng),
+    m_WorkVector(aMng->getTrialStep()->clone()),
+    m_HessTimesTrialStep(aMng->getTrialStep()->clone())
 {
 }
 
-DOTk_TrustRegionInexactNewton::DOTk_TrustRegionInexactNewton(const std::shared_ptr<dotk::DOTk_LinearOperator> & hessian_,
-                                                             const std::shared_ptr<dotk::DOTk_TrustRegionAlgorithmsDataMng> & mng_,
-                                                             const std::shared_ptr<dotk::DOTk_KrylovSolverDataMng> & solver_mng_) :
+DOTk_TrustRegionInexactNewton::DOTk_TrustRegionInexactNewton(const std::shared_ptr<dotk::DOTk_LinearOperator> & aLinearOperator,
+                                                             const std::shared_ptr<dotk::DOTk_TrustRegionAlgorithmsDataMng> & aMng,
+                                                             const std::shared_ptr<dotk::DOTk_KrylovSolverDataMng> & aSolverMng) :
     dotk::DOTk_InexactNewtonAlgorithms(dotk::types::TRUST_REGION_INEXACT_NEWTON),
     m_NewObjectiveFuncValue(0.),
     m_KrylovSolver(),
-    m_IO(new dotk::DOTk_TrustRegionInexactNewtonIO),
-    m_LinearOperator(hessian_),
-    m_DataMng(mng_),
-    m_WorkVector(mng_->getTrialStep()->clone()),
-    m_HessTimesTrialStep(mng_->getTrialStep()->clone())
+    m_IO(std::make_shared<dotk::DOTk_TrustRegionInexactNewtonIO>()),
+    m_LinearOperator(aLinearOperator),
+    m_DataMng(aMng),
+    m_WorkVector(aMng->getTrialStep()->clone()),
+    m_HessTimesTrialStep(aMng->getTrialStep()->clone())
 {
-    dotk::DOTk_KrylovSolverFactory krylov_solver_factory(solver_mng_->getSolverType());
-    krylov_solver_factory.build(solver_mng_, m_KrylovSolver);
+    dotk::DOTk_KrylovSolverFactory krylov_solver_factory(aSolverMng->getSolverType());
+    krylov_solver_factory.build(aSolverMng, m_KrylovSolver);
 }
 
 DOTk_TrustRegionInexactNewton::~DOTk_TrustRegionInexactNewton()
 {
 }
 
-void DOTk_TrustRegionInexactNewton::setNewObjectiveFunctionValue(Real value_)
+void DOTk_TrustRegionInexactNewton::setNewObjectiveFunctionValue(Real aInput)
 {
-    m_NewObjectiveFuncValue = value_;
+    m_NewObjectiveFuncValue = aInput;
 }
 
 Real DOTk_TrustRegionInexactNewton::getNewObjectiveFunctionValue() const
@@ -71,63 +71,63 @@ Real DOTk_TrustRegionInexactNewton::getNewObjectiveFunctionValue() const
     return (m_NewObjectiveFuncValue);
 }
 
-void DOTk_TrustRegionInexactNewton::setNumItrDone(size_t itr_)
+void DOTk_TrustRegionInexactNewton::setNumItrDone(size_t aInput)
 {
-    dotk::DOTk_InexactNewtonAlgorithms::setNumItrDone(itr_);
-    m_LinearOperator->setNumOtimizationItrDone(itr_);
-    m_KrylovSolver->getDataMng()->getLeftPrec()->setNumOptimizationItrDone(itr_);
+    dotk::DOTk_InexactNewtonAlgorithms::setNumItrDone(aInput);
+    m_LinearOperator->setNumOtimizationItrDone(aInput);
+    m_KrylovSolver->getDataMng()->getLeftPrec()->setNumOptimizationItrDone(aInput);
 }
 
-void DOTk_TrustRegionInexactNewton::setMaxNumKrylovSolverItr(size_t itr_)
+void DOTk_TrustRegionInexactNewton::setMaxNumKrylovSolverItr(size_t aInput)
 {
-    m_KrylovSolver->setMaxNumKrylovSolverItr(itr_);
+    m_KrylovSolver->setMaxNumKrylovSolverItr(aInput);
 }
 
-void DOTk_TrustRegionInexactNewton::setPrecGmresKrylovSolver(const std::shared_ptr<dotk::DOTk_Primal> & primal_,
-                                                            size_t max_num_itr_)
+void DOTk_TrustRegionInexactNewton::setPrecGmresKrylovSolver(const std::shared_ptr<dotk::DOTk_Primal> & aPrimal,
+                                                            size_t aMaxNumIterations)
 {
     dotk::DOTk_KrylovSolverFactory factory;
-    factory.buildPrecGmresSolver(primal_, m_LinearOperator, max_num_itr_, m_KrylovSolver);
-    m_KrylovSolver->setMaxNumKrylovSolverItr(max_num_itr_);
+    factory.buildPrecGmresSolver(aPrimal, m_LinearOperator, aMaxNumIterations, m_KrylovSolver);
+    m_KrylovSolver->setMaxNumKrylovSolverItr(aMaxNumIterations);
 }
 
-void DOTk_TrustRegionInexactNewton::setLeftPrecCgKrylovSolver(const std::shared_ptr<dotk::DOTk_Primal> & primal_,
-                                                             size_t max_num_itr_)
+void DOTk_TrustRegionInexactNewton::setLeftPrecCgKrylovSolver(const std::shared_ptr<dotk::DOTk_Primal> & aPrimal,
+                                                             size_t aMaxNumIterations)
 {
     dotk::DOTk_KrylovSolverFactory factory;
-    factory.buildLeftPrecCgSolver(primal_, m_LinearOperator, m_KrylovSolver);
-    m_KrylovSolver->setMaxNumKrylovSolverItr(max_num_itr_);
+    factory.buildLeftPrecCgSolver(aPrimal, m_LinearOperator, m_KrylovSolver);
+    m_KrylovSolver->setMaxNumKrylovSolverItr(aMaxNumIterations);
 }
 
-void DOTk_TrustRegionInexactNewton::setLeftPrecCrKrylovSolver(const std::shared_ptr<dotk::DOTk_Primal> & primal_,
-                                                             size_t max_num_itr_)
+void DOTk_TrustRegionInexactNewton::setLeftPrecCrKrylovSolver(const std::shared_ptr<dotk::DOTk_Primal> & aPrimal,
+                                                             size_t aMaxNumIterations)
 {
     dotk::DOTk_KrylovSolverFactory factory;
-    factory.buildLeftPrecCrSolver(primal_, m_LinearOperator, m_KrylovSolver);
-    m_KrylovSolver->setMaxNumKrylovSolverItr(max_num_itr_);
+    factory.buildLeftPrecCrSolver(aPrimal, m_LinearOperator, m_KrylovSolver);
+    m_KrylovSolver->setMaxNumKrylovSolverItr(aMaxNumIterations);
 }
 
-void DOTk_TrustRegionInexactNewton::setLeftPrecGcrKrylovSolver(const std::shared_ptr<dotk::DOTk_Primal> & primal_,
-                                                              size_t max_num_itr_)
+void DOTk_TrustRegionInexactNewton::setLeftPrecGcrKrylovSolver(const std::shared_ptr<dotk::DOTk_Primal> & aPrimal,
+                                                              size_t aMaxNumIterations)
 {
     dotk::DOTk_KrylovSolverFactory factory;
-    factory.buildLeftPrecGcrSolver(primal_, m_LinearOperator, max_num_itr_, m_KrylovSolver);
+    factory.buildLeftPrecGcrSolver(aPrimal, m_LinearOperator, aMaxNumIterations, m_KrylovSolver);
 }
 
-void DOTk_TrustRegionInexactNewton::setLeftPrecCgneKrylovSolver(const std::shared_ptr<dotk::DOTk_Primal> & primal_,
-                                                               size_t max_num_itr_)
+void DOTk_TrustRegionInexactNewton::setLeftPrecCgneKrylovSolver(const std::shared_ptr<dotk::DOTk_Primal> & aPrimal,
+                                                               size_t aMaxNumIterations)
 {
     dotk::DOTk_KrylovSolverFactory factory;
-    factory.buildLeftPrecCgneSolver(primal_, m_LinearOperator, m_KrylovSolver);
-    m_KrylovSolver->setMaxNumKrylovSolverItr(max_num_itr_);
+    factory.buildLeftPrecCgneSolver(aPrimal, m_LinearOperator, m_KrylovSolver);
+    m_KrylovSolver->setMaxNumKrylovSolverItr(aMaxNumIterations);
 }
 
-void DOTk_TrustRegionInexactNewton::setLeftPrecCgnrKrylovSolver(const std::shared_ptr<dotk::DOTk_Primal> & primal_,
-                                                               size_t max_num_itr_)
+void DOTk_TrustRegionInexactNewton::setLeftPrecCgnrKrylovSolver(const std::shared_ptr<dotk::DOTk_Primal> & aPrimal,
+                                                               size_t aMaxNumIterations)
 {
     dotk::DOTk_KrylovSolverFactory factory;
-    factory.buildLeftPrecCgnrSolver(primal_, m_LinearOperator, m_KrylovSolver);
-    m_KrylovSolver->setMaxNumKrylovSolverItr(max_num_itr_);
+    factory.buildLeftPrecCgnrSolver(aPrimal, m_LinearOperator, m_KrylovSolver);
+    m_KrylovSolver->setMaxNumKrylovSolverItr(aMaxNumIterations);
 }
 
 void DOTk_TrustRegionInexactNewton::printDiagnosticsAndSolutionEveryItr()

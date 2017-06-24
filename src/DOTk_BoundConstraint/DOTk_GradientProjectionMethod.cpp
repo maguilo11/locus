@@ -34,7 +34,7 @@ GradientProjectionMethod::GradientProjectionMethod(const std::shared_ptr<dotk::D
         m_StoppingCriterion(dotk::types::OPT_ALG_HAS_NOT_CONVERGED),
         m_OutputFile(),
         m_Primal(primal_),
-        m_Bounds(new dotk::DOTk_BoundConstraints),
+        m_Bounds(std::make_shared<dotk::DOTk_BoundConstraints>()),
         m_LineSearchStep(step_),
         m_Data(mng_)
 {

@@ -16,16 +16,17 @@
 namespace dotk
 {
 
-DOTk_LBFGSInvHessian::DOTk_LBFGSInvHessian(const std::shared_ptr<dotk::Vector<Real> > & vector_,
-                                           size_t max_secant_storage_) :
-        dotk::DOTk_SecondOrderOperator(max_secant_storage_),
-        m_Alpha(max_secant_storage_, 0.),
-        m_RhoStorage(new std::vector<Real>(max_secant_storage_, 0.)),
-        m_DeltaPrimal(vector_->clone()),
-        m_DeltaGradient(vector_->clone()),
-        m_DeltaPrimalStorage(new dotk::serial::DOTk_RowMatrix<Real>(*vector_, max_secant_storage_)),
-        m_DeltaGradientStorage(new dotk::serial::DOTk_RowMatrix<Real>(*vector_, max_secant_storage_))
+DOTk_LBFGSInvHessian::DOTk_LBFGSInvHessian(const std::shared_ptr<dotk::Vector<Real> > & aVector,
+                                           size_t aSecantStorageSize) :
+        dotk::DOTk_SecondOrderOperator(aSecantStorageSize),
+        m_Alpha(aSecantStorageSize, 0.),
+        m_RhoStorage(std::make_shared<std::vector<Real>>(aSecantStorageSize)),
+        m_DeltaPrimal(aVector->clone()),
+        m_DeltaGradient(aVector->clone()),
+        m_DeltaPrimalStorage(std::make_shared<dotk::serial::DOTk_RowMatrix<Real>>(*aVector, aSecantStorageSize)),
+        m_DeltaGradientStorage(std::make_shared<dotk::serial::DOTk_RowMatrix<Real>>(*aVector, aSecantStorageSize))
 {
+    std::fill(m_RhoStorage->begin(), m_RhoStorage->end(), 0.);
     dotk::DOTk_SecondOrderOperator::setInvHessianType(dotk::types::LBFGS_INV_HESS);
 }
 
@@ -39,21 +40,21 @@ const std::shared_ptr<std::vector<Real> > & DOTk_LBFGSInvHessian::getDeltaGradPr
     return (m_RhoStorage);
 }
 
-const std::shared_ptr<dotk::Vector<Real> > & DOTk_LBFGSInvHessian::getDeltaGradStorage(size_t at_) const
+const std::shared_ptr<dotk::Vector<Real> > & DOTk_LBFGSInvHessian::getDeltaGradStorage(size_t aIndex) const
 {
-    return (m_DeltaGradientStorage->basis(at_));
+    return (m_DeltaGradientStorage->basis(aIndex));
 }
 
-const std::shared_ptr<dotk::Vector<Real> > & DOTk_LBFGSInvHessian::getDeltaPrimalStorage(size_t at_) const
+const std::shared_ptr<dotk::Vector<Real> > & DOTk_LBFGSInvHessian::getDeltaPrimalStorage(size_t aIndex) const
 {
-    return (m_DeltaPrimalStorage->basis(at_));
+    return (m_DeltaPrimalStorage->basis(aIndex));
 }
 
-void DOTk_LBFGSInvHessian::getInvHessian(const std::shared_ptr<dotk::Vector<Real> > & vector_,
-                                         const std::shared_ptr<dotk::Vector<Real> > & inv_hess_times_vector_)
+void DOTk_LBFGSInvHessian::getInvHessian(const std::shared_ptr<dotk::Vector<Real> > & aVector,
+                                         const std::shared_ptr<dotk::Vector<Real> > & aOutput)
 {
-    int storage_size = dotk::DOTk_SecondOrderOperator::getNumUpdatesStored() - 1;
-    inv_hess_times_vector_->update(1., *vector_, 0.);
+    Int storage_size = dotk::DOTk_SecondOrderOperator::getNumUpdatesStored() - 1;
+    aOutput->update(1., *aVector, 0.);
     bool is_secant_information_stored = dotk::DOTk_SecondOrderOperator::getNumUpdatesStored() <= 0 ? true : false;
     if(is_secant_information_stored == true)
     {
@@ -61,39 +62,39 @@ void DOTk_LBFGSInvHessian::getInvHessian(const std::shared_ptr<dotk::Vector<Real
     }
 
     m_Alpha.assign(m_Alpha.size(), 0.);
-    for (int index_i = storage_size; index_i >= 0; index_i--)
+    for (Int index_i = storage_size; index_i >= 0; index_i--)
     {
-        m_Alpha[index_i] = (*m_RhoStorage)[index_i] * m_DeltaPrimalStorage->basis(index_i)->dot(*inv_hess_times_vector_);
-        inv_hess_times_vector_->update(-m_Alpha[index_i], *(m_DeltaGradientStorage->basis(index_i)), static_cast<Real>(1.));
+        m_Alpha[index_i] = (*m_RhoStorage)[index_i] * m_DeltaPrimalStorage->basis(index_i)->dot(*aOutput);
+        aOutput->update(-m_Alpha.operator [](index_i), *(m_DeltaGradientStorage->basis(index_i)), static_cast<Real>(1.));
     }
 
-    for(int index_j = 0; index_j <= storage_size; ++index_j)
+    for(Int index_j = 0; index_j <= storage_size; ++index_j)
     {
-        Real beta = (*m_RhoStorage)[index_j] * m_DeltaGradientStorage->basis(index_j)->dot(*inv_hess_times_vector_);
+        Real beta = (*m_RhoStorage)[index_j] * m_DeltaGradientStorage->basis(index_j)->dot(*aOutput);
         Real kappa = m_Alpha[index_j] - beta;
-        inv_hess_times_vector_->update(kappa, *m_DeltaPrimalStorage->basis(index_j), 1.);
+        aOutput->update(kappa, *m_DeltaPrimalStorage->basis(index_j), 1.);
     }
 
-    Real norm_invhess_times_vec = inv_hess_times_vector_->norm();
+    Real norm_invhess_times_vec = aOutput->norm();
     bool negative_curvature_detected = norm_invhess_times_vec < std::numeric_limits<Real>::min() ? true: false;
     if (negative_curvature_detected == true)
     {
-        inv_hess_times_vector_->update(1., *vector_, 0.);
+        aOutput->update(1., *aVector, 0.);
     }
 }
 
-void DOTk_LBFGSInvHessian::apply(const std::shared_ptr<dotk::DOTk_OptimizationDataMng> & mng_,
-                                 const std::shared_ptr<dotk::Vector<Real> > & vector_,
-                                 const std::shared_ptr<dotk::Vector<Real> > & matrix_times_vector_)
+void DOTk_LBFGSInvHessian::apply(const std::shared_ptr<dotk::DOTk_OptimizationDataMng> & aMng,
+                                 const std::shared_ptr<dotk::Vector<Real> > & aVector,
+                                 const std::shared_ptr<dotk::Vector<Real> > & aOutput)
 {
-    dotk::DOTk_SecondOrderOperator::computeDeltaPrimal(mng_->getNewPrimal(), mng_->getOldPrimal(), m_DeltaPrimal);
-    dotk::DOTk_SecondOrderOperator::computeDeltaGradient(mng_->getNewGradient(), mng_->getOldGradient(), m_DeltaGradient);
+    dotk::DOTk_SecondOrderOperator::computeDeltaPrimal(aMng->getNewPrimal(), aMng->getOldPrimal(), m_DeltaPrimal);
+    dotk::DOTk_SecondOrderOperator::computeDeltaGradient(aMng->getNewGradient(), aMng->getOldGradient(), m_DeltaGradient);
     dotk::DOTk_SecondOrderOperator::updateSecantStorage(m_DeltaPrimal,
                                                         m_DeltaGradient,
                                                         *m_RhoStorage,
                                                         m_DeltaPrimalStorage,
                                                         m_DeltaGradientStorage);
-    this->getInvHessian(vector_, matrix_times_vector_);
+    this->getInvHessian(aVector, aOutput);
 }
 
 }

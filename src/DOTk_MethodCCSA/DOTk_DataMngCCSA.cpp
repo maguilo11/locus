@@ -50,7 +50,7 @@ DOTk_DataMngCCSA::DOTk_DataMngCCSA(const std::shared_ptr<dotk::DOTk_Primal> & pr
         m_InputInequalityCoefficientsD(primal_->dual()->clone()),
         m_Primal(primal_),
         m_NumInequalityConstraints(inequality_.size()),
-        m_AssemblyMng(new dotk::DOTk_RoutinesTypeLP(objective_, inequality_))
+        m_AssemblyMng(std::make_shared<dotk::DOTk_RoutinesTypeLP>(objective_, inequality_))
 {
     this->initialize(primal_);
 }
@@ -81,7 +81,7 @@ DOTk_DataMngCCSA::DOTk_DataMngCCSA(const std::shared_ptr<dotk::DOTk_Primal> & pr
         m_InputInequalityCoefficientsD(primal_->dual()->clone()),
         m_Primal(primal_),
         m_NumInequalityConstraints(inequality_.size()),
-        m_AssemblyMng(new dotk::DOTk_RoutinesTypeNP(primal_, objective_, equality_, inequality_))
+        m_AssemblyMng(std::make_shared<dotk::DOTk_RoutinesTypeNP>(primal_, objective_, equality_, inequality_))
 {
     this->initialize(primal_);
 }
@@ -217,8 +217,8 @@ void DOTk_DataMngCCSA::initialize(const std::shared_ptr<dotk::DOTk_Primal> & pri
     m_CurrentFeasibilityMeasures->fill(std::numeric_limits<Real>::max());
 
     this->initializeAuxiliaryVariables();
-    m_CurrentInequalityGradients.reset(new dotk::serial::DOTk_RowMatrix<Real>
-        (*primal_->control(), m_NumInequalityConstraints));
+    m_CurrentInequalityGradients =
+            std::make_shared<dotk::serial::DOTk_RowMatrix<Real>>(*primal_->control(), m_NumInequalityConstraints);
 }
 
 void DOTk_DataMngCCSA::checkInitialAuxiliaryVariables()

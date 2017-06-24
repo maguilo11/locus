@@ -31,59 +31,65 @@ dotk::types::invhessian_t DOTk_SecantLeftPreconditionerFactory::getSecantType() 
 }
 
 void DOTk_SecantLeftPreconditionerFactory::buildLdfpSecantPreconditioner
-(size_t secant_storage_,
- const std::shared_ptr<dotk::Vector<Real> > & vector_,
- std::shared_ptr<dotk::DOTk_LeftPreconditioner> & left_prec_)
+(size_t aSecantStorageSize,
+ const std::shared_ptr<dotk::Vector<Real> > & aVector,
+ std::shared_ptr<dotk::DOTk_LeftPreconditioner> & aOutput)
 {
-    left_prec_.reset(new dotk::DOTK_SecantLeftPreconditioner(vector_, dotk::types::LDFP_INV_HESS, secant_storage_));
-    this->setSecantType(dotk::types::LDFP_INV_HESS);
+    dotk::types::invhessian_t tType = dotk::types::LDFP_INV_HESS;
+    aOutput = std::make_shared<dotk::DOTK_SecantLeftPreconditioner>(aVector, tType, aSecantStorageSize);
+    this->setSecantType(tType);
 }
 
 void DOTk_SecantLeftPreconditionerFactory::buildLsr1SecantPreconditioner
-(size_t secant_storage_,
- const std::shared_ptr<dotk::Vector<Real> > & vector_,
- std::shared_ptr<dotk::DOTk_LeftPreconditioner> & left_prec_)
+(size_t aSecantStorageSize,
+ const std::shared_ptr<dotk::Vector<Real> > & aVector,
+ std::shared_ptr<dotk::DOTk_LeftPreconditioner> & aOutput)
 {
-    left_prec_.reset(new dotk::DOTK_SecantLeftPreconditioner(vector_, dotk::types::LSR1_INV_HESS, secant_storage_));
-    this->setSecantType(dotk::types::LSR1_INV_HESS);
+    dotk::types::invhessian_t tType = dotk::types::LSR1_INV_HESS;
+    aOutput = std::make_shared<dotk::DOTK_SecantLeftPreconditioner>(aVector, tType, aSecantStorageSize);
+    this->setSecantType(tType);
 }
 
 void DOTk_SecantLeftPreconditionerFactory::buildLbfgsSecantPreconditioner
-(size_t secant_storage_,
- const std::shared_ptr<dotk::Vector<Real> > & vector_,
- std::shared_ptr<dotk::DOTk_LeftPreconditioner> & left_prec_)
+(size_t aSecantStorageSize,
+ const std::shared_ptr<dotk::Vector<Real> > & aVector,
+ std::shared_ptr<dotk::DOTk_LeftPreconditioner> & aOutput)
 {
-    left_prec_.reset(new dotk::DOTK_SecantLeftPreconditioner(vector_, dotk::types::LBFGS_INV_HESS, secant_storage_));
-    this->setSecantType(dotk::types::LBFGS_INV_HESS);
+    dotk::types::invhessian_t tType = dotk::types::LBFGS_INV_HESS;
+    aOutput = std::make_shared<dotk::DOTK_SecantLeftPreconditioner>(aVector, tType, aSecantStorageSize);
+    this->setSecantType(tType);
 }
 
 void DOTk_SecantLeftPreconditionerFactory::buildBfgsSecantPreconditioner
-(const std::shared_ptr<dotk::Vector<Real> > & vector_,
- std::shared_ptr<dotk::DOTk_LeftPreconditioner> & left_prec_)
+(const std::shared_ptr<dotk::Vector<Real> > & aVector,
+ std::shared_ptr<dotk::DOTk_LeftPreconditioner> & aOutput)
 {
-    left_prec_.reset(new dotk::DOTK_SecantLeftPreconditioner(vector_, dotk::types::BFGS_INV_HESS));
-    this->setSecantType(dotk::types::BFGS_INV_HESS);
+    dotk::types::invhessian_t tType = dotk::types::BFGS_INV_HESS;
+    aOutput = std::make_shared<dotk::DOTK_SecantLeftPreconditioner>(aVector, tType);
+    this->setSecantType(tType);
 }
 
 void DOTk_SecantLeftPreconditionerFactory::buildSr1SecantPreconditioner
-(const std::shared_ptr<dotk::Vector<Real> > & vector_,
- std::shared_ptr<dotk::DOTk_LeftPreconditioner> & left_prec_)
+(const std::shared_ptr<dotk::Vector<Real> > & aVector,
+ std::shared_ptr<dotk::DOTk_LeftPreconditioner> & aOutput)
 {
-    left_prec_.reset(new dotk::DOTK_SecantLeftPreconditioner(vector_, dotk::types::SR1_INV_HESS));
-    this->setSecantType(dotk::types::SR1_INV_HESS);
+    dotk::types::invhessian_t tType = dotk::types::SR1_INV_HESS;
+    aOutput = std::make_shared<dotk::DOTK_SecantLeftPreconditioner>(aVector, tType);
+    this->setSecantType(tType);
 }
 
 void DOTk_SecantLeftPreconditionerFactory::buildBarzilaiBorweinSecantPreconditioner
-(const std::shared_ptr<dotk::Vector<Real> > & vector_,
- std::shared_ptr<dotk::DOTk_LeftPreconditioner> & left_prec_)
+(const std::shared_ptr<dotk::Vector<Real> > & aVector,
+ std::shared_ptr<dotk::DOTk_LeftPreconditioner> & aOutput)
 {
-    left_prec_.reset(new dotk::DOTK_SecantLeftPreconditioner(vector_, dotk::types::BARZILAIBORWEIN_INV_HESS));
-    this->setSecantType(dotk::types::BARZILAIBORWEIN_INV_HESS);
+    dotk::types::invhessian_t tType = dotk::types::BARZILAIBORWEIN_INV_HESS;
+    aOutput = std::make_shared<dotk::DOTK_SecantLeftPreconditioner>(aVector, tType);
+    this->setSecantType(tType);
 }
 
-void DOTk_SecantLeftPreconditionerFactory::setSecantType(dotk::types::invhessian_t type_)
+void DOTk_SecantLeftPreconditionerFactory::setSecantType(dotk::types::invhessian_t aType)
 {
-    m_SecantType = type_;
+    m_SecantType = aType;
 }
 
 }

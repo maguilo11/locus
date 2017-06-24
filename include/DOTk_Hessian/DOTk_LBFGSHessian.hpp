@@ -23,18 +23,18 @@ class matrix;
 class DOTk_LBFGSHessian : public dotk::DOTk_SecondOrderOperator
 {
 public:
-    DOTk_LBFGSHessian(const dotk::Vector<Real> & vector_, size_t max_secant_storage_);
+    DOTk_LBFGSHessian(const dotk::Vector<Real> & aVector, size_t aSecantStorageSize);
     virtual ~DOTk_LBFGSHessian();
 
     const std::shared_ptr<std::vector<Real> > & getDeltaGradPrimalInnerProductStorage() const;
     const std::shared_ptr<dotk::Vector<Real> > & getDeltaGradStorage(size_t at_) const;
     const std::shared_ptr<dotk::Vector<Real> > & getDeltaPrimalStorage(size_t at_) const;
 
-    void getHessian(const std::shared_ptr<dotk::Vector<Real> > & vec_,
-                    const std::shared_ptr<dotk::Vector<Real> > & hess_times_vec_);
+    void getHessian(const std::shared_ptr<dotk::Vector<Real> > & aVector,
+                    const std::shared_ptr<dotk::Vector<Real> > & aHessianTimesVector);
     virtual void apply(const std::shared_ptr<dotk::DOTk_OptimizationDataMng>& mng_,
-                       const std::shared_ptr<dotk::Vector<Real> > & vec_,
-                       const std::shared_ptr<dotk::Vector<Real> > & matrix_times_vec_);
+                       const std::shared_ptr<dotk::Vector<Real> > & aVector,
+                       const std::shared_ptr<dotk::Vector<Real> > & aHessianTimesVector);
 
 private:
     std::shared_ptr<std::vector<Real> > m_RhoStorage;

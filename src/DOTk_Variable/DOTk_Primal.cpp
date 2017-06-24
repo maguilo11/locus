@@ -17,9 +17,9 @@ namespace dotk
 {
 
 DOTk_Primal::DOTk_Primal() :
-        m_Dual(new dotk::DOTk_Dual),
-        m_State(new dotk::DOTk_State),
-        m_Control(new dotk::DOTk_Control)
+        m_Dual(std::make_shared<dotk::DOTk_Dual>()),
+        m_State(std::make_shared<dotk::DOTk_State>()),
+        m_Control(std::make_shared<dotk::DOTk_Control>())
 {
 }
 
@@ -155,7 +155,7 @@ void DOTk_Primal::setControlUpperBound(const dotk::Vector<Real> & upper_bound_)
 void DOTk_Primal::allocateUserDefinedDual(const dotk::Vector<Real> & dual_)
 {
     assert(m_Dual.get() != nullptr);
-    m_Dual.reset(new dotk::DOTk_Dual(dual_));
+    m_Dual = std::make_shared<dotk::DOTk_Dual>(dual_);
 }
 
 void DOTk_Primal::allocateSerialDualArray(size_t size_, Real value_)
@@ -173,7 +173,7 @@ void DOTk_Primal::allocateSerialDualVector(size_t size_, Real value_)
 void DOTk_Primal::allocateUserDefinedState(const dotk::Vector<Real> & state_)
 {
     assert(m_State.get() != nullptr);
-    m_State.reset(new dotk::DOTk_State(state_));
+    m_State = std::make_shared<dotk::DOTk_State>(state_);
 }
 
 void DOTk_Primal::allocateSerialStateArray(size_t size_, Real value_)
@@ -191,7 +191,7 @@ void DOTk_Primal::allocateSerialStateVector(size_t size_, Real value_)
 void DOTk_Primal::allocateUserDefinedControl(const dotk::Vector<Real> & control_)
 {
     assert(m_Control.get() != nullptr);
-    m_Control.reset(new dotk::DOTk_Control(control_));
+    m_Control = std::make_shared<dotk::DOTk_Control>(control_);
 }
 
 void DOTk_Primal::allocateSerialControlArray(size_t size_, Real value_)

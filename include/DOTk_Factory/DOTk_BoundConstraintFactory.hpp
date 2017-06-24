@@ -23,16 +23,16 @@ public:
     DOTk_BoundConstraintFactory();
     ~DOTk_BoundConstraintFactory();
 
-    void setFactoryType(dotk::types::constraint_method_t type_);
+    void setFactoryType(dotk::types::constraint_method_t aType);
     dotk::types::constraint_method_t getFactoryType() const;
 
-    void buildFeasibleDirection(const std::shared_ptr<dotk::DOTk_Primal> & primal_,
-                                std::shared_ptr<dotk::DOTk_BoundConstraint> & bound_);
-    void buildProjectionAlongFeasibleDirection(const std::shared_ptr<dotk::DOTk_Primal> & primal_,
-                                               std::shared_ptr<dotk::DOTk_BoundConstraint> & bound_);
+    void buildFeasibleDirection(const std::shared_ptr<dotk::DOTk_Primal> & aPrimal,
+                                std::shared_ptr<dotk::DOTk_BoundConstraint> & aBound);
+    void buildProjectionAlongFeasibleDirection(const std::shared_ptr<dotk::DOTk_Primal> & aPrimal,
+                                               std::shared_ptr<dotk::DOTk_BoundConstraint> & aBound);
 
-    void build(const std::shared_ptr<dotk::DOTk_Primal> & primal_,
-               std::shared_ptr<dotk::DOTk_BoundConstraint> & bound_) const;
+    void build(const std::shared_ptr<dotk::DOTk_Primal> & aPrimal,
+               std::shared_ptr<dotk::DOTk_BoundConstraint> & aBound) const;
 
 private:
     dotk::types::constraint_method_t m_Type;

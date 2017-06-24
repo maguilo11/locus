@@ -24,14 +24,14 @@ class DOTk_LineSearchAlgorithmsDataMng;
 class DOTk_LineSearchQuasiNewton : public dotk::DOTk_FirstOrderAlgorithm
 {
 public:
-    DOTk_LineSearchQuasiNewton(const std::shared_ptr<dotk::DOTk_LineSearchStepMng> & step_,
-                               const std::shared_ptr<dotk::DOTk_LineSearchAlgorithmsDataMng> & mng_);
+    DOTk_LineSearchQuasiNewton(const std::shared_ptr<dotk::DOTk_LineSearchStepMng> & aStep,
+                               const std::shared_ptr<dotk::DOTk_LineSearchAlgorithmsDataMng> & aMng);
     ~DOTk_LineSearchQuasiNewton();
 
     const std::shared_ptr<dotk::DOTk_SecondOrderOperator> & getInvHessianPtr() const;
-    void setLbfgsSecantMethod(size_t secant_storage_ = 2);
-    void setLdfpSecantMethod(size_t secant_storage_ = 2);
-    void setLsr1SecantMethod(size_t secant_storage_ = 2);
+    void setLbfgsSecantMethod(size_t aSecantStorageSize = 2);
+    void setLdfpSecantMethod(size_t aSecantStorageSize = 2);
+    void setLsr1SecantMethod(size_t aSecantStorageSize = 2);
     void setSr1SecantMethod();
     void setBfgsSecantMethod();
     void setBarzilaiBorweinSecantMethod();

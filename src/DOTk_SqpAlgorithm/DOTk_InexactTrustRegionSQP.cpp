@@ -41,7 +41,7 @@ DOTk_InexactTrustRegionSQP::DOTk_InexactTrustRegionSQP
         m_TangentialProbExitCriterion(dotk::types::SOLVER_DID_NOT_CONVERGED),
         m_TangentialSubProbExitCriterion(dotk::types::SOLVER_DID_NOT_CONVERGED),
         m_Hessian(hessian_),
-        m_IO(new dotk::DOTk_InexactTrustRegionSqpIO),
+        m_IO(std::make_shared<dotk::DOTk_InexactTrustRegionSqpIO>()),
         m_SqpDataMng(data_mng_),
         m_SqpSolverMng(solver_mng_)
 {

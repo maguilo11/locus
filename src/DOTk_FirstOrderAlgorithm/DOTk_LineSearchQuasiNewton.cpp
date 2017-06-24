@@ -24,14 +24,14 @@
 namespace dotk
 {
 
-DOTk_LineSearchQuasiNewton::DOTk_LineSearchQuasiNewton(const std::shared_ptr<dotk::DOTk_LineSearchStepMng> & step_,
-                                                       const std::shared_ptr<dotk::DOTk_LineSearchAlgorithmsDataMng> & mng_) :
+DOTk_LineSearchQuasiNewton::DOTk_LineSearchQuasiNewton(const std::shared_ptr<dotk::DOTk_LineSearchStepMng> & aStep,
+                                                       const std::shared_ptr<dotk::DOTk_LineSearchAlgorithmsDataMng> & aMng) :
         dotk::DOTk_FirstOrderAlgorithm(dotk::types::LINE_SEARCH_QUASI_NEWTON),
-        m_InvHessianTimesVector(mng_->getNewPrimal()->clone()),
-        m_IO(new dotk::DOTk_FirstOrderLineSearchAlgIO),
-        m_LineSearch(step_),
+        m_InvHessianTimesVector(aMng->getNewPrimal()->clone()),
+        m_IO(std::make_shared<dotk::DOTk_FirstOrderLineSearchAlgIO>()),
+        m_LineSearch(aStep),
         m_InvHessian(),
-        m_DataMng(mng_)
+        m_DataMng(aMng)
 {
     this->setBfgsSecantMethod();
 }
@@ -45,22 +45,22 @@ const std::shared_ptr<dotk::DOTk_SecondOrderOperator> & DOTk_LineSearchQuasiNewt
     return (m_InvHessian);
 }
 
-void DOTk_LineSearchQuasiNewton::setLbfgsSecantMethod(size_t secant_storage_)
+void DOTk_LineSearchQuasiNewton::setLbfgsSecantMethod(size_t aSecantStorageSize)
 {
     dotk::DOTk_InverseHessianFactory factory;
-    factory.buildLbfgsInvHessian(secant_storage_, m_DataMng->getTrialStep(), m_InvHessian);
+    factory.buildLbfgsInvHessian(aSecantStorageSize, m_DataMng->getTrialStep(), m_InvHessian);
 }
 
-void DOTk_LineSearchQuasiNewton::setLdfpSecantMethod(size_t secant_storage_)
+void DOTk_LineSearchQuasiNewton::setLdfpSecantMethod(size_t aSecantStorageSize)
 {
     dotk::DOTk_InverseHessianFactory factory;
-    factory.buildLdfpInvHessian(secant_storage_, m_DataMng->getTrialStep(), m_InvHessian);
+    factory.buildLdfpInvHessian(aSecantStorageSize, m_DataMng->getTrialStep(), m_InvHessian);
 }
 
-void DOTk_LineSearchQuasiNewton::setLsr1SecantMethod(size_t secant_storage_)
+void DOTk_LineSearchQuasiNewton::setLsr1SecantMethod(size_t aSecantStorageSize)
 {
     dotk::DOTk_InverseHessianFactory factory;
-    factory.buildLsr1InvHessian(secant_storage_, m_DataMng->getTrialStep(), m_InvHessian);
+    factory.buildLsr1InvHessian(aSecantStorageSize, m_DataMng->getTrialStep(), m_InvHessian);
 }
 
 void DOTk_LineSearchQuasiNewton::setSr1SecantMethod()

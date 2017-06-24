@@ -17,11 +17,11 @@
 namespace dotk
 {
 
-DOTk_OrthogonalProjectionFactory::DOTk_OrthogonalProjectionFactory(size_t krylov_subspace_dim_,
-                                                                   dotk::types::projection_t type_) :
+DOTk_OrthogonalProjectionFactory::DOTk_OrthogonalProjectionFactory(size_t aKrylovSubspaceDim,
+                                                                   dotk::types::projection_t aType) :
     m_WarningMsg(),
-    m_KrylovSubspaceDimension(krylov_subspace_dim_),
-    m_FactoryType(type_)
+    m_KrylovSubspaceDimension(aKrylovSubspaceDim),
+    m_FactoryType(aType)
 {
 }
 
@@ -45,37 +45,37 @@ dotk::types::projection_t DOTk_OrthogonalProjectionFactory::getFactoryType() con
 }
 
 void DOTk_OrthogonalProjectionFactory::buildGramSchmidt
-(const std::shared_ptr<dotk::DOTk_Primal> & primal_,
- std::shared_ptr<dotk::DOTk_OrthogonalProjection> & projection_)
+(const std::shared_ptr<dotk::DOTk_Primal> & aPrimal,
+ std::shared_ptr<dotk::DOTk_OrthogonalProjection> & aOutput)
 {
     this->setFactoryType(dotk::types::GRAM_SCHMIDT);
-    size_t krylov_subspace_dim = this->getKrylovSubspaceDim();
-    projection_.reset(new dotk::DOTk_GramSchmidt(primal_, krylov_subspace_dim));
+    size_t tKrylovSubspaceDim = this->getKrylovSubspaceDim();
+    aOutput = std::make_shared<dotk::DOTk_GramSchmidt>(aPrimal, tKrylovSubspaceDim);
 }
 
 void DOTk_OrthogonalProjectionFactory::buildArnoldiProjection
-(const std::shared_ptr<dotk::DOTk_Primal> & primal_,
- std::shared_ptr<dotk::DOTk_OrthogonalProjection> & projection_)
+(const std::shared_ptr<dotk::DOTk_Primal> & aPrimal,
+ std::shared_ptr<dotk::DOTk_OrthogonalProjection> & aOutput)
 {
     this->setFactoryType(dotk::types::ARNOLDI);
-    size_t krylov_subspace_dim = this->getKrylovSubspaceDim();
-    projection_.reset(new dotk::DOTk_ArnoldiProjection(primal_, krylov_subspace_dim));
+    size_t tKrylovSubspaceDim = this->getKrylovSubspaceDim();
+    aOutput = std::make_shared<dotk::DOTk_ArnoldiProjection>(aPrimal, tKrylovSubspaceDim);
 }
 
 void DOTk_OrthogonalProjectionFactory::build
-(const std::shared_ptr<dotk::DOTk_Primal> & primal_,
- std::shared_ptr<dotk::DOTk_OrthogonalProjection> & projection_)
+(const std::shared_ptr<dotk::DOTk_Primal> & aPrimal,
+ std::shared_ptr<dotk::DOTk_OrthogonalProjection> & aOutput)
 {
     switch (this->getFactoryType())
     {
         case dotk::types::ARNOLDI:
         {
-            this->buildArnoldiProjection(primal_, projection_);
+            this->buildArnoldiProjection(aPrimal, aOutput);
             break;
         }
         case dotk::types::GRAM_SCHMIDT:
         {
-            this->buildGramSchmidt(primal_, projection_);
+            this->buildGramSchmidt(aPrimal, aOutput);
             break;
         }
         case dotk::types::MODIFIED_GRAM_SCHMIDT:
@@ -91,20 +91,20 @@ void DOTk_OrthogonalProjectionFactory::build
                     << " Default method will be set to Gram-Schmidt.\n" << std::flush;
             dotk::ioUtils::printMessage(msg);
             this->setWarningMsg(msg.str());
-            this->buildGramSchmidt(primal_, projection_);
+            this->buildGramSchmidt(aPrimal, aOutput);
             break;
         }
     }
 }
 
-void DOTk_OrthogonalProjectionFactory::setWarningMsg(const std::string & msg_)
+void DOTk_OrthogonalProjectionFactory::setWarningMsg(const std::string & aMsg)
 {
-    m_WarningMsg.append(msg_);
+    m_WarningMsg.append(aMsg);
 }
 
-void DOTk_OrthogonalProjectionFactory::setFactoryType(dotk::types::projection_t type_)
+void DOTk_OrthogonalProjectionFactory::setFactoryType(dotk::types::projection_t aType)
 {
-    m_FactoryType = type_;
+    m_FactoryType = aType;
 }
 
 }

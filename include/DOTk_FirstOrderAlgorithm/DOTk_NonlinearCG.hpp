@@ -25,8 +25,8 @@ class Vector;
 class DOTk_NonlinearCG : public dotk::DOTk_FirstOrderAlgorithm
 {
 public:
-    DOTk_NonlinearCG(const std::shared_ptr<dotk::DOTk_LineSearchStepMng> & step_,
-                     const std::shared_ptr<dotk::DOTk_LineSearchAlgorithmsDataMng> & mng_);
+    DOTk_NonlinearCG(const std::shared_ptr<dotk::DOTk_LineSearchStepMng> & aStep,
+                     const std::shared_ptr<dotk::DOTk_LineSearchAlgorithmsDataMng> & aMng);
     ~DOTk_NonlinearCG();
 
     Real getLineSearchStepSize() const;
@@ -42,7 +42,7 @@ public:
     void setDaiYuanHybridNlcg();
     void setPerryShannoNlcg();
     void setLiuStoreyNlcg();
-    void setDanielsNlcg(const std::shared_ptr<dotk::DOTk_LinearOperator> & hessian_);
+    void setDanielsNlcg(const std::shared_ptr<dotk::DOTk_LinearOperator> & aInput);
 
     void printDiagnosticsAndSolutionEveryItr();
     void printDiagnosticsEveryItrAndSolutionAtTheEnd();

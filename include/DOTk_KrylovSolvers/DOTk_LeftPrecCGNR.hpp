@@ -25,25 +25,25 @@ class Vector;
 class DOTk_LeftPrecCGNR : public dotk::DOTk_KrylovSolver
 {
 public:
-    explicit DOTk_LeftPrecCGNR(const std::shared_ptr<dotk::DOTk_KrylovSolverDataMng> & solver_mng_);
-    DOTk_LeftPrecCGNR(const std::shared_ptr<dotk::DOTk_Primal> & primal_,
-                      const std::shared_ptr<dotk::DOTk_LinearOperator> & linear_operator_);
+    explicit DOTk_LeftPrecCGNR(const std::shared_ptr<dotk::DOTk_KrylovSolverDataMng> & aSolverDataMng);
+    DOTk_LeftPrecCGNR(const std::shared_ptr<dotk::DOTk_Primal> & aPrimal,
+                      const std::shared_ptr<dotk::DOTk_LinearOperator> & aLinearOperator);
     virtual ~DOTk_LeftPrecCGNR();
 
-    void initialize(const std::shared_ptr<dotk::Vector<Real> > & rhs_vec_,
-                    const std::shared_ptr<dotk::DOTk_KrylovSolverStoppingCriterion> & criterion_,
-                    const std::shared_ptr<dotk::DOTk_OptimizationDataMng> & opt_mng_);
-    void cgnr(const std::shared_ptr<dotk::Vector<Real> > & rhs_vec_,
-              const std::shared_ptr<dotk::DOTk_KrylovSolverStoppingCriterion> & criterion_,
-              const std::shared_ptr<dotk::DOTk_OptimizationDataMng> & opt_mng_);
+    void initialize(const std::shared_ptr<dotk::Vector<Real> > & aRhsVector,
+                    const std::shared_ptr<dotk::DOTk_KrylovSolverStoppingCriterion> & aCriterion,
+                    const std::shared_ptr<dotk::DOTk_OptimizationDataMng> & aMng);
+    void cgnr(const std::shared_ptr<dotk::Vector<Real> > & aRhsVector,
+              const std::shared_ptr<dotk::DOTk_KrylovSolverStoppingCriterion> & aCriterion,
+              const std::shared_ptr<dotk::DOTk_OptimizationDataMng> & aMng);
 
-    virtual void setMaxNumKrylovSolverItr(size_t itr_);
+    virtual void setMaxNumKrylovSolverItr(size_t aMaxNumIterations);
     virtual const std::shared_ptr<dotk::DOTk_KrylovSolverDataMng> & getDataMng() const;
     virtual const std::shared_ptr<dotk::DOTk_LinearOperator> & getLinearOperator() const;
     virtual const std::shared_ptr<dotk::Vector<Real> > & getDescentDirection();
-    virtual void solve(const std::shared_ptr<dotk::Vector<Real> > & rhs_vec_,
-                       const std::shared_ptr<dotk::DOTk_KrylovSolverStoppingCriterion> & criterion_,
-                       const std::shared_ptr<dotk::DOTk_OptimizationDataMng> & opt_mng_);
+    virtual void solve(const std::shared_ptr<dotk::Vector<Real> > & aRhsVector,
+                       const std::shared_ptr<dotk::DOTk_KrylovSolverStoppingCriterion> & aCriterion,
+                       const std::shared_ptr<dotk::DOTk_OptimizationDataMng> & aMng);
 
 private:
     std::shared_ptr<dotk::DOTk_KrylovSolverDataMng> m_DataMng;

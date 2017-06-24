@@ -23,42 +23,40 @@ class DOTk_KrylovSolverStoppingCriterion;
 template<typename ScalarType>
 class Vector;
 
-class DOTk_ProjectedLeftPrecCG: public dotk::DOTk_KrylovSolver
+class DOTk_ProjectedLeftPrecCG : public dotk::DOTk_KrylovSolver
 {
 public:
-    explicit DOTk_ProjectedLeftPrecCG(const std::shared_ptr<dotk::DOTk_KrylovSolverDataMng> & mng_);
+    explicit DOTk_ProjectedLeftPrecCG(const std::shared_ptr<dotk::DOTk_KrylovSolverDataMng> & aSolverDataMng);
     DOTk_ProjectedLeftPrecCG(const std::shared_ptr<dotk::DOTk_Primal> & primal_,
-                             const std::shared_ptr<dotk::DOTk_LinearOperator> & operator_,
-                             size_t max_num_itr_ = 200);
+                             const std::shared_ptr<dotk::DOTk_LinearOperator> & aLinearOperator,
+                             size_t aMaxNumIterations = 200);
     virtual ~DOTk_ProjectedLeftPrecCG();
 
     Real getOrthogonalityTolerance() const;
-    void setOrthogonalityTolerance(Real tolerance_);
+    void setOrthogonalityTolerance(Real aInput);
     Real getInexactnessTolerance() const;
-    void setInexactnessTolerance(Real tolerance_);
-    Real getOrthogonalityMeasure(size_t row_, size_t column_) const;
+    void setInexactnessTolerance(Real aInput);
+    Real getOrthogonalityMeasure(size_t aRow, size_t aColumn) const;
 
-    virtual void setMaxNumKrylovSolverItr(size_t itr_);
+    virtual void setMaxNumKrylovSolverItr(size_t aMaxNumIterations);
     virtual const std::shared_ptr<dotk::DOTk_KrylovSolverDataMng> & getDataMng() const;
     virtual const std::shared_ptr<dotk::DOTk_LinearOperator> & getLinearOperator() const;
     virtual const std::shared_ptr<dotk::Vector<Real> > &
     getDescentDirection();
 
     bool checkOrthogonalityMeasure();
-    void initialize(const std::shared_ptr<dotk::Vector<Real> > & rhs_vec_,
-                    const std::shared_ptr<dotk::DOTk_OptimizationDataMng> & mng_);
-    void ppcg(const std::shared_ptr<dotk::Vector<Real> > & rhs_vec_,
-              const std::shared_ptr<dotk::DOTk_KrylovSolverStoppingCriterion> & criterion_,
-              const std::shared_ptr<dotk::DOTk_OptimizationDataMng> & mng_);
-    virtual void solve(const std::shared_ptr<dotk::Vector<Real> > & rhs_vec_,
-                       const std::shared_ptr<dotk::DOTk_KrylovSolverStoppingCriterion> & criterion_,
-                       const std::shared_ptr<dotk::DOTk_OptimizationDataMng> & mng_);
+    void initialize(const std::shared_ptr<dotk::Vector<Real> > & aRhsVector,
+                    const std::shared_ptr<dotk::DOTk_OptimizationDataMng> & aMng);
+    void ppcg(const std::shared_ptr<dotk::Vector<Real> > & aRhsVector,
+              const std::shared_ptr<dotk::DOTk_KrylovSolverStoppingCriterion> & aCriterion,
+              const std::shared_ptr<dotk::DOTk_OptimizationDataMng> & aMng);
+    virtual void solve(const std::shared_ptr<dotk::Vector<Real> > & aRhsVector,
+                       const std::shared_ptr<dotk::DOTk_KrylovSolverStoppingCriterion> & aCriterion,
+                       const std::shared_ptr<dotk::DOTk_OptimizationDataMng> & aMng);
 
 private:
     void setProjectedConjugateDirection();
-    bool checkInexactnessMeasure(Real curvature_,
-                                 Real norm_old_residual_,
-                                 Real old_residual_dot_projected_prec_residual_);
+    bool checkInexactnessMeasure(Real aCurvature, Real aNormOldResidual, Real aOldResidualDotProjectedPrecResidual);
     void initialize();
     void setFirstSolution();
     void clear();

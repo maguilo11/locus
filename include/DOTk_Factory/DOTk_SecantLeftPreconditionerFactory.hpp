@@ -26,24 +26,24 @@ public:
     ~DOTk_SecantLeftPreconditionerFactory();
 
     dotk::types::invhessian_t getSecantType() const;
-    void buildLdfpSecantPreconditioner(size_t secant_storage_,
-                                       const std::shared_ptr<dotk::Vector<Real> > & vector_,
-                                       std::shared_ptr<dotk::DOTk_LeftPreconditioner> & left_prec_);
-    void buildLsr1SecantPreconditioner(size_t secant_storage_,
-                                       const std::shared_ptr<dotk::Vector<Real> > & vector_,
-                                       std::shared_ptr<dotk::DOTk_LeftPreconditioner> & left_prec_);
-    void buildLbfgsSecantPreconditioner(size_t secant_storage_,
-                                        const std::shared_ptr<dotk::Vector<Real> > & vector_,
-                                        std::shared_ptr<dotk::DOTk_LeftPreconditioner> & left_prec_);
-    void buildBfgsSecantPreconditioner(const std::shared_ptr<dotk::Vector<Real> > & vector_,
-                                       std::shared_ptr<dotk::DOTk_LeftPreconditioner> & left_prec_);
-    void buildSr1SecantPreconditioner(const std::shared_ptr<dotk::Vector<Real> > & vector_,
-                                      std::shared_ptr<dotk::DOTk_LeftPreconditioner> & left_prec_);
-    void buildBarzilaiBorweinSecantPreconditioner(const std::shared_ptr<dotk::Vector<Real> > & vector_,
-                                                  std::shared_ptr<dotk::DOTk_LeftPreconditioner> & left_prec_);
+    void buildLdfpSecantPreconditioner(size_t aSecantStorageSize,
+                                       const std::shared_ptr<dotk::Vector<Real> > & aVector,
+                                       std::shared_ptr<dotk::DOTk_LeftPreconditioner> & aOutput);
+    void buildLsr1SecantPreconditioner(size_t aSecantStorageSize,
+                                       const std::shared_ptr<dotk::Vector<Real> > & aVector,
+                                       std::shared_ptr<dotk::DOTk_LeftPreconditioner> & aOutput);
+    void buildLbfgsSecantPreconditioner(size_t aSecantStorageSize,
+                                        const std::shared_ptr<dotk::Vector<Real> > & aVector,
+                                        std::shared_ptr<dotk::DOTk_LeftPreconditioner> & aOutput);
+    void buildBfgsSecantPreconditioner(const std::shared_ptr<dotk::Vector<Real> > & aVector,
+                                       std::shared_ptr<dotk::DOTk_LeftPreconditioner> & aOutput);
+    void buildSr1SecantPreconditioner(const std::shared_ptr<dotk::Vector<Real> > & aVector,
+                                      std::shared_ptr<dotk::DOTk_LeftPreconditioner> & aOutput);
+    void buildBarzilaiBorweinSecantPreconditioner(const std::shared_ptr<dotk::Vector<Real> > & aVector,
+                                                  std::shared_ptr<dotk::DOTk_LeftPreconditioner> & aOutput);
 
 private:
-    void setSecantType(dotk::types::invhessian_t type_);
+    void setSecantType(dotk::types::invhessian_t aType);
 
 private:
     dotk::types::invhessian_t m_SecantType;

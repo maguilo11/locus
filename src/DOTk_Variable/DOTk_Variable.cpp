@@ -125,12 +125,12 @@ void DOTk_Variable::allocate(const dotk::Vector<Real> & input_)
 
 void DOTk_Variable::allocateSerialArray(size_t size_, Real value_)
 {
-    m_Data.reset(new dotk::StdArray<Real>(size_, value_));
+    m_Data = std::make_shared<dotk::StdArray<Real>>(size_, value_);
 }
 
 void DOTk_Variable::allocateSerialVector(size_t size_, Real value_)
 {
-    m_Data.reset(new dotk::StdVector<Real>(size_, value_));
+    m_Data = std::make_shared<dotk::StdVector<Real>>(size_, value_);
 }
 
 void DOTk_Variable::checkData()

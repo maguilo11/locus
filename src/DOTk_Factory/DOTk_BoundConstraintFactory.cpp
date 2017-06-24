@@ -24,9 +24,9 @@ DOTk_BoundConstraintFactory::~DOTk_BoundConstraintFactory()
 {
 }
 
-void DOTk_BoundConstraintFactory::setFactoryType(dotk::types::constraint_method_t type_)
+void DOTk_BoundConstraintFactory::setFactoryType(dotk::types::constraint_method_t aType)
 {
-    m_Type = type_;
+    m_Type = aType;
 }
 
 dotk::types::constraint_method_t DOTk_BoundConstraintFactory::getFactoryType() const
@@ -35,36 +35,36 @@ dotk::types::constraint_method_t DOTk_BoundConstraintFactory::getFactoryType() c
 }
 
 void DOTk_BoundConstraintFactory::buildFeasibleDirection
-(const std::shared_ptr<dotk::DOTk_Primal> & primal_,
- std::shared_ptr<dotk::DOTk_BoundConstraint> & bound_)
+(const std::shared_ptr<dotk::DOTk_Primal> & aPrimal,
+ std::shared_ptr<dotk::DOTk_BoundConstraint> & aBound)
 {
     this->setFactoryType(dotk::types::FEASIBLE_DIR);
-    bound_.reset(new dotk::DOTk_FeasibleDirection(primal_));
+    aBound = std::make_shared<dotk::DOTk_FeasibleDirection>(aPrimal);
 }
 
 void DOTk_BoundConstraintFactory::buildProjectionAlongFeasibleDirection
-(const std::shared_ptr<dotk::DOTk_Primal> & primal_,
- std::shared_ptr<dotk::DOTk_BoundConstraint> & bound_)
+(const std::shared_ptr<dotk::DOTk_Primal> & aPrimal,
+ std::shared_ptr<dotk::DOTk_BoundConstraint> & aBound)
 {
     this->setFactoryType(dotk::types::PROJECTION_ALONG_FEASIBLE_DIR);
-    bound_.reset(new dotk::DOTk_ProjectionAlongFeasibleDir(primal_));
-    bound_->setStepType(dotk::types::CONSTANT_STEP);
+    aBound = std::make_shared<dotk::DOTk_ProjectionAlongFeasibleDir>(aPrimal);
+    aBound->setStepType(dotk::types::CONSTANT_STEP);
 }
 
-void DOTk_BoundConstraintFactory::build(const std::shared_ptr<dotk::DOTk_Primal> & primal_,
-                                        std::shared_ptr<dotk::DOTk_BoundConstraint> & bound_) const
+void DOTk_BoundConstraintFactory::build(const std::shared_ptr<dotk::DOTk_Primal> & aPrimal,
+                                        std::shared_ptr<dotk::DOTk_BoundConstraint> & aBound) const
 {
     switch(this->getFactoryType())
     {
         case dotk::types::FEASIBLE_DIR:
         {
-            bound_.reset(new dotk::DOTk_FeasibleDirection(primal_));
+            aBound = std::make_shared<dotk::DOTk_FeasibleDirection>(aPrimal);
             break;
         }
         case dotk::types::PROJECTION_ALONG_FEASIBLE_DIR:
         {
-            bound_.reset(new dotk::DOTk_ProjectionAlongFeasibleDir(primal_));
-            bound_->setStepType(dotk::types::CONSTANT_STEP);
+            aBound = std::make_shared<dotk::DOTk_ProjectionAlongFeasibleDir>(aPrimal);
+            aBound->setStepType(dotk::types::CONSTANT_STEP);
             break;
         }
         case dotk::types::CONSTRAINT_METHOD_DISABLED:
@@ -72,7 +72,7 @@ void DOTk_BoundConstraintFactory::build(const std::shared_ptr<dotk::DOTk_Primal>
         {
             std::cout << "\nDOTk WARNING: Invalid bound constraint type, Default bound constraint method set to "
                     << "ARMIJO RULE ALONG THE PROJECTION ARC.\n" << std::flush;
-            bound_.reset(new dotk::DOTk_ProjectionAlongFeasibleDir(primal_));
+            aBound = std::make_shared<dotk::DOTk_ProjectionAlongFeasibleDir>(aPrimal);
             break;
         }
     }

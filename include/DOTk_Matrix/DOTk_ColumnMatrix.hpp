@@ -23,7 +23,7 @@ template<typename ScalarType>
 class DOTk_ColumnMatrix : public dotk::matrix<ScalarType>
 {
 public:
-    DOTk_ColumnMatrix(const dotk::Vector<ScalarType> & column_, size_t storage_size_);
+    DOTk_ColumnMatrix(const dotk::Vector<ScalarType> & aColumn, size_t aNumColumns);
     virtual ~DOTk_ColumnMatrix();
     // Returns the number of rows in the matrix.
     virtual size_t nrows() const;
@@ -32,18 +32,18 @@ public:
     // Returns the number of elements contained in the matrix object.
     virtual size_t size() const;
     // Copies row/column into matrix row/column defined by index.
-    virtual void copy(const size_t & index_, const dotk::Vector<ScalarType> & input_, bool column_major_copy_ = true);
+    virtual void copy(const size_t & aIndex, const dotk::Vector<ScalarType> & aInput, bool column_major_copy_ = true);
     // Returns the euclidean norm of a vector. Index indicates row/column index.
-    virtual ScalarType norm(const size_t & index_, bool column_major_dot_product_ = true) const;
+    virtual ScalarType norm(const size_t & aIndex, bool column_major_dot_product_ = true) const;
     // Scales a vector by a real constant. Index indicates row/column index.
-    virtual void scale(const size_t & index_, const ScalarType & alpha_, bool column_major_scale_ = true);
+    virtual void scale(const size_t & aIndex, const ScalarType & alpha_, bool column_major_scale_ = true);
     // Constant times a vector plus a vector. Index indicates row/column index.
-    virtual void axpy(const size_t & index_,
+    virtual void axpy(const size_t & aIndex,
                       const ScalarType & alpha_,
                       const dotk::Vector<ScalarType> & input_,
                       bool column_major_axpy_ = true);
     // Returns the dot product of two vectors. Index indicates row/column index.
-    virtual ScalarType dot(const size_t & index_,
+    virtual ScalarType dot(const size_t & aIndex,
                            const dotk::Vector<ScalarType> & input_,
                            bool column_major_dot_product_ = true) const;
     // Returns the Frobenius norm of a matrix.
@@ -67,7 +67,7 @@ public:
     // Scales all the elements by a constant.
     virtual void scale(const ScalarType & alpha_);
     // Assigns new contents to the matrix, replacing its current contents, and not modifying its size.
-    virtual void fill(const ScalarType & value_);
+    virtual void fill(const ScalarType & aValue);
     // Copies the elements in the range [first,last) into the range beginning at result.
     virtual void copy(const dotk::matrix<ScalarType> & input_);
     // Copies the elements in the range [first,last) into the range beginning at result.
@@ -77,7 +77,7 @@ public:
     // Sets matrix to identity
     virtual void identity();
     // Sets matrix element to input value
-    virtual void set(const size_t & row_index_, const size_t & column_index_, ScalarType value_);
+    virtual void set(const size_t & aRowIndex, const size_t & aColumnIndex, ScalarType aValue);
     // Returns the elements on the main diagonal.
     virtual void diag(dotk::Vector<ScalarType> & input_) const;
     // Sets elements on the main diagonal to input data.
@@ -89,11 +89,11 @@ public:
     // Returns linearly independent spanning set dimension
     virtual size_t basisDimension() const;
     // Returns shared pointer to the first element of ith-column.
-    virtual std::shared_ptr<dotk::Vector<ScalarType> > & basis(const size_t & index_);
+    virtual std::shared_ptr<dotk::Vector<ScalarType> > & basis(const size_t & aIndex);
     // Operator overloads the parenthesis operator
-    virtual ScalarType & operator ()(const size_t & row_index_, const size_t & column_index_);
+    virtual ScalarType & operator ()(const size_t & aRowIndex, const size_t & aColumnIndex);
     // Operator overloads the parenthesis operator
-    virtual const ScalarType & operator ()(const size_t & row_index_, const size_t & column_index_) const;
+    virtual const ScalarType & operator ()(const size_t & aRowIndex, const size_t & aColumnIndex) const;
     // Clones memory for an object of type dotk::matrix
     virtual std::shared_ptr<dotk::matrix<ScalarType> > clone() const;
     // Returns dotk matrix type
@@ -101,7 +101,7 @@ public:
 
 private:
     void clear();
-    void initialize(const dotk::Vector<ScalarType> & column_);
+    void initialize(const dotk::Vector<ScalarType> & aColumn);
 
 private:
     size_t m_Size;

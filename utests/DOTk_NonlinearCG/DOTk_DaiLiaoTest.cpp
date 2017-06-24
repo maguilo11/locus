@@ -33,9 +33,9 @@ TEST(DOTk_DaiLiao, setAndGetConstant)
 TEST(DOTk_DaiLiao, computeScaleFactor)
 {
     size_t ncontrols = 2;
-    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal = std::make_shared<dotk::DOTk_Primal>();
     primal->allocateSerialControlArray(ncontrols, 2);
-    std::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
+    std::shared_ptr<dotk::DOTk_Rosenbrock> objective = std::make_shared<dotk::DOTk_Rosenbrock>();
     dotk::DOTk_LineSearchMngTypeULP mng(primal, objective);
 
     (*primal->control())[0] = 1.;
@@ -68,9 +68,9 @@ TEST(DOTk_DaiLiao, computeScaleFactor)
 TEST(DOTk_DaiLiao, getDirection)
 {
     size_t ncontrols = 2;
-    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal = std::make_shared<dotk::DOTk_Primal>();
     primal->allocateSerialControlArray(ncontrols, 2);
-    std::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
+    std::shared_ptr<dotk::DOTk_Rosenbrock> objective = std::make_shared<dotk::DOTk_Rosenbrock>();
     dotk::DOTk_LineSearchMngTypeULP mng(primal, objective);
 
     (*primal->control())[0] = 1.;
@@ -108,10 +108,10 @@ TEST(DOTk_DaiLiao, getDirection)
 TEST(DOTk_DaiLiao, direction)
 {
     size_t ncontrols = 2;
-    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal = std::make_shared<dotk::DOTk_Primal>();
     primal->allocateSerialControlArray(ncontrols, 2);
-    std::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
-    std::shared_ptr<dotk::DOTk_LineSearchMngTypeULP> mng(new dotk::DOTk_LineSearchMngTypeULP(primal, objective));
+    std::shared_ptr<dotk::DOTk_Rosenbrock> objective = std::make_shared<dotk::DOTk_Rosenbrock>();
+    std::shared_ptr<dotk::DOTk_LineSearchMngTypeULP> mng = std::make_shared<dotk::DOTk_LineSearchMngTypeULP>(primal, objective);
 
     (*primal->control())[0] = 1.;
     (*primal->control())[1] = 2.;

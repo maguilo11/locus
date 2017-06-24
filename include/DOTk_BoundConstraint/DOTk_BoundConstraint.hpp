@@ -25,54 +25,54 @@ class DOTk_OptimizationDataMng;
 class DOTk_BoundConstraint
 {
 public:
-    DOTk_BoundConstraint(const std::shared_ptr<dotk::DOTk_Primal> & primal_,
-                         dotk::types::constraint_method_t type_ = dotk::types::CONSTRAINT_METHOD_DISABLED);
+    DOTk_BoundConstraint(const std::shared_ptr<dotk::DOTk_Primal> & aPrimal,
+                         dotk::types::constraint_method_t aType = dotk::types::CONSTRAINT_METHOD_DISABLED);
     virtual ~DOTk_BoundConstraint();
 
-    void setStepSize(Real value_);
+    void setStepSize(Real aInput);
     Real getStepSize() const;
-    void setStagnationTolerance(Real tol_);
+    void setStagnationTolerance(Real aInput);
     Real getStagnationTolerance() const;
-    void setContractionStep(Real value_);
+    void setContractionStep(Real aInput);
     Real getContractionStep() const;
-    void setNewObjectiveFunctionValue(Real value_);
+    void setNewObjectiveFunctionValue(Real aInput);
     Real getNewObjectiveFunctionValue() const;
 
-    void setNumFeasibleItr(size_t itr_);
+    void setNumFeasibleItr(size_t aInput);
     size_t getNumFeasibleItr() const;
-    void setMaxNumFeasibleItr(size_t itr_);
+    void setMaxNumFeasibleItr(size_t aInput);
     size_t getMaxNumFeasibleItr() const;
 
-    void activate(bool enable_);
+    void activate(bool aInput);
     bool active() const;
 
-    void setStepType(dotk::types::bound_step_t type_);
+    void setStepType(dotk::types::bound_step_t aType);
     dotk::types::bound_step_t getStepType() const;
     dotk::types::constraint_method_t type() const;
 
-    Real getStep(const std::shared_ptr<dotk::DOTk_LineSearch> & step_,
-                 const std::shared_ptr<dotk::DOTk_OptimizationDataMng> & mng_);
-    Real getArmijoStep(const std::shared_ptr<dotk::DOTk_LineSearch> & step_,
-                       const std::shared_ptr<dotk::DOTk_OptimizationDataMng> & mng_);
-    Real getMinReductionStep(const std::shared_ptr<dotk::DOTk_OptimizationDataMng> & mng_);
+    Real getStep(const std::shared_ptr<dotk::DOTk_LineSearch> & aStep,
+                 const std::shared_ptr<dotk::DOTk_OptimizationDataMng> & aMng);
+    Real getArmijoStep(const std::shared_ptr<dotk::DOTk_LineSearch> & aStep,
+                       const std::shared_ptr<dotk::DOTk_OptimizationDataMng> & aMng);
+    Real getMinReductionStep(const std::shared_ptr<dotk::DOTk_OptimizationDataMng> & aMng);
 
     const std::shared_ptr<dotk::Vector<Real> > & activeSet() const;
-    void project(const std::shared_ptr<dotk::Vector<Real> > & lwr_bound_,
-                 const std::shared_ptr<dotk::Vector<Real> > & upr_bound_,
-                 const std::shared_ptr<dotk::Vector<Real> > & primal_);
-    bool isFeasible(const std::shared_ptr<dotk::Vector<Real> > & lower_bound_,
-                    const std::shared_ptr<dotk::Vector<Real> > & upper_bound_,
-                    const std::shared_ptr<dotk::Vector<Real> > & primal_);
-    void pruneActive(const std::shared_ptr<dotk::Vector<Real> > & direction_);
-    void computeActiveSet(const std::shared_ptr<dotk::Vector<Real> > & lower_bound_,
-                          const std::shared_ptr<dotk::Vector<Real> > & upper_bound_,
-                          const std::shared_ptr<dotk::Vector<Real> > & primal_);
-    void computeScaledTrialStep(const std::shared_ptr<dotk::DOTk_LineSearch> & step_,
-                                const std::shared_ptr<dotk::DOTk_OptimizationDataMng> & mng_,
-                                const std::shared_ptr<dotk::Vector<Real> > & primal_);
+    void project(const std::shared_ptr<dotk::Vector<Real> > & aLowerBound,
+                 const std::shared_ptr<dotk::Vector<Real> > & aUpperBound,
+                 const std::shared_ptr<dotk::Vector<Real> > & aPrimal);
+    bool isFeasible(const std::shared_ptr<dotk::Vector<Real> > & aLowerBound,
+                    const std::shared_ptr<dotk::Vector<Real> > & aUpperBound,
+                    const std::shared_ptr<dotk::Vector<Real> > & aPrimal);
+    void pruneActive(const std::shared_ptr<dotk::Vector<Real> > & aDirection);
+    void computeActiveSet(const std::shared_ptr<dotk::Vector<Real> > & aLowerBound,
+                          const std::shared_ptr<dotk::Vector<Real> > & aUpperBound,
+                          const std::shared_ptr<dotk::Vector<Real> > & aPrimal);
+    void computeScaledTrialStep(const std::shared_ptr<dotk::DOTk_LineSearch> & aStep,
+                                const std::shared_ptr<dotk::DOTk_OptimizationDataMng> & aMng,
+                                const std::shared_ptr<dotk::Vector<Real> > & aPrimal);
 
-    virtual void constraint(const std::shared_ptr<dotk::DOTk_LineSearch> & step_,
-                            const std::shared_ptr<dotk::DOTk_OptimizationDataMng> & mng_){}
+    virtual void constraint(const std::shared_ptr<dotk::DOTk_LineSearch> & aStep,
+                            const std::shared_ptr<dotk::DOTk_OptimizationDataMng> & aMng){}
 
 private:
     bool m_Active;

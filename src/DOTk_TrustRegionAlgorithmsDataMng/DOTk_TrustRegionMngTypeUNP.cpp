@@ -24,7 +24,7 @@ DOTk_TrustRegionMngTypeUNP::DOTk_TrustRegionMngTypeUNP(const std::shared_ptr<dot
                                                        const std::shared_ptr<dotk::DOTk_EqualityConstraint<Real> > & equality_) :
         dotk::DOTk_TrustRegionAlgorithmsDataMng(primal_)
 {
-    m_RoutinesMng.reset(new dotk::DOTk_RoutinesTypeUNP(primal_, objective_, equality_));
+    m_RoutinesMng = std::make_shared<dotk::DOTk_RoutinesTypeUNP>(primal_, objective_, equality_);
 }
 
 DOTk_TrustRegionMngTypeUNP::~DOTk_TrustRegionMngTypeUNP()

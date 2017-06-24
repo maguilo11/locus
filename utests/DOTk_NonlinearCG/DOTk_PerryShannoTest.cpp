@@ -52,9 +52,9 @@ TEST(PerryShanno, setAndGetLowerBoundLimit)
 TEST(PerryShanno, computeAlphaScaleFactor)
 {
     size_t ncontrols = 2;
-    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal = std::make_shared<dotk::DOTk_Primal>();
     primal->allocateSerialControlArray(ncontrols, 2);
-    std::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
+    std::shared_ptr<dotk::DOTk_Rosenbrock> objective = std::make_shared<dotk::DOTk_Rosenbrock>();
     dotk::DOTk_LineSearchMngTypeULP mng(primal, objective);
 
     (*primal->control())[0] = 1.;
@@ -79,9 +79,9 @@ TEST(PerryShanno, computeAlphaScaleFactor)
 TEST(PerryShanno, computeThetaScaleFactor)
 {
     size_t ncontrols = 2;
-    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal = std::make_shared<dotk::DOTk_Primal>();
     primal->allocateSerialControlArray(ncontrols, 2);
-    std::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
+    std::shared_ptr<dotk::DOTk_Rosenbrock> objective = std::make_shared<dotk::DOTk_Rosenbrock>();
     dotk::DOTk_LineSearchMngTypeULP mng(primal, objective);
 
     (*primal->control())[0] = 1.;
@@ -110,9 +110,9 @@ TEST(PerryShanno, computeThetaScaleFactor)
 TEST(PerryShanno, computeScaleFactor)
 {
     size_t ncontrols = 2;
-    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal = std::make_shared<dotk::DOTk_Primal>();
     primal->allocateSerialControlArray(ncontrols, 2);
-    std::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
+    std::shared_ptr<dotk::DOTk_Rosenbrock> objective = std::make_shared<dotk::DOTk_Rosenbrock>();
     dotk::DOTk_LineSearchMngTypeULP mng(primal, objective);
 
     (*primal->control())[0] = 1.;
@@ -145,9 +145,9 @@ TEST(PerryShanno, computeScaleFactor)
 TEST(PerryShanno, getDirection)
 {
     size_t ncontrols = 2;
-    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal = std::make_shared<dotk::DOTk_Primal>();
     primal->allocateSerialControlArray(ncontrols, 2);
-    std::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
+    std::shared_ptr<dotk::DOTk_Rosenbrock> objective = std::make_shared<dotk::DOTk_Rosenbrock>();
     dotk::DOTk_LineSearchMngTypeULP mng(primal, objective);
 
     (*primal->control())[0] = 1.;
@@ -187,11 +187,11 @@ TEST(PerryShanno, getDirection)
 TEST(PerryShanno, direction)
 {
     size_t ncontrols = 2;
-    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal = std::make_shared<dotk::DOTk_Primal>();
     primal->allocateSerialControlArray(ncontrols, 2);
-    std::shared_ptr<dotk::DOTk_Rosenbrock> objective(new dotk::DOTk_Rosenbrock);
+    std::shared_ptr<dotk::DOTk_Rosenbrock> objective = std::make_shared<dotk::DOTk_Rosenbrock>();
     std::shared_ptr<dotk::DOTk_LineSearchMngTypeULP>
-    mng(new dotk::DOTk_LineSearchMngTypeULP(primal, objective));
+    mng = std::make_shared<dotk::DOTk_LineSearchMngTypeULP>(primal, objective);
 
     (*primal->control())[0] = 1.;
     (*primal->control())[1] = 2.;

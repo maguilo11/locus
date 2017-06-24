@@ -25,23 +25,23 @@ class Vector;
 class DOTk_PrecGenMinResDataMng : public dotk::DOTk_KrylovSolverDataMng
 {
 public:
-    DOTk_PrecGenMinResDataMng(const std::shared_ptr<dotk::DOTk_Primal> & primal_,
-                              const std::shared_ptr<dotk::DOTk_LinearOperator> & operator_,
-                              size_t max_num_itr_ = 200);
+    DOTk_PrecGenMinResDataMng(const std::shared_ptr<dotk::DOTk_Primal> & aPrimal,
+                              const std::shared_ptr<dotk::DOTk_LinearOperator> & aLinearOperator,
+                              size_t aMaxNumIterations  = 200);
     virtual ~DOTk_PrecGenMinResDataMng();
 
     void setDirectSolver(dotk::types::direct_solver_t type_);
-    void setArnoldiProjection(const std::shared_ptr<dotk::DOTk_Primal> & primal_);
-    void setGramSchmidtProjection(const std::shared_ptr<dotk::DOTk_Primal> & primal_);
+    void setArnoldiProjection(const std::shared_ptr<dotk::DOTk_Primal> & aPrimal);
+    void setGramSchmidtProjection(const std::shared_ptr<dotk::DOTk_Primal> & aPrimal);
 
-    void setLbfgsSecantLeftPreconditioner(size_t secant_storage_);
-    void setLdfpSecantLeftPreconditioner(size_t secant_storage_);
-    void setLsr1SecantLeftPreconditioner(size_t secant_storage_);
+    void setLbfgsSecantLeftPreconditioner(size_t aSecantStorageSize);
+    void setLdfpSecantLeftPreconditioner(size_t aSecantStorageSize);
+    void setLsr1SecantLeftPreconditioner(size_t aSecantStorageSize);
     void setSr1SecantLeftPreconditioner();
     void setBfgsSecantLeftPreconditioner();
     void setBarzilaiBorweinSecantLeftPreconditioner();
 
-    void setRightPreconditioner(dotk::types::right_prec_t type_);
+    void setRightPreconditioner(dotk::types::right_prec_t aType);
 
     virtual const std::shared_ptr<dotk::DOTk_OrthogonalProjection> & getProjection() const;
     virtual const std::shared_ptr<dotk::DOTk_LeftPreconditioner> & getLeftPrec() const;
@@ -59,7 +59,7 @@ private:
     std::shared_ptr<dotk::Vector<Real> > m_RightPrecTimesResidual;
 
 private:
-    void allocate(const std::shared_ptr<dotk::DOTk_Primal> & primal_);
+    void allocate(const std::shared_ptr<dotk::DOTk_Primal> & aPrimal);
 
 private:
     DOTk_PrecGenMinResDataMng(const dotk::DOTk_PrecGenMinResDataMng &);

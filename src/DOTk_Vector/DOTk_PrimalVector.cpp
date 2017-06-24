@@ -173,12 +173,14 @@ std::shared_ptr<dotk::Vector<ScalarType> > DOTk_PrimalVector<ScalarType>::clone(
 {
     if(m_State.use_count() > 0)
     {
-        std::shared_ptr<dotk::DOTk_PrimalVector<ScalarType> > x(new dotk::DOTk_PrimalVector<ScalarType>(*m_Control, *m_State));
+        std::shared_ptr<dotk::DOTk_PrimalVector<ScalarType> > x =
+                std::make_shared<dotk::DOTk_PrimalVector<ScalarType>>(*m_Control, *m_State);
         return (x);
     }
     else
     {
-        std::shared_ptr<dotk::DOTk_PrimalVector<ScalarType> > x(new dotk::DOTk_PrimalVector<ScalarType>(*m_Control));
+        std::shared_ptr<dotk::DOTk_PrimalVector<ScalarType> > x =
+                std::make_shared<dotk::DOTk_PrimalVector<ScalarType>>(*m_Control);
         return (x);
     }
 }

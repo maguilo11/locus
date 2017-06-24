@@ -23,23 +23,23 @@ class DOTk_LineSearchFactory
 {
 public:
     DOTk_LineSearchFactory();
-    explicit DOTk_LineSearchFactory(dotk::types::line_search_t type_);
+    explicit DOTk_LineSearchFactory(dotk::types::line_search_t aType);
     ~DOTk_LineSearchFactory();
 
-    void setFactoryType(dotk::types::line_search_t type_);
+    void setFactoryType(dotk::types::line_search_t aType);
     dotk::types::line_search_t getFactoryType() const;
 
-    void buildArmijoLineSearch(const std::shared_ptr<dotk::Vector<Real> > & vector_,
-                               std::shared_ptr<dotk::DOTk_LineSearch> & line_search_);
-    void buildGoldsteinLineSearch(const std::shared_ptr<dotk::Vector<Real> > & vector_,
-                                  std::shared_ptr<dotk::DOTk_LineSearch> & line_search_);
-    void buildCubicLineSearch(const std::shared_ptr<dotk::Vector<Real> > & vector_,
-                              std::shared_ptr<dotk::DOTk_LineSearch> & line_search_);
-    void buildGoldenSectionLineSearch(const std::shared_ptr<dotk::Vector<Real> > & vector_,
-                                      std::shared_ptr<dotk::DOTk_LineSearch> & line_search_);
+    void buildArmijoLineSearch(const std::shared_ptr<dotk::Vector<Real> > & aVector,
+                               std::shared_ptr<dotk::DOTk_LineSearch> & aOutput);
+    void buildGoldsteinLineSearch(const std::shared_ptr<dotk::Vector<Real> > & aVector,
+                                  std::shared_ptr<dotk::DOTk_LineSearch> & aOutput);
+    void buildCubicLineSearch(const std::shared_ptr<dotk::Vector<Real> > & aVector,
+                              std::shared_ptr<dotk::DOTk_LineSearch> & aOutput);
+    void buildGoldenSectionLineSearch(const std::shared_ptr<dotk::Vector<Real> > & aVector,
+                                      std::shared_ptr<dotk::DOTk_LineSearch> & aOutput);
 
-    void build(const std::shared_ptr<dotk::Vector<Real> > & vector_,
-               std::shared_ptr<dotk::DOTk_LineSearch> & line_search_) const;
+    void build(const std::shared_ptr<dotk::Vector<Real> > & aVector,
+               std::shared_ptr<dotk::DOTk_LineSearch> & aOutput) const;
 
 private:
     dotk::types::line_search_t m_FactoryType;

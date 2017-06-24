@@ -21,7 +21,7 @@ template<typename ScalarType>
 DOTk_UpperTriangularMatrix<ScalarType>::DOTk_UpperTriangularMatrix(size_t num_rows_, ScalarType value_) :
         dotk::matrix<ScalarType>(),
         m_Zero(0),
-        m_Data(NULL),
+        m_Data(nullptr),
         m_Size(0),
         m_NumRows(num_rows_),
         m_NumCols(num_rows_),
@@ -615,11 +615,11 @@ template<typename ScalarType>
 void DOTk_UpperTriangularMatrix<ScalarType>::clear()
 {
     delete[] m_Data;
-    m_Data = NULL;
+    m_Data = nullptr;
     delete[] m_Displacements;
-    m_Displacements = NULL;
+    m_Displacements = nullptr;
     delete[] m_NumColumnCount;
-    m_NumColumnCount = NULL;
+    m_NumColumnCount = nullptr;
 }
 
 }

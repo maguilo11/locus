@@ -23,7 +23,7 @@ DOTk_SteihaugTointStepMng::DOTk_SteihaugTointStepMng(const std::shared_ptr<dotk:
         dotk::DOTk_TrustRegionStepMng(),
         m_CurrentPrimal(primal_->control()),
         m_LinearOperator(linear_operator_),
-        m_Preconditioner(new dotk::DOTk_Preconditioner)
+        m_Preconditioner(std::make_shared<dotk::DOTk_Preconditioner>())
 {
 }
 

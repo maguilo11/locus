@@ -24,40 +24,40 @@ class DOTk_InverseHessianFactory
 {
 public:
     DOTk_InverseHessianFactory();
-    explicit DOTk_InverseHessianFactory(dotk::types::invhessian_t type_);
+    explicit DOTk_InverseHessianFactory(dotk::types::invhessian_t aType);
     ~DOTk_InverseHessianFactory();
 
-    void setDefaultSecantSotrage(size_t val_);
+    void setDefaultSecantSotrage(size_t aInput);
     size_t getDefaultSecantSotrage() const;
-    void setFactoryType(dotk::types::invhessian_t type_);
+    void setFactoryType(dotk::types::invhessian_t aType);
     dotk::types::invhessian_t getFactoryType() const;
 
-    void buildLbfgsInvHessian(size_t secant_storage_,
-                              const std::shared_ptr<dotk::Vector<Real> > & vector_,
-                              std::shared_ptr<dotk::DOTk_SecondOrderOperator> & operator_);
-    void buildLdfpInvHessian(size_t secant_storage_,
-                             const std::shared_ptr<dotk::Vector<Real> > & vector_,
-                             std::shared_ptr<dotk::DOTk_SecondOrderOperator> & operator_);
-    void buildLsr1InvHessian(size_t secant_storage_,
-                             const std::shared_ptr<dotk::Vector<Real> > & vector_,
-                             std::shared_ptr<dotk::DOTk_SecondOrderOperator> & operator_);
-    void buildSr1InvHessian(const std::shared_ptr<dotk::Vector<Real> > & vector_,
-                            std::shared_ptr<dotk::DOTk_SecondOrderOperator> & operator_);
-    void buildBfgsInvHessian(const std::shared_ptr<dotk::Vector<Real> > & vector_,
-                             std::shared_ptr<dotk::DOTk_SecondOrderOperator> & operator_);
-    void buildBarzilaiBorweinInvHessian(const std::shared_ptr<dotk::Vector<Real> > & vector_,
-                                        std::shared_ptr<dotk::DOTk_SecondOrderOperator> & operator_);
+    void buildLbfgsInvHessian(size_t aSecantStorageSize,
+                              const std::shared_ptr<dotk::Vector<Real> > & aVector,
+                              std::shared_ptr<dotk::DOTk_SecondOrderOperator> & aOutput);
+    void buildLdfpInvHessian(size_t aSecantStorageSize,
+                             const std::shared_ptr<dotk::Vector<Real> > & aVector,
+                             std::shared_ptr<dotk::DOTk_SecondOrderOperator> & aOutput);
+    void buildLsr1InvHessian(size_t aSecantStorageSize,
+                             const std::shared_ptr<dotk::Vector<Real> > & aVector,
+                             std::shared_ptr<dotk::DOTk_SecondOrderOperator> & aOutput);
+    void buildSr1InvHessian(const std::shared_ptr<dotk::Vector<Real> > & aVector,
+                            std::shared_ptr<dotk::DOTk_SecondOrderOperator> & aOutput);
+    void buildBfgsInvHessian(const std::shared_ptr<dotk::Vector<Real> > & aVector,
+                             std::shared_ptr<dotk::DOTk_SecondOrderOperator> & aOutput);
+    void buildBarzilaiBorweinInvHessian(const std::shared_ptr<dotk::Vector<Real> > & aVector,
+                                        std::shared_ptr<dotk::DOTk_SecondOrderOperator> & aOutput);
 
-    void build(const std::shared_ptr<dotk::Vector<Real> > & vec_template_,
-               std::shared_ptr<dotk::DOTk_SecondOrderOperator> & operator_,
-               size_t secant_storage_ = 0);
+    void build(const std::shared_ptr<dotk::Vector<Real> > & aVector,
+               std::shared_ptr<dotk::DOTk_SecondOrderOperator> & aOutput,
+               size_t aSecantStorageSize = 0);
 
 private:
     size_t mDefaultSecantSotrage;
     dotk::types::invhessian_t mFactoryType;
 
 private:
-    size_t checkSecantStorageInput(size_t secant_storage_);
+    size_t checkSecantStorageInput(size_t aSecantStorageSize);
 
 private:
     DOTk_InverseHessianFactory(const dotk::DOTk_InverseHessianFactory &);

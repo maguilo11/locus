@@ -31,60 +31,60 @@ DOTk_NonlinearCGFactory::~DOTk_NonlinearCGFactory()
 {
 }
 
-void DOTk_NonlinearCGFactory::buildDanielsNlcg(const std::shared_ptr<dotk::DOTk_LinearOperator> & hessian_,
-                                               std::shared_ptr<dotk::DOTk_DescentDirection> & output_)
+void DOTk_NonlinearCGFactory::buildDanielsNlcg(const std::shared_ptr<dotk::DOTk_LinearOperator> & aLinearOperator,
+                                               std::shared_ptr<dotk::DOTk_DescentDirection> & aOutput)
 {
-    output_.reset(new dotk::DOTk_Daniels(hessian_));
+    aOutput = std::make_shared<dotk::DOTk_Daniels>(aLinearOperator);
 }
 
-void DOTk_NonlinearCGFactory::buildFletcherReevesNlcg(std::shared_ptr<dotk::DOTk_DescentDirection> & output_)
+void DOTk_NonlinearCGFactory::buildFletcherReevesNlcg(std::shared_ptr<dotk::DOTk_DescentDirection> & aOutput)
 {
-    output_.reset(new dotk::DOTk_FletcherReeves);
+    aOutput = std::make_shared<dotk::DOTk_FletcherReeves>();
 }
 
-void DOTk_NonlinearCGFactory::buildPolakRibiereNlcg(std::shared_ptr<dotk::DOTk_DescentDirection> & output_)
+void DOTk_NonlinearCGFactory::buildPolakRibiereNlcg(std::shared_ptr<dotk::DOTk_DescentDirection> & aOutput)
 {
-    output_.reset(new dotk::DOTk_PolakRibiere);
+    aOutput = std::make_shared<dotk::DOTk_PolakRibiere>();
 }
 
-void DOTk_NonlinearCGFactory::buildHestenesStiefelNlcg(std::shared_ptr<dotk::DOTk_DescentDirection> & output_)
+void DOTk_NonlinearCGFactory::buildHestenesStiefelNlcg(std::shared_ptr<dotk::DOTk_DescentDirection> & aOutput)
 {
-    output_.reset(new dotk::DOTk_HestenesStiefel);
+    aOutput = std::make_shared<dotk::DOTk_HestenesStiefel>();
 }
 
-void DOTk_NonlinearCGFactory::buildConjugateDescentNlcg(std::shared_ptr<dotk::DOTk_DescentDirection> & output_)
+void DOTk_NonlinearCGFactory::buildConjugateDescentNlcg(std::shared_ptr<dotk::DOTk_DescentDirection> & aOutput)
 {
-    output_.reset(new dotk::DOTk_ConjugateDescent);
+    aOutput = std::make_shared<dotk::DOTk_ConjugateDescent>();
 }
 
-void DOTk_NonlinearCGFactory::buildHagerZhangNlcg(std::shared_ptr<dotk::DOTk_DescentDirection> & output_)
+void DOTk_NonlinearCGFactory::buildHagerZhangNlcg(std::shared_ptr<dotk::DOTk_DescentDirection> & aOutput)
 {
-    output_.reset(new dotk::DOTk_HagerZhang);
+    aOutput = std::make_shared<dotk::DOTk_HagerZhang>();
 }
 
-void DOTk_NonlinearCGFactory::buildDaiLiaoNlcg(std::shared_ptr<dotk::DOTk_DescentDirection> & output_)
+void DOTk_NonlinearCGFactory::buildDaiLiaoNlcg(std::shared_ptr<dotk::DOTk_DescentDirection> & aOutput)
 {
-    output_.reset(new dotk::DOTk_DaiLiao);
+    aOutput = std::make_shared<dotk::DOTk_DaiLiao>();
 }
 
-void DOTk_NonlinearCGFactory::buildDaiYuanNlcg(std::shared_ptr<dotk::DOTk_DescentDirection> & output_)
+void DOTk_NonlinearCGFactory::buildDaiYuanNlcg(std::shared_ptr<dotk::DOTk_DescentDirection> & aOutput)
 {
-    output_.reset(new dotk::DOTk_DaiYuan);
+    aOutput = std::make_shared<dotk::DOTk_DaiYuan>();
 }
 
-void DOTk_NonlinearCGFactory::buildDaiYuanHybridNlcg(std::shared_ptr<dotk::DOTk_DescentDirection> & output_)
+void DOTk_NonlinearCGFactory::buildDaiYuanHybridNlcg(std::shared_ptr<dotk::DOTk_DescentDirection> & aOutput)
 {
-    output_.reset(new dotk::DOTk_DaiYuanHybrid);
+    aOutput = std::make_shared<dotk::DOTk_DaiYuanHybrid>();
 }
 
-void DOTk_NonlinearCGFactory::buildPerryShannoNlcg(std::shared_ptr<dotk::DOTk_DescentDirection> & output_)
+void DOTk_NonlinearCGFactory::buildPerryShannoNlcg(std::shared_ptr<dotk::DOTk_DescentDirection> & aOutput)
 {
-    output_.reset(new dotk::DOTk_PerryShanno);
+    aOutput = std::make_shared<dotk::DOTk_PerryShanno>();
 }
 
-void DOTk_NonlinearCGFactory::buildLiuStoreyNlcg(std::shared_ptr<dotk::DOTk_DescentDirection> & output_)
+void DOTk_NonlinearCGFactory::buildLiuStoreyNlcg(std::shared_ptr<dotk::DOTk_DescentDirection> & aOutput)
 {
-    output_.reset(new dotk::DOTk_LiuStorey);
+    aOutput = std::make_shared<dotk::DOTk_LiuStorey>();
 }
 
 }
