@@ -106,7 +106,7 @@ void DOTk_MexGradientProjection::solveLinearProgrammingProblem(const mxArray* in
     mxDestroyArray(mx_initial_control);
 
     // Allocate DOTk data structures
-    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal = std::make_shared<dotk::DOTk_Primal>();
     primal->allocateUserDefinedControl(controls);
 
     // Set lower bounds on control variables
@@ -122,7 +122,7 @@ void DOTk_MexGradientProjection::solveLinearProgrammingProblem(const mxArray* in
     primal->setControlUpperBound(upper_bound);
 
     // Set line search step manager
-    std::shared_ptr<dotk::DOTk_LineSearchStep> step(new dotk::DOTk_LineSearchStep(primal));
+    std::shared_ptr<dotk::DOTk_LineSearchStep> step = std::make_shared<dotk::DOTk_LineSearchStep>(primal);
     step->build(primal, m_LineSearchMethod);
     step->setMaxNumIterations(m_MaxNumLineSearchIterations);
     step->setContractionFactor(m_LineSearchContractionFactor);
@@ -130,9 +130,9 @@ void DOTk_MexGradientProjection::solveLinearProgrammingProblem(const mxArray* in
 
     // Set line search algorithm data manager
     std::shared_ptr<dotk::DOTk_MexObjectiveFunction>
-        objective(new dotk::DOTk_MexObjectiveFunction(m_ObjectiveFunction, m_ProblemType));
+        objective = std::make_shared<dotk::DOTk_MexObjectiveFunction>(m_ObjectiveFunction, m_ProblemType);
     std::shared_ptr<dotk::DOTk_LineSearchMngTypeULP>
-        mng(new dotk::DOTk_LineSearchMngTypeULP(primal, objective));
+        mng = std::make_shared<dotk::DOTk_LineSearchMngTypeULP>(primal, objective);
     dotk::mex::buildGradient(input_[0], mng);
 
     // Initialize algorithm
@@ -157,7 +157,7 @@ void DOTk_MexGradientProjection::solveNonlinearProgrammingProblem(const mxArray*
     mxDestroyArray(mx_initial_control);
 
     // Allocate DOTk data structures
-    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal = std::make_shared<dotk::DOTk_Primal>();
     primal->allocateUserDefinedState(states);
     primal->allocateUserDefinedControl(controls);
 
@@ -174,7 +174,7 @@ void DOTk_MexGradientProjection::solveNonlinearProgrammingProblem(const mxArray*
     primal->setControlUpperBound(upper_bound);
 
     // Set line search step manager
-    std::shared_ptr<dotk::DOTk_LineSearchStep> step(new dotk::DOTk_LineSearchStep(primal));
+    std::shared_ptr<dotk::DOTk_LineSearchStep> step = std::make_shared<dotk::DOTk_LineSearchStep>(primal);
     step->build(primal, m_LineSearchMethod);
     step->setMaxNumIterations(m_MaxNumLineSearchIterations);
     step->setContractionFactor(m_LineSearchContractionFactor);
@@ -182,12 +182,12 @@ void DOTk_MexGradientProjection::solveNonlinearProgrammingProblem(const mxArray*
 
     // Set objective function, equality constraint, and line search algorithm data manager
     std::shared_ptr<dotk::DOTk_MexObjectiveFunction>
-        objective(new dotk::DOTk_MexObjectiveFunction(m_ObjectiveFunction, m_ProblemType));
+        objective = std::make_shared<dotk::DOTk_MexObjectiveFunction>(m_ObjectiveFunction, m_ProblemType);
     m_EqualityConstraint = dotk::mex::parseEqualityConstraint(input_[1]);
     std::shared_ptr<dotk::DOTk_MexEqualityConstraint>
-        equality(new dotk::DOTk_MexEqualityConstraint(m_EqualityConstraint, m_ProblemType));
+        equality = std::make_shared<dotk::DOTk_MexEqualityConstraint>(m_EqualityConstraint, m_ProblemType);
     std::shared_ptr<dotk::DOTk_LineSearchMngTypeUNP>
-        mng(new dotk::DOTk_LineSearchMngTypeUNP(primal, objective, equality));
+        mng = std::make_shared<dotk::DOTk_LineSearchMngTypeUNP>(primal, objective, equality);
     dotk::mex::buildGradient(input_[0], mng);
 
     // Initialize gradient projection algorithm

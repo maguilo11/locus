@@ -160,9 +160,10 @@ size_t MexVector::size() const
 
 std::shared_ptr<dotk::Vector<double> > MexVector::clone() const
 {
-    size_t this_length = this->size();
-    std::shared_ptr<dotk::MexVector> this_copy(new dotk::MexVector(this_length, 0.));
-    return (this_copy);
+    double tValue = 0;
+    size_t tSize = this->size();
+    std::shared_ptr<dotk::MexVector> tVector = std::make_shared<dotk::MexVector>(tSize, tValue);
+    return (tVector);
 }
 
 double & MexVector::operator [](size_t index_)

@@ -40,9 +40,9 @@ DOTk_MexOptimalityCriteria::DOTk_MexOptimalityCriteria(const mxArray* options_[]
         m_ObjectiveFunction(nullptr),
         m_EqualityConstraint(nullptr),
         m_InequalityConstraint(nullptr)
-{
-    this->initialize(options_);
-}
+        {
+            this->initialize(options_);
+        }
 
 DOTk_MexOptimalityCriteria::~DOTk_MexOptimalityCriteria()
 {
@@ -117,7 +117,7 @@ void DOTk_MexOptimalityCriteria::solve(const mxArray* input_[], mxArray* output_
     mxDestroyArray(mx_initial_control);
 
     // Allocate DOTk data structures
-    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal = std::make_shared<dotk::DOTk_Primal>();
     primal->allocateUserDefinedDual(duals);
     primal->allocateUserDefinedState(states);
     primal->allocateUserDefinedControl(controls);
@@ -136,12 +136,12 @@ void DOTk_MexOptimalityCriteria::solve(const mxArray* input_[], mxArray* output_
 
     // Set objective, equality, and inequality operators
     dotk::types::problem_t type = this->getProblemType();
-    std::shared_ptr<dotk::DOTk_MexObjectiveFunction>
-        objective(new dotk::DOTk_MexObjectiveFunction(m_ObjectiveFunction, type));
-    std::shared_ptr<dotk::DOTk_MexEqualityConstraint>
-        equality(new dotk::DOTk_MexEqualityConstraint(m_EqualityConstraint, type));
-    std::shared_ptr<dotk::DOTk_MexInequalityConstraint>
-        inequality(new dotk::DOTk_MexInequalityConstraint(m_InequalityConstraint, type));
+    std::shared_ptr<dotk::DOTk_MexObjectiveFunction> objective =
+            std::make_shared<dotk::DOTk_MexObjectiveFunction>(m_ObjectiveFunction, type);
+    std::shared_ptr<dotk::DOTk_MexEqualityConstraint> equality =
+            std::make_shared<dotk::DOTk_MexEqualityConstraint>(m_EqualityConstraint, type);
+    std::shared_ptr<dotk::DOTk_MexInequalityConstraint> inequality =
+            std::make_shared<dotk::DOTk_MexInequalityConstraint>(m_InequalityConstraint, type);
 
     // Set optimization algorithm
     dotk::DOTk_OptimalityCriteria algorithm(primal, objective, equality, inequality);
@@ -174,7 +174,7 @@ void DOTk_MexOptimalityCriteria::setAlgorithmParameters(const mxArray* options_,
     value = this->getControlStagnationTolerance();
     algorithm_.setControlStagnationTolerance(value);
 
-    size_t max_num_itr  = this->getMaxNumAlgorithmItr();
+    size_t max_num_itr = this->getMaxNumAlgorithmItr();
     algorithm_.setMaxNumOptimizationItr(max_num_itr);
 }
 

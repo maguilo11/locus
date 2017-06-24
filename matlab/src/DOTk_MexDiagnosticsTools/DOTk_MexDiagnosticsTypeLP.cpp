@@ -6,7 +6,6 @@
  */
 
 #include <sstream>
-#include <tr1/memory>
 
 #include "DOTk_MexVector.hpp"
 #include "DOTk_MexAlgorithmParser.hpp"
@@ -35,7 +34,7 @@ void DOTk_MexDiagnosticsTypeLP::checkFirstDerivative(const mxArray* input_[])
 {
     dotk::types::problem_t type = DOTk_MexDiagnostics::getProblemType();
 
-    switch (type)
+    switch(type)
     {
         case dotk::types::TYPE_ULP:
         case dotk::types::TYPE_LP_BOUND:
@@ -78,7 +77,7 @@ void DOTk_MexDiagnosticsTypeLP::checkSecondDerivative(const mxArray* input_[])
 {
     dotk::types::problem_t type = DOTk_MexDiagnostics::getProblemType();
 
-    switch (type)
+    switch(type)
     {
         case dotk::types::TYPE_ULP:
         case dotk::types::TYPE_LP_BOUND:
@@ -118,8 +117,8 @@ void DOTk_MexDiagnosticsTypeLP::checkFirstDerivativeTypeULP(const mxArray* input
     dotk::types::problem_t problem_type = DOTk_MexDiagnostics::getProblemType();
 
     mxArray* mx_objective = dotk::mex::parseObjectiveFunction(input_[1]);
-    std::shared_ptr<dotk::DOTk_MexObjectiveFunction>
-        objective(new dotk::DOTk_MexObjectiveFunction(mx_objective, problem_type));
+    std::shared_ptr<dotk::DOTk_MexObjectiveFunction> objective =
+            std::make_shared<dotk::DOTk_MexObjectiveFunction>(mx_objective, problem_type);
     mxDestroyArray(mx_objective);
 
     dotk::DOTk_DiagnosticsTypeLP diagnostics(objective);
@@ -142,18 +141,18 @@ void DOTk_MexDiagnosticsTypeLP::checkFirstDerivativeTypeILP(const mxArray* input
     dotk::types::problem_t problem_type = DOTk_MexDiagnostics::getProblemType();
 
     mxArray* mx_objective = dotk::mex::parseObjectiveFunction(input_[1]);
-    std::shared_ptr<dotk::DOTk_MexObjectiveFunction>
-        objective(new dotk::DOTk_MexObjectiveFunction(mx_objective, problem_type));
+    std::shared_ptr<dotk::DOTk_MexObjectiveFunction> objective =
+            std::make_shared<dotk::DOTk_MexObjectiveFunction>(mx_objective, problem_type);
     mxDestroyArray(mx_objective);
 
     mxArray* mx_inequality = dotk::mex::parseInequalityConstraint(input_[1]);
-    std::shared_ptr<dotk::DOTk_MexInequalityConstraint>
-        inequality(new dotk::DOTk_MexInequalityConstraint(mx_inequality, problem_type));
+    std::shared_ptr<dotk::DOTk_MexInequalityConstraint> inequality =
+            std::make_shared<dotk::DOTk_MexInequalityConstraint>(mx_inequality, problem_type);
     std::vector<std::shared_ptr<dotk::DOTk_InequalityConstraint<double> > > inequality_vector(1, inequality);
     mxDestroyArray(mx_inequality);
 
     // Set dummy inequality constraint
-    std::shared_ptr<dotk::DOTk_EqualityConstraint<double> > equality(new dotk::DOTk_EqualityConstraint<double>);
+    std::shared_ptr<dotk::DOTk_EqualityConstraint<double> > equality = std::make_shared<dotk::DOTk_EqualityConstraint<double>>();
 
     dotk::DOTk_DiagnosticsTypeLP diagnostics(objective, equality, inequality_vector);
     int lower_super_subscript = DOTk_MexDiagnostics::getLowerSuperScript();
@@ -180,13 +179,13 @@ void DOTk_MexDiagnosticsTypeLP::checkFirstDerivativeTypeELP(const mxArray* input
     dotk::types::problem_t problem_type = DOTk_MexDiagnostics::getProblemType();
 
     mxArray* mx_objective = dotk::mex::parseObjectiveFunction(input_[1]);
-    std::shared_ptr<dotk::DOTk_MexObjectiveFunction>
-        objective(new dotk::DOTk_MexObjectiveFunction(mx_objective, problem_type));
+    std::shared_ptr<dotk::DOTk_MexObjectiveFunction> objective =
+            std::make_shared<dotk::DOTk_MexObjectiveFunction>(mx_objective, problem_type);
     mxDestroyArray(mx_objective);
 
     mxArray* mx_equality = dotk::mex::parseObjectiveFunction(input_[1]);
-    std::shared_ptr<dotk::DOTk_MexEqualityConstraint>
-    equality(new dotk::DOTk_MexEqualityConstraint(mx_equality, problem_type));
+    std::shared_ptr<dotk::DOTk_MexEqualityConstraint> equality =
+            std::make_shared<dotk::DOTk_MexEqualityConstraint>(mx_equality, problem_type);
     mxDestroyArray(mx_equality);
 
     dotk::DOTk_DiagnosticsTypeLP diagnostics(objective, equality);
@@ -223,18 +222,18 @@ void DOTk_MexDiagnosticsTypeLP::checkFirstDerivativeTypeCLP(const mxArray* input
     dotk::types::problem_t problem_type = DOTk_MexDiagnostics::getProblemType();
 
     mxArray* mx_objective = dotk::mex::parseObjectiveFunction(input_[1]);
-    std::shared_ptr<dotk::DOTk_MexObjectiveFunction>
-        objective(new dotk::DOTk_MexObjectiveFunction(mx_objective, problem_type));
+    std::shared_ptr<dotk::DOTk_MexObjectiveFunction> objective =
+            std::make_shared<dotk::DOTk_MexObjectiveFunction>(mx_objective, problem_type);
     mxDestroyArray(mx_objective);
 
     mxArray* mx_equality = dotk::mex::parseObjectiveFunction(input_[1]);
-    std::shared_ptr<dotk::DOTk_MexEqualityConstraint>
-    equality(new dotk::DOTk_MexEqualityConstraint(mx_equality, problem_type));
+    std::shared_ptr<dotk::DOTk_MexEqualityConstraint> equality =
+            std::make_shared<dotk::DOTk_MexEqualityConstraint>(mx_equality, problem_type);
     mxDestroyArray(mx_equality);
 
     mxArray* mx_inequality = dotk::mex::parseInequalityConstraint(input_[1]);
-    std::shared_ptr<dotk::DOTk_MexInequalityConstraint>
-        inequality(new dotk::DOTk_MexInequalityConstraint(mx_inequality, problem_type));
+    std::shared_ptr<dotk::DOTk_MexInequalityConstraint> inequality =
+            std::make_shared<dotk::DOTk_MexInequalityConstraint>(mx_inequality, problem_type);
     std::vector<std::shared_ptr<dotk::DOTk_InequalityConstraint<double> > > inequality_vector(1, inequality);
     mxDestroyArray(mx_inequality);
 
@@ -277,8 +276,8 @@ void DOTk_MexDiagnosticsTypeLP::checkSecondDerivativeTypeULP(const mxArray* inpu
     dotk::types::problem_t problem_type = DOTk_MexDiagnostics::getProblemType();
 
     mxArray* mx_objective = dotk::mex::parseObjectiveFunction(input_[1]);
-    std::shared_ptr<dotk::DOTk_MexObjectiveFunction>
-        objective(new dotk::DOTk_MexObjectiveFunction(mx_objective, problem_type));
+    std::shared_ptr<dotk::DOTk_MexObjectiveFunction> objective =
+            std::make_shared<dotk::DOTk_MexObjectiveFunction>(mx_objective, problem_type);
     mxDestroyArray(mx_objective);
 
     dotk::DOTk_DiagnosticsTypeLP diagnostics(objective);
@@ -301,13 +300,13 @@ void DOTk_MexDiagnosticsTypeLP::checkSecondDerivativeTypeELP(const mxArray* inpu
     dotk::types::problem_t problem_type = DOTk_MexDiagnostics::getProblemType();
 
     mxArray* mx_objective = dotk::mex::parseObjectiveFunction(input_[1]);
-    std::shared_ptr<dotk::DOTk_MexObjectiveFunction>
-        objective(new dotk::DOTk_MexObjectiveFunction(mx_objective, problem_type));
+    std::shared_ptr<dotk::DOTk_MexObjectiveFunction> objective =
+            std::make_shared<dotk::DOTk_MexObjectiveFunction>(mx_objective, problem_type);
     mxDestroyArray(mx_objective);
 
     mxArray* mx_equality = dotk::mex::parseObjectiveFunction(input_[1]);
-    std::shared_ptr<dotk::DOTk_MexEqualityConstraint>
-    equality(new dotk::DOTk_MexEqualityConstraint(mx_equality, problem_type));
+    std::shared_ptr<dotk::DOTk_MexEqualityConstraint> equality =
+            std::make_shared<dotk::DOTk_MexEqualityConstraint>(mx_equality, problem_type);
     mxDestroyArray(mx_equality);
 
     dotk::DOTk_DiagnosticsTypeLP diagnostics(objective, equality);
@@ -339,18 +338,18 @@ void DOTk_MexDiagnosticsTypeLP::checkSecondDerivativeTypeCLP(const mxArray* inpu
     dotk::types::problem_t problem_type = DOTk_MexDiagnostics::getProblemType();
 
     mxArray* mx_objective = dotk::mex::parseObjectiveFunction(input_[1]);
-    std::shared_ptr<dotk::DOTk_MexObjectiveFunction>
-        objective(new dotk::DOTk_MexObjectiveFunction(mx_objective, problem_type));
+    std::shared_ptr<dotk::DOTk_MexObjectiveFunction> objective =
+            std::make_shared<dotk::DOTk_MexObjectiveFunction>(mx_objective, problem_type);
     mxDestroyArray(mx_objective);
 
     mxArray* mx_equality = dotk::mex::parseObjectiveFunction(input_[1]);
-    std::shared_ptr<dotk::DOTk_MexEqualityConstraint>
-    equality(new dotk::DOTk_MexEqualityConstraint(mx_equality, problem_type));
+    std::shared_ptr<dotk::DOTk_MexEqualityConstraint> equality =
+            std::make_shared<dotk::DOTk_MexEqualityConstraint>(mx_equality, problem_type);
     mxDestroyArray(mx_equality);
 
     mxArray* mx_inequality = dotk::mex::parseInequalityConstraint(input_[1]);
-    std::shared_ptr<dotk::DOTk_MexInequalityConstraint >
-        inequality(new dotk::DOTk_MexInequalityConstraint(mx_inequality, problem_type));
+    std::shared_ptr<dotk::DOTk_MexInequalityConstraint> inequality =
+            std::make_shared<dotk::DOTk_MexInequalityConstraint>(mx_inequality, problem_type);
     std::vector<std::shared_ptr<dotk::DOTk_InequalityConstraint<double> > > inequality_vector(1, inequality);
     mxDestroyArray(mx_inequality);
 

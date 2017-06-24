@@ -27,9 +27,9 @@ DOTk_MexInexactTrustRegionSQP::DOTk_MexInexactTrustRegionSQP(const mxArray* opti
         dotk::DOTk_MexAlgorithmTypeSQP(options_[0]),
         m_ObjectiveFunction(nullptr),
         m_EqualityConstraint(nullptr)
-{
-    this->initialize(options_);
-}
+        {
+            this->initialize(options_);
+        }
 
 DOTk_MexInexactTrustRegionSQP::~DOTk_MexInexactTrustRegionSQP()
 {
@@ -40,7 +40,7 @@ void DOTk_MexInexactTrustRegionSQP::solve(const mxArray* input_[], mxArray* outp
 {
     dotk::types::problem_t type = DOTk_MexAlgorithmTypeSQP::getProblemType();
 
-    switch (type)
+    switch(type)
     {
         case dotk::types::TYPE_ELP:
         {
@@ -141,29 +141,29 @@ void DOTk_MexInexactTrustRegionSQP::solveTypeEqualityConstrainedLinearProgrammin
     mxDestroyArray(mx_initial_control);
 
     // Allocate DOTk data structures
-    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal = std::make_shared<dotk::DOTk_Primal>();
     primal->allocateUserDefinedDual(duals);
     primal->allocateUserDefinedControl(controls);
 
     // Set objective function and equality constraint
     dotk::types::problem_t problem_type = DOTk_MexAlgorithmTypeSQP::getProblemType();
-    std::shared_ptr<dotk::DOTk_MexObjectiveFunction>
-        objective(new dotk::DOTk_MexObjectiveFunction(m_ObjectiveFunction, problem_type));
-    std::shared_ptr<dotk::DOTk_MexEqualityConstraint>
-        equality(new dotk::DOTk_MexEqualityConstraint(m_EqualityConstraint, problem_type));
+    std::shared_ptr<dotk::DOTk_MexObjectiveFunction> objective =
+            std::make_shared<dotk::DOTk_MexObjectiveFunction>(m_ObjectiveFunction, problem_type);
+    std::shared_ptr<dotk::DOTk_MexEqualityConstraint> equality =
+            std::make_shared<dotk::DOTk_MexEqualityConstraint>(m_EqualityConstraint, problem_type);
 
     // Set trust region SQP data manager
-    std::shared_ptr<dotk::DOTk_TrustRegionMngTypeELP>
-        data_mng(new dotk::DOTk_TrustRegionMngTypeELP(primal, objective, equality));
+    std::shared_ptr<dotk::DOTk_TrustRegionMngTypeELP> data_mng =
+            std::make_shared<dotk::DOTk_TrustRegionMngTypeELP>(primal, objective, equality);
     this->setTrustRegionParameters(input_[0], *data_mng);
 
     // Set solver manager
-    std::shared_ptr<dotk::DOTk_InexactTrustRegionSqpSolverMng>
-        solver_mng(new dotk::DOTk_InexactTrustRegionSqpSolverMng(primal, data_mng));
+    std::shared_ptr<dotk::DOTk_InexactTrustRegionSqpSolverMng> solver_mng = std::make_shared<
+            dotk::DOTk_InexactTrustRegionSqpSolverMng>(primal, data_mng);
     this->setSqpKrylovSolversParameters(input_[0], *solver_mng);
 
     // Initialize SQP algorithm
-    std::shared_ptr<dotk::DOTk_Hessian> hessian(new dotk::DOTk_Hessian);
+    std::shared_ptr<dotk::DOTk_Hessian> hessian = std::make_shared<dotk::DOTk_Hessian>();
     hessian->setFullSpaceHessian();
     solver_mng->setDefaultKrylovSolvers(primal, hessian);
     dotk::DOTk_InexactTrustRegionSQP algorithm(hessian, data_mng, solver_mng);
@@ -187,30 +187,30 @@ void DOTk_MexInexactTrustRegionSQP::solveTypeEqualityConstrainedNonlinearProgram
     mxDestroyArray(mx_initial_control);
 
     // Allocate DOTk data structures
-    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal = std::make_shared<dotk::DOTk_Primal>();
     primal->allocateUserDefinedDual(duals);
     primal->allocateUserDefinedState(states);
     primal->allocateUserDefinedControl(controls);
 
     // Set objective function and equality constraint
     dotk::types::problem_t problem_type = DOTk_MexAlgorithmTypeSQP::getProblemType();
-    std::shared_ptr<dotk::DOTk_MexObjectiveFunction>
-        objective(new dotk::DOTk_MexObjectiveFunction(m_ObjectiveFunction, problem_type));
-    std::shared_ptr<dotk::DOTk_MexEqualityConstraint>
-        equality(new dotk::DOTk_MexEqualityConstraint(m_EqualityConstraint, problem_type));
+    std::shared_ptr<dotk::DOTk_MexObjectiveFunction> objective =
+            std::make_shared<dotk::DOTk_MexObjectiveFunction>(m_ObjectiveFunction, problem_type);
+    std::shared_ptr<dotk::DOTk_MexEqualityConstraint> equality =
+            std::make_shared<dotk::DOTk_MexEqualityConstraint>(m_EqualityConstraint, problem_type);
 
     // Set trust region SQP data manager
-    std::shared_ptr<dotk::DOTk_TrustRegionMngTypeELP>
-        data_mng(new dotk::DOTk_TrustRegionMngTypeELP(primal, objective, equality));
+    std::shared_ptr<dotk::DOTk_TrustRegionMngTypeELP> data_mng =
+            std::make_shared<dotk::DOTk_TrustRegionMngTypeELP>(primal, objective, equality);
     this->setTrustRegionParameters(input_[0], *data_mng);
 
     // Set solver manager
-    std::shared_ptr<dotk::DOTk_InexactTrustRegionSqpSolverMng>
-        solver_mng(new dotk::DOTk_InexactTrustRegionSqpSolverMng(primal, data_mng));
+    std::shared_ptr<dotk::DOTk_InexactTrustRegionSqpSolverMng> solver_mng =
+            std::make_shared<dotk::DOTk_InexactTrustRegionSqpSolverMng>(primal, data_mng);
     this->setSqpKrylovSolversParameters(input_[0], *solver_mng);
 
     // Initialize SQP algorithm
-    std::shared_ptr<dotk::DOTk_Hessian> hessian(new dotk::DOTk_Hessian);
+    std::shared_ptr<dotk::DOTk_Hessian> hessian = std::make_shared<dotk::DOTk_Hessian>();
     hessian->setFullSpaceHessian();
     solver_mng->setDefaultKrylovSolvers(primal, hessian);
     dotk::DOTk_InexactTrustRegionSQP algorithm(hessian, data_mng, solver_mng);

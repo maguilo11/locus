@@ -121,23 +121,23 @@ void DOTk_MexNewtonTypeTR::solveTypeLinearProgramming(const mxArray* input_[], m
     mxArray* mx_initial_control = dotk::mex::parseInitialControl(input_[0]);
     dotk::MexVector controls(mx_initial_control);
     mxDestroyArray(mx_initial_control);
-    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal = std::make_shared<dotk::DOTk_Primal>();
     primal->allocateUserDefinedControl(controls);
 
     // Set objective function operators
     dotk::types::problem_t problem_type = DOTk_MexAlgorithmTypeNewton::getProblemType();
     std::shared_ptr<dotk::DOTk_MexObjectiveFunction>
-        objective(new dotk::DOTk_MexObjectiveFunction(m_ObjectiveFunction, problem_type));
+        objective = std::make_shared<dotk::DOTk_MexObjectiveFunction>(m_ObjectiveFunction, problem_type);
 
     // Set trust region data manager
     std::shared_ptr<dotk::DOTk_TrustRegionMngTypeULP>
-        mng(new dotk::DOTk_TrustRegionMngTypeULP(primal, objective));
+        mng = std::make_shared<dotk::DOTk_TrustRegionMngTypeULP>(primal, objective);
     dotk::mex::buildTrustRegionMethod(input_[0], mng);
     this->setTrustRegionMethodParameters(mng);
 
     // Set gradient and Hessian computation methods
     dotk::mex::buildGradient(input_[0], mng);
-    std::shared_ptr<dotk::DOTk_Hessian> hessian(new dotk::DOTk_Hessian);
+    std::shared_ptr<dotk::DOTk_Hessian> hessian = std::make_shared<dotk::DOTk_Hessian>();
     dotk::mex::buildHessian(input_[0], hessian);
 
     // Initialize trust region algorithm
@@ -161,27 +161,27 @@ void DOTk_MexNewtonTypeTR::solveTypeNonlinearProgramming(const mxArray* input_[]
     mxDestroyArray(mx_initial_control);
 
     // Allocate DOTk data structures
-    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal = std::make_shared<dotk::DOTk_Primal>();
     primal->allocateUserDefinedState(states);
     primal->allocateUserDefinedControl(controls);
 
     // Set objective function  and equality constraint operators
     dotk::types::problem_t problem_type = DOTk_MexAlgorithmTypeNewton::getProblemType();
     std::shared_ptr<dotk::DOTk_MexObjectiveFunction>
-        objective(new dotk::DOTk_MexObjectiveFunction(m_ObjectiveFunction, problem_type));
+        objective = std::make_shared<dotk::DOTk_MexObjectiveFunction>(m_ObjectiveFunction, problem_type);
     m_EqualityConstraint = dotk::mex::parseEqualityConstraint(input_[1]);
     std::shared_ptr<dotk::DOTk_MexEqualityConstraint >
-        equality(new dotk::DOTk_MexEqualityConstraint(m_EqualityConstraint, problem_type));
+        equality = std::make_shared<dotk::DOTk_MexEqualityConstraint>(m_EqualityConstraint, problem_type);
 
     // Set trust region data manager
     std::shared_ptr<dotk::DOTk_TrustRegionMngTypeULP>
-        mng(new dotk::DOTk_TrustRegionMngTypeULP(primal, objective));
+        mng = std::make_shared<dotk::DOTk_TrustRegionMngTypeULP>(primal, objective);
     dotk::mex::buildTrustRegionMethod(input_[0], mng);
     this->setTrustRegionMethodParameters(mng);
 
     // Set gradient and Hessian computation methods
     dotk::mex::buildGradient(input_[0], mng);
-    std::shared_ptr<dotk::DOTk_Hessian> hessian(new dotk::DOTk_Hessian);
+    std::shared_ptr<dotk::DOTk_Hessian> hessian = std::make_shared<dotk::DOTk_Hessian>();
     dotk::mex::buildHessian(input_[0], hessian);
 
     // Initialize trust region algorithm

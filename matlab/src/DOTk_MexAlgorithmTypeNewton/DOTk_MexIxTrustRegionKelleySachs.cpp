@@ -116,7 +116,7 @@ void DOTk_MexIxTrustRegionKelleySachs::solveTypeLinearProgramming(const mxArray*
     mxArray* mx_initial_control = dotk::mex::parseInitialControl(input_[0]);
     dotk::MexVector controls(mx_initial_control);
     mxDestroyArray(mx_initial_control);
-    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal = std::make_shared<dotk::DOTk_Primal>();
     primal->allocateUserDefinedControl(controls);
 
     // Disable lower and upper bounds
@@ -127,18 +127,18 @@ void DOTk_MexIxTrustRegionKelleySachs::solveTypeLinearProgramming(const mxArray*
 
     // Set objective function and trust region data manager
     std::shared_ptr<dotk::DOTk_MexObjectiveFunction>
-        objective(new dotk::DOTk_MexObjectiveFunction(m_ObjectiveFunction, m_ProblemType));
+        objective = std::make_shared<dotk::DOTk_MexObjectiveFunction>(m_ObjectiveFunction, m_ProblemType);
     std::shared_ptr<dotk::DOTk_SteihaugTointDataMng>
-    data(new dotk::DOTk_SteihaugTointDataMng(primal, objective));
+    data = std::make_shared<dotk::DOTk_SteihaugTointDataMng>(primal, objective);
     dotk::mex::buildGradient(input_[0], data);
 
     // Set numerically differentiated Hessian
     std::shared_ptr<dotk::NumericallyDifferentiatedHessian>
-        hessian(new dotk::NumericallyDifferentiatedHessian(primal, objective));
+        hessian = std::make_shared<dotk::NumericallyDifferentiatedHessian>(primal, objective);
     dotk::mex::buildNumericallyDifferentiatedHessian(input_[0], controls, hessian);
 
     // Set trust region step manager
-    std::shared_ptr<dotk::DOTk_KelleySachsStepMng> step(new dotk::DOTk_KelleySachsStepMng(primal, hessian));
+    std::shared_ptr<dotk::DOTk_KelleySachsStepMng> step = std::make_shared<dotk::DOTk_KelleySachsStepMng>(primal, hessian);
     dotk::DOTk_MexSteihaugTointNewton::setTrustRegionStepParameters(step);
 
     // Initialize trust region algorithm
@@ -160,7 +160,7 @@ void DOTk_MexIxTrustRegionKelleySachs::solveTypeNonlinearProgramming(const mxArr
     mxDestroyArray(mx_initial_control);
 
     // Allocate DOTk data structures
-    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal = std::make_shared<dotk::DOTk_Primal>();
     primal->allocateUserDefinedState(states);
     primal->allocateUserDefinedControl(controls);
 
@@ -172,23 +172,23 @@ void DOTk_MexIxTrustRegionKelleySachs::solveTypeNonlinearProgramming(const mxArr
 
     // Set objective function and equality constraint operators
     std::shared_ptr<dotk::DOTk_MexObjectiveFunction>
-        objective(new dotk::DOTk_MexObjectiveFunction(m_ObjectiveFunction, m_ProblemType));
+        objective = std::make_shared<dotk::DOTk_MexObjectiveFunction>(m_ObjectiveFunction, m_ProblemType);
     m_EqualityConstraint = dotk::mex::parseEqualityConstraint(input_[1]);
     std::shared_ptr<dotk::DOTk_MexEqualityConstraint>
-        equality(new dotk::DOTk_MexEqualityConstraint(m_EqualityConstraint, m_ProblemType));
+        equality = std::make_shared<dotk::DOTk_MexEqualityConstraint>(m_EqualityConstraint, m_ProblemType);
 
     // Set trust region algorithm data manager
     std::shared_ptr<dotk::DOTk_SteihaugTointDataMng>
-        data(new dotk::DOTk_SteihaugTointDataMng(primal, objective, equality));
+        data = std::make_shared<dotk::DOTk_SteihaugTointDataMng>(primal, objective, equality);
     dotk::mex::buildGradient(input_[0], data);
 
     // Set numerically differentiated Hessian
     std::shared_ptr<dotk::NumericallyDifferentiatedHessian>
-        hessian(new dotk::NumericallyDifferentiatedHessian(primal, objective, equality));
+        hessian = std::make_shared<dotk::NumericallyDifferentiatedHessian>(primal, objective, equality);
     dotk::mex::buildNumericallyDifferentiatedHessian(input_[0], controls, hessian);
 
     // Set trust region step manager
-    std::shared_ptr<dotk::DOTk_KelleySachsStepMng> step(new dotk::DOTk_KelleySachsStepMng(primal, hessian));
+    std::shared_ptr<dotk::DOTk_KelleySachsStepMng> step = std::make_shared<dotk::DOTk_KelleySachsStepMng>(primal, hessian);
     dotk::DOTk_MexSteihaugTointNewton::setTrustRegionStepParameters(step);
 
     // Initialize trust region algorithm
@@ -208,7 +208,7 @@ void DOTk_MexIxTrustRegionKelleySachs::solveTypeBoundLinearProgramming(const mxA
     mxDestroyArray(mx_initial_control);
 
     // Allocate DOTk data structures
-    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal = std::make_shared<dotk::DOTk_Primal>();
     primal->allocateUserDefinedControl(controls);
 
     // Set lower bounds on control variables
@@ -225,18 +225,18 @@ void DOTk_MexIxTrustRegionKelleySachs::solveTypeBoundLinearProgramming(const mxA
 
     // Set trust region algorithm data manager
     std::shared_ptr<dotk::DOTk_MexObjectiveFunction>
-        objective(new dotk::DOTk_MexObjectiveFunction(m_ObjectiveFunction, m_ProblemType));
+        objective = std::make_shared<dotk::DOTk_MexObjectiveFunction>(m_ObjectiveFunction, m_ProblemType);
     std::shared_ptr<dotk::DOTk_SteihaugTointDataMng>
-        data(new dotk::DOTk_SteihaugTointDataMng(primal, objective));
+        data = std::make_shared<dotk::DOTk_SteihaugTointDataMng>(primal, objective);
     dotk::mex::buildGradient(input_[0], data);
 
     // Set numerically differentiated Hessian
     std::shared_ptr<dotk::NumericallyDifferentiatedHessian>
-        hessian(new dotk::NumericallyDifferentiatedHessian(primal, objective));
+        hessian = std::make_shared<dotk::NumericallyDifferentiatedHessian>(primal, objective);
     dotk::mex::buildNumericallyDifferentiatedHessian(input_[0], controls, hessian);
 
     // Set trust region step manager
-    std::shared_ptr<dotk::DOTk_KelleySachsStepMng> step(new dotk::DOTk_KelleySachsStepMng(primal, hessian));
+    std::shared_ptr<dotk::DOTk_KelleySachsStepMng> step = std::make_shared<dotk::DOTk_KelleySachsStepMng>(primal, hessian);
     dotk::DOTk_MexSteihaugTointNewton::setTrustRegionStepParameters(step);
 
     // Initialize trust region algorithm
@@ -258,7 +258,7 @@ void DOTk_MexIxTrustRegionKelleySachs::solveTypeBoundNonlinearProgramming(const 
     mxDestroyArray(mx_initial_control);
 
     // Allocate DOTk data structures
-    std::shared_ptr<dotk::DOTk_Primal> primal(new dotk::DOTk_Primal);
+    std::shared_ptr<dotk::DOTk_Primal> primal = std::make_shared<dotk::DOTk_Primal>();
     primal->allocateUserDefinedState(states);
     primal->allocateUserDefinedControl(controls);
 
@@ -276,23 +276,23 @@ void DOTk_MexIxTrustRegionKelleySachs::solveTypeBoundNonlinearProgramming(const 
 
     // Set objective function and equality constraint operators
     std::shared_ptr<dotk::DOTk_MexObjectiveFunction>
-        objective(new dotk::DOTk_MexObjectiveFunction(m_ObjectiveFunction, m_ProblemType));
+        objective = std::make_shared<dotk::DOTk_MexObjectiveFunction>(m_ObjectiveFunction, m_ProblemType);
     m_EqualityConstraint = dotk::mex::parseEqualityConstraint(input_[1]);
     std::shared_ptr<dotk::DOTk_MexEqualityConstraint>
-        equality(new dotk::DOTk_MexEqualityConstraint(m_EqualityConstraint, m_ProblemType));
+        equality = std::make_shared<dotk::DOTk_MexEqualityConstraint>(m_EqualityConstraint, m_ProblemType);
 
     // Set trust region algorithm data manager
     std::shared_ptr<dotk::DOTk_SteihaugTointDataMng>
-        data(new dotk::DOTk_SteihaugTointDataMng(primal, objective, equality));
+        data = std::make_shared<dotk::DOTk_SteihaugTointDataMng>(primal, objective, equality);
     dotk::mex::buildGradient(input_[0], data);
 
     // Set numerically differentiated Hessian
     std::shared_ptr<dotk::NumericallyDifferentiatedHessian>
-        hessian(new dotk::NumericallyDifferentiatedHessian(primal, objective, equality));
+        hessian = std::make_shared<dotk::NumericallyDifferentiatedHessian>(primal, objective, equality);
     dotk::mex::buildNumericallyDifferentiatedHessian(input_[0], controls, hessian);
 
     // Set trust region step manager
-    std::shared_ptr<dotk::DOTk_KelleySachsStepMng> step(new dotk::DOTk_KelleySachsStepMng(primal, hessian));
+    std::shared_ptr<dotk::DOTk_KelleySachsStepMng> step = std::make_shared<dotk::DOTk_KelleySachsStepMng>(primal, hessian);
     dotk::DOTk_MexSteihaugTointNewton::setTrustRegionStepParameters(step);
 
     // Initialize trust region algorithm

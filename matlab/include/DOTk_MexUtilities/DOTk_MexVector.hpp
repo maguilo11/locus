@@ -31,7 +31,7 @@ public:
      * \return Reference to MexVector.
      *
      **/
-    MexVector(size_t length_, double a_initial_value);
+    MexVector(size_t length_, double a_initial_value = 0.);
     /*!
      * Creates a MexVector object by making a deep copy of the input MEX array
      * Parameters:
