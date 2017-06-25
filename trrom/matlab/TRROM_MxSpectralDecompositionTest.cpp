@@ -25,10 +25,11 @@ void mexFunction(int nOutput, mxArray* pOutput[], int nInput, const mxArray* pIn
         mexErrMsgTxt(error.c_str());
     }
 
-    std::shared_ptr<trrom::MxMatrix> A(new trrom::MxMatrix(pInput[0]));
-    std::shared_ptr<trrom::Vector<double> > singular_values(new trrom::MxVector(1));
-    std::shared_ptr<trrom::Matrix<double> > left_singular_vectors(new trrom::MxMatrix(1, 1));
-    std::shared_ptr<trrom::Matrix<double> > right_singular_vectors(new trrom::MxMatrix(1, 1));
+    const size_t tDefaultLength = 1;
+    std::shared_ptr<trrom::MxMatrix> A = std::make_shared<trrom::MxMatrix>(pInput[0]);
+    std::shared_ptr<trrom::Vector<double> > singular_values = std::make_shared<trrom::MxVector>(tDefaultLength);
+    std::shared_ptr<trrom::Matrix<double> > left_singular_vectors = std::make_shared<trrom::MxMatrix>(tDefaultLength, tDefaultLength);
+    std::shared_ptr<trrom::Matrix<double> > right_singular_vectors = std::make_shared<trrom::MxMatrix>(tDefaultLength, tDefaultLength);
 
     trrom::MxSingularValueDecomposition svd;
     svd.solve(A, singular_values, left_singular_vectors, right_singular_vectors);

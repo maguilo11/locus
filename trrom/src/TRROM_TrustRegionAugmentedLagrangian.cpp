@@ -28,9 +28,9 @@ TrustRegionAugmentedLagrangian::TrustRegionAugmentedLagrangian(const std::shared
         m_FeasibilityTolerance(1e-3),
         m_Vector(data_->control()->create()),
         m_MidGradient(data_->control()->create()),
-        m_IO(new trrom::TrustRegionNewtonIO),
+        m_IO(std::make_shared<trrom::TrustRegionNewtonIO>()),
         m_StepMng(step_mng),
-        m_Solver(new trrom::ProjectedSteihaugTointPcg(data_)),
+        m_Solver(std::make_shared<trrom::ProjectedSteihaugTointPcg>(data_)),
         m_DataMng(data_mng_)
 {
 }

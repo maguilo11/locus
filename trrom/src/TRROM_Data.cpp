@@ -15,10 +15,10 @@ namespace trrom
 {
 
 Data::Data() :
-        m_Dual(new trrom::Dual),
-        m_State(new trrom::State),
-        m_Slacks(new trrom::Slacks),
-        m_Control(new trrom::Control)
+        m_Dual(std::make_shared<trrom::Dual>()),
+        m_State(std::make_shared<trrom::State>()),
+        m_Slacks(std::make_shared<trrom::Slacks>()),
+        m_Control(std::make_shared<trrom::Control>())
 {
 }
 
@@ -166,19 +166,19 @@ void Data::setControlUpperBound(const trrom::Vector<double> & upper_bound_)
 void Data::allocateDual(const trrom::Vector<double> & dual_)
 {
     assert(m_Dual.get() != NULL);
-    m_Dual.reset(new trrom::Dual(dual_));
+    m_Dual = std::make_shared<trrom::Dual>(dual_);
 }
 
 void Data::allocateState(const trrom::Vector<double> & state_)
 {
     assert(m_State.get() != NULL);
-    m_State.reset(new trrom::State(state_));
+    m_State = std::make_shared<trrom::State>(state_);
 }
 
 void Data::allocateSlacks(const trrom::Vector<double> & slacks_)
 {
     assert(m_Slacks.get() != NULL);
-    m_Slacks.reset(new trrom::Slacks(slacks_));
+    m_Slacks = std::make_shared<trrom::Slacks>(slacks_);
     m_Slacks->setLowerBound(0);
     m_Slacks->setUpperBound(std::numeric_limits<double>::max());
 }
@@ -186,7 +186,7 @@ void Data::allocateSlacks(const trrom::Vector<double> & slacks_)
 void Data::allocateControl(const trrom::Vector<double> & control_)
 {
     assert(m_Control.get() != NULL);
-    m_Control.reset(new trrom::Control(control_));
+    m_Control = std::make_shared<trrom::Control>(control_);
 }
 
 }

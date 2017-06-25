@@ -161,11 +161,11 @@ public:
         if(global_dim_ == 0)
         {
             int length = this->size();
-            this_copy.reset(new trrom::SerialVector<ScalarType>(length));
+            this_copy = std::make_shared<trrom::SerialVector<ScalarType>>(length);
         }
         else
         {
-            this_copy.reset(new trrom::SerialVector<ScalarType>(global_dim_));
+            this_copy = std::make_shared<trrom::SerialVector<ScalarType>>(global_dim_);
         }
         return (this_copy);
     }

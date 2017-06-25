@@ -85,7 +85,7 @@ SpectralDecompositionMng::SpectralDecompositionMng(const std::shared_ptr<trrom::
                                                    const std::shared_ptr<trrom::OrthogonalFactorization> & ortho_) :
         m_Factory(algebra_factory_),
         m_FullRankSVD(svd_),
-        m_LowRankSVD(new trrom::BrandLowRankSVD(brands_factory_, algebra_factory_, svd_, ortho_)),
+        m_LowRankSVD(std::make_shared<trrom::BrandLowRankSVD>(brands_factory_, algebra_factory_, svd_, ortho_)),
         m_DualEnergyThreshold(0.99),
         m_StateEnergyThreshold(0.99),
         m_LeftHandSideEnergyThreshold(0.99),

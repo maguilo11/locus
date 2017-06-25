@@ -21,13 +21,15 @@ class TeuchosSerialDenseMatrix : public trrom::Matrix<double>
 {
 public:
     TeuchosSerialDenseMatrix() :
-            m_Data(new Teuchos::SerialDenseMatrix<int, double>()),
-            m_Vector(new trrom::SerialArray<double>(1))
+            mLength(1),
+            mData(std::make_shared<Teuchos::SerialDenseMatrix<int, double>>()),
+            mVector(std::make_shared<trrom::SerialArray<double>>(mLength))
     {
     }
     TeuchosSerialDenseMatrix(int num_rows_, int num_columns_) :
-            m_Data(new Teuchos::SerialDenseMatrix<int, double>(num_rows_, num_columns_)),
-            m_Vector(new trrom::SerialArray<double>(1))
+            mLength(1),
+            mData(std::make_shared<Teuchos::SerialDenseMatrix<int, double>>(num_rows_, num_columns_)),
+            mVector(std::make_shared<trrom::SerialArray<double>>(mLength))
     {
     }
     virtual ~TeuchosSerialDenseMatrix()
@@ -36,11 +38,11 @@ public:
 
     void fill(double value_)
     {
-        m_Data->putScalar(value_);
+        mData->putScalar(value_);
     }
     void scale(double value_)
     {
-        m_Data->scale(value_);
+        mData->scale(value_);
     }
     void insert(const trrom::Vector<double> & input_, int index_ = 0)
     {
@@ -58,8 +60,8 @@ public:
         {
             for(int column_index = 0; column_index < num_columns; ++column_index)
             {
-                (*m_Data)(row_index, column_index) =
-                        beta_ * (*m_Data)(row_index, column_index) + alpha_ * input_(row_index, column_index);
+                (*mData)(row_index, column_index) =
+                        beta_ * (*mData)(row_index, column_index) + alpha_ * input_(row_index, column_index);
             }
         }
     }
@@ -80,11 +82,11 @@ public:
 
         Teuchos::ETransp transpose = this->castTranspose(transpose_);
 
-        m_Data->GEMV(transpose,
+        mData->GEMV(transpose,
                      num_rows,
                      num_columns,
                      alpha_,
-                     m_Data->values(),
+                     mData->values(),
                      matrix_leading_dim,
                      input.data()->getRawPtr(),
                      increments_for_in_vector,
@@ -116,13 +118,13 @@ public:
         Teuchos::ETransp transpose_A = this->castTranspose(transpose_A_);
         Teuchos::ETransp transpose_B = this->castTranspose(transpose_B_);
 
-        m_Data->GEMM(transpose_A,
+        mData->GEMM(transpose_A,
                      transpose_B,
                      num_rows,
                      num_columns,
                      num_columns,
                      alpha_,
-                     m_Data->values(),
+                     mData->values(),
                      matrix_A_leading_dim,
                      B_matrix.data()->values(),
                      matrix_B_leading_dim,
@@ -135,31 +137,31 @@ public:
 
     int getNumRows() const
     {
-        int number_of_rows = m_Data->numRows();
+        int number_of_rows = mData->numRows();
         return (number_of_rows);
     }
     int getNumCols() const
     {
-        int number_of_columns = m_Data->numCols();
+        int number_of_columns = mData->numCols();
         return (number_of_columns);
     }
     double & operator ()(int global_row_index_, int global_column_index_)
     {
-        return (m_Data->operator ()(global_row_index_, global_column_index_));
+        return (mData->operator ()(global_row_index_, global_column_index_));
     }
     const double & operator ()(int global_row_index_, int global_column_index_) const
     {
-        return (m_Data->operator ()(global_row_index_, global_column_index_));
+        return (mData->operator ()(global_row_index_, global_column_index_));
     }
     void replaceGlobalValue(const int & global_row_index_, const int & global_column_index_, const double & value_)
     {
-        (*m_Data)(global_row_index_, global_column_index_) = value_;
+        (*mData)(global_row_index_, global_column_index_) = value_;
     }
 
     const std::shared_ptr<trrom::Vector<double> > & vector(int index_) const
     {
         // TODO: RECONSIDER PURE VIRTUAL FUNCTION
-        return (m_Vector);
+        return (mVector);
     }
     std::shared_ptr<trrom::Matrix<double> > create(int nrows_ = 0, int ncols_ = 0) const
     {
@@ -168,19 +170,19 @@ public:
         std::shared_ptr<trrom::TeuchosSerialDenseMatrix> this_copy;
         if((nrows_ > 0) && (ncols_ > 0))
         {
-            this_copy.reset(new trrom::TeuchosSerialDenseMatrix(nrows_, ncols_));
+            this_copy = std::make_shared<trrom::TeuchosSerialDenseMatrix>(nrows_, ncols_);
         }
         else
         {
             int num_rows = this->getNumRows();
             int num_cols = this->getNumCols();
-            this_copy.reset(new trrom::TeuchosSerialDenseMatrix(num_rows, num_cols));
+            this_copy = std::make_shared<trrom::TeuchosSerialDenseMatrix>(num_rows, num_cols);
         }
         return (this_copy);
     }
     std::shared_ptr<Teuchos::SerialDenseMatrix<int, double> > & data()
     {
-        return (m_Data);
+        return (mData);
     }
 
 private:
@@ -200,8 +202,9 @@ private:
     }
 
 private:
-    std::shared_ptr< Teuchos::SerialDenseMatrix<int, double> > m_Data;
-    std::shared_ptr< trrom::Vector<double> > m_Vector;
+    int mLength;
+    std::shared_ptr< Teuchos::SerialDenseMatrix<int, double> > mData;
+    std::shared_ptr< trrom::Vector<double> > mVector;
 
 private:
     TeuchosSerialDenseMatrix(const trrom::TeuchosSerialDenseMatrix &);

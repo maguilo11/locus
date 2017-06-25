@@ -31,7 +31,7 @@ TrustRegionNewtonBase::TrustRegionNewtonBase(const std::shared_ptr<trrom::Data> 
         m_WorkVector(data_->control()->create()),
         m_LowerBound(data_->getControlLowerBound()),
         m_UpperBound(data_->getControlUpperBound()),
-        m_BoundConstraint(new trrom::BoundConstraints)
+        m_BoundConstraint(std::make_shared<trrom::BoundConstraints>())
 {
 }
 

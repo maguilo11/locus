@@ -26,7 +26,7 @@ inline void setDEIMTestData(std::shared_ptr<trrom::Matrix<double> > & basis_)
 {
     int num_rows = 10;
     int num_columns = 3;
-    basis_.reset(new trrom::MxMatrix(num_rows, num_columns));
+    basis_ = std::make_shared<trrom::MxMatrix>(num_rows, num_columns);
     (*basis_)(0, 0) = -0.305337446414953;
     (*basis_)(0, 1) = 0.149929755643348;
     (*basis_)(0, 2) = 0.454738659588238;
@@ -64,12 +64,12 @@ inline void setDEIMTestGold(std::shared_ptr<trrom::Matrix<double> > & binary_mat
 {
     const int num_rows = 10;
     const int num_columns = 3;
-    binary_matrix.reset(new trrom::MxMatrix(num_rows, num_columns));
+    binary_matrix = std::make_shared<trrom::MxMatrix>(num_rows, num_columns);
     (*binary_matrix)(7, 0) = 1;
     (*binary_matrix)(3, 1) = 1;
     (*binary_matrix)(2, 2) = 1;
 
-    active_indices_.reset(new trrom::MxVector(num_columns));
+    active_indices_ = std::make_shared<trrom::MxVector>(num_columns);
     (*active_indices_)[0] = 7;
     (*active_indices_)[1] = 3;
     (*active_indices_)[2] = 2;
@@ -89,8 +89,8 @@ void mexFunction(int nOutput, mxArray* pOutput[], int nInput, const mxArray* pIn
         mexErrMsgTxt(error.c_str());
     }
 
-    std::shared_ptr<trrom::MxDirectSolver> solver(new trrom::MxDirectSolver);
-    std::shared_ptr<trrom::MxLinearAlgebraFactory> factory(new trrom::MxLinearAlgebraFactory);
+    std::shared_ptr<trrom::MxDirectSolver> solver = std::make_shared<trrom::MxDirectSolver>();
+    std::shared_ptr<trrom::MxLinearAlgebraFactory> factory = std::make_shared<trrom::MxLinearAlgebraFactory>();
     trrom::DiscreteEmpiricalInterpolation deim(solver, factory);
 
    // **** TEST 1: apply ****

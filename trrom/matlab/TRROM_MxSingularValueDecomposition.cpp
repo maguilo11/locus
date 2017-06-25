@@ -45,7 +45,7 @@ void MxSingularValueDecomposition::solve(const std::shared_ptr<trrom::Matrix<dou
 
     // Copy singular values output from Matlab into TRROM vector data structure
     const int num_singular_values = mxGetM(output[1]);
-    singular_values_.reset(new trrom::MxVector(num_singular_values));
+    singular_values_ = std::make_shared<trrom::MxVector>(num_singular_values);
     trrom::MxVector & singular_values = dynamic_cast<trrom::MxVector &>(*singular_values_);
     double* singular_values_data = mxGetPr(output[1]);
     double* singular_values_output_data = singular_values.data();
@@ -58,14 +58,14 @@ void MxSingularValueDecomposition::solve(const std::shared_ptr<trrom::Matrix<dou
     // Copy left singular vectors output from Matlab into TRROM matrix data structure
     int num_rows = mxGetM(output[0]);
     int num_columns = mxGetN(output[0]);
-    left_singular_vectors_.reset(new trrom::MxMatrix(num_rows, num_columns));
+    left_singular_vectors_ = std::make_shared<trrom::MxMatrix>(num_rows, num_columns);
     trrom::MxMatrix & left_singular_vectors = dynamic_cast<trrom::MxMatrix &>(*left_singular_vectors_);
     trrom::mx::setMxArray(output[0], left_singular_vectors.array());
 
     // Copy right singular vectors output from Matlab into TRROM matrix data structure
     num_rows = mxGetM(output[2]);
     num_columns = mxGetN(output[2]);
-    right_singular_vectors_.reset(new trrom::MxMatrix(num_rows, num_columns));
+    right_singular_vectors_ = std::make_shared<trrom::MxMatrix>(num_rows, num_columns);
     trrom::MxMatrix & right_singular_vectors = dynamic_cast<trrom::MxMatrix &>(*right_singular_vectors_);
     trrom::mx::setMxArray(output[2], right_singular_vectors.array());
 }

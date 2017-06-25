@@ -25,11 +25,11 @@ class EpetraVector : public trrom::Vector<double>
 {
 public:
     explicit EpetraVector(const Epetra_BlockMap & map_) :
-            m_Data(new Epetra_Vector(map_))
+            m_Data(std::make_shared<Epetra_Vector>(map_))
     {
     }
     EpetraVector(Epetra_DataAccess copy_or_view_access_, const Epetra_MultiVector & source_, int index_) :
-            m_Data(new Epetra_Vector(copy_or_view_access_, source_, index_))
+            m_Data(std::make_shared<Epetra_Vector>(copy_or_view_access_, source_, index_))
     {
     }
     virtual ~EpetraVector()
@@ -146,14 +146,14 @@ public:
         std::shared_ptr<trrom::EpetraVector> this_copy;
         if(global_length == 0)
         {
-            this_copy.reset(new trrom::EpetraVector(m_Data->Map()));
+            this_copy = std::make_shared<trrom::EpetraVector>(m_Data->Map());
         }
         else
         {
             const int index_base = m_Data->Map().IndexBase();
             const int element_size = m_Data->Map().ElementSize();
             Epetra_BlockMap map(global_length, element_size, index_base, m_Data->Comm());
-            this_copy.reset(new trrom::EpetraVector(map));
+            this_copy = std::make_shared<trrom::EpetraVector>(map);
         }
         return (this_copy);
     }

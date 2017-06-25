@@ -90,7 +90,7 @@ void MxBrandMatrixFactory::buildMatrixK(const std::shared_ptr<trrom::Vector<doub
      * references, and assign new contents to output matrix. */
     const int num_rows = mxGetM(mex_output_five[0]);
     const int num_columns = mxGetN(mex_output_five[0]);
-    K_.reset(new trrom::MxMatrix(num_rows, num_columns));
+    K_ = std::make_shared<trrom::MxMatrix>(num_rows, num_columns);
     trrom::MxMatrix & K_matrix = dynamic_cast<trrom::MxMatrix &>(*K_);
     K_matrix.setMxArray(mex_output_five[0]);
 }
@@ -130,7 +130,7 @@ void MxBrandMatrixFactory::buildMatrixUbar(const std::shared_ptr<trrom::Matrix<d
      * references, and assign new contents to output matrix. */
     const int num_rows = mxGetM(mex_output_two[0]);
     const int num_columns = mxGetN(mex_output_two[0]);
-    Un_.reset(new trrom::MxMatrix(num_rows, num_columns));
+    Un_ = std::make_shared<trrom::MxMatrix>(num_rows, num_columns);
     trrom::MxMatrix & new_left_singular_vectors = dynamic_cast<trrom::MxMatrix &>(*Un_);
     new_left_singular_vectors.setMxArray(mex_output_two[0]);
 }
@@ -179,7 +179,7 @@ void MxBrandMatrixFactory::buildMatrixVbar(const std::shared_ptr<trrom::Matrix<d
      * references, and assign new contents to output matrix. */
     const int num_rows = mxGetM(mex_output_three[0]);
     const int num_columns = mxGetN(mex_output_three[0]);
-    Vn_.reset(new trrom::MxMatrix(num_rows, num_columns));
+    Vn_ = std::make_shared<trrom::MxMatrix>(num_rows, num_columns);
     trrom::MxMatrix & new_right_singular_vectors = dynamic_cast<trrom::MxMatrix &>(*Vn_);
     new_right_singular_vectors.setMxArray(mex_output_three[0]);
 }

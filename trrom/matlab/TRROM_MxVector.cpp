@@ -160,11 +160,11 @@ std::shared_ptr<trrom::Vector<double> > MxVector::create(int length_) const
     if(length_ == 0)
     {
         int this_length = this->size();
-        this_copy.reset(new trrom::MxVector(this_length));
+        this_copy = std::make_shared<trrom::MxVector>(this_length);
     }
     else
     {
-        this_copy.reset(new trrom::MxVector(length_));
+        this_copy = std::make_shared<trrom::MxVector>(length_);
     }
     return (this_copy);
 }

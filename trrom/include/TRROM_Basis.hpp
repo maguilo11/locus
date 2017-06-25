@@ -227,14 +227,14 @@ public:
         if((num_rows_ > 0) && (num_cols_ > 0))
         {
             trrom::SerialVector<ScalarType> vector(num_rows_);
-            this_copy.reset(new trrom::Basis<ScalarType>(vector, num_cols_));
+            this_copy = std::make_shared<trrom::Basis<ScalarType>>(vector, num_cols_);
         }
         else
         {
             int num_rows = this->getNumRows();
             int num_cols = this->getNumCols();
             trrom::SerialVector<ScalarType> vector(num_rows);
-            this_copy.reset(new trrom::Basis<ScalarType>(vector, num_cols));
+            this_copy = std::make_shared<trrom::Basis<ScalarType>>(vector, num_cols);
         }
         return (this_copy);
     }

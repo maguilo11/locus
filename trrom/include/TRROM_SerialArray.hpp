@@ -26,7 +26,7 @@ public:
     virtual ~SerialArray()
     {
         delete[] m_Data;
-        m_Data = NULL;
+        m_Data = nullptr;
     }
 
     // Scales a vector by a real constant.
@@ -157,11 +157,11 @@ public:
         if(global_length_ == 0)
         {
             int length = this->size();
-            this_copy.reset(new trrom::SerialArray<ScalarType>(length));
+            this_copy = std::make_shared<trrom::SerialArray<ScalarType>>(length);
         }
         else
         {
-            this_copy.reset(new trrom::SerialArray<ScalarType>(global_length_));
+            this_copy = std::make_shared<trrom::SerialArray<ScalarType>>(global_length_);
         }
         return (this_copy);
     }

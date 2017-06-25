@@ -28,7 +28,7 @@ void mexFunction(int nOutput, mxArray* pOutput[], int nInput, const mxArray* pIn
     // **** TEST 1: reshape ****
     msg.assign("reshape");
     const int length = 25;
-    std::shared_ptr<trrom::Vector<double> > vector(new trrom::MxVector(length));
+    std::shared_ptr<trrom::Vector<double> > vector = std::make_shared<trrom::MxVector>(length);
     trrom::mx::fill(*vector);
 
     const int num_rows = 5;

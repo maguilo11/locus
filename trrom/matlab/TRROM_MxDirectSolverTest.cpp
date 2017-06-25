@@ -27,7 +27,7 @@ inline void setSolverTestData(std::shared_ptr<MxMatrix> & matrix_,
     // Set matrix data
     const int num_rows = 5;
     const int num_columns = 5;
-    matrix_.reset(new trrom::MxMatrix(num_rows, num_columns));
+    matrix_ = std::make_shared<trrom::MxMatrix>(num_rows, num_columns);
     (*matrix_)(0, 0) = 1;
     (*matrix_)(0, 1) = 5;
     (*matrix_)(0, 2) = 0;
@@ -55,7 +55,7 @@ inline void setSolverTestData(std::shared_ptr<MxMatrix> & matrix_,
     (*matrix_)(4, 4) = 5;
 
     // Set right hand side vector data
-    rhs_.reset(new trrom::MxVector(num_columns));
+    rhs_ = std::make_shared<trrom::MxVector>(num_columns);
     (*rhs_)[0] = 1;
     (*rhs_)[1] = 2;
     (*rhs_)[2] = 3;
@@ -93,7 +93,7 @@ void mexFunction(int nOutput, mxArray* pOutput[], int nInput, const mxArray* pIn
 
     msg.assign("solve - rhs not transpose");
     mxArray* mx_rhs = mxCreateDoubleMatrix(length, 1, mxREAL);
-    rhs.reset(new trrom::MxVector(mx_rhs));
+    rhs = std::make_shared<trrom::MxVector>(mx_rhs);
     trrom::mx::fill(*rhs);
     solver.solve(*A, *rhs, lhs);
     did_test_pass = trrom::mx::checkResults(gold, lhs);

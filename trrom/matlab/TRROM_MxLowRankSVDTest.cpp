@@ -27,7 +27,7 @@ inline void setBrandAlgorithmTestData(std::shared_ptr<trrom::Matrix<double> > & 
     // Assign contents to current data set
     int num_rows = 10;
     int num_columns = 6;
-    current_data_set_.reset(new trrom::MxMatrix(num_rows, num_columns));
+    current_data_set_ = std::make_shared<trrom::MxMatrix>(num_rows, num_columns);
     (*current_data_set_)(0, 0) = 0.075854289563063;
     (*current_data_set_)(0, 1) = 0.162182308193243;
     (*current_data_set_)(0, 2) = 0.450541598502498;
@@ -91,13 +91,13 @@ inline void setBrandAlgorithmTestData(std::shared_ptr<trrom::Matrix<double> > & 
 
     // Assign contents to current singular values
     int num_singular_values = 3;
-    current_singular_values_.reset(new trrom::MxVector(num_singular_values));
+    current_singular_values_ = std::make_shared<trrom::MxVector>(num_singular_values);
     (*current_singular_values_)[0] = 2.76159072774184;
     (*current_singular_values_)[1] = 0.951101592150856;
     (*current_singular_values_)[2] = 0.718247784809067;
 
     // Assign contents to current left singular vectors
-    current_left_singular_vectors_.reset(new trrom::MxMatrix(num_rows, num_singular_values));
+    current_left_singular_vectors_ = std::make_shared<trrom::MxMatrix>(num_rows, num_singular_values);
     (*current_left_singular_vectors_)(0, 0) = -0.305337446414953;
     (*current_left_singular_vectors_)(0, 1) = 0.149929755643348;
     (*current_left_singular_vectors_)(0, 2) = 0.454738659588238;
@@ -131,7 +131,7 @@ inline void setBrandAlgorithmTestData(std::shared_ptr<trrom::Matrix<double> > & 
 
 
     // Assign contents to current right singular vectors
-    current_right_singular_vectors_.reset(new trrom::MxMatrix(num_singular_values, num_singular_values));
+    current_right_singular_vectors_ = std::make_shared<trrom::MxMatrix>(num_singular_values, num_singular_values);
     (*current_right_singular_vectors_)(0, 0) = -0.570895481691234;
     (*current_right_singular_vectors_)(0, 1) = 0.590426379303292;
     (*current_right_singular_vectors_)(0, 2) = -0.570504197712286;
@@ -158,7 +158,7 @@ inline void setBrandAlgorithmTestGold(std::shared_ptr<trrom::Vector<double> > & 
                                       std::shared_ptr<trrom::Matrix<double> > & gold_right_singular_vectors_)
 {
     const int num_singular_values = 9;
-    gold_singular_values_.reset(new trrom::MxVector(num_singular_values));
+    gold_singular_values_ = std::make_shared<trrom::MxVector>(num_singular_values);
     (*gold_singular_values_)[0] = 4.35066187820290;
     (*gold_singular_values_)[1] = 1.71801176275607;
     (*gold_singular_values_)[2] = 1.24206362721136;
@@ -171,7 +171,7 @@ inline void setBrandAlgorithmTestGold(std::shared_ptr<trrom::Vector<double> > & 
 
     int num_rows = 10;
     int num_columns = 9;
-    gold_left_singular_vectors_.reset(new trrom::MxMatrix(num_rows, num_columns));
+    gold_left_singular_vectors_ = std::make_shared<trrom::MxMatrix>(num_rows, num_columns);
     (*gold_left_singular_vectors_)(0, 0) = -0.279542725299900;
     (*gold_left_singular_vectors_)(0, 1) = -0.158507411951207;
     (*gold_left_singular_vectors_)(0, 2) = -0.0638679695334556;
@@ -265,7 +265,7 @@ inline void setBrandAlgorithmTestGold(std::shared_ptr<trrom::Vector<double> > & 
 
     num_rows = 9;
     num_columns = 9;
-    gold_right_singular_vectors_.reset(new trrom::MxMatrix(num_rows, num_columns));
+    gold_right_singular_vectors_ = std::make_shared<trrom::MxMatrix>(num_rows, num_columns);
     (*gold_right_singular_vectors_)(0, 0) = -0.381463050250012;
     (*gold_right_singular_vectors_)(0, 1) = -0.017236141543870;
     (*gold_right_singular_vectors_)(0, 2) = 0.608460868927007;

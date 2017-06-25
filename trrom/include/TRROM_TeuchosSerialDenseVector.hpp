@@ -19,7 +19,7 @@ class TeuchosSerialDenseVector : public trrom::Vector<double>
 {
 public:
     explicit TeuchosSerialDenseVector(int num_elements_) :
-            m_Data(new Teuchos::SerialDenseVector<int, double>(num_elements_))
+            m_Data(std::make_shared<Teuchos::SerialDenseVector<int, double>>(num_elements_))
     {
     }
     virtual ~TeuchosSerialDenseVector()
@@ -127,11 +127,11 @@ public:
         if(global_length_ == 0)
         {
             int num_elements = this->size();
-            this_copy.reset(new trrom::TeuchosSerialDenseVector(num_elements));
+            this_copy = std::make_shared<trrom::TeuchosSerialDenseVector>(num_elements);
         }
         else
         {
-            this_copy.reset(new trrom::TeuchosSerialDenseVector(global_length_));
+            this_copy = std::make_shared<trrom::TeuchosSerialDenseVector>(global_length_);
         }
         return (this_copy);
     }

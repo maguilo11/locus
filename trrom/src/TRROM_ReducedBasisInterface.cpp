@@ -27,7 +27,7 @@ ReducedBasisInterface::ReducedBasisInterface(const std::shared_ptr<trrom::Reduce
         m_Solver(solver_),
         m_Factory(factory_),
         m_SpectralDecompositionMng(mng_),
-        m_DiscreteEmpiricalInterpolation(new trrom::DiscreteEmpiricalInterpolation(solver_, factory_)),
+        m_DiscreteEmpiricalInterpolation(std::make_shared<trrom::DiscreteEmpiricalInterpolation>(solver_, factory_)),
         m_DualBasis(),
         m_ReducedDualSolution(),
         m_ReducedDualLeftHandSide(),

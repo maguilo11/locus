@@ -50,21 +50,21 @@ void MxOrthogonalDecomposition::factorize(const std::shared_ptr<trrom::Matrix<do
     // Copy m-by-n unitary matrix Q output from Matlab into TRROM matrix data structure
     int num_rows = mxGetM(mex_output[0]);
     int num_columns = mxGetN(mex_output[0]);
-    Q_.reset(new trrom::MxMatrix(num_rows, num_columns));
+    Q_ = std::make_shared<trrom::MxMatrix>(num_rows, num_columns);
     trrom::MxMatrix & Q_matrix = dynamic_cast<trrom::MxMatrix &>(*Q_);
     Q_matrix.setMxArray(mex_output[0]);
 
     // Copy n-by-n upper triangular matrix R output from Matlab into TRROM matrix data structure
     num_rows = mxGetM(mex_output[1]);
     num_columns = mxGetN(mex_output[1]);
-    R_.reset(new trrom::MxMatrix(num_rows, num_columns));
+    R_ = std::make_shared<trrom::MxMatrix>(num_rows, num_columns);
     trrom::MxMatrix & R_matrix = dynamic_cast<trrom::MxMatrix &>(*R_);
     R_matrix.setMxArray(mex_output[1]);
 
     // Copy permutation matrix output from Matlab into TRROM matrix data structure
     num_rows = mxGetM(mex_output[2]);
     num_columns = mxGetN(mex_output[2]);
-    m_PermutationData.reset(new trrom::MxMatrix(num_rows, num_columns));
+    m_PermutationData = std::make_shared<trrom::MxMatrix>(num_rows, num_columns);
     m_PermutationData->setMxArray(mex_output[2]);
 }
 

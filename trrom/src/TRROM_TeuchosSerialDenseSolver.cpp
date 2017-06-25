@@ -15,7 +15,7 @@ namespace trrom
 {
 
 TeuchosSerialDenseSolver::TeuchosSerialDenseSolver() :
-        m_Solver(new Teuchos::SerialDenseSolver<int, double>)
+        m_Solver(std::make_shared<Teuchos::SerialDenseSolver<int, double>>())
 {
 }
 

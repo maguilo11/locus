@@ -20,7 +20,7 @@ class TeuchosArray : public trrom::Vector<ScalarType>
 {
 public:
     TeuchosArray(int dimension_, ScalarType value_ = 0) :
-            m_Data(new Teuchos::Array<ScalarType>(dimension_, value_))
+            m_Data(std::make_shared<Teuchos::Array<ScalarType>>(dimension_, value_))
     {
     }
     virtual ~TeuchosArray()
@@ -154,11 +154,11 @@ public:
         if(global_dim_ == 0)
         {
             int dimension = this->size();
-            vector.reset(new trrom::TeuchosArray<ScalarType>(dimension));
+            vector = std::make_shared<trrom::TeuchosArray<ScalarType>>(dimension);
         }
         else
         {
-            vector.reset(new trrom::TeuchosArray<ScalarType>(global_dim_));
+            vector = std::make_shared<trrom::TeuchosArray<ScalarType>>(global_dim_);
         }
         return (vector);
     }

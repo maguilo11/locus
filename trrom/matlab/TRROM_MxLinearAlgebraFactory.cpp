@@ -47,19 +47,19 @@ void MxLinearAlgebraFactory::reshape(const int & num_rows_,
     mxDestroyArray(mx_num_columns);
 
     // Set output
-    output_.reset(new trrom::MxMatrix(output[0]));
+    output_ = std::make_shared<trrom::MxMatrix>(output[0]);
 }
 
 void MxLinearAlgebraFactory::buildLocalVector(const int & length_, std::shared_ptr<trrom::Vector<double> > & output_)
 {
-    output_.reset(new trrom::MxVector(length_));
+    output_ = std::make_shared<trrom::MxVector>(length_);
 }
 
 void MxLinearAlgebraFactory::buildLocalMatrix(const int & num_rows_,
                                               const int & num_columns_,
                                               std::shared_ptr<trrom::Matrix<double> > & output_)
 {
-    output_.reset(new trrom::MxMatrix(num_rows_, num_columns_));
+    output_ = std::make_shared<trrom::MxMatrix>(num_rows_, num_columns_);
 }
 
 void MxLinearAlgebraFactory::buildMultiVector(const int & num_vectors_,
@@ -67,7 +67,7 @@ void MxLinearAlgebraFactory::buildMultiVector(const int & num_vectors_,
                                               std::shared_ptr<trrom::Matrix<double> > & output_)
 {
     const int num_rows = vector_->size();
-    output_.reset(new trrom::MxMatrix(num_rows, num_vectors_));
+    output_ = std::make_shared<trrom::MxMatrix>(num_rows, num_vectors_);
 }
 
 }

@@ -29,17 +29,17 @@ void mexFunction(int nOutput, mxArray* pOutput[], int nInput, const mxArray* pIn
     // Construct Matrix A
     int num_rows = 3;
     int num_columns = 4;
-    std::shared_ptr<trrom::Matrix<double> > A(new trrom::MxMatrix(num_rows, num_columns));
+    std::shared_ptr<trrom::Matrix<double> > A = std::make_shared<trrom::MxMatrix>(num_rows, num_columns);
     trrom::mx::fill(*A);
     // Construct Matrix B
     num_rows = 3;
     num_columns = 6;
-    std::shared_ptr<trrom::Matrix<double> > B(new trrom::MxMatrix(num_rows, num_columns));
+    std::shared_ptr<trrom::Matrix<double> > B = std::make_shared<trrom::MxMatrix>(num_rows, num_columns);
     trrom::mx::fill(*B);
     // Construct Matrix C
     num_rows = 10;
     num_columns = 2;
-    std::shared_ptr<trrom::Matrix<double> > C(new trrom::MxMatrix(num_rows, num_columns));
+    std::shared_ptr<trrom::Matrix<double> > C = std::make_shared<trrom::MxMatrix>(num_rows, num_columns);
     trrom::mx::fill(*C);
     std::shared_ptr<trrom::Matrix<double> > D;
 
@@ -48,7 +48,7 @@ void mexFunction(int nOutput, mxArray* pOutput[], int nInput, const mxArray* pIn
     // ASSERT TEST 1 RESULTS
     num_rows = 3;
     num_columns = 2;
-    std::shared_ptr<trrom::Matrix<double> > gold(new trrom::MxMatrix(num_rows, num_columns));
+    std::shared_ptr<trrom::Matrix<double> > gold = std::make_shared<trrom::MxMatrix>(num_rows, num_columns);
     (*gold)(0,0) = 505; (*gold)(1,0) = 560; (*gold)(2,0) = 615;
     (*gold)(0,1) = 1235; (*gold)(1,1) = 1390; (*gold)(2,1) = 1545;
     bool did_test_pass = trrom::mx::checkResults(*gold, *D);
@@ -58,11 +58,11 @@ void mexFunction(int nOutput, mxArray* pOutput[], int nInput, const mxArray* pIn
     msg.assign("buildMatrixVbar");
     num_rows = 5;
     num_columns = 6;
-    A.reset(new trrom::MxMatrix(num_rows, num_columns));
+    A = std::make_shared<trrom::MxMatrix>(num_rows, num_columns);
     trrom::mx::fill(*A);
     num_rows = 10;
     num_columns = 2;
-    B.reset(new trrom::MxMatrix(num_rows, num_columns));
+    B = std::make_shared<trrom::MxMatrix>(num_rows, num_columns);
     trrom::mx::fill(*B);
 
     factory.buildMatrixVbar(A, B, D);
@@ -70,7 +70,7 @@ void mexFunction(int nOutput, mxArray* pOutput[], int nInput, const mxArray* pIn
     // ASSERT TEST 2 RESULTS
     num_rows = 9;
     num_columns = 2;
-    gold.reset(new trrom::MxMatrix(num_rows, num_columns));
+    gold = std::make_shared<trrom::MxMatrix>(num_rows, num_columns);
     (*gold)(0,0) = 371; (*gold)(0,1) = 1181;
     (*gold)(1,0) = 392; (*gold)(1,1) = 1262;
     (*gold)(2,0) = 413; (*gold)(2,1) = 1343;
@@ -87,14 +87,14 @@ void mexFunction(int nOutput, mxArray* pOutput[], int nInput, const mxArray* pIn
     msg.assign("buildMatrixK");
     num_rows = 4;
     num_columns = 5;
-    A.reset(new trrom::MxMatrix(num_rows, num_columns));
+    A = std::make_shared<trrom::MxMatrix>(num_rows, num_columns);
     trrom::mx::fill(*A);
     num_rows = 5;
     num_columns = 5;
-    B.reset(new trrom::MxMatrix(num_rows, num_columns));
+    B = std::make_shared<trrom::MxMatrix>(num_rows, num_columns);
     trrom::mx::fill(*B);
     const int num_singular_values = 4;
-    std::shared_ptr<trrom::Vector<double> > sigma(new trrom::MxVector(num_singular_values));
+    std::shared_ptr<trrom::Vector<double> > sigma = std::make_shared<trrom::MxVector>(num_singular_values);
     trrom::mx::fill(*sigma);
 
     factory.buildMatrixK(sigma, A, B, D);
@@ -102,7 +102,7 @@ void mexFunction(int nOutput, mxArray* pOutput[], int nInput, const mxArray* pIn
     // ASSERT TEST 3 RESULTS
     num_rows = 9;
     num_columns = 9;
-    gold.reset(new trrom::MxMatrix(num_rows, num_columns));
+    gold = std::make_shared<trrom::MxMatrix>(num_rows, num_columns);
     // BLOCK 11
     (*gold)(0,0)=1; (*gold)(1,1)=2; (*gold)(2,2)=3; (*gold)(3,3)=4;
     // BLOCK 12

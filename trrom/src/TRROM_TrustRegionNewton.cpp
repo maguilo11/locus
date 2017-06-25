@@ -24,10 +24,10 @@ TrustRegionNewton::TrustRegionNewton(const std::shared_ptr<trrom::Data> & data_,
                                      const std::shared_ptr<trrom::InexactNewtonDataMng> & data_mng_) :
         trrom::TrustRegionNewtonBase(data_),
         m_MidGradient(data_->control()->create()),
-        m_IO(new trrom::TrustRegionNewtonIO),
+        m_IO(std::make_shared<trrom::TrustRegionNewtonIO>()),
         m_StepMng(step_mng),
         m_DataMng(data_mng_),
-        m_Solver(new trrom::ProjectedSteihaugTointPcg(data_))
+        m_Solver(std::make_shared<trrom::ProjectedSteihaugTointPcg>(data_))
 {
 }
 
