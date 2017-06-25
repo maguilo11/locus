@@ -74,8 +74,8 @@ public:
     virtual void replaceGlobalValue(const int & row_index_, const int & column_index_, const ScalarType & value_) = 0;
 
     virtual void insert(const trrom::Vector<ScalarType> & input_) = 0;
-    virtual const std::tr1::shared_ptr<trrom::Vector<ScalarType> > & getVector(const int & global_vector_index_) = 0;
-    virtual std::tr1::shared_ptr<trrom::MultiVector<ScalarType> > create(int global_num_elements_ = 0, int global_num_vectors_ = 0) const = 0;
+    virtual const std::shared_ptr<trrom::Vector<ScalarType> > & getVector(const int & global_vector_index_) = 0;
+    virtual std::shared_ptr<trrom::MultiVector<ScalarType> > create(int global_num_elements_ = 0, int global_num_vectors_ = 0) const = 0;
 };
 
 class EpetraMultiVector : public trrom::MultiVector<double>
@@ -258,17 +258,17 @@ public:
             m_NumVecStored++;
         }
     }
-    const std::tr1::shared_ptr< trrom::Vector<double> > & getVector(const int & global_vector_index_)
+    const std::shared_ptr< trrom::Vector<double> > & getVector(const int & global_vector_index_)
     {
         m_ThisVector.reset(new trrom::EpetraVector(Epetra_DataAccess::View, *m_CurrentEnsemble, global_vector_index_));
         return (m_ThisVector);
     }
-    std::tr1::shared_ptr<trrom::MultiVector<double> > create(int global_num_elements_ = 0, int num_vectors_ = 0) const
+    std::shared_ptr<trrom::MultiVector<double> > create(int global_num_elements_ = 0, int num_vectors_ = 0) const
     {
         /*! Creates copy of this vector with user supplied dimensions */
         assert(num_vectors_ >= 0);
         assert(global_num_elements_ >= 0);
-        std::tr1::shared_ptr<trrom::EpetraMultiVector> this_copy;
+        std::shared_ptr<trrom::EpetraMultiVector> this_copy;
         if(num_vectors_ > 0 && global_num_elements_ > 0)
         {
             const int index_base = m_CurrentEnsemble->Map().IndexBase();
@@ -289,7 +289,7 @@ public:
     {
         return (m_DataWarehouse->NumVectors());
     }
-    const std::tr1::shared_ptr<Epetra_MultiVector> & data() const
+    const std::shared_ptr<Epetra_MultiVector> & data() const
     {
         return (m_CurrentEnsemble);
     }
@@ -311,9 +311,9 @@ private:
 
 private:
     int m_NumVecStored;
-    std::tr1::shared_ptr< trrom::Vector<double> > m_ThisVector;
-    std::tr1::shared_ptr<Epetra_MultiVector> m_CurrentEnsemble;
-    std::tr1::shared_ptr<Epetra_MultiVector> m_DataWarehouse;
+    std::shared_ptr< trrom::Vector<double> > m_ThisVector;
+    std::shared_ptr<Epetra_MultiVector> m_CurrentEnsemble;
+    std::shared_ptr<Epetra_MultiVector> m_DataWarehouse;
 
 private:
     EpetraMultiVector(const trrom::EpetraMultiVector &);
@@ -426,7 +426,7 @@ TEST(EpetraMultiVector, getVector)
     x.fill(2);
     X.insert(x);
 
-    std::tr1::shared_ptr< trrom::Vector<double> > gold = x.create();
+    std::shared_ptr< trrom::Vector<double> > gold = x.create();
     gold->fill(2);
     checkResults(*gold, *X.getVector(0));
 }

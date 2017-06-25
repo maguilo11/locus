@@ -44,10 +44,10 @@ public:
      *    \param Out
      *          right_singular_vectors_: right singular vectors
      **/
-    void solve(const std::tr1::shared_ptr<trrom::Matrix<double> > & data_,
-               std::tr1::shared_ptr<trrom::Vector<double> > & singular_values_,
-               std::tr1::shared_ptr<trrom::Matrix<double> > & left_singular_vectors_,
-               std::tr1::shared_ptr<trrom::Matrix<double> > & right_singular_vectors_);
+    void solve(const std::shared_ptr<trrom::Matrix<double> > & data_,
+               std::shared_ptr<trrom::Vector<double> > & singular_values_,
+               std::shared_ptr<trrom::Matrix<double> > & left_singular_vectors_,
+               std::shared_ptr<trrom::Matrix<double> > & right_singular_vectors_);
 
 private:
     MxSingularValueDecomposition(const trrom::MxSingularValueDecomposition &);

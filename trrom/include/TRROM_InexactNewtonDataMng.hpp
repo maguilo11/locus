@@ -22,26 +22,26 @@ class Vector;
 class InexactNewtonDataMng : public trrom::OptimizationDataMng
 {
 public:
-    InexactNewtonDataMng(const std::tr1::shared_ptr<trrom::Data> & data_,
-                         const std::tr1::shared_ptr<trrom::AssemblyManager> & manager_);
+    InexactNewtonDataMng(const std::shared_ptr<trrom::Data> & data_,
+                         const std::shared_ptr<trrom::AssemblyManager> & manager_);
     virtual ~InexactNewtonDataMng();
 
     double evaluateObjective();
-    double evaluateObjective(const std::tr1::shared_ptr<trrom::Vector<double> > & input_);
+    double evaluateObjective(const std::shared_ptr<trrom::Vector<double> > & input_);
     int getObjectiveFunctionEvaluationCounter() const;
 
     void computeGradient();
-    void computeGradient(const std::tr1::shared_ptr<trrom::Vector<double> > & input_,
-                         const std::tr1::shared_ptr<trrom::Vector<double> > & output_);
+    void computeGradient(const std::shared_ptr<trrom::Vector<double> > & input_,
+                         const std::shared_ptr<trrom::Vector<double> > & output_);
 
-    void applyVectorToHessian(const std::tr1::shared_ptr<trrom::Vector<double> > & input_,
-                              const std::tr1::shared_ptr<trrom::Vector<double> > & output_);
+    void applyVectorToHessian(const std::shared_ptr<trrom::Vector<double> > & input_,
+                              const std::shared_ptr<trrom::Vector<double> > & output_);
 
-    const std::tr1::shared_ptr<trrom::Data> & getData() const;
+    const std::shared_ptr<trrom::Data> & getData() const;
 
 private:
-    std::tr1::shared_ptr<trrom::Data> m_Data;
-    std::tr1::shared_ptr<trrom::AssemblyManager> m_AssemblyMng;
+    std::shared_ptr<trrom::Data> m_Data;
+    std::shared_ptr<trrom::AssemblyManager> m_AssemblyMng;
 
 private:
     InexactNewtonDataMng(const trrom::InexactNewtonDataMng &);

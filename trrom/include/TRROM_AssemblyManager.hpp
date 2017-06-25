@@ -7,6 +7,8 @@
 #ifndef TRROM_ASSEMBLYMANAGER_HPP_
 #define TRROM_ASSEMBLYMANAGER_HPP_
 
+#include <memory>
+
 #include "TRROM_Vector.hpp"
 
 namespace trrom
@@ -26,16 +28,16 @@ public:
     virtual int getObjectiveCounter() const = 0;
     virtual void updateObjectiveCounter() = 0;
 
-    virtual double objective(const std::tr1::shared_ptr<trrom::Vector<double> > & input_,
+    virtual double objective(const std::shared_ptr<trrom::Vector<double> > & input_,
                            const double & tolerance_,
                            bool & inexactness_violated_) = 0;
-    virtual void gradient(const std::tr1::shared_ptr<trrom::Vector<double> > & input_,
-                          const std::tr1::shared_ptr<trrom::Vector<double> > & output_,
+    virtual void gradient(const std::shared_ptr<trrom::Vector<double> > & input_,
+                          const std::shared_ptr<trrom::Vector<double> > & output_,
                           const double & tolerance_,
                           bool & inexactness_violated_) = 0;
-    virtual void hessian(const std::tr1::shared_ptr<trrom::Vector<double> > & input_,
-                         const std::tr1::shared_ptr<trrom::Vector<double> > & vector_,
-                         const std::tr1::shared_ptr<trrom::Vector<double> > & output_,
+    virtual void hessian(const std::shared_ptr<trrom::Vector<double> > & input_,
+                         const std::shared_ptr<trrom::Vector<double> > & vector_,
+                         const std::shared_ptr<trrom::Vector<double> > & output_,
                          const double & tolerance_,
                          bool & inexactness_violated_) = 0;
 };

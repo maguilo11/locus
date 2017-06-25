@@ -56,7 +56,7 @@ trrom::types::variable_t Variable::type() const
     return (m_Type);
 }
 
-const std::tr1::shared_ptr<trrom::Vector<double> > & Variable::data() const
+const std::shared_ptr<trrom::Vector<double> > & Variable::data() const
 {
     return (m_Data);
 }
@@ -83,7 +83,7 @@ void Variable::setLowerBound(const trrom::Vector<double> & lower_bound_)
     m_LowerBound->update(1., lower_bound_, 0.);
 }
 
-const std::tr1::shared_ptr<trrom::Vector<double> > & Variable::lowerBound() const
+const std::shared_ptr<trrom::Vector<double> > & Variable::lowerBound() const
 {
     return (m_LowerBound);
 }
@@ -110,7 +110,7 @@ void Variable::setUpperBound(const trrom::Vector<double> & upper_bound_)
     m_UpperBound->update(1., upper_bound_, 0.);
 }
 
-const std::tr1::shared_ptr<trrom::Vector<double> > & Variable::upperBound() const
+const std::shared_ptr<trrom::Vector<double> > & Variable::upperBound() const
 {
     return (m_UpperBound);
 }
@@ -122,7 +122,8 @@ void Variable::checkData()
         if(m_Data.use_count() <= 0)
         {
             std::ostringstream error;
-            error << "\nERROR IN: " << __FILE__ << ", LINE: " << __LINE__ << " -> Data structure is not allocated\n";
+            error << "\nERROR IN: " << __FILE__ << ", LINE: " << __LINE__ << ", FUNCTION: " << __FUNCTION__
+                    << ", MESSAGE: Data structure is not allocated\n";
             throw error.str().c_str();
         }
     }
@@ -148,9 +149,10 @@ void Variable::initialize(const trrom::Vector<double> & data_,
         if(lower_bound_size != data_size)
         {
             std::ostringstream msg;
-            msg << "ERROR: DIMENSION MISMATCH BETWEEN LOWER BOUND AND DATA CONTAINERS."
+            msg << "\n\n**** ERROR IN: " << __FILE__ << ", LINE: " << __LINE__ << ", FUNCTION: " << __FUNCTION__
+                    << ", MESSAGE: DIMENSION MISMATCH BETWEEN LOWER BOUND AND DATA CONTAINERS."
                     << " DATA CONTAINER DIMENSION IS EQUAL TO " << data_size
-                    << " AND LOWER BOUND CONTAINER DIMENSION IS EQUAL TO " << lower_bound_size << ": ABORT\n\n";
+                    << " AND LOWER BOUND CONTAINER DIMENSION IS EQUAL TO " << lower_bound_size << ": ABORT ****\n\n";
             throw msg.str().c_str();
         }
 
@@ -158,9 +160,10 @@ void Variable::initialize(const trrom::Vector<double> & data_,
         if(upper_bound_size != data_size)
         {
             std::ostringstream msg;
-            msg << "ERROR: DIMENSION MISMATCH BETWEEN UPPER BOUND AND DATA CONTAINERS."
+            msg << "\n\n**** ERROR IN: " << __FILE__ << ", LINE: " << __LINE__ << ", FUNCTION: " << __FUNCTION__
+                    << ", MESSAGE: DIMENSION MISMATCH BETWEEN UPPER BOUND AND DATA CONTAINERS."
                     << " DATA CONTAINER DIMENSION IS EQUAL TO " << data_size
-                    << " AND UPPER BOUND CONTAINER DIMENSION IS EQUAL TO " << upper_bound_size << ": ABORT\n\n";
+                    << " AND UPPER BOUND CONTAINER DIMENSION IS EQUAL TO " << upper_bound_size << ": ABORT ****\n\n";
             throw msg.str().c_str();
         }
 
@@ -169,8 +172,10 @@ void Variable::initialize(const trrom::Vector<double> & data_,
             if(lower_bound_[index] > upper_bound_[index])
             {
                 std::ostringstream msg;
-                msg << "ERROR: LOWER BOUND AT INDEX " << index << " EXCEEDS UPPER BOUND WITH VALUE " << lower_bound_[index]
-                        << ". UPPER BOUND AT INDEX " << index << " HAS A VALUE OF " << upper_bound_[index] << ": ABORT\n\n";
+                msg << "\n\n**** ERROR IN: " << __FILE__ << ", LINE: " << __LINE__ << ", FUNCTION: " << __FUNCTION__
+                        << ", MESSAGE: LOWER BOUND AT INDEX " << index << " EXCEEDS UPPER BOUND WITH VALUE "
+                        << lower_bound_[index] << ". UPPER BOUND AT INDEX " << index << " HAS A VALUE OF "
+                        << upper_bound_[index] << ": ABORT ****\n\n";
                 throw msg.str().c_str();
             }
         }

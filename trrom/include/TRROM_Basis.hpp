@@ -215,15 +215,15 @@ public:
     {
         m_Data[global_column_index_]->operator[](global_row_index_) = value_;
     }
-    const std::tr1::shared_ptr<trrom::Vector<ScalarType> > & vector(int index_) const
+    const std::shared_ptr<trrom::Vector<ScalarType> > & vector(int index_) const
     {
         return (m_Data[index_]);
     }
-    std::tr1::shared_ptr<trrom::Matrix<ScalarType> > create(int num_rows_, int num_cols_) const
+    std::shared_ptr<trrom::Matrix<ScalarType> > create(int num_rows_, int num_cols_) const
     {
         assert(num_rows_ >= 0);
         assert(num_cols_ >= 0);
-        std::tr1::shared_ptr<trrom::Basis<ScalarType> > this_copy;
+        std::shared_ptr<trrom::Basis<ScalarType> > this_copy;
         if((num_rows_ > 0) && (num_cols_ > 0))
         {
             trrom::SerialVector<ScalarType> vector(num_rows_);
@@ -368,7 +368,7 @@ private:
 
 private:
     int m_NumSnapShots;
-    std::vector<std::tr1::shared_ptr<trrom::Vector<ScalarType> > > m_Data;
+    std::vector<std::shared_ptr<trrom::Vector<ScalarType> > > m_Data;
 
 private:
     Basis(const trrom::Basis<ScalarType> &);

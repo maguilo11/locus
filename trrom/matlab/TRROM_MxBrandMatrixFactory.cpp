@@ -23,10 +23,10 @@ MxBrandMatrixFactory::~MxBrandMatrixFactory()
 {
 }
 
-void MxBrandMatrixFactory::buildMatrixK(const std::tr1::shared_ptr<trrom::Vector<double> > & sigma_,
-                                        const std::tr1::shared_ptr<trrom::Matrix<double> > & M_,
-                                        const std::tr1::shared_ptr<trrom::Matrix<double> > & R_,
-                                        std::tr1::shared_ptr<trrom::Matrix<double> > & K_)
+void MxBrandMatrixFactory::buildMatrixK(const std::shared_ptr<trrom::Vector<double> > & sigma_,
+                                        const std::shared_ptr<trrom::Matrix<double> > & M_,
+                                        const std::shared_ptr<trrom::Matrix<double> > & R_,
+                                        std::shared_ptr<trrom::Matrix<double> > & K_)
 {
     // Cast const trrom::Matrix references into const trrom::MxMatrix references
     const trrom::MxVector & sigma = dynamic_cast<const trrom::MxVector &>(*sigma_);
@@ -95,10 +95,10 @@ void MxBrandMatrixFactory::buildMatrixK(const std::tr1::shared_ptr<trrom::Vector
     K_matrix.setMxArray(mex_output_five[0]);
 }
 
-void MxBrandMatrixFactory::buildMatrixUbar(const std::tr1::shared_ptr<trrom::Matrix<double> > & Uc_,
-                                           const std::tr1::shared_ptr<trrom::Matrix<double> > & Q_,
-                                           const std::tr1::shared_ptr<trrom::Matrix<double> > & Ur_,
-                                           std::tr1::shared_ptr<trrom::Matrix<double> > & Un_)
+void MxBrandMatrixFactory::buildMatrixUbar(const std::shared_ptr<trrom::Matrix<double> > & Uc_,
+                                           const std::shared_ptr<trrom::Matrix<double> > & Q_,
+                                           const std::shared_ptr<trrom::Matrix<double> > & Ur_,
+                                           std::shared_ptr<trrom::Matrix<double> > & Un_)
 {
     // Cast const trrom::Matrix references into const trrom::MxMatrix references
     const trrom::MxMatrix & unitary_matrix = dynamic_cast<const trrom::MxMatrix &>(*Q_);
@@ -135,9 +135,9 @@ void MxBrandMatrixFactory::buildMatrixUbar(const std::tr1::shared_ptr<trrom::Mat
     new_left_singular_vectors.setMxArray(mex_output_two[0]);
 }
 
-void MxBrandMatrixFactory::buildMatrixVbar(const std::tr1::shared_ptr<trrom::Matrix<double> > & Vc_,
-                                           const std::tr1::shared_ptr<trrom::Matrix<double> > & Vr_,
-                                           std::tr1::shared_ptr<trrom::Matrix<double> > & Vn_)
+void MxBrandMatrixFactory::buildMatrixVbar(const std::shared_ptr<trrom::Matrix<double> > & Vc_,
+                                           const std::shared_ptr<trrom::Matrix<double> > & Vr_,
+                                           std::shared_ptr<trrom::Matrix<double> > & Vn_)
 {
     // Cast const trrom::Matrix references into const trrom::MxMatrix references
     const trrom::MxMatrix & current_right_singular_vectors = dynamic_cast<const trrom::MxMatrix &>(*Vc_);

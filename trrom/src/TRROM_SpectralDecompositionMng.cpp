@@ -49,9 +49,9 @@ SpectralDecompositionMng::SpectralDecompositionMng() :
 {
 }
 
-SpectralDecompositionMng::SpectralDecompositionMng(const std::tr1::shared_ptr<trrom::LinearAlgebraFactory> & algebra_factory_,
-                                                   const std::tr1::shared_ptr<trrom::SpectralDecomposition> & full_rank_svd_,
-                                                   const std::tr1::shared_ptr<trrom::LowRankSpectralDecomposition> & low_rank_svd_) :
+SpectralDecompositionMng::SpectralDecompositionMng(const std::shared_ptr<trrom::LinearAlgebraFactory> & algebra_factory_,
+                                                   const std::shared_ptr<trrom::SpectralDecomposition> & full_rank_svd_,
+                                                   const std::shared_ptr<trrom::LowRankSpectralDecomposition> & low_rank_svd_) :
         m_Factory(algebra_factory_),
         m_FullRankSVD(full_rank_svd_),
         m_LowRankSVD(low_rank_svd_),
@@ -79,10 +79,10 @@ SpectralDecompositionMng::SpectralDecompositionMng(const std::tr1::shared_ptr<tr
 {
 }
 
-SpectralDecompositionMng::SpectralDecompositionMng(const std::tr1::shared_ptr<trrom::BrandMatrixFactory> & brands_factory_,
-                                                   const std::tr1::shared_ptr<trrom::LinearAlgebraFactory> & algebra_factory_,
-                                                   const std::tr1::shared_ptr<trrom::SpectralDecomposition> & svd_,
-                                                   const std::tr1::shared_ptr<trrom::OrthogonalFactorization> & ortho_) :
+SpectralDecompositionMng::SpectralDecompositionMng(const std::shared_ptr<trrom::BrandMatrixFactory> & brands_factory_,
+                                                   const std::shared_ptr<trrom::LinearAlgebraFactory> & algebra_factory_,
+                                                   const std::shared_ptr<trrom::SpectralDecomposition> & svd_,
+                                                   const std::shared_ptr<trrom::OrthogonalFactorization> & ortho_) :
         m_Factory(algebra_factory_),
         m_FullRankSVD(svd_),
         m_LowRankSVD(new trrom::BrandLowRankSVD(brands_factory_, algebra_factory_, svd_, ortho_)),
@@ -243,7 +243,7 @@ void SpectralDecompositionMng::storeLeftHandSideSnapshot(const trrom::Vector<dou
     m_LeftHandSideSnapshotEnsemble->insert(input_);
 }
 
-void SpectralDecompositionMng::computeDualOrthonormalBasis(std::tr1::shared_ptr<trrom::Matrix<double> > & basis_)
+void SpectralDecompositionMng::computeDualOrthonormalBasis(std::shared_ptr<trrom::Matrix<double> > & basis_)
 {
     int num_basis_vectors = trrom::energy(m_DualEnergyThreshold, *m_DualSingularValues);
     m_Factory->buildMultiVector(num_basis_vectors, m_DualSnapshotEnsemble->vector(0), basis_);
@@ -253,7 +253,7 @@ void SpectralDecompositionMng::computeDualOrthonormalBasis(std::tr1::shared_ptr<
                                          *basis_);
 }
 
-void SpectralDecompositionMng::computeStateOrthonormalBasis(std::tr1::shared_ptr<trrom::Matrix<double> > & basis_)
+void SpectralDecompositionMng::computeStateOrthonormalBasis(std::shared_ptr<trrom::Matrix<double> > & basis_)
 {
     int num_basis_vectors = trrom::energy(m_StateEnergyThreshold, *m_StateSingularValues);
     m_Factory->buildMultiVector(num_basis_vectors, m_StateSnapshotEnsemble->vector(0), basis_);
@@ -263,7 +263,7 @@ void SpectralDecompositionMng::computeStateOrthonormalBasis(std::tr1::shared_ptr
                                          *basis_);
 }
 
-void SpectralDecompositionMng::computeLeftHandSideOrthonormalBasis(std::tr1::shared_ptr<trrom::Matrix<double> > & basis_)
+void SpectralDecompositionMng::computeLeftHandSideOrthonormalBasis(std::shared_ptr<trrom::Matrix<double> > & basis_)
 {
     int num_basis_vectors = trrom::energy(m_LeftHandSideEnergyThreshold, *m_LeftHandSideSingularValues);
     m_Factory->buildMultiVector(num_basis_vectors, m_LeftHandSideSnapshotEnsemble->vector(0), basis_);
@@ -329,17 +329,17 @@ void SpectralDecompositionMng::solveLeftHandSideSingularValueDecomposition()
     }
 }
 
-const std::tr1::shared_ptr<trrom::Vector<double> > & SpectralDecompositionMng::getDualSnapshot(int index_) const
+const std::shared_ptr<trrom::Vector<double> > & SpectralDecompositionMng::getDualSnapshot(int index_) const
 {
     return (m_DualSnapshotEnsemble->vector(index_));
 }
 
-const std::tr1::shared_ptr<trrom::Vector<double> > & SpectralDecompositionMng::getStateSnapshot(int index_) const
+const std::shared_ptr<trrom::Vector<double> > & SpectralDecompositionMng::getStateSnapshot(int index_) const
 {
     return (m_StateSnapshotEnsemble->vector(index_));
 }
 
-const std::tr1::shared_ptr<trrom::Vector<double> > & SpectralDecompositionMng::getLeftHandSideSnapshot(int index_) const
+const std::shared_ptr<trrom::Vector<double> > & SpectralDecompositionMng::getLeftHandSideSnapshot(int index_) const
 {
     return (m_LeftHandSideSnapshotEnsemble->vector(index_));
 }

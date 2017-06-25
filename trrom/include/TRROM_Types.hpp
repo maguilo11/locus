@@ -15,11 +15,11 @@
 #include <vector>
 #include <limits>
 #include <string>
+#include <memory>
 #include <cstdlib>
 #include <utility>
 #include <assert.h>
 #include <iostream>
-#include <tr1/memory>
 
 namespace trrom
 {

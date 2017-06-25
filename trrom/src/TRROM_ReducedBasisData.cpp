@@ -32,8 +32,8 @@ void ReducedBasisData::allocateLeftHandSideSnapshot(const trrom::Vector<double> 
         if(input_.size() <= 0)
         {
             std::ostringstream error;
-            error << "\nERROR IN: " << __FILE__ << ", LINE: "
-                  << __LINE__ << " -> Input left hand side vector's length <= 0.\n";
+            error << "\nERROR IN: " << __FILE__ << ", LINE: " << __LINE__ << ", FUNCTION:" << __FUNCTION__
+                    << " -> Input left hand side vector's length <= 0.\n";
             throw error.str().c_str();
         }
         m_LeftHandSideSnapshot = input_.create();
@@ -51,8 +51,8 @@ void ReducedBasisData::allocateRightHandSideSnapshot(const trrom::Vector<double>
         if(input_.size() <= 0)
         {
             std::ostringstream error;
-            error << "\nERROR IN: " << __FILE__ << ", LINE: "
-                  << __LINE__ << " -> Input right hand side vector's length <= 0.\n";
+            error << "\nERROR IN: " << __FILE__ << ", LINE: " << __LINE__ << ", FUNCTION:" << __FUNCTION__
+                    << " -> Input right hand side vector's length <= 0.\n";
             throw error.str().c_str();
         }
         m_RightHandSideSnapshot = input_.create();
@@ -73,7 +73,7 @@ void ReducedBasisData::fidelity(trrom::types::fidelity_t input_)
     m_Fidelity = input_;
 }
 
-const std::tr1::shared_ptr<trrom::Vector<double> > & ReducedBasisData::getLeftHandSideSnapshot() const
+const std::shared_ptr<trrom::Vector<double> > & ReducedBasisData::getLeftHandSideSnapshot() const
 {
     return (m_LeftHandSideSnapshot);
 }
@@ -85,8 +85,8 @@ void ReducedBasisData::setLeftHandSideSnapshot(const trrom::Vector<double> & inp
         if(input_.size() <= 0)
         {
             std::ostringstream error;
-            error << "\nERROR IN: " << __FILE__ << ", LINE: "
-                  << __LINE__ << " -> Input left hand side snapshot has size <= 0.\n";
+            error << "\nERROR IN: " << __FILE__ << ", LINE: " << __LINE__ << ", FUNCTION:" << __FUNCTION__
+                    << " -> Input left hand side snapshot has size <= 0.\n";
             throw error.str().c_str();
         }
 
@@ -106,7 +106,7 @@ void ReducedBasisData::setLeftHandSideSnapshot(const trrom::Vector<double> & inp
     }
 }
 
-const std::tr1::shared_ptr<trrom::Vector<double> > & ReducedBasisData::getRightHandSideSnapshot() const
+const std::shared_ptr<trrom::Vector<double> > & ReducedBasisData::getRightHandSideSnapshot() const
 {
     return (m_RightHandSideSnapshot);
 }
@@ -118,7 +118,7 @@ void ReducedBasisData::setRightHandSideSnapshot(const trrom::Vector<double> & in
         if(input_.size() <= 0)
         {
             std::ostringstream error;
-            error << "\nERROR IN: " << __FILE__ << ", LINE: "
+            error << "\nERROR IN: " << __FILE__ << ", LINE: " << ", FUNCTION:" << __FUNCTION__
                   << __LINE__ << " -> Input right hand side snapshot has size <= 0.\n";
             throw error.str().c_str();
         }
@@ -139,7 +139,7 @@ void ReducedBasisData::setRightHandSideSnapshot(const trrom::Vector<double> & in
     }
 }
 
-const std::tr1::shared_ptr<trrom::Vector<double> > & ReducedBasisData::getLeftHandSideActiveIndices() const
+const std::shared_ptr<trrom::Vector<double> > & ReducedBasisData::getLeftHandSideActiveIndices() const
 {
     return (m_LeftHandSideActiveIndices);
 }
@@ -151,8 +151,8 @@ void ReducedBasisData::setLeftHandSideActiveIndices(const trrom::Vector<double> 
         if(input_.size() <= 0)
         {
             std::ostringstream error;
-            error << "\nERROR IN: " << __FILE__ << ", LINE: "
-                  << __LINE__ << " -> Input left hand side active indices array has size <= 0.\n";
+            error << "\nERROR IN: " << __FILE__ << ", LINE: " << __LINE__ << ", FUNCTION:" << __FUNCTION__
+                    << ", MESSAGE: Input left hand side active indices array has size <= 0.\n";
             throw error.str().c_str();
         }
         m_LeftHandSideActiveIndices = input_.create();

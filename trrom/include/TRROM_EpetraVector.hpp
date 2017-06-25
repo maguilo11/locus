@@ -140,10 +140,10 @@ public:
         /** Operator overloads square bracket operator */
         return (m_Data->operator [](index_));
     }
-    std::tr1::shared_ptr<trrom::Vector<double> > create(int global_length = 0) const
+    std::shared_ptr<trrom::Vector<double> > create(int global_length = 0) const
     {
         /*! Creates copy of this vector */
-        std::tr1::shared_ptr<trrom::EpetraVector> this_copy;
+        std::shared_ptr<trrom::EpetraVector> this_copy;
         if(global_length == 0)
         {
             this_copy.reset(new trrom::EpetraVector(m_Data->Map()));
@@ -165,17 +165,17 @@ public:
     {
         return (m_Data->Map().NumGlobalElements());
     }
-    std::tr1::shared_ptr<Epetra_Vector> & data()
+    std::shared_ptr<Epetra_Vector> & data()
     {
         return (m_Data);
     }
-    const std::tr1::shared_ptr<Epetra_Vector> & data() const
+    const std::shared_ptr<Epetra_Vector> & data() const
     {
         return (m_Data);
     }
 
 private:
-    std::tr1::shared_ptr<Epetra_Vector> m_Data;
+    std::shared_ptr<Epetra_Vector> m_Data;
 
 private:
     EpetraVector(const trrom::EpetraVector & that_);

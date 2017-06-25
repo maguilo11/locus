@@ -20,7 +20,7 @@ class Vector;
 class AssemblyMngTypeLP : public trrom::AssemblyManager
 {
 public:
-    explicit AssemblyMngTypeLP(const std::tr1::shared_ptr<trrom::ObjectiveTypeLP> & objective_);
+    explicit AssemblyMngTypeLP(const std::shared_ptr<trrom::ObjectiveTypeLP> & objective_);
     virtual ~AssemblyMngTypeLP();
 
     virtual int getHessianCounter() const;
@@ -30,16 +30,16 @@ public:
     virtual int getObjectiveCounter() const;
     virtual void updateObjectiveCounter();
 
-    virtual double objective(const std::tr1::shared_ptr<trrom::Vector<double> > & input_,
+    virtual double objective(const std::shared_ptr<trrom::Vector<double> > & input_,
                              const double & tolerance_,
                              bool & inexactness_violated_);
-    virtual void gradient(const std::tr1::shared_ptr<trrom::Vector<double> > & input_,
-                          const std::tr1::shared_ptr<trrom::Vector<double> > & gradient_,
+    virtual void gradient(const std::shared_ptr<trrom::Vector<double> > & input_,
+                          const std::shared_ptr<trrom::Vector<double> > & gradient_,
                           const double & tolerance_,
                           bool & inexactness_violated_);
-    virtual void hessian(const std::tr1::shared_ptr<trrom::Vector<double> > & input_,
-                         const std::tr1::shared_ptr<trrom::Vector<double> > & vector_,
-                         const std::tr1::shared_ptr<trrom::Vector<double> > & hess_times_vec_,
+    virtual void hessian(const std::shared_ptr<trrom::Vector<double> > & input_,
+                         const std::shared_ptr<trrom::Vector<double> > & vector_,
+                         const std::shared_ptr<trrom::Vector<double> > & hess_times_vec_,
                          const double & tolerance_,
                          bool & inexactness_violated_);
 
@@ -48,7 +48,7 @@ private:
     int m_GradientCounter;
     int m_ObjectiveCounter;
 
-    std::tr1::shared_ptr<trrom::ObjectiveTypeLP> m_Objective;
+    std::shared_ptr<trrom::ObjectiveTypeLP> m_Objective;
 
 private:
     AssemblyMngTypeLP(const trrom::AssemblyMngTypeLP &);

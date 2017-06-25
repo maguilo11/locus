@@ -27,14 +27,14 @@ trrom::types::linear_operator_t ReducedHessian::type() const
     return (trrom::types::REDUCED_HESSIAN);
 }
 
-void ReducedHessian::update(const std::tr1::shared_ptr<trrom::OptimizationDataMng> & mng_)
+void ReducedHessian::update(const std::shared_ptr<trrom::OptimizationDataMng> & mng_)
 {
     return;
 }
 
-void ReducedHessian::apply(const std::tr1::shared_ptr<trrom::OptimizationDataMng> & mng_,
-                           const std::tr1::shared_ptr<trrom::Vector<double> > & input_,
-                           const std::tr1::shared_ptr<trrom::Vector<double> > & output_)
+void ReducedHessian::apply(const std::shared_ptr<trrom::OptimizationDataMng> & mng_,
+                           const std::shared_ptr<trrom::Vector<double> > & input_,
+                           const std::shared_ptr<trrom::Vector<double> > & output_)
 {
     mng_->applyVectorToHessian(input_, output_);
 }

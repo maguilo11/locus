@@ -8,6 +8,8 @@
 #ifndef TRROM_BRANDMATRIXFACTORY_HPP_
 #define TRROM_BRANDMATRIXFACTORY_HPP_
 
+#include <memory>
+
 namespace trrom
 {
 
@@ -44,10 +46,10 @@ public:
      *    \param Out
      *          K_: (r+k)-by-(r+k) matrix.
      **/
-    virtual void buildMatrixK(const std::tr1::shared_ptr<trrom::Vector<double> > & sigma_,
-                              const std::tr1::shared_ptr<trrom::Matrix<double> > & M_,
-                              const std::tr1::shared_ptr<trrom::Matrix<double> > & R_,
-                              std::tr1::shared_ptr<trrom::Matrix<double> > & K_) = 0;
+    virtual void buildMatrixK(const std::shared_ptr<trrom::Vector<double> > & sigma_,
+                              const std::shared_ptr<trrom::Matrix<double> > & M_,
+                              const std::shared_ptr<trrom::Matrix<double> > & R_,
+                              std::shared_ptr<trrom::Matrix<double> > & K_) = 0;
     /*! Build m-by-k matrix \bar{U} = \[Uo P\]Ur from input matrices Uo\in\mathbb{R}^{m \times r},
      * P\in\mathbb{R}^{m \times k}, and C\in\mathbb{R}^{(r+k)\times(r+k)}. Here, r denotes the length
      * of input vector of singular values, k denotes the number of new snapshots stored since the last
@@ -63,10 +65,10 @@ public:
      *    \param Out
      *          Un_: m-by-(r+k) matrix containing the updated left singular vectors.
      **/
-    virtual void buildMatrixUbar(const std::tr1::shared_ptr<trrom::Matrix<double> > & Uo_,
-                                 const std::tr1::shared_ptr<trrom::Matrix<double> > & Q_,
-                                 const std::tr1::shared_ptr<trrom::Matrix<double> > & Ur_,
-                                 std::tr1::shared_ptr<trrom::Matrix<double> > & Un_) = 0;
+    virtual void buildMatrixUbar(const std::shared_ptr<trrom::Matrix<double> > & Uo_,
+                                 const std::shared_ptr<trrom::Matrix<double> > & Q_,
+                                 const std::shared_ptr<trrom::Matrix<double> > & Ur_,
+                                 std::shared_ptr<trrom::Matrix<double> > & Un_) = 0;
     /*! Build m-by-k matrix \bar{V} = \[Vo 0; 0 I\]Vr from input matrices I\in\mathbb{R}^{k \times k},
      * Vo\in\mathbb{R}^{n \times r}, Vr\in\mathbb{R}^{(r+k)\times(r+k)}. Here, n denotes the current
      * number of snapshots, k denotes the new number of snapshots stored since the last low-rank
@@ -80,9 +82,9 @@ public:
      *    \param Out
      *          Vn_: n-by-(r+k) matrix containing the updated left singular vectors.
      **/
-    virtual void buildMatrixVbar(const std::tr1::shared_ptr<trrom::Matrix<double> > & Vo_,
-                                 const std::tr1::shared_ptr<trrom::Matrix<double> > & Vr_,
-                                 std::tr1::shared_ptr<trrom::Matrix<double> > & Vn_) = 0;
+    virtual void buildMatrixVbar(const std::shared_ptr<trrom::Matrix<double> > & Vo_,
+                                 const std::shared_ptr<trrom::Matrix<double> > & Vr_,
+                                 std::shared_ptr<trrom::Matrix<double> > & Vn_) = 0;
 };
 
 }

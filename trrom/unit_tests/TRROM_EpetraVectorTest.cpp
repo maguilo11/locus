@@ -6,6 +6,8 @@
 
 #include <gtest/gtest.h>
 
+#include <mpi.h>
+
 #include "TRROM_EpetraVector.hpp"
 
 namespace EpetraVectorTest
@@ -157,7 +159,7 @@ TEST(EpetraVector, create)
     x.fill(2.);
 
     double tolerance = 1e-6;
-    std::tr1::shared_ptr<trrom::Vector<double>> y = x.create();
+    std::shared_ptr<trrom::Vector<double>> y = x.create();
     for(int local_index = 0; local_index < x.size(); ++local_index)
     {
         EXPECT_NEAR(2., x[local_index], tolerance);
@@ -217,7 +219,7 @@ TEST(EpetraVector, create2)
     }
 
     int new_num_global_entries = 40;
-    std::tr1::shared_ptr<trrom::Vector<double>> y = x.create(new_num_global_entries);
+    std::shared_ptr<trrom::Vector<double>> y = x.create(new_num_global_entries);
 
     gold = static_cast<int>(new_num_global_entries / x.getNumProc());
     EXPECT_EQ(gold, y->size());

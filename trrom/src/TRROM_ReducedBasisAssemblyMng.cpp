@@ -16,10 +16,10 @@
 namespace trrom
 {
 
-ReducedBasisAssemblyMng::ReducedBasisAssemblyMng(const std::tr1::shared_ptr<trrom::ReducedBasisData> & data_,
-                                                 const std::tr1::shared_ptr<trrom::ReducedBasisInterface> & interface_,
-                                                 const std::tr1::shared_ptr<trrom::ReducedBasisObjectiveOperators> & objective_,
-                                                 const std::tr1::shared_ptr<trrom::ReducedBasisPDE> & partial_differential_equation_) :
+ReducedBasisAssemblyMng::ReducedBasisAssemblyMng(const std::shared_ptr<trrom::ReducedBasisData> & data_,
+                                                 const std::shared_ptr<trrom::ReducedBasisInterface> & interface_,
+                                                 const std::shared_ptr<trrom::ReducedBasisObjectiveOperators> & objective_,
+                                                 const std::shared_ptr<trrom::ReducedBasisPDE> & partial_differential_equation_) :
         m_UseFullNewtonHessian(true),
         m_HessianCounter(0),
         m_GradientCounter(0),
@@ -159,7 +159,7 @@ void ReducedBasisAssemblyMng::updateHighFidelityAdjointJacobianSolveCounter()
     m_HighFidelityAdjointJacobianSolveCounter++;
 }
 
-double ReducedBasisAssemblyMng::objective(const std::tr1::shared_ptr<trrom::Vector<double> > & control_,
+double ReducedBasisAssemblyMng::objective(const std::shared_ptr<trrom::Vector<double> > & control_,
                                           const double & tolerance_,
                                           bool & inexactness_violated_)
 {
@@ -188,8 +188,8 @@ double ReducedBasisAssemblyMng::objective(const std::tr1::shared_ptr<trrom::Vect
     return (value);
 }
 
-void ReducedBasisAssemblyMng::gradient(const std::tr1::shared_ptr<trrom::Vector<double> > & control_,
-                                       const std::tr1::shared_ptr<trrom::Vector<double> > & gradient_,
+void ReducedBasisAssemblyMng::gradient(const std::shared_ptr<trrom::Vector<double> > & control_,
+                                       const std::shared_ptr<trrom::Vector<double> > & gradient_,
                                        const double & tolerance_,
                                        bool & inexactness_violated_)
 {
@@ -226,9 +226,9 @@ void ReducedBasisAssemblyMng::gradient(const std::tr1::shared_ptr<trrom::Vector<
     }
 }
 
-void ReducedBasisAssemblyMng::hessian(const std::tr1::shared_ptr<trrom::Vector<double> > & control_,
-                                      const std::tr1::shared_ptr<trrom::Vector<double> > & vector_,
-                                      const std::tr1::shared_ptr<trrom::Vector<double> > & hess_times_vec_,
+void ReducedBasisAssemblyMng::hessian(const std::shared_ptr<trrom::Vector<double> > & control_,
+                                      const std::shared_ptr<trrom::Vector<double> > & vector_,
+                                      const std::shared_ptr<trrom::Vector<double> > & hess_times_vec_,
                                       const double & tolerance_,
                                       bool & inexactness_violated_)
 {

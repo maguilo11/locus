@@ -29,26 +29,26 @@ void mexFunction(int nOutput, mxArray* pOutput[], int nInput, const mxArray* pIn
     // Construct Matrix A
     int num_rows = 3;
     int num_columns = 4;
-    std::tr1::shared_ptr<trrom::Matrix<double> > A(new trrom::MxMatrix(num_rows, num_columns));
+    std::shared_ptr<trrom::Matrix<double> > A(new trrom::MxMatrix(num_rows, num_columns));
     trrom::mx::fill(*A);
     // Construct Matrix B
     num_rows = 3;
     num_columns = 6;
-    std::tr1::shared_ptr<trrom::Matrix<double> > B(new trrom::MxMatrix(num_rows, num_columns));
+    std::shared_ptr<trrom::Matrix<double> > B(new trrom::MxMatrix(num_rows, num_columns));
     trrom::mx::fill(*B);
     // Construct Matrix C
     num_rows = 10;
     num_columns = 2;
-    std::tr1::shared_ptr<trrom::Matrix<double> > C(new trrom::MxMatrix(num_rows, num_columns));
+    std::shared_ptr<trrom::Matrix<double> > C(new trrom::MxMatrix(num_rows, num_columns));
     trrom::mx::fill(*C);
-    std::tr1::shared_ptr<trrom::Matrix<double> > D;
+    std::shared_ptr<trrom::Matrix<double> > D;
 
     factory.buildMatrixUbar(A, B, C, D);
 
     // ASSERT TEST 1 RESULTS
     num_rows = 3;
     num_columns = 2;
-    std::tr1::shared_ptr<trrom::Matrix<double> > gold(new trrom::MxMatrix(num_rows, num_columns));
+    std::shared_ptr<trrom::Matrix<double> > gold(new trrom::MxMatrix(num_rows, num_columns));
     (*gold)(0,0) = 505; (*gold)(1,0) = 560; (*gold)(2,0) = 615;
     (*gold)(0,1) = 1235; (*gold)(1,1) = 1390; (*gold)(2,1) = 1545;
     bool did_test_pass = trrom::mx::checkResults(*gold, *D);
@@ -94,7 +94,7 @@ void mexFunction(int nOutput, mxArray* pOutput[], int nInput, const mxArray* pIn
     B.reset(new trrom::MxMatrix(num_rows, num_columns));
     trrom::mx::fill(*B);
     const int num_singular_values = 4;
-    std::tr1::shared_ptr<trrom::Vector<double> > sigma(new trrom::MxVector(num_singular_values));
+    std::shared_ptr<trrom::Vector<double> > sigma(new trrom::MxVector(num_singular_values));
     trrom::mx::fill(*sigma);
 
     factory.buildMatrixK(sigma, A, B, D);

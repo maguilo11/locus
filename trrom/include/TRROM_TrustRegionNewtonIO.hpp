@@ -9,6 +9,7 @@
 #define TRROM_TRUSTREGIONNEWTONIO_HPP_
 
 #include <string>
+#include <memory>
 #include <fstream>
 
 #include "TRROM_Types.hpp"
@@ -40,24 +41,24 @@ public:
     void openFile(const std::string & name_);
     void closeFile();
 
-    void printInitialDiagnostics(const std::tr1::shared_ptr<trrom::OptimizationDataMng> & data_mng_);
-    void printSolution(const std::tr1::shared_ptr<trrom::Vector<double> > & primal_);
-    void printConvergedDiagnostics(const std::tr1::shared_ptr<trrom::OptimizationDataMng> & data_mng_,
-                                   const std::tr1::shared_ptr<trrom::SteihaugTointSolver> & solver_,
+    void printInitialDiagnostics(const std::shared_ptr<trrom::OptimizationDataMng> & data_mng_);
+    void printSolution(const std::shared_ptr<trrom::Vector<double> > & primal_);
+    void printConvergedDiagnostics(const std::shared_ptr<trrom::OptimizationDataMng> & data_mng_,
+                                   const std::shared_ptr<trrom::SteihaugTointSolver> & solver_,
                                    const trrom::TrustRegionStepMng * const step_mng_);
-    void printTrustRegionSubProblemDiagnostics(const std::tr1::shared_ptr<trrom::OptimizationDataMng> & data_mng_,
-                                               const std::tr1::shared_ptr<trrom::SteihaugTointSolver> & solver_,
+    void printTrustRegionSubProblemDiagnostics(const std::shared_ptr<trrom::OptimizationDataMng> & data_mng_,
+                                               const std::shared_ptr<trrom::SteihaugTointSolver> & solver_,
                                                const trrom::TrustRegionStepMng * const step_mng_);
 
 private:
     void printHeader();
-    void printSubProblemDiagnostics(const std::tr1::shared_ptr<trrom::OptimizationDataMng> & data_mng_,
-                                    const std::tr1::shared_ptr<trrom::SteihaugTointSolver> & solver_,
+    void printSubProblemDiagnostics(const std::shared_ptr<trrom::OptimizationDataMng> & data_mng_,
+                                    const std::shared_ptr<trrom::SteihaugTointSolver> & solver_,
                                     const trrom::TrustRegionStepMng * const step_mng_);
-    void printSubProblemFirstItrDiagnostics(const std::tr1::shared_ptr<trrom::OptimizationDataMng> & data_mng_,
-                                            const std::tr1::shared_ptr<trrom::SteihaugTointSolver> & solver_,
+    void printSubProblemFirstItrDiagnostics(const std::shared_ptr<trrom::OptimizationDataMng> & data_mng_,
+                                            const std::shared_ptr<trrom::SteihaugTointSolver> & solver_,
                                             const trrom::TrustRegionStepMng * const step_mng_);
-    void printCurrentSolution(const std::tr1::shared_ptr<trrom::Vector<double> > & primal_);
+    void printCurrentSolution(const std::shared_ptr<trrom::Vector<double> > & primal_);
     void getSolverExitCriterion(trrom::types::solver_stop_criterion_t type_, std::ostringstream & criterion_);
 
 private:

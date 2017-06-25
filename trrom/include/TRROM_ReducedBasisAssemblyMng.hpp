@@ -25,10 +25,10 @@ class Matrix;
 class ReducedBasisAssemblyMng : public trrom::AssemblyManager
 {
 public:
-    ReducedBasisAssemblyMng(const std::tr1::shared_ptr<trrom::ReducedBasisData> & data_,
-                            const std::tr1::shared_ptr<trrom::ReducedBasisInterface> & interface_,
-                            const std::tr1::shared_ptr<trrom::ReducedBasisObjectiveOperators> & objective_,
-                            const std::tr1::shared_ptr<trrom::ReducedBasisPDE> & partial_differential_equation_);
+    ReducedBasisAssemblyMng(const std::shared_ptr<trrom::ReducedBasisData> & data_,
+                            const std::shared_ptr<trrom::ReducedBasisInterface> & interface_,
+                            const std::shared_ptr<trrom::ReducedBasisObjectiveOperators> & objective_,
+                            const std::shared_ptr<trrom::ReducedBasisPDE> & partial_differential_equation_);
     virtual ~ReducedBasisAssemblyMng();
 
     void updateLowFidelityModel();
@@ -42,16 +42,16 @@ public:
     int getObjectiveCounter() const;
     void updateObjectiveCounter();
 
-    double objective(const std::tr1::shared_ptr<trrom::Vector<double> > & control_,
+    double objective(const std::shared_ptr<trrom::Vector<double> > & control_,
                      const double & tolerance_,
                      bool & inexactness_violated_);
-    void gradient(const std::tr1::shared_ptr<trrom::Vector<double> > & control_,
-                  const std::tr1::shared_ptr<trrom::Vector<double> > & gradient_,
+    void gradient(const std::shared_ptr<trrom::Vector<double> > & control_,
+                  const std::shared_ptr<trrom::Vector<double> > & gradient_,
                   const double & tolerance_,
                   bool & inexactness_violated_);
-    void hessian(const std::tr1::shared_ptr<trrom::Vector<double> > & control_,
-                 const std::tr1::shared_ptr<trrom::Vector<double> > & vector_,
-                 const std::tr1::shared_ptr<trrom::Vector<double> > & hess_times_vec_,
+    void hessian(const std::shared_ptr<trrom::Vector<double> > & control_,
+                 const std::shared_ptr<trrom::Vector<double> > & vector_,
+                 const std::shared_ptr<trrom::Vector<double> > & hess_times_vec_,
                  const double & tolerance_,
                  bool & inexactness_violated_);
 
@@ -108,17 +108,17 @@ private:
     int m_LowFidelityAdjointJacobianSolveCounter;
     int m_HighFidelityAdjointJacobianSolveCounter;
 
-    std::tr1::shared_ptr<trrom::Vector<double> > m_Dual;
-    std::tr1::shared_ptr<trrom::Vector<double> > m_State;
-    std::tr1::shared_ptr<trrom::Vector<double> > m_DeltaDual;
-    std::tr1::shared_ptr<trrom::Vector<double> > m_DeltaState;
-    std::tr1::shared_ptr<trrom::Vector<double> > m_HessWorkVec;
-    std::tr1::shared_ptr<trrom::Vector<double> > m_StateWorkVec;
-    std::tr1::shared_ptr<trrom::Vector<double> > m_ControlWorkVec;
+    std::shared_ptr<trrom::Vector<double> > m_Dual;
+    std::shared_ptr<trrom::Vector<double> > m_State;
+    std::shared_ptr<trrom::Vector<double> > m_DeltaDual;
+    std::shared_ptr<trrom::Vector<double> > m_DeltaState;
+    std::shared_ptr<trrom::Vector<double> > m_HessWorkVec;
+    std::shared_ptr<trrom::Vector<double> > m_StateWorkVec;
+    std::shared_ptr<trrom::Vector<double> > m_ControlWorkVec;
 
-    std::tr1::shared_ptr<trrom::ReducedBasisPDE> m_PDE;
-    std::tr1::shared_ptr<trrom::ReducedBasisObjectiveOperators> m_Objective;
-    std::tr1::shared_ptr<trrom::ReducedBasisInterface> m_ReducedBasisInterface;
+    std::shared_ptr<trrom::ReducedBasisPDE> m_PDE;
+    std::shared_ptr<trrom::ReducedBasisObjectiveOperators> m_Objective;
+    std::shared_ptr<trrom::ReducedBasisInterface> m_ReducedBasisInterface;
 
 private:
     ReducedBasisAssemblyMng(const trrom::ReducedBasisAssemblyMng &);

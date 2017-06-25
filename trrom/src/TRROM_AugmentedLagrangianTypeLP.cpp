@@ -14,9 +14,9 @@
 namespace trrom
 {
 
-AugmentedLagrangianTypeLP::AugmentedLagrangianTypeLP(const std::tr1::shared_ptr<trrom::Data> & input_,
-                                                     const std::tr1::shared_ptr<trrom::ObjectiveTypeLP> & objective_,
-                                                     const std::vector<std::tr1::shared_ptr<trrom::InequalityTypeLP> > & inequality_) :
+AugmentedLagrangianTypeLP::AugmentedLagrangianTypeLP(const std::shared_ptr<trrom::Data> & input_,
+                                                     const std::shared_ptr<trrom::ObjectiveTypeLP> & objective_,
+                                                     const std::vector<std::shared_ptr<trrom::InequalityTypeLP> > & inequality_) :
         m_HessianCounter(0),
         m_GradientCounter(0),
         m_ObjectiveCounter(0),
@@ -119,7 +119,7 @@ void AugmentedLagrangianTypeLP::updateInequalityConstraintValues()
     m_NormInequalityConstraints = m_CurrentInequalityConstraintValues->norm();
 }
 
-double AugmentedLagrangianTypeLP::objective(const std::tr1::shared_ptr<trrom::Vector<double> > & control_,
+double AugmentedLagrangianTypeLP::objective(const std::shared_ptr<trrom::Vector<double> > & control_,
                                             const double & tolerance_,
                                             bool & inexactness_violated_)
 {
@@ -152,8 +152,8 @@ double AugmentedLagrangianTypeLP::objective(const std::tr1::shared_ptr<trrom::Ve
     return (augmented_lagrangian_value);
 }
 
-void AugmentedLagrangianTypeLP::gradient(const std::tr1::shared_ptr<trrom::Vector<double> > & control_,
-                                         const std::tr1::shared_ptr<trrom::Vector<double> > & gradient_,
+void AugmentedLagrangianTypeLP::gradient(const std::shared_ptr<trrom::Vector<double> > & control_,
+                                         const std::shared_ptr<trrom::Vector<double> > & gradient_,
                                          const double & tolerance_,
                                          bool & inexactness_violated_)
 {
@@ -183,9 +183,9 @@ void AugmentedLagrangianTypeLP::gradient(const std::tr1::shared_ptr<trrom::Vecto
     this->updateGradientCounter();
 }
 
-void AugmentedLagrangianTypeLP::hessian(const std::tr1::shared_ptr<trrom::Vector<double> > & control_,
-                                        const std::tr1::shared_ptr<trrom::Vector<double> > & vector_,
-                                        const std::tr1::shared_ptr<trrom::Vector<double> > & hessian_times_vec_,
+void AugmentedLagrangianTypeLP::hessian(const std::shared_ptr<trrom::Vector<double> > & control_,
+                                        const std::shared_ptr<trrom::Vector<double> > & vector_,
+                                        const std::shared_ptr<trrom::Vector<double> > & hessian_times_vec_,
                                         const double & tolerance_,
                                         bool & inexactness_violated_)
 {

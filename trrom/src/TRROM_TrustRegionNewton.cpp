@@ -19,9 +19,9 @@
 namespace trrom
 {
 
-TrustRegionNewton::TrustRegionNewton(const std::tr1::shared_ptr<trrom::Data> & data_,
-                                     const std::tr1::shared_ptr<trrom::KelleySachsStepMng> & step_mng,
-                                     const std::tr1::shared_ptr<trrom::InexactNewtonDataMng> & data_mng_) :
+TrustRegionNewton::TrustRegionNewton(const std::shared_ptr<trrom::Data> & data_,
+                                     const std::shared_ptr<trrom::KelleySachsStepMng> & step_mng,
+                                     const std::shared_ptr<trrom::InexactNewtonDataMng> & data_mng_) :
         trrom::TrustRegionNewtonBase(data_),
         m_MidGradient(data_->control()->create()),
         m_IO(new trrom::TrustRegionNewtonIO),

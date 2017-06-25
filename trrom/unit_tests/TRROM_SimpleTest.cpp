@@ -261,8 +261,8 @@ TEST(Basis, gemm2)
     B.replaceGlobalValue(1, 2, 6.);
 
     // C = A*B
-    std::tr1::shared_ptr<trrom::Matrix<double> > C = B.create(3, 3);
-    std::tr1::shared_ptr<trrom::Matrix<double> > gold = B.create(3, 3);
+    std::shared_ptr<trrom::Matrix<double> > C = B.create(3, 3);
+    std::shared_ptr<trrom::Matrix<double> > gold = B.create(3, 3);
     trrom::SerialVector<double> data(C->getNumRows() * C->getNumCols(), 0.);
     A.gemm(false, false, 1., B, 0., *C);
     data[0] = 9;
@@ -295,7 +295,7 @@ TEST(Basis, gemm2)
     C = B.create(2, 2);
     gold = B.create(2, 2);
     A.gemm(true, false, 1., A, 0., *C);
-    std::tr1::shared_ptr<trrom::Vector<double> > z = data.create(4);
+    std::shared_ptr<trrom::Vector<double> > z = data.create(4);
     (*z)[0] = 35;
     (*z)[1] = 44;
     (*z)[2] = 44;
@@ -404,7 +404,7 @@ TEST(ModifiedGramSchmidt, factorize)
     int num_rows = 4;
     int num_columns = 4;
     trrom::SerialVector<double> x(num_rows);
-    std::tr1::shared_ptr<trrom::Matrix<double> > A(new trrom::Basis<double>(x, num_columns));
+    std::shared_ptr<trrom::Matrix<double> > A(new trrom::Basis<double>(x, num_columns));
 
     // basis 1
     A->replaceGlobalValue(0, 0, 10.);
@@ -427,12 +427,12 @@ TEST(ModifiedGramSchmidt, factorize)
     A->replaceGlobalValue(2, 3, -1.);
     A->replaceGlobalValue(3, 3, 8.);
 
-    std::tr1::shared_ptr<trrom::mock::Factory> factory(new trrom::mock::Factory);
+    std::shared_ptr<trrom::mock::Factory> factory(new trrom::mock::Factory);
     trrom::ModifiedGramSchmidt method(factory);
     EXPECT_EQ(trrom::types::MODIFIED_GRAM_SCHMIDT_QR, method.type());
 
-    std::tr1::shared_ptr<trrom::Matrix<double> > Q;
-    std::tr1::shared_ptr<trrom::Matrix<double> > R;
+    std::shared_ptr<trrom::Matrix<double> > Q;
+    std::shared_ptr<trrom::Matrix<double> > R;
     method.factorize(A, Q, R);
 
     // Check Q^t * Q = I

@@ -47,8 +47,8 @@ public:
      **/
     void reshape(const int & num_rows_,
                  const int & num_columns_,
-                 const std::tr1::shared_ptr<trrom::Vector<double> > & input_,
-                 std::tr1::shared_ptr<trrom::Matrix<double> > & output_);
+                 const std::shared_ptr<trrom::Vector<double> > & input_,
+                 std::shared_ptr<trrom::Matrix<double> > & output_);
     /*! MEX interface that creates a local vector of type MxVector.
     * Parameters:
     *    \param In
@@ -56,7 +56,7 @@ public:
     *    \param Out
     *          output_: MxVector vector
     **/
-    void buildLocalVector(const int & length_, std::tr1::shared_ptr<trrom::Vector<double> > & output_);
+    void buildLocalVector(const int & length_, std::shared_ptr<trrom::Vector<double> > & output_);
     /*! Creates a m-by-n local matrix of type MxMatrix
     * Parameters:
     *    \param In
@@ -68,7 +68,7 @@ public:
     **/
     void buildLocalMatrix(const int & num_rows_,
                           const int & num_columns_,
-                          std::tr1::shared_ptr<trrom::Matrix<double> > & output_);
+                          std::shared_ptr<trrom::Matrix<double> > & output_);
     /*! Creates a m-by-n multi-matrix of type MxMatrix
     * Parameters:
     *    \param In
@@ -79,8 +79,8 @@ public:
     *          output_: m-by-n MxMatrix
     **/
     void buildMultiVector(const int & num_vectors_,
-                          const std::tr1::shared_ptr<trrom::Vector<double> > & vector_,
-                          std::tr1::shared_ptr<trrom::Matrix<double> > & output_);
+                          const std::shared_ptr<trrom::Vector<double> > & vector_,
+                          std::shared_ptr<trrom::Matrix<double> > & output_);
 
 private:
     MxLinearAlgebraFactory(const trrom::MxLinearAlgebraFactory &);

@@ -7,6 +7,7 @@
 
 #include <mex.h>
 #include <string>
+#include <memory>
 
 #include "TRROM_MxUtils.hpp"
 #include "TRROM_MxMatrix.hpp"
@@ -23,9 +24,9 @@ void mexFunction(int nOutput, mxArray* pOutput[], int nInput, const mxArray* pIn
         mexErrMsgTxt(error.c_str());
     }
 
-    std::tr1::shared_ptr<trrom::Matrix<double> > Q;
-    std::tr1::shared_ptr<trrom::Matrix<double> > R;
-    std::tr1::shared_ptr<trrom::MxMatrix> A(new trrom::MxMatrix(pInput[0]));
+    std::shared_ptr<trrom::Matrix<double> > Q;
+    std::shared_ptr<trrom::Matrix<double> > R;
+    std::shared_ptr<trrom::MxMatrix> A(new trrom::MxMatrix(pInput[0]));
 
     trrom::MxOrthogonalDecomposition qr;
     qr.factorize(A, Q, R);

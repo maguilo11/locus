@@ -15,7 +15,7 @@
 namespace trrom
 {
 
-ProjectedSteihaugTointPcg::ProjectedSteihaugTointPcg(const std::tr1::shared_ptr<trrom::Data> & data_) :
+ProjectedSteihaugTointPcg::ProjectedSteihaugTointPcg(const std::shared_ptr<trrom::Data> & data_) :
         trrom::SteihaugTointSolver(),
         m_Residual(data_->control()->create()),
         m_ActiveSet(data_->control()->create()),
@@ -38,19 +38,19 @@ ProjectedSteihaugTointPcg::~ProjectedSteihaugTointPcg()
 {
 }
 
-const std::tr1::shared_ptr<trrom::Vector<double> > & ProjectedSteihaugTointPcg::getActiveSet() const
+const std::shared_ptr<trrom::Vector<double> > & ProjectedSteihaugTointPcg::getActiveSet() const
 {
     return (m_ActiveSet);
 }
 
-const std::tr1::shared_ptr<trrom::Vector<double> > & ProjectedSteihaugTointPcg::getInactiveSet() const
+const std::shared_ptr<trrom::Vector<double> > & ProjectedSteihaugTointPcg::getInactiveSet() const
 {
     return (m_InactiveSet);
 }
 
-void ProjectedSteihaugTointPcg::solve(const std::tr1::shared_ptr<trrom::Preconditioner> & preconditioner_,
-                                      const std::tr1::shared_ptr<trrom::LinearOperator> & linear_operator_,
-                                      const std::tr1::shared_ptr<trrom::OptimizationDataMng> & mng_)
+void ProjectedSteihaugTointPcg::solve(const std::shared_ptr<trrom::Preconditioner> & preconditioner_,
+                                      const std::shared_ptr<trrom::LinearOperator> & linear_operator_,
+                                      const std::shared_ptr<trrom::OptimizationDataMng> & mng_)
 {
     m_NewtonStep->fill(0.);
     m_ConjugateDirection->fill(0);
@@ -75,9 +75,9 @@ void ProjectedSteihaugTointPcg::solve(const std::tr1::shared_ptr<trrom::Precondi
     mng_->getTrialStep()->update(1., *m_NewtonStep, 0.);
 }
 
-void ProjectedSteihaugTointPcg::iterate(const std::tr1::shared_ptr<trrom::Preconditioner> & preconditioner_,
-                                        const std::tr1::shared_ptr<trrom::LinearOperator> & linear_operator_,
-                                        const std::tr1::shared_ptr<trrom::OptimizationDataMng> & mng_)
+void ProjectedSteihaugTointPcg::iterate(const std::shared_ptr<trrom::Preconditioner> & preconditioner_,
+                                        const std::shared_ptr<trrom::LinearOperator> & linear_operator_,
+                                        const std::shared_ptr<trrom::OptimizationDataMng> & mng_)
 {
     double previous_tau = 0;
     double norm_residual = m_Residual->norm();
@@ -147,8 +147,8 @@ void ProjectedSteihaugTointPcg::initialize()
     m_InactiveSet->fill(1);
 }
 
-double ProjectedSteihaugTointPcg::step(const std::tr1::shared_ptr<trrom::OptimizationDataMng> & mng_,
-                                       const std::tr1::shared_ptr<trrom::Preconditioner> & preconditioner_)
+double ProjectedSteihaugTointPcg::step(const std::shared_ptr<trrom::OptimizationDataMng> & mng_,
+                                       const std::shared_ptr<trrom::Preconditioner> & preconditioner_)
 {
     this->applyVectorToPreconditioner(mng_, preconditioner_, m_NewtonStep, m_PrecTimesNewtonStep);
     this->applyVectorToPreconditioner(mng_, preconditioner_, m_ConjugateDirection, m_PrecTimesConjugateDirection);
@@ -159,10 +159,10 @@ double ProjectedSteihaugTointPcg::step(const std::tr1::shared_ptr<trrom::Optimiz
     return (scale_factor);
 }
 
-void ProjectedSteihaugTointPcg::applyVectorToHessian(const std::tr1::shared_ptr<trrom::OptimizationDataMng> & mng_,
-                                                     const std::tr1::shared_ptr<trrom::LinearOperator> & linear_operator_,
-                                                     const std::tr1::shared_ptr<trrom::Vector<double> > & vector_,
-                                                     std::tr1::shared_ptr<trrom::Vector<double> > & output_)
+void ProjectedSteihaugTointPcg::applyVectorToHessian(const std::shared_ptr<trrom::OptimizationDataMng> & mng_,
+                                                     const std::shared_ptr<trrom::LinearOperator> & linear_operator_,
+                                                     const std::shared_ptr<trrom::Vector<double> > & vector_,
+                                                     std::shared_ptr<trrom::Vector<double> > & output_)
 {
     m_ActiveVector->update(1., *vector_, 0.);
     m_ActiveVector->elementWiseMultiplication(*m_ActiveSet);
@@ -176,10 +176,10 @@ void ProjectedSteihaugTointPcg::applyVectorToHessian(const std::tr1::shared_ptr<
     output_->update(1., *m_ActiveVector, 1.);
 }
 
-void ProjectedSteihaugTointPcg::applyVectorToPreconditioner(const std::tr1::shared_ptr<trrom::OptimizationDataMng> & mng_,
-                                                            const std::tr1::shared_ptr<trrom::Preconditioner> & preconditioner_,
-                                                            const std::tr1::shared_ptr<trrom::Vector<double> > & vector_,
-                                                            std::tr1::shared_ptr<trrom::Vector<double> > & output_)
+void ProjectedSteihaugTointPcg::applyVectorToPreconditioner(const std::shared_ptr<trrom::OptimizationDataMng> & mng_,
+                                                            const std::shared_ptr<trrom::Preconditioner> & preconditioner_,
+                                                            const std::shared_ptr<trrom::Vector<double> > & vector_,
+                                                            std::shared_ptr<trrom::Vector<double> > & output_)
 {
     m_ActiveVector->update(1., *vector_, 0.);
     m_ActiveVector->elementWiseMultiplication(*m_ActiveSet);
@@ -193,10 +193,10 @@ void ProjectedSteihaugTointPcg::applyVectorToPreconditioner(const std::tr1::shar
     output_->update(1., *m_ActiveVector, 1.);
 }
 
-void ProjectedSteihaugTointPcg::applyVectorToInvPreconditioner(const std::tr1::shared_ptr<trrom::OptimizationDataMng> & mng_,
-                                                               const std::tr1::shared_ptr<trrom::Preconditioner> & preconditioner_,
-                                                               const std::tr1::shared_ptr<trrom::Vector<double> > & vector_,
-                                                               std::tr1::shared_ptr<trrom::Vector<double> > & output_)
+void ProjectedSteihaugTointPcg::applyVectorToInvPreconditioner(const std::shared_ptr<trrom::OptimizationDataMng> & mng_,
+                                                               const std::shared_ptr<trrom::Preconditioner> & preconditioner_,
+                                                               const std::shared_ptr<trrom::Vector<double> > & vector_,
+                                                               std::shared_ptr<trrom::Vector<double> > & output_)
 {
     m_ActiveVector->update(1., *vector_, 0.);
     m_ActiveVector->elementWiseMultiplication(*m_ActiveSet);

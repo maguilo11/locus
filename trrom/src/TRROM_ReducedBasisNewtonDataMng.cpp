@@ -13,8 +13,8 @@
 namespace trrom
 {
 
-ReducedBasisNewtonDataMng::ReducedBasisNewtonDataMng(const std::tr1::shared_ptr<trrom::ReducedBasisData> & data_,
-                                                     const std::tr1::shared_ptr<trrom::ReducedBasisAssemblyMng> & manager_) :
+ReducedBasisNewtonDataMng::ReducedBasisNewtonDataMng(const std::shared_ptr<trrom::ReducedBasisData> & data_,
+                                                     const std::shared_ptr<trrom::ReducedBasisAssemblyMng> & manager_) :
         trrom::OptimizationDataMng(data_),
         m_AssemblyMng(manager_)
 {
@@ -39,8 +39,8 @@ void ReducedBasisNewtonDataMng::computeGradient()
     }
 }
 
-void ReducedBasisNewtonDataMng::computeGradient(const std::tr1::shared_ptr<trrom::Vector<double> > & input_,
-                                                const std::tr1::shared_ptr<trrom::Vector<double> > & output_)
+void ReducedBasisNewtonDataMng::computeGradient(const std::shared_ptr<trrom::Vector<double> > & input_,
+                                                const std::shared_ptr<trrom::Vector<double> > & output_)
 {
     bool gradient_inexactness_tol_exceeded = false;
     double tolerance = this->getGradientInexactnessTolerance();
@@ -61,7 +61,7 @@ double ReducedBasisNewtonDataMng::evaluateObjective()
     return (value);
 }
 
-double ReducedBasisNewtonDataMng::evaluateObjective(const std::tr1::shared_ptr<trrom::Vector<double> > & input_)
+double ReducedBasisNewtonDataMng::evaluateObjective(const std::shared_ptr<trrom::Vector<double> > & input_)
 {
     bool objective_inexactness_tolerance_exceeded = false;
     double tolerance = this->getObjectiveInexactnessTolerance();
@@ -70,8 +70,8 @@ double ReducedBasisNewtonDataMng::evaluateObjective(const std::tr1::shared_ptr<t
     return (value);
 }
 
-void ReducedBasisNewtonDataMng::applyVectorToHessian(const std::tr1::shared_ptr<trrom::Vector<double> > & input_,
-                                                     const std::tr1::shared_ptr<trrom::Vector<double> > & output_)
+void ReducedBasisNewtonDataMng::applyVectorToHessian(const std::shared_ptr<trrom::Vector<double> > & input_,
+                                                     const std::shared_ptr<trrom::Vector<double> > & output_)
 {
     bool inexactness_violated = false;
     double tolerance = std::numeric_limits<double>::max();

@@ -121,9 +121,9 @@ public:
         return (m_Data->length());
     }
     /*! Create object of type trrom::Vector */
-    std::tr1::shared_ptr<trrom::Vector<double> > create(int global_length_ = 0) const
+    std::shared_ptr<trrom::Vector<double> > create(int global_length_ = 0) const
     {
-        std::tr1::shared_ptr<trrom::TeuchosSerialDenseVector> this_copy;
+        std::shared_ptr<trrom::TeuchosSerialDenseVector> this_copy;
         if(global_length_ == 0)
         {
             int num_elements = this->size();
@@ -145,13 +145,13 @@ public:
     {
         return (m_Data->operator ()(index_));
     }
-    const std::tr1::shared_ptr<Teuchos::SerialDenseVector<int, double> > & data() const
+    const std::shared_ptr<Teuchos::SerialDenseVector<int, double> > & data() const
     {
         return (m_Data);
     }
 
 private:
-    std::tr1::shared_ptr<Teuchos::SerialDenseVector<int, double> > m_Data;
+    std::shared_ptr<Teuchos::SerialDenseVector<int, double> > m_Data;
 
 private:
     TeuchosSerialDenseVector(const trrom::TeuchosSerialDenseVector &);

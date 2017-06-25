@@ -26,62 +26,62 @@ Data::~Data()
 {
 }
 
-const std::tr1::shared_ptr<trrom::Vector<double> > & Data::dual() const
+const std::shared_ptr<trrom::Vector<double> > & Data::dual() const
 {
     return (m_Dual->data());
 }
 
-const std::tr1::shared_ptr<trrom::Vector<double> > & Data::state() const
+const std::shared_ptr<trrom::Vector<double> > & Data::state() const
 {
     return (m_State->data());
 }
 
-const std::tr1::shared_ptr<trrom::Vector<double> > & Data::slacks() const
+const std::shared_ptr<trrom::Vector<double> > & Data::slacks() const
 {
     return (m_Slacks->data());
 }
 
-const std::tr1::shared_ptr<trrom::Vector<double> > & Data::control() const
+const std::shared_ptr<trrom::Vector<double> > & Data::control() const
 {
     return (m_Control->data());
 }
 
-const std::tr1::shared_ptr<trrom::Vector<double> > & Data::getDualLowerBound() const
+const std::shared_ptr<trrom::Vector<double> > & Data::getDualLowerBound() const
 {
     return (m_Dual->lowerBound());
 }
 
-const std::tr1::shared_ptr<trrom::Vector<double> > & Data::getDualUpperBound() const
+const std::shared_ptr<trrom::Vector<double> > & Data::getDualUpperBound() const
 {
     return (m_Dual->upperBound());
 }
 
-const std::tr1::shared_ptr<trrom::Vector<double> > & Data::getStateLowerBound() const
+const std::shared_ptr<trrom::Vector<double> > & Data::getStateLowerBound() const
 {
     return (m_State->lowerBound());
 }
 
-const std::tr1::shared_ptr<trrom::Vector<double> > & Data::getStateUpperBound() const
+const std::shared_ptr<trrom::Vector<double> > & Data::getStateUpperBound() const
 {
     return (m_State->upperBound());
 }
 
-const std::tr1::shared_ptr<trrom::Vector<double> > & Data::getSlacksLowerBound() const
+const std::shared_ptr<trrom::Vector<double> > & Data::getSlacksLowerBound() const
 {
     return (m_Slacks->lowerBound());
 }
 
-const std::tr1::shared_ptr<trrom::Vector<double> > & Data::getSlacksUpperBound() const
+const std::shared_ptr<trrom::Vector<double> > & Data::getSlacksUpperBound() const
 {
     return (m_Slacks->upperBound());
 }
 
-const std::tr1::shared_ptr<trrom::Vector<double> > & Data::getControlLowerBound() const
+const std::shared_ptr<trrom::Vector<double> > & Data::getControlLowerBound() const
 {
     return (m_Control->lowerBound());
 }
 
-const std::tr1::shared_ptr<trrom::Vector<double> > & Data::getControlUpperBound() const
+const std::shared_ptr<trrom::Vector<double> > & Data::getControlUpperBound() const
 {
     return (m_Control->upperBound());
 }

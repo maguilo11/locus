@@ -45,18 +45,18 @@ public:
     void setStoppingCriterion(trrom::types::solver_stop_criterion_t input_);
     trrom::types::solver_stop_criterion_t getStoppingCriterion() const;
 
-    double computeSteihaugTointStep(const std::tr1::shared_ptr<trrom::Vector<double> > & newton_step_,
-                                  const std::tr1::shared_ptr<trrom::Vector<double> > & conjugate_dir_,
-                                  const std::tr1::shared_ptr<trrom::Vector<double> > & prec_times_newton_step_,
-                                  const std::tr1::shared_ptr<trrom::Vector<double> > & prec_times_conjugate_dir_);
+    double computeSteihaugTointStep(const std::shared_ptr<trrom::Vector<double> > & newton_step_,
+                                  const std::shared_ptr<trrom::Vector<double> > & conjugate_dir_,
+                                  const std::shared_ptr<trrom::Vector<double> > & prec_times_newton_step_,
+                                  const std::shared_ptr<trrom::Vector<double> > & prec_times_conjugate_dir_);
     bool invalidCurvatureDetected(const double & input_);
     bool toleranceSatisfied(const double & input_);
 
-    virtual const std::tr1::shared_ptr<trrom::Vector<double> > & getActiveSet() const;
-    virtual const std::tr1::shared_ptr<trrom::Vector<double> > & getInactiveSet() const;
-    virtual void solve(const std::tr1::shared_ptr<trrom::Preconditioner> & preconditioner_,
-                       const std::tr1::shared_ptr<trrom::LinearOperator> & linear_operator_,
-                       const std::tr1::shared_ptr<trrom::OptimizationDataMng> & mng_) = 0;
+    virtual const std::shared_ptr<trrom::Vector<double> > & getActiveSet() const;
+    virtual const std::shared_ptr<trrom::Vector<double> > & getInactiveSet() const;
+    virtual void solve(const std::shared_ptr<trrom::Preconditioner> & preconditioner_,
+                       const std::shared_ptr<trrom::LinearOperator> & linear_operator_,
+                       const std::shared_ptr<trrom::OptimizationDataMng> & mng_) = 0;
 
 private:
     int m_MaxNumItr;

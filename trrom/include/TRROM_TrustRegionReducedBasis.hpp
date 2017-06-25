@@ -25,9 +25,9 @@ class Vector;
 class TrustRegionReducedBasis : public trrom::TrustRegionNewtonBase
 {
 public:
-    TrustRegionReducedBasis(const std::tr1::shared_ptr<trrom::ReducedBasisData> & data_,
-                            const std::tr1::shared_ptr<trrom::KelleySachsStepMng> & step_mng,
-                            const std::tr1::shared_ptr<trrom::ReducedBasisNewtonDataMng> & data_mng_);
+    TrustRegionReducedBasis(const std::shared_ptr<trrom::ReducedBasisData> & data_,
+                            const std::shared_ptr<trrom::KelleySachsStepMng> & step_mng,
+                            const std::shared_ptr<trrom::ReducedBasisNewtonDataMng> & data_mng_);
     virtual ~TrustRegionReducedBasis();
 
     void printDiagnostics();
@@ -40,12 +40,12 @@ private:
     void updateNumOptimizationItrDone(const int & input_);
 
 private:
-    std::tr1::shared_ptr<trrom::Vector<double> > m_MidGradient;
+    std::shared_ptr<trrom::Vector<double> > m_MidGradient;
 
-    std::tr1::shared_ptr<trrom::TrustRegionNewtonIO> m_IO;
-    std::tr1::shared_ptr<trrom::KelleySachsStepMng> m_StepMng;
-    std::tr1::shared_ptr<trrom::ProjectedSteihaugTointPcg> m_Solver;
-    std::tr1::shared_ptr<trrom::ReducedBasisNewtonDataMng> m_DataMng;
+    std::shared_ptr<trrom::TrustRegionNewtonIO> m_IO;
+    std::shared_ptr<trrom::KelleySachsStepMng> m_StepMng;
+    std::shared_ptr<trrom::ProjectedSteihaugTointPcg> m_Solver;
+    std::shared_ptr<trrom::ReducedBasisNewtonDataMng> m_DataMng;
 
 private:
     TrustRegionReducedBasis(const trrom::TrustRegionReducedBasis &);

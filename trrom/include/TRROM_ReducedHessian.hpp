@@ -24,10 +24,10 @@ public:
     virtual ~ReducedHessian();
 
     virtual trrom::types::linear_operator_t type() const;
-    virtual void update(const std::tr1::shared_ptr<trrom::OptimizationDataMng> & mng_);
-    virtual void apply(const std::tr1::shared_ptr<trrom::OptimizationDataMng> & mng_,
-                       const std::tr1::shared_ptr<trrom::Vector<double> > & input_,
-                       const std::tr1::shared_ptr<trrom::Vector<double> > & output_);
+    virtual void update(const std::shared_ptr<trrom::OptimizationDataMng> & mng_);
+    virtual void apply(const std::shared_ptr<trrom::OptimizationDataMng> & mng_,
+                       const std::shared_ptr<trrom::Vector<double> > & input_,
+                       const std::shared_ptr<trrom::Vector<double> > & output_);
 
 private:
     ReducedHessian(const trrom::ReducedHessian &);

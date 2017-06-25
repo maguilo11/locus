@@ -7,6 +7,7 @@
 
 #include <mex.h>
 #include <string>
+#include <memory>
 
 #include "TRROM_MxUtils.hpp"
 #include "TRROM_MxVector.hpp"
@@ -20,8 +21,8 @@ namespace trrom
 namespace mx
 {
 
-inline void setSolverTestData(std::tr1::shared_ptr<MxMatrix> & matrix_,
-                              std::tr1::shared_ptr<MxVector> & rhs_)
+inline void setSolverTestData(std::shared_ptr<MxMatrix> & matrix_,
+                              std::shared_ptr<MxVector> & rhs_)
 {
     // Set matrix data
     const int num_rows = 5;
@@ -76,8 +77,8 @@ void mexFunction(int nOutput, mxArray* pOutput[], int nInput, const mxArray* pIn
         mexErrMsgTxt(error.c_str());
     }
 
-    std::tr1::shared_ptr<trrom::MxMatrix> A;
-    std::tr1::shared_ptr<trrom::MxVector> rhs;
+    std::shared_ptr<trrom::MxMatrix> A;
+    std::shared_ptr<trrom::MxVector> rhs;
     trrom::mx::setSolverTestData(A, rhs);
     const int length = rhs->size();
     trrom::MxVector lhs(length);

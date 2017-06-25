@@ -7,8 +7,8 @@
 #ifndef TRROM_MATRIX_HPP_
 #define TRROM_MATRIX_HPP_
 
+#include <memory>
 #include <cstddef>
-#include <tr1/memory>
 
 namespace trrom
 {
@@ -49,8 +49,8 @@ public:
     virtual const ScalarType & operator ()(int my_row_index_, int my_column_index_) const = 0;
 
     virtual void insert(const trrom::Vector<ScalarType> & input_, int index_ = 0) = 0;
-    virtual const std::tr1::shared_ptr<trrom::Vector<ScalarType> > & vector(int index_) const = 0;
-    virtual std::tr1::shared_ptr<trrom::Matrix<ScalarType> > create(int nrows_ = 0, int ncols_ = 0) const = 0;
+    virtual const std::shared_ptr<trrom::Vector<ScalarType> > & vector(int index_) const = 0;
+    virtual std::shared_ptr<trrom::Matrix<ScalarType> > create(int nrows_ = 0, int ncols_ = 0) const = 0;
 };
 
 }

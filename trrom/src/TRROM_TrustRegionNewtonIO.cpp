@@ -78,7 +78,7 @@ void TrustRegionNewtonIO::closeFile()
     m_DiagnosticsFile.close();
 }
 
-void TrustRegionNewtonIO::printInitialDiagnostics(const std::tr1::shared_ptr<trrom::OptimizationDataMng> & data_mng_)
+void TrustRegionNewtonIO::printInitialDiagnostics(const std::shared_ptr<trrom::OptimizationDataMng> & data_mng_)
 {
     if(this->getDisplayOption() == trrom::types::OFF)
     {
@@ -101,7 +101,7 @@ void TrustRegionNewtonIO::printInitialDiagnostics(const std::tr1::shared_ptr<trr
             << std::flush;
 }
 
-void TrustRegionNewtonIO::printSolution(const std::tr1::shared_ptr<trrom::Vector<double> > & primal_)
+void TrustRegionNewtonIO::printSolution(const std::shared_ptr<trrom::Vector<double> > & primal_)
 {
     if(this->getDisplayOption() == trrom::types::OFF)
     {
@@ -110,15 +110,15 @@ void TrustRegionNewtonIO::printSolution(const std::tr1::shared_ptr<trrom::Vector
     trrom::printSolution(primal_);
 }
 
-void TrustRegionNewtonIO::printConvergedDiagnostics(const std::tr1::shared_ptr<trrom::OptimizationDataMng> & data_mng_,
-                                                      const std::tr1::shared_ptr<trrom::SteihaugTointSolver> & solver_,
+void TrustRegionNewtonIO::printConvergedDiagnostics(const std::shared_ptr<trrom::OptimizationDataMng> & data_mng_,
+                                                      const std::shared_ptr<trrom::SteihaugTointSolver> & solver_,
                                                       const trrom::TrustRegionStepMng * const step_mng_)
 {
     this->printSubProblemFirstItrDiagnostics(data_mng_, solver_, step_mng_);
 }
 
-void TrustRegionNewtonIO::printTrustRegionSubProblemDiagnostics(const std::tr1::shared_ptr<trrom::OptimizationDataMng> & data_mng_,
-                                                                  const std::tr1::shared_ptr<trrom::SteihaugTointSolver> & solver_,
+void TrustRegionNewtonIO::printTrustRegionSubProblemDiagnostics(const std::shared_ptr<trrom::OptimizationDataMng> & data_mng_,
+                                                                  const std::shared_ptr<trrom::SteihaugTointSolver> & solver_,
                                                                   const trrom::TrustRegionStepMng * const step_mng_)
 {
     int num_opt_itr_done = this->getNumOptimizationItrDone();
@@ -148,8 +148,8 @@ void TrustRegionNewtonIO::printHeader()
             << std::setw(13) << std::right << "Ratio" << std::setw(12) << std::right << "Krylov-Itr" << std::setw(14)
             << std::right << "Krylov-Res" << std::setw(15) << std::right << "Krylov-Exit" << "\n" << std::flush;
 }
-void TrustRegionNewtonIO::printSubProblemDiagnostics(const std::tr1::shared_ptr<trrom::OptimizationDataMng> & data_mng_,
-                                                       const std::tr1::shared_ptr<trrom::SteihaugTointSolver> & solver_,
+void TrustRegionNewtonIO::printSubProblemDiagnostics(const std::shared_ptr<trrom::OptimizationDataMng> & data_mng_,
+                                                       const std::shared_ptr<trrom::SteihaugTointSolver> & solver_,
                                                        const trrom::TrustRegionStepMng * const step_mng_)
 {
     double actual_reduction = step_mng_->getActualReduction();
@@ -171,8 +171,8 @@ void TrustRegionNewtonIO::printSubProblemDiagnostics(const std::tr1::shared_ptr<
             << std::flush;
 }
 
-void TrustRegionNewtonIO::printSubProblemFirstItrDiagnostics(const std::tr1::shared_ptr<trrom::OptimizationDataMng> & data_mng_,
-                                                               const std::tr1::shared_ptr<trrom::SteihaugTointSolver> & solver_,
+void TrustRegionNewtonIO::printSubProblemFirstItrDiagnostics(const std::shared_ptr<trrom::OptimizationDataMng> & data_mng_,
+                                                               const std::shared_ptr<trrom::SteihaugTointSolver> & solver_,
                                                                const trrom::TrustRegionStepMng * const step_mng_)
 {
     double norm_grad = data_mng_->getNormNewGradient();
@@ -202,7 +202,7 @@ void TrustRegionNewtonIO::printSubProblemFirstItrDiagnostics(const std::tr1::sha
             << "\n" << std::flush;
 }
 
-void TrustRegionNewtonIO::printCurrentSolution(const std::tr1::shared_ptr<trrom::Vector<double> > & primal_)
+void TrustRegionNewtonIO::printCurrentSolution(const std::shared_ptr<trrom::Vector<double> > & primal_)
 {
     if(this->getDisplayOption() == trrom::types::OFF)
     {

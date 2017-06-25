@@ -11,7 +11,7 @@
 namespace trrom
 {
 
-AssemblyMngTypeLP::AssemblyMngTypeLP(const std::tr1::shared_ptr<trrom::ObjectiveTypeLP> & objective_) :
+AssemblyMngTypeLP::AssemblyMngTypeLP(const std::shared_ptr<trrom::ObjectiveTypeLP> & objective_) :
         m_HessianCounter(0),
         m_GradientCounter(0),
         m_ObjectiveCounter(0),
@@ -53,7 +53,7 @@ void AssemblyMngTypeLP::updateObjectiveCounter()
     m_ObjectiveCounter++;
 }
 
-double AssemblyMngTypeLP::objective(const std::tr1::shared_ptr<trrom::Vector<double> > & input_,
+double AssemblyMngTypeLP::objective(const std::shared_ptr<trrom::Vector<double> > & input_,
                                     const double & tolerance_,
                                     bool & inexactness_violated_)
 {
@@ -62,8 +62,8 @@ double AssemblyMngTypeLP::objective(const std::tr1::shared_ptr<trrom::Vector<dou
     return (value);
 }
 
-void AssemblyMngTypeLP::gradient(const std::tr1::shared_ptr<trrom::Vector<double> > & input_,
-                                 const std::tr1::shared_ptr<trrom::Vector<double> > & gradient_,
+void AssemblyMngTypeLP::gradient(const std::shared_ptr<trrom::Vector<double> > & input_,
+                                 const std::shared_ptr<trrom::Vector<double> > & gradient_,
                                  const double & tolerance_,
                                  bool & inexactness_violated_)
 {
@@ -71,9 +71,9 @@ void AssemblyMngTypeLP::gradient(const std::tr1::shared_ptr<trrom::Vector<double
     this->updateGradientCounter();
 }
 
-void AssemblyMngTypeLP::hessian(const std::tr1::shared_ptr<trrom::Vector<double> > & input_,
-                                const std::tr1::shared_ptr<trrom::Vector<double> > & vector_,
-                                const std::tr1::shared_ptr<trrom::Vector<double> > & hess_times_vec_,
+void AssemblyMngTypeLP::hessian(const std::shared_ptr<trrom::Vector<double> > & input_,
+                                const std::shared_ptr<trrom::Vector<double> > & vector_,
+                                const std::shared_ptr<trrom::Vector<double> > & hess_times_vec_,
                                 const double & tolerance_,
                                 bool & inexactness_violated_)
 {

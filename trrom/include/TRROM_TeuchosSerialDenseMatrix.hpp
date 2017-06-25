@@ -156,16 +156,16 @@ public:
         (*m_Data)(global_row_index_, global_column_index_) = value_;
     }
 
-    const std::tr1::shared_ptr<trrom::Vector<double> > & vector(int index_) const
+    const std::shared_ptr<trrom::Vector<double> > & vector(int index_) const
     {
         // TODO: RECONSIDER PURE VIRTUAL FUNCTION
         return (m_Vector);
     }
-    std::tr1::shared_ptr<trrom::Matrix<double> > create(int nrows_ = 0, int ncols_ = 0) const
+    std::shared_ptr<trrom::Matrix<double> > create(int nrows_ = 0, int ncols_ = 0) const
     {
         assert(nrows_ >= 0);
         assert(ncols_ >= 0);
-        std::tr1::shared_ptr<trrom::TeuchosSerialDenseMatrix> this_copy;
+        std::shared_ptr<trrom::TeuchosSerialDenseMatrix> this_copy;
         if((nrows_ > 0) && (ncols_ > 0))
         {
             this_copy.reset(new trrom::TeuchosSerialDenseMatrix(nrows_, ncols_));
@@ -178,7 +178,7 @@ public:
         }
         return (this_copy);
     }
-    std::tr1::shared_ptr<Teuchos::SerialDenseMatrix<int, double> > & data()
+    std::shared_ptr<Teuchos::SerialDenseMatrix<int, double> > & data()
     {
         return (m_Data);
     }
@@ -200,8 +200,8 @@ private:
     }
 
 private:
-    std::tr1::shared_ptr< Teuchos::SerialDenseMatrix<int, double> > m_Data;
-    std::tr1::shared_ptr< trrom::Vector<double> > m_Vector;
+    std::shared_ptr< Teuchos::SerialDenseMatrix<int, double> > m_Data;
+    std::shared_ptr< trrom::Vector<double> > m_Vector;
 
 private:
     TeuchosSerialDenseMatrix(const trrom::TeuchosSerialDenseMatrix &);

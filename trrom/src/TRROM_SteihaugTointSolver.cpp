@@ -9,6 +9,7 @@
 #include <limits>
 #include <math.h>
 #include <cstdio>
+#include <sstream>
 
 #include "TRROM_Vector.hpp"
 #include "TRROM_SteihaugTointSolver.hpp"
@@ -112,10 +113,10 @@ trrom::types::solver_stop_criterion_t SteihaugTointSolver::getStoppingCriterion(
     return (m_StoppingCriterion);
 }
 
-double SteihaugTointSolver::computeSteihaugTointStep(const std::tr1::shared_ptr<trrom::Vector<double> > & newton_step_,
-                                                     const std::tr1::shared_ptr<trrom::Vector<double> > & conjugate_dir_,
-                                                     const std::tr1::shared_ptr<trrom::Vector<double> > & prec_times_newton_step_,
-                                                     const std::tr1::shared_ptr<trrom::Vector<double> > & prec_times_conjugate_dir_)
+double SteihaugTointSolver::computeSteihaugTointStep(const std::shared_ptr<trrom::Vector<double> > & newton_step_,
+                                                     const std::shared_ptr<trrom::Vector<double> > & conjugate_dir_,
+                                                     const std::shared_ptr<trrom::Vector<double> > & prec_times_newton_step_,
+                                                     const std::shared_ptr<trrom::Vector<double> > & prec_times_conjugate_dir_)
 {
     // Dogleg trust region step
     double newton_step_dot_prec_times_conjugate_dir = newton_step_->dot(*prec_times_conjugate_dir_);
@@ -187,15 +188,21 @@ bool SteihaugTointSolver::toleranceSatisfied(const double & norm_descent_directi
     return (tolerance_criterion_satisfied);
 }
 
-const std::tr1::shared_ptr<trrom::Vector<double> > & SteihaugTointSolver::getActiveSet() const
+const std::shared_ptr<trrom::Vector<double> > & SteihaugTointSolver::getActiveSet() const
 {
-    std::perror("\n**** Error in SteihaugTointSolver::getActiveSet. Parent class function not defined. ABORT. ****\n");
+    std::ostringstream error;
+    error << "\n**** ERROR IN: " << __FILE__ << ", LINE: " << __LINE__ << ", FUNCTION:" << __FUNCTION__
+            << ", MESSAGE: Parent class function not defined. ABORT. ****\n";
+    std::perror(error.str().c_str());
     std::abort();
 }
 
-const std::tr1::shared_ptr<trrom::Vector<double> > & SteihaugTointSolver::getInactiveSet() const
+const std::shared_ptr<trrom::Vector<double> > & SteihaugTointSolver::getInactiveSet() const
 {
-    std::perror("\n**** Error in SteihaugTointSolver::getInactiveSet. Parent class function not defined. ABORT. ****\n");
+    std::ostringstream error;
+    error << "\n**** ERROR IN: " << __FILE__ << ", LINE: " << __LINE__ << ", FUNCTION:" << __FUNCTION__
+            << ", MESSAGE: Parent class function not defined. ABORT. ****\n";
+    std::perror(error.str().c_str());
     std::abort();
 }
 

@@ -16,8 +16,8 @@
 namespace trrom
 {
 
-DiscreteEmpiricalInterpolation::DiscreteEmpiricalInterpolation(const std::tr1::shared_ptr<trrom::SolverInterface> & solver_,
-                                                               const std::tr1::shared_ptr<trrom::LinearAlgebraFactory> & factory_) :
+DiscreteEmpiricalInterpolation::DiscreteEmpiricalInterpolation(const std::shared_ptr<trrom::SolverInterface> & solver_,
+                                                               const std::shared_ptr<trrom::LinearAlgebraFactory> & factory_) :
         m_Solver(solver_),
         m_Factory(factory_)
 {
@@ -27,14 +27,14 @@ DiscreteEmpiricalInterpolation::~DiscreteEmpiricalInterpolation()
 {
 }
 
-void DiscreteEmpiricalInterpolation::apply(const std::tr1::shared_ptr<trrom::Matrix<double> > & data_,
-                                           const std::tr1::shared_ptr<trrom::Matrix<double> > & binary_matrix_,
-                                           std::tr1::shared_ptr<trrom::Vector<double> > & active_indices_)
+void DiscreteEmpiricalInterpolation::apply(const std::shared_ptr<trrom::Matrix<double> > & data_,
+                                           const std::shared_ptr<trrom::Matrix<double> > & binary_matrix_,
+                                           std::shared_ptr<trrom::Vector<double> > & active_indices_)
 {
     assert(data_->getNumRows() == binary_matrix_->getNumRows());
     assert(data_->getNumCols() == binary_matrix_->getNumCols());
 
-    std::tr1::shared_ptr<trrom::Vector<double> > residual = data_->vector(0)->create();
+    std::shared_ptr<trrom::Vector<double> > residual = data_->vector(0)->create();
     residual->update(1., *data_->vector(0), 0.);
     residual->modulus();
 
@@ -47,12 +47,12 @@ void DiscreteEmpiricalInterpolation::apply(const std::tr1::shared_ptr<trrom::Mat
     (*active_indices_)[0] = max_index;
     (*binary_matrix_)(max_index, 0) = 1.;
 
-    std::tr1::shared_ptr<trrom::Vector<double> > reduced_snapshot;
+    std::shared_ptr<trrom::Vector<double> > reduced_snapshot;
     m_Factory->buildLocalVector(num_basis_vectors, reduced_snapshot);
 
-    std::tr1::shared_ptr<trrom::Matrix<double> > A;
-    std::tr1::shared_ptr<trrom::Matrix<double> > P;
-    std::tr1::shared_ptr<trrom::Vector<double> > rhs;
+    std::shared_ptr<trrom::Matrix<double> > A;
+    std::shared_ptr<trrom::Matrix<double> > P;
+    std::shared_ptr<trrom::Vector<double> > rhs;
     for(int basis_vector_index = 1; basis_vector_index < num_basis_vectors; ++basis_vector_index)
     {
         m_Factory->buildMultiVector(basis_vector_index, residual, P);

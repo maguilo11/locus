@@ -31,10 +31,10 @@ MxBrandLowRankSVD::~MxBrandLowRankSVD()
 {
 }
 
-void MxBrandLowRankSVD::solve(const std::tr1::shared_ptr<trrom::Matrix<double> > & data_set_,
-                              std::tr1::shared_ptr<trrom::Vector<double> > & singular_values_,
-                              std::tr1::shared_ptr<trrom::Matrix<double> > & left_singular_vectors_,
-                              std::tr1::shared_ptr<trrom::Matrix<double> > & right_singular_vectors_)
+void MxBrandLowRankSVD::solve(const std::shared_ptr<trrom::Matrix<double> > & data_set_,
+                              std::shared_ptr<trrom::Vector<double> > & singular_values_,
+                              std::shared_ptr<trrom::Matrix<double> > & left_singular_vectors_,
+                              std::shared_ptr<trrom::Matrix<double> > & right_singular_vectors_)
 {
     m_Algorithm->solve(data_set_, singular_values_, left_singular_vectors_, right_singular_vectors_);
 }

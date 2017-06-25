@@ -8,7 +8,7 @@
 #ifndef TRROM_LOWRANKSPECTRALDECOMPOSITION_HPP_
 #define TRROM_LOWRANKSPECTRALDECOMPOSITION_HPP_
 
-#include <tr1/memory>
+#include <memory>
 
 namespace trrom
 {
@@ -40,10 +40,10 @@ public:
      *    \param Out
      *          right_singular_vectors_: n-by-r matrix of right singular vectors.
      **/
-    virtual void solve(const std::tr1::shared_ptr<trrom::Matrix<double> > & data_,
-                       std::tr1::shared_ptr<trrom::Vector<double> > & singular_values_,
-                       std::tr1::shared_ptr<trrom::Matrix<double> > & left_singular_vectors_,
-                       std::tr1::shared_ptr<trrom::Matrix<double> > & right_singular_vectors_) = 0;
+    virtual void solve(const std::shared_ptr<trrom::Matrix<double> > & data_,
+                       std::shared_ptr<trrom::Vector<double> > & singular_values_,
+                       std::shared_ptr<trrom::Matrix<double> > & left_singular_vectors_,
+                       std::shared_ptr<trrom::Matrix<double> > & right_singular_vectors_) = 0;
 };
 
 }

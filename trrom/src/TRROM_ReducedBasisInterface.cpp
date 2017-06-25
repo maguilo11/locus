@@ -19,10 +19,10 @@
 namespace trrom
 {
 
-ReducedBasisInterface::ReducedBasisInterface(const std::tr1::shared_ptr<trrom::ReducedBasisData> & data_,
-                                             const std::tr1::shared_ptr<trrom::SolverInterface> & solver_,
-                                             const std::tr1::shared_ptr<trrom::LinearAlgebraFactory> & factory_,
-                                             const std::tr1::shared_ptr<trrom::SpectralDecompositionMng> & mng_) :
+ReducedBasisInterface::ReducedBasisInterface(const std::shared_ptr<trrom::ReducedBasisData> & data_,
+                                             const std::shared_ptr<trrom::SolverInterface> & solver_,
+                                             const std::shared_ptr<trrom::LinearAlgebraFactory> & factory_,
+                                             const std::shared_ptr<trrom::SpectralDecompositionMng> & mng_) :
         m_Data(data_),
         m_Solver(solver_),
         m_Factory(factory_),
@@ -150,7 +150,7 @@ void ReducedBasisInterface::updateLeftHandSideDeimDataStructures()
 {
     // Apply Discrete Empirical Interpolation Method (DEIM) to compute active indices,
     // (i.e. degrees of freedom (dofs))
-    std::tr1::shared_ptr<trrom::Vector<double> > active_indices;
+    std::shared_ptr<trrom::Vector<double> > active_indices;
     m_LeftHandSideActiveIndices = m_LeftHandSideBasis->create();
     m_DiscreteEmpiricalInterpolation->apply(m_LeftHandSideBasis, m_LeftHandSideActiveIndices, active_indices);
     m_Data->setLeftHandSideActiveIndices(*active_indices);
@@ -179,10 +179,10 @@ void ReducedBasisInterface::updateReducedLeftHandSideEnsembles()
     int num_state_snapshots = m_StateBasis->getNumCols();
     m_Factory->buildLocalMatrix(num_state_snapshots, num_state_snapshots, m_ReducedStateLeftHandSide);
 
-    std::tr1::shared_ptr<trrom::Matrix<double> > dual_work_matrix;
+    std::shared_ptr<trrom::Matrix<double> > dual_work_matrix;
     m_Factory->buildMultiVector(num_dual_snapshots, m_Data->dual(), dual_work_matrix);
 
-    std::tr1::shared_ptr<trrom::Matrix<double> > state_work_matrix;
+    std::shared_ptr<trrom::Matrix<double> > state_work_matrix;
     m_Factory->buildMultiVector(num_state_snapshots, m_Data->state(), state_work_matrix);
 
     m_ReducedDualLeftHandSideEnsemble.clear();
@@ -303,12 +303,12 @@ void ReducedBasisInterface::applyLowFidelityInverseAdjointJacobian(const trrom::
     m_DualBasis->gemv(false, 1., *m_ReducedDualSolution, 0., low_fidelity_solution_);
 }
 
-const std::tr1::shared_ptr<trrom::ReducedBasisData> & ReducedBasisInterface::data() const
+const std::shared_ptr<trrom::ReducedBasisData> & ReducedBasisInterface::data() const
 {
     return (m_Data);
 }
 
-void ReducedBasisInterface::initialize(const std::tr1::shared_ptr<trrom::ReducedBasisData> & data_)
+void ReducedBasisInterface::initialize(const std::shared_ptr<trrom::ReducedBasisData> & data_)
 {
     const int num_vectors = 1;
     m_Factory->buildMultiVector(num_vectors, data_->dual(), m_DualBasis);

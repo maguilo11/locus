@@ -25,9 +25,9 @@ class Vector;
 class TrustRegionNewton : public trrom::TrustRegionNewtonBase
 {
 public:
-    TrustRegionNewton(const std::tr1::shared_ptr<trrom::Data> & data_,
-                      const std::tr1::shared_ptr<trrom::KelleySachsStepMng> & step_mng,
-                      const std::tr1::shared_ptr<trrom::InexactNewtonDataMng> & data_mng_);
+    TrustRegionNewton(const std::shared_ptr<trrom::Data> & data_,
+                      const std::shared_ptr<trrom::KelleySachsStepMng> & step_mng,
+                      const std::shared_ptr<trrom::InexactNewtonDataMng> & data_mng_);
     virtual ~TrustRegionNewton();
 
     void printDiagnostics();
@@ -39,12 +39,12 @@ private:
     void updateNumOptimizationItrDone(const int & input_);
 
 private:
-    std::tr1::shared_ptr<trrom::Vector<double> > m_MidGradient;
+    std::shared_ptr<trrom::Vector<double> > m_MidGradient;
 
-    std::tr1::shared_ptr<trrom::TrustRegionNewtonIO> m_IO;
-    std::tr1::shared_ptr<trrom::KelleySachsStepMng> m_StepMng;
-    std::tr1::shared_ptr<trrom::InexactNewtonDataMng> m_DataMng;
-    std::tr1::shared_ptr<trrom::ProjectedSteihaugTointPcg> m_Solver;
+    std::shared_ptr<trrom::TrustRegionNewtonIO> m_IO;
+    std::shared_ptr<trrom::KelleySachsStepMng> m_StepMng;
+    std::shared_ptr<trrom::InexactNewtonDataMng> m_DataMng;
+    std::shared_ptr<trrom::ProjectedSteihaugTointPcg> m_Solver;
 
 private:
     TrustRegionNewton(const trrom::TrustRegionNewton &);

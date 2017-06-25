@@ -25,10 +25,10 @@ class Vector;
 class AugmentedLagrangianTypeNP : public trrom::AugmentedLagrangianAssemblyMng
 {
 public:
-    AugmentedLagrangianTypeNP(const std::tr1::shared_ptr<trrom::Data> & input_,
-                              const std::tr1::shared_ptr<trrom::PDE_Constraint> & pde_,
-                              const std::tr1::shared_ptr<trrom::ReducedObjectiveOperators> & objective_,
-                              const std::vector<std::tr1::shared_ptr<trrom::InequalityOperators> > & inequality_);
+    AugmentedLagrangianTypeNP(const std::shared_ptr<trrom::Data> & input_,
+                              const std::shared_ptr<trrom::PDE_Constraint> & pde_,
+                              const std::shared_ptr<trrom::ReducedObjectiveOperators> & objective_,
+                              const std::vector<std::shared_ptr<trrom::InequalityOperators> > & inequality_);
     virtual ~AugmentedLagrangianTypeNP();
 
     int getHessianCounter() const;
@@ -47,16 +47,16 @@ public:
     double getNormInequalityConstraints() const;
 
     void updateInequalityConstraintValues();
-    double objective(const std::tr1::shared_ptr<trrom::Vector<double> > & control_,
+    double objective(const std::shared_ptr<trrom::Vector<double> > & control_,
                      const double & tolerance_,
                      bool & inexactness_violated_);
-    void gradient(const std::tr1::shared_ptr<trrom::Vector<double> > & control_,
-                  const std::tr1::shared_ptr<trrom::Vector<double> > & gradient_,
+    void gradient(const std::shared_ptr<trrom::Vector<double> > & control_,
+                  const std::shared_ptr<trrom::Vector<double> > & gradient_,
                   const double & tolerance_,
                   bool & inexactness_violated_);
-    void hessian(const std::tr1::shared_ptr<trrom::Vector<double> > & control_,
-                 const std::tr1::shared_ptr<trrom::Vector<double> > & vector_,
-                 const std::tr1::shared_ptr<trrom::Vector<double> > & hess_times_vec_,
+    void hessian(const std::shared_ptr<trrom::Vector<double> > & control_,
+                 const std::shared_ptr<trrom::Vector<double> > & vector_,
+                 const std::shared_ptr<trrom::Vector<double> > & hess_times_vec_,
                  const double & tolerance_,
                  bool & inexactness_violated_);
     bool updateLagrangeMultipliers();
@@ -110,26 +110,26 @@ private:
     double m_NormLagrangianGradient;
     double m_NormInequalityConstraints;
 
-    std::tr1::shared_ptr<trrom::Vector<double> > m_State;
-    std::tr1::shared_ptr<trrom::Vector<double> > m_Slacks;
-    std::tr1::shared_ptr<trrom::Vector<double> > m_DeltaState;
-    std::tr1::shared_ptr<trrom::Vector<double> > m_HessWorkVec;
-    std::tr1::shared_ptr<trrom::Vector<double> > m_StateWorkVec;
-    std::tr1::shared_ptr<trrom::Vector<double> > m_ObjectiveDual;
-    std::tr1::shared_ptr<trrom::Vector<double> > m_ControlWorkVec;
-    std::tr1::shared_ptr<trrom::Vector<double> > m_GradientWorkVec;
-    std::tr1::shared_ptr<trrom::Vector<double> > m_LagrangianGradient;
-    std::tr1::shared_ptr<trrom::Vector<double> > m_ObjectiveDeltaDual;
-    std::tr1::shared_ptr<trrom::Vector<double> > m_LagrangeMultipliers;
-    std::tr1::shared_ptr<trrom::Vector<double> > m_InequalityConstraintValues;
-    std::tr1::shared_ptr<trrom::Vector<double> > m_CurrentInequalityConstraintValues;
+    std::shared_ptr<trrom::Vector<double> > m_State;
+    std::shared_ptr<trrom::Vector<double> > m_Slacks;
+    std::shared_ptr<trrom::Vector<double> > m_DeltaState;
+    std::shared_ptr<trrom::Vector<double> > m_HessWorkVec;
+    std::shared_ptr<trrom::Vector<double> > m_StateWorkVec;
+    std::shared_ptr<trrom::Vector<double> > m_ObjectiveDual;
+    std::shared_ptr<trrom::Vector<double> > m_ControlWorkVec;
+    std::shared_ptr<trrom::Vector<double> > m_GradientWorkVec;
+    std::shared_ptr<trrom::Vector<double> > m_LagrangianGradient;
+    std::shared_ptr<trrom::Vector<double> > m_ObjectiveDeltaDual;
+    std::shared_ptr<trrom::Vector<double> > m_LagrangeMultipliers;
+    std::shared_ptr<trrom::Vector<double> > m_InequalityConstraintValues;
+    std::shared_ptr<trrom::Vector<double> > m_CurrentInequalityConstraintValues;
 
-    std::vector<std::tr1::shared_ptr<trrom::Vector<double> > > m_InequalityDual;
-    std::vector<std::tr1::shared_ptr<trrom::Vector<double> > > m_InequalityDeltaDual;
+    std::vector<std::shared_ptr<trrom::Vector<double> > > m_InequalityDual;
+    std::vector<std::shared_ptr<trrom::Vector<double> > > m_InequalityDeltaDual;
 
-    std::tr1::shared_ptr<trrom::PDE_Constraint> m_PDE;
-    std::tr1::shared_ptr<trrom::ReducedObjectiveOperators> m_Objective;
-    std::vector<std::tr1::shared_ptr<trrom::InequalityOperators> > m_Inequality;
+    std::shared_ptr<trrom::PDE_Constraint> m_PDE;
+    std::shared_ptr<trrom::ReducedObjectiveOperators> m_Objective;
+    std::vector<std::shared_ptr<trrom::InequalityOperators> > m_Inequality;
 
 private:
     AugmentedLagrangianTypeNP(const trrom::AugmentedLagrangianTypeNP &);

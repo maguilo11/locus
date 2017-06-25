@@ -22,10 +22,10 @@ TeuchosSVD::~TeuchosSVD()
 {
 }
 
-void TeuchosSVD::solve(const std::tr1::shared_ptr<trrom::Matrix<double> > & data_,
-                       std::tr1::shared_ptr<trrom::Vector<double> > & singular_values_,
-                       std::tr1::shared_ptr<trrom::Matrix<double> > & left_singular_vectors_,
-                       std::tr1::shared_ptr<trrom::Matrix<double> > & right_singular_vectors_)
+void TeuchosSVD::solve(const std::shared_ptr<trrom::Matrix<double> > & data_,
+                       std::shared_ptr<trrom::Vector<double> > & singular_values_,
+                       std::shared_ptr<trrom::Matrix<double> > & left_singular_vectors_,
+                       std::shared_ptr<trrom::Matrix<double> > & right_singular_vectors_)
 {
     int input_data_num_rows = data_->getNumRows();
     int input_data_num_columns = data_->getNumCols();

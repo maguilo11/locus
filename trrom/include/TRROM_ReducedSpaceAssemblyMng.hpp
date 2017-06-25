@@ -22,9 +22,9 @@ class ReducedObjectiveOperators;
 class ReducedSpaceAssemblyMng : public trrom::AssemblyManager
 {
 public:
-    ReducedSpaceAssemblyMng(const std::tr1::shared_ptr<trrom::Data> & input_,
-                            const std::tr1::shared_ptr<trrom::PDE_Constraint> & pde_,
-                            const std::tr1::shared_ptr<trrom::ReducedObjectiveOperators> & objective_);
+    ReducedSpaceAssemblyMng(const std::shared_ptr<trrom::Data> & input_,
+                            const std::shared_ptr<trrom::PDE_Constraint> & pde_,
+                            const std::shared_ptr<trrom::ReducedObjectiveOperators> & objective_);
 
     virtual ~ReducedSpaceAssemblyMng();
 
@@ -35,16 +35,16 @@ public:
     virtual int getObjectiveCounter() const;
     virtual void updateObjectiveCounter();
 
-    virtual double objective(const std::tr1::shared_ptr<trrom::Vector<double> > & control_,
+    virtual double objective(const std::shared_ptr<trrom::Vector<double> > & control_,
                              const double & tolerance_,
                              bool & inexactness_violated_);
-    virtual void gradient(const std::tr1::shared_ptr<trrom::Vector<double> > & control_,
-                          const std::tr1::shared_ptr<trrom::Vector<double> > & gradient_,
+    virtual void gradient(const std::shared_ptr<trrom::Vector<double> > & control_,
+                          const std::shared_ptr<trrom::Vector<double> > & gradient_,
                           const double & tolerance_,
                           bool & inexactness_violated_);
-    virtual void hessian(const std::tr1::shared_ptr<trrom::Vector<double> > & control_,
-                         const std::tr1::shared_ptr<trrom::Vector<double> > & vector_,
-                         const std::tr1::shared_ptr<trrom::Vector<double> > & hess_times_vec_,
+    virtual void hessian(const std::shared_ptr<trrom::Vector<double> > & control_,
+                         const std::shared_ptr<trrom::Vector<double> > & vector_,
+                         const std::shared_ptr<trrom::Vector<double> > & hess_times_vec_,
                          const double & tolerance_,
                          bool & inexactness_violated_);
 
@@ -78,16 +78,16 @@ private:
     int m_InverseJacobianStateCounter;
     int m_AdjointInverseJacobianStateCounter;
 
-    std::tr1::shared_ptr<trrom::Vector<double> > m_Dual;
-    std::tr1::shared_ptr<trrom::Vector<double> > m_State;
-    std::tr1::shared_ptr<trrom::Vector<double> > m_DeltaDual;
-    std::tr1::shared_ptr<trrom::Vector<double> > m_DeltaState;
-    std::tr1::shared_ptr<trrom::Vector<double> > m_HessWorkVec;
-    std::tr1::shared_ptr<trrom::Vector<double> > m_StateWorkVec;
-    std::tr1::shared_ptr<trrom::Vector<double> > m_ControlWorkVec;
+    std::shared_ptr<trrom::Vector<double> > m_Dual;
+    std::shared_ptr<trrom::Vector<double> > m_State;
+    std::shared_ptr<trrom::Vector<double> > m_DeltaDual;
+    std::shared_ptr<trrom::Vector<double> > m_DeltaState;
+    std::shared_ptr<trrom::Vector<double> > m_HessWorkVec;
+    std::shared_ptr<trrom::Vector<double> > m_StateWorkVec;
+    std::shared_ptr<trrom::Vector<double> > m_ControlWorkVec;
 
-    std::tr1::shared_ptr<trrom::PDE_Constraint> m_PDE;
-    std::tr1::shared_ptr<trrom::ReducedObjectiveOperators> m_Objective;
+    std::shared_ptr<trrom::PDE_Constraint> m_PDE;
+    std::shared_ptr<trrom::ReducedObjectiveOperators> m_Objective;
 
 private:
     ReducedSpaceAssemblyMng(const trrom::ReducedSpaceAssemblyMng &);

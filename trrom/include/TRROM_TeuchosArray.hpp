@@ -148,9 +148,9 @@ public:
         return (num_elements);
     }
     // Create object of type trrom::Vector
-    std::tr1::shared_ptr<trrom::Vector<ScalarType> > create(int global_dim_ = 0) const
+    std::shared_ptr<trrom::Vector<ScalarType> > create(int global_dim_ = 0) const
     {
-        std::tr1::shared_ptr<trrom::TeuchosArray<ScalarType> > vector;
+        std::shared_ptr<trrom::TeuchosArray<ScalarType> > vector;
         if(global_dim_ == 0)
         {
             int dimension = this->size();
@@ -173,13 +173,13 @@ public:
         return ((*m_Data)[index_]);
     }
 
-    const std::tr1::shared_ptr<Teuchos::Array<ScalarType> > & data() const
+    const std::shared_ptr<Teuchos::Array<ScalarType> > & data() const
     {
         return (m_Data);
     }
 
 private:
-    std::tr1::shared_ptr<Teuchos::Array<ScalarType> > m_Data;
+    std::shared_ptr<Teuchos::Array<ScalarType> > m_Data;
 
 private:
     TeuchosArray(const trrom::TeuchosArray<ScalarType> &);

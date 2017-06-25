@@ -15,7 +15,7 @@
 namespace trrom
 {
 
-SteihaugTointPcg::SteihaugTointPcg(const std::tr1::shared_ptr<trrom::Data> & data_) :
+SteihaugTointPcg::SteihaugTointPcg(const std::shared_ptr<trrom::Data> & data_) :
         trrom::SteihaugTointSolver(),
         m_NewtonStep(data_->control()->create()),
         m_CauchyStep(data_->control()->create()),
@@ -34,9 +34,9 @@ SteihaugTointPcg::~SteihaugTointPcg()
 {
 }
 
-void SteihaugTointPcg::solve(const std::tr1::shared_ptr<trrom::Preconditioner> & preconditioner_,
-                             const std::tr1::shared_ptr<trrom::LinearOperator> & linear_operator_,
-                             const std::tr1::shared_ptr<trrom::OptimizationDataMng> & mng_)
+void SteihaugTointPcg::solve(const std::shared_ptr<trrom::Preconditioner> & preconditioner_,
+                             const std::shared_ptr<trrom::LinearOperator> & linear_operator_,
+                             const std::shared_ptr<trrom::OptimizationDataMng> & mng_)
 {
     m_NewtonStep->fill(0.);
     m_OldDescentDirection->update(1., *mng_->getNewGradient(), 0.);
@@ -100,7 +100,7 @@ void SteihaugTointPcg::solve(const std::tr1::shared_ptr<trrom::Preconditioner> &
     mng_->getTrialStep()->update(1., *m_NewtonStep, 0.);
 }
 
-void SteihaugTointPcg::computeStoppingTolerance(const std::tr1::shared_ptr<trrom::Vector<double> > & gradient_)
+void SteihaugTointPcg::computeStoppingTolerance(const std::shared_ptr<trrom::Vector<double> > & gradient_)
 {
     double relative_tolerance = this->getRelativeTolerance();
     double relative_tolerance_exponential = this->getRelativeToleranceExponential();
@@ -111,8 +111,8 @@ void SteihaugTointPcg::computeStoppingTolerance(const std::tr1::shared_ptr<trrom
     this->setSolverTolerance(stopping_tolerance);
 }
 
-double SteihaugTointPcg::step(const std::tr1::shared_ptr<trrom::OptimizationDataMng> & mng_,
-                              const std::tr1::shared_ptr<trrom::Preconditioner> & preconditioner_)
+double SteihaugTointPcg::step(const std::shared_ptr<trrom::OptimizationDataMng> & mng_,
+                              const std::shared_ptr<trrom::Preconditioner> & preconditioner_)
 {
     preconditioner_->applyPreconditioner(mng_, m_NewtonStep, m_PrecTimesNewtonStep);
     preconditioner_->applyPreconditioner(mng_, m_ConjugateDirection, m_PrecTimesConjugateDirection);

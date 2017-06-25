@@ -26,10 +26,10 @@ public:
     }
 
     virtual trrom::types::linear_operator_t type() const = 0;
-    virtual void update(const std::tr1::shared_ptr<trrom::OptimizationDataMng> & mng_) = 0;
-    virtual void apply(const std::tr1::shared_ptr<trrom::OptimizationDataMng> & mng_,
-                       const std::tr1::shared_ptr<trrom::Vector<double> > & vector_,
-                       const std::tr1::shared_ptr<trrom::Vector<double> > & output_) = 0;
+    virtual void update(const std::shared_ptr<trrom::OptimizationDataMng> & mng_) = 0;
+    virtual void apply(const std::shared_ptr<trrom::OptimizationDataMng> & mng_,
+                       const std::shared_ptr<trrom::Vector<double> > & vector_,
+                       const std::shared_ptr<trrom::Vector<double> > & output_) = 0;
 };
 
 }

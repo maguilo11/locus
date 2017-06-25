@@ -50,17 +50,17 @@ public:
      *    \param Out
      *          right_singular_vectors_: n-by-r matrix of right singular vectors.
      **/
-    void solve(const std::tr1::shared_ptr<trrom::Matrix<double> > & data_set_,
-               std::tr1::shared_ptr<trrom::Vector<double> > & singular_values_,
-               std::tr1::shared_ptr<trrom::Matrix<double> > & left_singular_vectors_,
-               std::tr1::shared_ptr<trrom::Matrix<double> > & right_singular_vectors_);
+    void solve(const std::shared_ptr<trrom::Matrix<double> > & data_set_,
+               std::shared_ptr<trrom::Vector<double> > & singular_values_,
+               std::shared_ptr<trrom::Matrix<double> > & left_singular_vectors_,
+               std::shared_ptr<trrom::Matrix<double> > & right_singular_vectors_);
 
 private:
-    std::tr1::shared_ptr<trrom::BrandLowRankSVD> m_Algorithm;
-    std::tr1::shared_ptr<trrom::MxBrandMatrixFactory> m_BrandFactory;
-    std::tr1::shared_ptr<trrom::MxLinearAlgebraFactory> m_AlgebraFactory;
-    std::tr1::shared_ptr<trrom::MxSingularValueDecomposition> m_SpectralMethod;
-    std::tr1::shared_ptr<trrom::MxOrthogonalDecomposition> m_OrthoFactorization;
+    std::shared_ptr<trrom::BrandLowRankSVD> m_Algorithm;
+    std::shared_ptr<trrom::MxBrandMatrixFactory> m_BrandFactory;
+    std::shared_ptr<trrom::MxLinearAlgebraFactory> m_AlgebraFactory;
+    std::shared_ptr<trrom::MxSingularValueDecomposition> m_SpectralMethod;
+    std::shared_ptr<trrom::MxOrthogonalDecomposition> m_OrthoFactorization;
 
 private:
     MxBrandLowRankSVD(const trrom::MxBrandLowRankSVD &);

@@ -20,7 +20,7 @@ namespace trrom
 
 MxMatrix::MxMatrix(int num_rows_, int num_columns_, double initial_value_) :
         m_Data(mxCreateDoubleMatrix(num_rows_, num_columns_, mxREAL)),
-        m_Vector(new trrom::MxVector(num_rows_))
+        m_Vector(std::make_shared<trrom::MxVector>(num_rows_))
 {
     this->fill(initial_value_);
 }
@@ -30,7 +30,7 @@ MxMatrix::MxMatrix(const mxArray* array_) :
         m_Vector()
 {
     const int num_rows = mxGetM(array_);
-    m_Vector.reset(new trrom::MxVector(num_rows));
+    m_Vector = std::make_shared<trrom::MxVector>(num_rows);
 }
 
 MxMatrix::~MxMatrix()
@@ -229,20 +229,20 @@ const double & MxMatrix::operator ()(int my_row_index_, int my_column_index_) co
     return (my_data[index]);
 }
 
-std::tr1::shared_ptr<trrom::Matrix<double> > MxMatrix::create(int num_rows_, int num_cols_) const
+std::shared_ptr<trrom::Matrix<double> > MxMatrix::create(int num_rows_, int num_cols_) const
 {
     assert(num_cols_ >= 0);
     assert(num_rows_ >= 0);
-    std::tr1::shared_ptr<trrom::MxMatrix> this_copy;
+    std::shared_ptr<trrom::MxMatrix> this_copy;
     if(num_cols_ > 0 && num_rows_ > 0)
     {
-        this_copy.reset(new trrom::MxMatrix(num_rows_, num_cols_));
+        this_copy = std::make_shared<trrom::MxMatrix>(num_rows_, num_cols_);
     }
     else
     {
         const int my_num_rows = this->getNumRows();
         const int my_num_columns = this->getNumCols();
-        this_copy.reset(new trrom::MxMatrix(my_num_rows, my_num_columns));
+        this_copy = std::make_shared<trrom::MxMatrix>(my_num_rows, my_num_columns);
     }
     return (this_copy);
 }
@@ -281,7 +281,7 @@ void MxMatrix::setMxArray(const mxArray* input_)
     }
 }
 
-const std::tr1::shared_ptr<trrom::Vector<double> > & MxMatrix::vector(int index_) const
+const std::shared_ptr<trrom::Vector<double> > & MxMatrix::vector(int index_) const
 {
     double* my_data = mxGetPr(m_Data);
     int my_num_rows = this->getNumRows();

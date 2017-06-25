@@ -81,7 +81,7 @@ void MxTrustRegionReducedOrderModelTypeB::solve(const mxArray* inputs_[], mxArra
     trrom::MxVector duals(num_duals);
     trrom::MxVector states(num_states);
     trrom::MxVector controls(num_controls);
-    std::tr1::shared_ptr<trrom::ReducedBasisData> data(new trrom::ReducedBasisData);
+    std::shared_ptr<trrom::ReducedBasisData> data(new trrom::ReducedBasisData);
     data->allocateDual(duals);
     data->allocateState(states);
     data->allocateControl(controls);
@@ -140,38 +140,38 @@ void MxTrustRegionReducedOrderModelTypeB::output(const trrom::ReducedBasisNewton
     mxSetField(outputs_[0], 0, "Controls", mx_control);
 }
 
-void MxTrustRegionReducedOrderModelTypeB::solveOptimizationProblem(const std::tr1::shared_ptr<trrom::ReducedBasisData> & data_,
+void MxTrustRegionReducedOrderModelTypeB::solveOptimizationProblem(const std::shared_ptr<trrom::ReducedBasisData> & data_,
                                                                    const mxArray* inputs_[],
                                                                    mxArray* outputs_[])
 {
     // Set spectral decomposition manager
-    std::tr1::shared_ptr<trrom::MxBrandLowRankSVD> low_rank_svd(new trrom::MxBrandLowRankSVD);
-    std::tr1::shared_ptr<trrom::MxLinearAlgebraFactory> linear_algebra_factory(new trrom::MxLinearAlgebraFactory);
-    std::tr1::shared_ptr<trrom::MxSingularValueDecomposition> full_rank_svd(new trrom::MxSingularValueDecomposition);
-    std::tr1::shared_ptr<trrom::SpectralDecompositionMng>
+    std::shared_ptr<trrom::MxBrandLowRankSVD> low_rank_svd(new trrom::MxBrandLowRankSVD);
+    std::shared_ptr<trrom::MxLinearAlgebraFactory> linear_algebra_factory(new trrom::MxLinearAlgebraFactory);
+    std::shared_ptr<trrom::MxSingularValueDecomposition> full_rank_svd(new trrom::MxSingularValueDecomposition);
+    std::shared_ptr<trrom::SpectralDecompositionMng>
         spectral_decomposition_mng(new trrom::SpectralDecompositionMng(linear_algebra_factory, full_rank_svd, low_rank_svd));
 
     // Set reduced basis interface: handles low fidelity partial differential equation solves
-    std::tr1::shared_ptr<trrom::MxDirectSolver> solver(new trrom::MxDirectSolver);
-    std::tr1::shared_ptr<trrom::ReducedBasisInterface>
+    std::shared_ptr<trrom::MxDirectSolver> solver(new trrom::MxDirectSolver);
+    std::shared_ptr<trrom::ReducedBasisInterface>
         reduced_basis_interface(new trrom::ReducedBasisInterface(data_, solver, linear_algebra_factory, spectral_decomposition_mng));
 
     // Set objective and partial differential equation (PDE) operators manager
     mxArray* mx_objective = trrom::mx::parseReducedBasisObjectiveFunction(inputs_[1]);
-    std::tr1::shared_ptr<trrom::ReducedBasisObjectiveOperators> objective(new trrom::MxReducedBasisObjectiveOperators(mx_objective));
+    std::shared_ptr<trrom::ReducedBasisObjectiveOperators> objective(new trrom::MxReducedBasisObjectiveOperators(mx_objective));
     mxDestroyArray(mx_objective);
     mxArray* mx_pde = trrom::mx::parseReducedBasisPartialDifferentialEquation(inputs_[1]);
-    std::tr1::shared_ptr<trrom::ReducedBasisPDE> pde(new trrom::MxReducedBasisPDE(mx_pde));
+    std::shared_ptr<trrom::ReducedBasisPDE> pde(new trrom::MxReducedBasisPDE(mx_pde));
     mxDestroyArray(mx_pde);
 
     // Set reduced basis assembly manager: Handles objective, gradient, and Hessian evaluations
-    std::tr1::shared_ptr<trrom::ReducedBasisAssemblyMng>
+    std::shared_ptr<trrom::ReducedBasisAssemblyMng>
         assembly_manager(new trrom::ReducedBasisAssemblyMng(data_, reduced_basis_interface, objective, pde));
 
     // Set optimization algorithm data
-    std::tr1::shared_ptr<trrom::ReducedHessian> hessian(new trrom::ReducedHessian);
-    std::tr1::shared_ptr<trrom::KelleySachsStepMng> step_mng(new trrom::KelleySachsStepMng(data_, hessian));
-    std::tr1::shared_ptr<trrom::ReducedBasisNewtonDataMng> data_mng(new trrom::ReducedBasisNewtonDataMng(data_, assembly_manager));
+    std::shared_ptr<trrom::ReducedHessian> hessian(new trrom::ReducedHessian);
+    std::shared_ptr<trrom::KelleySachsStepMng> step_mng(new trrom::KelleySachsStepMng(data_, hessian));
+    std::shared_ptr<trrom::ReducedBasisNewtonDataMng> data_mng(new trrom::ReducedBasisNewtonDataMng(data_, assembly_manager));
     trrom::TrustRegionReducedBasis algorithm(data_, step_mng, data_mng);
     this->initialize(inputs_, *step_mng, algorithm);
 

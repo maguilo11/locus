@@ -33,7 +33,7 @@ public:
     void solve(const trrom::Matrix<double> & A_, const trrom::Vector<double> & rhs_, trrom::Vector<double> & lhs_);
 
 private:
-    std::tr1::shared_ptr< Teuchos::SerialDenseSolver<int, double> > m_Solver;
+    std::shared_ptr< Teuchos::SerialDenseSolver<int, double> > m_Solver;
 
 private:
     TeuchosSerialDenseSolver(const trrom::TeuchosSerialDenseSolver &);

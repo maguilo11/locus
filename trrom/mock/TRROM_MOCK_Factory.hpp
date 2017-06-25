@@ -8,6 +8,8 @@
 #ifndef TRROM_MOCK_FACTORY_HPP_
 #define TRROM_MOCK_FACTORY_HPP_
 
+#include <memory>
+
 #include "TRROM_LinearAlgebraFactory.hpp"
 
 namespace trrom
@@ -29,15 +31,15 @@ public:
 
     void reshape(const int & num_rows_,
                  const int & num_columns_,
-                 const std::tr1::shared_ptr<trrom::Vector<double> > & input_,
-                 std::tr1::shared_ptr<trrom::Matrix<double> > & output_);
-    void buildLocalVector(const int & length_, std::tr1::shared_ptr<trrom::Vector<double> > & output_);
+                 const std::shared_ptr<trrom::Vector<double> > & input_,
+                 std::shared_ptr<trrom::Matrix<double> > & output_);
+    void buildLocalVector(const int & length_, std::shared_ptr<trrom::Vector<double> > & output_);
     void buildLocalMatrix(const int & num_rows_,
                           const int & num_columns_,
-                          std::tr1::shared_ptr<trrom::Matrix<double> > & output_);
+                          std::shared_ptr<trrom::Matrix<double> > & output_);
     void buildMultiVector(const int & num_vectors_,
-                          const std::tr1::shared_ptr<trrom::Vector<double> > & vector_,
-                          std::tr1::shared_ptr<trrom::Matrix<double> > & output_);
+                          const std::shared_ptr<trrom::Vector<double> > & vector_,
+                          std::shared_ptr<trrom::Matrix<double> > & output_);
 
 private:
     Factory(const trrom::mock::Factory &);

@@ -19,9 +19,9 @@
 namespace trrom
 {
 
-TrustRegionReducedBasis::TrustRegionReducedBasis(const std::tr1::shared_ptr<trrom::ReducedBasisData> & data_,
-                                                 const std::tr1::shared_ptr<trrom::KelleySachsStepMng> & step_mng,
-                                                 const std::tr1::shared_ptr<trrom::ReducedBasisNewtonDataMng> & data_mng_) :
+TrustRegionReducedBasis::TrustRegionReducedBasis(const std::shared_ptr<trrom::ReducedBasisData> & data_,
+                                                 const std::shared_ptr<trrom::KelleySachsStepMng> & step_mng,
+                                                 const std::shared_ptr<trrom::ReducedBasisNewtonDataMng> & data_mng_) :
         trrom::TrustRegionNewtonBase(data_),
         m_MidGradient(data_->control()->create()),
         m_IO(new trrom::TrustRegionNewtonIO),

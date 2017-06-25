@@ -27,19 +27,19 @@ public:
     Data();
     ~Data();
 
-    const std::tr1::shared_ptr<trrom::Vector<double> > & dual() const;
-    const std::tr1::shared_ptr<trrom::Vector<double> > & state() const;
-    const std::tr1::shared_ptr<trrom::Vector<double> > & slacks() const;
-    const std::tr1::shared_ptr<trrom::Vector<double> > & control() const;
+    const std::shared_ptr<trrom::Vector<double> > & dual() const;
+    const std::shared_ptr<trrom::Vector<double> > & state() const;
+    const std::shared_ptr<trrom::Vector<double> > & slacks() const;
+    const std::shared_ptr<trrom::Vector<double> > & control() const;
 
-    const std::tr1::shared_ptr<trrom::Vector<double> > & getDualLowerBound() const;
-    const std::tr1::shared_ptr<trrom::Vector<double> > & getDualUpperBound() const;
-    const std::tr1::shared_ptr<trrom::Vector<double> > & getStateLowerBound() const;
-    const std::tr1::shared_ptr<trrom::Vector<double> > & getStateUpperBound() const;
-    const std::tr1::shared_ptr<trrom::Vector<double> > & getSlacksLowerBound() const;
-    const std::tr1::shared_ptr<trrom::Vector<double> > & getSlacksUpperBound() const;
-    const std::tr1::shared_ptr<trrom::Vector<double> > & getControlLowerBound() const;
-    const std::tr1::shared_ptr<trrom::Vector<double> > & getControlUpperBound() const;
+    const std::shared_ptr<trrom::Vector<double> > & getDualLowerBound() const;
+    const std::shared_ptr<trrom::Vector<double> > & getDualUpperBound() const;
+    const std::shared_ptr<trrom::Vector<double> > & getStateLowerBound() const;
+    const std::shared_ptr<trrom::Vector<double> > & getStateUpperBound() const;
+    const std::shared_ptr<trrom::Vector<double> > & getSlacksLowerBound() const;
+    const std::shared_ptr<trrom::Vector<double> > & getSlacksUpperBound() const;
+    const std::shared_ptr<trrom::Vector<double> > & getControlLowerBound() const;
+    const std::shared_ptr<trrom::Vector<double> > & getControlUpperBound() const;
 
     void setDualLowerBound(double value_);
     void setDualUpperBound(double value_);
@@ -67,10 +67,10 @@ public:
     void allocateControl(const trrom::Vector<double> & control_);
 
 private:
-    std::tr1::shared_ptr<trrom::Dual> m_Dual;
-    std::tr1::shared_ptr<trrom::State> m_State;
-    std::tr1::shared_ptr<trrom::Slacks> m_Slacks;
-    std::tr1::shared_ptr<trrom::Control> m_Control;
+    std::shared_ptr<trrom::Dual> m_Dual;
+    std::shared_ptr<trrom::State> m_State;
+    std::shared_ptr<trrom::Slacks> m_Slacks;
+    std::shared_ptr<trrom::Control> m_Control;
 
 private:
     Data(const trrom::Data &);

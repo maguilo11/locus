@@ -22,26 +22,26 @@ class Vector;
 class ReducedBasisNewtonDataMng : public trrom::OptimizationDataMng
 {
 public:
-    ReducedBasisNewtonDataMng(const std::tr1::shared_ptr<trrom::ReducedBasisData> & data_,
-                              const std::tr1::shared_ptr<trrom::ReducedBasisAssemblyMng> & manager_);
+    ReducedBasisNewtonDataMng(const std::shared_ptr<trrom::ReducedBasisData> & data_,
+                              const std::shared_ptr<trrom::ReducedBasisAssemblyMng> & manager_);
     virtual ~ReducedBasisNewtonDataMng();
 
     int getObjectiveFunctionEvaluationCounter() const;
 
     void computeGradient();
-    void computeGradient(const std::tr1::shared_ptr<trrom::Vector<double> > & input_,
-                         const std::tr1::shared_ptr<trrom::Vector<double> > & output_);
+    void computeGradient(const std::shared_ptr<trrom::Vector<double> > & input_,
+                         const std::shared_ptr<trrom::Vector<double> > & output_);
     double evaluateObjective();
-    double evaluateObjective(const std::tr1::shared_ptr<trrom::Vector<double> > & input_);
-    void applyVectorToHessian(const std::tr1::shared_ptr<trrom::Vector<double> > & input_,
-                              const std::tr1::shared_ptr<trrom::Vector<double> > & output_);
+    double evaluateObjective(const std::shared_ptr<trrom::Vector<double> > & input_);
+    void applyVectorToHessian(const std::shared_ptr<trrom::Vector<double> > & input_,
+                              const std::shared_ptr<trrom::Vector<double> > & output_);
 
     void updateLowFidelityModel();
     trrom::types::fidelity_t fidelity() const;
     void fidelity(trrom::types::fidelity_t input_);
 
 private:
-    std::tr1::shared_ptr<trrom::ReducedBasisAssemblyMng> m_AssemblyMng;
+    std::shared_ptr<trrom::ReducedBasisAssemblyMng> m_AssemblyMng;
 
 private:
     ReducedBasisNewtonDataMng(const trrom::ReducedBasisNewtonDataMng &);

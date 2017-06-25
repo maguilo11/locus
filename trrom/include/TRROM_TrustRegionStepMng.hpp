@@ -71,9 +71,9 @@ public:
     void setInitialTrustRegionRadiusToGradNorm(bool input_);
     bool isInitialTrustRegionRadiusSetToGradNorm() const;
 
-    virtual bool solveSubProblem(const std::tr1::shared_ptr<trrom::OptimizationDataMng> & mng_,
-                                 const std::tr1::shared_ptr<trrom::SteihaugTointSolver> & solver_,
-                                 const std::tr1::shared_ptr<trrom::TrustRegionNewtonIO> & io_) = 0;
+    virtual bool solveSubProblem(const std::shared_ptr<trrom::OptimizationDataMng> & mng_,
+                                 const std::shared_ptr<trrom::SteihaugTointSolver> & solver_,
+                                 const std::shared_ptr<trrom::TrustRegionNewtonIO> & io_) = 0;
 
 private:
     double m_ActualReduction;

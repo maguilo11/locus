@@ -24,9 +24,9 @@ class Vector;
 class AugmentedLagrangianTypeLP : public trrom::AugmentedLagrangianAssemblyMng
 {
 public:
-    AugmentedLagrangianTypeLP(const std::tr1::shared_ptr<trrom::Data> & input_,
-                              const std::tr1::shared_ptr<trrom::ObjectiveTypeLP> & objective_,
-                              const std::vector<std::tr1::shared_ptr<trrom::InequalityTypeLP> > & inequality_);
+    AugmentedLagrangianTypeLP(const std::shared_ptr<trrom::Data> & input_,
+                              const std::shared_ptr<trrom::ObjectiveTypeLP> & objective_,
+                              const std::vector<std::shared_ptr<trrom::InequalityTypeLP> > & inequality_);
     virtual ~AugmentedLagrangianTypeLP();
 
     int getHessianCounter() const;
@@ -47,16 +47,16 @@ public:
     bool updateLagrangeMultipliers();
     void updateInequalityConstraintValues();
 
-    double objective(const std::tr1::shared_ptr<trrom::Vector<double> > & control_,
+    double objective(const std::shared_ptr<trrom::Vector<double> > & control_,
                      const double & tolerance_,
                      bool & inexactness_violated_);
-    void gradient(const std::tr1::shared_ptr<trrom::Vector<double> > & control_,
-                  const std::tr1::shared_ptr<trrom::Vector<double> > & gradient_,
+    void gradient(const std::shared_ptr<trrom::Vector<double> > & control_,
+                  const std::shared_ptr<trrom::Vector<double> > & gradient_,
                   const double & tolerance_,
                   bool & inexactness_violated_);
-    void hessian(const std::tr1::shared_ptr<trrom::Vector<double> > & control_,
-                 const std::tr1::shared_ptr<trrom::Vector<double> > & vector_,
-                 const std::tr1::shared_ptr<trrom::Vector<double> > & hessian_times_vec_,
+    void hessian(const std::shared_ptr<trrom::Vector<double> > & control_,
+                 const std::shared_ptr<trrom::Vector<double> > & vector_,
+                 const std::shared_ptr<trrom::Vector<double> > & hessian_times_vec_,
                  const double & tolerance_,
                  bool & inexactness_violated_);
 
@@ -76,14 +76,14 @@ private:
     double m_NormLagrangianGradient;
     double m_NormInequalityConstraints;
 
-    std::tr1::shared_ptr<trrom::Vector<double> > m_ControlWorkVec;
-    std::tr1::shared_ptr<trrom::Vector<double> > m_LagrangianGradient;
-    std::tr1::shared_ptr<trrom::Vector<double> > m_LagrangeMultipliers;
-    std::tr1::shared_ptr<trrom::Vector<double> > m_InequalityConstraintValues;
-    std::tr1::shared_ptr<trrom::Vector<double> > m_CurrentInequalityConstraintValues;
+    std::shared_ptr<trrom::Vector<double> > m_ControlWorkVec;
+    std::shared_ptr<trrom::Vector<double> > m_LagrangianGradient;
+    std::shared_ptr<trrom::Vector<double> > m_LagrangeMultipliers;
+    std::shared_ptr<trrom::Vector<double> > m_InequalityConstraintValues;
+    std::shared_ptr<trrom::Vector<double> > m_CurrentInequalityConstraintValues;
 
-    std::tr1::shared_ptr<trrom::ObjectiveTypeLP> m_Objective;
-    std::vector<std::tr1::shared_ptr<trrom::InequalityTypeLP> > m_Inequality;
+    std::shared_ptr<trrom::ObjectiveTypeLP> m_Objective;
+    std::vector<std::shared_ptr<trrom::InequalityTypeLP> > m_Inequality;
 
 private:
     AugmentedLagrangianTypeLP(const trrom::AugmentedLagrangianTypeLP &);

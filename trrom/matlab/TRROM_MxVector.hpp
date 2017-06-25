@@ -9,7 +9,7 @@
 #define TRROM_MXVECTOR_HPP_
 
 #include <mex.h>
-#include <tr1/memory>
+#include <memory>
 #include "TRROM_Vector.hpp"
 
 namespace trrom
@@ -71,7 +71,7 @@ public:
     /*! Returns the number of local elements in the Vector. */
     int size() const;
     /*! Creates a copy of type trrom::Vector */
-    std::tr1::shared_ptr<trrom::Vector<double> > create(int length_ = 0) const;
+    std::shared_ptr<trrom::Vector<double> > create(int length_ = 0) const;
     /*! Operator overloads the square bracket operator */
     double & operator [](int index_);
     /*! Operator overloads the square bracket operator */

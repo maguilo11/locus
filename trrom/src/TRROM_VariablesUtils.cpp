@@ -5,6 +5,7 @@
  *      Author: Miguel A. Aguilo Valentin
  */
 
+#include <memory>
 #include <fstream>
 #include <sstream>
 
@@ -14,7 +15,7 @@
 namespace trrom
 {
 
-void printDual(const std::tr1::shared_ptr<trrom::Vector<double> > & dual_)
+void printDual(const std::shared_ptr<trrom::Vector<double> > & dual_)
 {
     std::ofstream file("dual_solution.out", std::ios::out | std::ios::trunc);
     for(int i = 0; i < dual_->size(); ++i)
@@ -24,7 +25,7 @@ void printDual(const std::tr1::shared_ptr<trrom::Vector<double> > & dual_)
     file.close();
 }
 
-void printState(const std::tr1::shared_ptr<trrom::Vector<double> > & state_)
+void printState(const std::shared_ptr<trrom::Vector<double> > & state_)
 {
     std::ofstream file("state_solution.out", std::ios::out | std::ios::trunc);
     for(int i = 0; i < state_->size(); ++i)
@@ -34,7 +35,7 @@ void printState(const std::tr1::shared_ptr<trrom::Vector<double> > & state_)
     file.close();
 }
 
-void printControl(const std::tr1::shared_ptr<trrom::Vector<double> > & control_)
+void printControl(const std::shared_ptr<trrom::Vector<double> > & control_)
 {
     std::ofstream file("control_solution.out", std::ios::out | std::ios::trunc);
     for(int i = 0; i < control_->size(); ++i)
@@ -44,7 +45,7 @@ void printControl(const std::tr1::shared_ptr<trrom::Vector<double> > & control_)
     file.close();
 }
 
-void printSolution(const std::tr1::shared_ptr<trrom::Vector<double> > & solution_)
+void printSolution(const std::shared_ptr<trrom::Vector<double> > & solution_)
 {
     std::ofstream file("solution.out", std::ios::out | std::ios::trunc);
     for(int i = 0; i < solution_->size(); ++i)

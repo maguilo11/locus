@@ -25,10 +25,10 @@ SVD::~SVD()
 {
 }
 
-void SVD::solve(const std::tr1::shared_ptr<trrom::Matrix<double> > & data_,
-                std::tr1::shared_ptr<trrom::Vector<double> > & singular_values_,
-                std::tr1::shared_ptr<trrom::Matrix<double> > & left_singular_vectors_,
-                std::tr1::shared_ptr<trrom::Matrix<double> > & right_singular_vectors_)
+void SVD::solve(const std::shared_ptr<trrom::Matrix<double> > & data_,
+                std::shared_ptr<trrom::Vector<double> > & singular_values_,
+                std::shared_ptr<trrom::Matrix<double> > & left_singular_vectors_,
+                std::shared_ptr<trrom::Matrix<double> > & right_singular_vectors_)
 {
     assert(data_->getNumRows() == 4);
     assert(data_->getNumCols() == 4);

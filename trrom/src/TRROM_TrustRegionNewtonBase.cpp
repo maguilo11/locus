@@ -17,7 +17,7 @@
 namespace trrom
 {
 
-TrustRegionNewtonBase::TrustRegionNewtonBase(const std::tr1::shared_ptr<trrom::Data> & data_) :
+TrustRegionNewtonBase::TrustRegionNewtonBase(const std::shared_ptr<trrom::Data> & data_) :
         m_MaxNumUpdates(10),
         m_MaxNumOptimizationItr(100),
         m_NumOptimizationItrDone(0),
@@ -134,9 +134,9 @@ trrom::types::stop_criterion_t TrustRegionNewtonBase::getStoppingCriterion() con
     return (m_StoppingCriterion);
 }
 
-bool TrustRegionNewtonBase::updatePrimal(const std::tr1::shared_ptr<trrom::KelleySachsStepMng> & step_,
-                                          const std::tr1::shared_ptr<trrom::OptimizationDataMng> & data_,
-                                          const std::tr1::shared_ptr<trrom::Vector<double> > & mid_gradient_)
+bool TrustRegionNewtonBase::updatePrimal(const std::shared_ptr<trrom::KelleySachsStepMng> & step_,
+                                          const std::shared_ptr<trrom::OptimizationDataMng> & data_,
+                                          const std::shared_ptr<trrom::Vector<double> > & mid_gradient_)
 {
     bool primal_updated = false;
 
@@ -190,10 +190,10 @@ bool TrustRegionNewtonBase::updatePrimal(const std::tr1::shared_ptr<trrom::Kelle
     return (primal_updated);
 }
 
-void TrustRegionNewtonBase::updateDataManager(const std::tr1::shared_ptr<trrom::KelleySachsStepMng> & step_,
-                                               const std::tr1::shared_ptr<trrom::OptimizationDataMng> & data_,
-                                               const std::tr1::shared_ptr<trrom::Vector<double> > & mid_gradient_,
-                                               const std::tr1::shared_ptr<trrom::Vector<double> > & inactive_set_)
+void TrustRegionNewtonBase::updateDataManager(const std::shared_ptr<trrom::KelleySachsStepMng> & step_,
+                                               const std::shared_ptr<trrom::OptimizationDataMng> & data_,
+                                               const std::shared_ptr<trrom::Vector<double> > & mid_gradient_,
+                                               const std::shared_ptr<trrom::Vector<double> > & inactive_set_)
 {
     // set new objective function value
     double current_objective_value = data_->getNewObjectiveFunctionValue();
@@ -224,8 +224,8 @@ void TrustRegionNewtonBase::updateDataManager(const std::tr1::shared_ptr<trrom::
     data_->setGradientInexactnessTolerance(gradient_inexactness_tolerance);
 }
 
-bool TrustRegionNewtonBase::checkStoppingCriteria(const std::tr1::shared_ptr<trrom::KelleySachsStepMng> & step_,
-                                                   const std::tr1::shared_ptr<trrom::OptimizationDataMng> & data_)
+bool TrustRegionNewtonBase::checkStoppingCriteria(const std::shared_ptr<trrom::KelleySachsStepMng> & step_,
+                                                   const std::shared_ptr<trrom::OptimizationDataMng> & data_)
 {
     double actual_reduction = step_->getActualReduction();
     double norm_proj_gradient = data_->getNormNewGradient();
@@ -275,8 +275,8 @@ bool TrustRegionNewtonBase::checkStoppingCriteria(const std::tr1::shared_ptr<trr
     return (optimization_algorithm_converged);
 }
 
-void TrustRegionNewtonBase::computeStationarityMeasure(const std::tr1::shared_ptr<trrom::OptimizationDataMng> & data_,
-                                                        const std::tr1::shared_ptr<trrom::Vector<double> > & inactive_set_)
+void TrustRegionNewtonBase::computeStationarityMeasure(const std::shared_ptr<trrom::OptimizationDataMng> & data_,
+                                                       const std::shared_ptr<trrom::Vector<double> > & inactive_set_)
 {
     m_WorkVector->update(1., *data_->getNewPrimal(), 0.);
     m_WorkVector->update(-1., *data_->getNewGradient(), 1.);
@@ -289,7 +289,7 @@ void TrustRegionNewtonBase::computeStationarityMeasure(const std::tr1::shared_pt
     data_->setNormTrialStep(m_StationarityMeasure);
 }
 
-void TrustRegionNewtonBase::resetCurrentStateToPreviousState(const std::tr1::shared_ptr<trrom::OptimizationDataMng> & data_)
+void TrustRegionNewtonBase::resetCurrentStateToPreviousState(const std::shared_ptr<trrom::OptimizationDataMng> & data_)
 {
     data_->getNewPrimal()->update(1., *data_->getOldPrimal(), 0.);
     data_->getNewGradient()->update(1., *data_->getOldGradient(), 0.);

@@ -46,7 +46,7 @@ public:
     //! Returns the number of local elements in the Vector.
     virtual int size() const = 0;
     //! Creates object of type trrom::Vector
-    virtual std::tr1::shared_ptr<trrom::Vector<ScalarType> > create(int global_dim_ = 0) const = 0;
+    virtual std::shared_ptr<trrom::Vector<ScalarType> > create(int global_dim_ = 0) const = 0;
     //! Operator overloads the square bracket operator
     virtual ScalarType & operator [](int index_) = 0;
     //! Operator overloads the square bracket operator

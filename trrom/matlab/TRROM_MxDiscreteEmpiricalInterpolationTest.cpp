@@ -6,6 +6,7 @@
  */
 
 #include <string>
+#include <memory>
 
 #include "TRROM_MxUtils.hpp"
 #include "TRROM_MxVector.hpp"
@@ -21,7 +22,7 @@ namespace trrom
 namespace mx
 {
 
-inline void setDEIMTestData(std::tr1::shared_ptr<trrom::Matrix<double> > & basis_)
+inline void setDEIMTestData(std::shared_ptr<trrom::Matrix<double> > & basis_)
 {
     int num_rows = 10;
     int num_columns = 3;
@@ -58,8 +59,8 @@ inline void setDEIMTestData(std::tr1::shared_ptr<trrom::Matrix<double> > & basis
     (*basis_)(9, 2) = -0.427768815809286;
 }
 
-inline void setDEIMTestGold(std::tr1::shared_ptr<trrom::Matrix<double> > & binary_matrix,
-                            std::tr1::shared_ptr<trrom::Vector<double> > & active_indices_)
+inline void setDEIMTestGold(std::shared_ptr<trrom::Matrix<double> > & binary_matrix,
+                            std::shared_ptr<trrom::Vector<double> > & active_indices_)
 {
     const int num_rows = 10;
     const int num_columns = 3;
@@ -88,21 +89,21 @@ void mexFunction(int nOutput, mxArray* pOutput[], int nInput, const mxArray* pIn
         mexErrMsgTxt(error.c_str());
     }
 
-    std::tr1::shared_ptr<trrom::MxDirectSolver> solver(new trrom::MxDirectSolver);
-    std::tr1::shared_ptr<trrom::MxLinearAlgebraFactory> factory(new trrom::MxLinearAlgebraFactory);
+    std::shared_ptr<trrom::MxDirectSolver> solver(new trrom::MxDirectSolver);
+    std::shared_ptr<trrom::MxLinearAlgebraFactory> factory(new trrom::MxLinearAlgebraFactory);
     trrom::DiscreteEmpiricalInterpolation deim(solver, factory);
 
    // **** TEST 1: apply ****
-    std::tr1::shared_ptr<trrom::Matrix<double> > basis;
-    std::tr1::shared_ptr<trrom::Matrix<double> > binary_matrix;
-    std::tr1::shared_ptr<trrom::Vector<double> > active_indices;
+    std::shared_ptr<trrom::Matrix<double> > basis;
+    std::shared_ptr<trrom::Matrix<double> > binary_matrix;
+    std::shared_ptr<trrom::Vector<double> > active_indices;
     trrom::mx::setDEIMTestData(basis);
     binary_matrix = basis->create();
     deim.apply(basis, binary_matrix, active_indices);
 
     // SET GOLD VALUES
-    std::tr1::shared_ptr<trrom::Matrix<double> > gold_binary_matrix;
-    std::tr1::shared_ptr<trrom::Vector<double> > gold_active_indices;
+    std::shared_ptr<trrom::Matrix<double> > gold_binary_matrix;
+    std::shared_ptr<trrom::Vector<double> > gold_active_indices;
     trrom::mx::setDEIMTestGold(gold_binary_matrix, gold_active_indices);
 
     // ASSERT TEST 1 RESULTS

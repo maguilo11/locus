@@ -38,10 +38,10 @@ public:
      *          ortho_: instance to a derived class from trrom::OrthogonalFactorization
      * \return Reference to BrandLowRankSVD.
      **/
-    BrandLowRankSVD(const std::tr1::shared_ptr<trrom::BrandMatrixFactory> & brand_factory_,
-                    const std::tr1::shared_ptr<trrom::LinearAlgebraFactory> & algebra_factory_,
-                    const std::tr1::shared_ptr<trrom::SpectralDecomposition> & svd_,
-                    const std::tr1::shared_ptr<trrom::OrthogonalFactorization> & ortho_);
+    BrandLowRankSVD(const std::shared_ptr<trrom::BrandMatrixFactory> & brand_factory_,
+                    const std::shared_ptr<trrom::LinearAlgebraFactory> & algebra_factory_,
+                    const std::shared_ptr<trrom::SpectralDecomposition> & svd_,
+                    const std::shared_ptr<trrom::OrthogonalFactorization> & ortho_);
     //! BrandLowRankSVD destructor.
     virtual ~BrandLowRankSVD();
     //@}
@@ -58,16 +58,16 @@ public:
      *    \param Out
      *          right_singular_vectors_: n-by-r matrix of right singular vectors.
      **/
-    void solve(const std::tr1::shared_ptr<trrom::Matrix<double> > & data_set_,
-               std::tr1::shared_ptr<trrom::Vector<double> > & singular_values_,
-               std::tr1::shared_ptr<trrom::Matrix<double> > & left_singular_vectors_,
-               std::tr1::shared_ptr<trrom::Matrix<double> > & right_singular_vectors_);
+    void solve(const std::shared_ptr<trrom::Matrix<double> > & data_set_,
+               std::shared_ptr<trrom::Vector<double> > & singular_values_,
+               std::shared_ptr<trrom::Matrix<double> > & left_singular_vectors_,
+               std::shared_ptr<trrom::Matrix<double> > & right_singular_vectors_);
 
 private:
-    std::tr1::shared_ptr<trrom::BrandMatrixFactory> m_BrandFactory;
-    std::tr1::shared_ptr<trrom::SpectralDecomposition> m_SpectralMethod;
-    std::tr1::shared_ptr<trrom::LinearAlgebraFactory> m_LinearAlgebraFactory;
-    std::tr1::shared_ptr<trrom::OrthogonalFactorization> m_OrthoFactorization;
+    std::shared_ptr<trrom::BrandMatrixFactory> m_BrandFactory;
+    std::shared_ptr<trrom::SpectralDecomposition> m_SpectralMethod;
+    std::shared_ptr<trrom::LinearAlgebraFactory> m_LinearAlgebraFactory;
+    std::shared_ptr<trrom::OrthogonalFactorization> m_OrthoFactorization;
 
 private:
     BrandLowRankSVD(const trrom::BrandLowRankSVD &);

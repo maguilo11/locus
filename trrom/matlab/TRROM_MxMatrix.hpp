@@ -94,7 +94,7 @@ public:
     //! Operator overloads the constant parenthesis operator.
     const double & operator ()(int my_row_index_, int my_column_index_) const;
     //! Creates copy of this vector with user supplied dimensions */
-    std::tr1::shared_ptr<trrom::Matrix<double> > create(int num_rows_ = 0, int num_cols_ = 0) const;
+    std::shared_ptr<trrom::Matrix<double> > create(int num_rows_ = 0, int num_cols_ = 0) const;
 
     //! Get non-constant real numeric pointer for numeric array.
     double* data();
@@ -109,7 +109,7 @@ public:
 
     // TODO: MAKE THIS FUNCTIONALITIES NON-VIRTUAL
     void insert(const trrom::Vector<double> & input_, int index_ = 0);
-    const std::tr1::shared_ptr<trrom::Vector<double> > & vector(int index_) const;
+    const std::shared_ptr<trrom::Vector<double> > & vector(int index_) const;
 
 private:
     //! Verifies input matrices' dimensions before performing general matrix-matrix multiplication.
@@ -120,7 +120,7 @@ private:
 
 private:
     mxArray* m_Data;
-    std::tr1::shared_ptr<trrom::Vector<double> > m_Vector;
+    std::shared_ptr<trrom::Vector<double> > m_Vector;
 
 private:
     MxMatrix(const trrom::MxMatrix &);

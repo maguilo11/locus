@@ -5,6 +5,7 @@
  */
 
 #include <cassert>
+
 #include "TRROM_Basis.hpp"
 #include "TRROM_SerialVector.hpp"
 #include "TRROM_MOCK_MatlabQR.hpp"
@@ -28,9 +29,9 @@ trrom::types::ortho_factorization_t MatlabQR::type() const
     return (trrom::types::MODIFIED_GRAM_SCHMIDT_QR);
 }
 
-void MatlabQR::factorize(const std::tr1::shared_ptr<trrom::Matrix<double> > & input_,
-                         std::tr1::shared_ptr<trrom::Matrix<double> > & Q_,
-                         std::tr1::shared_ptr<trrom::Matrix<double> > & R_)
+void MatlabQR::factorize(const std::shared_ptr<trrom::Matrix<double> > & input_,
+                         std::shared_ptr<trrom::Matrix<double> > & Q_,
+                         std::shared_ptr<trrom::Matrix<double> > & R_)
 {
     const int num_columns = input_->getNumCols();
     trrom::SerialVector<double> x(input_->getNumRows());

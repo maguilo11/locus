@@ -35,8 +35,8 @@ public:
      * \return Reference to DiscreteEmpiricalInterpolation.
      *
      **/
-    DiscreteEmpiricalInterpolation(const std::tr1::shared_ptr<trrom::SolverInterface> & solver_,
-                                   const std::tr1::shared_ptr<trrom::LinearAlgebraFactory> & factory_);
+    DiscreteEmpiricalInterpolation(const std::shared_ptr<trrom::SolverInterface> & solver_,
+                                   const std::shared_ptr<trrom::LinearAlgebraFactory> & factory_);
     //! DiscreteEmpiricalInterpolation destructor
     virtual ~DiscreteEmpiricalInterpolation();
     //!@}
@@ -52,13 +52,13 @@ public:
      *          active_indices_: vector of active indices, indicates the active
      *          degrees of freedom for each snapshot (i.e. column)
      **/
-    void apply(const std::tr1::shared_ptr<trrom::Matrix<double> > & data_,
-               const std::tr1::shared_ptr<trrom::Matrix<double> > & binary_matrix_,
-               std::tr1::shared_ptr<trrom::Vector<double> > & active_indices_);
+    void apply(const std::shared_ptr<trrom::Matrix<double> > & data_,
+               const std::shared_ptr<trrom::Matrix<double> > & binary_matrix_,
+               std::shared_ptr<trrom::Vector<double> > & active_indices_);
 
 private:
-    std::tr1::shared_ptr<trrom::SolverInterface> m_Solver;
-    std::tr1::shared_ptr<trrom::LinearAlgebraFactory> m_Factory;
+    std::shared_ptr<trrom::SolverInterface> m_Solver;
+    std::shared_ptr<trrom::LinearAlgebraFactory> m_Factory;
 
 private:
     DiscreteEmpiricalInterpolation(const trrom::DiscreteEmpiricalInterpolation &);

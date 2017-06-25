@@ -22,20 +22,20 @@ class Vector;
 class AugmentedLagrangianDataMng : public trrom::OptimizationDataMng
 {
 public:
-    AugmentedLagrangianDataMng(const std::tr1::shared_ptr<trrom::Data> & data_,
-                               const std::tr1::shared_ptr<trrom::AugmentedLagrangianAssemblyMng> & mng_);
+    AugmentedLagrangianDataMng(const std::shared_ptr<trrom::Data> & data_,
+                               const std::shared_ptr<trrom::AugmentedLagrangianAssemblyMng> & mng_);
     virtual ~AugmentedLagrangianDataMng();
 
     double evaluateObjective();
-    double evaluateObjective(const std::tr1::shared_ptr<trrom::Vector<double> > & input_);
+    double evaluateObjective(const std::shared_ptr<trrom::Vector<double> > & input_);
     int getObjectiveFunctionEvaluationCounter() const;
 
     void computeGradient();
-    void computeGradient(const std::tr1::shared_ptr<trrom::Vector<double> > & input_,
-                         const std::tr1::shared_ptr<trrom::Vector<double> > & output_);
+    void computeGradient(const std::shared_ptr<trrom::Vector<double> > & input_,
+                         const std::shared_ptr<trrom::Vector<double> > & output_);
 
-    void applyVectorToHessian(const std::tr1::shared_ptr<trrom::Vector<double> > & input_,
-                              const std::tr1::shared_ptr<trrom::Vector<double> > & output_);
+    void applyVectorToHessian(const std::shared_ptr<trrom::Vector<double> > & input_,
+                              const std::shared_ptr<trrom::Vector<double> > & output_);
 
     double getPenalty() const;
     double getNormInequalityConstraints() const;
@@ -45,7 +45,7 @@ public:
     void updateInequalityConstraintValues();
 
 private:
-    std::tr1::shared_ptr<trrom::AugmentedLagrangianAssemblyMng> m_AssemblyMng;
+    std::shared_ptr<trrom::AugmentedLagrangianAssemblyMng> m_AssemblyMng;
 
 private:
     AugmentedLagrangianDataMng(const trrom::AugmentedLagrangianDataMng &);

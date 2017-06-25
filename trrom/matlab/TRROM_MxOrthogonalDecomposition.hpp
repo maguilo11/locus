@@ -44,15 +44,15 @@ public:
      *    \param Out
      *          R_: n-by-n upper triangular matrix
      **/
-    void factorize(const std::tr1::shared_ptr<trrom::Matrix<double> > & input_,
-                   std::tr1::shared_ptr<trrom::Matrix<double> > & Q_,
-                   std::tr1::shared_ptr<trrom::Matrix<double> > & R_);
+    void factorize(const std::shared_ptr<trrom::Matrix<double> > & input_,
+                   std::shared_ptr<trrom::Matrix<double> > & Q_,
+                   std::shared_ptr<trrom::Matrix<double> > & R_);
 
     //! Returns permutation matrix
     const trrom::MxMatrix & getPermutationData() const;
 
 private:
-    std::tr1::shared_ptr<MxMatrix> m_PermutationData;
+    std::shared_ptr<MxMatrix> m_PermutationData;
 
 private:
     MxOrthogonalDecomposition(const trrom::MxOrthogonalDecomposition &);

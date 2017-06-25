@@ -22,7 +22,7 @@ class OptimizationDataMng
 {
 public:
     OptimizationDataMng();
-    explicit OptimizationDataMng(const std::tr1::shared_ptr<trrom::Data> & data_);
+    explicit OptimizationDataMng(const std::shared_ptr<trrom::Data> & data_);
     virtual ~OptimizationDataMng();
 
     int getIterationCounter() const;
@@ -49,30 +49,30 @@ public:
     void setOldObjectiveFunctionValue(double value_);
     double getNewObjectiveFunctionValue() const;
     double getOldObjectiveFunctionValue() const;
-    const std::tr1::shared_ptr<trrom::Vector<double> > & getMatrixTimesVector() const;
+    const std::shared_ptr<trrom::Vector<double> > & getMatrixTimesVector() const;
 
     void setTrialStep(const trrom::Vector<double> & input_);
-    const std::tr1::shared_ptr<trrom::Vector<double> > & getTrialStep() const;
+    const std::shared_ptr<trrom::Vector<double> > & getTrialStep() const;
 
     void setNewPrimal(const trrom::Vector<double> & input_);
     void setOldPrimal(const trrom::Vector<double> & input_);
-    const std::tr1::shared_ptr<trrom::Vector<double> > & getNewPrimal() const;
-    const std::tr1::shared_ptr<trrom::Vector<double> > & getOldPrimal() const;
+    const std::shared_ptr<trrom::Vector<double> > & getNewPrimal() const;
+    const std::shared_ptr<trrom::Vector<double> > & getOldPrimal() const;
 
     void setNewGradient(const trrom::Vector<double> & input_);
     void setOldGradient(const trrom::Vector<double> & input_);
-    const std::tr1::shared_ptr<trrom::Vector<double> > & getNewGradient() const;
-    const std::tr1::shared_ptr<trrom::Vector<double> > & getOldGradient() const;
+    const std::shared_ptr<trrom::Vector<double> > & getNewGradient() const;
+    const std::shared_ptr<trrom::Vector<double> > & getOldGradient() const;
 
     virtual double evaluateObjective() = 0;
-    virtual double evaluateObjective(const std::tr1::shared_ptr<trrom::Vector<double> > & input_) = 0;
+    virtual double evaluateObjective(const std::shared_ptr<trrom::Vector<double> > & input_) = 0;
 
     virtual void computeGradient() = 0;
-    virtual void computeGradient(const std::tr1::shared_ptr<trrom::Vector<double> > & input_,
-                                 const std::tr1::shared_ptr<trrom::Vector<double> > & output_) = 0;
+    virtual void computeGradient(const std::shared_ptr<trrom::Vector<double> > & input_,
+                                 const std::shared_ptr<trrom::Vector<double> > & output_) = 0;
 
-    virtual void applyVectorToHessian(const std::tr1::shared_ptr<trrom::Vector<double> > & input_,
-                                      const std::tr1::shared_ptr<trrom::Vector<double> > & output_) = 0;
+    virtual void applyVectorToHessian(const std::shared_ptr<trrom::Vector<double> > & input_,
+                                      const std::shared_ptr<trrom::Vector<double> > & output_) = 0;
 
     virtual int getObjectiveFunctionEvaluationCounter() const = 0;
 
@@ -90,15 +90,15 @@ private:
     bool m_GradientInexactnessToleranceExceeded;
     bool m_ObjectiveInexactnessToleranceExceeded;
 
-    std::tr1::shared_ptr<trrom::Vector<double> > m_TrialStep;
-    std::tr1::shared_ptr<trrom::Vector<double> > m_OldPrimal;
-    std::tr1::shared_ptr<trrom::Vector<double> > m_NewPrimal;
-    std::tr1::shared_ptr<trrom::Vector<double> > m_OldGradient;
-    std::tr1::shared_ptr<trrom::Vector<double> > m_NewGradient;
-    std::tr1::shared_ptr<trrom::Vector<double> > m_MatrixTimesVector;
+    std::shared_ptr<trrom::Vector<double> > m_TrialStep;
+    std::shared_ptr<trrom::Vector<double> > m_OldPrimal;
+    std::shared_ptr<trrom::Vector<double> > m_NewPrimal;
+    std::shared_ptr<trrom::Vector<double> > m_OldGradient;
+    std::shared_ptr<trrom::Vector<double> > m_NewGradient;
+    std::shared_ptr<trrom::Vector<double> > m_MatrixTimesVector;
 
 private:
-    void initialize(const std::tr1::shared_ptr<trrom::Data> & data_);
+    void initialize(const std::shared_ptr<trrom::Data> & data_);
 
 private:
     // unimplemented

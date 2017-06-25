@@ -6,6 +6,7 @@
  */
 
 #include <string>
+#include <memory>
 
 #include "TRROM_MxUtils.hpp"
 #include "TRROM_MxVector.hpp"
@@ -27,16 +28,16 @@ void mexFunction(int nOutput, mxArray* pOutput[], int nInput, const mxArray* pIn
     // **** TEST 1: reshape ****
     msg.assign("reshape");
     const int length = 25;
-    std::tr1::shared_ptr<trrom::Vector<double> > vector(new trrom::MxVector(length));
+    std::shared_ptr<trrom::Vector<double> > vector(new trrom::MxVector(length));
     trrom::mx::fill(*vector);
 
     const int num_rows = 5;
     const int num_columns = 5;
-    std::tr1::shared_ptr<trrom::Matrix<double> > matrix;
+    std::shared_ptr<trrom::Matrix<double> > matrix;
     factory.reshape(num_rows, num_columns, vector, matrix);
 
     // ASSERT TEST 1 RESULTS
-    std::tr1::shared_ptr<trrom::Matrix<double> > gold = matrix->create();
+    std::shared_ptr<trrom::Matrix<double> > gold = matrix->create();
     (*gold)(0,0) = 1; (*gold)(0,1) = 6 ; (*gold)(0,2) = 11; (*gold)(0,3) = 16; (*gold)(0,4) = 21;
     (*gold)(1,0) = 2; (*gold)(1,1) = 7 ; (*gold)(1,2) = 12; (*gold)(1,3) = 17; (*gold)(1,4) = 22;
     (*gold)(2,0) = 3; (*gold)(2,1) = 8 ; (*gold)(2,2) = 13; (*gold)(2,3) = 18; (*gold)(2,4) = 23;
@@ -46,7 +47,7 @@ void mexFunction(int nOutput, mxArray* pOutput[], int nInput, const mxArray* pIn
     trrom::mx::assert_test(msg, did_test_pass);
 
     // **** TEST 2: buildVector ****
-    std::tr1::shared_ptr<trrom::Vector<double> > x;
+    std::shared_ptr<trrom::Vector<double> > x;
     msg.assign("build vector: count = 0");
     did_test_pass = x.use_count() == 0;
     trrom::mx::assert_test(msg, did_test_pass);
@@ -59,7 +60,7 @@ void mexFunction(int nOutput, mxArray* pOutput[], int nInput, const mxArray* pIn
     trrom::mx::assert_test(msg, did_test_pass);
 
     // **** TEST 3: buildMatrix ****
-    std::tr1::shared_ptr<trrom::Matrix<double> > A;
+    std::shared_ptr<trrom::Matrix<double> > A;
     msg.assign("build matrix: count = 0");
     did_test_pass = A.use_count() == 0;
     trrom::mx::assert_test(msg, did_test_pass);
@@ -75,7 +76,7 @@ void mexFunction(int nOutput, mxArray* pOutput[], int nInput, const mxArray* pIn
     trrom::mx::assert_test(msg, did_test_pass);
 
     // **** TEST 4: buildMultiVector ****
-    std::tr1::shared_ptr<trrom::Matrix<double> > B;
+    std::shared_ptr<trrom::Matrix<double> > B;
     msg.assign("build multivector: count = 0");
     did_test_pass = B.use_count() == 0;
     trrom::mx::assert_test(msg, did_test_pass);

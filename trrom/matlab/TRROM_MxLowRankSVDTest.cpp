@@ -6,6 +6,7 @@
  */
 
 #include <string>
+#include <memory>
 
 #include "TRROM_MxVector.hpp"
 #include "TRROM_MxMatrix.hpp"
@@ -18,10 +19,10 @@ namespace trrom
 namespace mx
 {
 
-inline void setBrandAlgorithmTestData(std::tr1::shared_ptr<trrom::Matrix<double> > & current_data_set_,
-                                      std::tr1::shared_ptr<trrom::Vector<double> > & current_singular_values_,
-                                      std::tr1::shared_ptr<trrom::Matrix<double> > & current_left_singular_vectors_,
-                                      std::tr1::shared_ptr<trrom::Matrix<double> > & current_right_singular_vectors_)
+inline void setBrandAlgorithmTestData(std::shared_ptr<trrom::Matrix<double> > & current_data_set_,
+                                      std::shared_ptr<trrom::Vector<double> > & current_singular_values_,
+                                      std::shared_ptr<trrom::Matrix<double> > & current_left_singular_vectors_,
+                                      std::shared_ptr<trrom::Matrix<double> > & current_right_singular_vectors_)
 {
     // Assign contents to current data set
     int num_rows = 10;
@@ -152,9 +153,9 @@ inline void setBrandAlgorithmTestData(std::tr1::shared_ptr<trrom::Matrix<double>
     (*current_right_singular_vectors_)(2, 2) = -0.774235693818238;
 }
 
-inline void setBrandAlgorithmTestGold(std::tr1::shared_ptr<trrom::Vector<double> > & gold_singular_values_,
-                                      std::tr1::shared_ptr<trrom::Matrix<double> > & gold_left_singular_vectors_,
-                                      std::tr1::shared_ptr<trrom::Matrix<double> > & gold_right_singular_vectors_)
+inline void setBrandAlgorithmTestGold(std::shared_ptr<trrom::Vector<double> > & gold_singular_values_,
+                                      std::shared_ptr<trrom::Matrix<double> > & gold_left_singular_vectors_,
+                                      std::shared_ptr<trrom::Matrix<double> > & gold_right_singular_vectors_)
 {
     const int num_singular_values = 9;
     gold_singular_values_.reset(new trrom::MxVector(num_singular_values));
@@ -365,17 +366,17 @@ void mexFunction(int nOutput, mxArray* pOutput[], int nInput, const mxArray* pIn
     trrom::MxBrandLowRankSVD thin_svd;
 
     // **** TEST 1: solve ****
-    std::tr1::shared_ptr<trrom::Matrix<double> > data;
-    std::tr1::shared_ptr<trrom::Vector<double> > singular_values;
-    std::tr1::shared_ptr<trrom::Matrix<double> > left_singular_vectors;
-    std::tr1::shared_ptr<trrom::Matrix<double> > right_singular_vectors;
+    std::shared_ptr<trrom::Matrix<double> > data;
+    std::shared_ptr<trrom::Vector<double> > singular_values;
+    std::shared_ptr<trrom::Matrix<double> > left_singular_vectors;
+    std::shared_ptr<trrom::Matrix<double> > right_singular_vectors;
     trrom::mx::setBrandAlgorithmTestData(data, singular_values, left_singular_vectors, right_singular_vectors);
     thin_svd.solve(data, singular_values, left_singular_vectors, right_singular_vectors);
 
     // SET GOLD VALUES
-    std::tr1::shared_ptr<trrom::Vector<double> > gold_singular_values;
-    std::tr1::shared_ptr<trrom::Matrix<double> > gold_left_singular_vectors;
-    std::tr1::shared_ptr<trrom::Matrix<double> > gold_right_singular_vectors;
+    std::shared_ptr<trrom::Vector<double> > gold_singular_values;
+    std::shared_ptr<trrom::Matrix<double> > gold_left_singular_vectors;
+    std::shared_ptr<trrom::Matrix<double> > gold_right_singular_vectors;
     trrom::mx::setBrandAlgorithmTestGold(gold_singular_values, gold_left_singular_vectors, gold_right_singular_vectors);
 
     // ASSERT TEST 1 RESULTS

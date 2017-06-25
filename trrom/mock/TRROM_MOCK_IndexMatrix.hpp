@@ -79,11 +79,11 @@ public:
     {
         m_Matrix->replaceGlobalValue(global_row_index_, global_column_index_, value_);
     }
-    std::tr1::shared_ptr<trrom::Matrix<ScalarType> > create(int nrows_ = 0, int ncols_ = 0) const
+    std::shared_ptr<trrom::Matrix<ScalarType> > create(int nrows_ = 0, int ncols_ = 0) const
     {
         assert(nrows_ >= 0);
         assert(ncols_ >= 0);
-        std::tr1::shared_ptr<trrom::mock::IndexMatrix<ScalarType> > this_copy;
+        std::shared_ptr<trrom::mock::IndexMatrix<ScalarType> > this_copy;
         if((nrows_ > 0) && (ncols_ > 0))
         {
             trrom::SerialVector<ScalarType> vector(nrows_);
@@ -94,13 +94,13 @@ public:
             int num_rows = this->getNumRows();
             int num_cols = this->getNumCols();
             trrom::SerialVector<ScalarType> vector(num_rows);
-            std::tr1::shared_ptr<trrom::mock::IndexMatrix<ScalarType> >
+            std::shared_ptr<trrom::mock::IndexMatrix<ScalarType> >
                 matrix(new trrom::mock::IndexMatrix<ScalarType>(vector, num_cols));
         }
         return (this_copy);
     }
 
-    const std::tr1::shared_ptr<trrom::Vector<ScalarType> > & vector(int index_) const
+    const std::shared_ptr<trrom::Vector<ScalarType> > & vector(int index_) const
     {
         return (m_Matrix->vector(index_));
     }
@@ -110,7 +110,7 @@ public:
     }
 
 private:
-    std::tr1::shared_ptr<trrom::Basis<ScalarType> > m_Matrix;
+    std::shared_ptr<trrom::Basis<ScalarType> > m_Matrix;
 
 private:
     IndexMatrix(const trrom::mock::IndexMatrix<ScalarType> &);

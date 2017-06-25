@@ -19,10 +19,9 @@
 namespace trrom
 {
 
-TrustRegionAugmentedLagrangian::TrustRegionAugmentedLagrangian
-(const std::tr1::shared_ptr<trrom::Data> & data_,
- const std::tr1::shared_ptr<trrom::KelleySachsStepMng> & step_mng,
- const std::tr1::shared_ptr<trrom::AugmentedLagrangianDataMng> & data_mng_) :
+TrustRegionAugmentedLagrangian::TrustRegionAugmentedLagrangian(const std::shared_ptr<trrom::Data> & data_,
+                                                               const std::shared_ptr<trrom::KelleySachsStepMng> & step_mng,
+                                                               const std::shared_ptr<trrom::AugmentedLagrangianDataMng> & data_mng_) :
         trrom::TrustRegionNewtonBase(data_),
         m_Gamma(1e-3),
         m_OptimalityTolerance(1e-3),

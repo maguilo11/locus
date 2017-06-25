@@ -25,8 +25,8 @@ MxLinearAlgebraFactory::~MxLinearAlgebraFactory()
 
 void MxLinearAlgebraFactory::reshape(const int & num_rows_,
                                      const int & num_columns_,
-                                     const std::tr1::shared_ptr<trrom::Vector<double> > & input_,
-                                     std::tr1::shared_ptr<trrom::Matrix<double> > & output_)
+                                     const std::shared_ptr<trrom::Vector<double> > & input_,
+                                     std::shared_ptr<trrom::Matrix<double> > & output_)
 {
     // Set input data
     mxArray* mx_num_rows = mxCreateDoubleScalar(num_rows_);
@@ -50,21 +50,21 @@ void MxLinearAlgebraFactory::reshape(const int & num_rows_,
     output_.reset(new trrom::MxMatrix(output[0]));
 }
 
-void MxLinearAlgebraFactory::buildLocalVector(const int & length_, std::tr1::shared_ptr<trrom::Vector<double> > & output_)
+void MxLinearAlgebraFactory::buildLocalVector(const int & length_, std::shared_ptr<trrom::Vector<double> > & output_)
 {
     output_.reset(new trrom::MxVector(length_));
 }
 
 void MxLinearAlgebraFactory::buildLocalMatrix(const int & num_rows_,
                                               const int & num_columns_,
-                                              std::tr1::shared_ptr<trrom::Matrix<double> > & output_)
+                                              std::shared_ptr<trrom::Matrix<double> > & output_)
 {
     output_.reset(new trrom::MxMatrix(num_rows_, num_columns_));
 }
 
 void MxLinearAlgebraFactory::buildMultiVector(const int & num_vectors_,
-                                              const std::tr1::shared_ptr<trrom::Vector<double> > & vector_,
-                                              std::tr1::shared_ptr<trrom::Matrix<double> > & output_)
+                                              const std::shared_ptr<trrom::Vector<double> > & vector_,
+                                              std::shared_ptr<trrom::Matrix<double> > & output_)
 {
     const int num_rows = vector_->size();
     output_.reset(new trrom::MxMatrix(num_rows, num_vectors_));

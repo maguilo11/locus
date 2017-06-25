@@ -8,6 +8,8 @@
 #ifndef TRROM_LINEARALGEBRAFACTORY_HPP_
 #define TRROM_LINEARALGEBRAFACTORY_HPP_
 
+#include <memory>
+
 namespace trrom
 {
 
@@ -41,8 +43,8 @@ public:
      **/
     virtual void reshape(const int & num_rows_,
                          const int & num_columns_,
-                         const std::tr1::shared_ptr<trrom::Vector<double> > & input_,
-                         std::tr1::shared_ptr<trrom::Matrix<double> > & output_) = 0;
+                         const std::shared_ptr<trrom::Vector<double> > & input_,
+                         std::shared_ptr<trrom::Matrix<double> > & output_) = 0;
     /*! Creates a custom local vector of given length.
      * Parameters:
      *    \param In
@@ -50,7 +52,7 @@ public:
      *    \param Out
      *          output_: custom local vector
      **/
-    virtual void buildLocalVector(const int & length_, std::tr1::shared_ptr<trrom::Vector<double> > & output_) = 0;
+    virtual void buildLocalVector(const int & length_, std::shared_ptr<trrom::Vector<double> > & output_) = 0;
     /*! Creates a m-by-n custom local matrix
      * Parameters:
      *    \param In
@@ -62,7 +64,7 @@ public:
      **/
     virtual void buildLocalMatrix(const int & num_rows_,
                                   const int & num_columns_,
-                                  std::tr1::shared_ptr<trrom::Matrix<double> > & output_) = 0;
+                                  std::shared_ptr<trrom::Matrix<double> > & output_) = 0;
     /*! Creates a m-by-n custom dual multi-vector
      * Parameters:
      *    \param In
@@ -73,8 +75,8 @@ public:
      *          output_: m-by-n custom dual multivector data structure
      **/
     virtual void buildMultiVector(const int & num_vectors_,
-                                  const std::tr1::shared_ptr<trrom::Vector<double> > & vector_,
-                                  std::tr1::shared_ptr<trrom::Matrix<double> > & output_) = 0;
+                                  const std::shared_ptr<trrom::Vector<double> > & vector_,
+                                  std::shared_ptr<trrom::Matrix<double> > & output_) = 0;
 };
 
 }

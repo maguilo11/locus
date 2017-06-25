@@ -7,6 +7,8 @@
 #ifndef TRROM_MOCK_MATLABQR_HPP_
 #define TRROM_MOCK_MATLABQR_HPP_
 
+#include <memory>
+
 #include "TRROM_OrthogonalFactorization.hpp"
 
 namespace trrom
@@ -24,9 +26,9 @@ public:
     virtual ~MatlabQR();
 
     trrom::types::ortho_factorization_t type() const;
-    void factorize(const std::tr1::shared_ptr<trrom::Matrix<double> > & input_,
-                   std::tr1::shared_ptr<trrom::Matrix<double> > & Q_,
-                   std::tr1::shared_ptr<trrom::Matrix<double> > & R_);
+    void factorize(const std::shared_ptr<trrom::Matrix<double> > & input_,
+                   std::shared_ptr<trrom::Matrix<double> > & Q_,
+                   std::shared_ptr<trrom::Matrix<double> > & R_);
 
 private:
     MatlabQR(const mock::MatlabQR &);

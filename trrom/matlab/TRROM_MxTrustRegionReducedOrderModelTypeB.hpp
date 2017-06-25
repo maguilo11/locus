@@ -8,7 +8,7 @@
 #ifndef TRROM_MXTRUSTREGIONREDUCEDORDERMODELTYPEB_HPP_
 #define TRROM_MXTRUSTREGIONREDUCEDORDERMODELTYPEB_HPP_
 
-#include <tr1/memory>
+#include <memory>
 
 #include "TRROM_MxTrustRegionReducedOrderModelAlgorithm.hpp"
 
@@ -82,7 +82,7 @@ private:
      *    \param Out
      *          outputs_: array of MEX array pointer
      */
-    void solveOptimizationProblem(const std::tr1::shared_ptr<trrom::ReducedBasisData> & data_,
+    void solveOptimizationProblem(const std::shared_ptr<trrom::ReducedBasisData> & data_,
                                   const mxArray* inputs_[],
                                   mxArray* outputs_[]);
     //@}

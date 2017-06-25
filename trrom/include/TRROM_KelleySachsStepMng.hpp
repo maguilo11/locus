@@ -27,11 +27,11 @@ class Vector;
 class KelleySachsStepMng : public trrom::TrustRegionStepMng
 {
 public:
-    KelleySachsStepMng(const std::tr1::shared_ptr<trrom::Data> & data_,
-                       const std::tr1::shared_ptr<trrom::LinearOperator> & linear_operator_);
-    KelleySachsStepMng(const std::tr1::shared_ptr<trrom::Data> & data_,
-                       const std::tr1::shared_ptr<trrom::LinearOperator> & linear_operator_,
-                       const std::tr1::shared_ptr<trrom::Preconditioner> & preconditioner_);
+    KelleySachsStepMng(const std::shared_ptr<trrom::Data> & data_,
+                       const std::shared_ptr<trrom::LinearOperator> & linear_operator_);
+    KelleySachsStepMng(const std::shared_ptr<trrom::Data> & data_,
+                       const std::shared_ptr<trrom::LinearOperator> & linear_operator_,
+                       const std::shared_ptr<trrom::Preconditioner> & preconditioner_);
     virtual ~KelleySachsStepMng();
 
     double getEta() const;
@@ -40,21 +40,21 @@ public:
     void setEpsilon(double input_);
     double getStationarityMeasure() const;
     double getMidObejectiveFunctionValue() const;
-    const std::tr1::shared_ptr<trrom::Vector<double> > & getMidPrimal() const;
+    const std::shared_ptr<trrom::Vector<double> > & getMidPrimal() const;
 
-    bool solveSubProblem(const std::tr1::shared_ptr<trrom::OptimizationDataMng> & mng_,
-                         const std::tr1::shared_ptr<trrom::SteihaugTointSolver> & solver_,
-                         const std::tr1::shared_ptr<trrom::TrustRegionNewtonIO> & io_);
+    bool solveSubProblem(const std::shared_ptr<trrom::OptimizationDataMng> & mng_,
+                         const std::shared_ptr<trrom::SteihaugTointSolver> & solver_,
+                         const std::shared_ptr<trrom::TrustRegionNewtonIO> & io_);
 
 private:
-    void bounds(const std::tr1::shared_ptr<trrom::Data> & data_);
-    void initialize(const std::tr1::shared_ptr<trrom::Data> & data_);
-    bool updateTrustRegionRadius(const std::tr1::shared_ptr<trrom::OptimizationDataMng> & mng_);
-    void applyProjectedTrialStepToHessian(const std::tr1::shared_ptr<trrom::OptimizationDataMng> & mng_,
-                                          const std::tr1::shared_ptr<trrom::SteihaugTointSolver> & solver_);
-    double computeActualReductionLowerBound(const std::tr1::shared_ptr<trrom::OptimizationDataMng> & mng_);
-    void computeActiveAndInactiveSet(const std::tr1::shared_ptr<trrom::OptimizationDataMng> & mng_,
-                                     const std::tr1::shared_ptr<trrom::SteihaugTointSolver> & solver_);
+    void bounds(const std::shared_ptr<trrom::Data> & data_);
+    void initialize(const std::shared_ptr<trrom::Data> & data_);
+    bool updateTrustRegionRadius(const std::shared_ptr<trrom::OptimizationDataMng> & mng_);
+    void applyProjectedTrialStepToHessian(const std::shared_ptr<trrom::OptimizationDataMng> & mng_,
+                                          const std::shared_ptr<trrom::SteihaugTointSolver> & solver_);
+    double computeActualReductionLowerBound(const std::shared_ptr<trrom::OptimizationDataMng> & mng_);
+    void computeActiveAndInactiveSet(const std::shared_ptr<trrom::OptimizationDataMng> & mng_,
+                                     const std::shared_ptr<trrom::SteihaugTointSolver> & solver_);
 
 private:
     double m_Eta;
@@ -65,21 +65,21 @@ private:
 
     bool m_TrustRegionRadiusFlag;
 
-    std::tr1::shared_ptr<trrom::LinearOperator> m_LinearOperator;
-    std::tr1::shared_ptr<trrom::Preconditioner> m_Preconditioner;
-    std::tr1::shared_ptr<trrom::BoundConstraints> m_BoundConstraint;
+    std::shared_ptr<trrom::LinearOperator> m_LinearOperator;
+    std::shared_ptr<trrom::Preconditioner> m_Preconditioner;
+    std::shared_ptr<trrom::BoundConstraints> m_BoundConstraint;
 
-    std::tr1::shared_ptr<trrom::Vector<double> > m_MidPrimal;
-    std::tr1::shared_ptr<trrom::Vector<double> > m_LowerBound;
-    std::tr1::shared_ptr<trrom::Vector<double> > m_UpperBound;
-    std::tr1::shared_ptr<trrom::Vector<double> > m_WorkVector;
-    std::tr1::shared_ptr<trrom::Vector<double> > m_LowerBoundLimit;
-    std::tr1::shared_ptr<trrom::Vector<double> > m_UpperBoundLimit;
-    std::tr1::shared_ptr<trrom::Vector<double> > m_InactiveGradient;
-    std::tr1::shared_ptr<trrom::Vector<double> > m_ProjectedTrialStep;
-    std::tr1::shared_ptr<trrom::Vector<double> > m_ProjectedCauchyStep;
-    std::tr1::shared_ptr<trrom::Vector<double> > m_ActiveProjectedTrialStep;
-    std::tr1::shared_ptr<trrom::Vector<double> > m_InactiveProjectedTrialStep;
+    std::shared_ptr<trrom::Vector<double> > m_MidPrimal;
+    std::shared_ptr<trrom::Vector<double> > m_LowerBound;
+    std::shared_ptr<trrom::Vector<double> > m_UpperBound;
+    std::shared_ptr<trrom::Vector<double> > m_WorkVector;
+    std::shared_ptr<trrom::Vector<double> > m_LowerBoundLimit;
+    std::shared_ptr<trrom::Vector<double> > m_UpperBoundLimit;
+    std::shared_ptr<trrom::Vector<double> > m_InactiveGradient;
+    std::shared_ptr<trrom::Vector<double> > m_ProjectedTrialStep;
+    std::shared_ptr<trrom::Vector<double> > m_ProjectedCauchyStep;
+    std::shared_ptr<trrom::Vector<double> > m_ActiveProjectedTrialStep;
+    std::shared_ptr<trrom::Vector<double> > m_InactiveProjectedTrialStep;
 
 private:
     KelleySachsStepMng(const trrom::KelleySachsStepMng &);

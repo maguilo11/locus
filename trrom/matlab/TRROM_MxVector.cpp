@@ -154,9 +154,9 @@ int MxVector::size() const
     return (mxGetNumberOfElements(m_Data));
 }
 
-std::tr1::shared_ptr<trrom::Vector<double> > MxVector::create(int length_) const
+std::shared_ptr<trrom::Vector<double> > MxVector::create(int length_) const
 {
-    std::tr1::shared_ptr<trrom::MxVector> this_copy;
+    std::shared_ptr<trrom::MxVector> this_copy;
     if(length_ == 0)
     {
         int this_length = this->size();

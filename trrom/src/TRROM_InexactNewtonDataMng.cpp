@@ -13,8 +13,8 @@
 namespace trrom
 {
 
-InexactNewtonDataMng::InexactNewtonDataMng(const std::tr1::shared_ptr<trrom::Data> & data_,
-                                           const std::tr1::shared_ptr<trrom::AssemblyManager> & manager_) :
+InexactNewtonDataMng::InexactNewtonDataMng(const std::shared_ptr<trrom::Data> & data_,
+                                           const std::shared_ptr<trrom::AssemblyManager> & manager_) :
         trrom::OptimizationDataMng(data_),
         m_Data(data_),
         m_AssemblyMng(manager_)
@@ -32,8 +32,8 @@ void InexactNewtonDataMng::computeGradient()
     m_AssemblyMng->gradient(this->getNewPrimal(), this->getNewGradient(), tolerance, gradient_inexactness_tol_exceeded);
 }
 
-void InexactNewtonDataMng::computeGradient(const std::tr1::shared_ptr<trrom::Vector<double> > & input_,
-                                           const std::tr1::shared_ptr<trrom::Vector<double> > & output_)
+void InexactNewtonDataMng::computeGradient(const std::shared_ptr<trrom::Vector<double> > & input_,
+                                           const std::shared_ptr<trrom::Vector<double> > & output_)
 {
     bool gradient_inexactness_tol_exceeded = false;
     double tolerance = this->getGradientInexactnessTolerance();
@@ -49,7 +49,7 @@ double InexactNewtonDataMng::evaluateObjective()
     return (value);
 }
 
-double InexactNewtonDataMng::evaluateObjective(const std::tr1::shared_ptr<trrom::Vector<double> > & input_)
+double InexactNewtonDataMng::evaluateObjective(const std::shared_ptr<trrom::Vector<double> > & input_)
 {
     bool objective_inexactness_tolerance_exceeded = false;
     double tolerance = this->getObjectiveInexactnessTolerance();
@@ -58,8 +58,8 @@ double InexactNewtonDataMng::evaluateObjective(const std::tr1::shared_ptr<trrom:
     return (value);
 }
 
-void InexactNewtonDataMng::applyVectorToHessian(const std::tr1::shared_ptr<trrom::Vector<double> > & input_,
-                                                const std::tr1::shared_ptr<trrom::Vector<double> > & output_)
+void InexactNewtonDataMng::applyVectorToHessian(const std::shared_ptr<trrom::Vector<double> > & input_,
+                                                const std::shared_ptr<trrom::Vector<double> > & output_)
 {
     bool inexactness_violated = false;
     double tolerance = std::numeric_limits<double>::max();
@@ -71,7 +71,7 @@ int InexactNewtonDataMng::getObjectiveFunctionEvaluationCounter() const
     return (m_AssemblyMng->getObjectiveCounter());
 }
 
-const std::tr1::shared_ptr<trrom::Data> & InexactNewtonDataMng::getData() const
+const std::shared_ptr<trrom::Data> & InexactNewtonDataMng::getData() const
 {
     return (m_Data);
 }

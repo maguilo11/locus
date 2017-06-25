@@ -5,7 +5,7 @@
  */
 
 #include <cassert>
-#include <tr1/memory>
+#include <memory>
 
 #include "TRROM_Vector.hpp"
 #include "TRROM_Matrix.hpp"

@@ -8,6 +8,7 @@
 #include <mex.h>
 #include <cmath>
 #include <string>
+#include <memory>
 
 #include "TRROM_MxVector.hpp"
 #include "TRROM_MxMatrix.hpp"
@@ -162,7 +163,7 @@ void mexFunction(int nOutput, mxArray* pOutput[], int nInput, const mxArray* pIn
 
     // TEST 16: create
     msg.assign("create_default");
-    std::tr1::shared_ptr< trrom::Matrix<double> > copy = A.create();
+    std::shared_ptr< trrom::Matrix<double> > copy = A.create();
     did_test_pass = copy->getNumCols() == A.getNumCols();
     trrom::mx::assert_test(msg, did_test_pass);
     did_test_pass = copy->getNumRows() == A.getNumRows();

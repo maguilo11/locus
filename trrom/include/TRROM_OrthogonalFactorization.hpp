@@ -7,7 +7,7 @@
 #ifndef TRROM_ORTHOGONALFACTORIZATION_HPP_
 #define TRROM_ORTHOGONALFACTORIZATION_HPP_
 
-#include <tr1/memory>
+#include <memory>
 
 namespace trrom
 {
@@ -48,9 +48,9 @@ public:
      *    \param Out
      *          R_: n-by-n upper triangular matrix
      **/
-    virtual void factorize(const std::tr1::shared_ptr<trrom::Matrix<double> > & input_,
-                           std::tr1::shared_ptr<trrom::Matrix<double> > & Q_,
-                           std::tr1::shared_ptr<trrom::Matrix<double> > & R_) = 0;
+    virtual void factorize(const std::shared_ptr<trrom::Matrix<double> > & input_,
+                           std::shared_ptr<trrom::Matrix<double> > & Q_,
+                           std::shared_ptr<trrom::Matrix<double> > & R_) = 0;
 };
 
 }

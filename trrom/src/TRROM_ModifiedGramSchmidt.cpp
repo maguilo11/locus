@@ -14,7 +14,7 @@
 namespace trrom
 {
 
-ModifiedGramSchmidt::ModifiedGramSchmidt(const std::tr1::shared_ptr<trrom::LinearAlgebraFactory> & factory_) :
+ModifiedGramSchmidt::ModifiedGramSchmidt(const std::shared_ptr<trrom::LinearAlgebraFactory> & factory_) :
         m_Factory(factory_)
 {
 }
@@ -28,9 +28,9 @@ trrom::types::ortho_factorization_t ModifiedGramSchmidt::type() const
     return (trrom::types::MODIFIED_GRAM_SCHMIDT_QR);
 }
 
-void ModifiedGramSchmidt::factorize(const std::tr1::shared_ptr<trrom::Matrix<double> > & input_,
-                                    std::tr1::shared_ptr<trrom::Matrix<double> > & Q_,
-                                    std::tr1::shared_ptr<trrom::Matrix<double> > & R_)
+void ModifiedGramSchmidt::factorize(const std::shared_ptr<trrom::Matrix<double> > & input_,
+                                    std::shared_ptr<trrom::Matrix<double> > & Q_,
+                                    std::shared_ptr<trrom::Matrix<double> > & R_)
 {
     assert(input_->getNumRows() > 0);
     assert(input_->getNumCols() > 0);

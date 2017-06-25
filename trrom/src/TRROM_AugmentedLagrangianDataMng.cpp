@@ -15,8 +15,8 @@
 namespace trrom
 {
 
-AugmentedLagrangianDataMng::AugmentedLagrangianDataMng(const std::tr1::shared_ptr<trrom::Data> & data_,
-                                                       const std::tr1::shared_ptr<trrom::AugmentedLagrangianAssemblyMng> & mng_) :
+AugmentedLagrangianDataMng::AugmentedLagrangianDataMng(const std::shared_ptr<trrom::Data> & data_,
+                                                       const std::shared_ptr<trrom::AugmentedLagrangianAssemblyMng> & mng_) :
         trrom::OptimizationDataMng(data_),
         m_AssemblyMng(mng_)
 {
@@ -43,7 +43,7 @@ double AugmentedLagrangianDataMng::evaluateObjective()
     return (value);
 }
 
-double AugmentedLagrangianDataMng::evaluateObjective(const std::tr1::shared_ptr<trrom::Vector<double> > & input_)
+double AugmentedLagrangianDataMng::evaluateObjective(const std::shared_ptr<trrom::Vector<double> > & input_)
 {
     ///
     /// Evaluate augmented Lagrangian objective
@@ -73,8 +73,8 @@ void AugmentedLagrangianDataMng::computeGradient()
     m_AssemblyMng->gradient(this->getNewPrimal(), this->getNewGradient(), tolerance, gradient_inexactness_tol_exceeded);
 }
 
-void AugmentedLagrangianDataMng::computeGradient(const std::tr1::shared_ptr<trrom::Vector<double> > & input_,
-                                                 const std::tr1::shared_ptr<trrom::Vector<double> > & output_)
+void AugmentedLagrangianDataMng::computeGradient(const std::shared_ptr<trrom::Vector<double> > & input_,
+                                                 const std::shared_ptr<trrom::Vector<double> > & output_)
 {
     ///
     /// Compute augmented Lagrangian gradient
@@ -84,8 +84,8 @@ void AugmentedLagrangianDataMng::computeGradient(const std::tr1::shared_ptr<trro
     m_AssemblyMng->gradient(input_, output_, tolerance, gradient_inexactness_tol_exceeded);
 }
 
-void AugmentedLagrangianDataMng::applyVectorToHessian(const std::tr1::shared_ptr<trrom::Vector<double> > & input_,
-                                                      const std::tr1::shared_ptr<trrom::Vector<double> > & output_)
+void AugmentedLagrangianDataMng::applyVectorToHessian(const std::shared_ptr<trrom::Vector<double> > & input_,
+                                                      const std::shared_ptr<trrom::Vector<double> > & output_)
 {
     ///
     /// Apply vector to augmented Lagrangian Hessian

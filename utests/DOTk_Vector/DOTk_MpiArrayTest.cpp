@@ -7,6 +7,8 @@
 
 #include "gtest/gtest.h"
 
+#include <mpi.h>
+
 #include "DOTk_MpiArray.hpp"
 #include "DOTk_GtestDOTkVecTools.hpp"
 

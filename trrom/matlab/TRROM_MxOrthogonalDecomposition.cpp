@@ -28,9 +28,9 @@ trrom::types::ortho_factorization_t MxOrthogonalDecomposition::type() const
     return (trrom::types::MATLAB_QR);
 }
 
-void MxOrthogonalDecomposition::factorize(const std::tr1::shared_ptr<trrom::Matrix<double> > & input_,
-                                          std::tr1::shared_ptr<trrom::Matrix<double> > & Q_,
-                                          std::tr1::shared_ptr<trrom::Matrix<double> > & R_)
+void MxOrthogonalDecomposition::factorize(const std::shared_ptr<trrom::Matrix<double> > & input_,
+                                          std::shared_ptr<trrom::Matrix<double> > & Q_,
+                                          std::shared_ptr<trrom::Matrix<double> > & R_)
 {
     const trrom::MxMatrix & input = dynamic_cast<const trrom::MxMatrix &>(*input_);
 

@@ -22,8 +22,8 @@
 namespace trrom
 {
 
-KelleySachsStepMng::KelleySachsStepMng(const std::tr1::shared_ptr<trrom::Data> & data_,
-                                       const std::tr1::shared_ptr<trrom::LinearOperator> & linear_operator_) :
+KelleySachsStepMng::KelleySachsStepMng(const std::shared_ptr<trrom::Data> & data_,
+                                       const std::shared_ptr<trrom::LinearOperator> & linear_operator_) :
         trrom::TrustRegionStepMng(),
         m_Eta(0),
         m_Epsilon(0),
@@ -49,9 +49,9 @@ KelleySachsStepMng::KelleySachsStepMng(const std::tr1::shared_ptr<trrom::Data> &
     this->initialize(data_);
 }
 
-KelleySachsStepMng::KelleySachsStepMng(const std::tr1::shared_ptr<trrom::Data> & data_,
-                                       const std::tr1::shared_ptr<trrom::LinearOperator> & linear_operator_,
-                                       const std::tr1::shared_ptr<trrom::Preconditioner> & preconditioner_) :
+KelleySachsStepMng::KelleySachsStepMng(const std::shared_ptr<trrom::Data> & data_,
+                                       const std::shared_ptr<trrom::LinearOperator> & linear_operator_,
+                                       const std::shared_ptr<trrom::Preconditioner> & preconditioner_) :
         trrom::TrustRegionStepMng(),
         m_Eta(0),
         m_Epsilon(0),
@@ -115,14 +115,14 @@ double KelleySachsStepMng::getMidObejectiveFunctionValue() const
     return (m_MidObjectiveFunctionValue);
 }
 
-const std::tr1::shared_ptr<trrom::Vector<double> > & KelleySachsStepMng::getMidPrimal() const
+const std::shared_ptr<trrom::Vector<double> > & KelleySachsStepMng::getMidPrimal() const
 {
     return (m_MidPrimal);
 }
 
-bool KelleySachsStepMng::solveSubProblem(const std::tr1::shared_ptr<trrom::OptimizationDataMng> & mng_,
-                                         const std::tr1::shared_ptr<trrom::SteihaugTointSolver> & solver_,
-                                         const std::tr1::shared_ptr<trrom::TrustRegionNewtonIO> & io_)
+bool KelleySachsStepMng::solveSubProblem(const std::shared_ptr<trrom::OptimizationDataMng> & mng_,
+                                         const std::shared_ptr<trrom::SteihaugTointSolver> & solver_,
+                                         const std::shared_ptr<trrom::TrustRegionNewtonIO> & io_)
 {
     m_TrustRegionRadiusFlag = false;
     bool trial_control_accepted = true;
@@ -194,7 +194,7 @@ bool KelleySachsStepMng::solveSubProblem(const std::tr1::shared_ptr<trrom::Optim
     return (trial_control_accepted);
 }
 
-void KelleySachsStepMng::bounds(const std::tr1::shared_ptr<trrom::Data> & data_)
+void KelleySachsStepMng::bounds(const std::shared_ptr<trrom::Data> & data_)
 {
     bool control_bounds_active = (data_->getControlLowerBound().use_count() > 0)
             && (data_->getControlUpperBound().use_count() > 0);
@@ -208,7 +208,7 @@ void KelleySachsStepMng::bounds(const std::tr1::shared_ptr<trrom::Data> & data_)
     m_UpperBound->update(1., *data_->getControlUpperBound(), 0.);
 }
 
-void KelleySachsStepMng::initialize(const std::tr1::shared_ptr<trrom::Data> & data_)
+void KelleySachsStepMng::initialize(const std::shared_ptr<trrom::Data> & data_)
 {
     if(data_->control().use_count() > 0)
     {
@@ -221,7 +221,7 @@ void KelleySachsStepMng::initialize(const std::tr1::shared_ptr<trrom::Data> & da
     }
 }
 
-bool KelleySachsStepMng::updateTrustRegionRadius(const std::tr1::shared_ptr<trrom::OptimizationDataMng> & mng_)
+bool KelleySachsStepMng::updateTrustRegionRadius(const std::shared_ptr<trrom::OptimizationDataMng> & mng_)
 {
     double actual_reduction = trrom::TrustRegionStepMng::getActualReduction();
     double actual_over_pred_red = trrom::TrustRegionStepMng::getActualOverPredictedReduction();
@@ -272,8 +272,8 @@ bool KelleySachsStepMng::updateTrustRegionRadius(const std::tr1::shared_ptr<trro
     return (stop_trust_region_sub_problem);
 }
 
-void KelleySachsStepMng::applyProjectedTrialStepToHessian(const std::tr1::shared_ptr<trrom::OptimizationDataMng> & mng_,
-                                                          const std::tr1::shared_ptr<trrom::SteihaugTointSolver> & solver_)
+void KelleySachsStepMng::applyProjectedTrialStepToHessian(const std::shared_ptr<trrom::OptimizationDataMng> & mng_,
+                                                          const std::shared_ptr<trrom::SteihaugTointSolver> & solver_)
 {
     // Compute active and inactive projected trial step
     m_ActiveProjectedTrialStep->update(1., *m_ProjectedTrialStep, 0.);
@@ -290,7 +290,7 @@ void KelleySachsStepMng::applyProjectedTrialStepToHessian(const std::tr1::shared
     mng_->getMatrixTimesVector()->update(1., *m_ActiveProjectedTrialStep, 1.);
 }
 
-double KelleySachsStepMng::computeActualReductionLowerBound(const std::tr1::shared_ptr<trrom::OptimizationDataMng> & mng_)
+double KelleySachsStepMng::computeActualReductionLowerBound(const std::shared_ptr<trrom::OptimizationDataMng> & mng_)
 {
     double condition_one = trrom::TrustRegionStepMng::getTrustRegionRadius()
             / (m_NormInactiveGradient + std::numeric_limits<double>::epsilon());
@@ -308,8 +308,8 @@ double KelleySachsStepMng::computeActualReductionLowerBound(const std::tr1::shar
     return (lower_bound);
 }
 
-void KelleySachsStepMng::computeActiveAndInactiveSet(const std::tr1::shared_ptr<trrom::OptimizationDataMng> & mng_,
-                                                     const std::tr1::shared_ptr<trrom::SteihaugTointSolver> & solver_)
+void KelleySachsStepMng::computeActiveAndInactiveSet(const std::shared_ptr<trrom::OptimizationDataMng> & mng_,
+                                                     const std::shared_ptr<trrom::SteihaugTointSolver> & solver_)
 {
     m_WorkVector->update(1., *mng_->getNewGradient(), 0.);
     m_WorkVector->elementWiseMultiplication(*solver_->getInactiveSet());

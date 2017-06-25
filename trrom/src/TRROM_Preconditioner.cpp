@@ -25,15 +25,15 @@ trrom::types::left_prec_t Preconditioner::type() const
 {
     return (m_Type);
 }
-void Preconditioner::applyPreconditioner(const std::tr1::shared_ptr<trrom::OptimizationDataMng> & mng_,
-                                         const std::tr1::shared_ptr<trrom::Vector<double> > & vector_,
-                                         std::tr1::shared_ptr<trrom::Vector<double> > & prec_times_vector_)
+void Preconditioner::applyPreconditioner(const std::shared_ptr<trrom::OptimizationDataMng> & mng_,
+                                         const std::shared_ptr<trrom::Vector<double> > & vector_,
+                                         std::shared_ptr<trrom::Vector<double> > & prec_times_vector_)
 {
     prec_times_vector_->update(1., *vector_, 0.);
 }
-void Preconditioner::applyInvPreconditioner(const std::tr1::shared_ptr<trrom::OptimizationDataMng> & mng_,
-                                            const std::tr1::shared_ptr<trrom::Vector<double> > & vector_,
-                                            std::tr1::shared_ptr<trrom::Vector<double> > & inv_prec_times_vector_)
+void Preconditioner::applyInvPreconditioner(const std::shared_ptr<trrom::OptimizationDataMng> & mng_,
+                                            const std::shared_ptr<trrom::Vector<double> > & vector_,
+                                            std::shared_ptr<trrom::Vector<double> > & inv_prec_times_vector_)
 {
     inv_prec_times_vector_->update(1., *vector_, 0.);
 }

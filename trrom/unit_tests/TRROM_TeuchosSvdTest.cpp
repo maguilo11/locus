@@ -47,7 +47,7 @@ TEST(TeuchosSerialSVD, solve)
 {
     int num_cols = 3;
     int num_rows = 2;
-    std::tr1::shared_ptr<trrom::TeuchosSerialDenseMatrix> A(new trrom::TeuchosSerialDenseMatrix(num_rows, num_cols));
+    std::shared_ptr<trrom::TeuchosSerialDenseMatrix> A(new trrom::TeuchosSerialDenseMatrix(num_rows, num_cols));
     (*A)(0, 0) = 3;
     (*A)(0, 1) = 2;
     (*A)(0, 2) = 2;
@@ -55,21 +55,21 @@ TEST(TeuchosSerialSVD, solve)
     (*A)(1, 1) = 3;
     (*A)(1, 2) = -2;
 
-    std::tr1::shared_ptr<trrom::Vector<double> > singular_values;
-    std::tr1::shared_ptr<trrom::Matrix<double> > left_singular_values;
-    std::tr1::shared_ptr<trrom::Matrix<double> > right_singular_values;
+    std::shared_ptr<trrom::Vector<double> > singular_values;
+    std::shared_ptr<trrom::Matrix<double> > left_singular_values;
+    std::shared_ptr<trrom::Matrix<double> > right_singular_values;
 
     trrom::TeuchosSVD svd;
     svd.solve(A, singular_values, left_singular_values, right_singular_values);
 
     /* TEST SINGULAR VALUES */
-    std::tr1::shared_ptr<trrom::Vector<double> > gold_singular_values = singular_values->create();
+    std::shared_ptr<trrom::Vector<double> > gold_singular_values = singular_values->create();
     gold_singular_values->operator [](0) = 5;
     gold_singular_values->operator [](1) = 3;
     trrom::test::checkResults(*gold_singular_values, *singular_values);
 
     /* TEST LEFT SINGULAR VECTORS */
-    std::tr1::shared_ptr<trrom::Matrix<double> > gold_left_singular_values = left_singular_values->create();
+    std::shared_ptr<trrom::Matrix<double> > gold_left_singular_values = left_singular_values->create();
     gold_left_singular_values->replaceGlobalValue(0, 0, (-1. / std::sqrt(2)));
     gold_left_singular_values->replaceGlobalValue(0, 1, (-1. / std::sqrt(2)));
     gold_left_singular_values->replaceGlobalValue(1, 0, (-1. / std::sqrt(2)));
@@ -77,7 +77,7 @@ TEST(TeuchosSerialSVD, solve)
     trrom::test::checkResults(*gold_left_singular_values, *left_singular_values);
 
     /* TEST RIGHT SINGULAR VECTORS */
-    std::tr1::shared_ptr<trrom::Matrix<double> > gold_right_singular_values = right_singular_values->create();
+    std::shared_ptr<trrom::Matrix<double> > gold_right_singular_values = right_singular_values->create();
     gold_right_singular_values->replaceGlobalValue(0, 0, (-1. / std::sqrt(2)));
     gold_right_singular_values->replaceGlobalValue(1, 0, (-1. / std::sqrt(18)));
     gold_right_singular_values->replaceGlobalValue(2, 0, (-2. / 3.));

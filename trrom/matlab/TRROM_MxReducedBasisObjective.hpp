@@ -366,10 +366,10 @@
 //     * \return Reference to ReducedBasisAssemblyMngTypeR.
 //     *
 //     **/
-//    ReducedBasisAssemblyMngTypeR(const std::tr1::shared_ptr<trrom::ReducedBasisData> & data_,
-//                                 const std::tr1::shared_ptr<trrom::ReducedBasisInterface> & interface_,
-//                                 const std::tr1::shared_ptr<trrom::ReducedBasisObjective> & objective_,
-//                                 const std::tr1::shared_ptr<trrom::ReducedBasisPDE> & pde_) :
+//    ReducedBasisAssemblyMngTypeR(const std::shared_ptr<trrom::ReducedBasisData> & data_,
+//                                 const std::shared_ptr<trrom::ReducedBasisInterface> & interface_,
+//                                 const std::shared_ptr<trrom::ReducedBasisObjective> & objective_,
+//                                 const std::shared_ptr<trrom::ReducedBasisPDE> & pde_) :
 //            m_HessianCounter(0),
 //            m_GradientCounter(0),
 //            m_ObjectiveCounter(0),
@@ -560,7 +560,7 @@
 //     *
 //     *    \return current objective function evaluation
 //     */
-//    double objective(const std::tr1::shared_ptr<trrom::Vector<double> > & control_,
+//    double objective(const std::shared_ptr<trrom::Vector<double> > & control_,
 //                     const double & tolerance_,
 //                     bool & inexactness_violated_)
 //    {
@@ -600,8 +600,8 @@
 //     *    \param Out
 //     *          inexactness_violated_: objective function inexactness flag
 //     */
-//    void gradient(const std::tr1::shared_ptr<trrom::Vector<double> > & control_,
-//                  const std::tr1::shared_ptr<trrom::Vector<double> > & output_,
+//    void gradient(const std::shared_ptr<trrom::Vector<double> > & control_,
+//                  const std::shared_ptr<trrom::Vector<double> > & output_,
 //                  const double & tolerance_,
 //                  bool & inexactness_violated_)
 //    {
@@ -645,9 +645,9 @@
 //     *    \param Out
 //     *          inexactness_violated_: objective function Hessian inexactness flag
 //     */
-//    void hessian(const std::tr1::shared_ptr<trrom::Vector<double> > & control_,
-//                 const std::tr1::shared_ptr<trrom::Vector<double> > & vector_,
-//                 const std::tr1::shared_ptr<trrom::Vector<double> > & output_,
+//    void hessian(const std::shared_ptr<trrom::Vector<double> > & control_,
+//                 const std::shared_ptr<trrom::Vector<double> > & vector_,
+//                 const std::shared_ptr<trrom::Vector<double> > & output_,
 //                 const double & tolerance_,
 //                 bool & inexactness_violated_)
 //    {
@@ -664,15 +664,15 @@
 //
 //    bool m_UseFullNewtonHessian;
 //
-//    std::tr1::shared_ptr<trrom::Vector<double> > m_Dual;
-//    std::tr1::shared_ptr<trrom::Vector<double> > m_State;
-//    std::tr1::shared_ptr<trrom::Vector<double> > m_HessWorkVec;
-//    std::tr1::shared_ptr<trrom::Vector<double> > m_StateWorkVec;
-//    std::tr1::shared_ptr<trrom::Vector<double> > m_ControlWorkVec;
+//    std::shared_ptr<trrom::Vector<double> > m_Dual;
+//    std::shared_ptr<trrom::Vector<double> > m_State;
+//    std::shared_ptr<trrom::Vector<double> > m_HessWorkVec;
+//    std::shared_ptr<trrom::Vector<double> > m_StateWorkVec;
+//    std::shared_ptr<trrom::Vector<double> > m_ControlWorkVec;
 //
-//    std::tr1::shared_ptr<trrom::ReducedBasisPDE> m_PDE;
-//    std::tr1::shared_ptr<trrom::ReducedBasisObjective> m_Objective;
-//    std::tr1::shared_ptr<trrom::ReducedBasisInterface> m_ReducedBasisInterface;
+//    std::shared_ptr<trrom::ReducedBasisPDE> m_PDE;
+//    std::shared_ptr<trrom::ReducedBasisObjective> m_Objective;
+//    std::shared_ptr<trrom::ReducedBasisInterface> m_ReducedBasisInterface;
 //
 //private:
 //    ReducedBasisAssemblyMngTypeR(const trrom::ReducedBasisAssemblyMngTypeR &);

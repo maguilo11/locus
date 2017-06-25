@@ -155,9 +155,9 @@ public:
         return (dim);
     }
     // Create object of type trrom::Vector
-    std::tr1::shared_ptr<trrom::Vector<ScalarType> > create(int global_dim_ = 0) const
+    std::shared_ptr<trrom::Vector<ScalarType> > create(int global_dim_ = 0) const
     {
-        std::tr1::shared_ptr<trrom::SerialVector<ScalarType> > this_copy;
+        std::shared_ptr<trrom::SerialVector<ScalarType> > this_copy;
         if(global_dim_ == 0)
         {
             int length = this->size();

@@ -26,19 +26,19 @@ public:
 
     trrom::types::fidelity_t fidelity() const;
     void fidelity(trrom::types::fidelity_t input_);
-    const std::tr1::shared_ptr<trrom::Vector<double> > & getLeftHandSideSnapshot() const;
+    const std::shared_ptr<trrom::Vector<double> > & getLeftHandSideSnapshot() const;
     void setLeftHandSideSnapshot(const trrom::Vector<double> & input_);
-    const std::tr1::shared_ptr<trrom::Vector<double> > & getRightHandSideSnapshot() const;
+    const std::shared_ptr<trrom::Vector<double> > & getRightHandSideSnapshot() const;
     void setRightHandSideSnapshot(const trrom::Vector<double> & input_);
-    const std::tr1::shared_ptr<trrom::Vector<double> > & getLeftHandSideActiveIndices() const;
+    const std::shared_ptr<trrom::Vector<double> > & getLeftHandSideActiveIndices() const;
     void setLeftHandSideActiveIndices(const trrom::Vector<double> & input_);
 
 private:
     trrom::types::fidelity_t m_Fidelity;
 
-    std::tr1::shared_ptr<trrom::Vector<double> > m_LeftHandSideSnapshot;
-    std::tr1::shared_ptr<trrom::Vector<double> > m_RightHandSideSnapshot;
-    std::tr1::shared_ptr<trrom::Vector<double> > m_LeftHandSideActiveIndices;
+    std::shared_ptr<trrom::Vector<double> > m_LeftHandSideSnapshot;
+    std::shared_ptr<trrom::Vector<double> > m_RightHandSideSnapshot;
+    std::shared_ptr<trrom::Vector<double> > m_LeftHandSideActiveIndices;
 
 private:
     ReducedBasisData(const trrom::ReducedBasisData &);

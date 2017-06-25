@@ -29,15 +29,15 @@ public:
 
     int size() const;
     trrom::types::variable_t type() const;
-    const std::tr1::shared_ptr<trrom::Vector<double> > & data() const;
+    const std::shared_ptr<trrom::Vector<double> > & data() const;
 
     void setLowerBound(double value_);
     void setLowerBound(const trrom::Vector<double> & lower_bound_);
-    const std::tr1::shared_ptr<trrom::Vector<double> > & lowerBound() const;
+    const std::shared_ptr<trrom::Vector<double> > & lowerBound() const;
 
     void setUpperBound(double value_);
     void setUpperBound(const trrom::Vector<double> & upper_bound_);
-    const std::tr1::shared_ptr<trrom::Vector<double> > & upperBound() const;
+    const std::shared_ptr<trrom::Vector<double> > & upperBound() const;
 
 private:
     void checkData();
@@ -48,9 +48,9 @@ private:
 
 private:
     trrom::types::variable_t m_Type;
-    std::tr1::shared_ptr<trrom::Vector<double> > m_Data;
-    std::tr1::shared_ptr<trrom::Vector<double> > m_LowerBound;
-    std::tr1::shared_ptr<trrom::Vector<double> > m_UpperBound;
+    std::shared_ptr<trrom::Vector<double> > m_Data;
+    std::shared_ptr<trrom::Vector<double> > m_LowerBound;
+    std::shared_ptr<trrom::Vector<double> > m_UpperBound;
 
 private:
     Variable(const trrom::Variable &);

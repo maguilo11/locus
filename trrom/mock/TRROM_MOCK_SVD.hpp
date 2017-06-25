@@ -7,6 +7,8 @@
 #ifndef TRROM_SVD_HPP_
 #define TRROM_SVD_HPP_
 
+#include <memory>
+
 #include "TRROM_SpectralDecomposition.hpp"
 
 namespace trrom
@@ -26,13 +28,13 @@ public:
     SVD();
     virtual ~SVD();
 
-    void solve(const std::tr1::shared_ptr<trrom::Matrix<double> > & data_,
-               std::tr1::shared_ptr<trrom::Vector<double> > & singular_values_,
-               std::tr1::shared_ptr<trrom::Matrix<double> > & left_singular_vectors_,
-               std::tr1::shared_ptr<trrom::Matrix<double> > & right_singular_vectors_);
+    void solve(const std::shared_ptr<trrom::Matrix<double> > & data_,
+               std::shared_ptr<trrom::Vector<double> > & singular_values_,
+               std::shared_ptr<trrom::Matrix<double> > & left_singular_vectors_,
+               std::shared_ptr<trrom::Matrix<double> > & right_singular_vectors_);
 
 private:
-    std::tr1::shared_ptr< trrom::Vector<double> > m_Vector;
+    std::shared_ptr< trrom::Vector<double> > m_Vector;
 
 private:
     SVD(const mock::SVD &);

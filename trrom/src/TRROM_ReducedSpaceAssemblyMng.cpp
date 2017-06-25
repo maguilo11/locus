@@ -13,9 +13,9 @@
 namespace trrom
 {
 
-ReducedSpaceAssemblyMng::ReducedSpaceAssemblyMng(const std::tr1::shared_ptr<trrom::Data> & input_,
-                                                 const std::tr1::shared_ptr<trrom::PDE_Constraint> & pde_,
-                                                 const std::tr1::shared_ptr<trrom::ReducedObjectiveOperators> & objective_) :
+ReducedSpaceAssemblyMng::ReducedSpaceAssemblyMng(const std::shared_ptr<trrom::Data> & input_,
+                                                 const std::shared_ptr<trrom::PDE_Constraint> & pde_,
+                                                 const std::shared_ptr<trrom::ReducedObjectiveOperators> & objective_) :
         m_FullNewton(true),
         m_HessianCounter(0),
         m_GradientCounter(0),
@@ -69,7 +69,7 @@ void ReducedSpaceAssemblyMng::updateObjectiveCounter()
     m_ObjectiveCounter++;
 }
 
-double ReducedSpaceAssemblyMng::objective(const std::tr1::shared_ptr<trrom::Vector<double> > & control_,
+double ReducedSpaceAssemblyMng::objective(const std::shared_ptr<trrom::Vector<double> > & control_,
                                           const double & tolerance_,
                                           bool & inexactness_violated_)
 {
@@ -93,8 +93,8 @@ double ReducedSpaceAssemblyMng::objective(const std::tr1::shared_ptr<trrom::Vect
     return (value);
 }
 
-void ReducedSpaceAssemblyMng::gradient(const std::tr1::shared_ptr<trrom::Vector<double> > & control_,
-                                       const std::tr1::shared_ptr<trrom::Vector<double> > & gradient_,
+void ReducedSpaceAssemblyMng::gradient(const std::shared_ptr<trrom::Vector<double> > & control_,
+                                       const std::shared_ptr<trrom::Vector<double> > & gradient_,
                                        const double & tolerance_,
                                        bool & inexactness_violated_)
 {
@@ -126,9 +126,9 @@ void ReducedSpaceAssemblyMng::gradient(const std::tr1::shared_ptr<trrom::Vector<
     }
 }
 
-void ReducedSpaceAssemblyMng::hessian(const std::tr1::shared_ptr<trrom::Vector<double> > & control_,
-                                      const std::tr1::shared_ptr<trrom::Vector<double> > & vector_,
-                                      const std::tr1::shared_ptr<trrom::Vector<double> > & hess_times_vec_,
+void ReducedSpaceAssemblyMng::hessian(const std::shared_ptr<trrom::Vector<double> > & control_,
+                                      const std::shared_ptr<trrom::Vector<double> > & vector_,
+                                      const std::shared_ptr<trrom::Vector<double> > & hess_times_vec_,
                                       const double & tolerance_,
                                       bool & inexactness_violated_)
 {
