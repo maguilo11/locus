@@ -1,5 +1,5 @@
 /*
- * DARPA_VectorTest.cpp
+ * Locus_VectorTest.cpp
  *
  *  Created on: Jun 14, 2017
  *      Author: Miguel A. Aguilo Valentin
