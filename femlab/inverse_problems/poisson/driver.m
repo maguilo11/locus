@@ -51,8 +51,8 @@ Domain.xmin = -1;  % min dim in x-dir
 Domain.xmax = 1;   % max dim in x-dir
 Domain.ymin = -1;  % min dim in y-dir
 Domain.ymax = 1;   % max dim in y-dir
-Domain.nx = 100;     % num intervals in x-dir
-Domain.ny = 100;     % num intervals in y-dir
+Domain.nx = 5;     % num intervals in x-dir
+Domain.ny = 5;     % num intervals in y-dir
 % choice of synthetic data
 % 1 = egg; 2 = 1D/2D/3D sphere; 3 = 1D/2D/3D sphere in cube
 target_control = 'sphere_in_cube';

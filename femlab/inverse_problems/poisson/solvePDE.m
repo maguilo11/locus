@@ -22,7 +22,7 @@ function [state,K] = solvePDE(struc,control,force)
 %           state      FEM solution
 %
 %   AUTHOR:  Miguel Aguilo
-%            Dookie's Corp.
+%            Dokie's Corp.
 %
 
 spaceDim      = struc.spaceDim;
