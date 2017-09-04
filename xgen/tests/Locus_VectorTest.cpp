@@ -2181,6 +2181,46 @@ namespace bounds
 {
 
 template<typename ElementType, typename SizeType = size_t>
+void checkBounds(const locus::MultiVector<ElementType, SizeType> & aLowerBounds,
+                 const locus::MultiVector<ElementType, SizeType> & aUpperBounds,
+                 bool aPrintMessage = false)
+{
+    assert(aLowerBounds.getNumVectors() == aUpperBounds.getNumVectors());
+
+    try
+    {
+        SizeType tNumVectors = aLowerBounds.getNumVectors();
+        for(SizeType tVectorIndex = 0; tVectorIndex < tNumVectors; tVectorIndex++)
+        {
+            assert(aLowerBounds[tVectorIndex].size() == aUpperBounds[tVectorIndex].size());
+
+            SizeType tNumElements = aLowerBounds[tVectorIndex].size();
+            for(SizeType tElemIndex = 0; tElemIndex < tNumElements; tElemIndex++)
+            {
+                if(aLowerBounds(tVectorIndex, tElemIndex) >= aUpperBounds(tVectorIndex, tElemIndex))
+                {
+                    std::ostringstream tErrorMessage;
+                    tErrorMessage << "\n\n**** ERROR IN FILE: " << __FILE__ << ", FUNCTION: "
+                            << __PRETTY_FUNCTION__ << ", MESSAGE: LOWER BOUND AT ELEMENT INDEX " << tElemIndex
+                            << " EXCEEDS/MATCHES UPPER BOUND WITH VALUE " << aLowerBounds(tVectorIndex, tElemIndex)
+                            << ". UPPER BOUND AT ELEMENT INDEX " << tElemIndex << " HAS A VALUE OF "
+                            << aUpperBounds(tVectorIndex, tElemIndex) << ": ABORT ****\n\n";
+                    throw std::invalid_argument(tErrorMessage.str().c_str());
+                }
+            }
+        }
+    }
+    catch(const std::invalid_argument & tErrorMsg)
+    {
+        if(aPrintMessage == true)
+        {
+            std::cout << tErrorMsg.what() << std::flush;
+        }
+        throw tErrorMsg;
+    }
+}
+
+template<typename ElementType, typename SizeType = size_t>
 void project(const locus::MultiVector<ElementType, SizeType> & aLowerBound,
              const locus::MultiVector<ElementType, SizeType> & aUpperBound,
              locus::MultiVector<ElementType, SizeType> & aInput)
@@ -2832,6 +2872,12 @@ public:
     // NOTE: STATIONARITY MEASURE CALCULATION
     void computeStationarityMeasure()
     {
+        assert(mInactiveSet.get() != nullptr);
+        assert(mCurrentControl.get() != nullptr);
+        assert(mCurrentGradient.get() != nullptr);
+        assert(mControlLowerBounds.get() != nullptr);
+        assert(mControlUpperBounds.get() != nullptr);
+
         locus::update(1., *mCurrentControl, 0., *mControlWorkMultiVector);
         locus::update(-1., *mCurrentGradient, 1., *mControlWorkMultiVector);
         locus::bounds::project(*mControlLowerBounds, *mControlUpperBounds, *mControlWorkMultiVector);
@@ -2880,9 +2926,16 @@ private:
     void initialize(const locus::DataFactory<ElementType, SizeType> & aDataFactory)
     {
         assert(aDataFactory.control().getNumVectors() > 0);
+
         const size_t tVectorIndex = 0;
         mControlWorkVector = aDataFactory.control(tVectorIndex).create();
-        locus::fill(static_cast<ElementType>(1.), *mInactiveSet);
+        locus::fill(static_cast<ElementType>(0), *mActiveSet);
+        locus::fill(static_cast<ElementType>(1), *mInactiveSet);
+
+        ElementType tScalarValue = std::numeric_limits<ElementType>::max();
+        locus::fill(tScalarValue, *mControlUpperBounds);
+        tScalarValue = -std::numeric_limits<ElementType>::max();
+        locus::fill(tScalarValue, *mControlLowerBounds);
     }
 
 private:
@@ -4402,64 +4455,6 @@ public:
         return (mMidControls);
     }
 
-    void setSolverTolerance(const locus::TrustRegionAlgorithmDataMng<ElementType, SizeType> & aDataMng,
-                            locus::SteihaugTointSolver<ElementType, SizeType> & aSolver)
-    {
-        ElementType tCummulativeDotProduct = 0;
-        const SizeType tNumVectors = aDataMng.getNumControlVectors();
-        for(SizeType tVectorIndex = 0; tVectorIndex < tNumVectors; tVectorIndex++)
-        {
-            const locus::Vector<ElementType, SizeType> & tMyInactiveSet = aDataMng.getInactiveSet(tVectorIndex);
-            const locus::Vector<ElementType, SizeType> & tMyCurrentGradient = aDataMng.getCurrentGradient(tVectorIndex);
-            locus::Vector<ElementType, SizeType> & tMyInactiveGradient = (*mInactiveGradient)[tVectorIndex];
-
-            tMyInactiveGradient.update(static_cast<ElementType>(1), tMyCurrentGradient, static_cast<ElementType>(0));
-            tMyInactiveGradient.entryWiseProduct(tMyInactiveSet);
-            tCummulativeDotProduct += tMyInactiveGradient.dot(tMyInactiveGradient);
-        }
-        mNormInactiveGradient = std::sqrt(tCummulativeDotProduct);
-        ElementType tSolverStoppingTolerance = this->getEtaConstant() * mNormInactiveGradient;
-        aSolver.setSolverTolerance(tSolverStoppingTolerance);
-    }
-
-    void computeProjectedTrialStep(const locus::TrustRegionAlgorithmDataMng<ElementType, SizeType> & aDataMng)
-    {
-        // Project trial control
-        const locus::MultiVector<ElementType, SizeType> & tCurrentControl = aDataMng.getCurrentControl();
-        locus::update(static_cast<ElementType>(1), tCurrentControl, static_cast<ElementType>(0), *mMidControls);
-        const locus::MultiVector<ElementType, SizeType> & tTrialStep = aDataMng.getTrialStep();
-        locus::update(static_cast<ElementType>(1), tTrialStep, static_cast<ElementType>(1), *mMidControls);
-        const locus::MultiVector<ElementType, SizeType> & tLowerBounds = aDataMng.getControlLowerBounds();
-        const locus::MultiVector<ElementType, SizeType> & tUpperBounds = aDataMng.getControlUpperBounds();
-        locus::bounds::project(tLowerBounds, tUpperBounds, *mMidControls);
-
-        // Compute projected trial step
-        locus::update(static_cast<ElementType>(1), *mMidControls, static_cast<ElementType>(0), *mProjectedTrialStep);
-        locus::update(static_cast<ElementType>(-1), tCurrentControl, static_cast<ElementType>(1), *mProjectedTrialStep);
-    }
-
-    ElementType computePredictedReduction(const locus::TrustRegionAlgorithmDataMng<ElementType, SizeType> & aDataMng)
-    {
-        ElementType tProjTrialStepDotInactiveGradient = 0;
-        ElementType tProjTrialStepDotHessTimesProjTrialStep = 0;
-        const SizeType tNumVectors = aDataMng.getNumControlVectors();
-        for(SizeType tVectorIndex = 0; tVectorIndex < tNumVectors; tVectorIndex++)
-        {
-            const locus::Vector<ElementType, SizeType> & tMyInactiveGradient = mInactiveGradient->operator[](tVectorIndex);
-            const locus::Vector<ElementType, SizeType> & tMyMatrixTimesVector = mMatrixTimesVector->operator[](tVectorIndex);
-            const locus::Vector<ElementType, SizeType> & tMyProjectedTrialStep = mProjectedTrialStep->operator[](tVectorIndex);
-
-            tProjTrialStepDotInactiveGradient += tMyProjectedTrialStep.dot(tMyInactiveGradient);
-            tProjTrialStepDotHessTimesProjTrialStep += tMyProjectedTrialStep.dot(tMyMatrixTimesVector);
-        }
-
-        ElementType tPredictedReduction = tProjTrialStepDotInactiveGradient
-                + (static_cast<ElementType>(0.5) * tProjTrialStepDotHessTimesProjTrialStep);
-        this->setPredictedReduction(tPredictedReduction);
-
-        return (tPredictedReduction);
-    }
-
     bool solveSubProblem(locus::TrustRegionAlgorithmDataMng<ElementType, SizeType> & aDataMng,
                          locus::TrustRegionAlgorithmStageMng<ElementType, SizeType> & aStageMng,
                          locus::SteihaugTointSolver<ElementType, SizeType> & aSolver)
@@ -4521,6 +4516,61 @@ public:
     }
 
 private:
+    void setSolverTolerance(const locus::TrustRegionAlgorithmDataMng<ElementType, SizeType> & aDataMng,
+                            locus::SteihaugTointSolver<ElementType, SizeType> & aSolver)
+    {
+        ElementType tCummulativeDotProduct = 0;
+        const SizeType tNumVectors = aDataMng.getNumControlVectors();
+        for(SizeType tVectorIndex = 0; tVectorIndex < tNumVectors; tVectorIndex++)
+        {
+            const locus::Vector<ElementType, SizeType> & tMyInactiveSet = aDataMng.getInactiveSet(tVectorIndex);
+            const locus::Vector<ElementType, SizeType> & tMyCurrentGradient = aDataMng.getCurrentGradient(tVectorIndex);
+            locus::Vector<ElementType, SizeType> & tMyInactiveGradient = (*mInactiveGradient)[tVectorIndex];
+
+            tMyInactiveGradient.update(static_cast<ElementType>(1), tMyCurrentGradient, static_cast<ElementType>(0));
+            tMyInactiveGradient.entryWiseProduct(tMyInactiveSet);
+            tCummulativeDotProduct += tMyInactiveGradient.dot(tMyInactiveGradient);
+        }
+        mNormInactiveGradient = std::sqrt(tCummulativeDotProduct);
+        ElementType tSolverStoppingTolerance = this->getEtaConstant() * mNormInactiveGradient;
+        aSolver.setSolverTolerance(tSolverStoppingTolerance);
+    }
+    void computeProjectedTrialStep(const locus::TrustRegionAlgorithmDataMng<ElementType, SizeType> & aDataMng)
+    {
+        // Project trial control
+        const locus::MultiVector<ElementType, SizeType> & tCurrentControl = aDataMng.getCurrentControl();
+        locus::update(static_cast<ElementType>(1), tCurrentControl, static_cast<ElementType>(0), *mMidControls);
+        const locus::MultiVector<ElementType, SizeType> & tTrialStep = aDataMng.getTrialStep();
+        locus::update(static_cast<ElementType>(1), tTrialStep, static_cast<ElementType>(1), *mMidControls);
+        const locus::MultiVector<ElementType, SizeType> & tLowerBounds = aDataMng.getControlLowerBounds();
+        const locus::MultiVector<ElementType, SizeType> & tUpperBounds = aDataMng.getControlUpperBounds();
+        locus::bounds::project(tLowerBounds, tUpperBounds, *mMidControls);
+
+        // Compute projected trial step
+        locus::update(static_cast<ElementType>(1), *mMidControls, static_cast<ElementType>(0), *mProjectedTrialStep);
+        locus::update(static_cast<ElementType>(-1), tCurrentControl, static_cast<ElementType>(1), *mProjectedTrialStep);
+    }
+    ElementType computePredictedReduction(const locus::TrustRegionAlgorithmDataMng<ElementType, SizeType> & aDataMng)
+    {
+        ElementType tProjTrialStepDotInactiveGradient = 0;
+        ElementType tProjTrialStepDotHessTimesProjTrialStep = 0;
+        const SizeType tNumVectors = aDataMng.getNumControlVectors();
+        for(SizeType tVectorIndex = 0; tVectorIndex < tNumVectors; tVectorIndex++)
+        {
+            const locus::Vector<ElementType, SizeType> & tMyInactiveGradient = mInactiveGradient->operator[](tVectorIndex);
+            const locus::Vector<ElementType, SizeType> & tMyMatrixTimesVector = mMatrixTimesVector->operator[](tVectorIndex);
+            const locus::Vector<ElementType, SizeType> & tMyProjectedTrialStep = mProjectedTrialStep->operator[](tVectorIndex);
+
+            tProjTrialStepDotInactiveGradient += tMyProjectedTrialStep.dot(tMyInactiveGradient);
+            tProjTrialStepDotHessTimesProjTrialStep += tMyProjectedTrialStep.dot(tMyMatrixTimesVector);
+        }
+
+        ElementType tPredictedReduction = tProjTrialStepDotInactiveGradient
+                + (static_cast<ElementType>(0.5) * tProjTrialStepDotHessTimesProjTrialStep);
+        this->setPredictedReduction(tPredictedReduction);
+
+        return (tPredictedReduction);
+    }
     bool updateTrustRegionRadius(locus::TrustRegionAlgorithmDataMng<ElementType, SizeType> & aDataMng)
     {
         ElementType tActualReduction = this->getActualReduction();
@@ -6312,6 +6362,22 @@ TEST(LocusTest, Project)
     LocusTest::checkMultiVectorData(tData, tGoldData);
 }
 
+TEST(LocusTest, CheckBounds)
+{
+    // ********* Allocate Lower & Upper Bounds *********
+    const size_t tNumVectors = 1;
+    const size_t tNumElements = 5;
+    double tLowerBoundValue = 2;
+    locus::StandardMultiVector<double> tLowerBounds(tNumVectors, tNumElements, tLowerBoundValue);
+    double tUpperBoundValue = 7;
+    locus::StandardMultiVector<double> tUpperBounds(tNumVectors, tNumElements, tUpperBoundValue);
+    ASSERT_NO_THROW(locus::bounds::checkBounds(tLowerBounds, tUpperBounds));
+
+    tUpperBoundValue = 2;
+    locus::fill(tUpperBoundValue, tUpperBounds);
+    ASSERT_THROW(locus::bounds::checkBounds(tLowerBounds, tUpperBounds), std::invalid_argument);
+}
+
 TEST(LocusTest, ComputeActiveAndInactiveSet)
 {
     // ********* Allocate Input Data *********
@@ -6579,7 +6645,8 @@ TEST(LocusTest, TrustRegionAlgorithmDataMng)
     LocusTest::checkMultiVectorData(tDataMng.getPreviousGradient(), tlocusControlMultiVector, tTolerance);
 
     // TEST CONTROL LOWER BOUND INTERFACES
-    locus::fill(0., tlocusControlMultiVector);
+    tValue = -std::numeric_limits<double>::max();
+    locus::fill(tValue, tlocusControlMultiVector);
     LocusTest::checkMultiVectorData(tDataMng.getControlLowerBounds(), tlocusControlMultiVector, tTolerance);
     tValue = 1e-3;
     tDataMng.setControlLowerBounds(tValue);
@@ -6614,7 +6681,8 @@ TEST(LocusTest, TrustRegionAlgorithmDataMng)
     LocusTest::checkMultiVectorData(tDataMng.getControlLowerBounds(), tlocusControlMultiVector, tTolerance);
 
     // TEST CONTROL UPPER BOUND INTERFACES
-    locus::fill(0., tlocusControlMultiVector);
+    tValue = std::numeric_limits<double>::max();
+    locus::fill(tValue, tlocusControlMultiVector);
     LocusTest::checkMultiVectorData(tDataMng.getControlUpperBounds(), tlocusControlMultiVector, tTolerance);
     tValue = 1e-3;
     tDataMng.setControlUpperBounds(tValue);
@@ -7700,6 +7768,85 @@ TEST(LocusTest, TrustRegionStepMngBase)
     EXPECT_TRUE(tStepMng.isInitialTrustRegionRadiusSetToNormProjectedGradient());
     tStepMng.setInitialTrustRegionRadiusSetToNormProjectedGradient(false);
     EXPECT_FALSE(tStepMng.isInitialTrustRegionRadiusSetToNormProjectedGradient());
+}
+
+TEST(LocusTest, KelleySachsStepMng)
+{
+    // ********* ALLOCATE DATA FACTORY *********
+    locus::DataFactory<double> tDataFactory;
+    const size_t tNumDuals = 1;
+    const size_t tNumControls = 2;
+    tDataFactory.allocateDual(tNumDuals);
+    tDataFactory.allocateControl(tNumControls);
+
+    // ********* ALLOCATE OBJECTIVE AND CONSTRAINT CRITERIA *********
+    locus::Circle<double> tCircle;
+    locus::Radius<double> tRadius;
+    locus::CriterionList<double> tList;
+    tList.add(tRadius);
+
+    // ********* AUGMENTED LAGRANGIAN STAGE MANAGER *********
+    locus::AugmentedLagrangianStageMng<double> tStageMng(tDataFactory, tCircle, tList);
+
+    // ********* SET FIRST AND SECOND ORDER DERIVATIVE COMPUTATION PROCEDURES *********
+    locus::AnalyticalGradient<double> tObjectiveGradient(tCircle);
+    tStageMng.setObjectiveGradient(tObjectiveGradient);
+    locus::AnalyticalGradient<double> tConstraintGradient(tRadius);
+    locus::GradientOperatorList<double> tGradientList;
+    tGradientList.add(tConstraintGradient);
+    tStageMng.setConstraintGradients(tGradientList);
+
+    locus::AnalyticalHessian<double> tObjectiveHessian(tCircle);
+    tStageMng.setObjectiveHessian(tObjectiveHessian);
+    locus::AnalyticalHessian<double> tConstraintHessian(tRadius);
+    locus::LinearOperatorList<double> tHessianList;
+    tHessianList.add(tConstraintHessian);
+    tStageMng.setConstraintHessians(tHessianList);
+
+    // ********* ALLOCATE TRUST REGION ALGORITHM DATA MANAGER *********
+    locus::TrustRegionAlgorithmDataMng<double> tDataMng(tDataFactory);
+
+    // ********* SET INITIAL DATA MANAGER VALUES *********
+    double tScalarValue = 0.5;
+    tDataMng.setInitialGuess(tScalarValue);
+    tScalarValue = tStageMng.evaluateObjective(tDataMng.getCurrentControl());
+    tStageMng.updateCurrentConstraintValues();
+    tDataMng.setCurrentObjectiveFunctionValue(tScalarValue);
+    const double tTolerance = 1e-6;
+    double tScalarGoldValue = 4.875;
+    EXPECT_NEAR(tScalarGoldValue, tDataMng.getCurrentObjectiveFunctionValue(), tTolerance);
+
+    const size_t tNumVectors = 1;
+    locus::StandardMultiVector<double> tVector(tNumVectors, tNumControls);
+    tStageMng.computeGradient(tDataMng.getCurrentControl(), tVector);
+    tDataMng.setCurrentGradient(tVector);
+    tDataMng.computeProjectedGradientNorm();
+    double tNormProjectedGradientGold = 6.670832032063167;
+    EXPECT_NEAR(tNormProjectedGradientGold, tDataMng.getNormProjectedGradient(), tTolerance);
+    tDataMng.computeStationarityMeasure();
+    tVector(0, 0) = -1.5;
+    tVector(0, 1) = -6.5;
+    LocusTest::checkMultiVectorData(tDataMng.getCurrentGradient(), tVector);
+
+    // ********* ALLOCATE SOLVER *********
+    locus::ProjectedSteihaugTointPcg<double> tSolver(tDataFactory);
+
+    // ********* ALLOCATE STEP MANAGER *********
+    locus::KelleySachsStepMng<double> tStepMng(tDataFactory);
+    tStepMng.setTrustRegionRadius(tNormProjectedGradientGold);
+
+    // ********* TEST CONSTANT FUNCTIONS *********
+    tScalarGoldValue = 0;
+    EXPECT_NEAR(tScalarGoldValue, tStepMng.getEtaConstant(), tTolerance);
+    tScalarGoldValue = 0.12;
+    tStepMng.setEtaConstant(tScalarGoldValue);
+    EXPECT_NEAR(tScalarGoldValue, tStepMng.getEtaConstant(), tTolerance);
+
+    tScalarGoldValue = 0;
+    EXPECT_NEAR(tScalarGoldValue, tStepMng.getEpsilonConstant(), tTolerance);
+    tScalarGoldValue = 0.11;
+    tStepMng.setEpsilonConstant(tScalarGoldValue);
+    EXPECT_NEAR(tScalarGoldValue, tStepMng.getEpsilonConstant(), tTolerance);
 }
 
 }
