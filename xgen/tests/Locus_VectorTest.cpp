@@ -3002,10 +3002,10 @@ enum linear_operator_t
 };
 
 template<typename ElementType, typename SizeType = size_t>
-class GradientOperator
+class GradientOperatorBase
 {
 public:
-    virtual ~GradientOperator()
+    virtual ~GradientOperatorBase()
     {
     }
 
@@ -3013,7 +3013,7 @@ public:
     virtual void compute(const locus::MultiVector<ElementType, SizeType> & aState,
                          const locus::MultiVector<ElementType, SizeType> & aControl,
                          locus::MultiVector<ElementType, SizeType> & aOutput) = 0;
-    virtual std::shared_ptr<locus::GradientOperator<ElementType, SizeType>> create() const = 0;
+    virtual std::shared_ptr<locus::GradientOperatorBase<ElementType, SizeType>> create() const = 0;
 };
 
 template<typename ElementType, typename SizeType = size_t>
@@ -3032,21 +3032,21 @@ public:
     {
         return (mList.size());
     }
-    void add(const locus::GradientOperator<ElementType, SizeType> & aInput)
+    void add(const locus::GradientOperatorBase<ElementType, SizeType> & aInput)
     {
         mList.push_back(aInput.create());
     }
-    void add(const std::shared_ptr<locus::GradientOperator<ElementType, SizeType>> & aInput)
+    void add(const std::shared_ptr<locus::GradientOperatorBase<ElementType, SizeType>> & aInput)
     {
         mList.push_back(aInput);
     }
-    locus::GradientOperator<ElementType, SizeType> & operator [](const SizeType & aIndex)
+    locus::GradientOperatorBase<ElementType, SizeType> & operator [](const SizeType & aIndex)
     {
         assert(aIndex < mList.size());
         assert(mList[aIndex].get() != nullptr);
         return (mList[aIndex].operator*());
     }
-    const locus::GradientOperator<ElementType, SizeType> & operator [](const SizeType & aIndex) const
+    const locus::GradientOperatorBase<ElementType, SizeType> & operator [](const SizeType & aIndex) const
     {
         assert(aIndex < mList.size());
         assert(mList[aIndex].get() != nullptr);
@@ -3063,12 +3063,12 @@ public:
         {
             assert(mList[tIndex].get() != nullptr);
 
-            const std::shared_ptr<locus::GradientOperator<ElementType, SizeType>> & tGradientOperator = mList[tIndex];
+            const std::shared_ptr<locus::GradientOperatorBase<ElementType, SizeType>> & tGradientOperator = mList[tIndex];
             tOutput->add(tGradientOperator);
         }
         return (tOutput);
     }
-    const std::shared_ptr<locus::GradientOperator<ElementType, SizeType>> & ptr(const SizeType & aIndex) const
+    const std::shared_ptr<locus::GradientOperatorBase<ElementType, SizeType>> & ptr(const SizeType & aIndex) const
     {
         assert(aIndex < mList.size());
         assert(mList[aIndex].get() != nullptr);
@@ -3076,7 +3076,7 @@ public:
     }
 
 private:
-    std::vector<std::shared_ptr<locus::GradientOperator<ElementType, SizeType>>> mList;
+    std::vector<std::shared_ptr<locus::GradientOperatorBase<ElementType, SizeType>>> mList;
 
 private:
     GradientOperatorList(const locus::GradientOperatorList<ElementType, SizeType>&);
@@ -3084,7 +3084,7 @@ private:
 };
 
 template<typename ElementType, typename SizeType = size_t>
-class AnalyticalGradient : public locus::GradientOperator<ElementType, SizeType>
+class AnalyticalGradient : public locus::GradientOperatorBase<ElementType, SizeType>
 {
 public:
     explicit AnalyticalGradient(const locus::Criterion<ElementType, SizeType> & aCriterion) :
@@ -3110,9 +3110,9 @@ public:
         locus::fill(static_cast<ElementType>(0), aOutput);
         mCriterion->gradient(aState, aControl, aOutput);
     }
-    std::shared_ptr<locus::GradientOperator<ElementType, SizeType>> create() const
+    std::shared_ptr<locus::GradientOperatorBase<ElementType, SizeType>> create() const
     {
-        std::shared_ptr<locus::GradientOperator<ElementType, SizeType>> tOutput =
+        std::shared_ptr<locus::GradientOperatorBase<ElementType, SizeType>> tOutput =
                 std::make_shared<locus::AnalyticalGradient<ElementType, SizeType>>(mCriterion);
         return (tOutput);
     }
@@ -3126,10 +3126,10 @@ private:
 };
 
 template<typename ElementType, typename SizeType = size_t>
-class LinearOperator
+class LinearOperatorBase
 {
 public:
-    virtual ~LinearOperator()
+    virtual ~LinearOperatorBase()
     {
     }
 
@@ -3138,7 +3138,7 @@ public:
                        const locus::MultiVector<ElementType, SizeType> & aControl,
                        const locus::MultiVector<ElementType, SizeType> & aVector,
                        locus::MultiVector<ElementType, SizeType> & aOutput) = 0;
-    virtual std::shared_ptr<locus::LinearOperator<ElementType, SizeType>> create() const = 0;
+    virtual std::shared_ptr<locus::LinearOperatorBase<ElementType, SizeType>> create() const = 0;
 };
 
 template<typename ElementType, typename SizeType = size_t>
@@ -3157,21 +3157,21 @@ public:
     {
         return (mList.size());
     }
-    void add(const locus::LinearOperator<ElementType, SizeType> & aInput)
+    void add(const locus::LinearOperatorBase<ElementType, SizeType> & aInput)
     {
         mList.push_back(aInput.create());
     }
-    void add(const std::shared_ptr<locus::LinearOperator<ElementType, SizeType>> & aInput)
+    void add(const std::shared_ptr<locus::LinearOperatorBase<ElementType, SizeType>> & aInput)
     {
         mList.push_back(aInput);
     }
-    locus::LinearOperator<ElementType, SizeType> & operator [](const SizeType & aIndex)
+    locus::LinearOperatorBase<ElementType, SizeType> & operator [](const SizeType & aIndex)
     {
         assert(aIndex < mList.size());
         assert(mList[aIndex].get() != nullptr);
         return (mList[aIndex].operator*());
     }
-    const locus::LinearOperator<ElementType, SizeType> & operator [](const SizeType & aIndex) const
+    const locus::LinearOperatorBase<ElementType, SizeType> & operator [](const SizeType & aIndex) const
     {
         assert(aIndex < mList.size());
         assert(mList[aIndex].get() != nullptr);
@@ -3188,12 +3188,12 @@ public:
         {
             assert(mList[tIndex].get() != nullptr);
 
-            const std::shared_ptr<locus::LinearOperator<ElementType, SizeType>> & tLinearOperator = mList[tIndex];
+            const std::shared_ptr<locus::LinearOperatorBase<ElementType, SizeType>> & tLinearOperator = mList[tIndex];
             tOutput->add(tLinearOperator);
         }
         return (tOutput);
     }
-    const std::shared_ptr<locus::LinearOperator<ElementType, SizeType>> & ptr(const SizeType & aIndex) const
+    const std::shared_ptr<locus::LinearOperatorBase<ElementType, SizeType>> & ptr(const SizeType & aIndex) const
     {
         assert(aIndex < mList.size());
         assert(mList[aIndex].get() != nullptr);
@@ -3201,7 +3201,7 @@ public:
     }
 
 private:
-    std::vector<std::shared_ptr<locus::LinearOperator<ElementType, SizeType>>> mList;
+    std::vector<std::shared_ptr<locus::LinearOperatorBase<ElementType, SizeType>>> mList;
 
 private:
     LinearOperatorList(const locus::LinearOperatorList<ElementType, SizeType>&);
@@ -3209,7 +3209,7 @@ private:
 };
 
 template<typename ElementType, typename SizeType = size_t>
-class AnalyticalHessian : public locus::LinearOperator<ElementType, SizeType>
+class AnalyticalHessian : public locus::LinearOperatorBase<ElementType, SizeType>
 {
 public:
     explicit AnalyticalHessian(const locus::Criterion<ElementType, SizeType> & aCriterion) :
@@ -3236,9 +3236,9 @@ public:
         locus::fill(static_cast<ElementType>(0), aOutput);
         mCriterion->hessian(aState, aControl, aVector, aOutput);
     }
-    std::shared_ptr<locus::LinearOperator<ElementType, SizeType>> create() const
+    std::shared_ptr<locus::LinearOperatorBase<ElementType, SizeType>> create() const
     {
-        std::shared_ptr<locus::LinearOperator<ElementType, SizeType>> tOutput =
+        std::shared_ptr<locus::LinearOperatorBase<ElementType, SizeType>> tOutput =
                 std::make_shared<locus::AnalyticalHessian<ElementType, SizeType>>(mCriterion);
         return (tOutput);
     }
@@ -3252,10 +3252,10 @@ private:
 };
 
 template<typename ElementType, typename SizeType = size_t>
-class Preconditioner
+class PreconditionerBase
 {
 public:
-    virtual ~Preconditioner()
+    virtual ~PreconditionerBase()
     {
     }
 
@@ -3266,11 +3266,11 @@ public:
     virtual void applyInvPreconditioner(const locus::MultiVector<ElementType, SizeType> & aControl,
                                         const locus::MultiVector<ElementType, SizeType> & aVector,
                                         locus::MultiVector<ElementType, SizeType> & aOutput) = 0;
-    virtual std::shared_ptr<locus::Preconditioner<ElementType, SizeType>> create() const = 0;
+    virtual std::shared_ptr<locus::PreconditionerBase<ElementType, SizeType>> create() const = 0;
 };
 
 template<typename ElementType, typename SizeType = size_t>
-class IdentityPreconditioner : public Preconditioner<ElementType, SizeType>
+class IdentityPreconditioner : public PreconditionerBase<ElementType, SizeType>
 {
 public:
     IdentityPreconditioner()
@@ -3297,9 +3297,9 @@ public:
         assert(aVector.getNumVectors() == aOutput.getNumVectors());
         locus::update(1., aVector, 0., aOutput);
     }
-    std::shared_ptr<locus::Preconditioner<ElementType, SizeType>> create() const
+    std::shared_ptr<locus::PreconditionerBase<ElementType, SizeType>> create() const
     {
-        std::shared_ptr<locus::Preconditioner<ElementType, SizeType>> tOutput =
+        std::shared_ptr<locus::PreconditionerBase<ElementType, SizeType>> tOutput =
                 std::make_shared<locus::IdentityPreconditioner<ElementType, SizeType>>();
         return (tOutput);
     }
@@ -3310,10 +3310,10 @@ private:
 };
 
 template<typename ElementType, typename SizeType = size_t>
-class TrustRegionAlgorithmStageMng
+class TrustRegionStageMngBase
 {
 public:
-    virtual ~TrustRegionAlgorithmStageMng()
+    virtual ~TrustRegionStageMngBase()
     {
     }
 
@@ -3334,13 +3334,12 @@ public:
 };
 
 template<typename ElementType, typename SizeType = size_t>
-class AugmentedLagrangianStageMng : public locus::TrustRegionAlgorithmStageMng<ElementType, SizeType>
+class AugmentedLagrangianStageMng : public locus::TrustRegionStageMngBase<ElementType, SizeType>
 {
 public:
     AugmentedLagrangianStageMng(const locus::DataFactory<ElementType, SizeType> & aDataFactory,
                                 const locus::Criterion<ElementType, SizeType> & aObjective,
                                 const locus::CriterionList<ElementType, SizeType> & aConstraints) :
-            mIsPenaltyBelowTolerance(false),
             mNumObjectiveFunctionEvaluations(0),
             mNumObjectiveGradientEvaluations(0),
             mNumObjectiveHessianEvaluations(0),
@@ -3373,10 +3372,6 @@ public:
     {
     }
 
-    bool isPenaltyBelowTolerance() const
-    {
-        return (mIsPenaltyBelowTolerance);
-    }
     SizeType getNumObjectiveFunctionEvaluations() const
     {
         return (mNumObjectiveFunctionEvaluations);
@@ -3427,7 +3422,7 @@ public:
         locus::update(1., *mCurrentConstraintValues, 0., aInput);
     }
 
-    void setObjectiveGradient(const locus::GradientOperator<ElementType, SizeType> & aInput)
+    void setObjectiveGradient(const locus::GradientOperatorBase<ElementType, SizeType> & aInput)
     {
         mObjectiveGradient = aInput.create();
     }
@@ -3435,7 +3430,7 @@ public:
     {
         mConstraintGradients = aInput.create();
     }
-    void setObjectiveHessian(const locus::LinearOperator<ElementType, SizeType> & aInput)
+    void setObjectiveHessian(const locus::LinearOperatorBase<ElementType, SizeType> & aInput)
     {
         mObjectiveHessian = aInput.create();
     }
@@ -3443,7 +3438,7 @@ public:
     {
         mConstraintHessians = aInput.create();
     }
-    void setPreconditioner(const locus::Preconditioner<ElementType, SizeType> & aInput)
+    void setPreconditioner(const locus::PreconditionerBase<ElementType, SizeType> & aInput)
     {
         mPreconditioner = aInput.create();
     }
@@ -3603,8 +3598,9 @@ public:
             }
         }
     }
-    void updateLagrangeMultipliers()
+    bool updateLagrangeMultipliers()
     {
+        bool tIsPenaltyBelowTolerance = false;
         ElementType tPreviousPenalty = mCurrentLagrangeMultipliersPenalty;
         mCurrentLagrangeMultipliersPenalty = mPenaltyScaleFactor * mCurrentLagrangeMultipliersPenalty;
         if(mCurrentLagrangeMultipliersPenalty >= mMinPenaltyValue)
@@ -3624,8 +3620,10 @@ public:
         }
         else
         {
-            mIsPenaltyBelowTolerance = true;
+            tIsPenaltyBelowTolerance = true;
         }
+
+        return (tIsPenaltyBelowTolerance);
     }
     void updateCurrentConstraintValues()
     {
@@ -3675,8 +3673,6 @@ private:
     }
 
 private:
-    bool mIsPenaltyBelowTolerance;
-
     SizeType mNumObjectiveFunctionEvaluations;
     SizeType mNumObjectiveGradientEvaluations;
     SizeType mNumObjectiveHessianEvaluations;
@@ -3702,12 +3698,12 @@ private:
     std::shared_ptr<locus::Criterion<ElementType, SizeType>> mObjective;
     std::shared_ptr<locus::CriterionList<ElementType, SizeType>> mConstraints;
 
-    std::shared_ptr<locus::Preconditioner<ElementType, SizeType>> mPreconditioner;
+    std::shared_ptr<locus::PreconditionerBase<ElementType, SizeType>> mPreconditioner;
 
-    std::shared_ptr<locus::GradientOperator<ElementType, SizeType>> mObjectiveGradient;
+    std::shared_ptr<locus::GradientOperatorBase<ElementType, SizeType>> mObjectiveGradient;
     std::shared_ptr<locus::GradientOperatorList<ElementType, SizeType>> mConstraintGradients;
 
-    std::shared_ptr<locus::LinearOperator<ElementType, SizeType>> mObjectiveHessian;
+    std::shared_ptr<locus::LinearOperatorBase<ElementType, SizeType>> mObjectiveHessian;
     std::shared_ptr<locus::LinearOperatorList<ElementType, SizeType>> mConstraintHessians;
 
     std::shared_ptr<locus::ReductionOperations<ElementType, SizeType>> mDualReductionOperations;
@@ -3718,10 +3714,10 @@ private:
 };
 
 template<typename ElementType, typename SizeType = size_t>
-class SteihaugTointSolver
+class SteihaugTointSolverBase
 {
 public:
-    SteihaugTointSolver() :
+    SteihaugTointSolverBase() :
             mMaxNumIterations(200),
             mNumIterationsDone(0),
             mTolerance(1e-8),
@@ -3732,7 +3728,7 @@ public:
             mStoppingCriterion(locus::MAX_SOLVER_ITERATIONS)
     {
     }
-    virtual ~SteihaugTointSolver()
+    virtual ~SteihaugTointSolverBase()
     {
     }
 
@@ -3883,7 +3879,7 @@ public:
         return (tToleranceCriterionSatisfied);
     }
 
-    virtual void solve(locus::TrustRegionAlgorithmStageMng<ElementType, SizeType> & aStageMng,
+    virtual void solve(locus::TrustRegionStageMngBase<ElementType, SizeType> & aStageMng,
                        locus::TrustRegionAlgorithmDataMng<ElementType, SizeType> & aDataMng) = 0;
 
 private:
@@ -3899,16 +3895,16 @@ private:
     locus::solver_stop_criterion_t mStoppingCriterion;
 
 private:
-    SteihaugTointSolver(const locus::SteihaugTointSolver<ElementType, SizeType> & aRhs);
-    locus::SteihaugTointSolver<ElementType, SizeType> & operator=(const locus::SteihaugTointSolver<ElementType, SizeType> & aRhs);
+    SteihaugTointSolverBase(const locus::SteihaugTointSolverBase<ElementType, SizeType> & aRhs);
+    locus::SteihaugTointSolverBase<ElementType, SizeType> & operator=(const locus::SteihaugTointSolverBase<ElementType, SizeType> & aRhs);
 };
 
 template<typename ElementType, typename SizeType = size_t>
-class ProjectedSteihaugTointPcg : public locus::SteihaugTointSolver<ElementType, SizeType>
+class ProjectedSteihaugTointPcg : public locus::SteihaugTointSolverBase<ElementType, SizeType>
 {
 public:
     explicit ProjectedSteihaugTointPcg(const locus::DataFactory<ElementType, SizeType> & aDataFactory) :
-            locus::SteihaugTointSolver<ElementType, SizeType>(),
+            locus::SteihaugTointSolverBase<ElementType, SizeType>(),
             mResidual(aDataFactory.control().create()),
             mNewtonStep(aDataFactory.control().create()),
             mCauchyStep(aDataFactory.control().create()),
@@ -3926,7 +3922,7 @@ public:
     {
     }
 
-    void solve(locus::TrustRegionAlgorithmStageMng<ElementType, SizeType> & aStageMng,
+    void solve(locus::TrustRegionStageMngBase<ElementType, SizeType> & aStageMng,
                locus::TrustRegionAlgorithmDataMng<ElementType, SizeType> & aDataMng)
     {
         SizeType tNumVectors = aDataMng.getNumControlVectors();
@@ -3961,7 +3957,7 @@ public:
 
 private:
     void iterate(const locus::TrustRegionAlgorithmDataMng<ElementType, SizeType> & aDataMng,
-                 locus::TrustRegionAlgorithmStageMng<ElementType, SizeType> & aStageMng)
+                 locus::TrustRegionStageMngBase<ElementType, SizeType> & aStageMng)
     {
         ElementType tPreviousTau = 0;
         ElementType tNormResidual = this->getNormResidual();
@@ -4021,7 +4017,7 @@ private:
         this->setNumIterationsDone(tIteration);
     }
     ElementType step(const locus::TrustRegionAlgorithmDataMng<ElementType, SizeType> & aDataMng,
-                     locus::TrustRegionAlgorithmStageMng<ElementType, SizeType> & aStageMng)
+                     locus::TrustRegionStageMngBase<ElementType, SizeType> & aStageMng)
     {
         this->applyVectorToPreconditioner(aDataMng, *mNewtonStep, aStageMng, *mPrecTimesNewtonStep);
         this->applyVectorToPreconditioner(aDataMng, *mConjugateDirection, aStageMng, *mPrecTimesConjugateDirection);
@@ -4035,7 +4031,7 @@ private:
     }
     void applyVectorToHessian(const locus::TrustRegionAlgorithmDataMng<ElementType, SizeType> & aDataMng,
                               const locus::MultiVector<ElementType, SizeType> & aVector,
-                              locus::TrustRegionAlgorithmStageMng<ElementType, SizeType> & aStageMng,
+                              locus::TrustRegionStageMngBase<ElementType, SizeType> & aStageMng,
                               locus::MultiVector<ElementType, SizeType> & aOutput)
     {
         assert(aVector.getNumVectors() > static_cast<SizeType>(0));
@@ -4068,7 +4064,7 @@ private:
     }
     void applyVectorToPreconditioner(const locus::TrustRegionAlgorithmDataMng<ElementType, SizeType> & aDataMng,
                                      const locus::MultiVector<ElementType, SizeType> & aVector,
-                                     locus::TrustRegionAlgorithmStageMng<ElementType, SizeType> & aStageMng,
+                                     locus::TrustRegionStageMngBase<ElementType, SizeType> & aStageMng,
                                      locus::MultiVector<ElementType, SizeType> & aOutput)
     {
         assert(aVector.getNumVectors() > static_cast<SizeType>(0));
@@ -4101,7 +4097,7 @@ private:
     }
     void applyVectorToInvPreconditioner(const locus::TrustRegionAlgorithmDataMng<ElementType, SizeType> & aDataMng,
                                         const locus::MultiVector<ElementType, SizeType> & aVector,
-                                        locus::TrustRegionAlgorithmStageMng<ElementType, SizeType> & aStageMng,
+                                        locus::TrustRegionStageMngBase<ElementType, SizeType> & aStageMng,
                                         locus::MultiVector<ElementType, SizeType> & aOutput)
     {
         assert(aVector.getNumVectors() > static_cast<SizeType>(0));
@@ -4166,8 +4162,8 @@ public:
             mTrustRegionExpansion(2.),
             mTrustRegionContraction(0.5),
             mMinCosineAngleTolerance(1e-2),
-            mGradientInexactnessTolerance(0),
-            mObjectiveInexactnessTolerance(0),
+            mGradientInexactnessTolerance(std::numeric_limits<ElementType>::max()),
+            mObjectiveInexactnessTolerance(std::numeric_limits<ElementType>::max()),
             mActualOverPredictedReduction(0),
             mActualOverPredictedReductionMidBound(0.25),
             mActualOverPredictedReductionLowerBound(0.1),
@@ -4356,8 +4352,8 @@ public:
     }
 
     virtual bool solveSubProblem(locus::TrustRegionAlgorithmDataMng<ElementType, SizeType> & aDataMng,
-                                 locus::TrustRegionAlgorithmStageMng<ElementType, SizeType> & aStageMng,
-                                 locus::SteihaugTointSolver<ElementType, SizeType> & aSolver) = 0;
+                                 locus::TrustRegionStageMngBase<ElementType, SizeType> & aStageMng,
+                                 locus::SteihaugTointSolverBase<ElementType, SizeType> & aSolver) = 0;
 
 private:
     ElementType mActualReduction;
@@ -4452,12 +4448,12 @@ public:
     //! Returns control values at the mid-point
     const locus::MultiVector<ElementType, SizeType> & getMidControl() const
     {
-        return (mMidControls);
+        return (mMidControls.operator*());
     }
 
     bool solveSubProblem(locus::TrustRegionAlgorithmDataMng<ElementType, SizeType> & aDataMng,
-                         locus::TrustRegionAlgorithmStageMng<ElementType, SizeType> & aStageMng,
-                         locus::SteihaugTointSolver<ElementType, SizeType> & aSolver)
+                         locus::TrustRegionStageMngBase<ElementType, SizeType> & aStageMng,
+                         locus::SteihaugTointSolverBase<ElementType, SizeType> & aSolver)
     {
         mTrustRegionRadiusFlag = false;
         bool tTrialControlAccepted = true;
@@ -4517,7 +4513,7 @@ public:
 
 private:
     void setSolverTolerance(const locus::TrustRegionAlgorithmDataMng<ElementType, SizeType> & aDataMng,
-                            locus::SteihaugTointSolver<ElementType, SizeType> & aSolver)
+                            locus::SteihaugTointSolverBase<ElementType, SizeType> & aSolver)
     {
         ElementType tCummulativeDotProduct = 0;
         const SizeType tNumVectors = aDataMng.getNumControlVectors();
@@ -4571,7 +4567,7 @@ private:
 
         return (tPredictedReduction);
     }
-    bool updateTrustRegionRadius(locus::TrustRegionAlgorithmDataMng<ElementType, SizeType> & aDataMng)
+    bool updateTrustRegionRadius(const locus::TrustRegionAlgorithmDataMng<ElementType, SizeType> & aDataMng)
     {
         ElementType tActualReduction = this->getActualReduction();
         ElementType tCurrentTrustRegionRadius = this->getTrustRegionRadius();
@@ -4607,7 +4603,7 @@ private:
         else if(tActualOverPredReduction > tActualOverPredUpperBound && mTrustRegionRadiusFlag == true)
         {
             tCurrentTrustRegionRadius =
-                    static_cast<ElementType>(2.) * this->getTrustRegionExpansion() * tCurrentTrustRegionRadius;
+                    static_cast<ElementType>(2) * this->getTrustRegionExpansion() * tCurrentTrustRegionRadius;
             tStopTrustRegionSubProblem = true;
         }
         else
@@ -4622,7 +4618,7 @@ private:
     }
 
     void applyProjectedTrialStepToHessian(const locus::TrustRegionAlgorithmDataMng<ElementType, SizeType> & aDataMng,
-                                          locus::TrustRegionAlgorithmStageMng<ElementType, SizeType> & aStageMng)
+                                          locus::TrustRegionStageMngBase<ElementType, SizeType> & aStageMng)
     {
         // Compute active projected trial step
         locus::fill(static_cast<ElementType>(0), *mMatrixTimesVector);
@@ -4757,10 +4753,10 @@ private:
 };
 
 template<typename ElementType, typename SizeType = size_t>
-class KelleySachsTrustRegionBase
+class KelleySachsBase
 {
 public:
-    explicit KelleySachsTrustRegionBase(const locus::DataFactory<ElementType, SizeType> & aDataFactory) :
+    explicit KelleySachsBase(const locus::DataFactory<ElementType, SizeType> & aDataFactory) :
             mMaxNumUpdates(10),
             mMaxNumOuterIterations(100),
             mNumOuterIterationsDone(0),
@@ -4774,7 +4770,7 @@ public:
             mControlWorkVector(aDataFactory.control().create())
     {
     }
-    virtual ~KelleySachsTrustRegionBase()
+    virtual ~KelleySachsBase()
     {
     }
 
@@ -4858,38 +4854,10 @@ public:
         return (mStoppingCriterion);
     }
 
-    void computeTrialControl(const ElementType & aLambda,
-                             const locus::MultiVector<ElementType, SizeType> & aLowerBound,
-                             const locus::MultiVector<ElementType, SizeType> & aUpperBound,
-                             const locus::MultiVector<ElementType, SizeType> & aMidControl,
-                             const locus::MultiVector<ElementType, SizeType> & aMidGradient)
-    {
-        assert(aMidControl.getNumVectors() == aLowerBound.getNumVectors());
-        assert(aUpperBound.getNumVectors() == aLowerBound.getNumVectors());
-        assert(aMidControl.getNumVectors() == aMidGradient.getNumVectors());
-
-        const SizeType tNumVectors = aMidControl.getNumVectors();
-        for(SizeType tVectorIndex = 0; tVectorIndex < tNumVectors; tVectorIndex++)
-        {
-            const locus::Vector<ElementType, SizeType> & tMyMidControl = aMidControl[tVectorIndex];
-            const locus::Vector<ElementType, SizeType> & tMyLowerBound = aLowerBound[tVectorIndex];
-            const locus::Vector<ElementType, SizeType> & tMyUpperBound = aUpperBound[tVectorIndex];
-            const locus::Vector<ElementType, SizeType> & tMyMidGradient = aMidGradient[tVectorIndex];
-
-            assert(tMyMidControl.size() == tMyLowerBound.size());
-            assert(tMyUpperBound.size() == tMyLowerBound.size());
-            assert(tMyMidControl.size() == tMyMidGradient.size());
-
-            mControlWorkVector->update(1., tMyMidControl, 0.);
-            mControlWorkVector->update(aLambda, tMyMidGradient, 1.);
-            locus::bounds::project(aLowerBound, aUpperBound, *mControlWorkVector);
-        }
-    }
-
     bool updateControl(const locus::MultiVector<ElementType, SizeType> & aMidGradient,
                        locus::KelleySachsStepMng<ElementType, SizeType> & aStepMng,
                        locus::TrustRegionAlgorithmDataMng<ElementType, SizeType> & aDataMng,
-                       locus::TrustRegionAlgorithmStageMng<ElementType, SizeType> & aStageMng)
+                       locus::TrustRegionStageMngBase<ElementType, SizeType> & aStageMng)
     {
         bool tControlUpdated = false;
 
@@ -4909,9 +4877,13 @@ public:
         {
             // Compute trial point based on the mid gradient (i.e. mid steepest descent)
             ElementType tLambda = -tXi / tAlpha;
-            this->computeTrialControl(tLambda, tLowerBounds, tUpperBounds, tMidControl, aMidGradient);
+            locus::update(static_cast<ElementType>(1), tMidControl, static_cast<ElementType>(0), *mControlWorkVector);
+            locus::update(tLambda, aMidGradient, static_cast<ElementType>(1), *mControlWorkVector);
+            locus::bounds::project(tLowerBounds, tUpperBounds, *mControlWorkVector);
+
             // Compute trial objective function
-            ElementType tTrialObjectiveValue = aStageMng.evaluateObjective(*mControlWorkVector);
+            ElementType tTolerance = aStepMng.getObjectiveInexactnessTolerance();
+            ElementType tTrialObjectiveValue = aStageMng.evaluateObjective(*mControlWorkVector, tTolerance);
             // Compute actual reduction
             ElementType tTrialActualReduction = tTrialObjectiveValue - tMidObjectiveValue;
             // Check convergence
@@ -4942,37 +4914,6 @@ public:
         }
 
         return (tControlUpdated);
-    }
-
-    void updateDataManager(const locus::MultiVector<ElementType, SizeType> & aMidGradient,
-                           locus::KelleySachsStepMng<ElementType, SizeType> & aStepMng,
-                           locus::TrustRegionAlgorithmDataMng<ElementType, SizeType> & aDataMng,
-                           locus::TrustRegionAlgorithmStageMng<ElementType, SizeType> & aStageMng)
-    {
-        // Store current objective function value, controls, and gradients
-        aDataMng.storeCurrentStageData();
-
-        if(this->updateControl(aMidGradient, aStepMng, aDataMng, aStageMng) == true)
-        {
-            // update new gradient since primal was successfully updated;
-            // else, keep mid gradient and thus mid primal
-            const locus::MultiVector<ElementType, SizeType> & tCurrentControl = aDataMng.getCurrentControl();
-            locus::fill(0., *mControlWorkVector);
-            aStageMng.computeGradient(tCurrentControl, *mControlWorkVector);
-            aDataMng.setCurrentGradient(*mControlWorkVector);
-        }
-        else
-        {
-            aDataMng.setCurrentGradient(aMidGradient);
-        }
-
-        aDataMng.computeStagnationMeasure();
-        aDataMng.computeProjectedGradientNorm();
-        // compute gradient inexactness bound
-        ElementType tNormProjectedGradient = aDataMng.getNormProjectedGradient();
-        aStepMng.updateGradientInexactnessTolerance(tNormProjectedGradient);
-        ElementType tGradientInexactnessTolerance = aDataMng.getGradientInexactnessTolerance();
-        aDataMng.setGradientInexactnessTolerance(tGradientInexactnessTolerance);
     }
     bool checkStoppingCriteria(const locus::KelleySachsStepMng<ElementType, SizeType> & aStep,
                                const locus::TrustRegionAlgorithmDataMng<ElementType, SizeType> & aDataMng)
@@ -5044,29 +4985,29 @@ private:
     std::shared_ptr<locus::MultiVector<ElementType,SizeType>> mControlWorkVector;
 
 private:
-    KelleySachsTrustRegionBase(const locus::KelleySachsTrustRegionBase<ElementType, SizeType> & aRhs);
-    locus::KelleySachsTrustRegionBase<ElementType, SizeType> & operator=(const locus::KelleySachsTrustRegionBase<ElementType, SizeType> & aRhs);
+    KelleySachsBase(const locus::KelleySachsBase<ElementType, SizeType> & aRhs);
+    locus::KelleySachsBase<ElementType, SizeType> & operator=(const locus::KelleySachsBase<ElementType, SizeType> & aRhs);
 };
 
 template<typename ElementType, typename SizeType = size_t>
-class TrustRegionAugmentedLagrangian : public locus::KelleySachsTrustRegionBase<ElementType, SizeType>
+class KelleySachsAugmentedLagrangian : public locus::KelleySachsBase<ElementType, SizeType>
 {
 public:
-    TrustRegionAugmentedLagrangian(const std::shared_ptr<locus::DataFactory<ElementType, SizeType>> & aData,
+    KelleySachsAugmentedLagrangian(const std::shared_ptr<locus::DataFactory<ElementType, SizeType>> & aDataFactory,
                                    const std::shared_ptr<locus::TrustRegionAlgorithmDataMng<ElementType, SizeType>> & aDataMng,
                                    const std::shared_ptr<locus::AugmentedLagrangianStageMng<ElementType, SizeType>> & aStageMng) :
-            locus::KelleySachsTrustRegionBase<ElementType, SizeType>(*aData),
+            locus::KelleySachsBase<ElementType, SizeType>(*aDataFactory),
             mGammaConstant(1e-3),
             mOptimalityTolerance(1e-3),
             mFeasibilityTolerance(1e-3),
-            mGradient(aData->control().create()),
-            mStepMng(std::make_shared<locus::KelleySachsStepMng<ElementType, SizeType>>(*aData)),
-            mSolver(std::make_shared<locus::ProjectedSteihaugTointPcg<ElementType, SizeType>>(*aData)),
+            mGradient(aDataFactory->control().create()),
+            mStepMng(std::make_shared<locus::KelleySachsStepMng<ElementType, SizeType>>(*aDataFactory)),
+            mSolver(std::make_shared<locus::ProjectedSteihaugTointPcg<ElementType, SizeType>>(*aDataFactory)),
             mDataMng(aDataMng),
             mStageMng(aStageMng)
     {
     }
-    virtual ~TrustRegionAugmentedLagrangian()
+    virtual ~KelleySachsAugmentedLagrangian()
     {
     }
 
@@ -5083,9 +5024,10 @@ public:
     void solve()
     {
         const locus::MultiVector<ElementType, SizeType> & tCurrentControl = mDataMng->getCurrentControl();
-        ElementType tCurrentObjectiveFunctionValue = mStageMng->evaluateObjective(tCurrentControl);
+        ElementType tTolerance = mStepMng->getObjectiveInexactnessTolerance();
+        ElementType tCurrentObjectiveFunctionValue = mStageMng->evaluateObjective(tCurrentControl, tTolerance);
         mDataMng->setCurrentObjectiveFunctionValue(tCurrentObjectiveFunctionValue);
-        mStageMng->updateConstraintValues();
+        mStageMng->updateCurrentConstraintValues();
 
         mStageMng->computeGradient(tCurrentControl, *mGradient);
         mDataMng->setCurrentGradient(*mGradient);
@@ -5129,7 +5071,7 @@ public:
         mDataMng->storeCurrentStageData();
 
         // Update inequality constraint values at mid point
-        mStageMng->updateConstraintValues();
+        mStageMng->updateCurrentConstraintValues();
         // Compute gradient at new midpoint
         const locus::MultiVector<ElementType, SizeType> & tMidControl = mStepMng->getMidControl();
         mStageMng->computeGradient(tMidControl, *mGradient);
@@ -5138,7 +5080,7 @@ public:
         {
             // Update new gradient and inequality constraint values since control
             // was successfully updated; else, keep mid gradient and thus mid control.
-            mStageMng->updateConstraintValues();
+            mStageMng->updateCurrentConstraintValues();
             const locus::MultiVector<ElementType, SizeType> & tCurrentControl = mDataMng->getCurrentControl();
             mStageMng->computeGradient(tCurrentControl, *mGradient);
             mDataMng->setCurrentGradient(*mGradient);
@@ -5163,14 +5105,13 @@ public:
         // compute gradient inexactness bound
         ElementType tNormProjectedGradient = mDataMng->getNormProjectedGradient();
         mStepMng->updateGradientInexactnessTolerance(tNormProjectedGradient);
-        ElementType tGradientInexactnessTolerance = mDataMng->getGradientInexactnessTolerance();
-        mDataMng->setGradientInexactnessTolerance(tGradientInexactnessTolerance);
     }
 
     bool checkStoppingCriteria()
     {
         bool tStop = false;
-        ElementType tTolerance = mGammaConstant * mStageMng->getLagrangeMultipliersPenalty();
+        ElementType tCurrentLagrangeMultipliersPenalty = mStageMng->getCurrentLagrangeMultipliersPenalty();
+        ElementType tTolerance = mGammaConstant * tCurrentLagrangeMultipliersPenalty;
         ElementType tNormAugmentedLagrangianGradient = mDataMng->getNormProjectedGradient();
         if(tNormAugmentedLagrangianGradient <= tTolerance)
         {
@@ -5255,7 +5196,7 @@ public:
     {
         const ElementType tFeasibilityMeasure = mStageMng->getFeasibilityMeasure();
         const ElementType tStationarityMeasure = mDataMng->getStationarityMeasure();
-        const ElementType tOptimalityMeasure = mDataMng->getNormObjectiveFunctionGradient();
+        const ElementType tOptimalityMeasure = mStageMng->getNormObjectiveFunctionGradient();
         const ElementType tNormProjectedAugmentedLagrangianGradient = mDataMng->getNormProjectedGradient();
 
         bool tNaN_ValueDetected = false;
@@ -5296,8 +5237,8 @@ private:
     std::shared_ptr<locus::AugmentedLagrangianStageMng<ElementType,SizeType>> mStageMng;
 
 private:
-    TrustRegionAugmentedLagrangian(const locus::TrustRegionAugmentedLagrangian<ElementType, SizeType> & aRhs);
-    locus::TrustRegionAugmentedLagrangian<ElementType, SizeType> & operator=(const locus::TrustRegionAugmentedLagrangian<ElementType, SizeType> & aRhs);
+    KelleySachsAugmentedLagrangian(const locus::KelleySachsAugmentedLagrangian<ElementType, SizeType> & aRhs);
+    locus::KelleySachsAugmentedLagrangian<ElementType, SizeType> & operator=(const locus::KelleySachsAugmentedLagrangian<ElementType, SizeType> & aRhs);
 };
 
 template<typename ElementType, typename SizeType = size_t>
@@ -6988,7 +6929,7 @@ TEST(LocusTest, Preconditioner)
     LocusTest::checkMultiVectorData(tOutput, tVector);
 
     // TEST CREATE FUNCTION
-    std::shared_ptr<locus::Preconditioner<double>> tCopy = tPreconditioner.create();
+    std::shared_ptr<locus::PreconditionerBase<double>> tCopy = tPreconditioner.create();
     tCopy->applyInvPreconditioner(tControl, tVector, tOutput);
     LocusTest::checkMultiVectorData(tOutput, tVector);
     locus::fill(0., tOutput);
@@ -7290,7 +7231,6 @@ TEST(LocusTest, AugmentedLagrangianStageMng)
 
     // ********* AUGMENTED LAGRANGIAN STAGE MANAGER *********
     locus::AugmentedLagrangianStageMng<double> tStageMng(tDataFactory, tCircle, tList);
-    EXPECT_FALSE(tStageMng.isPenaltyBelowTolerance());
 
     // ********* TEST AUGMENTED LAGRANGIAN STAGE MANAGER FUNCTIONALITIES *********
     size_t tIntegerGold = 0;
@@ -7326,7 +7266,7 @@ TEST(LocusTest, AugmentedLagrangianStageMng)
     // ********* TEST AUGMENTED LAGRANGIAN STAGE MANAGER - UPDATE LAGRANGE MULTIPLIERS *********
     tScalarGold = 1.;
     EXPECT_NEAR(tScalarGold, tStageMng.getCurrentLagrangeMultipliersPenalty(), tTolerance);
-    tStageMng.updateLagrangeMultipliers();
+    EXPECT_FALSE(tStageMng.updateLagrangeMultipliers());
     locus::StandardMultiVector<double> tLagrangeMultipliers(tNumVectors, tNumDuals);
     tStageMng.getLagrangeMultipliers(tLagrangeMultipliers);
     locus::StandardMultiVector<double> tLagrangeMultipliersGold(tNumVectors, tNumDuals);
@@ -7348,7 +7288,7 @@ TEST(LocusTest, AugmentedLagrangianStageMng)
 
     tScalarGold = 0.2;
     EXPECT_NEAR(tScalarGold, tStageMng.getCurrentLagrangeMultipliersPenalty(), tTolerance);
-    tStageMng.updateLagrangeMultipliers();
+    EXPECT_FALSE(tStageMng.updateLagrangeMultipliers());
     tStageMng.getLagrangeMultipliers(tLagrangeMultipliers);
     tScalarGold = 0.04;
     EXPECT_NEAR(tScalarGold, tStageMng.getCurrentLagrangeMultipliersPenalty(), tTolerance);
@@ -7413,7 +7353,7 @@ TEST(LocusTest, AugmentedLagrangianStageMng)
     LocusTest::checkMultiVectorData(tOutput, tGoldMultiVector);
 }
 
-TEST(LocusTest, SteihaugTointSolver)
+TEST(LocusTest, SteihaugTointSolverBase)
 {
     // ********* ALLOCATE DATA FACTORY *********
     locus::DataFactory<double> tDataFactory;
@@ -7690,6 +7630,8 @@ TEST(LocusTest, TrustRegionStepMngBase)
     tStepMng.setGradientInexactnessToleranceConstant(tScalarGoldValue);
     EXPECT_NEAR(tScalarGoldValue, tStepMng.getGradientInexactnessToleranceConstant(), tTolerance);
     // TEST INEXACTNESS TOLERANCE: SELECT CURRENT TRUST REGION RADIUS
+    tScalarGoldValue = std::numeric_limits<double>::max();
+    EXPECT_NEAR(tScalarGoldValue, tStepMng.getGradientInexactnessTolerance(), tTolerance);
     tScalarGoldValue = 1e3;
     tStepMng.updateGradientInexactnessTolerance(tScalarGoldValue);
     tScalarGoldValue = 200;
@@ -7707,6 +7649,8 @@ TEST(LocusTest, TrustRegionStepMngBase)
     tStepMng.setObjectiveInexactnessToleranceConstant(tScalarGoldValue);
     EXPECT_NEAR(tScalarGoldValue, tStepMng.getObjectiveInexactnessToleranceConstant(), tTolerance);
     // TEST INEXACTNESS TOLERANCE
+    tScalarGoldValue = std::numeric_limits<double>::max();
+    EXPECT_NEAR(tScalarGoldValue, tStepMng.getObjectiveInexactnessTolerance(), tTolerance);
     tScalarGoldValue = 100;
     tStepMng.updateObjectiveInexactnessTolerance(tScalarGoldValue);
     tScalarGoldValue = 30;
@@ -7824,6 +7768,8 @@ TEST(LocusTest, KelleySachsStepMng)
     double tNormProjectedGradientGold = 6.670832032063167;
     EXPECT_NEAR(tNormProjectedGradientGold, tDataMng.getNormProjectedGradient(), tTolerance);
     tDataMng.computeStationarityMeasure();
+    double tStationarityMeasureGold = 6.670832032063167;
+    EXPECT_NEAR(tStationarityMeasureGold, tDataMng.getStationarityMeasure(), tTolerance);
     tVector(0, 0) = -1.5;
     tVector(0, 1) = -6.5;
     LocusTest::checkMultiVectorData(tDataMng.getCurrentGradient(), tVector);
@@ -7847,6 +7793,85 @@ TEST(LocusTest, KelleySachsStepMng)
     tScalarGoldValue = 0.11;
     tStepMng.setEpsilonConstant(tScalarGoldValue);
     EXPECT_NEAR(tScalarGoldValue, tStepMng.getEpsilonConstant(), tTolerance);
+
+    // ********* TEST SUBPROBLEM SOLVE *********
+    tScalarValue = 0.01;
+    tStepMng.setEtaConstant(tScalarValue);
+    EXPECT_TRUE(tStepMng.solveSubProblem(tDataMng, tStageMng, tSolver));
+
+    // VERIFY CURRENT SUBPROBLEM SOLVE RESULTS
+    size_t tIntegerGoldValue = 4;
+    EXPECT_EQ(tIntegerGoldValue, tStepMng.getNumTrustRegionSubProblemItrDone());
+    tScalarGoldValue = 0.768899024566474;
+    EXPECT_NEAR(tScalarGoldValue, tStepMng.getActualOverPredictedReduction(), tTolerance);
+    tScalarGoldValue = 1.757354736328125;
+    EXPECT_NEAR(tScalarGoldValue, tStepMng.getMidObejectiveFunctionValue(), tTolerance);
+    tScalarGoldValue = 3.335416016031584;
+    EXPECT_NEAR(tScalarGoldValue, tStepMng.getTrustRegionRadius(), tTolerance);
+    tScalarGoldValue = -3.117645263671875;
+    EXPECT_NEAR(tScalarGoldValue, tStepMng.getActualReduction(), tTolerance);
+    tScalarGoldValue = -4.0546875;
+    EXPECT_NEAR(tScalarGoldValue, tStepMng.getPredictedReduction(), tTolerance);
+    tScalarGoldValue = 0.066708320320632;
+    EXPECT_NEAR(tScalarGoldValue, tSolver.getSolverTolerance(), tTolerance);
+    const locus::MultiVector<double> & tMidControl = tStepMng.getMidControl();
+    locus::StandardMultiVector<double> tVectorGold(tNumVectors, tNumControls);
+    tVectorGold(0, 0) = 0.6875;
+    tVectorGold(0, 1) = 1.3125;
+    LocusTest::checkMultiVectorData(tMidControl, tVectorGold);
+    const locus::MultiVector<double> & tTrialStep = tDataMng.getTrialStep();
+    tVectorGold(0, 0) = 0.1875;
+    tVectorGold(0, 1) = 0.8125;
+    LocusTest::checkMultiVectorData(tTrialStep, tVectorGold);
+}
+
+TEST(LocusTest, KelleySachsBase)
+{
+    // ********* ALLOCATE DATA FACTORY *********
+    std::shared_ptr<locus::DataFactory<double>> tDataFactory =
+            std::make_shared<locus::DataFactory<double>>();
+    const size_t tNumDuals = 1;
+    const size_t tNumControls = 2;
+    tDataFactory->allocateDual(tNumDuals);
+    tDataFactory->allocateControl(tNumControls);
+
+    // ********* ALLOCATE TRUST REGION ALGORITHM DATA MANAGER *********
+    std::shared_ptr<locus::TrustRegionAlgorithmDataMng<double>> tDataMng =
+            std::make_shared<locus::TrustRegionAlgorithmDataMng<double>>(*tDataFactory);
+    double tScalarValue = 0.5;
+    tDataMng->setInitialGuess(tScalarValue);
+    tScalarValue = 0;
+    tDataMng->setControlLowerBounds(tScalarValue);
+    tScalarValue = 100;
+    tDataMng->setControlUpperBounds(tScalarValue);
+
+    // ********* ALLOCATE OBJECTIVE AND CONSTRAINT CRITERIA *********
+    locus::Circle<double> tCircle;
+    locus::Radius<double> tRadius;
+    locus::CriterionList<double> tConstraintList;
+    tConstraintList.add(tRadius);
+
+    // ********* AUGMENTED LAGRANGIAN STAGE MANAGER *********
+    std::shared_ptr<locus::AugmentedLagrangianStageMng<double>> tStageMng =
+            std::make_shared<locus::AugmentedLagrangianStageMng<double>>(*tDataFactory, tCircle, tConstraintList);
+
+    // ********* SET FIRST AND SECOND ORDER DERIVATIVE COMPUTATION PROCEDURES *********
+    locus::AnalyticalGradient<double> tObjectiveGradient(tCircle);
+    tStageMng->setObjectiveGradient(tObjectiveGradient);
+    locus::AnalyticalGradient<double> tConstraintGradient(tRadius);
+    locus::GradientOperatorList<double> tGradientList;
+    tGradientList.add(tConstraintGradient);
+    tStageMng->setConstraintGradients(tGradientList);
+
+    locus::AnalyticalHessian<double> tObjectiveHessian(tCircle);
+    tStageMng->setObjectiveHessian(tObjectiveHessian);
+    locus::AnalyticalHessian<double> tConstraintHessian(tRadius);
+    locus::LinearOperatorList<double> tHessianList;
+    tHessianList.add(tConstraintHessian);
+    tStageMng->setConstraintHessians(tHessianList);
+
+    // ********* ALLOCATE KELLEY-SACHS BASE *********
+    locus::KelleySachsAugmentedLagrangian<double> tAlgorithm(tDataFactory, tDataMng, tStageMng);
 }
 
 }
