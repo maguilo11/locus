@@ -3347,7 +3347,6 @@ public:
             mFeasibilityMeasure(std::numeric_limits<ElementType>::max()),
             mCurrentLagrangeMultipliersPenalty(1),
             mNormObjectiveFunctionGradient(std::numeric_limits<ElementType>::max()),
-            mNormAugmentedLagrangianGradient(std::numeric_limits<ElementType>::max()),
             mNumConstraintEvaluations(aConstraints.size()),
             mNumConstraintGradientEvaluations(aConstraints.size()),
             mNumConstraintHessianEvaluations(aConstraints.size()),
@@ -3407,10 +3406,6 @@ public:
     ElementType getNormObjectiveFunctionGradient() const
     {
         return (mNormObjectiveFunctionGradient);
-    }
-    ElementType getNormAugmentedLagrangianGradient() const
-    {
-        return (mNormAugmentedLagrangianGradient);
     }
 
     void getLagrangeMultipliers(locus::MultiVector<ElementType, SizeType> & aInput) const
@@ -3515,7 +3510,6 @@ public:
         }
         // Compute Augmented Lagrangian gradient
         locus::update(static_cast<ElementType>(1), *mObjectiveFunctionGradient, static_cast<ElementType>(1), aOutput);
-        mNormAugmentedLagrangianGradient = locus::norm(aOutput);
     }
     /*! Reduced space interface: Assemble the reduced space gradient operator. \n
         In: \n
@@ -3684,7 +3678,6 @@ private:
     ElementType mFeasibilityMeasure;
     ElementType mCurrentLagrangeMultipliersPenalty;
     ElementType mNormObjectiveFunctionGradient;
-    ElementType mNormAugmentedLagrangianGradient;
 
     std::vector<SizeType> mNumConstraintEvaluations;
     std::vector<SizeType> mNumConstraintGradientEvaluations;
@@ -4964,7 +4957,7 @@ public:
             locus::KelleySachsBase<ElementType, SizeType>(*aDataFactory),
             mGammaConstant(1e-3),
             mOptimalityTolerance(1e-5),
-            mFeasibilityTolerance(1e-5),
+            mFeasibilityTolerance(1e-4),
             mGradient(aDataFactory->control().create()),
             mStepMng(std::make_shared<locus::KelleySachsStepMng<ElementType, SizeType>>(*aDataFactory)),
             mSolver(std::make_shared<locus::ProjectedSteihaugTointPcg<ElementType, SizeType>>(*aDataFactory)),
@@ -5103,7 +5096,7 @@ private:
             const SizeType tIterationCount = this->getNumIterationsDone();
             const ElementType tStagnationMeasure = mDataMng->getStagnationMeasure();
             const ElementType tFeasibilityMeasure = mStageMng->getFeasibilityMeasure();
-            const ElementType tOptimalityMeasure = mStageMng->getNormObjectiveFunctionGradient();
+            const ElementType tOptimalityMeasure = mDataMng->getNormProjectedGradient();
             if( (tOptimalityMeasure < mOptimalityTolerance) && (tFeasibilityMeasure < mFeasibilityTolerance) )
             {
                 this->setStoppingCriterion(locus::OPTIMALITY_AND_FEASIBILITY_SATISFIED);
@@ -5138,7 +5131,7 @@ private:
             const ElementType tStagnationMeasure = mDataMng->getStagnationMeasure();
             const ElementType tFeasibilityMeasure = mStageMng->getFeasibilityMeasure();
             const ElementType tStationarityMeasure = mDataMng->getStationarityMeasure();
-            const ElementType tOptimalityMeasure = mStageMng->getNormObjectiveFunctionGradient();
+            const ElementType tOptimalityMeasure = mDataMng->getNormProjectedGradient();
 
             if( tStationarityMeasure <= this->getTrialStepTolerance() )
             {
@@ -5169,7 +5162,7 @@ private:
     {
         const ElementType tFeasibilityMeasure = mStageMng->getFeasibilityMeasure();
         const ElementType tStationarityMeasure = mDataMng->getStationarityMeasure();
-        const ElementType tOptimalityMeasure = mStageMng->getNormObjectiveFunctionGradient();
+        const ElementType tOptimalityMeasure = mDataMng->getNormProjectedGradient();
         const ElementType tNormProjectedAugmentedLagrangianGradient = mDataMng->getNormProjectedGradient();
 
         bool tNaN_ValueDetected = false;
@@ -7222,7 +7215,6 @@ TEST(LocusTest, AugmentedLagrangianStageMng)
     EXPECT_NEAR(tScalarGold, tStageMng.getCurrentLagrangeMultipliersPenalty(), tTolerance);
     tScalarGold = std::numeric_limits<double>::max();
     EXPECT_NEAR(tScalarGold, tStageMng.getNormObjectiveFunctionGradient(), tTolerance);
-    EXPECT_NEAR(tScalarGold, tStageMng.getNormAugmentedLagrangianGradient(), tTolerance);
 
     // ********* TEST AUGMENTED LAGRANGIAN STAGE MANAGER OBJECTIVE EVALUATION *********
     double tValue = 1;
@@ -7295,8 +7287,6 @@ TEST(LocusTest, AugmentedLagrangianStageMng)
     tGoldMultiVector(tVectorIndex, 0) = -16;
     tGoldMultiVector(tVectorIndex, 1) = -21;
     LocusTest::checkMultiVectorData(tOutput, tGoldMultiVector);
-    tScalarGold = 26.4007575649;
-    EXPECT_NEAR(tScalarGold, tStageMng.getNormAugmentedLagrangianGradient(), tTolerance);
 
     // ********* TEST AUGMENTED LAGRANGIAN STAGE MANAGER - APPLY VECTOR TO HESSIAN *********
     locus::AnalyticalHessian<double> tObjectiveHessian(tCircle);
@@ -7986,16 +7976,19 @@ TEST(LocusTest, KelleySachsAugmentedLagrangian)
     locus::KelleySachsAugmentedLagrangian<double> tAlgorithm(tDataFactory, tDataMng, tStageMng);
     tAlgorithm.solve();
 
+    // TEST NUMBER OF ITERATIONS AND STOPPING CRITERION
     size_t tIntegerGold = 25;
     EXPECT_EQ(tIntegerGold, tAlgorithm.getNumIterationsDone());
     locus::stop_criterion_t tGold = locus::CONTROL_STAGNATION;
     EXPECT_EQ(tGold, tAlgorithm.getStoppingCriterion());
 
+    // TEST OBJECTIVE FUNCTION VALUE
     const double tTolerance = 1e-6;
     double tScalarGold = 2.678009477208421;
     EXPECT_NEAR(tScalarGold, tDataMng->getCurrentObjectiveFunctionValue(), tTolerance);
     tScalarGold = 2.678009477208421;
 
+    // TEST CURRENT CONSTRAINT VALUE
     const size_t tNumVectors = 1;
     locus::StandardMultiVector<double> tConstraintValues(tNumVectors, tNumDuals);
     tStageMng->getCurrentConstraintValues(tConstraintValues);
@@ -8003,17 +7996,25 @@ TEST(LocusTest, KelleySachsAugmentedLagrangian)
     tGoldConstraintValues(0,0) = 1.876192258460918e-4;
     LocusTest::checkMultiVectorData(tConstraintValues, tGoldConstraintValues);
 
+    // TEST LAGRANGE MULTIPLIERS
     locus::StandardMultiVector<double> tLagrangeMulipliers(tNumVectors, tNumDuals);
     tStageMng->getLagrangeMultipliers(tLagrangeMulipliers);
     locus::StandardMultiVector<double> tGoldtLagrangeMulipliers(tNumVectors, tNumDuals);
     tGoldtLagrangeMulipliers(0,0) = 2.209155776190176;
     LocusTest::checkMultiVectorData(tLagrangeMulipliers, tGoldtLagrangeMulipliers);
 
+    // TEST CONTROL SOLUTION
     locus::StandardMultiVector<double> tGoldVector(tNumVectors, tNumControls);
     tGoldVector(0,0) = 0.311608429003505;
     tGoldVector(0,1) = 0.950309321326385;
     const locus::MultiVector<double> & tCurrentControl = tDataMng->getCurrentControl();
     LocusTest::checkMultiVectorData(tCurrentControl, tGoldVector);
+
+    // TEST CURRENT AUGMENTED LAGRANGIAN GRADIENT
+    tGoldVector(0,0) = 0.073079644963231;
+    tGoldVector(0,1) = 0.222870312033612;
+    const locus::MultiVector<double> & tCurrentGradient = tDataMng->getCurrentGradient();
+    LocusTest::checkMultiVectorData(tCurrentGradient, tGoldVector);
 }
 
 }
