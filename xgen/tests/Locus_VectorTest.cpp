@@ -2162,19 +2162,18 @@ private:
 
 enum stop_criterion_t
 {
-    NaN_TRIAL_STEP_NORM = 1,
-    NaN_GRADIENT_NORM = 2,
-    GRADIENT_TOL_SATISFIED = 3,
-    TRIAL_STEP_TOL_SATISFIED = 4,
-    OBJECTIVE_FUNC_TOL_SATISFIED = 5,
+    NaN_NORM_TRIAL_STEP = 1,
+    NaN_NORM_GRADIENT = 2,
+    GRADIENT_TOLERANCE = 3,
+    TRIAL_STEP_TOLERANCE = 4,
+    OBJECTIVE_STAGNATION = 5,
     MAX_NUM_OUTER_ITERATIONS = 6,
     OPTIMALITY_AND_FEASIBILITY_SATISFIED = 7,
-    TRUST_REGION_RADIUS_SMALLER_THAN_TRIAL_STEP_NORM = 8,
-    ACTUAL_REDUCTION_TOL_SATISFIED = 9,
-    STAGNATION_MEASURE = 10,
-    NaN_OPTIMALITY_NORM = 11,
-    NaN_FEASIBILITY_VALUE = 12,
-    OPT_ALG_HAS_NOT_CONVERGED = 13
+    ACTUAL_REDUCTION_TOLERANCE = 8,
+    CONTROL_STAGNATION = 9,
+    NaN_OBJECTIVE_GRADIENT = 10,
+    NaN_FEASIBILITY_VALUE = 11,
+    ALGORITHM_DID_NOT_CONVERGE = 12
 };
 
 namespace bounds
@@ -2291,10 +2290,10 @@ void computeActiveAndInactiveSets(const locus::MultiVector<ElementType, SizeType
 } // namespace bounds
 
 template<typename ElementType, typename SizeType = size_t>
-class OptimizationAlgorithmDataMng
+class AlgorithmDataMng
 {
 public:
-    virtual ~OptimizationAlgorithmDataMng()
+    virtual ~AlgorithmDataMng()
     {
     }
 
@@ -2360,7 +2359,7 @@ public:
 };
 
 template<typename ElementType, typename SizeType = size_t>
-class TrustRegionAlgorithmDataMng : public OptimizationAlgorithmDataMng<ElementType, SizeType>
+class TrustRegionAlgorithmDataMng : public AlgorithmDataMng<ElementType, SizeType>
 {
 public:
     explicit TrustRegionAlgorithmDataMng(const locus::DataFactory<ElementType, SizeType> & aDataFactory) :
@@ -2595,7 +2594,7 @@ public:
     void setCurrentControl(const locus::MultiVector<ElementType, SizeType> & aInput)
     {
         assert(aInput.getNumVectors() == mCurrentControl->getNumVectors());
-        locus::update(1., aInput, 0., *mCurrentControl);
+        locus::update(static_cast<ElementType>(1), aInput, static_cast<ElementType>(0), *mCurrentControl);
     }
     void setCurrentControl(const SizeType & aVectorIndex, const locus::Vector<ElementType, SizeType> & aInput)
     {
@@ -3009,7 +3008,7 @@ public:
     {
     }
 
-    virtual void update(const locus::OptimizationAlgorithmDataMng<ElementType, SizeType> & aDataMng) = 0;
+    virtual void update(const locus::AlgorithmDataMng<ElementType, SizeType> & aDataMng) = 0;
     virtual void compute(const locus::MultiVector<ElementType, SizeType> & aState,
                          const locus::MultiVector<ElementType, SizeType> & aControl,
                          locus::MultiVector<ElementType, SizeType> & aOutput) = 0;
@@ -3099,7 +3098,7 @@ public:
     {
     }
 
-    void update(const locus::OptimizationAlgorithmDataMng<ElementType, SizeType> & aDataMng)
+    void update(const locus::AlgorithmDataMng<ElementType, SizeType> & aDataMng)
     {
         return;
     }
@@ -3133,7 +3132,7 @@ public:
     {
     }
 
-    virtual void update(const locus::OptimizationAlgorithmDataMng<ElementType, SizeType> & aDataMng) = 0;
+    virtual void update(const locus::AlgorithmDataMng<ElementType, SizeType> & aDataMng) = 0;
     virtual void apply(const locus::MultiVector<ElementType, SizeType> & aState,
                        const locus::MultiVector<ElementType, SizeType> & aControl,
                        const locus::MultiVector<ElementType, SizeType> & aVector,
@@ -3224,7 +3223,7 @@ public:
     {
     }
 
-    void update(const locus::OptimizationAlgorithmDataMng<ElementType, SizeType> & aDataMng)
+    void update(const locus::AlgorithmDataMng<ElementType, SizeType> & aDataMng)
     {
         return;
     }
@@ -3259,7 +3258,7 @@ public:
     {
     }
 
-    virtual void update(const locus::OptimizationAlgorithmDataMng<ElementType, SizeType> & aDataMng) = 0;
+    virtual void update(const locus::AlgorithmDataMng<ElementType, SizeType> & aDataMng) = 0;
     virtual void applyPreconditioner(const locus::MultiVector<ElementType, SizeType> & aControl,
                                      const locus::MultiVector<ElementType, SizeType> & aVector,
                                      locus::MultiVector<ElementType, SizeType> & aOutput) = 0;
@@ -3279,7 +3278,7 @@ public:
     virtual ~IdentityPreconditioner()
     {
     }
-    void update(const locus::OptimizationAlgorithmDataMng<ElementType, SizeType> & aDataMng)
+    void update(const locus::AlgorithmDataMng<ElementType, SizeType> & aDataMng)
     {
         return;
     }
@@ -3353,6 +3352,7 @@ public:
             mNumConstraintGradientEvaluations(aConstraints.size()),
             mNumConstraintHessianEvaluations(aConstraints.size()),
             mState(aDataFactory.state().create()),
+            mDualWorkVec(aDataFactory.dual().create()),
             mControlWorkVec(aDataFactory.control().create()),
             mLagrangeMultipliers(aDataFactory.dual().create()),
             mWorkConstraintValues(aDataFactory.dual().create()),
@@ -3631,11 +3631,13 @@ public:
     }
     void computeFeasibilityMeasure()
     {
-        const SizeType tNumVectors = mCurrentConstraintValues->getNumVectors();
+        locus::update(static_cast<ElementType>(1), *mCurrentConstraintValues, static_cast<ElementType>(0), *mDualWorkVec);
+        const SizeType tNumVectors = mDualWorkVec->getNumVectors();
         std::vector<ElementType> tMaxValues(tNumVectors, 0.);
         for(SizeType tVectorIndex = 0; tVectorIndex < tNumVectors; tVectorIndex++)
         {
-            const locus::Vector<ElementType, SizeType> & tMyVector = (*mCurrentConstraintValues)[tVectorIndex];
+            locus::Vector<ElementType, SizeType> & tMyVector = (*mDualWorkVec)[tVectorIndex];
+            tMyVector.modulus();
             tMaxValues[tVectorIndex] = mDualReductionOperations->max(tMyVector);
         }
 
@@ -3689,6 +3691,7 @@ private:
     std::vector<SizeType> mNumConstraintHessianEvaluations;
 
     std::shared_ptr<locus::MultiVector<ElementType, SizeType>> mState;
+    std::shared_ptr<locus::MultiVector<ElementType, SizeType>> mDualWorkVec;
     std::shared_ptr<locus::MultiVector<ElementType, SizeType>> mControlWorkVec;
     std::shared_ptr<locus::MultiVector<ElementType, SizeType>> mLagrangeMultipliers;
     std::shared_ptr<locus::MultiVector<ElementType, SizeType>> mWorkConstraintValues;
@@ -4395,7 +4398,7 @@ public:
             mEpsilon(0),
             mNormInactiveGradient(0),
             mStationarityMeasureConstant(std::numeric_limits<ElementType>::min()),
-            mMidObjectiveFunctionValue(0),
+            mMidPointObjectiveFunction(0),
             mTrustRegionRadiusFlag(false),
             mActiveSet(aDataFactory.control().create()),
             mInactiveSet(aDataFactory.control().create()),
@@ -4440,13 +4443,25 @@ public:
     {
         mStationarityMeasureConstant = aInput;
     }
-    //! Returns objective function value computed with the control values at the mid-point
-    ElementType getMidObejectiveFunctionValue() const
+    //! Sets objective function value computed with the control values at the mid-point
+    void setMidPointObjectiveFunctionValue(const ElementType & aInput)
     {
-        return (mMidObjectiveFunctionValue);
+        mMidPointObjectiveFunction = aInput;
+    }
+    //! Returns objective function value computed with the control values at the mid-point
+    ElementType getMidPointObjectiveFunctionValue() const
+    {
+        return (mMidPointObjectiveFunction);
+    }
+    //! Sets control values at the mid-point
+    void setMidPointControls(const locus::MultiVector<ElementType, SizeType> & aInput)
+    {
+        assert(mMidControls.get() != nullptr);
+        assert(aInput.getNumVectors() == mMidControls->getNumVectors());
+        locus::update(static_cast<ElementType>(1), aInput, static_cast<ElementType>(0), *mMidControls);
     }
     //! Returns control values at the mid-point
-    const locus::MultiVector<ElementType, SizeType> & getMidControl() const
+    const locus::MultiVector<ElementType, SizeType> & getMidPointControls() const
     {
         return (mMidControls.operator*());
     }
@@ -4492,10 +4507,10 @@ public:
             this->updateObjectiveInexactnessTolerance(tPredictedReduction);
             // Evaluate current mid objective function
             ElementType tTolerance = this->getObjectiveInexactnessTolerance();
-            mMidObjectiveFunctionValue = aStageMng.evaluateObjective(*mMidControls, tTolerance);
+            mMidPointObjectiveFunction = aStageMng.evaluateObjective(*mMidControls, tTolerance);
             // Compute actual reduction based on mid trial control
             ElementType tCurrentObjectiveFunctionValue = aDataMng.getCurrentObjectiveFunctionValue();
-            ElementType tActualReduction = mMidObjectiveFunctionValue - tCurrentObjectiveFunctionValue;
+            ElementType tActualReduction = mMidPointObjectiveFunction - tCurrentObjectiveFunctionValue;
             this->setActualReduction(tActualReduction);
             // Compute actual over predicted reduction ratio
             ElementType tActualOverPredReduction = tActualReduction /
@@ -4730,7 +4745,7 @@ private:
     ElementType mEpsilon;
     ElementType mNormInactiveGradient;
     ElementType mStationarityMeasureConstant;
-    ElementType mMidObjectiveFunctionValue;
+    ElementType mMidPointObjectiveFunction;
 
     bool mTrustRegionRadiusFlag;
 
@@ -4760,13 +4775,13 @@ public:
             mMaxNumUpdates(10),
             mMaxNumOuterIterations(100),
             mNumOuterIterationsDone(0),
-            mGradientTolerance(1e-10),
-            mTrialStepTolerance(1e-10),
-            mObjectiveTolerance(1e-10),
-            mStagnationTolerance(1e-12),
+            mGradientTolerance(1e-8),
+            mTrialStepTolerance(1e-8),
+            mObjectiveTolerance(1e-8),
+            mStagnationTolerance(1e-8),
             mStationarityMeasure(0.),
             mActualReductionTolerance(1e-10),
-            mStoppingCriterion(locus::OPT_ALG_HAS_NOT_CONVERGED),
+            mStoppingCriterion(locus::ALGORITHM_DID_NOT_CONVERGE),
             mControlWorkVector(aDataFactory.control().create())
     {
     }
@@ -4799,11 +4814,11 @@ public:
     {
         mMaxNumUpdates = aInput;
     }
-    void setNumOptimizationItrDone(const SizeType & aInput)
+    void setNumIterationsDone(const SizeType & aInput)
     {
         mNumOuterIterationsDone = aInput;
     }
-    void setMaxNumOptimizationIterations(const SizeType & aInput)
+    void setMaxNumIterations(const SizeType & aInput)
     {
         mMaxNumOuterIterations = aInput;
     }
@@ -4841,11 +4856,11 @@ public:
     {
         return (mMaxNumUpdates);
     }
-    SizeType getNumOptimizationItrDone() const
+    SizeType getNumIterationsDone() const
     {
         return (mNumOuterIterationsDone);
     }
-    SizeType getMaxNumOptimizationItr() const
+    SizeType getMaxNumIterations() const
     {
         return (mMaxNumOuterIterations);
     }
@@ -4867,8 +4882,8 @@ public:
         ElementType tMu = static_cast<ElementType>(1) - static_cast<ElementType>(1e-4);
 
         ElementType tMidActualReduction = aStepMng.getActualReduction();
-        ElementType tMidObjectiveValue = aStepMng.getMidObejectiveFunctionValue();
-        const locus::MultiVector<ElementType, SizeType> & tMidControl = aStepMng.getMidControl();
+        ElementType tMidObjectiveValue = aStepMng.getMidPointObjectiveFunctionValue();
+        const locus::MultiVector<ElementType, SizeType> & tMidControl = aStepMng.getMidPointControls();
         const locus::MultiVector<ElementType, SizeType> & tLowerBounds = aDataMng.getControlLowerBounds();
         const locus::MultiVector<ElementType, SizeType> & tUpperBounds = aDataMng.getControlUpperBounds();
 
@@ -4915,56 +4930,6 @@ public:
 
         return (tControlUpdated);
     }
-    bool checkStoppingCriteria(const locus::KelleySachsStepMng<ElementType, SizeType> & aStep,
-                               const locus::TrustRegionAlgorithmDataMng<ElementType, SizeType> & aDataMng)
-    {
-        ElementType tActualReduction = aStep.getActualReduction();
-        ElementType tNormProjGradient = aDataMng.getNormProjectedGradient();
-        ElementType tObjectiveFunctionValue = aDataMng.getCurrentObjectiveFunctionValue();
-
-        bool tOptimizationAlgorithmConverged = false;
-        if(mStationarityMeasure <= this->getTrialStepTolerance())
-        {
-            tOptimizationAlgorithmConverged = true;
-            this->setStoppingCriterion(locus::TRIAL_STEP_TOL_SATISFIED);
-        }
-        else if(std::isfinite(mStationarityMeasure) == false)
-        {
-            tOptimizationAlgorithmConverged = true;
-            aDataMng.resetCurrentStageDataToPreviousStageData();
-            this->setStoppingCriterion(locus::NaN_TRIAL_STEP_NORM);
-        }
-        else if(tNormProjGradient < this->getGradientTolerance())
-        {
-            tOptimizationAlgorithmConverged = true;
-            this->setStoppingCriterion(locus::GRADIENT_TOL_SATISFIED);
-        }
-        else if(std::isfinite(tNormProjGradient) == false)
-        {
-            tOptimizationAlgorithmConverged = true;
-            aDataMng.resetCurrentStageDataToPreviousStageData();
-            this->setStoppingCriterion(locus::NaN_GRADIENT_NORM);
-        }
-        else if(std::abs(tActualReduction) <= this->getActualReductionTolerance())
-        {
-            // objective function stagnation
-            tOptimizationAlgorithmConverged = true;
-            this->setStoppingCriterion(locus::ACTUAL_REDUCTION_TOL_SATISFIED);
-        }
-        else if(tObjectiveFunctionValue <= this->getObjectiveTolerance())
-        {
-            // objective function stagnation
-            tOptimizationAlgorithmConverged = true;
-            this->setStoppingCriterion(locus::OBJECTIVE_FUNC_TOL_SATISFIED);
-        }
-        else if(this->getNumOptimizationItrDone() >= this->getMaxNumOptimizationItr())
-        {
-            tOptimizationAlgorithmConverged = true;
-            this->setStoppingCriterion(locus::MAX_NUM_OUTER_ITERATIONS);
-        }
-
-        return (tOptimizationAlgorithmConverged);
-    }
 
     virtual void solve() = 0;
 
@@ -4998,8 +4963,8 @@ public:
                                    const std::shared_ptr<locus::AugmentedLagrangianStageMng<ElementType, SizeType>> & aStageMng) :
             locus::KelleySachsBase<ElementType, SizeType>(*aDataFactory),
             mGammaConstant(1e-3),
-            mOptimalityTolerance(1e-3),
-            mFeasibilityTolerance(1e-3),
+            mOptimalityTolerance(1e-5),
+            mFeasibilityTolerance(1e-5),
             mGradient(aDataFactory->control().create()),
             mStepMng(std::make_shared<locus::KelleySachsStepMng<ElementType, SizeType>>(*aDataFactory)),
             mSolver(std::make_shared<locus::ProjectedSteihaugTointPcg<ElementType, SizeType>>(*aDataFactory)),
@@ -5011,14 +4976,21 @@ public:
     {
     }
 
-    void setOptimalityTolerance(const double & aInput)
+    void setOptimalityTolerance(const ElementType & aInput)
     {
         mOptimalityTolerance = aInput;
     }
-
-    void setFeasibilityTolerance(const double & aInput)
+    ElementType getOptimalityTolerance() const
+    {
+        return (mOptimalityTolerance);
+    }
+    void setFeasibilityTolerance(const ElementType & aInput)
     {
         mFeasibilityTolerance = aInput;
+    }
+    ElementType getFeasibilityTolerance() const
+    {
+        return (mFeasibilityTolerance);
     }
 
     void solve()
@@ -5041,10 +5013,11 @@ public:
         }
         mDataMng->computeStationarityMeasure();
 
-        SizeType tIteration = 1;
+        SizeType tIteration = 0;
         while(1)
         {
-            this->setNumOptimizationItrDone(tIteration);
+            tIteration++;
+            this->setNumIterationsDone(tIteration);
             // Compute adaptive constants to ensure superlinear convergence
             ElementType tStationarityMeasure = mDataMng->getStationarityMeasure();
             ElementType tValue = std::pow(tStationarityMeasure, static_cast<ElementType>(0.75));
@@ -5061,10 +5034,10 @@ public:
             {
                 break;
             }
-            tIteration++;
         }
     }
 
+private:
     void updateDataManager()
     {
         // Store current objective function, control, and gradient values
@@ -5073,7 +5046,7 @@ public:
         // Update inequality constraint values at mid point
         mStageMng->updateCurrentConstraintValues();
         // Compute gradient at new midpoint
-        const locus::MultiVector<ElementType, SizeType> & tMidControl = mStepMng->getMidControl();
+        const locus::MultiVector<ElementType, SizeType> & tMidControl = mStepMng->getMidPointControls();
         mStageMng->computeGradient(tMidControl, *mGradient);
 
         if(this->updateControl(*mGradient, *mStepMng, *mDataMng, *mStageMng) == true)
@@ -5088,7 +5061,7 @@ public:
         else
         {
             // Keep current objective function, control, and gradient values at mid point
-            const ElementType tMidObjectiveFunctionValue = mStepMng->getMidObejectiveFunctionValue();
+            const ElementType tMidObjectiveFunctionValue = mStepMng->getMidPointObjectiveFunctionValue();
             mDataMng->setCurrentObjectiveFunctionValue(tMidObjectiveFunctionValue);
             mDataMng->setCurrentControl(tMidControl);
             mDataMng->setCurrentGradient(*mGradient);
@@ -5127,7 +5100,7 @@ public:
         }
         else
         {
-            const SizeType tIterationCount = this->getNumOptimizationItrDone();
+            const SizeType tIterationCount = this->getNumIterationsDone();
             const ElementType tStagnationMeasure = mDataMng->getStagnationMeasure();
             const ElementType tFeasibilityMeasure = mStageMng->getFeasibilityMeasure();
             const ElementType tOptimalityMeasure = mStageMng->getNormObjectiveFunctionGradient();
@@ -5139,9 +5112,9 @@ public:
             else if( tStagnationMeasure < this->getStagnationTolerance() )
             {
                 tStop = true;
-                this->setStoppingCriterion(locus::STAGNATION_MEASURE);
+                this->setStoppingCriterion(locus::CONTROL_STAGNATION);
             }
-            else if( tIterationCount >= this->getMaxNumOptimizationItr() )
+            else if( tIterationCount >= this->getMaxNumIterations() )
             {
                 tStop = true;
                 this->setStoppingCriterion(locus::MAX_NUM_OUTER_ITERATIONS);
@@ -5170,19 +5143,19 @@ public:
             if( tStationarityMeasure <= this->getTrialStepTolerance() )
             {
                 tStop = true;
-                this->setStoppingCriterion(locus::TRIAL_STEP_TOL_SATISFIED);
+                this->setStoppingCriterion(locus::TRIAL_STEP_TOLERANCE);
             }
             else if( tStagnationMeasure < this->getStagnationTolerance() )
             {
                 tStop = true;
-                this->setStoppingCriterion(locus::STAGNATION_MEASURE);
+                this->setStoppingCriterion(locus::CONTROL_STAGNATION);
             }
             else if( (tOptimalityMeasure < mOptimalityTolerance) && (tFeasibilityMeasure < mFeasibilityTolerance) )
             {
                 tStop = true;
                 this->setStoppingCriterion(locus::OPTIMALITY_AND_FEASIBILITY_SATISFIED);
             }
-            else if( this->getNumOptimizationItrDone() >= this->getMaxNumOptimizationItr() )
+            else if( this->getNumIterationsDone() >= this->getMaxNumIterations() )
             {
                 tStop = true;
                 this->setStoppingCriterion(locus::MAX_NUM_OUTER_ITERATIONS);
@@ -5203,17 +5176,17 @@ public:
         if(std::isfinite(tStationarityMeasure) == false)
         {
             tNaN_ValueDetected = true;
-            this->setStoppingCriterion(locus::NaN_TRIAL_STEP_NORM);
+            this->setStoppingCriterion(locus::NaN_NORM_TRIAL_STEP);
         }
         else if(std::isfinite(tNormProjectedAugmentedLagrangianGradient) == false)
         {
             tNaN_ValueDetected = true;
-            this->setStoppingCriterion(locus::NaN_GRADIENT_NORM);
+            this->setStoppingCriterion(locus::NaN_NORM_GRADIENT);
         }
         else if(std::isfinite(tOptimalityMeasure) == false)
         {
             tNaN_ValueDetected = true;
-            this->setStoppingCriterion(locus::NaN_OPTIMALITY_NORM);
+            this->setStoppingCriterion(locus::NaN_OBJECTIVE_GRADIENT);
         }
         else if(std::isfinite(tFeasibilityMeasure) == false)
         {
@@ -7299,7 +7272,7 @@ TEST(LocusTest, AugmentedLagrangianStageMng)
 
     // ********* TEST AUGMENTED LAGRANGIAN STAGE MANAGER - COMPUTE FEASIBILITY MEASURE *********
     tStageMng.computeFeasibilityMeasure();
-    tScalarGold = -0.5;
+    tScalarGold = 0.5;
     EXPECT_NEAR(tScalarGold, tStageMng.getFeasibilityMeasure(), tTolerance);
 
     // ********* TEST AUGMENTED LAGRANGIAN STAGE MANAGER - COMPUTE GRADIENT *********
@@ -7805,7 +7778,7 @@ TEST(LocusTest, KelleySachsStepMng)
     tScalarGoldValue = 0.768899024566474;
     EXPECT_NEAR(tScalarGoldValue, tStepMng.getActualOverPredictedReduction(), tTolerance);
     tScalarGoldValue = 1.757354736328125;
-    EXPECT_NEAR(tScalarGoldValue, tStepMng.getMidObejectiveFunctionValue(), tTolerance);
+    EXPECT_NEAR(tScalarGoldValue, tStepMng.getMidPointObjectiveFunctionValue(), tTolerance);
     tScalarGoldValue = 3.335416016031584;
     EXPECT_NEAR(tScalarGoldValue, tStepMng.getTrustRegionRadius(), tTolerance);
     tScalarGoldValue = -3.117645263671875;
@@ -7814,7 +7787,7 @@ TEST(LocusTest, KelleySachsStepMng)
     EXPECT_NEAR(tScalarGoldValue, tStepMng.getPredictedReduction(), tTolerance);
     tScalarGoldValue = 0.066708320320632;
     EXPECT_NEAR(tScalarGoldValue, tSolver.getSolverTolerance(), tTolerance);
-    const locus::MultiVector<double> & tMidControl = tStepMng.getMidControl();
+    const locus::MultiVector<double> & tMidControl = tStepMng.getMidPointControls();
     locus::StandardMultiVector<double> tVectorGold(tNumVectors, tNumControls);
     tVectorGold(0, 0) = 0.6875;
     tVectorGold(0, 1) = 1.3125;
@@ -7840,7 +7813,7 @@ TEST(LocusTest, KelleySachsBase)
             std::make_shared<locus::TrustRegionAlgorithmDataMng<double>>(*tDataFactory);
     double tScalarValue = 0.5;
     tDataMng->setInitialGuess(tScalarValue);
-    tScalarValue = 0;
+    tScalarValue = -100;
     tDataMng->setControlLowerBounds(tScalarValue);
     tScalarValue = 100;
     tDataMng->setControlUpperBounds(tScalarValue);
@@ -7870,8 +7843,177 @@ TEST(LocusTest, KelleySachsBase)
     tHessianList.add(tConstraintHessian);
     tStageMng->setConstraintHessians(tHessianList);
 
-    // ********* ALLOCATE KELLEY-SACHS BASE *********
+    // ********* ALLOCATE KELLEY-SACHS ALGORITHM *********
     locus::KelleySachsAugmentedLagrangian<double> tAlgorithm(tDataFactory, tDataMng, tStageMng);
+
+    // TEST MAXIMUM NUMBER OF UPDATES
+    size_t tIntegerGold = 10;
+    EXPECT_EQ(tIntegerGold, tAlgorithm.getMaxNumUpdates());
+    tIntegerGold = 5;
+    tAlgorithm.setMaxNumUpdates(tIntegerGold);
+    EXPECT_EQ(tIntegerGold, tAlgorithm.getMaxNumUpdates());
+
+    // TEST NUMBER ITERATIONS DONE
+    tIntegerGold = 0;
+    EXPECT_EQ(tIntegerGold, tAlgorithm.getNumIterationsDone());
+    tIntegerGold = 3;
+    tAlgorithm.setNumIterationsDone(tIntegerGold);
+    EXPECT_EQ(tIntegerGold, tAlgorithm.getNumIterationsDone());
+
+    // TEST NUMBER ITERATIONS DONE
+    tIntegerGold = 100;
+    EXPECT_EQ(tIntegerGold, tAlgorithm.getMaxNumIterations());
+    tIntegerGold = 30;
+    tAlgorithm.setMaxNumIterations(tIntegerGold);
+    EXPECT_EQ(tIntegerGold, tAlgorithm.getMaxNumIterations());
+
+    // TEST STOPPING CRITERIA
+    locus::stop_criterion_t tGold = locus::ALGORITHM_DID_NOT_CONVERGE;
+    EXPECT_EQ(tGold, tAlgorithm.getStoppingCriterion());
+    tGold = locus::NaN_NORM_TRIAL_STEP;
+    tAlgorithm.setStoppingCriterion(tGold);
+    EXPECT_EQ(tGold, tAlgorithm.getStoppingCriterion());
+
+    // TEST GRADIENT TOLERANCE
+    double tScalarGold = 1e-8;
+    EXPECT_EQ(tScalarGold, tAlgorithm.getGradientTolerance());
+    tScalarGold = 1e-4;
+    tAlgorithm.setGradientTolerance(tScalarGold);
+    EXPECT_EQ(tScalarGold, tAlgorithm.getGradientTolerance());
+
+    // TEST TRIAL STEP TOLERANCE
+    tScalarGold = 1e-8;
+    EXPECT_EQ(tScalarGold, tAlgorithm.getTrialStepTolerance());
+    tScalarGold = 1e-3;
+    tAlgorithm.setTrialStepTolerance(tScalarGold);
+    EXPECT_EQ(tScalarGold, tAlgorithm.getTrialStepTolerance());
+
+    // TEST OBJECTIVE TOLERANCE
+    tScalarGold = 1e-8;
+    EXPECT_EQ(tScalarGold, tAlgorithm.getObjectiveTolerance());
+    tScalarGold = 1e-5;
+    tAlgorithm.setObjectiveTolerance(tScalarGold);
+    EXPECT_EQ(tScalarGold, tAlgorithm.getObjectiveTolerance());
+
+    // TEST CONTROL STAGNATION TOLERANCE
+    tScalarGold = 1e-8;
+    EXPECT_EQ(tScalarGold, tAlgorithm.getStagnationTolerance());
+    tScalarGold = 1e-2;
+    tAlgorithm.setStagnationTolerance(tScalarGold);
+    EXPECT_EQ(tScalarGold, tAlgorithm.getStagnationTolerance());
+
+    // TEST ACTUAL REDUCTION TOLERANCE
+    tScalarGold = 1e-10;
+    EXPECT_EQ(tScalarGold, tAlgorithm.getActualReductionTolerance());
+    tScalarGold = 1e-9;
+    tAlgorithm.setActualReductionTolerance(tScalarGold);
+    EXPECT_EQ(tScalarGold, tAlgorithm.getActualReductionTolerance());
+
+    // TEST UPDATE CONTROL
+    const size_t tNumVectors = 1;
+    locus::KelleySachsStepMng<double> tStepMng(*tDataFactory);
+    locus::StandardMultiVector<double> tMidControls(tNumVectors, tNumControls);
+    tMidControls(0,0) = 0.6875;
+    tMidControls(0,1) = 1.3125;
+    tStepMng.setMidPointControls(tMidControls);
+    locus::StandardMultiVector<double> tMidGradient(tNumVectors, tNumControls);
+    tMidGradient(0,0) = 1.0185546875;
+    tMidGradient(0,1) = 0.3876953125;
+    tScalarValue = 1.757354736328125;
+    tStepMng.setMidPointObjectiveFunctionValue(tScalarValue);
+    tScalarValue = -3.117645263671875;
+    tStepMng.setActualReduction(tScalarValue);
+    EXPECT_TRUE(tAlgorithm.updateControl(tMidGradient, tStepMng, *tDataMng, *tStageMng));
+
+    locus::StandardMultiVector<double> tGoldVector(tNumVectors, tNumControls);
+    tGoldVector(0,0) = -0.3310546875;
+    tGoldVector(0,1) = 0.9248046875;
+    const locus::MultiVector<double> & tCurrentControl = tDataMng->getCurrentControl();
+    LocusTest::checkMultiVectorData(tCurrentControl, tGoldVector);
+    const double tTolerance = 1e-6;
+    tScalarGold = 2.327059142438884;
+    EXPECT_NEAR(tScalarGold, tStepMng.getActualReduction(), tTolerance);
+    tScalarGold = 4.084413878767009;
+    EXPECT_NEAR(tScalarGold, tDataMng->getCurrentObjectiveFunctionValue(), tTolerance);
+}
+
+TEST(LocusTest, KelleySachsAugmentedLagrangian)
+{
+    // ********* ALLOCATE DATA FACTORY *********
+    std::shared_ptr<locus::DataFactory<double>> tDataFactory =
+            std::make_shared<locus::DataFactory<double>>();
+    const size_t tNumDuals = 1;
+    const size_t tNumControls = 2;
+    tDataFactory->allocateDual(tNumDuals);
+    tDataFactory->allocateControl(tNumControls);
+
+    // ********* ALLOCATE TRUST REGION ALGORITHM DATA MANAGER *********
+    std::shared_ptr<locus::TrustRegionAlgorithmDataMng<double>> tDataMng =
+            std::make_shared<locus::TrustRegionAlgorithmDataMng<double>>(*tDataFactory);
+    double tScalarValue = 0.5;
+    tDataMng->setInitialGuess(tScalarValue);
+    tScalarValue = -100;
+    tDataMng->setControlLowerBounds(tScalarValue);
+    tScalarValue = 100;
+    tDataMng->setControlUpperBounds(tScalarValue);
+
+    // ********* ALLOCATE OBJECTIVE AND CONSTRAINT CRITERIA *********
+    locus::Circle<double> tCircle;
+    locus::Radius<double> tRadius;
+    locus::CriterionList<double> tConstraintList;
+    tConstraintList.add(tRadius);
+
+    // ********* AUGMENTED LAGRANGIAN STAGE MANAGER *********
+    std::shared_ptr<locus::AugmentedLagrangianStageMng<double>> tStageMng =
+            std::make_shared<locus::AugmentedLagrangianStageMng<double>>(*tDataFactory, tCircle, tConstraintList);
+
+    // ********* SET FIRST AND SECOND ORDER DERIVATIVE COMPUTATION PROCEDURES *********
+    locus::AnalyticalGradient<double> tObjectiveGradient(tCircle);
+    tStageMng->setObjectiveGradient(tObjectiveGradient);
+    locus::AnalyticalGradient<double> tConstraintGradient(tRadius);
+    locus::GradientOperatorList<double> tGradientList;
+    tGradientList.add(tConstraintGradient);
+    tStageMng->setConstraintGradients(tGradientList);
+
+    locus::AnalyticalHessian<double> tObjectiveHessian(tCircle);
+    tStageMng->setObjectiveHessian(tObjectiveHessian);
+    locus::AnalyticalHessian<double> tConstraintHessian(tRadius);
+    locus::LinearOperatorList<double> tHessianList;
+    tHessianList.add(tConstraintHessian);
+    tStageMng->setConstraintHessians(tHessianList);
+
+    // ********* ALLOCATE KELLEY-SACHS ALGORITHM *********
+    locus::KelleySachsAugmentedLagrangian<double> tAlgorithm(tDataFactory, tDataMng, tStageMng);
+    tAlgorithm.solve();
+
+    size_t tIntegerGold = 25;
+    EXPECT_EQ(tIntegerGold, tAlgorithm.getNumIterationsDone());
+    locus::stop_criterion_t tGold = locus::CONTROL_STAGNATION;
+    EXPECT_EQ(tGold, tAlgorithm.getStoppingCriterion());
+
+    const double tTolerance = 1e-6;
+    double tScalarGold = 2.678009477208421;
+    EXPECT_NEAR(tScalarGold, tDataMng->getCurrentObjectiveFunctionValue(), tTolerance);
+    tScalarGold = 2.678009477208421;
+
+    const size_t tNumVectors = 1;
+    locus::StandardMultiVector<double> tConstraintValues(tNumVectors, tNumDuals);
+    tStageMng->getCurrentConstraintValues(tConstraintValues);
+    locus::StandardMultiVector<double> tGoldConstraintValues(tNumVectors, tNumDuals);
+    tGoldConstraintValues(0,0) = 1.876192258460918e-4;
+    LocusTest::checkMultiVectorData(tConstraintValues, tGoldConstraintValues);
+
+    locus::StandardMultiVector<double> tLagrangeMulipliers(tNumVectors, tNumDuals);
+    tStageMng->getLagrangeMultipliers(tLagrangeMulipliers);
+    locus::StandardMultiVector<double> tGoldtLagrangeMulipliers(tNumVectors, tNumDuals);
+    tGoldtLagrangeMulipliers(0,0) = 2.209155776190176;
+    LocusTest::checkMultiVectorData(tLagrangeMulipliers, tGoldtLagrangeMulipliers);
+
+    locus::StandardMultiVector<double> tGoldVector(tNumVectors, tNumControls);
+    tGoldVector(0,0) = 0.311608429003505;
+    tGoldVector(0,1) = 0.950309321326385;
+    const locus::MultiVector<double> & tCurrentControl = tDataMng->getCurrentControl();
+    LocusTest::checkMultiVectorData(tCurrentControl, tGoldVector);
 }
 
 }
