@@ -4973,17 +4973,9 @@ public:
     {
         mOptimalityTolerance = aInput;
     }
-    ElementType getOptimalityTolerance() const
-    {
-        return (mOptimalityTolerance);
-    }
     void setFeasibilityTolerance(const ElementType & aInput)
     {
         mFeasibilityTolerance = aInput;
-    }
-    ElementType getFeasibilityTolerance() const
-    {
-        return (mFeasibilityTolerance);
     }
 
     void solve()
