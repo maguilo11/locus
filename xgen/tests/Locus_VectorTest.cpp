@@ -3344,7 +3344,7 @@ public:
             mNumObjectiveHessianEvaluations(0),
             mMinPenaltyValue(1e-10),
             mPenaltyScaleFactor(0.2),
-            mFeasibilityMeasure(std::numeric_limits<ElementType>::max()),
+            mCurrentFeasibilityMeasure(std::numeric_limits<ElementType>::max()),
             mCurrentLagrangeMultipliersPenalty(1),
             mNormObjectiveFunctionGradient(std::numeric_limits<ElementType>::max()),
             mNumConstraintEvaluations(aConstraints.size()),
@@ -3623,7 +3623,7 @@ public:
     {
         locus::update(static_cast<ElementType>(1), *mWorkConstraintValues, static_cast<ElementType>(0), *mCurrentConstraintValues);
     }
-    void computeFeasibilityMeasure()
+    void computeCurrentFeasibilityMeasure()
     {
         locus::update(static_cast<ElementType>(1), *mCurrentConstraintValues, static_cast<ElementType>(0), *mDualWorkVec);
         const SizeType tNumVectors = mDualWorkVec->getNumVectors();
@@ -3635,11 +3635,11 @@ public:
             tMaxValues[tVectorIndex] = mDualReductionOperations->max(tMyVector);
         }
 
-        mFeasibilityMeasure = *std::max_element(tMaxValues.begin(), tMaxValues.end());
+        mCurrentFeasibilityMeasure = *std::max_element(tMaxValues.begin(), tMaxValues.end());
     }
-    ElementType getFeasibilityMeasure() const
+    ElementType getCurrentFeasibilityMeasure() const
     {
-        return (mFeasibilityMeasure);
+        return (mCurrentFeasibilityMeasure);
     }
 
 private:
@@ -3675,7 +3675,7 @@ private:
 
     ElementType mMinPenaltyValue;
     ElementType mPenaltyScaleFactor;
-    ElementType mFeasibilityMeasure;
+    ElementType mCurrentFeasibilityMeasure;
     ElementType mCurrentLagrangeMultipliersPenalty;
     ElementType mNormObjectiveFunctionGradient;
 
@@ -4980,6 +4980,8 @@ public:
 
     void solve()
     {
+        assert(mDataMng->isInitialGuessSet() == true);
+
         const locus::MultiVector<ElementType, SizeType> & tCurrentControl = mDataMng->getCurrentControl();
         ElementType tTolerance = mStepMng->getObjectiveInexactnessTolerance();
         ElementType tCurrentObjectiveFunctionValue = mStageMng->evaluateObjective(tCurrentControl, tTolerance);
@@ -5053,7 +5055,7 @@ private:
         }
 
         // Compute feasibility measure
-        mStageMng->computeFeasibilityMeasure();
+        mStageMng->computeCurrentFeasibilityMeasure();
         // Compute norm of projected gradient
         mDataMng->computeProjectedGradientNorm();
         // Compute stationarity measure
@@ -5087,7 +5089,7 @@ private:
         {
             const SizeType tIterationCount = this->getNumIterationsDone();
             const ElementType tStagnationMeasure = mDataMng->getStagnationMeasure();
-            const ElementType tFeasibilityMeasure = mStageMng->getFeasibilityMeasure();
+            const ElementType tFeasibilityMeasure = mStageMng->getCurrentFeasibilityMeasure();
             const ElementType tOptimalityMeasure = mDataMng->getNormProjectedGradient();
             if( (tOptimalityMeasure < mOptimalityTolerance) && (tFeasibilityMeasure < mFeasibilityTolerance) )
             {
@@ -5121,7 +5123,7 @@ private:
         else
         {
             const ElementType tStagnationMeasure = mDataMng->getStagnationMeasure();
-            const ElementType tFeasibilityMeasure = mStageMng->getFeasibilityMeasure();
+            const ElementType tFeasibilityMeasure = mStageMng->getCurrentFeasibilityMeasure();
             const ElementType tStationarityMeasure = mDataMng->getStationarityMeasure();
             const ElementType tOptimalityMeasure = mDataMng->getNormProjectedGradient();
 
@@ -5152,7 +5154,7 @@ private:
 
     bool checkNaN()
     {
-        const ElementType tFeasibilityMeasure = mStageMng->getFeasibilityMeasure();
+        const ElementType tFeasibilityMeasure = mStageMng->getCurrentFeasibilityMeasure();
         const ElementType tStationarityMeasure = mDataMng->getStationarityMeasure();
         const ElementType tOptimalityMeasure = mDataMng->getNormProjectedGradient();
         const ElementType tNormProjectedAugmentedLagrangianGradient = mDataMng->getNormProjectedGradient();
@@ -5328,7 +5330,877 @@ private:
     locus::Radius<ElementType, SizeType> & operator=(const locus::Radius<ElementType, SizeType> & aRhs);
 };
 
+/**********************************************************************************************************/
+/************************* CONSERVATIVE CONVEX SEPARABLE APPROXIMATION ALGORITHM **************************/
+/**********************************************************************************************************/
+
+template<typename ElementType, typename SizeType = size_t>
+class MethodMovingAsymptoteDataMng
+{
+public:
+    MethodMovingAsymptoteDataMng(const locus::DataFactory<ElementType, SizeType> & aDataFactory) :
+            mIsInitialGuessSet(false),
+            mControlWorkVector(),
+            mControlWorkMultiVector(aDataFactory.control().create()),
+            mStagnationMeasure(0),
+            mStationarityMeasure(0),
+            mNormProjectedGradient(0),
+            mObjectiveCoefficientA(1),
+            mInitialAuxiliaryVariableZ(0),
+            mCurrentObjectiveFunctionValue(std::numeric_limits<ElementType>::max()),
+            mPreviousObjectiveFunctionValue(std::numeric_limits<ElementType>::max()),
+            mDual(aDataFactory.dual().create()),
+            mMinRho(aDataFactory.dual().create()),
+            mActiveSet(aDataFactory.control().create()),
+            mInactiveSet(aDataFactory.control().create()),
+            mCurrentSigma(aDataFactory.control().create()),
+            mCurrentControl(aDataFactory.control().create()),
+            mPreviousControl(aDataFactory.control().create()),
+            mControlLowerBounds(aDataFactory.control().create()),
+            mControlUpperBounds(aDataFactory.control().create()),
+            mCurrentConstraintValues(aDataFactory.dual().create()),
+            mCurrentObjectiveGradient(aDataFactory.control().create()),
+            mCurrentConstraintGradients(),
+            mAuxiliaryVariablesY(aDataFactory.dual().create()),
+            mConstraintCoefficientsA(aDataFactory.dual().create()),
+            mConstraintCoefficientsC(aDataFactory.dual().create()),
+            mConstraintCoefficientsD(aDataFactory.dual().create()),
+            mDualReductionOperations(aDataFactory.getDualReductionOperations().create()),
+            mControlReductionOperations(aDataFactory.getControlReductionOperations().create())
+    {
+        this->initialize();
+    }
+    ~MethodMovingAsymptoteDataMng()
+    {
+    }
+
+    bool isInitialGuessSet() const
+    {
+        return (mIsInitialGuessSet);
+    }
+
+    // NOTE: NUMBER OF CONTROL VECTORS
+    SizeType getNumControlVectors() const
+    {
+        return (mCurrentControl->getNumVectors());
+    }
+    // NOTE: NUMBER OF DUAL VECTORS
+    SizeType getNumDualVectors() const
+    {
+        return (mDual->getNumVectors());
+    }
+
+    // NOTE: DUAL PROBLEM INPUT PARAMETERS
+    ElementType getDualProblemObjectiveCoefficient() const
+    {
+        return (mObjectiveCoefficientA);
+    }
+    void setDualProblemObjectiveCoefficient(const ElementType & aInput)
+    {
+        mObjectiveCoefficientA = aInput;
+    }
+    ElementType getInitialAuxiliaryVariable() const
+    {
+        return (mInitialAuxiliaryVariableZ);
+    }
+    void setInitialAuxiliaryVariable(const ElementType & aInput)
+    {
+        mInitialAuxiliaryVariableZ = aInput;
+    }
+
+    // NOTE: OBJECTIVE FUNCTION VALUE
+    ElementType getCurrentObjectiveFunctionValue() const
+    {
+        return (mCurrentObjectiveFunctionValue);
+    }
+    void setCurrentObjectiveFunctionValue(const ElementType & aInput)
+    {
+        mCurrentObjectiveFunctionValue = aInput;
+    }
+    ElementType getPreviousObjectiveFunctionValue() const
+    {
+        return (mPreviousObjectiveFunctionValue);
+    }
+    void setPreviousObjectiveFunctionValue(const ElementType & aInput)
+    {
+        mPreviousObjectiveFunctionValue = aInput;
+    }
+
+    // NOTE: SET INITIAL GUESS
+    void setInitialGuess(const ElementType & aValue)
+    {
+        assert(mCurrentControl.get() != nullptr);
+        assert(mCurrentControl->getNumVectors() > static_cast<SizeType>(0));
+
+        SizeType tNumVectors = mCurrentControl->getNumVectors();
+        for(SizeType tVectorIndex = 0; tVectorIndex < tNumVectors; tVectorIndex++)
+        {
+            mCurrentControl->operator [](tVectorIndex).fill(aValue);
+        }
+        mIsInitialGuessSet = true;
+    }
+    void setInitialGuess(const SizeType & aVectorIndex, const ElementType & aValue)
+    {
+        assert(mCurrentControl.get() != nullptr);
+        assert(aVectorIndex >= static_cast<SizeType>(0));
+        assert(aVectorIndex < mCurrentControl->getNumVectors());
+
+        mCurrentControl->operator [](aVectorIndex).fill(aValue);
+        mIsInitialGuessSet = true;
+    }
+    void setInitialGuess(const SizeType & aVectorIndex, const locus::Vector<ElementType, SizeType> & aInput)
+    {
+        assert(mCurrentControl.get() != nullptr);
+        assert(aVectorIndex >= static_cast<SizeType>(0));
+        assert(aVectorIndex < mCurrentControl->getNumVectors());
+
+        mCurrentControl->operator [](aVectorIndex).update(1., aInput, 0.);
+        mIsInitialGuessSet = true;
+    }
+    void setInitialGuess(const locus::MultiVector<ElementType, SizeType> & aInput)
+    {
+        assert(aInput.getNumVectors() == mCurrentControl->getNumVectors());
+        locus::update(1., aInput, 0., *mCurrentControl);
+        mIsInitialGuessSet = true;
+    }
+
+    // NOTE: DUAL VECTOR
+    const locus::MultiVector<ElementType, SizeType> & getDual() const
+    {
+        assert(mDual.get() != nullptr);
+        return (mDual.operator *());
+    }
+    const locus::Vector<ElementType, SizeType> & getDual(const SizeType & aVectorIndex) const
+    {
+        assert(mDual.get() != nullptr);
+        assert(aVectorIndex >= static_cast<SizeType>(0));
+        assert(aVectorIndex < mDual->getNumVectors());
+        return (mDual->operator [](aVectorIndex));
+    }
+    void setDual(const locus::MultiVector<ElementType, SizeType> & aInput)
+    {
+        assert(aInput.getNumVectors() == mDual->getNumVectors());
+        locus::update(1., aInput, 0., *mDual);
+    }
+    void setDual(const SizeType & aVectorIndex, const locus::Vector<ElementType, SizeType> & aInput)
+    {
+        assert(mDual.get() != nullptr);
+        assert(aVectorIndex >= static_cast<SizeType>(0));
+        assert(aVectorIndex < mDual->getNumVectors());
+        mDual->operator [](aVectorIndex).update(1., aInput, 0.);
+    }
+
+    // NOTE: ACTIVE SET FUNCTIONS
+    const locus::MultiVector<ElementType, SizeType> & getActiveSet() const
+    {
+        assert(mActiveSet.get() != nullptr);
+
+        return (mActiveSet.operator *());
+    }
+    const locus::Vector<ElementType, SizeType> & getActiveSet(const SizeType & aVectorIndex) const
+    {
+        assert(mActiveSet.get() != nullptr);
+        assert(aVectorIndex >= static_cast<SizeType>(0));
+        assert(aVectorIndex < mActiveSet->getNumVectors());
+
+        return (mActiveSet->operator [](aVectorIndex));
+    }
+    void setActiveSet(const locus::MultiVector<ElementType, SizeType> & aInput)
+    {
+        assert(aInput.getNumVectors() == mActiveSet->getNumVectors());
+        locus::update(1., aInput, 0., *mActiveSet);
+    }
+    void setActiveSet(const SizeType & aVectorIndex, const locus::Vector<ElementType, SizeType> & aInput)
+    {
+        assert(mActiveSet.get() != nullptr);
+        assert(aVectorIndex >= static_cast<SizeType>(0));
+        assert(aVectorIndex < mActiveSet->getNumVectors());
+
+        mActiveSet->operator [](aVectorIndex).update(1., aInput, 0.);
+    }
+
+    // NOTE: INACTIVE SET FUNCTIONS
+    const locus::MultiVector<ElementType, SizeType> & getInactiveSet() const
+    {
+        assert(mInactiveSet.get() != nullptr);
+
+        return (mInactiveSet.operator *());
+    }
+    const locus::Vector<ElementType, SizeType> & getInactiveSet(const SizeType & aVectorIndex) const
+    {
+        assert(mInactiveSet.get() != nullptr);
+        assert(aVectorIndex >= static_cast<SizeType>(0));
+        assert(aVectorIndex < mInactiveSet->getNumVectors());
+
+        return (mInactiveSet->operator [](aVectorIndex));
+    }
+    void setInactiveSet(const locus::MultiVector<ElementType, SizeType> & aInput)
+    {
+        assert(aInput.getNumVectors() == mInactiveSet->getNumVectors());
+        locus::update(1., aInput, 0., *mInactiveSet);
+    }
+    void setInactiveSet(const SizeType & aVectorIndex, const locus::Vector<ElementType, SizeType> & aInput)
+    {
+        assert(mInactiveSet.get() != nullptr);
+        assert(aVectorIndex >= static_cast<SizeType>(0));
+        assert(aVectorIndex < mInactiveSet->getNumVectors());
+
+        mInactiveSet->operator [](aVectorIndex).update(1., aInput, 0.);
+    }
+
+    // NOTE: CURRENT CONTROL
+    const locus::MultiVector<ElementType, SizeType> & getCurrentControl() const
+    {
+        assert(mCurrentControl.get() != nullptr);
+
+        return (mCurrentControl.operator *());
+    }
+    const locus::Vector<ElementType, SizeType> & getCurrentControl(const SizeType & aVectorIndex) const
+    {
+        assert(mCurrentControl.get() != nullptr);
+        assert(aVectorIndex >= static_cast<SizeType>(0));
+        assert(aVectorIndex < mCurrentControl->getNumVectors());
+
+        return (mCurrentControl->operator [](aVectorIndex));
+    }
+    void setCurrentControl(const locus::MultiVector<ElementType, SizeType> & aInput)
+    {
+        assert(aInput.getNumVectors() == mCurrentControl->getNumVectors());
+        locus::update(static_cast<ElementType>(1), aInput, static_cast<ElementType>(0), *mCurrentControl);
+    }
+    void setCurrentControl(const SizeType & aVectorIndex, const locus::Vector<ElementType, SizeType> & aInput)
+    {
+        assert(mCurrentControl.get() != nullptr);
+        assert(aVectorIndex >= static_cast<SizeType>(0));
+        assert(aVectorIndex < mCurrentControl->getNumVectors());
+
+        mCurrentControl->operator [](aVectorIndex).update(1., aInput, 0.);
+    }
+
+    // NOTE: PREVIOUS CONTROL
+    const locus::MultiVector<ElementType, SizeType> & getPreviousControl() const
+    {
+        assert(mPreviousControl.get() != nullptr);
+
+        return (mPreviousControl.operator *());
+    }
+    const locus::Vector<ElementType, SizeType> & getPreviousControl(const SizeType & aVectorIndex) const
+    {
+        assert(mPreviousControl.get() != nullptr);
+        assert(aVectorIndex >= static_cast<SizeType>(0));
+        assert(aVectorIndex < mPreviousControl->getNumVectors());
+
+        return (mPreviousControl->operator [](aVectorIndex));
+    }
+    void setPreviousControl(const locus::MultiVector<ElementType, SizeType> & aInput)
+    {
+        assert(aInput.getNumVectors() == mPreviousControl->getNumVectors());
+        locus::update(1., aInput, 0., *mPreviousControl);
+    }
+    void setPreviousControl(const SizeType & aVectorIndex, const locus::Vector<ElementType, SizeType> & aInput)
+    {
+        assert(mPreviousControl.get() != nullptr);
+        assert(aVectorIndex >= static_cast<SizeType>(0));
+        assert(aVectorIndex < mPreviousControl->getNumVectors());
+
+        mPreviousControl->operator [](aVectorIndex).update(1., aInput, 0.);
+    }
+
+    // NOTE: CURRENT OBJECTIVE GRADIENT
+    const locus::MultiVector<ElementType, SizeType> & getCurrentObjectiveGradient() const
+    {
+        assert(mCurrentObjectiveGradient.get() != nullptr);
+
+        return (mCurrentObjectiveGradient.operator *());
+    }
+    const locus::Vector<ElementType, SizeType> & getCurrentObjectiveGradient(const SizeType & aVectorIndex) const
+    {
+        assert(mCurrentObjectiveGradient.get() != nullptr);
+        assert(aVectorIndex >= static_cast<SizeType>(0));
+        assert(aVectorIndex < mCurrentObjectiveGradient->getNumVectors());
+
+        return (mCurrentObjectiveGradient->operator [](aVectorIndex));
+    }
+    void setCurrentObjectiveGradient(const locus::MultiVector<ElementType, SizeType> & aInput)
+    {
+        assert(aInput.getNumVectors() == mCurrentObjectiveGradient->getNumVectors());
+        locus::update(1., aInput, 0., *mCurrentObjectiveGradient);
+    }
+    void setCurrentObjectiveGradient(const SizeType & aVectorIndex, const locus::Vector<ElementType, SizeType> & aInput)
+    {
+        assert(mCurrentObjectiveGradient.get() != nullptr);
+        assert(aVectorIndex >= static_cast<SizeType>(0));
+        assert(aVectorIndex < mCurrentObjectiveGradient->getNumVectors());
+
+        mCurrentObjectiveGradient->operator [](aVectorIndex).update(1., aInput, 0.);
+    }
+
+    // NOTE: CURRENT SIGMA VECTOR
+    const locus::MultiVector<ElementType, SizeType> & getCurrentSigma() const
+    {
+        assert(mCurrentSigma.get() != nullptr);
+
+        return (mCurrentSigma.operator *());
+    }
+    const locus::Vector<ElementType, SizeType> & getCurrentSigma(const SizeType & aVectorIndex) const
+    {
+        assert(mCurrentSigma.get() != nullptr);
+        assert(aVectorIndex >= static_cast<SizeType>(0));
+        assert(aVectorIndex < mCurrentSigma->getNumVectors());
+
+        return (mCurrentSigma->operator [](aVectorIndex));
+    }
+    void setCurrentSigma(const locus::MultiVector<ElementType, SizeType> & aInput)
+    {
+        assert(aInput.getNumVectors() == mCurrentSigma->getNumVectors());
+        locus::update(1., aInput, 0., *mCurrentSigma);
+    }
+    void setCurrentSigma(const SizeType & aVectorIndex, const locus::Vector<ElementType, SizeType> & aInput)
+    {
+        assert(mCurrentSigma.get() != nullptr);
+        assert(aVectorIndex >= static_cast<SizeType>(0));
+        assert(aVectorIndex < mCurrentSigma->getNumVectors());
+
+        mCurrentSigma->operator [](aVectorIndex).update(1., aInput, 0.);
+    }
+
+    // NOTE: SET CONTROL LOWER BOUNDS
+    const locus::MultiVector<ElementType, SizeType> & getControlLowerBounds() const
+    {
+        assert(mControlLowerBounds.get() != nullptr);
+
+        return (mControlLowerBounds.operator *());
+    }
+    const locus::Vector<ElementType, SizeType> & getControlLowerBounds(const SizeType & aVectorIndex) const
+    {
+        assert(mControlLowerBounds.get() != nullptr);
+        assert(aVectorIndex >= static_cast<SizeType>(0));
+        assert(aVectorIndex < mControlLowerBounds->getNumVectors());
+
+        return (mControlLowerBounds->operator [](aVectorIndex));
+    }
+    void setControlLowerBounds(const ElementType & aValue)
+    {
+        assert(mControlLowerBounds.get() != nullptr);
+        assert(mControlLowerBounds->getNumVectors() > static_cast<SizeType>(0));
+
+        SizeType tNumVectors = mControlLowerBounds->getNumVectors();
+        for(SizeType tVectorIndex = 0; tVectorIndex < tNumVectors; tVectorIndex++)
+        {
+            mControlLowerBounds->operator [](tVectorIndex).fill(aValue);
+        }
+    }
+    void setControlLowerBounds(const SizeType & aVectorIndex, const ElementType & aValue)
+    {
+        assert(mControlLowerBounds.get() != nullptr);
+        assert(aVectorIndex >= static_cast<SizeType>(0));
+        assert(aVectorIndex < mControlLowerBounds->getNumVectors());
+
+        mControlLowerBounds->operator [](aVectorIndex).fill(aValue);
+    }
+    void setControlLowerBounds(const SizeType & aVectorIndex, const locus::Vector<ElementType, SizeType> & aInput)
+    {
+        assert(mControlLowerBounds.get() != nullptr);
+        assert(aVectorIndex >= static_cast<SizeType>(0));
+        assert(aVectorIndex < mControlLowerBounds->getNumVectors());
+
+        mControlLowerBounds->operator [](aVectorIndex).update(1., aInput, 0.);
+    }
+    void setControlLowerBounds(const locus::MultiVector<ElementType, SizeType> & aInput)
+    {
+        assert(aInput.getNumVectors() == mControlLowerBounds->getNumVectors());
+        locus::update(1., aInput, 0., *mControlLowerBounds);
+    }
+
+    // NOTE: SET CONTROL UPPER BOUNDS
+    const locus::MultiVector<ElementType, SizeType> & getControlUpperBounds() const
+    {
+        assert(mControlUpperBounds.get() != nullptr);
+
+        return (mControlUpperBounds.operator *());
+    }
+    const locus::Vector<ElementType, SizeType> & getControlUpperBounds(const SizeType & aVectorIndex) const
+    {
+        assert(mControlUpperBounds.get() != nullptr);
+        assert(aVectorIndex >= static_cast<SizeType>(0));
+        assert(aVectorIndex < mControlUpperBounds->getNumVectors());
+
+        return (mControlUpperBounds->operator [](aVectorIndex));
+    }
+    void setControlUpperBounds(const ElementType & aValue)
+    {
+        assert(mControlUpperBounds.get() != nullptr);
+        assert(mControlUpperBounds->getNumVectors() > static_cast<SizeType>(0));
+
+        SizeType tNumVectors = mControlUpperBounds->getNumVectors();
+        for(SizeType tVectorIndex = 0; tVectorIndex < tNumVectors; tVectorIndex++)
+        {
+            mControlUpperBounds->operator [](tVectorIndex).fill(aValue);
+        }
+    }
+    void setControlUpperBounds(const SizeType & aVectorIndex, const ElementType & aValue)
+    {
+        assert(mControlUpperBounds.get() != nullptr);
+        assert(aVectorIndex >= static_cast<SizeType>(0));
+        assert(aVectorIndex < mControlUpperBounds->getNumVectors());
+
+        mControlUpperBounds->operator [](aVectorIndex).fill(aValue);
+    }
+    void setControlUpperBounds(const SizeType & aVectorIndex, const locus::Vector<ElementType, SizeType> & aInput)
+    {
+        assert(mControlUpperBounds.get() != nullptr);
+        assert(aVectorIndex >= static_cast<SizeType>(0));
+        assert(aVectorIndex < mControlUpperBounds->getNumVectors());
+
+        mControlUpperBounds->operator [](aVectorIndex).update(1., aInput, 0.);
+    }
+    void setControlUpperBounds(const locus::MultiVector<ElementType, SizeType> & aInput)
+    {
+        assert(aInput.getNumVectors() == mControlUpperBounds->getNumVectors());
+        locus::update(1., aInput, 0., *mControlUpperBounds);
+    }
+
+    // NOTE: CURRENT CONSTRAINT VALUES
+    const locus::MultiVector<ElementType, SizeType> & getCurrentConstraintValues() const
+    {
+        assert(mCurrentConstraintValues.get() != nullptr);
+        return (mCurrentConstraintValues.operator *());
+    }
+    const locus::Vector<ElementType, SizeType> & getCurrentConstraintValues(const SizeType & aVectorIndex) const
+    {
+        assert(mCurrentConstraintValues.get() != nullptr);
+        assert(aVectorIndex >= static_cast<SizeType>(0));
+        assert(aVectorIndex < mCurrentConstraintValues->getNumVectors());
+        return (mCurrentConstraintValues->operator [](aVectorIndex));
+    }
+    void setCurrentConstraintValues(const locus::MultiVector<ElementType, SizeType> & aInput)
+    {
+        assert(aInput.getNumVectors() == mCurrentConstraintValues->getNumVectors());
+        locus::update(1., aInput, 0., *mCurrentConstraintValues);
+    }
+    void setCurrentConstraintValues(const SizeType & aVectorIndex, const locus::Vector<ElementType, SizeType> & aInput)
+    {
+        assert(mCurrentConstraintValues.get() != nullptr);
+        assert(aVectorIndex >= static_cast<SizeType>(0));
+        assert(aVectorIndex < mCurrentConstraintValues->getNumVectors());
+        mCurrentConstraintValues->operator [](aVectorIndex).update(1., aInput, 0.);
+    }
+
+    // NOTE: CURRENT CONSTRAINT GRADIENTS
+    const locus::MultiVector<ElementType, SizeType> & getCurrentConstraintGradients() const
+    {
+        assert(mCurrentConstraintGradients.get() != nullptr);
+
+        return (mCurrentConstraintGradients.operator *());
+    }
+    const locus::Vector<ElementType, SizeType> & getCurrentConstraintGradients(const SizeType & aVectorIndex) const
+    {
+        assert(mCurrentConstraintGradients.get() != nullptr);
+        assert(aVectorIndex >= static_cast<SizeType>(0));
+        assert(aVectorIndex < mCurrentConstraintGradients->getNumVectors());
+
+        return (mCurrentConstraintGradients->operator [](aVectorIndex));
+    }
+    void setCurrentConstraintGradients(const locus::MultiVector<ElementType, SizeType> & aInput)
+    {
+        assert(aInput.getNumVectors() == mCurrentConstraintGradients->getNumVectors());
+        locus::update(1., aInput, 0., *mCurrentConstraintGradients);
+    }
+    void setCurrentConstraintGradients(const SizeType & aVectorIndex,
+                                       const locus::Vector<ElementType, SizeType> & aInput)
+    {
+        assert(mCurrentConstraintGradients.get() != nullptr);
+        assert(aVectorIndex >= static_cast<SizeType>(0));
+        assert(aVectorIndex < mCurrentConstraintGradients->getNumVectors());
+
+        mCurrentConstraintGradients->operator [](aVectorIndex).update(1., aInput, 0.);
+    }
+
+    // NOTE: DUAL PROBLEM AUXILIARY (I.E. SLACK) VARIABLES
+    const locus::MultiVector<ElementType, SizeType> & getAuxiliaryVariables() const
+    {
+        assert(mAuxiliaryVariablesY.get() != nullptr);
+
+        return (mAuxiliaryVariablesY.operator *());
+    }
+    const locus::Vector<ElementType, SizeType> & getAuxiliaryVariables(const SizeType & aVectorIndex) const
+    {
+        assert(mAuxiliaryVariablesY.get() != nullptr);
+        assert(aVectorIndex >= static_cast<SizeType>(0));
+        assert(aVectorIndex < mAuxiliaryVariablesY->getNumVectors());
+
+        return (mAuxiliaryVariablesY->operator [](aVectorIndex));
+    }
+    void setAuxiliaryVariables(const ElementType & aValue)
+    {
+        assert(mAuxiliaryVariablesY.get() != nullptr);
+        assert(mAuxiliaryVariablesY->getNumVectors() > static_cast<SizeType>(0));
+
+        SizeType tNumVectors = mAuxiliaryVariablesY->getNumVectors();
+        for(SizeType tVectorIndex = 0; tVectorIndex < tNumVectors; tVectorIndex++)
+        {
+            mAuxiliaryVariablesY->operator [](tVectorIndex).fill(aValue);
+        }
+    }
+    void setAuxiliaryVariables(const SizeType & aVectorIndex, const ElementType & aValue)
+    {
+        assert(mAuxiliaryVariablesY.get() != nullptr);
+        assert(aVectorIndex >= static_cast<SizeType>(0));
+        assert(aVectorIndex < mAuxiliaryVariablesY->getNumVectors());
+
+        mAuxiliaryVariablesY->operator [](aVectorIndex).fill(aValue);
+    }
+    void setAuxiliaryVariables(const SizeType & aVectorIndex,
+                               const SizeType & aElementIndex,
+                               const ElementType & aValue)
+    {
+        assert(mAuxiliaryVariablesY.get() != nullptr);
+        assert(aVectorIndex >= static_cast<SizeType>(0));
+        assert(aVectorIndex < mAuxiliaryVariablesY->getNumVectors());
+        assert(aElementIndex >= static_cast<SizeType>(0));
+        assert(aElementIndex < mAuxiliaryVariablesY->operator [](aVectorIndex).size());
+
+        mAuxiliaryVariablesY->operator*().operator()(aVectorIndex, aElementIndex) = aValue;
+    }
+    void setAuxiliaryVariables(const SizeType & aVectorIndex, const locus::Vector<ElementType, SizeType> & aInput)
+    {
+        assert(mAuxiliaryVariablesY.get() != nullptr);
+        assert(aVectorIndex >= static_cast<SizeType>(0));
+        assert(aVectorIndex < mAuxiliaryVariablesY->getNumVectors());
+
+        mAuxiliaryVariablesY->operator [](aVectorIndex).update(1., aInput, 0.);
+    }
+    void setAuxiliaryVariables(const locus::MultiVector<ElementType, SizeType> & aInput)
+    {
+        assert(aInput.getNumVectors() == mAuxiliaryVariablesY->getNumVectors());
+        locus::update(1., aInput, 0., *mAuxiliaryVariablesY);
+    }
+
+    // NOTE: DUAL PROBLEM CONSTRAINT COEFFICIENTS A
+    const locus::MultiVector<ElementType, SizeType> & getConstraintCoefficientsA() const
+    {
+        assert(mConstraintCoefficientsA.get() != nullptr);
+
+        return (mConstraintCoefficientsA.operator *());
+    }
+    const locus::Vector<ElementType, SizeType> & getConstraintCoefficientsA(const SizeType & aVectorIndex) const
+    {
+        assert(mConstraintCoefficientsA.get() != nullptr);
+        assert(aVectorIndex >= static_cast<SizeType>(0));
+        assert(aVectorIndex < mConstraintCoefficientsA->getNumVectors());
+
+        return (mConstraintCoefficientsA->operator [](aVectorIndex));
+    }
+    void setConstraintCoefficientsA(const ElementType & aValue)
+    {
+        assert(mConstraintCoefficientsA.get() != nullptr);
+        assert(mConstraintCoefficientsA->getNumVectors() > static_cast<SizeType>(0));
+
+        SizeType tNumVectors = mConstraintCoefficientsA->getNumVectors();
+        for(SizeType tVectorIndex = 0; tVectorIndex < tNumVectors; tVectorIndex++)
+        {
+            mConstraintCoefficientsA->operator [](tVectorIndex).fill(aValue);
+        }
+    }
+    void setConstraintCoefficientsA(const SizeType & aVectorIndex, const ElementType & aValue)
+    {
+        assert(mConstraintCoefficientsA.get() != nullptr);
+        assert(aVectorIndex >= static_cast<SizeType>(0));
+        assert(aVectorIndex < mConstraintCoefficientsA->getNumVectors());
+
+        mConstraintCoefficientsA->operator [](aVectorIndex).fill(aValue);
+    }
+    void setConstraintCoefficientsA(const SizeType & aVectorIndex,
+                                    const SizeType & aElementIndex,
+                                    const ElementType & aValue)
+    {
+        assert(mConstraintCoefficientsA.get() != nullptr);
+        assert(aVectorIndex >= static_cast<SizeType>(0));
+        assert(aVectorIndex < mConstraintCoefficientsA->getNumVectors());
+        assert(aElementIndex >= static_cast<SizeType>(0));
+        assert(aElementIndex < mConstraintCoefficientsA->operator [](aVectorIndex).size());
+
+        mConstraintCoefficientsA->operator*().operator()(aVectorIndex, aElementIndex) = aValue;
+    }
+    void setConstraintCoefficientsA(const SizeType & aVectorIndex, const locus::Vector<ElementType, SizeType> & aInput)
+    {
+        assert(mConstraintCoefficientsA.get() != nullptr);
+        assert(aVectorIndex >= static_cast<SizeType>(0));
+        assert(aVectorIndex < mConstraintCoefficientsA->getNumVectors());
+
+        mConstraintCoefficientsA->operator [](aVectorIndex).update(1., aInput, 0.);
+    }
+    void setConstraintCoefficientsA(const locus::MultiVector<ElementType, SizeType> & aInput)
+    {
+        assert(aInput.getNumVectors() == mConstraintCoefficientsA->getNumVectors());
+        locus::update(1., aInput, 0., *mConstraintCoefficientsA);
+    }
+
+    // NOTE: DUAL PROBLEM CONSTRAINT COEFFICIENTS C
+    const locus::MultiVector<ElementType, SizeType> & getConstraintCoefficientsC() const
+    {
+        assert(mConstraintCoefficientsC.get() != nullptr);
+
+        return (mConstraintCoefficientsC.operator *());
+    }
+    const locus::Vector<ElementType, SizeType> & getConstraintCoefficientsC(const SizeType & aVectorIndex) const
+    {
+        assert(mConstraintCoefficientsC.get() != nullptr);
+        assert(aVectorIndex >= static_cast<SizeType>(0));
+        assert(aVectorIndex < mConstraintCoefficientsC->getNumVectors());
+
+        return (mConstraintCoefficientsC->operator [](aVectorIndex));
+    }
+    void setConstraintCoefficientsC(const ElementType & aValue)
+    {
+        assert(mConstraintCoefficientsC.get() != nullptr);
+        assert(mConstraintCoefficientsC->getNumVectors() > static_cast<SizeType>(0));
+
+        SizeType tNumVectors = mConstraintCoefficientsC->getNumVectors();
+        for(SizeType tVectorIndex = 0; tVectorIndex < tNumVectors; tVectorIndex++)
+        {
+            mConstraintCoefficientsC->operator [](tVectorIndex).fill(aValue);
+        }
+    }
+    void setConstraintCoefficientsC(const SizeType & aVectorIndex, const ElementType & aValue)
+    {
+        assert(mConstraintCoefficientsC.get() != nullptr);
+        assert(aVectorIndex >= static_cast<SizeType>(0));
+        assert(aVectorIndex < mConstraintCoefficientsC->getNumVectors());
+
+        mConstraintCoefficientsC->operator [](aVectorIndex).fill(aValue);
+    }
+    void setConstraintCoefficientsC(const SizeType & aVectorIndex,
+                                    const SizeType & aElementIndex,
+                                    const ElementType & aValue)
+    {
+        assert(mConstraintCoefficientsC.get() != nullptr);
+        assert(aVectorIndex >= static_cast<SizeType>(0));
+        assert(aVectorIndex < mConstraintCoefficientsC->getNumVectors());
+        assert(aElementIndex >= static_cast<SizeType>(0));
+        assert(aElementIndex < mConstraintCoefficientsC->operator [](aVectorIndex).size());
+
+        mConstraintCoefficientsC->operator*().operator()(aVectorIndex, aElementIndex) = aValue;
+    }
+    void setConstraintCoefficientsC(const SizeType & aVectorIndex, const locus::Vector<ElementType, SizeType> & aInput)
+    {
+        assert(mConstraintCoefficientsC.get() != nullptr);
+        assert(aVectorIndex >= static_cast<SizeType>(0));
+        assert(aVectorIndex < mConstraintCoefficientsC->getNumVectors());
+
+        mConstraintCoefficientsC->operator [](aVectorIndex).update(1., aInput, 0.);
+    }
+    void setConstraintCoefficientsC(const locus::MultiVector<ElementType, SizeType> & aInput)
+    {
+        assert(aInput.getNumVectors() == mConstraintCoefficientsC->getNumVectors());
+        locus::update(1., aInput, 0., *mConstraintCoefficientsC);
+    }
+
+    // NOTE: DUAL PROBLEM CONSTRAINT COEFFICIENTS D
+    const locus::MultiVector<ElementType, SizeType> & getConstraintCoefficientsD() const
+    {
+        assert(mConstraintCoefficientsD.get() != nullptr);
+
+        return (mConstraintCoefficientsD.operator *());
+    }
+    const locus::Vector<ElementType, SizeType> & getConstraintCoefficientsD(const SizeType & aVectorIndex) const
+    {
+        assert(mConstraintCoefficientsD.get() != nullptr);
+        assert(aVectorIndex >= static_cast<SizeType>(0));
+        assert(aVectorIndex < mConstraintCoefficientsD->getNumVectors());
+
+        return (mConstraintCoefficientsD->operator [](aVectorIndex));
+    }
+    void setConstraintCoefficientsD(const ElementType & aValue)
+    {
+        assert(mConstraintCoefficientsD.get() != nullptr);
+        assert(mConstraintCoefficientsD->getNumVectors() > static_cast<SizeType>(0));
+
+        SizeType tNumVectors = mConstraintCoefficientsD->getNumVectors();
+        for(SizeType tVectorIndex = 0; tVectorIndex < tNumVectors; tVectorIndex++)
+        {
+            mConstraintCoefficientsD->operator [](tVectorIndex).fill(aValue);
+        }
+    }
+    void setConstraintCoefficientsD(const SizeType & aVectorIndex, const ElementType & aValue)
+    {
+        assert(mConstraintCoefficientsD.get() != nullptr);
+        assert(aVectorIndex >= static_cast<SizeType>(0));
+        assert(aVectorIndex < mConstraintCoefficientsD->getNumVectors());
+
+        mConstraintCoefficientsD->operator [](aVectorIndex).fill(aValue);
+    }
+    void setConstraintCoefficientsD(const SizeType & aVectorIndex,
+                                    const SizeType & aElementIndex,
+                                    const ElementType & aValue)
+    {
+        assert(mConstraintCoefficientsD.get() != nullptr);
+        assert(aVectorIndex >= static_cast<SizeType>(0));
+        assert(aVectorIndex < mConstraintCoefficientsD->getNumVectors());
+        assert(aElementIndex >= static_cast<SizeType>(0));
+        assert(aElementIndex < mConstraintCoefficientsD->operator [](aVectorIndex).size());
+
+        mConstraintCoefficientsD->operator*().operator()(aVectorIndex, aElementIndex) = aValue;
+    }
+    void setConstraintCoefficientsD(const SizeType & aVectorIndex, const locus::Vector<ElementType, SizeType> & aInput)
+    {
+        assert(mConstraintCoefficientsD.get() != nullptr);
+        assert(aVectorIndex >= static_cast<SizeType>(0));
+        assert(aVectorIndex < mConstraintCoefficientsD->getNumVectors());
+
+        mConstraintCoefficientsD->operator [](aVectorIndex).update(1., aInput, 0.);
+    }
+    void setConstraintCoefficientsD(const locus::MultiVector<ElementType, SizeType> & aInput)
+    {
+        assert(aInput.getNumVectors() == mConstraintCoefficientsD->getNumVectors());
+        locus::update(1., aInput, 0., *mConstraintCoefficientsD);
+    }
+
+    // NOTE: STAGNATION MEASURE CRITERION
+    void computeStagnationMeasure()
+    {
+        SizeType tNumVectors = mCurrentControl->getNumVectors();
+        std::vector<ElementType> storage(tNumVectors, std::numeric_limits<ElementType>::min());
+        for(SizeType tIndex = 0; tIndex < tNumVectors; tIndex++)
+        {
+            const locus::Vector<ElementType, SizeType> & tMyCurrentControl = mCurrentControl->operator[](tIndex);
+            mControlWorkVector->update(1., tMyCurrentControl, 0.);
+            const locus::Vector<ElementType, SizeType> & tMyPreviousControl = mPreviousControl->operator[](tIndex);
+            mControlWorkVector->update(-1., tMyPreviousControl, 1.);
+            mControlWorkVector->modulus();
+            storage[tIndex] = mControlReductionOperations->max(*mControlWorkVector);
+        }
+        mStagnationMeasure = *std::max_element(storage.begin(), storage.end());
+    }
+    ElementType getStagnationMeasure() const
+    {
+        return (mStagnationMeasure);
+    }
+
+    // NOTE: NORM OF CURRENT PROJECTED GRADIENT
+    ElementType computeProjectedVectorNorm(const locus::MultiVector<ElementType, SizeType> & aInput)
+    {
+        ElementType tCummulativeDotProduct = 0.;
+        SizeType tNumVectors = aInput.getNumVectors();
+        for(SizeType tIndex = 0; tIndex < tNumVectors; tIndex++)
+        {
+            const locus::Vector<ElementType, SizeType> & tMyInactiveSet = (*mInactiveSet)[tIndex];
+            const locus::Vector<ElementType, SizeType> & tMyInputVector = aInput[tIndex];
+
+            mControlWorkVector->update(1., tMyInputVector, 0.);
+            mControlWorkVector->entryWiseProduct(tMyInactiveSet);
+            tCummulativeDotProduct += mControlWorkVector->dot(*mControlWorkVector);
+        }
+        ElementType tOutput = std::sqrt(tCummulativeDotProduct);
+        return(tOutput);
+    }
+    void computeProjectedGradientNorm()
+    {
+        ElementType tCummulativeDotProduct = 0.;
+        SizeType tNumVectors = mCurrentObjectiveGradient->getNumVectors();
+        for(SizeType tIndex = 0; tIndex < tNumVectors; tIndex++)
+        {
+            const locus::Vector<ElementType, SizeType> & tMyInactiveSet = (*mInactiveSet)[tIndex];
+            const locus::Vector<ElementType, SizeType> & tMyGradient = (*mCurrentObjectiveGradient)[tIndex];
+
+            mControlWorkVector->update(1., tMyGradient, 0.);
+            mControlWorkVector->entryWiseProduct(tMyInactiveSet);
+            tCummulativeDotProduct += mControlWorkVector->dot(*mControlWorkVector);
+        }
+        mNormProjectedGradient = std::sqrt(tCummulativeDotProduct);
+    }
+    ElementType getNormProjectedGradient() const
+    {
+        return (mNormProjectedGradient);
+    }
+
+    // NOTE: STATIONARITY MEASURE CALCULATION
+    void computeStationarityMeasure()
+    {
+        assert(mInactiveSet.get() != nullptr);
+        assert(mCurrentControl.get() != nullptr);
+        assert(mControlLowerBounds.get() != nullptr);
+        assert(mControlUpperBounds.get() != nullptr);
+        assert(mCurrentObjectiveGradient.get() != nullptr);
+
+        locus::update(1., *mCurrentControl, 0., *mControlWorkMultiVector);
+        locus::update(-1., *mCurrentObjectiveGradient, 1., *mControlWorkMultiVector);
+        locus::bounds::project(*mControlLowerBounds, *mControlUpperBounds, *mControlWorkMultiVector);
+        locus::update(1., *mCurrentControl, -1., *mControlWorkMultiVector);
+        locus::entryWiseProduct(*mInactiveSet, *mControlWorkMultiVector);
+        mStationarityMeasure = locus::norm(*mControlWorkMultiVector);
+    }
+    ElementType getStationarityMeasure() const
+    {
+        return (mStationarityMeasure);
+    }
+
+public:
+    std::shared_ptr<locus::Vector<ElementType, SizeType>> mControlWorkVector;
+    std::shared_ptr<locus::MultiVector<ElementType, SizeType>> mControlWorkMultiVector;
+
+private:
+    void initialize()
+    {
+        const SizeType tVectorIndex = 0;
+        const locus::Vector<ElementType, SizeType> & tVector = mCurrentControl[tVectorIndex];
+        mControlWorkVector = tVector.create();
+        locus::fill(static_cast<ElementType>(0), *mActiveSet);
+        locus::fill(static_cast<ElementType>(1), *mInactiveSet);
+
+        const SizeType tNumConstraints = mDual->getNumVectors();
+        mCurrentConstraintGradients =
+                std::make_shared<locus::StandardMultiVector<ElementType, SizeType>>(tNumConstraints, tVector);
+
+        ElementType tScalarValue = std::numeric_limits<ElementType>::max();
+        locus::fill(tScalarValue, *mControlUpperBounds);
+        tScalarValue = -std::numeric_limits<ElementType>::max();
+        locus::fill(tScalarValue, *mControlLowerBounds);
+    }
+
+private:
+    bool mIsInitialGuessSet;
+
+    ElementType mStagnationMeasure;
+    ElementType mStationarityMeasure;
+    ElementType mNormProjectedGradient;
+    ElementType mObjectiveCoefficientA;
+    ElementType mInitialAuxiliaryVariableZ;
+    ElementType mCurrentObjectiveFunctionValue;
+    ElementType mPreviousObjectiveFunctionValue;
+
+    std::shared_ptr<locus::MultiVector<ElementType, SizeType>> mDual;
+    std::shared_ptr<locus::MultiVector<ElementType, SizeType>> mMinRho;
+    std::shared_ptr<locus::MultiVector<ElementType, SizeType>> mActiveSet;
+    std::shared_ptr<locus::MultiVector<ElementType, SizeType>> mInactiveSet;
+    std::shared_ptr<locus::MultiVector<ElementType, SizeType>> mCurrentSigma;
+    std::shared_ptr<locus::MultiVector<ElementType, SizeType>> mCurrentControl;
+    std::shared_ptr<locus::MultiVector<ElementType, SizeType>> mPreviousControl;
+    std::shared_ptr<locus::MultiVector<ElementType, SizeType>> mControlLowerBounds;
+    std::shared_ptr<locus::MultiVector<ElementType, SizeType>> mControlUpperBounds;
+
+    std::shared_ptr<locus::MultiVector<ElementType, SizeType>> mCurrentConstraintValues;
+    std::shared_ptr<locus::MultiVector<ElementType, SizeType>> mCurrentObjectiveGradient;
+    std::shared_ptr<locus::MultiVector<ElementType, SizeType>> mCurrentConstraintGradients;
+
+    std::shared_ptr<locus::MultiVector<ElementType, SizeType>> mAuxiliaryVariablesY;
+    std::shared_ptr<locus::MultiVector<ElementType, SizeType>> mConstraintCoefficientsA;
+    std::shared_ptr<locus::MultiVector<ElementType, SizeType>> mConstraintCoefficientsC;
+    std::shared_ptr<locus::MultiVector<ElementType, SizeType>> mConstraintCoefficientsD;
+
+    std::shared_ptr<locus::ReductionOperations<ElementType, SizeType>> mDualReductionOperations;
+    std::shared_ptr<locus::ReductionOperations<ElementType, SizeType>> mControlReductionOperations;
+
+private:
+    MethodMovingAsymptoteDataMng(const locus::MethodMovingAsymptoteDataMng<ElementType, SizeType> & aRhs);
+    locus::MethodMovingAsymptoteDataMng<ElementType, SizeType> & operator=(const locus::MethodMovingAsymptoteDataMng<ElementType, SizeType> & aRhs);
+};
+
 }
+
+/**********************************************************************************************************/
+/*********************************************** UNIT TESTS ***********************************************/
+/**********************************************************************************************************/
 
 namespace LocusTest
 {
@@ -7255,9 +8127,9 @@ TEST(LocusTest, AugmentedLagrangianStageMng)
     LocusTest::checkMultiVectorData(tLagrangeMultipliers, tLagrangeMultipliersGold);
 
     // ********* TEST AUGMENTED LAGRANGIAN STAGE MANAGER - COMPUTE FEASIBILITY MEASURE *********
-    tStageMng.computeFeasibilityMeasure();
+    tStageMng.computeCurrentFeasibilityMeasure();
     tScalarGold = 0.5;
-    EXPECT_NEAR(tScalarGold, tStageMng.getFeasibilityMeasure(), tTolerance);
+    EXPECT_NEAR(tScalarGold, tStageMng.getCurrentFeasibilityMeasure(), tTolerance);
 
     // ********* TEST AUGMENTED LAGRANGIAN STAGE MANAGER - COMPUTE GRADIENT *********
     locus::AnalyticalGradient<double> tObjectiveGradient(tCircle);
