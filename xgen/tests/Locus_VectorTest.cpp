@@ -600,6 +600,45 @@ void update(const ElementType & aAlpha,
     }
 }
 
+template<typename ElementType, typename SizeType>
+void gemv(const ElementType & aAlpha,
+          const locus::MultiVector<ElementType, SizeType> & aMatrix,
+          const locus::Vector<ElementType, SizeType> & aVector,
+          const ElementType & aBeta,
+          locus::Vector<ElementType, SizeType> & aOutput,
+          bool aTranspose)
+{
+    const SizeType tNumElements = aMatrix[0].size();
+    const SizeType tNumVectors = aMatrix.getNumVectors();
+
+    if(aTranspose == false)
+    {
+        assert(tNumVectors == aOutput.size());
+        assert(tNumElements == aVector.size());
+
+        aOutput.scale(aBeta);
+        for(SizeType tVectorIndex = 0; tVectorIndex < tNumVectors; tVectorIndex++)
+        {
+            ElementType tOutputRowValue = aMatrix[tVectorIndex].dot(aVector);
+            tOutputRowValue = aAlpha * tOutputRowValue;
+            aOutput[tVectorIndex] = aOutput[tVectorIndex] + tOutputRowValue;
+        }
+    }
+    else
+    {
+        assert(tNumVectors == aVector.size());
+        assert(tNumElements == aOutput.size());
+
+        aOutput.scale(aBeta);
+        for(SizeType tVectorIndex = 0; tVectorIndex < tNumVectors; tVectorIndex++)
+        {
+            ElementType tScaleFactor = aAlpha * aVector[tVectorIndex];
+            const locus::Vector<ElementType, SizeType> & tVector = aMatrix[tVectorIndex];
+            aOutput.update(tScaleFactor, tVector, static_cast<ElementType>(1));
+        }
+    }
+}
+
 /**********************************************************************************************************/
 /************************************** OPTIMALITY CRITERIA ALGORITHM *************************************/
 /**********************************************************************************************************/
@@ -2042,9 +2081,9 @@ public:
         mObjectiveGradientTolerance = aInput;
     }
 
-    void gatherOuputStream(std::ostringstream & output_)
+    void gatherOuputStream(std::ostringstream & aOutput)
     {
-        output_ << mOutputStream.str().c_str();
+        aOutput << mOutputStream.str().c_str();
     }
 
     void solve()
@@ -6194,6 +6233,111 @@ private:
 private:
     MethodMovingAsymptoteDataMng(const locus::MethodMovingAsymptoteDataMng<ElementType, SizeType> & aRhs);
     locus::MethodMovingAsymptoteDataMng<ElementType, SizeType> & operator=(const locus::MethodMovingAsymptoteDataMng<ElementType, SizeType> & aRhs);
+};
+
+template<typename ElementType, typename SizeType = size_t>
+class MethodMovingAsymptoteStageMng
+{
+public:
+    virtual ~MethodMovingAsymptoteStageMng()
+    {
+    }
+
+    virtual void update(const locus::MethodMovingAsymptoteDataMng<ElementType, SizeType> & aDataMng) = 0;
+    virtual ElementType evaluateObjective(const locus::MultiVector<ElementType, SizeType> & aControl) = 0;
+    virtual void computeGradient(const locus::MultiVector<ElementType, SizeType> & aControl,
+                                 locus::MultiVector<ElementType, SizeType> & aOutput) = 0;
+};
+
+template<typename ElementType, typename SizeType = size_t>
+class DualProblemStageMng : public locus::MethodMovingAsymptoteStageMng<ElementType, SizeType>
+{
+public:
+    DualProblemStageMng(const locus::DataFactory<ElementType, SizeType> & aDataFactory) :
+            mTrialControl(aDataFactory.control().create())
+    {
+    }
+    virtual ~DualProblemStageMng()
+    {
+    }
+
+    void update(const locus::MethodMovingAsymptoteDataMng<ElementType, SizeType> & aDataMng)
+    {
+    }
+    ElementType evaluateObjective(const locus::MultiVector<ElementType, SizeType> & aDual)
+    {
+        return (0);
+    }
+    void computeGradient(const locus::MultiVector<ElementType, SizeType> & aDual,
+                         locus::MultiVector<ElementType, SizeType> & aOutput)
+    {
+    }
+
+private:
+    // Compute trial controls based on the following explicit expression:
+    // \[ x(\lambda)=\frac{u_j^k\mathtt{b}^{1/2}+l_j^k\mathtt{a}^{1/2}}{(\mathtt{a}^{1/2}+\mathtt{b}^{1/2})} \],
+    // where
+    //      \[ \mathtt{a}=(p_{0j}+\lambda^{\intercal}p_j) \] and [ \mathtt{b}=(q_{0j}+\lambda^{\intercal}q_j) ]
+    //      and j=1\dots,n_{x}
+    // Here, x denotes the trial control vector
+    void computeTrialControl(const locus::MultiVector<ElementType, SizeType> & aDual)
+    {
+        assert(aDual->getNumVectors() == static_cast<SizeType>(1));
+        assert(mConstraintCoefficientsP->getNumVectors() == aDual->operator[](0).size());
+
+        ElementType tBeta = 0;
+        ElementType tAlpha = 1;
+        locus::gemv(tAlpha, *mConstraintCoefficientsP, aDual, tBeta, *mDualTimesPcoeffMatrix, true);
+        locus::gemv(tAlpha, *mConstraintCoefficientsQ, aDual, tBeta, *mDualTimesQcoeffMatrix, true);
+
+        locus::update(static_cast<ElementType>(1), *mObjectiveCoefficientsP, static_cast<ElementType>(0), *mTermA);
+        locus::update(static_cast<ElementType>(1), *mDualTimesPcoeffMatrix, static_cast<ElementType>(1), *mTermA);
+        locus::update(static_cast<ElementType>(1), *mObjectiveCoefficientsQ, static_cast<ElementType>(0), *mTermB);
+        locus::update(static_cast<ElementType>(1), *mDualTimesQcoeffMatrix, static_cast<ElementType>(1), *mTermB);
+
+        const SizeType tNumControlVectors = mTrialControl->getNumVectors();
+        assert(tNumControlVectors == static_cast<SizeType>(1));
+        for(SizeType tVectorIndex = 0; tVectorIndex < tNumControlVectors; tVectorIndex++)
+        {
+            SizeType tNumControls = mTrialControl->operator[](tVectorIndex).size();
+            for(SizeType tControlIndex = 0; tControlIndex < tNumControls; tControlIndex++)
+            {
+                ElementType tSqrtTermA = std::sqrt(mTermA->operator()(tVectorIndex, tControlIndex));
+                ElementType tSqrtTermB = std::sqrt(mTermB->operator()(tVectorIndex, tControlIndex));
+                ElementType tNumerator = (mLowerAsymptote->operator()(tVectorIndex, tControlIndex) * tSqrtTermA)
+                        + (mUpperAsymptote->operator()(tVectorIndex, tControlIndex) * tSqrtTermB);
+                ElementType tDenominator = (tSqrtTermA + tSqrtTermB);
+                mTrialControl->operator()(tVectorIndex, tControlIndex) = tNumerator / tDenominator;
+                // Project trial control to feasible set
+                mTrialControl->operator()(tVectorIndex, tControlIndex) =
+                        std::max(mTrialControl->operator()(tVectorIndex, tControlIndex),
+                                 mTrialControlLowerBounds->operator()(tVectorIndex, tControlIndex));
+                mTrialControl->operator()(tVectorIndex, tControlIndex) =
+                        std::min(mTrialControl->operator()(tVectorIndex, tControlIndex),
+                                 mTrialControlUpperBounds->operator()(tVectorIndex, tControlIndex));
+            }
+        }
+    }
+
+private:
+    std::shared_ptr<locus::MultiVector<ElementType, SizeType>> mTermA;
+    std::shared_ptr<locus::MultiVector<ElementType, SizeType>> mTermB;
+    std::shared_ptr<locus::MultiVector<ElementType, SizeType>> mTrialControl;
+    std::shared_ptr<locus::MultiVector<ElementType, SizeType>> mLowerAsymptote;
+    std::shared_ptr<locus::MultiVector<ElementType, SizeType>> mUpperAsymptote;
+    std::shared_ptr<locus::MultiVector<ElementType, SizeType>> mControlWorkVector;
+    std::shared_ptr<locus::MultiVector<ElementType, SizeType>> mDualTimesPcoeffMatrix;
+    std::shared_ptr<locus::MultiVector<ElementType, SizeType>> mDualTimesQcoeffMatrix;
+    std::shared_ptr<locus::MultiVector<ElementType, SizeType>> mObjectiveCoefficientsP;
+    std::shared_ptr<locus::MultiVector<ElementType, SizeType>> mObjectiveCoefficientsQ;
+    std::shared_ptr<locus::MultiVector<ElementType, SizeType>> mTrialControlLowerBounds;
+    std::shared_ptr<locus::MultiVector<ElementType, SizeType>> mTrialControlUpperBounds;
+    std::shared_ptr<locus::MultiVector<ElementType, SizeType>> mConstraintCoefficientsP;
+    std::shared_ptr<locus::MultiVector<ElementType, SizeType>> mConstraintCoefficientsQ;
+
+private:
+    DualProblemStageMng(const locus::DualProblemStageMng<ElementType, SizeType> & aRhs);
+    locus::DualProblemStageMng<ElementType, SizeType> & operator=(const locus::DualProblemStageMng<ElementType, SizeType> & aRhs);
 };
 
 }
