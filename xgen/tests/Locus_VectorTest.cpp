@@ -6334,7 +6334,7 @@ public:
             mConstraintCoefficientsC(aDataFactory.dual().create()),
             mConstraintCoefficientsD(aDataFactory.dual().create()),
             mConstraintCoefficientsR(aDataFactory.dual().create()),
-            mTrialAuxiliaryVariableY(aDataFactory.dual().create()),
+            mAuxiliaryVariableY(aDataFactory.dual().create()),
             mConstraintCoefficientsP(),
             mConstraintCoefficientsQ(),
             mDualReductionOperations(aDataFactory.getDualReductionOperations().create()),
@@ -6390,20 +6390,22 @@ public:
         assert(aDual.getNumVectors() == static_cast<IndexType>(1));
 
         const IndexType tDualVectorIndex = 0;
-        const locus::Vector<ElementType, IndexType> & tDual = aDual[tDualVectorIndex];
         locus::Vector<ElementType, IndexType> & tGradient = aGradient[tDualVectorIndex];
+        const locus::Vector<ElementType, IndexType> & tDual = aDual[tDualVectorIndex];
+        const locus::Vector<ElementType, IndexType> & tAuxiliaryVariableY = (*mAuxiliaryVariableY)[tDualVectorIndex];
+        const locus::Vector<ElementType, IndexType> & tCoefficientsR = (*mConstraintCoefficientsR)[tDualVectorIndex];
+        const locus::Vector<ElementType, IndexType> & tCoefficientsA = (*mConstraintCoefficientsA)[tDualVectorIndex];
 
         IndexType tNumConstraints = tDual.size();
         for(IndexType tConstraintIndex = 0; tConstraintIndex < tNumConstraints; tConstraintIndex++)
         {
-            tGradient[tConstraintIndex] = (*mConstraintCoefficientsR)[tConstraintIndex]
-                    - (*mTrialAuxiliaryVariableY)[tConstraintIndex]
-                    - ((*mConstraintCoefficientsA)[tConstraintIndex] * mTrialAuxiliaryVariableZ);
+            tGradient[tConstraintIndex] = tCoefficientsR[tConstraintIndex] - tAuxiliaryVariableY[tConstraintIndex]
+                    - (tCoefficientsA[tConstraintIndex] * mTrialAuxiliaryVariableZ);
 
             const locus::MultiVector<ElementType, IndexType> & tMyConstraintCoefficientsP =
-                    mConstraintCoefficientsP[tConstraintIndex];
+                    mConstraintCoefficientsP[tConstraintIndex].operator*();
             const locus::MultiVector<ElementType, IndexType> & tMyConstraintCoefficientsQ =
-                    mConstraintCoefficientsQ[tConstraintIndex];
+                    mConstraintCoefficientsQ[tConstraintIndex].operator*();
 
             const IndexType tNumControlVectors = mTrialControl->getNumVectors();
             std::vector<ElementType> tMyStorageOne(tNumControlVectors);
@@ -6587,7 +6589,7 @@ private:
             const locus::Vector<ElementType, IndexType> & tMyDualTimesCoefficientsQ =
                     mDualTimesCoefficientsQ->operator[](tVectorIndex);
 
-            IndexType tNumControls = mTrialControl[tVectorIndex].size();
+            const IndexType tNumControls = tMyTrialControl.size();
             for(IndexType tControlIndex = 0; tControlIndex < tNumControls; tControlIndex++)
             {
                 ElementType tNumerator = tMyObjectiveCoefficientsP[tControlIndex]
@@ -6619,7 +6621,7 @@ private:
     // Here, x denotes the trial control vector
     void computeTrialControl(const locus::MultiVector<ElementType, IndexType> & aDual)
     {
-        assert(aDual->getNumVectors() == static_cast<IndexType>(1));
+        assert(aDual.getNumVectors() == static_cast<IndexType>(1));
 
         locus::update(static_cast<ElementType>(1), *mObjectiveCoefficientsP, static_cast<ElementType>(0), *mTermA);
         locus::update(static_cast<ElementType>(1), *mDualTimesCoefficientsP, static_cast<ElementType>(1), *mTermA);
@@ -6672,7 +6674,7 @@ private:
             const locus::Vector<ElementType, IndexType> & tMyDual = aDual[tVectorIndex];
             const locus::Vector<ElementType, IndexType> & tMyCoefficientsC = (*mConstraintCoefficientsC)[tVectorIndex];
             const locus::Vector<ElementType, IndexType> & tMyCoefficientsD = (*mConstraintCoefficientsD)[tVectorIndex];
-            locus::Vector<ElementType, IndexType> & tMyAuxiliaryVariablesY = (*mTrialAuxiliaryVariableY)[tVectorIndex];
+            locus::Vector<ElementType, IndexType> & tMyAuxiliaryVariablesY = (*mAuxiliaryVariableY)[tVectorIndex];
 
             const IndexType tNumDual = tMyAuxiliaryVariablesY.size();
             for(IndexType tIndex = 0; tIndex < tNumDual; tIndex++)
@@ -6694,9 +6696,9 @@ private:
      **/
     ElementType computeConstraintContribution(const locus::MultiVector<ElementType, IndexType> & aDual)
     {
-        assert(aDual->getNumVectors() == static_cast<IndexType>(1));
+        assert(aDual.getNumVectors() == static_cast<IndexType>(1));
 
-        const IndexType tNumVectors = aDual->getNumVectors();
+        const IndexType tNumVectors = aDual.getNumVectors();
         std::vector<ElementType> tStorage(tNumVectors);
         for(IndexType tVectorIndex = 0; tVectorIndex < tNumVectors; tVectorIndex++)
         {
@@ -6704,7 +6706,7 @@ private:
             const locus::Vector<ElementType, IndexType> & tMyDual = aDual[tVectorIndex];
             const locus::Vector<ElementType, IndexType> & tMyCoefficientsC = (*mConstraintCoefficientsC)[tVectorIndex];
             const locus::Vector<ElementType, IndexType> & tMyCoefficientsD = (*mConstraintCoefficientsD)[tVectorIndex];
-            const locus::Vector<ElementType, IndexType> & tMyAuxiliaryVariablesY = (*mTrialAuxiliaryVariableY)[tVectorIndex];
+            const locus::Vector<ElementType, IndexType> & tMyAuxiliaryVariablesY = (*mAuxiliaryVariableY)[tVectorIndex];
 
             const IndexType tNumDuals = tMyDual.size();
             for(IndexType tIndex = 0; tIndex < tNumDuals; tIndex++)
@@ -6715,7 +6717,6 @@ private:
                 (*mDualWorkVector)[tIndex] = tValueOne + tValueTwo;
             }
 
-            ElementType tInitialValue = 0;
             tStorage[tVectorIndex] = mDualReductionOperations->sum(mDualWorkVector.operator*());
         }
 
@@ -6725,7 +6726,7 @@ private:
         // Add additional contributions to inequality summation term
         ElementType tDualDotConstraintCoeffR = locus::dot(aDual, *mConstraintCoefficientsR);
         ElementType tDualDotConstraintCoeffA = locus::dot(aDual, *mConstraintCoefficientsA);
-        ElementType tDualDotTrialAuxiliaryVariableY = locus::dot(aDual, *mTrialAuxiliaryVariableY);
+        ElementType tDualDotTrialAuxiliaryVariableY = locus::dot(aDual, *mAuxiliaryVariableY);
         ElementType tOutput = tConstraintSummationTerm - tDualDotTrialAuxiliaryVariableY
                 - (tDualDotConstraintCoeffA * mTrialAuxiliaryVariableZ) + tDualDotConstraintCoeffR;
 
@@ -6744,22 +6745,27 @@ private:
 
         const ElementType tBeta = 1;
         const IndexType tNumConstraints = tDual.size();
-        for(IndexType tDualIndex = 0; tDualIndex < tNumConstraints; tDualIndex++)
+        for(IndexType tConstraintIndex = 0; tConstraintIndex < tNumConstraints; tConstraintIndex++)
         {
             const locus::MultiVector<ElementType, IndexType> & tMyConstraintCoefficientsP =
-                    mConstraintCoefficientsP[tDualIndex].operator*();
+                    mConstraintCoefficientsP[tConstraintIndex].operator*();
             const locus::MultiVector<ElementType, IndexType> & tMyConstraintCoefficientsQ =
-                    mConstraintCoefficientsQ[tDualIndex].operator*();
+                    mConstraintCoefficientsQ[tConstraintIndex].operator*();
 
             const IndexType tNumControlVectors = tMyConstraintCoefficientsP.getNumVectors();
             for(IndexType tVectorIndex = 0; tVectorIndex < tNumControlVectors; tVectorIndex++)
             {
                 const locus::Vector<ElementType, IndexType> & tMyCoefficientsP =
                         tMyConstraintCoefficientsP[tVectorIndex];
-                mDualTimesCoefficientsP[tVectorIndex].operator*().update(tDual[tDualIndex], tMyCoefficientsP, tBeta);
+                locus::Vector<ElementType, IndexType> & tMyDualTimesCoefficientsP =
+                        (*mDualTimesCoefficientsP)[tVectorIndex];
+                tMyDualTimesCoefficientsP.update(tDual[tConstraintIndex], tMyCoefficientsP, tBeta);
+
                 const locus::Vector<ElementType, IndexType> & tMyCoefficientsQ =
                         tMyConstraintCoefficientsQ[tVectorIndex];
-                mDualTimesCoefficientsQ[tVectorIndex].operator*().update(tDual[tDualIndex], tMyCoefficientsQ, tBeta);
+                locus::Vector<ElementType, IndexType> & tMyDualTimesCoefficientsQ =
+                        (*mDualTimesCoefficientsQ)[tVectorIndex];
+                tMyDualTimesCoefficientsQ.update(tDual[tConstraintIndex], tMyCoefficientsQ, tBeta);
             }
         }
     }
@@ -6789,7 +6795,7 @@ private:
     std::shared_ptr<locus::MultiVector<ElementType, IndexType>> mConstraintCoefficientsC;
     std::shared_ptr<locus::MultiVector<ElementType, IndexType>> mConstraintCoefficientsD;
     std::shared_ptr<locus::MultiVector<ElementType, IndexType>> mConstraintCoefficientsR;
-    std::shared_ptr<locus::MultiVector<ElementType, IndexType>> mTrialAuxiliaryVariableY;
+    std::shared_ptr<locus::MultiVector<ElementType, IndexType>> mAuxiliaryVariableY;
 
     std::vector<std::shared_ptr<locus::MultiVector<ElementType, IndexType>>> mConstraintCoefficientsP;
     std::vector<std::shared_ptr<locus::MultiVector<ElementType, IndexType>>> mConstraintCoefficientsQ;
@@ -9485,6 +9491,21 @@ TEST(LocusTest, KelleySachsAugmentedLagrangian)
     tGoldVector(0,1) = 0.222870312033612;
     const locus::MultiVector<double> & tCurrentGradient = tDataMng->getCurrentGradient();
     LocusTest::checkMultiVectorData(tCurrentGradient, tGoldVector);
+}
+
+/* ******************************************************************* */
+/* ************** METHOD OF MOVING ASYMPTOTES UNIT TESTS ************* */
+/* ******************************************************************* */
+
+TEST(LocusTest, DualProblemStageMng)
+{
+    locus::DataFactory<double> tDataFactory;
+    const size_t tNumDuals = 1;
+    const size_t tNumControls = 2;
+    tDataFactory.allocateDual(tNumDuals);
+    tDataFactory.allocateControl(tNumControls);
+
+    locus::DualProblemStageMng<double> tStageMng(tDataFactory);
 }
 
 }
