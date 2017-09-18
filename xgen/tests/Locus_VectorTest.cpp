@@ -5389,7 +5389,7 @@ template<typename ElementType, typename IndexType = size_t>
 class ConservativeConvexSeparableAppxDataMng
 {
 public:
-    ConservativeConvexSeparableAppxDataMng(const locus::DataFactory<ElementType, IndexType> & aDataFactory) :
+    explicit ConservativeConvexSeparableAppxDataMng(const locus::DataFactory<ElementType, IndexType> & aDataFactory) :
             mControlWorkVector(),
             mControlWorkMultiVector(aDataFactory.control().create()),
             mIsInitialGuessSet(false),
@@ -6068,11 +6068,12 @@ template<typename ElementType, typename IndexType = size_t>
 class DualProblemStageMng : public locus::ConservativeConvexSeparableAppxStageMng<ElementType, IndexType>
 {
 public:
-    DualProblemStageMng(const locus::DataFactory<ElementType, IndexType> & aDataFactory) :
+    explicit DualProblemStageMng(const locus::DataFactory<ElementType, IndexType> & aDataFactory) :
             mEpsilon(1e-6),
             mObjectiveCoefficientA(1),
             mObjectiveCoefficientR(1),
             mTrialAuxiliaryVariableZ(0),
+            mCurrentObjectiveFunctionValue(std::numeric_limits<ElementType>::max()),
             mDualWorkVector(),
             mControlWorkVectorOne(),
             mControlWorkVectorTwo(),
@@ -6092,6 +6093,7 @@ public:
             mConstraintCoefficientsD(aDataFactory.dual().create()),
             mConstraintCoefficientsR(aDataFactory.dual().create()),
             mTrialAuxiliaryVariableY(aDataFactory.dual().create()),
+            mCurrentConstraintValues(aDataFactory.dual().create()),
             mDualReductionOperations(aDataFactory.getDualReductionOperations().create()),
             mControlReductionOperations(aDataFactory.getControlReductionOperations().create()),
             mConstraintCoefficientsP(),
@@ -6287,6 +6289,13 @@ public:
 
     void update(const locus::ConservativeConvexSeparableAppxDataMng<ElementType, IndexType> & aDataMng)
     {
+        // Update Current Objective & Constraint Values
+        mCurrentObjectiveFunctionValue = aDataMng.getCurrentObjectiveFunctionValue();
+        locus::update(static_cast<ElementType>(1),
+                      aDataMng.getCurrentConstraintValues(),
+                      static_cast<ElementType>(0),
+                      mCurrentConstraintValues.operator*());
+
         // Update Moving Asymptotes
         const locus::MultiVector<ElementType, IndexType> & tCurrentSigma = aDataMng.getCurrentSigma();
         const locus::MultiVector<ElementType, IndexType> & tCurrentControl = aDataMng.getCurrentControl();
@@ -6382,13 +6391,13 @@ public:
         }
     }
 
-    const locus::MultiVector<ElementType, IndexType> & getTrialControl() const
+    void getTrialControl(locus::MultiVector<ElementType, IndexType> & aInput) const
     {
-        return (mTrialControl.operator*());
+        locus::update(static_cast<ElementType>(1), *mTrialControl, static_cast<ElementType>(0), aInput);
     }
     void updateObjectiveCoefficients(const locus::ConservativeConvexSeparableAppxDataMng<ElementType, IndexType> & aDataMng)
     {
-        mObjectiveCoefficientR = aDataMng.getCurrentObjectiveFunctionValue();
+        mObjectiveCoefficientR = mCurrentObjectiveFunctionValue;
         const ElementType tGlobalizationFactor = aDataMng.getDualObjectiveGlobalizationFactor();
         const locus::MultiVector<ElementType, IndexType> & tCurrentSigma = aDataMng.getCurrentSigma();
 
@@ -6430,7 +6439,7 @@ public:
 
         const IndexType tDualVectorIndex = 0;
         const locus::Vector<ElementType, IndexType> & tCurrentConstraintValues =
-                aDataMng.getCurrentConstraintValues(tDualVectorIndex);
+                mCurrentConstraintValues->operator[](tDualVectorIndex);
         const locus::Vector<ElementType, IndexType> & tGlobalizationFactor =
                 aDataMng.getDualConstraintGlobalizationFactors(tDualVectorIndex);
         locus::Vector<ElementType, IndexType> & tConstraintCoefficientsR =
@@ -6771,6 +6780,7 @@ private:
     ElementType mObjectiveCoefficientA;
     ElementType mObjectiveCoefficientR;
     ElementType mTrialAuxiliaryVariableZ;
+    ElementType mCurrentObjectiveFunctionValue;
 
     std::shared_ptr<locus::Vector<ElementType, IndexType>> mDualWorkVector;
     std::shared_ptr<locus::Vector<ElementType, IndexType>> mControlWorkVectorOne;
@@ -6792,6 +6802,7 @@ private:
     std::shared_ptr<locus::MultiVector<ElementType, IndexType>> mConstraintCoefficientsD;
     std::shared_ptr<locus::MultiVector<ElementType, IndexType>> mConstraintCoefficientsR;
     std::shared_ptr<locus::MultiVector<ElementType, IndexType>> mTrialAuxiliaryVariableY;
+    std::shared_ptr<locus::MultiVector<ElementType, IndexType>> mCurrentConstraintValues;
 
     std::shared_ptr<locus::ReductionOperations<ElementType, IndexType>> mDualReductionOperations;
     std::shared_ptr<locus::ReductionOperations<ElementType, IndexType>> mControlReductionOperations;
@@ -6831,17 +6842,134 @@ template<typename ElementType, typename IndexType = size_t>
 class ConservativeConvexSeparableAppxSubProblem
 {
 public:
-    ConservativeConvexSeparableAppxSubProblem()
+    explicit ConservativeConvexSeparableAppxSubProblem(const locus::ccsa::method_t & aInput) :
+            mMethod(aInput),
+            mStoppingCriterion(locus::ccsa::stop_t::NOT_CONVERGED),
+            mMaxNumIterations(10),
+            mNumIterationsDone(0),
+            mResidualTolerance(1e-6),
+            mStagnationTolerance(1e-6)
     {
     }
     virtual ~ConservativeConvexSeparableAppxSubProblem()
     {
     }
 
+    locus::ccsa::method_t  type() const
+    {
+        return (mMethod);
+    }
+    locus::ccsa::stop_t getStoppingCriterion() const
+    {
+        return (mStoppingCriterion);
+    }
+    void setStoppingCriterion(const locus::ccsa::stop_t & aInput)
+    {
+        mStoppingCriterion = aInput;
+    }
+
+    IndexType getNumIterationsDone() const
+    {
+        return (mNumIterationsDone);
+    }
+    void setNumIterationsDone(const IndexType & aInput)
+    {
+        mNumIterationsDone = aInput;
+    }
+    IndexType getMaxNumIterations() const
+    {
+        return (mMaxNumIterations);
+    }
+    void setMaxNumIterations(const IndexType & aInput)
+    {
+        mMaxNumIterations = aInput;
+    }
+
+    ElementType getResidualTolerance() const
+    {
+        return (mResidualTolerance);
+    }
+    void setResidualTolerance(const ElementType & aInput)
+    {
+        mResidualTolerance = aInput;
+    }
+    ElementType getStagnationTolerance() const
+    {
+        return (mStagnationTolerance);
+    }
+    void setStagnationTolerance(const ElementType & aInput) const
+    {
+        mStagnationTolerance = aInput;
+    }
+
+    virtual void solve(locus::DualProblemStageMng<ElementType, IndexType> & aDualProblemStageMng,
+                       locus::ConservativeConvexSeparableAppxDataMng<ElementType, IndexType> & aDataMng) = 0;
+
+private:
+    locus::ccsa::method_t mMethod;
+    locus::ccsa::stop_t mStoppingCriterion;
+
+    IndexType mMaxNumIterations;
+    IndexType mNumIterationsDone;
+
+    ElementType mResidualTolerance;
+    ElementType mStagnationTolerance;
+
 private:
     ConservativeConvexSeparableAppxSubProblem(const locus::ConservativeConvexSeparableAppxSubProblem<ElementType, IndexType> & aRhs);
     locus::ConservativeConvexSeparableAppxSubProblem<ElementType, IndexType> & operator=(const locus::ConservativeConvexSeparableAppxSubProblem<ElementType, IndexType> & aRhs);
+};
 
+template<typename ElementType, typename IndexType = size_t>
+class MethodMovingAsymptotes : public locus::ConservativeConvexSeparableAppxSubProblem<ElementType, IndexType>
+{
+public:
+    explicit MethodMovingAsymptotes(const locus::DataFactory<ElementType, IndexType> & aDataFactory) :
+            locus::ConservativeConvexSeparableAppxSubProblem<ElementType, IndexType>(locus::ccsa::method_t::MMA),
+            mActiveSet(aDataFactory.control().create()),
+            mInactiveSet(aDataFactory.control().create()),
+            mTrialControl(aDataFactory.control().create()),
+            mConstraintValues(aDataFactory.dual().create())
+    {
+    }
+    virtual ~MethodMovingAsymptotes()
+    {
+    }
+
+    void solve(locus::DualProblemStageMng<ElementType, IndexType> & aDualProblemStageMng,
+               locus::ConservativeConvexSeparableAppxDataMng<ElementType, IndexType> & aDataMng)
+    {
+        // RESET DUAL SOLVER DATA: mSolver->reset();
+        aDualProblemStageMng.update(aDataMng);
+        aDualProblemStageMng.updateObjectiveCoefficients(aDataMng);
+        aDualProblemStageMng.updateConstraintCoefficients(aDataMng);
+        // SOLVE DUAL PROBLEM: solve(aDualProblemStageMng);
+        aDualProblemStageMng.getTrialControl(mTrialControl.operator*());
+        const locus::MultiVector<ElementType, IndexType> & tLowerBounds = aDataMng.getControlLowerBounds();
+        const locus::MultiVector<ElementType, IndexType> & tUpperBounds = aDataMng.getControlUpperBounds();
+        locus::bounds::project(tLowerBounds, tUpperBounds, mTrialControl.operator*());
+        locus::bounds::computeActiveAndInactiveSets(*mTrialControl.operator*(),
+                                                    tLowerBounds,
+                                                    tUpperBounds,
+                                                    mActiveSet.operator*(),
+                                                    mInactiveSet.operator*());
+        aDataMng.setActiveSet(mActiveSet.operator*());
+        aDataMng.setInactiveSet(mInactiveSet.operator*());
+        // EVALUATE PRIMAL OBJECTIVE WITH TRIAL CONTROL: evaluateObjective(*mTrialControl);
+        // aDataMng.setCurrentObjectiveFunctionValue(tObjectiveFunctionValue);
+        // EVALUATE PRIMAL CONSTRAINTS WITH TRIAL CONTROL: evaluateConstraints(*mTrialControl, *mConstraintValues);
+        aDataMng.setCurrentConstraintValues(mConstraintValues.operator*());
+    }
+
+private:
+    std::shared_ptr<locus::MultiVector<ElementType, IndexType>> mActiveSet;
+    std::shared_ptr<locus::MultiVector<ElementType, IndexType>> mInactiveSet;
+    std::shared_ptr<locus::MultiVector<ElementType, IndexType>> mTrialControl;
+    std::shared_ptr<locus::MultiVector<ElementType, IndexType>> mConstraintValues;
+
+private:
+    MethodMovingAsymptotes(const locus::MethodMovingAsymptotes<ElementType, IndexType> & aRhs);
+    locus::MethodMovingAsymptotes<ElementType, IndexType> & operator=(const locus::MethodMovingAsymptotes<ElementType, IndexType> & aRhs);
 };
 
 }
