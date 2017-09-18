@@ -6526,6 +6526,16 @@ public:
             mTrialAuxiliaryVariableZ = 0;
         }
     }
+    void checkConstraintCoefficients()
+    {
+        const IndexType tDualVectorIndex = 0;
+        ElementType tMinCoeffA = mDualReductionOperations->min(mConstraintCoefficientsA->operator[](tDualVectorIndex));
+        assert(tMinCoeffA >= static_cast<ElementType>(0));
+        ElementType tMinCoeffC = mDualReductionOperations->min(mConstraintCoefficientsC->operator[](tDualVectorIndex));
+        assert(tMinCoeffC >= static_cast<ElementType>(0));
+        ElementType tMinCoeffD = mDualReductionOperations->min(mConstraintCoefficientsD->operator[](tDualVectorIndex));
+        assert(tMinCoeffD >= static_cast<ElementType>(0));
+    }
 
 private:
     void initialize(const locus::DataFactory<ElementType, IndexType> & aDataFactory)
