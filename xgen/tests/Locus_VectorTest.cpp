@@ -5396,14 +5396,11 @@ public:
             mStagnationMeasure(0),
             mStationarityMeasure(0),
             mNormProjectedGradient(0),
-            mObjectiveCoefficientA(1),
-            mInitialAuxiliaryVariableZ(0),
             mDualProblemBoundsScaleFactor(0.5),
             mCurrentObjectiveFunctionValue(std::numeric_limits<ElementType>::max()),
             mPreviousObjectiveFunctionValue(std::numeric_limits<ElementType>::max()),
             mDualObjectiveGlobalizationFactor(1),
             mDual(aDataFactory.dual().create()),
-            mMinRho(aDataFactory.dual().create()),
             mActiveSet(aDataFactory.control().create()),
             mInactiveSet(aDataFactory.control().create()),
             mCurrentSigma(aDataFactory.control().create()),
@@ -5413,11 +5410,10 @@ public:
             mControlUpperBounds(aDataFactory.control().create()),
             mCurrentConstraintValues(aDataFactory.dual().create()),
             mCurrentObjectiveGradient(aDataFactory.control().create()),
-            mCurrentConstraintGradients(),
-            mAuxiliaryVariablesY(aDataFactory.dual().create()),
             mDualConstraintGlobalizationFactors(aDataFactory.dual().create()),
             mDualReductionOperations(aDataFactory.getDualReductionOperations().create()),
-            mControlReductionOperations(aDataFactory.getControlReductionOperations().create())
+            mControlReductionOperations(aDataFactory.getControlReductionOperations().create()),
+            mCurrentConstraintGradients()
     {
         this->initialize();
     }
@@ -5442,22 +5438,6 @@ public:
     }
 
     // NOTE: DUAL PROBLEM PARAMETERS
-    ElementType getDualProblemObjectiveCoefficient() const
-    {
-        return (mObjectiveCoefficientA);
-    }
-    void setDualProblemObjectiveCoefficient(const ElementType & aInput)
-    {
-        mObjectiveCoefficientA = aInput;
-    }
-    ElementType getInitialAuxiliaryVariable() const
-    {
-        return (mInitialAuxiliaryVariableZ);
-    }
-    void setInitialAuxiliaryVariable(const ElementType & aInput)
-    {
-        mInitialAuxiliaryVariableZ = aInput;
-    }
     ElementType getDualProblemBoundsScaleFactor() const
     {
         return (mDualProblemBoundsScaleFactor);
@@ -5930,66 +5910,6 @@ public:
                                                                                        static_cast<ElementType>(0));
     }
 
-    // NOTE: DUAL PROBLEM AUXILIARY (I.E. SLACK) VARIABLES
-    const locus::MultiVector<ElementType, IndexType> & getAuxiliaryVariables() const
-    {
-        assert(mAuxiliaryVariablesY.get() != nullptr);
-
-        return (mAuxiliaryVariablesY.operator *());
-    }
-    const locus::Vector<ElementType, IndexType> & getAuxiliaryVariables(const IndexType & aVectorIndex) const
-    {
-        assert(mAuxiliaryVariablesY.get() != nullptr);
-        assert(aVectorIndex >= static_cast<IndexType>(0));
-        assert(aVectorIndex < mAuxiliaryVariablesY->getNumVectors());
-
-        return (mAuxiliaryVariablesY->operator [](aVectorIndex));
-    }
-    void setAuxiliaryVariables(const ElementType & aValue)
-    {
-        assert(mAuxiliaryVariablesY.get() != nullptr);
-        assert(mAuxiliaryVariablesY->getNumVectors() > static_cast<IndexType>(0));
-
-        IndexType tNumVectors = mAuxiliaryVariablesY->getNumVectors();
-        for(IndexType tVectorIndex = 0; tVectorIndex < tNumVectors; tVectorIndex++)
-        {
-            mAuxiliaryVariablesY->operator [](tVectorIndex).fill(aValue);
-        }
-    }
-    void setAuxiliaryVariables(const IndexType & aVectorIndex, const ElementType & aValue)
-    {
-        assert(mAuxiliaryVariablesY.get() != nullptr);
-        assert(aVectorIndex >= static_cast<IndexType>(0));
-        assert(aVectorIndex < mAuxiliaryVariablesY->getNumVectors());
-
-        mAuxiliaryVariablesY->operator [](aVectorIndex).fill(aValue);
-    }
-    void setAuxiliaryVariables(const IndexType & aVectorIndex,
-                               const IndexType & aElementIndex,
-                               const ElementType & aValue)
-    {
-        assert(mAuxiliaryVariablesY.get() != nullptr);
-        assert(aVectorIndex >= static_cast<IndexType>(0));
-        assert(aVectorIndex < mAuxiliaryVariablesY->getNumVectors());
-        assert(aElementIndex >= static_cast<IndexType>(0));
-        assert(aElementIndex < mAuxiliaryVariablesY->operator [](aVectorIndex).size());
-
-        mAuxiliaryVariablesY->operator*().operator()(aVectorIndex, aElementIndex) = aValue;
-    }
-    void setAuxiliaryVariables(const IndexType & aVectorIndex, const locus::Vector<ElementType, IndexType> & aInput)
-    {
-        assert(mAuxiliaryVariablesY.get() != nullptr);
-        assert(aVectorIndex >= static_cast<IndexType>(0));
-        assert(aVectorIndex < mAuxiliaryVariablesY->getNumVectors());
-
-        mAuxiliaryVariablesY->operator [](aVectorIndex).update(1., aInput, 0.);
-    }
-    void setAuxiliaryVariables(const locus::MultiVector<ElementType, IndexType> & aInput)
-    {
-        assert(aInput.getNumVectors() == mAuxiliaryVariablesY->getNumVectors());
-        locus::update(1., aInput, 0., *mAuxiliaryVariablesY);
-    }
-
     // NOTE: STAGNATION MEASURE CRITERION
     void computeStagnationMeasure()
     {
@@ -6102,15 +6022,12 @@ private:
     ElementType mStagnationMeasure;
     ElementType mStationarityMeasure;
     ElementType mNormProjectedGradient;
-    ElementType mObjectiveCoefficientA;
-    ElementType mInitialAuxiliaryVariableZ;
     ElementType mDualProblemBoundsScaleFactor;
     ElementType mCurrentObjectiveFunctionValue;
     ElementType mPreviousObjectiveFunctionValue;
     ElementType mDualObjectiveGlobalizationFactor;
 
     std::shared_ptr<locus::MultiVector<ElementType, IndexType>> mDual;
-    std::shared_ptr<locus::MultiVector<ElementType, IndexType>> mMinRho;
     std::shared_ptr<locus::MultiVector<ElementType, IndexType>> mActiveSet;
     std::shared_ptr<locus::MultiVector<ElementType, IndexType>> mInactiveSet;
     std::shared_ptr<locus::MultiVector<ElementType, IndexType>> mCurrentSigma;
@@ -6121,13 +6038,12 @@ private:
 
     std::shared_ptr<locus::MultiVector<ElementType, IndexType>> mCurrentConstraintValues;
     std::shared_ptr<locus::MultiVector<ElementType, IndexType>> mCurrentObjectiveGradient;
-    std::vector<std::shared_ptr<locus::MultiVector<ElementType, IndexType>>> mCurrentConstraintGradients;
-
-    std::shared_ptr<locus::MultiVector<ElementType, IndexType>> mAuxiliaryVariablesY;
     std::shared_ptr<locus::MultiVector<ElementType, IndexType>> mDualConstraintGlobalizationFactors;
 
     std::shared_ptr<locus::ReductionOperations<ElementType, IndexType>> mDualReductionOperations;
     std::shared_ptr<locus::ReductionOperations<ElementType, IndexType>> mControlReductionOperations;
+
+    std::vector<std::shared_ptr<locus::MultiVector<ElementType, IndexType>>> mCurrentConstraintGradients;
 
 private:
     MethodMovingAsymptoteDataMng(const locus::MethodMovingAsymptoteDataMng<ElementType, IndexType> & aRhs);
@@ -6176,10 +6092,10 @@ public:
             mConstraintCoefficientsD(aDataFactory.dual().create()),
             mConstraintCoefficientsR(aDataFactory.dual().create()),
             mTrialAuxiliaryVariableY(aDataFactory.dual().create()),
-            mConstraintCoefficientsP(),
-            mConstraintCoefficientsQ(),
             mDualReductionOperations(aDataFactory.getDualReductionOperations().create()),
-            mControlReductionOperations(aDataFactory.getControlReductionOperations().create())
+            mControlReductionOperations(aDataFactory.getControlReductionOperations().create()),
+            mConstraintCoefficientsP(),
+            mConstraintCoefficientsQ()
     {
         this->initialize(aDataFactory);
     }
@@ -6568,6 +6484,48 @@ public:
             tConstraintCoefficientsR[tConstraintIndex] = tConstraintCoefficientsR[tConstraintIndex] - tValue;
         }
     }
+    void initializeAuxiliaryVariables(const locus::MethodMovingAsymptoteDataMng<ElementType, IndexType> & aDataMng)
+    {
+        assert(aDataMng.getNumDualVectors() == static_cast<IndexType>(1));
+
+        const IndexType tDualVectorIndex = 0;
+        locus::Vector<ElementType> & tAuxiliaryVariablesY =
+                mTrialAuxiliaryVariableY->operator[](tDualVectorIndex);
+        const locus::Vector<ElementType> & tCoefficientsA =
+                mConstraintCoefficientsA->operator[](tDualVectorIndex);
+        const locus::Vector<ElementType, IndexType> & tCurrentConstraintValues =
+                aDataMng.getCurrentConstraintValues(tDualVectorIndex);
+
+        const IndexType tNumConstraints = mDualWorkVector->size();
+        const ElementType tMaxCoefficientA = mDualReductionOperations->max(tCoefficientsA);
+        if(tMaxCoefficientA > static_cast<ElementType>(0))
+        {
+            locus::fill(static_cast<ElementType>(0), mDualWorkVector.operator*());
+            for(IndexType tIndex = 0; tIndex < tNumConstraints; tIndex++)
+            {
+                if(tCoefficientsA[tIndex] > static_cast<ElementType>(0))
+                {
+                    ElementType tValue = std::max(static_cast<ElementType>(0), tCurrentConstraintValues[tIndex]);
+                    (*mDualWorkVector)[tIndex] = tValue / tCoefficientsA[tIndex];
+                    tAuxiliaryVariablesY[tIndex] = 0;
+                }
+                else
+                {
+                    tAuxiliaryVariablesY[tIndex] =
+                            std::max(static_cast<ElementType>(0), tCurrentConstraintValues[tIndex]);
+                }
+            }
+            mTrialAuxiliaryVariableZ = mDualReductionOperations->max(mDualWorkVector.operator*());
+        }
+        else
+        {
+            for(IndexType tIndex = 0; tIndex < tNumConstraints; tIndex++)
+            {
+                tAuxiliaryVariablesY[tIndex] = tCurrentConstraintValues[tIndex];
+            }
+            mTrialAuxiliaryVariableZ = 0;
+        }
+    }
 
 private:
     void initialize(const locus::DataFactory<ElementType, IndexType> & aDataFactory)
@@ -6825,11 +6783,11 @@ private:
     std::shared_ptr<locus::MultiVector<ElementType, IndexType>> mConstraintCoefficientsR;
     std::shared_ptr<locus::MultiVector<ElementType, IndexType>> mTrialAuxiliaryVariableY;
 
-    std::vector<std::shared_ptr<locus::MultiVector<ElementType, IndexType>>> mConstraintCoefficientsP;
-    std::vector<std::shared_ptr<locus::MultiVector<ElementType, IndexType>>> mConstraintCoefficientsQ;
-
     std::shared_ptr<locus::ReductionOperations<ElementType, IndexType>> mDualReductionOperations;
     std::shared_ptr<locus::ReductionOperations<ElementType, IndexType>> mControlReductionOperations;
+
+    std::vector<std::shared_ptr<locus::MultiVector<ElementType, IndexType>>> mConstraintCoefficientsP;
+    std::vector<std::shared_ptr<locus::MultiVector<ElementType, IndexType>>> mConstraintCoefficientsQ;
 
 private:
     DualProblemStageMng(const locus::DualProblemStageMng<ElementType, IndexType> & aRhs);
@@ -9533,7 +9491,7 @@ TEST(LocusTest, DualProblemStageMng)
     tDataFactory.allocateDual(tNumDuals);
     tDataFactory.allocateControl(tNumControls);
 
-    locus::MethodMovingAsymptoteDataMng<double> tStageMng(tDataFactory);
+    locus::DualProblemStageMng<double> tStageMng(tDataFactory);
 }
 
 }
