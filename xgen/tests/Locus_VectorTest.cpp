@@ -2208,13 +2208,13 @@ struct algorithm
         GRADIENT_TOLERANCE = 3,
         TRIAL_STEP_TOLERANCE = 4,
         OBJECTIVE_STAGNATION = 5,
-        MAX_NUM_ITERATIONS = 6,
+        MAX_NUMBER_ITERATIONS = 6,
         OPTIMALITY_AND_FEASIBILITY = 7,
         ACTUAL_REDUCTION_TOLERANCE = 8,
         CONTROL_STAGNATION = 9,
         NaN_OBJECTIVE_GRADIENT = 10,
         NaN_FEASIBILITY_VALUE = 11,
-        DID_NOT_CONVERGE = 12
+        NOT_CONVERGED = 12
     };
 };
 
@@ -4825,7 +4825,7 @@ public:
             mStagnationTolerance(1e-8),
             mStationarityMeasure(0.),
             mActualReductionTolerance(1e-10),
-            mStoppingCriterion(locus::algorithm::DID_NOT_CONVERGE),
+            mStoppingCriterion(locus::algorithm::NOT_CONVERGED),
             mControlWorkVector(aDataFactory.control().create())
     {
     }
@@ -5155,7 +5155,7 @@ private:
             else if( tIterationCount >= this->getMaxNumIterations() )
             {
                 tStop = true;
-                this->setStoppingCriterion(locus::algorithm::stop_t::MAX_NUM_ITERATIONS);
+                this->setStoppingCriterion(locus::algorithm::stop_t::MAX_NUMBER_ITERATIONS);
             }
         }
 
@@ -5196,7 +5196,7 @@ private:
             else if( this->getNumIterationsDone() >= this->getMaxNumIterations() )
             {
                 tStop = true;
-                this->setStoppingCriterion(locus::algorithm::stop_t::MAX_NUM_ITERATIONS);
+                this->setStoppingCriterion(locus::algorithm::stop_t::MAX_NUMBER_ITERATIONS);
             }
         }
 
@@ -5386,10 +5386,10 @@ private:
 /**********************************************************************************************************/
 
 template<typename ElementType, typename IndexType = size_t>
-class MethodMovingAsymptoteDataMng
+class ConservativeConvexSeparableAppxDataMng
 {
 public:
-    MethodMovingAsymptoteDataMng(const locus::DataFactory<ElementType, IndexType> & aDataFactory) :
+    ConservativeConvexSeparableAppxDataMng(const locus::DataFactory<ElementType, IndexType> & aDataFactory) :
             mControlWorkVector(),
             mControlWorkMultiVector(aDataFactory.control().create()),
             mIsInitialGuessSet(false),
@@ -5417,7 +5417,7 @@ public:
     {
         this->initialize();
     }
-    ~MethodMovingAsymptoteDataMng()
+    ~ConservativeConvexSeparableAppxDataMng()
     {
     }
 
@@ -6046,26 +6046,26 @@ private:
     std::vector<std::shared_ptr<locus::MultiVector<ElementType, IndexType>>> mCurrentConstraintGradients;
 
 private:
-    MethodMovingAsymptoteDataMng(const locus::MethodMovingAsymptoteDataMng<ElementType, IndexType> & aRhs);
-    locus::MethodMovingAsymptoteDataMng<ElementType, IndexType> & operator=(const locus::MethodMovingAsymptoteDataMng<ElementType, IndexType> & aRhs);
+    ConservativeConvexSeparableAppxDataMng(const locus::ConservativeConvexSeparableAppxDataMng<ElementType, IndexType> & aRhs);
+    locus::ConservativeConvexSeparableAppxDataMng<ElementType, IndexType> & operator=(const locus::ConservativeConvexSeparableAppxDataMng<ElementType, IndexType> & aRhs);
 };
 
 template<typename ElementType, typename IndexType = size_t>
-class MethodMovingAsymptoteStageMng
+class ConservativeConvexSeparableAppxStageMng
 {
 public:
-    virtual ~MethodMovingAsymptoteStageMng()
+    virtual ~ConservativeConvexSeparableAppxStageMng()
     {
     }
 
-    virtual void update(const locus::MethodMovingAsymptoteDataMng<ElementType, IndexType> & aDataMng) = 0;
+    virtual void update(const locus::ConservativeConvexSeparableAppxDataMng<ElementType, IndexType> & aDataMng) = 0;
     virtual ElementType evaluateObjective(const locus::MultiVector<ElementType, IndexType> & aControl) = 0;
     virtual void computeGradient(const locus::MultiVector<ElementType, IndexType> & aControl,
                                  locus::MultiVector<ElementType, IndexType> & aOutput) = 0;
 };
 
 template<typename ElementType, typename IndexType = size_t>
-class DualProblemStageMng : public locus::MethodMovingAsymptoteStageMng<ElementType, IndexType>
+class DualProblemStageMng : public locus::ConservativeConvexSeparableAppxStageMng<ElementType, IndexType>
 {
 public:
     DualProblemStageMng(const locus::DataFactory<ElementType, IndexType> & aDataFactory) :
@@ -6285,7 +6285,7 @@ public:
         locus::update(1., aInput, 0., *mConstraintCoefficientsD);
     }
 
-    void update(const locus::MethodMovingAsymptoteDataMng<ElementType, IndexType> & aDataMng)
+    void update(const locus::ConservativeConvexSeparableAppxDataMng<ElementType, IndexType> & aDataMng)
     {
         // Update Moving Asymptotes
         const locus::MultiVector<ElementType, IndexType> & tCurrentSigma = aDataMng.getCurrentSigma();
@@ -6386,7 +6386,7 @@ public:
     {
         return (mTrialControl.operator*());
     }
-    void updateObjectiveCoefficients(const locus::MethodMovingAsymptoteDataMng<ElementType, IndexType> & aDataMng)
+    void updateObjectiveCoefficients(const locus::ConservativeConvexSeparableAppxDataMng<ElementType, IndexType> & aDataMng)
     {
         mObjectiveCoefficientR = aDataMng.getCurrentObjectiveFunctionValue();
         const ElementType tGlobalizationFactor = aDataMng.getDualObjectiveGlobalizationFactor();
@@ -6424,7 +6424,7 @@ public:
         const ElementType tValue = std::accumulate(tStorage.begin(), tStorage.end(), tInitialValue);
         mObjectiveCoefficientR = mObjectiveCoefficientR - tValue;
     }
-    void updateConstraintCoefficients(const locus::MethodMovingAsymptoteDataMng<ElementType, IndexType> & aDataMng)
+    void updateConstraintCoefficients(const locus::ConservativeConvexSeparableAppxDataMng<ElementType, IndexType> & aDataMng)
     {
         assert(aDataMng.getNumDualVectors() == static_cast<IndexType>(1));
 
@@ -6484,7 +6484,7 @@ public:
             tConstraintCoefficientsR[tConstraintIndex] = tConstraintCoefficientsR[tConstraintIndex] - tValue;
         }
     }
-    void initializeAuxiliaryVariables(const locus::MethodMovingAsymptoteDataMng<ElementType, IndexType> & aDataMng)
+    void initializeAuxiliaryVariables(const locus::ConservativeConvexSeparableAppxDataMng<ElementType, IndexType> & aDataMng)
     {
         assert(aDataMng.getNumDualVectors() == static_cast<IndexType>(1));
 
@@ -6802,6 +6802,46 @@ private:
 private:
     DualProblemStageMng(const locus::DualProblemStageMng<ElementType, IndexType> & aRhs);
     locus::DualProblemStageMng<ElementType, IndexType> & operator=(const locus::DualProblemStageMng<ElementType, IndexType> & aRhs);
+};
+
+struct ccsa
+{
+    enum method_t
+    {
+        MMA = 1,
+        GCMMA = 2
+    };
+
+    enum stop_t
+    {
+        GRADIENT_TOLERANCE = 1,
+        STEP_TOLERANCE = 2,
+        OBJECTIVE_TOLERANCE = 3,
+        RESIDUAL_TOLERANCE = 4,
+        CONTROL_STAGNATION = 5,
+        OBJECTIVE_STAGNATION = 6,
+        MAX_NUMBER_ITERATIONS = 7,
+        FEASIBILITY_MEASURE = 8,
+        OPTIMALITY_AND_FEASIBILITY_MET = 9,
+        NOT_CONVERGED = 10,
+    };
+};
+
+template<typename ElementType, typename IndexType = size_t>
+class ConservativeConvexSeparableAppxSubProblem
+{
+public:
+    ConservativeConvexSeparableAppxSubProblem()
+    {
+    }
+    virtual ~ConservativeConvexSeparableAppxSubProblem()
+    {
+    }
+
+private:
+    ConservativeConvexSeparableAppxSubProblem(const locus::ConservativeConvexSeparableAppxSubProblem<ElementType, IndexType> & aRhs);
+    locus::ConservativeConvexSeparableAppxSubProblem<ElementType, IndexType> & operator=(const locus::ConservativeConvexSeparableAppxSubProblem<ElementType, IndexType> & aRhs);
+
 };
 
 }
@@ -9330,7 +9370,7 @@ TEST(LocusTest, KelleySachsBase)
     EXPECT_EQ(tIntegerGold, tAlgorithm.getMaxNumIterations());
 
     // TEST STOPPING CRITERIA
-    locus::algorithm::stop_t tGold = locus::algorithm::stop_t::DID_NOT_CONVERGE;
+    locus::algorithm::stop_t tGold = locus::algorithm::stop_t::NOT_CONVERGED;
     EXPECT_EQ(tGold, tAlgorithm.getStoppingCriterion());
     tGold = locus::algorithm::stop_t::NaN_NORM_TRIAL_STEP;
     tAlgorithm.setStoppingCriterion(tGold);
