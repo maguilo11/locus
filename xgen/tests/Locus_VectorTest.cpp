@@ -5390,8 +5390,6 @@ class ConservativeConvexSeparableAppxDataMng
 {
 public:
     explicit ConservativeConvexSeparableAppxDataMng(const locus::DataFactory<ElementType, IndexType> & aDataFactory) :
-            mControlWorkVector(),
-            mControlWorkMultiVector(aDataFactory.control().create()),
             mIsInitialGuessSet(false),
             mStagnationMeasure(0),
             mStationarityMeasure(0),
@@ -5400,6 +5398,7 @@ public:
             mCurrentObjectiveFunctionValue(std::numeric_limits<ElementType>::max()),
             mPreviousObjectiveFunctionValue(std::numeric_limits<ElementType>::max()),
             mDualObjectiveGlobalizationFactor(1),
+            mControlWorkVector(),
             mDual(aDataFactory.dual().create()),
             mActiveSet(aDataFactory.control().create()),
             mInactiveSet(aDataFactory.control().create()),
@@ -5408,6 +5407,7 @@ public:
             mPreviousControl(aDataFactory.control().create()),
             mControlLowerBounds(aDataFactory.control().create()),
             mControlUpperBounds(aDataFactory.control().create()),
+            mControlWorkMultiVector(aDataFactory.control().create()),
             mCurrentConstraintValues(aDataFactory.dual().create()),
             mCurrentObjectiveGradient(aDataFactory.control().create()),
             mDualConstraintGlobalizationFactors(aDataFactory.dual().create()),
@@ -5847,7 +5847,7 @@ public:
     void setCurrentConstraintValues(const locus::MultiVector<ElementType, IndexType> & aInput)
     {
         assert(aInput.getNumVectors() == mCurrentConstraintValues->getNumVectors());
-        locus::update(1., aInput, 0., *mCurrentConstraintValues);
+        locus::update(static_cast<ElementType>(1), aInput, static_cast<ElementType>(0), *mCurrentConstraintValues);
     }
     void setCurrentConstraintValues(const IndexType & aVectorIndex, const locus::Vector<ElementType, IndexType> & aInput)
     {
@@ -5858,6 +5858,11 @@ public:
     }
 
     // NOTE: CURRENT CONSTRAINT GRADIENTS
+    const std::vector<locus::MultiVector<ElementType, IndexType>> & getCurrentConstraintGradients() const
+    {
+        assert(mCurrentConstraintGradients.empty() == false);
+        return (mCurrentConstraintGradients);
+    }
     const locus::MultiVector<ElementType, IndexType> & getCurrentConstraintGradients(const IndexType & aConstraintIndex) const
     {
         assert(mCurrentConstraintGradients.empty() == false);
@@ -5878,6 +5883,22 @@ public:
         assert(aVectorIndex < mCurrentConstraintGradients[aConstraintIndex]->getNumVectors());
 
         return (mCurrentConstraintGradients[aConstraintIndex]->operator[](aVectorIndex));
+    }
+    void getCurrentConstraintGradients(const std::vector<locus::MultiVector<ElementType, IndexType>> & aInput)
+    {
+        assert(aInput.empty() == false);
+        assert(aInput.size() == mCurrentConstraintGradients.size());
+
+        const IndexType tNumConstraints = aInput.size();
+        for(IndexType tConstraintIndex = 0; tConstraintIndex < tNumConstraints; tConstraintIndex++)
+        {
+            assert(aInput[tConstraintIndex].get() != nullptr);
+            assert(mCurrentConstraintGradients[tConstraintIndex].get() != nullptr);
+            locus::update(static_cast<ElementType>(1),
+                          aInput[tConstraintIndex].operator*(),
+                          static_cast<ElementType>(0),
+                          mCurrentConstraintGradients[tConstraintIndex].operator*());
+        }
     }
     void setCurrentConstraintGradients(const IndexType & aConstraintIndex,
                                        const locus::MultiVector<ElementType, IndexType> & aInput)
@@ -5989,9 +6010,6 @@ public:
         return (mStationarityMeasure);
     }
 
-public:
-    std::shared_ptr<locus::Vector<ElementType, IndexType>> mControlWorkVector;
-    std::shared_ptr<locus::MultiVector<ElementType, IndexType>> mControlWorkMultiVector;
 
 private:
     void initialize()
@@ -6014,6 +6032,9 @@ private:
         locus::fill(tScalarValue, *mControlUpperBounds);
         tScalarValue = -std::numeric_limits<ElementType>::max();
         locus::fill(tScalarValue, *mControlLowerBounds);
+
+        tScalarValue = 1;
+        locus::fill(tScalarValue, mDualConstraintGlobalizationFactors.operator*());
     }
 
 private:
@@ -6027,6 +6048,8 @@ private:
     ElementType mPreviousObjectiveFunctionValue;
     ElementType mDualObjectiveGlobalizationFactor;
 
+    std::shared_ptr<locus::Vector<ElementType, IndexType>> mControlWorkVector;
+
     std::shared_ptr<locus::MultiVector<ElementType, IndexType>> mDual;
     std::shared_ptr<locus::MultiVector<ElementType, IndexType>> mActiveSet;
     std::shared_ptr<locus::MultiVector<ElementType, IndexType>> mInactiveSet;
@@ -6035,6 +6058,7 @@ private:
     std::shared_ptr<locus::MultiVector<ElementType, IndexType>> mPreviousControl;
     std::shared_ptr<locus::MultiVector<ElementType, IndexType>> mControlLowerBounds;
     std::shared_ptr<locus::MultiVector<ElementType, IndexType>> mControlUpperBounds;
+    std::shared_ptr<locus::MultiVector<ElementType, IndexType>> mControlWorkMultiVector;
 
     std::shared_ptr<locus::MultiVector<ElementType, IndexType>> mCurrentConstraintValues;
     std::shared_ptr<locus::MultiVector<ElementType, IndexType>> mCurrentObjectiveGradient;
@@ -6062,6 +6086,44 @@ public:
     virtual ElementType evaluateObjective(const locus::MultiVector<ElementType, IndexType> & aControl) = 0;
     virtual void computeGradient(const locus::MultiVector<ElementType, IndexType> & aControl,
                                  locus::MultiVector<ElementType, IndexType> & aOutput) = 0;
+};
+
+template<typename ElementType, typename IndexType = size_t>
+class PrimalProblemStageMng : public locus::ConservativeConvexSeparableAppxStageMng<ElementType, IndexType>
+{
+public:
+    PrimalProblemStageMng()
+    {
+    }
+    virtual ~PrimalProblemStageMng()
+    {
+    }
+
+    void update(const locus::ConservativeConvexSeparableAppxDataMng<ElementType, IndexType> & aDataMng)
+    {
+    }
+    ElementType evaluateObjective(const locus::MultiVector<ElementType, IndexType> & aControl)
+    {
+        return (0);
+    }
+    void computeGradient(const locus::MultiVector<ElementType, IndexType> & aControl,
+                         locus::MultiVector<ElementType, IndexType> & aOutput)
+    {
+    }
+    void evaluateConstraints(const locus::MultiVector<ElementType, IndexType> & aControl,
+                             locus::MultiVector<ElementType, IndexType> & aOutput)
+    {
+
+    }
+    void evaluateConstraintGradients(const locus::MultiVector<ElementType, IndexType> & aControl,
+                                     std::vector<locus::MultiVector<ElementType, IndexType>> & aOutput)
+    {
+
+    }
+
+private:
+    PrimalProblemStageMng(const locus::PrimalProblemStageMng<ElementType, IndexType> & aRhs);
+    locus::PrimalProblemStageMng<ElementType, IndexType> & operator=(const locus::PrimalProblemStageMng<ElementType, IndexType> & aRhs);
 };
 
 template<typename ElementType, typename IndexType = size_t>
@@ -6839,10 +6901,10 @@ struct ccsa
 };
 
 template<typename ElementType, typename IndexType = size_t>
-class ConservativeConvexSeparableAppxSubProblem
+class ConservativeConvexSeparableApproximations
 {
 public:
-    explicit ConservativeConvexSeparableAppxSubProblem(const locus::ccsa::method_t & aInput) :
+    explicit ConservativeConvexSeparableApproximations(const locus::ccsa::method_t & aInput) :
             mMethod(aInput),
             mStoppingCriterion(locus::ccsa::stop_t::NOT_CONVERGED),
             mMaxNumIterations(10),
@@ -6851,7 +6913,7 @@ public:
             mStagnationTolerance(1e-6)
     {
     }
-    virtual ~ConservativeConvexSeparableAppxSubProblem()
+    virtual ~ConservativeConvexSeparableApproximations()
     {
     }
 
@@ -6903,6 +6965,7 @@ public:
     }
 
     virtual void solve(locus::DualProblemStageMng<ElementType, IndexType> & aDualProblemStageMng,
+                       locus::PrimalProblemStageMng<ElementType, IndexType> & aPrimalProblemStageMng,
                        locus::ConservativeConvexSeparableAppxDataMng<ElementType, IndexType> & aDataMng) = 0;
 
 private:
@@ -6916,16 +6979,16 @@ private:
     ElementType mStagnationTolerance;
 
 private:
-    ConservativeConvexSeparableAppxSubProblem(const locus::ConservativeConvexSeparableAppxSubProblem<ElementType, IndexType> & aRhs);
-    locus::ConservativeConvexSeparableAppxSubProblem<ElementType, IndexType> & operator=(const locus::ConservativeConvexSeparableAppxSubProblem<ElementType, IndexType> & aRhs);
+    ConservativeConvexSeparableApproximations(const locus::ConservativeConvexSeparableApproximations<ElementType, IndexType> & aRhs);
+    locus::ConservativeConvexSeparableApproximations<ElementType, IndexType> & operator=(const locus::ConservativeConvexSeparableApproximations<ElementType, IndexType> & aRhs);
 };
 
 template<typename ElementType, typename IndexType = size_t>
-class MethodMovingAsymptotes : public locus::ConservativeConvexSeparableAppxSubProblem<ElementType, IndexType>
+class MethodMovingAsymptotes : public locus::ConservativeConvexSeparableApproximations<ElementType, IndexType>
 {
 public:
     explicit MethodMovingAsymptotes(const locus::DataFactory<ElementType, IndexType> & aDataFactory) :
-            locus::ConservativeConvexSeparableAppxSubProblem<ElementType, IndexType>(locus::ccsa::method_t::MMA),
+            locus::ConservativeConvexSeparableApproximations<ElementType, IndexType>(locus::ccsa::method_t::MMA),
             mActiveSet(aDataFactory.control().create()),
             mInactiveSet(aDataFactory.control().create()),
             mTrialControl(aDataFactory.control().create()),
@@ -6937,28 +7000,37 @@ public:
     }
 
     void solve(locus::DualProblemStageMng<ElementType, IndexType> & aDualProblemStageMng,
+               locus::PrimalProblemStageMng<ElementType, IndexType> & aPrimalProblemStageMng,
                locus::ConservativeConvexSeparableAppxDataMng<ElementType, IndexType> & aDataMng)
     {
-        // RESET DUAL SOLVER DATA: mSolver->reset();
+        // NOTE: REMBER THAT THE GLOBALIZATION FACTORS FOR BOTH OBJECTIVE AND CONSTRAINTS ARE SET TO ZERO IF MMA.
+        //       METHOD. THE METHOD SHOULD BE DETECTED AT THE OUTTER LOOP LEVEL AND THE VALUES SET INSIDE INITIALZE.
+        //       DEFAULT VALUES ARE SET FOR GCMMA CASE.
         aDualProblemStageMng.update(aDataMng);
         aDualProblemStageMng.updateObjectiveCoefficients(aDataMng);
         aDualProblemStageMng.updateConstraintCoefficients(aDataMng);
+
+        // RESET DUAL SOLVER DATA: mSolver->reset();
         // SOLVE DUAL PROBLEM: solve(aDualProblemStageMng);
+
         aDualProblemStageMng.getTrialControl(mTrialControl.operator*());
         const locus::MultiVector<ElementType, IndexType> & tLowerBounds = aDataMng.getControlLowerBounds();
         const locus::MultiVector<ElementType, IndexType> & tUpperBounds = aDataMng.getControlUpperBounds();
         locus::bounds::project(tLowerBounds, tUpperBounds, mTrialControl.operator*());
-        locus::bounds::computeActiveAndInactiveSets(*mTrialControl.operator*(),
+        locus::bounds::computeActiveAndInactiveSets(mTrialControl.operator*(),
                                                     tLowerBounds,
                                                     tUpperBounds,
                                                     mActiveSet.operator*(),
                                                     mInactiveSet.operator*());
         aDataMng.setActiveSet(mActiveSet.operator*());
         aDataMng.setInactiveSet(mInactiveSet.operator*());
-        // EVALUATE PRIMAL OBJECTIVE WITH TRIAL CONTROL: evaluateObjective(*mTrialControl);
-        // aDataMng.setCurrentObjectiveFunctionValue(tObjectiveFunctionValue);
-        // EVALUATE PRIMAL CONSTRAINTS WITH TRIAL CONTROL: evaluateConstraints(*mTrialControl, *mConstraintValues);
+
+        ElementType tObjectiveFunctionValue = aPrimalProblemStageMng.evaluateObjective(mTrialControl.operator*());
+        aDataMng.setCurrentObjectiveFunctionValue(tObjectiveFunctionValue);
+        aPrimalProblemStageMng.evaluateConstraints(mTrialControl.operator*(), mConstraintValues.operator*());
         aDataMng.setCurrentConstraintValues(mConstraintValues.operator*());
+
+        this->setStoppingCriterion(locus::ccsa::stop_t::MAX_NUMBER_ITERATIONS);
     }
 
 private:
@@ -6970,6 +7042,163 @@ private:
 private:
     MethodMovingAsymptotes(const locus::MethodMovingAsymptotes<ElementType, IndexType> & aRhs);
     locus::MethodMovingAsymptotes<ElementType, IndexType> & operator=(const locus::MethodMovingAsymptotes<ElementType, IndexType> & aRhs);
+};
+
+template<typename ElementType, typename IndexType = size_t>
+class GloballyConvergentMethodMovingAsymptotes : public locus::ConservativeConvexSeparableApproximations<ElementType, IndexType>
+{
+public:
+    explicit GloballyConvergentMethodMovingAsymptotes(const locus::DataFactory<ElementType, IndexType> & aDataFactory) :
+            locus::ConservativeConvexSeparableApproximations<ElementType, IndexType>(locus::ccsa::method_t::GCMMA),
+            mTrialObjectiveFunctionValue(std::numeric_limits<ElementType>::max()),
+            mMinObjectiveGlobalizationFactor(1e-5),
+            mControlWorkOne(),
+            mControlWorkTwo(),
+            mActiveSet(aDataFactory.control().create()),
+            mInactiveSet(aDataFactory.control().create()),
+            mDeltaControl(aDataFactory.control().create()),
+            mTrialControl(aDataFactory.control().create()),
+            mTrialConstraintValues(aDataFactory.dual().create()),
+            mMinConstraintGlobalizationFactors(aDataFactory.dual().create()),
+            mControlReductionOperations(aDataFactory.getControlReductionOperations().create())
+    {
+        this->initialize();
+    }
+    virtual ~GloballyConvergentMethodMovingAsymptotes()
+    {
+    }
+
+    void solve(locus::DualProblemStageMng<ElementType, IndexType> & aDualProblemStageMng,
+               locus::PrimalProblemStageMng<ElementType, IndexType> & aPrimalProblemStageMng,
+               locus::ConservativeConvexSeparableAppxDataMng<ElementType, IndexType> & aDataMng)
+    {
+        aDualProblemStageMng.update(aDataMng);
+        IndexType tIterations = 0;
+        const IndexType tMaxNumIterations = this->getMaxNumIterations();
+        while(tIterations < tMaxNumIterations)
+        {
+            aDualProblemStageMng.updateObjectiveCoefficients(aDataMng);
+            aDualProblemStageMng.updateConstraintCoefficients(aDataMng);
+
+            // RESET DUAL SOLVER DATA: mSolver->reset();
+            // SOLVE DUAL PROBLEM: solve(aDualProblemStageMng);
+
+            aDualProblemStageMng.getTrialControl(mTrialControl.operator*());
+            const locus::MultiVector<ElementType, IndexType> & tLowerBounds = aDataMng.getControlLowerBounds();
+            const locus::MultiVector<ElementType, IndexType> & tUpperBounds = aDataMng.getControlUpperBounds();
+            locus::bounds::project(tLowerBounds, tUpperBounds, mTrialControl.operator*());
+            locus::bounds::computeActiveAndInactiveSets(mTrialControl.operator*(),
+                                                        tLowerBounds,
+                                                        tUpperBounds,
+                                                        mActiveSet.operator*(),
+                                                        mInactiveSet.operator*());
+            aDataMng.setActiveSet(mActiveSet.operator*());
+            aDataMng.setInactiveSet(mInactiveSet.operator*());
+
+            mTrialObjectiveFunctionValue = aPrimalProblemStageMng.evaluateObjective(mTrialControl.operator*());
+            aPrimalProblemStageMng.evaluateConstraints(mTrialControl.operator*(), mTrialConstraintValues.operator*());
+
+            const locus::MultiVector<ElementType, IndexType> & tCurrentControl = aDataMng.getCurrentControl();
+            locus::update(static_cast<ElementType>(1), *mTrialControl, static_cast<ElementType>(0), *mDeltaControl);
+            locus::update(static_cast<ElementType>(-1), tCurrentControl, static_cast<ElementType>(1), *mDeltaControl);
+            this->updateObjectiveGlobalizationFactor(aDataMng);
+            // UPDATE CONSTRAINT GLOBALIZATION FACTORS: this->updateConstraintGlobalizationFactors(aDataMng);
+
+            tIterations++;
+        }
+
+        this->setNumIterationsDone(tIterations);
+        aDataMng.setCurrentObjectiveFunctionValue(mTrialObjectiveFunctionValue);
+        aDataMng.setCurrentConstraintValues(mTrialConstraintValues.operator*());
+    }
+
+private:
+    void initialize()
+    {
+        locus::fill(static_cast<ElementType>(1e-5), mMinConstraintGlobalizationFactors.operator*());
+        const IndexType tVectorIndex = 0;
+        mControlWorkOne = mTrialControl->operator[](tVectorIndex).create();
+        mControlWorkTwo = mTrialControl->operator[](tVectorIndex).create();
+    }
+    void updateObjectiveGlobalizationFactor(locus::ConservativeConvexSeparableAppxDataMng<ElementType, IndexType> & aDataMng)
+    {
+        locus::fill(static_cast<ElementType>(0), mControlWorkOne.operator*());
+        locus::fill(static_cast<ElementType>(0), mControlWorkTwo.operator*());
+
+        const IndexType tNumVectors = mTrialControl->getNumVectors();
+        std::vector<ElementType> tStorageOne(tNumVectors, 0);
+        std::vector<ElementType> tStorageTwo(tNumVectors, 0);
+
+        for(IndexType tVectorIndex = 0; tVectorIndex < tNumVectors; tVectorIndex++)
+        {
+            locus::Vector<ElementType, IndexType> & tWorkVectorOne = mControlWorkOne->operator[](tVectorIndex);
+            locus::Vector<ElementType, IndexType> & tWorkVectorTwo = mControlWorkOne->operator[](tVectorIndex);
+            const locus::Vector<ElementType, IndexType> & tDeltaControl = mDeltaControl->operator[](tVectorIndex);
+            const locus::Vector<ElementType, IndexType> & tCurrentSigma = aDataMng.getCurrentSigma(tVectorIndex);
+            const locus::Vector<ElementType, IndexType> & tCurrentGradient = aDataMng.getCurrentObjectiveGradient(tVectorIndex);
+            assert(tWorkVectorOne.size() == tWorkVectorTwo.size());
+
+            const IndexType tNumControls = tWorkVectorOne.size();
+            for(IndexType tControlIndex = 0; tControlIndex < tNumControls; tControlIndex++)
+            {
+                ElementType tNumerator = tDeltaControl[tControlIndex] * tDeltaControl[tControlIndex];
+                ElementType tDenominator = (tCurrentSigma[tControlIndex] * tCurrentSigma[tControlIndex])
+                        - (tDeltaControl[tControlIndex] * tDeltaControl[tControlIndex]);
+                tWorkVectorOne[tControlIndex] = tNumerator / tDenominator;
+
+                tNumerator = ((tCurrentSigma[tControlIndex] * tCurrentSigma[tControlIndex])
+                        * tCurrentGradient[tControlIndex] * tDeltaControl[tControlIndex])
+                        + (tCurrentSigma[tControlIndex] * std::abs(tCurrentGradient[tControlIndex])
+                                * (tDeltaControl[tControlIndex] * tDeltaControl[tControlIndex]));
+                tWorkVectorTwo[tControlIndex] = tNumerator / tDenominator;
+            }
+
+            tStorageOne[tVectorIndex] = mControlReductionOperations->sum(tWorkVectorOne);
+            tStorageTwo[tVectorIndex] = mControlReductionOperations->sum(tWorkVectorTwo);
+        }
+
+        const ElementType tInitialValue = 0;
+        ElementType tFunctionEvaluationW = std::accumulate(tStorageOne.begin(), tStorageOne.end(), tInitialValue);
+        tFunctionEvaluationW = static_cast<ElementType>(0.5) * tFunctionEvaluationW;
+        ElementType tFunctionEvaluationV = std::accumulate(tStorageTwo.begin(), tStorageTwo.end(), tInitialValue);
+        const ElementType tCurrentObjectiveValue = aDataMng.getCurrentObjectiveFunctionValue();
+        tFunctionEvaluationV = tCurrentObjectiveValue + tFunctionEvaluationV;
+
+        ElementType tGlobalizationFactor = aDataMng.getDualObjectiveGlobalizationFactor();
+        const ElementType tFunctionValueCCSA = tFunctionEvaluationV + (tGlobalizationFactor * tFunctionEvaluationW);
+
+        const ElementType tActualOverPredictedReduction = (mTrialObjectiveFunctionValue - tFunctionValueCCSA)
+                / tFunctionEvaluationW;
+        if(tActualOverPredictedReduction > static_cast<ElementType>(0))
+        {
+            ElementType tValueOne = static_cast<ElementType>(10) * tGlobalizationFactor;
+            ElementType tValueTwo = static_cast<ElementType>(1.1)
+                    * (tGlobalizationFactor + tActualOverPredictedReduction);
+            tGlobalizationFactor = std::min(tValueOne, tValueTwo);
+        }
+
+        aDataMng.setDualObjectiveGlobalizationFactor(tGlobalizationFactor);
+    }
+
+private:
+    ElementType mTrialObjectiveFunctionValue;
+    ElementType mMinObjectiveGlobalizationFactor;
+
+    std::shared_ptr<locus::Vector<ElementType, IndexType>> mControlWorkOne;
+    std::shared_ptr<locus::Vector<ElementType, IndexType>> mControlWorkTwo;
+
+    std::shared_ptr<locus::MultiVector<ElementType, IndexType>> mActiveSet;
+    std::shared_ptr<locus::MultiVector<ElementType, IndexType>> mInactiveSet;
+    std::shared_ptr<locus::MultiVector<ElementType, IndexType>> mDeltaControl;
+    std::shared_ptr<locus::MultiVector<ElementType, IndexType>> mTrialControl;
+    std::shared_ptr<locus::MultiVector<ElementType, IndexType>> mTrialConstraintValues;
+    std::shared_ptr<locus::MultiVector<ElementType, IndexType>> mMinConstraintGlobalizationFactors;
+
+    std::shared_ptr<locus::ReductionOperations<ElementType, IndexType>> mControlReductionOperations;
+
+private:
+    GloballyConvergentMethodMovingAsymptotes(const locus::GloballyConvergentMethodMovingAsymptotes<ElementType, IndexType> & aRhs);
+    locus::GloballyConvergentMethodMovingAsymptotes<ElementType, IndexType> & operator=(const locus::GloballyConvergentMethodMovingAsymptotes<ElementType, IndexType> & aRhs);
 };
 
 }
