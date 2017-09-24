@@ -5398,7 +5398,10 @@ public:
             mCurrentObjectiveFunctionValue(std::numeric_limits<ElementType>::max()),
             mPreviousObjectiveFunctionValue(std::numeric_limits<ElementType>::max()),
             mDualObjectiveGlobalizationFactor(1),
-            mControlWorkVector(),
+            mDualWorkOne(),
+            mDualWorkTwo(),
+            mControlWorkOne(),
+            mControlWorkTwo(),
             mDual(aDataFactory.dual().create()),
             mActiveSet(aDataFactory.control().create()),
             mInactiveSet(aDataFactory.control().create()),
@@ -5410,9 +5413,9 @@ public:
             mControlWorkMultiVector(aDataFactory.control().create()),
             mCurrentConstraintValues(aDataFactory.dual().create()),
             mCurrentObjectiveGradient(aDataFactory.control().create()),
-            mDualConstraintGlobalizationFactors(aDataFactory.dual().create()),
-            mDualReductionOperations(aDataFactory.getDualReductionOperations().create()),
-            mControlReductionOperations(aDataFactory.getControlReductionOperations().create()),
+            mConstraintGlobalizationFactors(aDataFactory.dual().create()),
+            mDualReductions(aDataFactory.getDualReductionOperations().create()),
+            mControlReductions(aDataFactory.getControlReductionOperations().create()),
             mCurrentConstraintGradients()
     {
         this->initialize();
@@ -5436,6 +5439,12 @@ public:
     {
         return (mDual->getNumVectors());
     }
+    // NOTE :GET NUMBER OF CONSTRAINTS
+    IndexType getNumConstraints() const
+    {
+        IndexType tNumConstraints = mCurrentConstraintGradients.size();
+        return (tNumConstraints);
+    }
 
     // NOTE: DUAL PROBLEM PARAMETERS
     ElementType getDualProblemBoundsScaleFactor() const
@@ -5454,29 +5463,29 @@ public:
     {
         mDualObjectiveGlobalizationFactor = aInput;
     }
-    const locus::MultiVector<ElementType, IndexType> & getDualConstraintGlobalizationFactors() const
+    const locus::MultiVector<ElementType, IndexType> & getConstraintGlobalizationFactors() const
     {
-        assert(mDualConstraintGlobalizationFactors.get() != nullptr);
-        return (mDualConstraintGlobalizationFactors.operator *());
+        assert(mConstraintGlobalizationFactors.get() != nullptr);
+        return (mConstraintGlobalizationFactors.operator *());
     }
-    const locus::Vector<ElementType, IndexType> & getDualConstraintGlobalizationFactors(const IndexType & aVectorIndex) const
+    const locus::Vector<ElementType, IndexType> & getConstraintGlobalizationFactors(const IndexType & aVectorIndex) const
     {
-        assert(mDualConstraintGlobalizationFactors.get() != nullptr);
+        assert(mConstraintGlobalizationFactors.get() != nullptr);
         assert(aVectorIndex >= static_cast<IndexType>(0));
-        assert(aVectorIndex < mDualConstraintGlobalizationFactors->getNumVectors());
-        return (mDualConstraintGlobalizationFactors->operator [](aVectorIndex));
+        assert(aVectorIndex < mConstraintGlobalizationFactors->getNumVectors());
+        return (mConstraintGlobalizationFactors->operator [](aVectorIndex));
     }
-    void setDualConstraintGlobalizationFactors(const locus::MultiVector<ElementType, IndexType> & aInput)
+    void setConstraintGlobalizationFactors(const locus::MultiVector<ElementType, IndexType> & aInput)
     {
-        assert(aInput.getNumVectors() == mDualConstraintGlobalizationFactors->getNumVectors());
-        locus::update(1., aInput, 0., *mDualConstraintGlobalizationFactors);
+        assert(aInput.getNumVectors() == mConstraintGlobalizationFactors->getNumVectors());
+        locus::update(1., aInput, 0., *mConstraintGlobalizationFactors);
     }
-    void setDualConstraintGlobalizationFactors(const IndexType & aVectorIndex, const locus::Vector<ElementType, IndexType> & aInput)
+    void setConstraintGlobalizationFactors(const IndexType & aVectorIndex, const locus::Vector<ElementType, IndexType> & aInput)
     {
-        assert(mDualConstraintGlobalizationFactors.get() != nullptr);
+        assert(mConstraintGlobalizationFactors.get() != nullptr);
         assert(aVectorIndex >= static_cast<IndexType>(0));
-        assert(aVectorIndex < mDualConstraintGlobalizationFactors->getNumVectors());
-        mDualConstraintGlobalizationFactors->operator [](aVectorIndex).update(1., aInput, 0.);
+        assert(aVectorIndex < mConstraintGlobalizationFactors->getNumVectors());
+        mConstraintGlobalizationFactors->operator [](aVectorIndex).update(1., aInput, 0.);
     }
 
     // NOTE: OBJECTIVE FUNCTION VALUE
@@ -5939,11 +5948,11 @@ public:
         for(IndexType tIndex = 0; tIndex < tNumVectors; tIndex++)
         {
             const locus::Vector<ElementType, IndexType> & tMyCurrentControl = mCurrentControl->operator[](tIndex);
-            mControlWorkVector->update(1., tMyCurrentControl, 0.);
+            mControlWorkOne->update(1., tMyCurrentControl, 0.);
             const locus::Vector<ElementType, IndexType> & tMyPreviousControl = mPreviousControl->operator[](tIndex);
-            mControlWorkVector->update(-1., tMyPreviousControl, 1.);
-            mControlWorkVector->modulus();
-            storage[tIndex] = mControlReductionOperations->max(*mControlWorkVector);
+            mControlWorkOne->update(-1., tMyPreviousControl, 1.);
+            mControlWorkOne->modulus();
+            storage[tIndex] = mControlReductions->max(*mControlWorkOne);
         }
         mStagnationMeasure = *std::max_element(storage.begin(), storage.end());
     }
@@ -5962,9 +5971,9 @@ public:
             const locus::Vector<ElementType, IndexType> & tMyInactiveSet = (*mInactiveSet)[tIndex];
             const locus::Vector<ElementType, IndexType> & tMyInputVector = aInput[tIndex];
 
-            mControlWorkVector->update(1., tMyInputVector, 0.);
-            mControlWorkVector->entryWiseProduct(tMyInactiveSet);
-            tCummulativeDotProduct += mControlWorkVector->dot(*mControlWorkVector);
+            mControlWorkOne->update(1., tMyInputVector, 0.);
+            mControlWorkOne->entryWiseProduct(tMyInactiveSet);
+            tCummulativeDotProduct += mControlWorkOne->dot(*mControlWorkOne);
         }
         ElementType tOutput = std::sqrt(tCummulativeDotProduct);
         return(tOutput);
@@ -5978,9 +5987,9 @@ public:
             const locus::Vector<ElementType, IndexType> & tMyInactiveSet = (*mInactiveSet)[tIndex];
             const locus::Vector<ElementType, IndexType> & tMyGradient = (*mCurrentObjectiveGradient)[tIndex];
 
-            mControlWorkVector->update(1., tMyGradient, 0.);
-            mControlWorkVector->entryWiseProduct(tMyInactiveSet);
-            tCummulativeDotProduct += mControlWorkVector->dot(*mControlWorkVector);
+            mControlWorkOne->update(1., tMyGradient, 0.);
+            mControlWorkOne->entryWiseProduct(tMyInactiveSet);
+            tCummulativeDotProduct += mControlWorkOne->dot(*mControlWorkOne);
         }
         mNormProjectedGradient = std::sqrt(tCummulativeDotProduct);
     }
@@ -6010,17 +6019,59 @@ public:
         return (mStationarityMeasure);
     }
 
+    /*! Check inexactness in the Karush-Kuhn-Tucker (KKT) conditions (i.e. KKT residual) and compute
+     * the norm of the KKT residual, where r(x,\lambda) = \{C1, C2, C3, C4\} denotes the residual vector
+     * and C# denotes the corresponding Condition. The KKT conditions are given by:
+     *
+     * Condition 1: \left(1 + x_j\right)\left(\frac{\partial{f}_0}{\partial{x}_j} + \sum_{i=1}^{N_c}
+     *              \lambda_i\frac{\partial{f}_i}{\partial{x}_j}\right)^{+} = 0,\quad{j}=1,\dots,n_x
+     * Condition 2: \left(1 - x_j\right)\left(\frac{\partial{f}_0}{\partial{x}_j} + \sum_{i=1}^{N_c}
+     *              \lambda_i\frac{\partial{f}_i}{\partial{x}_j}\right)^{-} = 0,\quad{j}=1,\dots,n_x
+     * Condition 3: f_i(x)^{+} = 0,\quad{i}=1,\dots,N_c
+     * Condition 4: \lambda_{i}f_i(x)^{-} = 0,\quad{i}=1,\dots,N_c.
+     *
+     * The nomenclature is given as follows: x denotes the control vector, \lambda denotes the dual
+     * vector, N_c is the number of constraints, n_x is the number of controls, f_0 is the objective
+     * function and f_i is the i-th constraint. Finally, a^{+} = max{0, a} and a^{-} = max{0, −a}.
+     **/
+    ElementType checkKarushKuhnTuckerConditions(const locus::MultiVector<ElementType, IndexType> & aControl,
+                                                const locus::MultiVector<ElementType, IndexType> & aDual)
+    {
+        assert(aDual.getNumVectors() == mDual->getNumVectors());
+        assert(aDual[0].size() == mDual->operator[](0).size());
+        assert(aControl.getNumVectors() == mCurrentControl->getNumVectors());
+        assert(aControl[0].size() == mCurrentControl->operator[](0).size());
+
+        ElementType tConditioneOne = std::numeric_limits<ElementType>::max();
+        ElementType tConditioneTwo = std::numeric_limits<ElementType>::max();
+        this->computeConditionsOneAndTwo(aControl, aDual, tConditioneOne, tConditioneTwo);
+
+        const ElementType tConditioneThree = std::numeric_limits<ElementType>::max();
+        const ElementType tConditioneFour = std::numeric_limits<ElementType>::max();
+        this->computeConditionsThreeAndFour(aControl, aDual, tConditioneThree, tConditioneFour);
+
+        ElementType tNumControls = aControl[0].size();
+        ElementType tSum = tConditioneOne + tConditioneTwo + tConditioneThree + tConditioneFour;
+        ElementType tOutput = (static_cast<ElementType>(1) / tNumControls) * std::sqrt(tSum);
+
+        return (tOutput);
+    }
+
 
 private:
     void initialize()
     {
         const IndexType tControlVectorIndex = 0;
-        mControlWorkVector = mCurrentControl->operator[](tControlVectorIndex).create();
+        mControlWorkOne = mCurrentControl->operator[](tControlVectorIndex).create();
+        mControlWorkTwo = mCurrentControl->operator[](tControlVectorIndex).create();
         locus::fill(static_cast<ElementType>(0), *mActiveSet);
         locus::fill(static_cast<ElementType>(1), *mInactiveSet);
 
         assert(mDual->getNumVectors() == static_cast<IndexType>(1));
         const IndexType tDualVectorIndex = 0;
+        mDualWorkOne = mDual->operator[](tDualVectorIndex).create();
+        mDualWorkTwo = mDual->operator[](tDualVectorIndex).create();
+
         const IndexType tNumConstraints = mDual->operator[](tDualVectorIndex).size();
         mCurrentConstraintGradients.resize(tNumConstraints);
         for(IndexType tIndex = 0; tIndex < tNumConstraints; tIndex++)
@@ -6034,7 +6085,105 @@ private:
         locus::fill(tScalarValue, *mControlLowerBounds);
 
         tScalarValue = 1;
-        locus::fill(tScalarValue, mDualConstraintGlobalizationFactors.operator*());
+        locus::fill(tScalarValue, mConstraintGlobalizationFactors.operator*());
+    }
+    /*!
+     * Compute the following Karush-Kuhn-Tucker (KKT) conditions:
+     *
+     * Condition 3: f_i(x)^{+} = 0,\quad{i}=1,\dots,N_c
+     * Condition 4: \lambda_{i}f_i(x)^{-} = 0,\quad{i}=1,\dots,N_c.
+     *
+     * where the nomenclature is given as follows: \lambda denotes the dual vector, N_c is the
+     * number of constraints, n_x is the number of controls and f_i is the i-th constraint.
+     * Finally, a^{+} = max{0, a} and a^{-} = max{0, −a}.
+     **/
+    void computeConditionsOneAndTwo(const locus::MultiVector<ElementType, IndexType> & aControl,
+                                    const locus::MultiVector<ElementType, IndexType> & aDual,
+                                    ElementType & aConditionOne,
+                                    ElementType & aConditionTwo)
+    {
+        /*        const IndexType tNumControlVectors = aControl.getNumVectors();
+        std::vector<ElementType> tStorageOne(tNumControlVectors, static_cast<ElementType>(0));
+        std::vector<ElementType> tStorageTwo(tNumControlVectors, static_cast<ElementType>(0));
+        for(IndexType tVectorIndex = 0; tVectorIndex < tNumControlVectors; tVectorIndex++)
+        {
+            locus::Vector<ElementType, IndexType> & tWorkOne = mControlWorkOne.operator*();
+            locus::Vector<ElementType, IndexType> & tWorkTwo = mControlWorkTwo.operator*();
+            const locus::Vector<ElementType, IndexType> & tControl = aControl[tVectorIndex];
+            const locus::Vector<ElementType, IndexType> & tObjectiveGradient =
+                    mCurrentObjectiveGradient->operator[](tVectorIndex);
+            const locus::Vector<ElementType, IndexType> & tConstraintGradientTimesDual =
+                    aConstraintGradientTimesDual[tVectorIndex];
+
+            const IndexType tNumControls = tControl.size();
+            for(IndexType tControlIndex = 0; tControlIndex < tNumControls; tControlIndex++)
+            {
+                tWorkOne[tControlIndex] = tObjectiveGradient[tControlIndex] + tConstraintGradientTimesDual[tControlIndex];
+                tWorkOne[tControlIndex] = std::max(static_cast<ElementType>(0), tWorkOne[tControlIndex]);
+                tWorkOne[tControlIndex] = (static_cast<ElementType>(1) + tControl[tControlIndex]) * tWorkOne[tControlIndex];
+                tWorkOne[tControlIndex] = tWorkOne[tControlIndex] * tWorkOne[tControlIndex];
+
+                tWorkTwo[tControlIndex] = tObjectiveGradient[tControlIndex] + tConstraintGradientTimesDual[tControlIndex];
+                tWorkTwo[tControlIndex] = std::max(static_cast<ElementType>(0), -tWorkTwo[tControlIndex]);
+                tWorkTwo[tControlIndex] = (static_cast<ElementType>(1) - tControl[tControlIndex]) * tWorkTwo[tControlIndex];
+                tWorkTwo[tControlIndex] = tWorkTwo[tControlIndex] * tWorkTwo[tControlIndex];
+            }
+
+            tStorageOne[tVectorIndex] = mControlReductions->sum(tWorkOne);
+            tStorageTwo[tVectorIndex] = mControlReductions->sum(tWorkTwo);
+        }
+
+        const ElementType tInitialValue = 0;
+        aConditionOne = std::accumulate(tStorageOne.begin(), tStorageOne.end(), tInitialValue);
+        aConditionTwo = std::accumulate(tStorageTwo.begin(), tStorageTwo.end(), tInitialValue);*/
+    }
+    /*!
+     * Compute the following Karush-Kuhn-Tucker (KKT) conditions:
+     *
+     * Condition 1: \left(1 + x_j\right)\left(\frac{\partial{f}_0}{\partial{x}_j} + \sum_{i=1}^{N_c}
+     *              \lambda_i\frac{\partial{f}_i}{\partial{x}_j}\right)^{+} = 0,\quad{j}=1,\dots,n_x
+     * Condition 2: \left(1 - x_j\right)\left(\frac{\partial{f}_0}{\partial{x}_j} + \sum_{i=1}^{N_c}
+     *              \lambda_i\frac{\partial{f}_i}{\partial{x}_j}\right)^{-} = 0,\quad{j}=1,\dots,n_x,
+     *
+     * where the nomenclature is given as follows: x denotes the control vector, \lambda denotes
+     * the dual vector, N_c is the number of constraints, n_x is the number of controls, f_0 is
+     * the objective function and f_i is the i-th constraint. Finally, a^{+} = max{0, a} and a^{-}
+     * = max{0, −a}.
+     **/
+    void computeConditionsThreeAndFour(const locus::MultiVector<ElementType, IndexType> & aControl,
+                                    const locus::MultiVector<ElementType, IndexType> & aDual,
+                                    ElementType & aConditionThree,
+                                    ElementType & aConditionFour)
+    {
+        const IndexType tNumDualVectors = aDual.getNumVectors();
+        std::vector<ElementType> tStorageOne(tNumDualVectors, static_cast<ElementType>(0));
+        std::vector<ElementType> tStorageTwo(tNumDualVectors, static_cast<ElementType>(0));
+        for(IndexType tVectorIndex = 0; tVectorIndex < tNumDualVectors; tVectorIndex++)
+        {
+            locus::Vector<ElementType, IndexType> & tWorkOne = mDualWorkOne.operator*();
+            locus::Vector<ElementType, IndexType> & tWorkTwo = mDualWorkTwo.operator*();
+            const locus::Vector<ElementType, IndexType> & tDual = aDual[tVectorIndex];
+            const locus::Vector<ElementType, IndexType> & tConstraintValues =
+                    mCurrentConstraintValues->operator[](tVectorIndex);
+
+            const IndexType tNumConstraints = tDual.size();
+            for(IndexType tConstraintIndex = 0; tConstraintIndex < tNumConstraints; tConstraintIndex++)
+            {
+                tWorkOne[tConstraintIndex] = std::max(static_cast<ElementType>(0), tConstraintValues[tConstraintIndex]);
+                tWorkOne[tConstraintIndex] = tWorkOne[tConstraintIndex] * tWorkOne[tConstraintIndex];
+
+                tWorkTwo[tConstraintIndex] = tDual[tConstraintIndex]
+                        * std::max(static_cast<ElementType>(0), -tConstraintValues[tConstraintIndex]);
+                tWorkTwo[tConstraintIndex] = tWorkTwo[tConstraintIndex] * tWorkTwo[tConstraintIndex];
+            }
+
+            tStorageOne[tVectorIndex] = mDualReductions->sum(tWorkOne);
+            tStorageTwo[tVectorIndex] = mDualReductions->sum(tWorkTwo);
+        }
+
+        const ElementType tInitialValue = 0;
+        aConditionThree = std::accumulate(tStorageOne.begin(), tStorageOne.end(), tInitialValue);
+        aConditionFour = std::accumulate(tStorageTwo.begin(), tStorageTwo.end(), tInitialValue);
     }
 
 private:
@@ -6048,7 +6197,10 @@ private:
     ElementType mPreviousObjectiveFunctionValue;
     ElementType mDualObjectiveGlobalizationFactor;
 
-    std::shared_ptr<locus::Vector<ElementType, IndexType>> mControlWorkVector;
+    std::shared_ptr<locus::Vector<ElementType, IndexType>> mDualWorkOne;
+    std::shared_ptr<locus::Vector<ElementType, IndexType>> mDualWorkTwo;
+    std::shared_ptr<locus::Vector<ElementType, IndexType>> mControlWorkOne;
+    std::shared_ptr<locus::Vector<ElementType, IndexType>> mControlWorkTwo;
 
     std::shared_ptr<locus::MultiVector<ElementType, IndexType>> mDual;
     std::shared_ptr<locus::MultiVector<ElementType, IndexType>> mActiveSet;
@@ -6062,10 +6214,10 @@ private:
 
     std::shared_ptr<locus::MultiVector<ElementType, IndexType>> mCurrentConstraintValues;
     std::shared_ptr<locus::MultiVector<ElementType, IndexType>> mCurrentObjectiveGradient;
-    std::shared_ptr<locus::MultiVector<ElementType, IndexType>> mDualConstraintGlobalizationFactors;
+    std::shared_ptr<locus::MultiVector<ElementType, IndexType>> mConstraintGlobalizationFactors;
 
-    std::shared_ptr<locus::ReductionOperations<ElementType, IndexType>> mDualReductionOperations;
-    std::shared_ptr<locus::ReductionOperations<ElementType, IndexType>> mControlReductionOperations;
+    std::shared_ptr<locus::ReductionOperations<ElementType, IndexType>> mDualReductions;
+    std::shared_ptr<locus::ReductionOperations<ElementType, IndexType>> mControlReductions;
 
     std::vector<std::shared_ptr<locus::MultiVector<ElementType, IndexType>>> mCurrentConstraintGradients;
 
@@ -6503,7 +6655,7 @@ public:
         const locus::Vector<ElementType, IndexType> & tCurrentConstraintValues =
                 mCurrentConstraintValues->operator[](tDualVectorIndex);
         const locus::Vector<ElementType, IndexType> & tGlobalizationFactor =
-                aDataMng.getDualConstraintGlobalizationFactors(tDualVectorIndex);
+                aDataMng.getConstraintGlobalizationFactors(tDualVectorIndex);
         locus::Vector<ElementType, IndexType> & tConstraintCoefficientsR =
                 mConstraintCoefficientsR.operator*()[tDualVectorIndex];
 
@@ -7050,10 +7202,12 @@ class GloballyConvergentMethodMovingAsymptotes : public locus::ConservativeConve
 public:
     explicit GloballyConvergentMethodMovingAsymptotes(const locus::DataFactory<ElementType, IndexType> & aDataFactory) :
             locus::ConservativeConvexSeparableApproximations<ElementType, IndexType>(locus::ccsa::method_t::GCMMA),
-            mTrialObjectiveFunctionValue(std::numeric_limits<ElementType>::max()),
             mMinObjectiveGlobalizationFactor(1e-5),
+            mCurrentTrialObjectiveFunctionValue(std::numeric_limits<ElementType>::max()),
+            mPreviousTrialObjectiveFunctionValue(std::numeric_limits<ElementType>::max()),
             mControlWorkOne(),
             mControlWorkTwo(),
+            mTrialDual(aDataFactory.dual().create()),
             mActiveSet(aDataFactory.control().create()),
             mInactiveSet(aDataFactory.control().create()),
             mDeltaControl(aDataFactory.control().create()),
@@ -7095,20 +7249,24 @@ public:
             aDataMng.setActiveSet(mActiveSet.operator*());
             aDataMng.setInactiveSet(mInactiveSet.operator*());
 
-            mTrialObjectiveFunctionValue = aPrimalProblemStageMng.evaluateObjective(mTrialControl.operator*());
+            mCurrentTrialObjectiveFunctionValue = aPrimalProblemStageMng.evaluateObjective(mTrialControl.operator*());
             aPrimalProblemStageMng.evaluateConstraints(mTrialControl.operator*(), mTrialConstraintValues.operator*());
 
             const locus::MultiVector<ElementType, IndexType> & tCurrentControl = aDataMng.getCurrentControl();
             locus::update(static_cast<ElementType>(1), *mTrialControl, static_cast<ElementType>(0), *mDeltaControl);
             locus::update(static_cast<ElementType>(-1), tCurrentControl, static_cast<ElementType>(1), *mDeltaControl);
             this->updateObjectiveGlobalizationFactor(aDataMng);
-            // UPDATE CONSTRAINT GLOBALIZATION FACTORS: this->updateConstraintGlobalizationFactors(aDataMng);
+            this->updateConstraintGlobalizationFactors(aDataMng);
 
             tIterations++;
+            if(this->checkStoppingCriteria(aDataMng) == true)
+            {
+                break;
+            }
         }
 
         this->setNumIterationsDone(tIterations);
-        aDataMng.setCurrentObjectiveFunctionValue(mTrialObjectiveFunctionValue);
+        aDataMng.setCurrentObjectiveFunctionValue(mCurrentTrialObjectiveFunctionValue);
         aDataMng.setCurrentConstraintValues(mTrialConstraintValues.operator*());
     }
 
@@ -7165,9 +7323,9 @@ private:
         tFunctionEvaluationV = tCurrentObjectiveValue + tFunctionEvaluationV;
 
         ElementType tGlobalizationFactor = aDataMng.getDualObjectiveGlobalizationFactor();
-        const ElementType tFunctionValueCCSA = tFunctionEvaluationV + (tGlobalizationFactor * tFunctionEvaluationW);
+        const ElementType tCcsaFunctionValue = tFunctionEvaluationV + (tGlobalizationFactor * tFunctionEvaluationW);
 
-        const ElementType tActualOverPredictedReduction = (mTrialObjectiveFunctionValue - tFunctionValueCCSA)
+        const ElementType tActualOverPredictedReduction = (mCurrentTrialObjectiveFunctionValue - tCcsaFunctionValue)
                 / tFunctionEvaluationW;
         if(tActualOverPredictedReduction > static_cast<ElementType>(0))
         {
@@ -7179,14 +7337,106 @@ private:
 
         aDataMng.setDualObjectiveGlobalizationFactor(tGlobalizationFactor);
     }
+    void updateConstraintGlobalizationFactors(locus::ConservativeConvexSeparableAppxDataMng<ElementType, IndexType> & aDataMng)
+    {
+        assert(aDataMng.getNumDualVectors() == static_cast<IndexType>(1));
+        const IndexType tNumDualVectors = 1;
+        const locus::Vector<ElementType, IndexType> & tConstraintValues =
+                aDataMng.getCurrentConstraintValues(tNumDualVectors);
+        locus::Vector<ElementType, IndexType> & tGlobalizationFactors =
+                aDataMng.getConstraintGlobalizationFactors(tNumDualVectors);
+
+        const IndexType tNumConstraints = aDataMng.getNumConstraints();
+        for(IndexType tConstraintIndex = 0; tConstraintIndex < tNumConstraints; tConstraintIndex++)
+        {
+            locus::fill(static_cast<ElementType>(0), mControlWorkOne.operator*());
+            locus::fill(static_cast<ElementType>(0), mControlWorkTwo.operator*());
+
+            const IndexType tNumVectors = mTrialControl->getNumVectors();
+            std::vector<ElementType> tStorageOne(tNumVectors, 0);
+            std::vector<ElementType> tStorageTwo(tNumVectors, 0);
+            for(IndexType tVectorIndex = 0; tVectorIndex < tNumVectors; tVectorIndex++)
+            {
+                locus::Vector<ElementType, IndexType> & tWorkVectorOne = mControlWorkOne->operator[](tVectorIndex);
+                locus::Vector<ElementType, IndexType> & tWorkVectorTwo = mControlWorkOne->operator[](tVectorIndex);
+                const locus::Vector<ElementType, IndexType> & tDeltaControl = mDeltaControl->operator[](tVectorIndex);
+                const locus::Vector<ElementType, IndexType> & tCurrentSigma = aDataMng.getCurrentSigma(tVectorIndex);
+                const locus::Vector<ElementType, IndexType> & tConstraintGradient =
+                        aDataMng.getCurrentConstraintGradients(tConstraintIndex, tVectorIndex);
+                assert(tDeltaControl.size() == tWorkVectorOne.size());
+                assert(tWorkVectorOne.size() == tWorkVectorTwo.size());
+                assert(tConstraintGradient.size() == tDeltaControl.size());
+
+                const IndexType tNumControls = tWorkVectorOne.size();
+                for(IndexType tControlIndex = 0; tControlIndex < tNumControls; tControlIndex++)
+                {
+                    ElementType numerator = tDeltaControl[tControlIndex] * tDeltaControl[tControlIndex];
+                    ElementType denominator = (tCurrentSigma[tControlIndex] * tCurrentSigma[tControlIndex])
+                            - (tDeltaControl[tControlIndex] * tDeltaControl[tControlIndex]);
+                    tWorkVectorOne[tControlIndex] = numerator / denominator;
+
+                    numerator = ((tCurrentSigma[tControlIndex] * tCurrentSigma[tControlIndex])
+                            * tConstraintGradient[tControlIndex] * tDeltaControl[tControlIndex])
+                            + (tCurrentSigma[tControlIndex] * std::abs(tConstraintGradient[tControlIndex])
+                                    * (tDeltaControl[tControlIndex] * tDeltaControl[tControlIndex]));
+                    tWorkVectorTwo[tControlIndex] = numerator / denominator;
+                }
+
+                tStorageOne[tVectorIndex] = mControlReductionOperations->sum(tWorkVectorOne);
+                tStorageTwo[tVectorIndex] = mControlReductionOperations->sum(tWorkVectorTwo);
+            }
+
+            const ElementType tInitialValue = 0;
+            ElementType tFunctionEvaluationW = std::accumulate(tStorageOne.begin(), tStorageOne.end(), tInitialValue);
+            tFunctionEvaluationW = static_cast<ElementType>(0.5) * tFunctionEvaluationW;
+
+            ElementType tFunctionEvaluationV = std::accumulate(tStorageTwo.begin(), tStorageTwo.end(), tInitialValue);
+            tFunctionEvaluationV = tFunctionEvaluationV + tConstraintValues[tConstraintIndex];
+
+            ElementType tCcsaFunctionValue = tFunctionEvaluationV + (tGlobalizationFactors[tConstraintIndex] * tFunctionEvaluationW);
+            ElementType tActualOverPredictedReduction = (tConstraintValues[tConstraintIndex] - tCcsaFunctionValue) / tFunctionEvaluationW;
+
+            if(tActualOverPredictedReduction > static_cast<ElementType>(0))
+            {
+                ElementType tValueOne = static_cast<ElementType>(10) * tGlobalizationFactors[tConstraintIndex];
+                ElementType tValueTwo = static_cast<ElementType>(1.1)
+                        * (tGlobalizationFactors[tConstraintIndex] + tActualOverPredictedReduction);
+                tGlobalizationFactors[tConstraintIndex] = std::min(tValueOne, tValueTwo);
+            }
+        }
+    }
+    bool checkStoppingCriteria(locus::ConservativeConvexSeparableAppxDataMng<ElementType, IndexType> & aDataMng)
+    {
+        bool tStop = false;
+        const ElementType tNorm_KKT_Residual =
+                aDataMng.checkKarushKuhnTuckerConditions(mTrialControl.operator*(), mTrialDual.operator*());
+
+        const ElementType tObjectiveStagnation =
+                std::abs(mCurrentTrialObjectiveFunctionValue - mPreviousTrialObjectiveFunctionValue);
+
+        if(tNorm_KKT_Residual < this->getResidualTolerance())
+        {
+            tStop = true;
+            this->setStoppingCriterion(locus::ccsa::RESIDUAL_TOLERANCE);
+        }
+        else if(tObjectiveStagnation < this->getStagnationTolerance())
+        {
+            tStop = true;
+            this->setStoppingCriterion(locus::ccsa::OBJECTIVE_STAGNATION);
+        }
+
+        return (tStop);
+    }
 
 private:
-    ElementType mTrialObjectiveFunctionValue;
     ElementType mMinObjectiveGlobalizationFactor;
+    ElementType mCurrentTrialObjectiveFunctionValue;
+    ElementType mPreviousTrialObjectiveFunctionValue;
 
     std::shared_ptr<locus::Vector<ElementType, IndexType>> mControlWorkOne;
     std::shared_ptr<locus::Vector<ElementType, IndexType>> mControlWorkTwo;
 
+    std::shared_ptr<locus::MultiVector<ElementType, IndexType>> mTrialDual;
     std::shared_ptr<locus::MultiVector<ElementType, IndexType>> mActiveSet;
     std::shared_ptr<locus::MultiVector<ElementType, IndexType>> mInactiveSet;
     std::shared_ptr<locus::MultiVector<ElementType, IndexType>> mDeltaControl;
