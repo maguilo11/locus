@@ -3398,9 +3398,9 @@ public:
             mCurrentFeasibilityMeasure(std::numeric_limits<ElementType>::max()),
             mCurrentLagrangeMultipliersPenalty(1),
             mNormObjectiveFunctionGradient(std::numeric_limits<ElementType>::max()),
-            mNumConstraintEvaluations(aConstraints.size()),
-            mNumConstraintGradientEvaluations(aConstraints.size()),
-            mNumConstraintHessianEvaluations(aConstraints.size()),
+            mNumConstraintEvaluations(std::vector<IndexType>(aConstraints.size())),
+            mNumConstraintGradientEvaluations(std::vector<IndexType>(aConstraints.size())),
+            mNumConstraintHessianEvaluations(std::vector<IndexType>(aConstraints.size())),
             mState(aDataFactory.state().create()),
             mDualWorkVec(aDataFactory.dual().create()),
             mControlWorkVec(aDataFactory.control().create()),
@@ -3436,17 +3436,23 @@ public:
     }
     IndexType getNumConstraintEvaluations(const IndexType & aIndex) const
     {
+        assert(mNumConstraintEvaluations.empty() == false);
+        assert(aIndex >= static_cast<IndexType>(0));
         assert(aIndex < mNumConstraintEvaluations.size());
         return (mNumConstraintEvaluations[aIndex]);
     }
     IndexType getNumConstraintGradientEvaluations(const IndexType & aIndex) const
     {
-        assert(aIndex < mNumConstraintEvaluations.size());
+        assert(mNumConstraintGradientEvaluations.empty() == false);
+        assert(aIndex >= static_cast<IndexType>(0));
+        assert(aIndex < mNumConstraintGradientEvaluations.size());
         return (mNumConstraintGradientEvaluations[aIndex]);
     }
     IndexType getNumConstraintHessianEvaluations(const IndexType & aIndex) const
     {
-        assert(aIndex < mNumConstraintEvaluations.size());
+        assert(mNumConstraintHessianEvaluations.empty() == false);
+        assert(aIndex >= static_cast<IndexType>(0));
+        assert(aIndex < mNumConstraintHessianEvaluations.size());
         return (mNumConstraintHessianEvaluations[aIndex]);
     }
 
@@ -5385,6 +5391,86 @@ private:
 /************************* CONSERVATIVE CONVEX SEPARABLE APPROXIMATION ALGORITHM **************************/
 /**********************************************************************************************************/
 
+
+template<typename ElementType, typename IndexType = size_t>
+class MultiVectorList
+{
+public:
+    MultiVectorList() :
+            mList()
+    {
+    }
+    ~MultiVectorList()
+    {
+    }
+
+    IndexType size() const
+    {
+        return (mList.size());
+    }
+    void add(const locus::MultiVector<ElementType, IndexType> & aInput)
+    {
+        mList.push_back(aInput.create());
+    }
+    void add(const std::shared_ptr<locus::MultiVector<ElementType, IndexType>> & aInput)
+    {
+        mList.push_back(aInput);
+    }
+    locus::MultiVector<ElementType, IndexType> & operator [](const IndexType & aInput)
+    {
+        assert(aInput < mList.size());
+        assert(mList[aInput].get() != nullptr);
+        return (mList[aInput].operator*());
+    }
+    const locus::MultiVector<ElementType, IndexType> & operator [](const IndexType & aInput) const
+    {
+        assert(aInput < mList.size());
+        assert(mList[aInput].get() != nullptr);
+        return (mList[aInput].operator*());
+    }
+    locus::Vector<ElementType, IndexType> & operator ()(const IndexType & aListIndex, const IndexType & aVectorIndex)
+    {
+        assert(aListIndex < mList.size());
+        assert(mList[aListIndex].get() != nullptr);
+        return (mList[aListIndex]->operator[](aVectorIndex));
+    }
+    const locus::Vector<ElementType, IndexType> & operator ()(const IndexType & aListIndex,
+                                                              const IndexType & aVectorIndex) const
+    {
+        assert(aListIndex < mList.size());
+        assert(mList[aListIndex].get() != nullptr);
+        return (mList[aListIndex]->operator[](aVectorIndex));
+    }
+    std::shared_ptr<locus::MultiVectorList<ElementType, IndexType>> create() const
+    {
+        assert(this->size() > static_cast<IndexType>(0));
+        std::shared_ptr<locus::MultiVectorList<ElementType, IndexType>> tOutput =
+                std::make_shared<locus::MultiVectorList<ElementType, IndexType>>();
+        const IndexType tListSize = this->size();
+        for(IndexType tIndex = 0; tIndex < tListSize; tIndex++)
+        {
+            assert(mList[tIndex].get() != nullptr);
+            const std::shared_ptr<locus::MultiVector<ElementType, IndexType>> & tMultiVector = mList[tIndex];
+            tOutput->add(tMultiVector);
+        }
+        return (tOutput);
+    }
+    const std::shared_ptr<locus::MultiVector<ElementType, IndexType>> & ptr(const IndexType & aInput) const
+    {
+        assert(aInput < mList.size());
+        assert(mList[aInput].get() != nullptr);
+        return(mList[aInput]);
+    }
+
+private:
+    std::vector<std::shared_ptr<locus::MultiVector<ElementType, IndexType>>> mList;
+
+private:
+    MultiVectorList(const locus::MultiVectorList<ElementType, IndexType>&);
+    locus::MultiVectorList<ElementType, IndexType> & operator=(const locus::MultiVectorList<ElementType, IndexType>&);
+};
+
+
 template<typename ElementType, typename IndexType = size_t>
 class ConservativeConvexSeparableAppxDataMng
 {
@@ -5870,77 +5956,76 @@ public:
     }
 
     // NOTE: CURRENT CONSTRAINT GRADIENTS
-    const std::vector<locus::MultiVector<ElementType, IndexType>> & getCurrentConstraintGradients() const
+    const locus::MultiVectorList<ElementType, IndexType> & getCurrentConstraintGradients() const
     {
-        assert(mCurrentConstraintGradients.empty() == false);
-        return (mCurrentConstraintGradients);
+        assert(mCurrentConstraintGradients.get() != nullptr);
+        return (mCurrentConstraintGradients.operator*());
     }
     const locus::MultiVector<ElementType, IndexType> & getCurrentConstraintGradients(const IndexType & aConstraintIndex) const
     {
-        assert(mCurrentConstraintGradients.empty() == false);
+        assert(mCurrentConstraintGradients.get() != nullptr);
         assert(aConstraintIndex >= static_cast<IndexType>(0));
-        assert(aConstraintIndex < static_cast<IndexType>(mCurrentConstraintGradients.size()));
-        assert(mCurrentConstraintGradients[aConstraintIndex].get() != nullptr);
+        assert(aConstraintIndex < mCurrentConstraintGradients->size());
+        assert(mCurrentConstraintGradients->ptr(aConstraintIndex).get() != nullptr);
 
-        return (mCurrentConstraintGradients[aConstraintIndex].operator*());
+        return (mCurrentConstraintGradients->operator[](aConstraintIndex));
     }
     const locus::Vector<ElementType, IndexType> & getCurrentConstraintGradients(const IndexType & aConstraintIndex,
                                                                                 const IndexType & aVectorIndex) const
     {
+        assert(mCurrentConstraintGradients.get() != nullptr);
         assert(aVectorIndex >= static_cast<IndexType>(0));
         assert(aConstraintIndex >= static_cast<IndexType>(0));
-        assert(mCurrentConstraintGradients.empty() == false);
-        assert(aConstraintIndex < static_cast<IndexType>(mCurrentConstraintGradients.size()));
-        assert(mCurrentConstraintGradients[aConstraintIndex].get() != nullptr);
-        assert(aVectorIndex < mCurrentConstraintGradients[aConstraintIndex]->getNumVectors());
+        assert(aConstraintIndex < mCurrentConstraintGradients->size());
+        assert(mCurrentConstraintGradients->ptr(aConstraintIndex).get() != nullptr);
+        assert(aVectorIndex < mCurrentConstraintGradients->operator[](aConstraintIndex).getNumVectors());
 
-        return (mCurrentConstraintGradients[aConstraintIndex]->operator[](aVectorIndex));
+        return (mCurrentConstraintGradients->operator()(aConstraintIndex, aVectorIndex));
     }
-    void getCurrentConstraintGradients(const std::vector<locus::MultiVector<ElementType, IndexType>> & aInput)
+    void getCurrentConstraintGradients(locus::MultiVectorList<ElementType, IndexType> & aInput)
     {
-        assert(aInput.empty() == false);
-        assert(aInput.size() == mCurrentConstraintGradients.size());
+        assert(mCurrentConstraintGradients.get() != nullptr);
+        assert(aInput.size() == mCurrentConstraintGradients->size());
 
         const IndexType tNumConstraints = aInput.size();
         for(IndexType tConstraintIndex = 0; tConstraintIndex < tNumConstraints; tConstraintIndex++)
         {
             assert(aInput[tConstraintIndex].get() != nullptr);
-            assert(mCurrentConstraintGradients[tConstraintIndex].get() != nullptr);
+            assert(mCurrentConstraintGradients->ptr(tConstraintIndex).get() != nullptr);
             locus::update(static_cast<ElementType>(1),
-                          aInput[tConstraintIndex].operator*(),
+                          mCurrentConstraintGradients->operator[](tConstraintIndex),
                           static_cast<ElementType>(0),
-                          mCurrentConstraintGradients[tConstraintIndex].operator*());
+                          aInput[tConstraintIndex]);
         }
     }
     void setCurrentConstraintGradients(const IndexType & aConstraintIndex,
                                        const locus::MultiVector<ElementType, IndexType> & aInput)
     {
-        assert(mCurrentConstraintGradients.empty() == false);
+        assert(mCurrentConstraintGradients.get() != nullptr);
         assert(aConstraintIndex >= static_cast<IndexType>(0));
-        assert(aConstraintIndex < static_cast<IndexType>(mCurrentConstraintGradients.size()));
-        assert(mCurrentConstraintGradients[aConstraintIndex].get() != nullptr);
-        assert(aInput.getNumVectors() == mCurrentConstraintGradients[aConstraintIndex]->getNumVectors());
+        assert(aConstraintIndex < mCurrentConstraintGradients->size());
+        assert(mCurrentConstraintGradients->ptr(aConstraintIndex).get() != nullptr);
+        assert(aInput.getNumVectors() == mCurrentConstraintGradients->operator[](aConstraintIndex).getNumVectors());
 
         locus::update(static_cast<ElementType>(1),
                       aInput,
                       static_cast<ElementType>(0),
-                      mCurrentConstraintGradients[aConstraintIndex].operator*());
+                      mCurrentConstraintGradients->operator[](aConstraintIndex));
     }
     void setCurrentConstraintGradients(const IndexType & aConstraintIndex,
                                        const IndexType & aVectorIndex,
                                        const locus::Vector<ElementType, IndexType> & aInput)
     {
-        assert(mCurrentConstraintGradients.empty() == false);
+        assert(mCurrentConstraintGradients.get() != nullptr);
         assert(aVectorIndex >= static_cast<IndexType>(0));
         assert(aConstraintIndex >= static_cast<IndexType>(0));
-        assert(aConstraintIndex < static_cast<IndexType>(mCurrentConstraintGradients.size()));
-        assert(mCurrentConstraintGradients[aConstraintIndex].get() != nullptr);
-        assert(aVectorIndex < mCurrentConstraintGradients[aConstraintIndex]->getNumVectors());
-        assert(aInput.size() == mCurrentConstraintGradients[aConstraintIndex]->operator[](aVectorIndex).size());
+        assert(aConstraintIndex < mCurrentConstraintGradients->size());
+        assert(aVectorIndex < mCurrentConstraintGradients->operator[](aConstraintIndex).getNumVectors());
+        assert(aInput.size() == mCurrentConstraintGradients->operator()(aConstraintIndex, aVectorIndex).size());
 
-        mCurrentConstraintGradients[aConstraintIndex]->operator[](aVectorIndex).update(static_cast<ElementType>(1),
-                                                                                       aInput,
-                                                                                       static_cast<ElementType>(0));
+        const ElementType tAlpha = 1;
+        const ElementType tBeta = 0;
+        mCurrentConstraintGradients->operator()(aConstraintIndex, aVectorIndex).update(tAlpha, aInput, tBeta);
     }
 
     // NOTE: STAGNATION MEASURE CRITERION
@@ -6127,10 +6212,9 @@ private:
         mDualWorkTwo = mDual->operator[](tDualVectorIndex).create();
 
         const IndexType tNumConstraints = mDual->operator[](tDualVectorIndex).size();
-        mCurrentConstraintGradients.resize(tNumConstraints);
         for(IndexType tIndex = 0; tIndex < tNumConstraints; tIndex++)
         {
-            mCurrentConstraintGradients[tIndex] = mCurrentControl->create();
+            mCurrentConstraintGradients->add(mCurrentControl.operator*());
         }
 
         ElementType tScalarValue = std::numeric_limits<ElementType>::max();
@@ -6276,7 +6360,7 @@ private:
     std::shared_ptr<locus::ReductionOperations<ElementType, IndexType>> mDualReductions;
     std::shared_ptr<locus::ReductionOperations<ElementType, IndexType>> mControlReductions;
 
-    std::vector<std::shared_ptr<locus::MultiVector<ElementType, IndexType>>> mCurrentConstraintGradients;
+    std::shared_ptr<locus::MultiVectorList<ElementType, IndexType>> mCurrentConstraintGradients;
 
 private:
     ConservativeConvexSeparableAppxDataMng(const locus::ConservativeConvexSeparableAppxDataMng<ElementType, IndexType> & aRhs);
@@ -6301,11 +6385,66 @@ template<typename ElementType, typename IndexType = size_t>
 class PrimalProblemStageMng : public locus::ConservativeConvexSeparableAppxStageMng<ElementType, IndexType>
 {
 public:
-    PrimalProblemStageMng(const locus::DataFactory<ElementType, IndexType> & aDataFactory)
+    PrimalProblemStageMng(const locus::DataFactory<ElementType, IndexType> & aDataFactory) :
+            mNumObjectiveFunctionEvaluations(0),
+            mNumObjectiveGradientEvaluations(0),
+            mNumConstraintEvaluations(),
+            mNumConstraintGradientEvaluations(),
+            mState(aDataFactory.state().create()),
+            mObjective(),
+            mConstraints(),
+            mObjectiveGradient(),
+            mConstraintGradients()
+    {
+    }
+    PrimalProblemStageMng(const locus::DataFactory<ElementType, IndexType> & aDataFactory,
+                          const locus::Criterion<ElementType, IndexType> & aObjective,
+                          const locus::CriterionList<ElementType, IndexType> & aConstraints) :
+            mNumObjectiveFunctionEvaluations(0),
+            mNumObjectiveGradientEvaluations(0),
+            mNumConstraintEvaluations(std::vector<IndexType>(aConstraints.size())),
+            mNumConstraintGradientEvaluations(std::vector<IndexType>(aConstraints.size())),
+            mState(aDataFactory.state().create()),
+            mObjective(aObjective.create()),
+            mConstraints(aConstraints.create()),
+            mObjectiveGradient(),
+            mConstraintGradients()
     {
     }
     virtual ~PrimalProblemStageMng()
     {
+    }
+
+    IndexType getNumObjectiveFunctionEvaluations() const
+    {
+        return (mNumObjectiveFunctionEvaluations);
+    }
+    IndexType getNumObjectiveGradientEvaluations() const
+    {
+        return (mNumObjectiveGradientEvaluations);
+    }
+    IndexType getNumConstraintEvaluations(const IndexType & aIndex) const
+    {
+        assert(mNumConstraintEvaluations.empty() == false);
+        assert(aIndex >= static_cast<IndexType>(0));
+        assert(aIndex < mNumConstraintEvaluations.size());
+        return (mNumConstraintEvaluations[aIndex]);
+    }
+    IndexType getNumConstraintGradientEvaluations(const IndexType & aIndex) const
+    {
+        assert(mNumConstraintGradientEvaluations.empty() == false);
+        assert(aIndex >= static_cast<IndexType>(0));
+        assert(aIndex < mNumConstraintGradientEvaluations.size());
+        return (mNumConstraintGradientEvaluations[aIndex]);
+    }
+
+    void setObjectiveGradient(const locus::GradientOperatorBase<ElementType, IndexType> & aInput)
+    {
+        mObjectiveGradient = aInput.create();
+    }
+    void setConstraintGradients(const locus::GradientOperatorList<ElementType, IndexType> & aInput)
+    {
+        mConstraintGradients = aInput.create();
     }
 
     void update(const locus::ConservativeConvexSeparableAppxDataMng<ElementType, IndexType> & aDataMng)
@@ -6313,22 +6452,76 @@ public:
     }
     ElementType evaluateObjective(const locus::MultiVector<ElementType, IndexType> & aControl)
     {
-        return (0);
+        assert(mObjective.get() != nullptr);
+
+        ElementType tObjectiveFunctionValue = mObjective->value(mState.operator*(), aControl);
+        mNumObjectiveFunctionEvaluations++;
+
+        return (tObjectiveFunctionValue);
     }
     void computeGradient(const locus::MultiVector<ElementType, IndexType> & aControl,
                          locus::MultiVector<ElementType, IndexType> & aOutput)
     {
+        assert(mObjectiveGradient.get() != nullptr);
+
+        locus::fill(static_cast<ElementType>(0), aOutput);
+        mObjectiveGradient->compute(mState.operator*(), aControl, aOutput);
+        mNumObjectiveGradientEvaluations++;
     }
     void evaluateConstraints(const locus::MultiVector<ElementType, IndexType> & aControl,
                              locus::MultiVector<ElementType, IndexType> & aOutput)
     {
+        assert(mConstraints.get() != nullptr);
 
+        locus::fill(static_cast<ElementType>(0), aOutput);
+        const IndexType tNumVectors = aOutput.getNumVectors();
+        for(IndexType tVectorIndex = 0; tVectorIndex < tNumVectors; tVectorIndex++)
+        {
+            locus::Vector<ElementType, IndexType> & tMyOutput = aOutput[tVectorIndex];
+            const IndexType tNumConstraints = tMyOutput.size();
+            assert(tNumConstraints == mConstraints->size());
+
+            for(IndexType tConstraintIndex = 0; tConstraintIndex < tNumConstraints; tConstraintIndex++)
+            {
+                assert(mConstraints->ptr(tConstraintIndex).get() != nullptr);
+
+                tMyOutput[tConstraintIndex] = mConstraints->operator[](tConstraintIndex).value(*mState, aControl);
+                mNumConstraintEvaluations[tConstraintIndex] =
+                        mNumConstraintEvaluations[tConstraintIndex] + static_cast<IndexType>(1);
+            }
+        }
     }
-    void evaluateConstraintGradients(const locus::MultiVector<ElementType, IndexType> & aControl,
-                                     std::vector<locus::MultiVector<ElementType, IndexType>> & aOutput)
+    void computeConstraintGradients(const locus::MultiVector<ElementType, IndexType> & aControl,
+                                    locus::MultiVectorList<ElementType, IndexType> & aOutput)
     {
+        assert(mConstraintGradients.get() != nullptr);
+        assert(mConstraintGradients->size() == aOutput.size());
 
+        const IndexType tNumConstraints = aOutput.size();
+        for(IndexType tIndex = 0; tIndex < tNumConstraints; tIndex++)
+        {
+            assert(mConstraints->ptr(tIndex).get() != nullptr);
+
+            locus::MultiVector<ElementType, IndexType> & tMyOutput = aOutput[tIndex];
+            locus::fill(static_cast<ElementType>(0), tMyOutput);
+            mConstraints->operator[](tIndex).computeConstraintGradients(*mState, aControl, tMyOutput);
+            mNumConstraintGradientEvaluations[tIndex] =
+                    mNumConstraintGradientEvaluations[tIndex] + static_cast<IndexType>(1);
+        }
     }
+
+private:
+    IndexType mNumObjectiveFunctionEvaluations;
+    IndexType mNumObjectiveGradientEvaluations;
+
+    std::vector<IndexType> mNumConstraintEvaluations;
+    std::vector<IndexType> mNumConstraintGradientEvaluations;
+
+    std::shared_ptr<MultiVector<ElementType, IndexType>> mState;
+    std::shared_ptr<locus::Criterion<ElementType, IndexType>> mObjective;
+    std::shared_ptr<locus::CriterionList<ElementType, IndexType>> mConstraints;
+    std::shared_ptr<locus::GradientOperatorBase<ElementType, IndexType>> mObjectiveGradient;
+    std::shared_ptr<locus::GradientOperatorList<ElementType, IndexType>> mConstraintGradients;
 
 private:
     PrimalProblemStageMng(const locus::PrimalProblemStageMng<ElementType, IndexType> & aRhs);
@@ -7106,6 +7299,8 @@ struct ccsa
     };
 };
 
+
+
 template<typename ElementType, typename IndexType = size_t>
 class ConservativeConvexSeparableApproximations
 {
@@ -7530,6 +7725,7 @@ public:
             mControlWork(),
             mPreviousSigma(),
             mAntepenultimateControl(),
+            mWorkMultiVectorList(),
             mDualProblemStageMng(aDualProblemStageMng),
             mPrimalProblemStageMng(aPrimalProblemStageMng),
             mDataMng(aDataMng),
@@ -7659,6 +7855,8 @@ public:
             const locus::MultiVector<ElementType, IndexType> & tCurrentControl = mDataMng->getCurrentControl();
             mPrimalProblemStageMng->computeGradient(tCurrentControl, mControlWork.operator*());
             mDataMng->setCurrentObjectiveGradient(mControlWork.operator*());
+            mPrimalProblemStageMng->computeConstraintGradients(tCurrentControl, mWorkMultiVectorList.operator*());
+            mDataMng->setCurrentConstraintGradients(mWorkMultiVectorList.operator*());
 
             if(this->checkStoppingCriteria() == true)
             {
@@ -7695,6 +7893,7 @@ private:
         mControlWork = mDataMng->getCurrentControl().create();
         mPreviousSigma = mDataMng->getCurrentControl().create();
         mAntepenultimateControl = mDataMng->getCurrentControl().create();
+        mWorkMultiVectorList = mDataMng->getCurrentConstraintGradients().create();
     }
     bool checkStoppingCriteria()
     {
@@ -7838,6 +8037,7 @@ private:
     std::shared_ptr<locus::MultiVector<ElementType, IndexType>> mControlWork;
     std::shared_ptr<locus::MultiVector<ElementType, IndexType>> mPreviousSigma;
     std::shared_ptr<locus::MultiVector<ElementType, IndexType>> mAntepenultimateControl;
+    std::shared_ptr<locus::MultiVectorList<ElementType, IndexType>> mWorkMultiVectorList;
 
     std::shared_ptr<locus::DualProblemStageMng<ElementType, IndexType>> mDualProblemStageMng;
     std::shared_ptr<locus::PrimalProblemStageMng<ElementType, IndexType>> mPrimalProblemStageMng;
