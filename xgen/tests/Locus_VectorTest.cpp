@@ -2890,7 +2890,7 @@ public:
         ElementType tOutput = std::sqrt(tCummulativeDotProduct);
         return(tOutput);
     }
-    void computeProjectedGradientNorm()
+    void computeNormProjectedGradient()
     {
         ElementType tCummulativeDotProduct = 0.;
         IndexType tNumVectors = mCurrentGradient->getNumVectors();
@@ -5041,7 +5041,7 @@ public:
 
         mStageMng->computeGradient(tCurrentControl, *mGradient);
         mDataMng->setCurrentGradient(*mGradient);
-        mDataMng->computeProjectedGradientNorm();
+        mDataMng->computeNormProjectedGradient();
         mDataMng->storeCurrentStageData();
 
         if(mStepMng->isInitialTrustRegionRadiusSetToNormProjectedGradient() == true)
@@ -5108,7 +5108,7 @@ private:
         // Compute feasibility measure
         mStageMng->computeCurrentFeasibilityMeasure();
         // Compute norm of projected gradient
-        mDataMng->computeProjectedGradientNorm();
+        mDataMng->computeNormProjectedGradient();
         // Compute stationarity measure
         mDataMng->computeStationarityMeasure();
         // Compute stagnation measure
@@ -5391,13 +5391,16 @@ class ConservativeConvexSeparableAppxDataMng
 public:
     explicit ConservativeConvexSeparableAppxDataMng(const locus::DataFactory<ElementType, IndexType> & aDataFactory) :
             mIsInitialGuessSet(false),
-            mStagnationMeasure(0),
-            mStationarityMeasure(0),
-            mNormProjectedGradient(0),
+            mStagnationMeasure(std::numeric_limits<ElementType>::max()),
+            mFeasibilityMeasure(std::numeric_limits<ElementType>::max()),
+            mStationarityMeasure(std::numeric_limits<ElementType>::max()),
+            mNormProjectedGradient(std::numeric_limits<ElementType>::max()),
+            mObjectiveStagnationMeasure(std::numeric_limits<ElementType>::max()),
             mDualProblemBoundsScaleFactor(0.5),
             mCurrentObjectiveFunctionValue(std::numeric_limits<ElementType>::max()),
             mPreviousObjectiveFunctionValue(std::numeric_limits<ElementType>::max()),
             mDualObjectiveGlobalizationFactor(1),
+            mKarushKuhnTuckerConditionsInexactness(std::numeric_limits<ElementType>::max()),
             mDualWorkOne(),
             mDualWorkTwo(),
             mControlWorkOne(),
@@ -5978,7 +5981,7 @@ public:
         ElementType tOutput = std::sqrt(tCummulativeDotProduct);
         return(tOutput);
     }
-    void computeProjectedGradientNorm()
+    void computeNormProjectedGradient()
     {
         ElementType tCummulativeDotProduct = 0.;
         IndexType tNumVectors = mCurrentObjectiveGradient->getNumVectors();
@@ -5996,6 +5999,38 @@ public:
     ElementType getNormProjectedGradient() const
     {
         return (mNormProjectedGradient);
+    }
+
+    // NOTE: FEASIBILITY MEASURE CALCULATION
+    void computeObjectiveStagnationMeasure()
+    {
+        mObjectiveStagnationMeasure = mPreviousObjectiveFunctionValue - mCurrentObjectiveFunctionValue;
+        mObjectiveStagnationMeasure = std::abs(mObjectiveStagnationMeasure);
+    }
+    ElementType getObjectiveStagnationMeasure() const
+    {
+        return (mObjectiveStagnationMeasure);
+    }
+
+    // NOTE: FEASIBILITY MEASURE CALCULATION
+    void computeFeasibilityMeasure()
+    {
+        const IndexType tNumVectors = mCurrentConstraintValues->getNumVectors();
+        std::vector<ElementType> tStorage(tNumVectors, static_cast<ElementType>(0));
+        for(IndexType tVectorIndex = 0; tVectorIndex < tNumVectors; tVectorIndex++)
+        {
+            const locus::Vector<ElementType, IndexType> & tDual = mDual->operator[](tVectorIndex);
+            const locus::Vector<ElementType, IndexType> & tWork = mDualWorkOne->operator[](tVectorIndex);
+            locus::update(static_cast<ElementType>(1), tDual, static_cast<ElementType>(0), tWork);
+            tWork.modulus();
+            tStorage[tVectorIndex] = mDualReductions->max(tWork);
+        }
+        const ElementType tInitialValue = 0;
+        mFeasibilityMeasure = std::accumulate(tStorage.begin(), tStorage.end(), tInitialValue);
+    }
+    ElementType getFeasibilityMeasure() const
+    {
+        return (mFeasibilityMeasure);
     }
 
     // NOTE: STATIONARITY MEASURE CALCULATION
@@ -6034,13 +6069,30 @@ public:
      * vector, N_c is the number of constraints, n_x is the number of controls, f_0 is the objective
      * function and f_i is the i-th constraint. Finally, a^{+} = max{0, a} and a^{-} = max{0, −a}.
      **/
-    ElementType checkKarushKuhnTuckerConditions(const locus::MultiVector<ElementType, IndexType> & aControl,
-                                                const locus::MultiVector<ElementType, IndexType> & aDual)
+    void computeKarushKuhnTuckerConditionsInexactness(const locus::MultiVector<ElementType, IndexType> & aControl,
+                                                      const locus::MultiVector<ElementType, IndexType> & aDual)
     {
+        const IndexType tVectorIndex = 0;
         assert(aDual.getNumVectors() == mDual->getNumVectors());
-        assert(aDual[0].size() == mDual->operator[](0).size());
+        assert(aDual.getNumVectors() == static_cast<IndexType>(1));
+        assert(aDual[tVectorIndex].size() == mDual->operator[](tVectorIndex).size());
         assert(aControl.getNumVectors() == mCurrentControl->getNumVectors());
-        assert(aControl[0].size() == mCurrentControl->operator[](0).size());
+        assert(aControl[tVectorIndex].size() == mCurrentControl->operator[](tVectorIndex).size());
+
+        locus::fill(static_cast<ElementType>(0), mControlWorkMultiVector.operator*());
+        const locus::Vector<ElementType, IndexType> & tDual = aDual[tVectorIndex];
+        const IndexType tNumConstraints = tDual.size();
+        for(IndexType tConstraintIndex = 0; tConstraintIndex < tNumConstraints; tConstraintIndex++)
+        {
+            const locus::MultiVector<ElementType, IndexType> tConstraintGradients =
+                    mCurrentConstraintGradients[tConstraintIndex].operator*();
+            locus::MultiVector<ElementType, IndexType> tConstraintGradientsTimesDual =
+                    mControlWorkMultiVector.operator*();
+            locus::update(tDual[tConstraintIndex],
+                          tConstraintGradients,
+                          static_cast<ElementType>(1),
+                          tConstraintGradientsTimesDual);
+        }
 
         ElementType tConditioneOne = std::numeric_limits<ElementType>::max();
         ElementType tConditioneTwo = std::numeric_limits<ElementType>::max();
@@ -6050,11 +6102,13 @@ public:
         const ElementType tConditioneFour = std::numeric_limits<ElementType>::max();
         this->computeConditionsThreeAndFour(aControl, aDual, tConditioneThree, tConditioneFour);
 
-        ElementType tNumControls = aControl[0].size();
+        ElementType tNumControls = aControl[tVectorIndex].size();
         ElementType tSum = tConditioneOne + tConditioneTwo + tConditioneThree + tConditioneFour;
-        ElementType tOutput = (static_cast<ElementType>(1) / tNumControls) * std::sqrt(tSum);
-
-        return (tOutput);
+        mKarushKuhnTuckerConditionsInexactness = (static_cast<ElementType>(1) / tNumControls) * std::sqrt(tSum);
+    }
+    ElementType getKarushKuhnTuckerConditionsInexactness() const
+    {
+        return (mKarushKuhnTuckerConditionsInexactness);
     }
 
 
@@ -6102,7 +6156,7 @@ private:
                                     ElementType & aConditionOne,
                                     ElementType & aConditionTwo)
     {
-        /*        const IndexType tNumControlVectors = aControl.getNumVectors();
+        const IndexType tNumControlVectors = aControl.getNumVectors();
         std::vector<ElementType> tStorageOne(tNumControlVectors, static_cast<ElementType>(0));
         std::vector<ElementType> tStorageTwo(tNumControlVectors, static_cast<ElementType>(0));
         for(IndexType tVectorIndex = 0; tVectorIndex < tNumControlVectors; tVectorIndex++)
@@ -6113,7 +6167,7 @@ private:
             const locus::Vector<ElementType, IndexType> & tObjectiveGradient =
                     mCurrentObjectiveGradient->operator[](tVectorIndex);
             const locus::Vector<ElementType, IndexType> & tConstraintGradientTimesDual =
-                    aConstraintGradientTimesDual[tVectorIndex];
+                    mControlWorkMultiVector->operator[](tVectorIndex);
 
             const IndexType tNumControls = tControl.size();
             for(IndexType tControlIndex = 0; tControlIndex < tNumControls; tControlIndex++)
@@ -6135,7 +6189,7 @@ private:
 
         const ElementType tInitialValue = 0;
         aConditionOne = std::accumulate(tStorageOne.begin(), tStorageOne.end(), tInitialValue);
-        aConditionTwo = std::accumulate(tStorageTwo.begin(), tStorageTwo.end(), tInitialValue);*/
+        aConditionTwo = std::accumulate(tStorageTwo.begin(), tStorageTwo.end(), tInitialValue);
     }
     /*!
      * Compute the following Karush-Kuhn-Tucker (KKT) conditions:
@@ -6190,12 +6244,15 @@ private:
     bool mIsInitialGuessSet;
 
     ElementType mStagnationMeasure;
+    ElementType mFeasibilityMeasure;
     ElementType mStationarityMeasure;
     ElementType mNormProjectedGradient;
+    ElementType mObjectiveStagnationMeasure;
     ElementType mDualProblemBoundsScaleFactor;
     ElementType mCurrentObjectiveFunctionValue;
     ElementType mPreviousObjectiveFunctionValue;
     ElementType mDualObjectiveGlobalizationFactor;
+    ElementType mKarushKuhnTuckerConditionsInexactness;
 
     std::shared_ptr<locus::Vector<ElementType, IndexType>> mDualWorkOne;
     std::shared_ptr<locus::Vector<ElementType, IndexType>> mDualWorkTwo;
@@ -7039,16 +7096,13 @@ struct ccsa
 
     enum stop_t
     {
-        GRADIENT_TOLERANCE = 1,
-        STEP_TOLERANCE = 2,
-        OBJECTIVE_TOLERANCE = 3,
-        RESIDUAL_TOLERANCE = 4,
-        CONTROL_STAGNATION = 5,
-        OBJECTIVE_STAGNATION = 6,
-        MAX_NUMBER_ITERATIONS = 7,
-        FEASIBILITY_MEASURE = 8,
-        OPTIMALITY_AND_FEASIBILITY_MET = 9,
-        NOT_CONVERGED = 10,
+        STATIONARITY_TOLERANCE = 1,
+        KKT_CONDITIONS_TOLERANCE = 2,
+        CONTROL_STAGNATION = 3,
+        OBJECTIVE_STAGNATION = 4,
+        MAX_NUMBER_ITERATIONS = 5,
+        OPTIMALITY_AND_FEASIBILITY_MET = 6,
+        NOT_CONVERGED = 7,
     };
 };
 
@@ -7061,8 +7115,8 @@ public:
             mStoppingCriterion(locus::ccsa::stop_t::NOT_CONVERGED),
             mMaxNumIterations(10),
             mNumIterationsDone(0),
-            mResidualTolerance(1e-6),
-            mStagnationTolerance(1e-6)
+            mStagnationTolerance(1e-6),
+            mKarushKuhnTuckerConditionsTolerance(1e-6)
     {
     }
     virtual ~ConservativeConvexSeparableApproximations()
@@ -7099,13 +7153,13 @@ public:
         mMaxNumIterations = aInput;
     }
 
-    ElementType getResidualTolerance() const
+    ElementType getKarushKuhnTuckerConditionsTolerance() const
     {
-        return (mResidualTolerance);
+        return (mKarushKuhnTuckerConditionsTolerance);
     }
-    void setResidualTolerance(const ElementType & aInput)
+    void setKarushKuhnTuckerConditionsTolerance(const ElementType & aInput)
     {
-        mResidualTolerance = aInput;
+        mKarushKuhnTuckerConditionsTolerance = aInput;
     }
     ElementType getStagnationTolerance() const
     {
@@ -7116,8 +7170,8 @@ public:
         mStagnationTolerance = aInput;
     }
 
-    virtual void solve(locus::DualProblemStageMng<ElementType, IndexType> & aDualProblemStageMng,
-                       locus::PrimalProblemStageMng<ElementType, IndexType> & aPrimalProblemStageMng,
+    virtual void solve(locus::PrimalProblemStageMng<ElementType, IndexType> & aPrimalProblemStageMng,
+                       locus::DualProblemStageMng<ElementType, IndexType> & aDualProblemStageMng,
                        locus::ConservativeConvexSeparableAppxDataMng<ElementType, IndexType> & aDataMng) = 0;
 
 private:
@@ -7127,8 +7181,8 @@ private:
     IndexType mMaxNumIterations;
     IndexType mNumIterationsDone;
 
-    ElementType mResidualTolerance;
     ElementType mStagnationTolerance;
+    ElementType mKarushKuhnTuckerConditionsTolerance;
 
 private:
     ConservativeConvexSeparableApproximations(const locus::ConservativeConvexSeparableApproximations<ElementType, IndexType> & aRhs);
@@ -7151,8 +7205,8 @@ public:
     {
     }
 
-    void solve(locus::DualProblemStageMng<ElementType, IndexType> & aDualProblemStageMng,
-               locus::PrimalProblemStageMng<ElementType, IndexType> & aPrimalProblemStageMng,
+    void solve(locus::PrimalProblemStageMng<ElementType, IndexType> & aPrimalProblemStageMng,
+               locus::DualProblemStageMng<ElementType, IndexType> & aDualProblemStageMng,
                locus::ConservativeConvexSeparableAppxDataMng<ElementType, IndexType> & aDataMng)
     {
         // NOTE: REMBER THAT THE GLOBALIZATION FACTORS FOR BOTH OBJECTIVE AND CONSTRAINTS ARE SET TO ZERO IF MMA.
@@ -7222,8 +7276,8 @@ public:
     {
     }
 
-    void solve(locus::DualProblemStageMng<ElementType, IndexType> & aDualProblemStageMng,
-               locus::PrimalProblemStageMng<ElementType, IndexType> & aPrimalProblemStageMng,
+    void solve(locus::PrimalProblemStageMng<ElementType, IndexType> & aPrimalProblemStageMng,
+               locus::DualProblemStageMng<ElementType, IndexType> & aDualProblemStageMng,
                locus::ConservativeConvexSeparableAppxDataMng<ElementType, IndexType> & aDataMng)
     {
         aDualProblemStageMng.update(aDataMng);
@@ -7408,16 +7462,16 @@ private:
     bool checkStoppingCriteria(locus::ConservativeConvexSeparableAppxDataMng<ElementType, IndexType> & aDataMng)
     {
         bool tStop = false;
-        const ElementType tNorm_KKT_Residual =
-                aDataMng.checkKarushKuhnTuckerConditions(mTrialControl.operator*(), mTrialDual.operator*());
+        aDataMng.computeKarushKuhnTuckerConditionsInexactness(mTrialControl.operator*(), mTrialDual.operator*());
+        const ElementType t_KKT_ConditionsInexactness = aDataMng.getKarushKuhnTuckerConditionsInexactness();
 
         const ElementType tObjectiveStagnation =
                 std::abs(mCurrentTrialObjectiveFunctionValue - mPreviousTrialObjectiveFunctionValue);
 
-        if(tNorm_KKT_Residual < this->getResidualTolerance())
+        if(t_KKT_ConditionsInexactness < this->getKarushKuhnTuckerConditionsTolerance())
         {
             tStop = true;
-            this->setStoppingCriterion(locus::ccsa::RESIDUAL_TOLERANCE);
+            this->setStoppingCriterion(locus::ccsa::KKT_CONDITIONS_TOLERANCE);
         }
         else if(tObjectiveStagnation < this->getStagnationTolerance())
         {
@@ -7449,6 +7503,275 @@ private:
 private:
     GloballyConvergentMethodMovingAsymptotes(const locus::GloballyConvergentMethodMovingAsymptotes<ElementType, IndexType> & aRhs);
     locus::GloballyConvergentMethodMovingAsymptotes<ElementType, IndexType> & operator=(const locus::GloballyConvergentMethodMovingAsymptotes<ElementType, IndexType> & aRhs);
+};
+
+template<typename ElementType, typename IndexType>
+class ConservativeConvexSeparableAppxAlgorithm
+{
+public:
+    ConservativeConvexSeparableAppxAlgorithm(const std::shared_ptr<locus::DualProblemStageMng<ElementType, IndexType>> & aDualProblemStageMng,
+                                             const std::shared_ptr<locus::PrimalProblemStageMng<ElementType, IndexType>> & aPrimalProblemStageMng,
+                                             const std::shared_ptr<locus::ConservativeConvexSeparableAppxDataMng<ElementType, IndexType>> & aDataMng,
+                                             const std::shared_ptr<locus::ConservativeConvexSeparableApproximations<ElementType, IndexType>> & aSubProblem) :
+            mMaxNumIterations(50),
+            mNumIterationsDone(0),
+            mOptimalityTolerance(1e-4),
+            mStagnationTolerance(1e-3),
+            mFeasibilityTolerance(1e-4),
+            mStationarityTolerance(1e-4),
+            mObjectiveStagnationTolerance(1e-8),
+            mMovingAsymptoteExpansionFactor(1.2),
+            mMovingAsymptoteContractionFactor(0.4),
+            mKarushKuhnTuckerConditionsTolerance(1e-4),
+            mMovingAsymptoteUpperBoundScaleFactor(10),
+            mMovingAsymptoteLowerBoundScaleFactor(0.01),
+            mStoppingCriterion(locus::ccsa::stop_t::NOT_CONVERGED),
+            mDualWork(),
+            mControlWork(),
+            mPreviousControl(),
+            mAntepenultimateControl(),
+            mDualProblemStageMng(aDualProblemStageMng),
+            mPrimalProblemStageMng(aPrimalProblemStageMng),
+            mDataMng(aDataMng),
+            mSubProblem(aSubProblem)
+    {
+        this->initialize();
+    }
+    ~ConservativeConvexSeparableAppxAlgorithm()
+    {
+    }
+
+    IndexType getMaxNumIterations() const
+    {
+        return (mMaxNumIterations);
+    }
+    void setMaxNumIterations(const IndexType & aInput)
+    {
+        mMaxNumIterations = aInput;
+    }
+    IndexType getNumIterationsDone() const
+    {
+        return (mNumIterationsDone);
+    }
+
+    ElementType getOptimalityTolerance() const
+    {
+        return (mOptimalityTolerance);
+    }
+    void setOptimalityTolerance(const ElementType & aInput)
+    {
+        mOptimalityTolerance = aInput;
+    }
+    ElementType getStagnationTolerance() const
+    {
+        return (mStagnationTolerance);
+    }
+    void setStagnationTolerance(const ElementType & aInput)
+    {
+        mStagnationTolerance = aInput;
+    }
+    ElementType getFeasibilityTolerance() const
+    {
+        return (mFeasibilityTolerance);
+    }
+    void setFeasibilityTolerance(const ElementType & aInput)
+    {
+        mFeasibilityTolerance = aInput;
+    }
+    ElementType getStationarityTolerance() const
+    {
+        return (mStationarityTolerance);
+    }
+    void setStationarityTolerance(const ElementType & aInput)
+    {
+        mStationarityTolerance = aInput;
+    }
+    ElementType getObjectiveStagnationTolerance() const
+    {
+        return (mObjectiveStagnationTolerance);
+    }
+    void setObjectiveStagnationTolerance(const ElementType & aInput)
+    {
+        mObjectiveStagnationTolerance = aInput;
+    }
+    ElementType getMovingAsymptoteExpansionFactor() const
+    {
+        return (mMovingAsymptoteExpansionFactor);
+    }
+    void setMovingAsymptoteExpansionFactor(const ElementType & aInput)
+    {
+        mMovingAsymptoteExpansionFactor = aInput;
+    }
+    ElementType getMovingAsymptoteContractionFactor() const
+    {
+        return (mMovingAsymptoteContractionFactor);
+    }
+    void setMovingAsymptoteContractionFactor(const ElementType & aInput)
+    {
+        mMovingAsymptoteContractionFactor = aInput;
+    }
+    ElementType getKarushKuhnTuckerConditionsTolerance() const
+    {
+        return (mKarushKuhnTuckerConditionsTolerance);
+    }
+    void setKarushKuhnTuckerConditionsTolerance(const ElementType & aInput)
+    {
+        mKarushKuhnTuckerConditionsTolerance = aInput;
+    }
+    ElementType getMovingAsymptoteUpperBoundScaleFactor() const
+    {
+        return (mMovingAsymptoteUpperBoundScaleFactor);
+    }
+    void setMovingAsymptoteUpperBoundScaleFactor(const ElementType & aInput)
+    {
+        mMovingAsymptoteUpperBoundScaleFactor = aInput;
+    }
+
+    locus::ccsa::stop_t getStoppingCriterion() const
+    {
+        return (mStoppingCriterion);
+    }
+    void setStoppingCriterion(const locus::ccsa::stop_t & aInput)
+    {
+        mStoppingCriterion = aInput;
+    }
+
+    void solve()
+    {
+        mDualProblemStageMng->initializeAuxiliaryVariables(mDataMng.operator*());
+        const locus::MultiVector<ElementType, IndexType> & tControl = mDataMng->getCurrentControl();
+        const ElementType tCurrentObjectiveFunctionValue = mPrimalProblemStageMng->evaluateObjective(tControl);
+        mDataMng->setCurrentObjectiveFunctionValue(tCurrentObjectiveFunctionValue);
+        mPrimalProblemStageMng->evaluateConstraints(tControl, mDualWork.operator*());
+        mDataMng->setDual(mDualWork.operator*());
+
+        mNumIterationsDone = 0;
+        while(1)
+        {
+            const locus::MultiVector<ElementType, IndexType> & tCurrentControl = mDataMng->getCurrentControl();
+            mPrimalProblemStageMng->computeGradient(tCurrentControl, mControlWork.operator*());
+            mDataMng->setCurrentObjectiveGradient(mControlWork.operator*());
+
+            if(this->checkStoppingCriteria() == true)
+            {
+                break;
+            }
+
+            // NOTE: TODO this->updateSigmaParameters();
+
+            locus::update(static_cast<ElementType>(1),
+                          mPreviousControl.operator*(),
+                          static_cast<ElementType>(0),
+                          mAntepenultimateControl.operator*());
+            locus::update(static_cast<ElementType>(1),
+                          tCurrentControl,
+                          static_cast<ElementType>(0),
+                          mPreviousControl.operator*());
+
+            mSubProblem->solve(mPrimalProblemStageMng.operator*(),
+                               mDualProblemStageMng.operator*(),
+                               mDataMng.operator*());
+
+            mNumIterationsDone++;
+        }
+    }
+
+private:
+    void initialize()
+    {
+        assert(mDataMng.get() != nullptr);
+
+        mDualWork = mDataMng->getDual()->create();
+        mControlWork = mDataMng->getCurrentControl()->create();
+        mPreviousControl = mDataMng->getCurrentControl()->create();
+        mAntepenultimateControl = mDataMng->getCurrentControl()->create();
+    }
+    bool checkStoppingCriteria()
+    {
+        bool tStop = false;
+
+        mDataMng->computeStagnationMeasure();
+        mDataMng->computeFeasibilityMeasure();
+        mDataMng->computeStationarityMeasure();
+        mDataMng->computeNormProjectedGradient();
+        mDataMng->computeObjectiveStagnationMeasure();
+
+        const locus::MultiVector<ElementType, IndexType> & tDual = mDataMng->getDual();
+        const locus::MultiVector<ElementType, IndexType> & tControl = mDataMng->getCurrentControl();
+        mDataMng->computeKarushKuhnTuckerConditionsInexactness(tControl, tDual);
+
+        const ElementType tStagnationMeasure = mDataMng->getStagnationMeasure();
+        const ElementType tFeasibilityMeasure = mDataMng->getFeasibilityMeasure();
+        const ElementType tStationarityMeasure = mDataMng->getStationarityMeasure();
+        const ElementType tNormProjectedGradient = mDataMng->getNormProjectedGradient();
+        const ElementType tObjectiveStagnationMeasure = mDataMng->getObjectiveStagnationMeasure();
+        const ElementType t_KKT_ConditionsInexactness = mDataMng->getKarushKuhnTuckerConditionsInexactness();
+
+        if(tStagnationMeasure < this->getStagnationTolerance())
+        {
+            tStop = true;
+            this->setStoppingCriterion(locus::ccsa::stop_t::CONTROL_STAGNATION);
+        }
+        else if(tStationarityMeasure < this->getStationarityTolerance())
+        {
+            tStop = true;
+            this->setStoppingCriterion(locus::ccsa::stop_t::STATIONARITY_TOLERANCE);
+        }
+        else if( (tFeasibilityMeasure < this->getFeasibilityTolerance())
+                && (tNormProjectedGradient < this->getOptimalityTolerance()) )
+        {
+            tStop = true;
+            this->setStoppingCriterion(locus::ccsa::stop_t::OPTIMALITY_AND_FEASIBILITY_MET);
+        }
+        else if(t_KKT_ConditionsInexactness < this->getKarushKuhnTuckerConditionsTolerance())
+        {
+            tStop = true;
+            this->setStoppingCriterion(locus::ccsa::stop_t::KKT_CONDITIONS_TOLERANCE);
+        }
+        else if(mNumIterationsDone < this->getMaxNumIterations())
+        {
+            tStop = true;
+            this->setStoppingCriterion(locus::ccsa::stop_t::MAX_NUMBER_ITERATIONS);
+        }
+        else if(tObjectiveStagnationMeasure < this->getObjectiveStagnationTolerance())
+        {
+            tStop = true;
+            this->setStoppingCriterion(locus::ccsa::stop_t::OBJECTIVE_STAGNATION);
+        }
+
+        return (tStop);
+    }
+
+private:
+    IndexType mMaxNumIterations;
+    IndexType mNumIterationsDone;
+
+    ElementType mOptimalityTolerance;
+    ElementType mStagnationTolerance;
+    ElementType mFeasibilityTolerance;
+    ElementType mStationarityTolerance;
+    ElementType mObjectiveStagnationTolerance;
+    ElementType mMovingAsymptoteExpansionFactor;
+    ElementType mMovingAsymptoteContractionFactor;
+    ElementType mKarushKuhnTuckerConditionsTolerance;
+    ElementType mMovingAsymptoteUpperBoundScaleFactor;
+    ElementType mMovingAsymptoteLowerBoundScaleFactor;
+
+    locus::ccsa::stop_t mStoppingCriterion;
+
+    std::shared_ptr<locus::MultiVector<ElementType, IndexType>> mDualWork;
+    std::shared_ptr<locus::MultiVector<ElementType, IndexType>> mControlWork;
+    std::shared_ptr<locus::MultiVector<ElementType, IndexType>> mPreviousControl;
+    std::shared_ptr<locus::MultiVector<ElementType, IndexType>> mAntepenultimateControl;
+
+    std::shared_ptr<locus::DualProblemStageMng<ElementType, IndexType>> mDualProblemStageMng;
+    std::shared_ptr<locus::PrimalProblemStageMng<ElementType, IndexType>> mPrimalProblemStageMng;
+    std::shared_ptr<locus::ConservativeConvexSeparableAppxDataMng<ElementType, IndexType>> mDataMng;
+    std::shared_ptr<locus::ConservativeConvexSeparableApproximations<ElementType, IndexType>> mSubProblem;
+
+private:
+    ConservativeConvexSeparableAppxAlgorithm(const locus::ConservativeConvexSeparableAppxAlgorithm<ElementType, IndexType> & aRhs);
+    locus::ConservativeConvexSeparableAppxAlgorithm<ElementType, IndexType> & operator=(const locus::ConservativeConvexSeparableAppxAlgorithm<ElementType, IndexType> & aRhs);
 };
 
 }
@@ -8792,7 +9115,7 @@ TEST(LocusTest, TrustRegionAlgorithmDataMng)
     tDataMng.setInactiveSet(tlocusControlMultiVector);
     locus::fill(3., tlocusControlMultiVector);
     tDataMng.setCurrentGradient(tlocusControlMultiVector);
-    tDataMng.computeProjectedGradientNorm();
+    tDataMng.computeNormProjectedGradient();
     tValue = 11.61895003862225;
     EXPECT_NEAR(tValue, tDataMng.getNormProjectedGradient(), tTolerance);
 
@@ -8801,7 +9124,7 @@ TEST(LocusTest, TrustRegionAlgorithmDataMng)
     tElementIndex = 0;
     tlocusControlMultiVector(tVectorIndex, tElementIndex) = 0;
     tDataMng.setInactiveSet(tlocusControlMultiVector);
-    tDataMng.computeProjectedGradientNorm();
+    tDataMng.computeNormProjectedGradient();
     tValue = 11.224972160321824;
     EXPECT_NEAR(tValue, tDataMng.getNormProjectedGradient(), tTolerance);
 
@@ -9606,7 +9929,7 @@ TEST(LocusTest, ProjectedSteihaugTointPcg)
     locus::StandardMultiVector<double> tVector(tNumVectors, tNumControls);
     tStageMng.computeGradient(tDataMng.getCurrentControl(), tVector);
     tDataMng.setCurrentGradient(tVector);
-    tDataMng.computeProjectedGradientNorm();
+    tDataMng.computeNormProjectedGradient();
     tScalarGoldValue = 6.670832032063167;
     EXPECT_NEAR(tScalarGoldValue, tDataMng.getNormProjectedGradient(), tTolerance);
     tVector(0, 0) = -1.5;
@@ -9846,7 +10169,7 @@ TEST(LocusTest, KelleySachsStepMng)
     locus::StandardMultiVector<double> tVector(tNumVectors, tNumControls);
     tStageMng.computeGradient(tDataMng.getCurrentControl(), tVector);
     tDataMng.setCurrentGradient(tVector);
-    tDataMng.computeProjectedGradientNorm();
+    tDataMng.computeNormProjectedGradient();
     double tNormProjectedGradientGold = 6.670832032063167;
     EXPECT_NEAR(tNormProjectedGradientGold, tDataMng.getNormProjectedGradient(), tTolerance);
     tDataMng.computeStationarityMeasure();
@@ -10148,7 +10471,7 @@ TEST(LocusTest, DualProblemStageMng)
     tDataFactory.allocateDual(tNumDuals);
     tDataFactory.allocateControl(tNumControls);
 
-    locus::DualProblemStageMng<double> tStageMng(tDataFactory);
+    locus::ConservativeConvexSeparableAppxDataMng<double> tStageMng(tDataFactory);
 }
 
 }
