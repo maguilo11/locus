@@ -6301,7 +6301,7 @@ template<typename ElementType, typename IndexType = size_t>
 class PrimalProblemStageMng : public locus::ConservativeConvexSeparableAppxStageMng<ElementType, IndexType>
 {
 public:
-    PrimalProblemStageMng()
+    PrimalProblemStageMng(const locus::DataFactory<ElementType, IndexType> & aDataFactory)
     {
     }
     virtual ~PrimalProblemStageMng()
@@ -6682,7 +6682,7 @@ public:
             const locus::Vector<ElementType, IndexType> & tMyCurrentObjectiveGradient =
                     aDataMng.getCurrentObjectiveGradient(tVectorIndex);
 
-            IndexType tNumControls = tMyCurrentSigma[tVectorIndex].size();
+            IndexType tNumControls = tMyCurrentSigma.size();
             for(IndexType tControlIndex = 0; tControlIndex < tNumControls; tControlIndex++)
             {
                 ElementType tCurrentSigmaTimesCurrentSigma = tMyCurrentSigma[tControlIndex]
@@ -6722,9 +6722,9 @@ public:
             tConstraintCoefficientsR[tConstraintIndex] = tCurrentConstraintValues[tConstraintIndex];
             const locus::MultiVector<ElementType, IndexType> & tCurrentConstraintGradients =
                     aDataMng.getCurrentConstraintGradients(tConstraintIndex);
-            const locus::MultiVector<ElementType, IndexType> & tMyConstraintCoeffP =
+            locus::MultiVector<ElementType, IndexType> & tMyConstraintCoeffP =
                     mConstraintCoefficientsP[tConstraintIndex].operator*();
-            const locus::MultiVector<ElementType, IndexType> & tMyConstraintCoeffQ =
+            locus::MultiVector<ElementType, IndexType> & tMyConstraintCoeffQ =
                     mConstraintCoefficientsQ[tConstraintIndex].operator*();
             assert(tCurrentConstraintGradients.getNumVectors() == aDataMng.getNumControlVectors());
 
@@ -6733,8 +6733,8 @@ public:
             for(IndexType tVectorIndex = 0; tVectorIndex < tNumControlVectors; tVectorIndex++)
             {
                 mControlWorkVectorOne->fill(static_cast<ElementType>(0));
-                const locus::Vector<ElementType, IndexType> & tMyCoeffP = tMyConstraintCoeffP[tVectorIndex];
-                const locus::Vector<ElementType, IndexType> & tMyCoeffQ = tMyConstraintCoeffQ[tVectorIndex];
+                locus::Vector<ElementType, IndexType> & tMyCoeffP = tMyConstraintCoeffP[tVectorIndex];
+                locus::Vector<ElementType, IndexType> & tMyCoeffQ = tMyConstraintCoeffQ[tVectorIndex];
                 const locus::Vector<ElementType, IndexType> & tMyCurrentSigma = aDataMng.getCurrentSigma(tVectorIndex);
                 const locus::Vector<ElementType, IndexType> & tMyCurrentGradient = tCurrentConstraintGradients[tVectorIndex];
 
@@ -7505,7 +7505,7 @@ private:
     locus::GloballyConvergentMethodMovingAsymptotes<ElementType, IndexType> & operator=(const locus::GloballyConvergentMethodMovingAsymptotes<ElementType, IndexType> & aRhs);
 };
 
-template<typename ElementType, typename IndexType>
+template<typename ElementType, typename IndexType = size_t>
 class ConservativeConvexSeparableAppxAlgorithm
 {
 public:
@@ -7528,7 +7528,7 @@ public:
             mStoppingCriterion(locus::ccsa::stop_t::NOT_CONVERGED),
             mDualWork(),
             mControlWork(),
-            mPreviousControl(),
+            mPreviousSigma(),
             mAntepenultimateControl(),
             mDualProblemStageMng(aDualProblemStageMng),
             mPrimalProblemStageMng(aPrimalProblemStageMng),
@@ -7626,6 +7626,14 @@ public:
     {
         mMovingAsymptoteUpperBoundScaleFactor = aInput;
     }
+    ElementType getMovingAsymptoteLowerBoundScaleFactor() const
+    {
+        return (mMovingAsymptoteLowerBoundScaleFactor);
+    }
+    void setMovingAsymptoteLowerBoundScaleFactor(const ElementType & aInput)
+    {
+        mMovingAsymptoteLowerBoundScaleFactor = aInput;
+    }
 
     locus::ccsa::stop_t getStoppingCriterion() const
     {
@@ -7657,16 +7665,18 @@ public:
                 break;
             }
 
-            // NOTE: TODO this->updateSigmaParameters();
+            this->updateSigmaParameters();
 
+            const locus::MultiVector<ElementType, IndexType> & tPreviousControl = mDataMng->getPreviousControl();
             locus::update(static_cast<ElementType>(1),
-                          mPreviousControl.operator*(),
+                          tPreviousControl,
                           static_cast<ElementType>(0),
                           mAntepenultimateControl.operator*());
             locus::update(static_cast<ElementType>(1),
                           tCurrentControl,
                           static_cast<ElementType>(0),
-                          mPreviousControl.operator*());
+                          mControlWork.operator*());
+            mDataMng->setPreviousControl(mControlWork.operator*());
 
             mSubProblem->solve(mPrimalProblemStageMng.operator*(),
                                mDualProblemStageMng.operator*(),
@@ -7681,10 +7691,10 @@ private:
     {
         assert(mDataMng.get() != nullptr);
 
-        mDualWork = mDataMng->getDual()->create();
-        mControlWork = mDataMng->getCurrentControl()->create();
-        mPreviousControl = mDataMng->getCurrentControl()->create();
-        mAntepenultimateControl = mDataMng->getCurrentControl()->create();
+        mDualWork = mDataMng->getDual().create();
+        mControlWork = mDataMng->getCurrentControl().create();
+        mPreviousSigma = mDataMng->getCurrentControl().create();
+        mAntepenultimateControl = mDataMng->getCurrentControl().create();
     }
     bool checkStoppingCriteria()
     {
@@ -7741,6 +7751,71 @@ private:
 
         return (tStop);
     }
+    void updateSigmaParameters()
+    {
+        assert(mControlWork.get() != nullptr);
+        assert(mPreviousSigma.get() != nullptr);
+
+        const locus::MultiVector<ElementType, IndexType> & tCurrentSigma = mDataMng->getCurrentSigma();
+        locus::update(static_cast<ElementType>(1), tCurrentSigma, static_cast<ElementType>(0), *mPreviousSigma);
+
+        const IndexType tNumIterationsDone = this->getNumIterationsDone();
+        if(tNumIterationsDone < static_cast<IndexType>(2))
+        {
+            const locus::MultiVector<ElementType, IndexType> & tUpperBounds = mDataMng->getControlUpperBounds();
+            locus::update(static_cast<ElementType>(1), tUpperBounds, static_cast<ElementType>(0), *mControlWork);
+            const locus::MultiVector<ElementType, IndexType> & tLowerBounds = mDataMng->getControlLowerBounds();
+            locus::update(static_cast<ElementType>(-1), tLowerBounds, static_cast<ElementType>(1), *mControlWork);
+            locus::scale(static_cast<ElementType>(0.5), mControlWork.operator*());
+            mDataMng->setCurrentSigma(mControlWork.operator*());
+        }
+        else
+        {
+            const IndexType tNumVectors = mControlWork->getNumVectors();
+            locus::fill(static_cast<ElementType>(0), mControlWork.operator*());
+            for(IndexType tVectorIndex = 0; tVectorIndex < tNumVectors; tVectorIndex++)
+            {
+                const ElementType tExpansionFactor = this->getMovingAsymptoteExpansionFactor();
+                const ElementType tContractionFactor = this->getMovingAsymptoteContractionFactor();
+
+                const locus::MultiVector<ElementType, IndexType> & tCurrentControl = mDataMng->getCurrentControl();
+                const locus::MultiVector<ElementType, IndexType> & tUpperBounds = mDataMng->getControlUpperBounds();
+                const locus::MultiVector<ElementType, IndexType> & tLowerBounds = mDataMng->getControlLowerBounds();
+                const locus::MultiVector<ElementType, IndexType> & tPreviousControl = mDataMng->getPreviousControl();
+                const locus::MultiVector<ElementType, IndexType> & tPreviousSigma = mPreviousSigma->operator[](tVectorIndex);
+                const locus::MultiVector<ElementType, IndexType> & tAntepenultimateControl = mAntepenultimateControl->operator[](tVectorIndex);
+
+                const IndexType tNumberControls = mControlWork->operator[](tVectorIndex).size();
+                locus::MultiVector<ElementType, IndexType> & tCurrentSigma = mControlWork->operator[](tVectorIndex);
+                for(IndexType tControlIndex = 0; tControlIndex < tNumberControls; tControlIndex++)
+                {
+                    ElementType tValue = (tCurrentControl[tControlIndex] - tPreviousControl[tControlIndex])
+                            * (tPreviousControl[tControlIndex] - tAntepenultimateControl[tControlIndex]);
+                    if(tValue > static_cast<ElementType>(0))
+                    {
+                        tCurrentSigma[tControlIndex] = tExpansionFactor * tPreviousSigma[tControlIndex];
+                    }
+                    else if(tValue < static_cast<ElementType>(0))
+                    {
+                        tCurrentSigma[tControlIndex] = tContractionFactor * tPreviousSigma[tControlIndex];
+                    }
+                    else
+                    {
+                        tCurrentSigma[tControlIndex] = tPreviousSigma[tControlIndex];
+                    }
+                    // check that lower bound is satisfied
+                    const ElementType tLowerBoundScaleFactor = this->getMovingAsymptoteLowerBoundScaleFactor();
+                    tValue = tLowerBoundScaleFactor * (tUpperBounds[tControlIndex] - tLowerBounds[tControlIndex]);
+                    tCurrentSigma[tControlIndex] = std::max(tValue, tCurrentSigma[tControlIndex]);
+                    // check that upper bound is satisfied
+                    const ElementType tUpperBoundScaleFactor = this->getMovingAsymptoteUpperBoundScaleFactor();
+                    tValue = tUpperBoundScaleFactor * (tUpperBounds[tControlIndex] - tLowerBounds[tControlIndex]);
+                    tCurrentSigma[tControlIndex] = std::min(tValue, tCurrentSigma[tControlIndex]);
+                }
+            }
+            mDataMng->setCurrentSigma(mControlWork.operator*());
+        }
+    }
 
 private:
     IndexType mMaxNumIterations;
@@ -7761,7 +7836,7 @@ private:
 
     std::shared_ptr<locus::MultiVector<ElementType, IndexType>> mDualWork;
     std::shared_ptr<locus::MultiVector<ElementType, IndexType>> mControlWork;
-    std::shared_ptr<locus::MultiVector<ElementType, IndexType>> mPreviousControl;
+    std::shared_ptr<locus::MultiVector<ElementType, IndexType>> mPreviousSigma;
     std::shared_ptr<locus::MultiVector<ElementType, IndexType>> mAntepenultimateControl;
 
     std::shared_ptr<locus::DualProblemStageMng<ElementType, IndexType>> mDualProblemStageMng;
@@ -10471,7 +10546,16 @@ TEST(LocusTest, DualProblemStageMng)
     tDataFactory.allocateDual(tNumDuals);
     tDataFactory.allocateControl(tNumControls);
 
-    locus::ConservativeConvexSeparableAppxDataMng<double> tStageMng(tDataFactory);
+    std::shared_ptr<locus::MethodMovingAsymptotes<double>> tSubProblem =
+            std::make_shared<locus::MethodMovingAsymptotes<double>>(tDataFactory);
+    std::shared_ptr<locus::DualProblemStageMng<double>> tDualProblem =
+            std::make_shared<locus::DualProblemStageMng<double>>(tDataFactory);
+    std::shared_ptr<locus::PrimalProblemStageMng<double>> tPrimalProblem =
+            std::make_shared<locus::PrimalProblemStageMng<double>>(tDataFactory);
+    std::shared_ptr<locus::ConservativeConvexSeparableAppxDataMng<double>> tDataMng =
+            std::make_shared<locus::ConservativeConvexSeparableAppxDataMng<double>>(tDataFactory);
+
+    locus::ConservativeConvexSeparableAppxAlgorithm<double> tAlgorithm(tDualProblem, tPrimalProblem, tDataMng, tSubProblem);
 }
 
 }
