@@ -3663,6 +3663,7 @@ public:
         mStateData->setCurrentTrialStep(aDataMng.getTrialStep());
         mStateData->setCurrentControl(aDataMng.getCurrentControl());
         mStateData->setCurrentObjectiveGradient(aDataMng.getCurrentGradient());
+
         mObjectiveGradientOperator->update(mStateData.operator*());
         mObjectiveHessian->update(mStateData.operator*());
         mPreconditioner->update(mStateData.operator*());
@@ -5449,6 +5450,92 @@ private:
 };
 
 template<typename ScalarType, typename OrdinalType = size_t>
+class Rosenbrock : public locus::Criterion<ScalarType, OrdinalType>
+{
+public:
+    Rosenbrock()
+    {
+    }
+    virtual ~Rosenbrock()
+    {
+    }
+
+    /*!
+     * Evaluate Rosenbrock function:
+     *      f(\mathbf{x}) = 100 * \left(x_2 - x_1^2\right)^2 + \left(1 - x_1\right)^2
+     * */
+    ScalarType value(const locus::MultiVector<ScalarType, OrdinalType> & aState,
+                     const locus::MultiVector<ScalarType, OrdinalType> & aControl)
+    {
+        assert(aControl.getNumVectors() == static_cast<OrdinalType>(1));
+
+        const OrdinalType tVectorIndex = 0;
+        const locus::Vector<ScalarType, OrdinalType> & tMyControl = aControl[tVectorIndex];
+
+        ScalarType tOutput = static_cast<ScalarType>(100.)
+                * std::pow((tMyControl[1] - tMyControl[0] * tMyControl[0]), static_cast<ScalarType>(2))
+                + std::pow(static_cast<ScalarType>(1) - tMyControl[0], static_cast<ScalarType>(2));
+
+        return (tOutput);
+    }
+    /*!
+     * Compute Rosenbrock gradient:
+     *      \frac{\partial{f}}{\partial x_1} = -400 * \left(x_2 - x_1^2\right) * x_1 +
+     *                                          \left(2 * \left(1 - x_1\right) \right)
+     *      \frac{\partial{f}}{\partial x_2} = 200 * \left(x_2 - x_1^2\right)
+     * */
+    void gradient(const locus::MultiVector<ScalarType, OrdinalType> & aState,
+                  const locus::MultiVector<ScalarType, OrdinalType> & aControl,
+                  locus::MultiVector<ScalarType, OrdinalType> & aOutput)
+    {
+        assert(aOutput.getNumVectors() == static_cast<OrdinalType>(1));
+        assert(aControl.getNumVectors() == static_cast<OrdinalType>(1));
+
+        const OrdinalType tVectorIndex = 0;
+        locus::Vector<ScalarType, OrdinalType> & tMyOutput = aOutput[tVectorIndex];
+        const locus::Vector<ScalarType, OrdinalType> & tMyControl = aControl[tVectorIndex];
+
+        tMyOutput[0] = static_cast<ScalarType>(-400) * (tMyControl[1] - (tMyControl[0] * tMyControl[0])) * tMyControl[0]
+                + static_cast<ScalarType>(2) * tMyControl[0] - static_cast<ScalarType>(2);
+        tMyOutput[1] = static_cast<ScalarType>(200) * (tMyControl[1] - (tMyControl[0] * tMyControl[0]));
+    }
+    /*!
+     * Compute Rosenbrock Hessian times vector:
+     * */
+    void hessian(const locus::MultiVector<ScalarType, OrdinalType> & aState,
+                 const locus::MultiVector<ScalarType, OrdinalType> & aControl,
+                 const locus::MultiVector<ScalarType, OrdinalType> & aVector,
+                 locus::MultiVector<ScalarType, OrdinalType> & aOutput)
+    {
+        assert(aOutput.getNumVectors() == static_cast<OrdinalType>(1));
+        assert(aVector.getNumVectors() == static_cast<OrdinalType>(1));
+        assert(aControl.getNumVectors() == static_cast<OrdinalType>(1));
+
+        const OrdinalType tVectorIndex = 0;
+        locus::Vector<ScalarType, OrdinalType> & tMyOutput = aOutput[tVectorIndex];
+        const locus::Vector<ScalarType, OrdinalType> & tMyVector = aVector[tVectorIndex];
+        const locus::Vector<ScalarType, OrdinalType> & tMyControl = aControl[tVectorIndex];
+
+        tMyOutput[0] = ((static_cast<ScalarType>(2)
+                - static_cast<ScalarType>(400) * (tMyControl[1] - (tMyControl[0] * tMyControl[0]))
+                + static_cast<ScalarType>(800) * (tMyControl[0] * tMyControl[0])) * tMyVector[0])
+                - (static_cast<ScalarType>(400) * tMyControl[0] * tMyVector[1]);
+        tMyOutput[1] = (static_cast<ScalarType>(-400) * tMyControl[0] * tMyVector[0])
+                + (static_cast<ScalarType>(200) * tMyVector[1]);
+    }
+    std::shared_ptr<locus::Criterion<ScalarType, OrdinalType>> create() const
+    {
+        std::shared_ptr<locus::Criterion<ScalarType, OrdinalType>> tOutput =
+                std::make_shared<locus::Rosenbrock<ScalarType, OrdinalType>>();
+        return (tOutput);
+    }
+
+private:
+    Rosenbrock(const locus::Rosenbrock<ScalarType, OrdinalType> & aRhs);
+    locus::Rosenbrock<ScalarType, OrdinalType> & operator=(const locus::Rosenbrock<ScalarType, OrdinalType> & aRhs);
+};
+
+template<typename ScalarType, typename OrdinalType = size_t>
 class Circle : public locus::Criterion<ScalarType, OrdinalType>
 {
 public:
@@ -5461,7 +5548,7 @@ public:
 
     /// \left(\mathbf{z}(0) - 1.\right)^2 + 2\left(\mathbf{z}(1) - 2\right)^2
     ScalarType value(const locus::MultiVector<ScalarType, OrdinalType> & aState,
-                      const locus::MultiVector<ScalarType, OrdinalType> & aControl)
+                     const locus::MultiVector<ScalarType, OrdinalType> & aControl)
     {
         assert(aControl.getNumVectors() > static_cast<OrdinalType>(0));
 
@@ -5576,6 +5663,12 @@ private:
     Radius(const locus::Radius<ScalarType, OrdinalType> & aRhs);
     locus::Radius<ScalarType, OrdinalType> & operator=(const locus::Radius<ScalarType, OrdinalType> & aRhs);
 };
+
+/**********************************************************************************************************/
+/******************************** NONLINEAR CONJUGATE GRADIENT ALGORITHM **********************************/
+/**********************************************************************************************************/
+
+
 
 /**********************************************************************************************************/
 /************************* CONSERVATIVE CONVEX SEPARABLE APPROXIMATION ALGORITHM **************************/
@@ -9645,6 +9738,41 @@ TEST(LocusTest, TrustRegionAlgorithmDataMng)
     LocusTest::checkMultiVectorData(tDataMng.getPreviousControl(), tlocusControlMultiVector);
     locus::fill(10., tlocusControlMultiVector);
     LocusTest::checkMultiVectorData(tDataMng.getPreviousGradient(), tlocusControlMultiVector);
+}
+
+TEST(LocusTest, RosenbrockCriterion)
+{
+    const size_t tNumStates = 1;
+    const size_t tNumVectors = 1;
+    locus::StandardMultiVector<double> tState(tNumVectors, tNumStates);
+    double tValue = 2;
+    const size_t tNumControls = 2;
+    locus::StandardMultiVector<double> tControl(tNumVectors, tNumControls, tValue);
+
+    locus::Rosenbrock<double> tCriterion;
+    // TEST OBJECTIVE FUNCTION EVALUATION
+    double tObjectiveValue = tCriterion.value(tState, tControl);
+    const double tGoldValue = 401;
+    const double tTolerance = 1e-6;
+    EXPECT_NEAR(tGoldValue, tObjectiveValue, tTolerance);
+
+    // TEST GRADIENT EVALUATION FUNCTION
+    locus::StandardMultiVector<double> tGradient(tNumVectors, tNumControls);
+    tCriterion.gradient(tState, tControl, tGradient);
+    locus::StandardMultiVector<double> tGoldVector(tNumVectors, tNumControls);
+    const size_t tVectorIndex = 0;
+    tGoldVector(tVectorIndex, 0) = 1602;
+    tGoldVector(tVectorIndex, 1) = -400;
+    LocusTest::checkMultiVectorData(tGradient, tGoldVector);
+
+    // TEST HESSIAN TIMES VECTOR FUNCTION
+    tValue = 1;
+    locus::StandardMultiVector<double> tVector(tNumVectors, tNumControls, tValue);
+    locus::StandardMultiVector<double> tHessianTimesVector(tNumVectors, tNumControls);
+    tCriterion.hessian(tState, tControl, tVector, tHessianTimesVector);
+    tGoldVector(tVectorIndex, 0) = 3202;
+    tGoldVector(tVectorIndex, 1) = -600;
+    LocusTest::checkMultiVectorData(tHessianTimesVector, tGoldVector);
 }
 
 TEST(LocusTest, CircleCriterion)
