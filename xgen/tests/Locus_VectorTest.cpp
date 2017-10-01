@@ -3665,6 +3665,7 @@ public:
         mStateData->setCurrentObjectiveGradient(aDataMng.getCurrentGradient());
         mObjectiveGradientOperator->update(mStateData.operator*());
         mObjectiveHessian->update(mStateData.operator*());
+        mPreconditioner->update(mStateData.operator*());
 
         const OrdinalType tNumConstraints = mConstraintGradientOperators->size();
         assert(tNumConstraints == mCostraintGradients->size());
