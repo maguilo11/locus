@@ -4,8 +4,8 @@ CXXFLAGS = -Wall -Wuninitialized -Werror -Wformat -fopenmp -O3 -g -std=c++11
 CXX_INCLUDE = /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include/c++/
 
 # Set source and include directories
-SRC = /Users/miguelaguilo/locus/xgen/src/
-INC = /Users/miguelaguilo/locus/xgen/include/
+LOCUS_SOURCE = /Users/miguelaguilo/locus/xgen/src/
+LOCUS_INCLUDE = /Users/miguelaguilo/locus/xgen/include/
 
 # Set source and include directories for unit tests
 TEST = /Users/miguelaguilo/locus/xgen/tests/
@@ -15,14 +15,15 @@ GTEST_INCLUDE = /Users/miguelaguilo/Software/gtest/include/
 GTEST_BUILD = /Users/miguelaguilo/Software/gtest_mybuild_mpicxx/CMakeFiles/gtest.dir/src/
 
 # Set object files directory
-OBJS = $(SRC)
+OBJS = $(LOCUS_SOURCE)
 
 UTEST = $(GTEST_BUILD)gtest-all.cc.o \
+	$(TEST)Locus_PythonInterfaceTest.o \
 	$(TEST)Locus_UnitTestMain.o \
 	$(TEST)Locus_VectorTest.o
 
 .cpp.o:
-	$(CXX) $(CXXFLAGS) -I$(CXX_INCLUDE) -I$(GTEST_INCLUDE) -I$(INC) -I$(SRC) \
+	$(CXX) $(CXXFLAGS) -I$(CXX_INCLUDE) -I$(GTEST_INCLUDE) -I$(LOCUS_INCLUDE) -I$(LOCUS_SOURCE) \
 	-c -o $@ $<
 
 locus: $(OBJS) LocusMain.o

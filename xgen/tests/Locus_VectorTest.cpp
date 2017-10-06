@@ -19,44 +19,17 @@
 #include <iostream>
 #include <algorithm>
 
+#include "Locus_Vector.hpp"
+#include "Locus_Criterion.hpp"
+#include "Locus_MultiVector.hpp"
+#include "Locus_ReductionOperations.hpp"
+
 namespace locus
 {
 
 /**********************************************************************************************************/
 /**************************************** LINEAR ALGEBRA OPERATIONS ***************************************/
 /**********************************************************************************************************/
-
-template<typename ScalarType, typename OrdinalType = size_t>
-class Vector
-{
-public:
-    virtual ~Vector()
-    {
-    }
-
-    //! Scales a Vector by a ScalarType constant.
-    virtual void scale(const ScalarType & aInput) = 0;
-    //! Entry-Wise product of two vectors.
-    virtual void entryWiseProduct(const locus::Vector<ScalarType, OrdinalType> & aInput) = 0;
-    //! Update vector values with scaled values of A, this = beta*this + alpha*A.
-    virtual void update(const ScalarType & aAlpha,
-                        const locus::Vector<ScalarType, OrdinalType> & aInputVector,
-                        const ScalarType & aBeta) = 0;
-    //! Computes the absolute value of each element in the container.
-    virtual void modulus() = 0;
-    //! Returns the inner product of two vectors.
-    virtual ScalarType dot(const locus::Vector<ScalarType, OrdinalType> & aInputVector) const = 0;
-    //! Assigns new contents to the Vector, replacing its current contents, and not modifying its size.
-    virtual void fill(const ScalarType & aValue) = 0;
-    //! Returns the number of local elements in the Vector.
-    virtual OrdinalType size() const = 0;
-    //! Creates an object of type locus::Vector
-    virtual std::shared_ptr<locus::Vector<ScalarType, OrdinalType>> create() const = 0;
-    //! Operator overloads the square bracket operator
-    virtual ScalarType & operator [](const OrdinalType & aIndex) = 0;
-    //! Operator overloads the square bracket operator
-    virtual const ScalarType & operator [](const OrdinalType & aIndex) const = 0;
-};
 
 template<typename ScalarType, typename OrdinalType = size_t>
 class StandardVector : public locus::Vector<ScalarType, OrdinalType>
@@ -170,24 +143,6 @@ private:
 private:
     StandardVector(const locus::StandardVector<ScalarType, OrdinalType> &);
     locus::StandardVector<ScalarType, OrdinalType> & operator=(const locus::StandardVector<ScalarType, OrdinalType> &);
-};
-
-template<typename ScalarType, typename OrdinalType = size_t>
-class ReductionOperations
-{
-public:
-    virtual ~ReductionOperations()
-    {
-    }
-
-    //! Returns the maximum element in range
-    virtual ScalarType max(const locus::Vector<ScalarType, OrdinalType> & aInput) const = 0;
-    //! Returns the minimum element in range
-    virtual ScalarType min(const locus::Vector<ScalarType, OrdinalType> & aInput) const = 0;
-    //! Returns the sum of all the elements in container.
-    virtual ScalarType sum(const locus::Vector<ScalarType, OrdinalType> & aInput) const = 0;
-    //! Creates object of type locus::ReductionOperations
-    virtual std::shared_ptr<locus::ReductionOperations<ScalarType, OrdinalType>> create() const = 0;
 };
 
 template<typename ScalarType, typename OrdinalType = size_t>
@@ -352,28 +307,6 @@ public:
 private:
     DistributedReductionOperations(const locus::DistributedReductionOperations<ScalarType, OrdinalType> &);
     locus::DistributedReductionOperations<ScalarType, OrdinalType> & operator=(const locus::DistributedReductionOperations<ScalarType, OrdinalType> &);
-};
-
-template<typename ScalarType, typename OrdinalType = size_t>
-class MultiVector
-{
-public:
-    virtual ~MultiVector()
-    {
-    }
-
-    //! Returns number of vectors
-    virtual OrdinalType getNumVectors() const = 0;
-    //! Creates a copy of type MultiVector
-    virtual std::shared_ptr<locus::MultiVector<ScalarType, OrdinalType>> create() const = 0;
-    //! Operator overloads the square bracket operator
-    virtual locus::Vector<ScalarType, OrdinalType> & operator [](const OrdinalType & aVectorIndex) = 0;
-    //! Operator overloads the square bracket operator
-    virtual const locus::Vector<ScalarType, OrdinalType> & operator [](const OrdinalType & aVectorIndex) const = 0;
-    //! Operator overloads the square bracket operator
-    virtual ScalarType & operator ()(const OrdinalType & aVectorIndex, const OrdinalType & aElementIndex) = 0;
-    //! Operator overloads the square bracket operator
-    virtual const ScalarType & operator ()(const OrdinalType & aVectorIndex, const OrdinalType & aElementIndex) const = 0;
 };
 
 template<typename ScalarType, typename OrdinalType = size_t>
@@ -1401,70 +1334,6 @@ public:
      */
     virtual void solve(const locus::Vector<ScalarType, OrdinalType> & aControl,
                        locus::Vector<ScalarType, OrdinalType> & aState) = 0;
-};
-
-template<typename ScalarType, typename OrdinalType = size_t>
-class Criterion
-{
-public:
-    virtual ~Criterion()
-    {
-    }
-
-    /*!
-     * Evaluates criterion of type f(\mathbf{u}(\mathbf{z}),\mathbf{z})\colon\mathbb{R}^{n_u}\times\mathbb{R}^{n_z}
-     * \rightarrow\mathbb{R}, where u denotes the state and z denotes the control variables. This criterion
-     * is typically associated with nonlinear programming optimization problems. For instance, PDE constrasize_t
-     * optimization problems.
-     *  Parameters:
-     *    \param In
-     *          aState: state variables
-     *    \param In
-     *          aControl: control variables
-     *
-     *  \return Objective function value
-     **/
-    virtual ScalarType value(const locus::MultiVector<ScalarType, OrdinalType> & aState,
-                              const locus::MultiVector<ScalarType, OrdinalType> & aControl) = 0;
-    /*!
-     * Computes the gradient of a criterion of type f(\mathbf{u}(\mathbf{z}),\mathbf{z})\colon\mathbb{R}^{n_u}
-     * \times\mathbb{R}^{n_z}\rightarrow\mathbb{R}, where u denotes the state and z denotes the control variables.
-     * This criterion is typically associated with nonlinear programming optimization problems. For instance, PDE
-     * constraint optimization problems.
-     *  Parameters:
-     *    \param In
-     *          aState: state variables
-     *    \param In
-     *          aControl: control variables
-     *    \param Out
-     *          aOutput: gradient
-     **/
-    virtual void gradient(const locus::MultiVector<ScalarType, OrdinalType> & aState,
-                          const locus::MultiVector<ScalarType, OrdinalType> & aControl,
-                          locus::MultiVector<ScalarType, OrdinalType> & aOutput) = 0;
-    /*!
-     * Computes the application of a vector to the Hessian of a criterion of type f(\mathbf{u}(\mathbf{z}),\mathbf{z})
-     * \colon\mathbb{R}^{n_u}\times\mathbb{R}^{n_z}\rightarrow\mathbb{R}, where u denotes the state and z denotes the
-     * control variables. This criterion is typically associated with nonlinear programming optimization problems.
-     * For instance, PDE constraint optimization problems.
-     *  Parameters:
-     *    \param In
-     *          aState:   state variables
-     *    \param In
-     *          aControl: control variables
-     *    \param In
-     *          aVector:  direction vector
-     *    \param Out
-     *          aOutput:  Hessian times direction vector
-     **/
-    virtual void hessian(const locus::MultiVector<ScalarType, OrdinalType> & aState,
-                         const locus::MultiVector<ScalarType, OrdinalType> & aControl,
-                         const locus::MultiVector<ScalarType, OrdinalType> & aVector,
-                         locus::MultiVector<ScalarType, OrdinalType> & aOutput)
-    {
-    }
-    //! Creates an object of type locus::Criterion
-    virtual std::shared_ptr<locus::Criterion<ScalarType, OrdinalType>> create() const = 0;
 };
 
 template<typename ScalarType, typename OrdinalType = size_t>
@@ -5668,7 +5537,182 @@ private:
 /******************************** NONLINEAR CONJUGATE GRADIENT ALGORITHM **********************************/
 /**********************************************************************************************************/
 
+template<typename ScalarType, typename OrdinalType = size_t>
+class NonlinearConjugateGradientDataMng
+{
+public:
+    NonlinearConjugateGradientDataMng()
+    {
+    }
+    ~NonlinearConjugateGradientDataMng()
+    {
+    }
 
+    OrdinalType getNumControlVectors() const
+    {
+    }
+
+    // NOTE: OBJECTIVE FUNCTION VALUE
+    ScalarType getCurrentObjectiveFunctionValue() const
+    {
+    }
+    void setCurrentObjectiveFunctionValue(const ScalarType & aInput)
+    {
+    }
+    ScalarType getPreviousObjectiveFunctionValue() const
+    {
+    }
+    void setPreviousObjectiveFunctionValue(const ScalarType & aInput)
+    {
+    }
+
+    // NOTE: SET INITIAL GUESS
+    void setInitialGuess(const ScalarType & aValue)
+    {
+    }
+    void setInitialGuess(const OrdinalType & aVectorIndex, const ScalarType & aValue)
+    {
+    }
+    void setInitialGuess(const locus::MultiVector<ScalarType, OrdinalType> & aInitialGuess)
+    {
+    }
+    void setInitialGuess(const OrdinalType & aVectorIndex, const locus::Vector<ScalarType, OrdinalType> & aInitialGuess)
+    {
+    }
+
+    // NOTE: TRIAL STEP
+    const locus::MultiVector<ScalarType, OrdinalType> & getTrialStep() const
+    {
+    }
+    const locus::Vector<ScalarType, OrdinalType> & getTrialStep(const OrdinalType & aVectorIndex) const
+    {
+    }
+    void setTrialStep(const locus::MultiVector<ScalarType, OrdinalType> & aTrialStep)
+    {
+    }
+    void setTrialStep(const OrdinalType & aVectorIndex, const locus::Vector<ScalarType, OrdinalType> & aTrialStep)
+    {
+    }
+
+    // NOTE: CURRENT CONTROL
+    const locus::MultiVector<ScalarType, OrdinalType> & getCurrentControl() const
+    {
+    }
+    const locus::Vector<ScalarType, OrdinalType> & getCurrentControl(const OrdinalType & aVectorIndex) const
+    {
+    }
+    void setCurrentControl(const locus::MultiVector<ScalarType, OrdinalType> & aControl)
+    {
+    }
+    void setCurrentControl(const OrdinalType & aVectorIndex, const locus::Vector<ScalarType, OrdinalType> & aControl)
+    {
+    }
+
+    // NOTE: PREVIOUS CONTROL
+    const locus::MultiVector<ScalarType, OrdinalType> & getPreviousControl() const
+    {
+    }
+    const locus::Vector<ScalarType, OrdinalType> & getPreviousControl(const OrdinalType & aVectorIndex) const
+    {
+    }
+    void setPreviousControl(const locus::MultiVector<ScalarType, OrdinalType> & aControl)
+    {
+    }
+    void setPreviousControl(const OrdinalType & aVectorIndex, const locus::Vector<ScalarType, OrdinalType> & aControl)
+    {
+    }
+
+    // NOTE: CURRENT GRADIENT
+    const locus::MultiVector<ScalarType, OrdinalType> & getCurrentGradient() const
+    {
+    }
+    const locus::Vector<ScalarType, OrdinalType> & getCurrentGradient(const OrdinalType & aVectorIndex) const
+    {
+    }
+    void setCurrentGradient(const locus::MultiVector<ScalarType, OrdinalType> & aGradient)
+    {
+    }
+    void setCurrentGradient(const OrdinalType & aVectorIndex, const locus::Vector<ScalarType, OrdinalType> & aGradient)
+    {
+    }
+
+    // NOTE: PREVIOUS GRADIENT
+    const locus::MultiVector<ScalarType, OrdinalType> & getPreviousGradient() const
+    {
+    }
+    const locus::Vector<ScalarType, OrdinalType> & getPreviousGradient(const OrdinalType & aVectorIndex) const
+    {
+    }
+    void setPreviousGradient(const locus::MultiVector<ScalarType, OrdinalType> & aGradient)
+    {
+    }
+    void setPreviousGradient(const OrdinalType & aVectorIndex, const locus::Vector<ScalarType, OrdinalType> & aGradient)
+    {
+    }
+
+    // NOTE: SET CONTROL LOWER BOUNDS
+    const locus::MultiVector<ScalarType, OrdinalType> & getControlLowerBounds() const
+    {
+    }
+    const locus::Vector<ScalarType, OrdinalType> & getControlLowerBounds(const OrdinalType & aVectorIndex) const
+    {
+    }
+    void setControlLowerBounds(const ScalarType & aValue)
+    {
+    }
+    void setControlLowerBounds(const OrdinalType & aVectorIndex, const ScalarType & aValue)
+    {
+    }
+    void setControlLowerBounds(const OrdinalType & aVectorIndex,
+                               const locus::Vector<ScalarType, OrdinalType> & aLowerBound)
+    {
+    }
+    void setControlLowerBounds(const locus::MultiVector<ScalarType, OrdinalType> & aLowerBound)
+    {
+    }
+
+    // NOTE: SET CONTROL UPPER BOUNDS
+    const locus::MultiVector<ScalarType, OrdinalType> & getControlUpperBounds() const
+    {
+    }
+    const locus::Vector<ScalarType, OrdinalType> & getControlUpperBounds(const OrdinalType & aVectorIndex) const
+    {
+    }
+    void setControlUpperBounds(const ScalarType & aValue)
+    {
+    }
+    void setControlUpperBounds(const OrdinalType & aVectorIndex, const ScalarType & aValue)
+    {
+    }
+    void setControlUpperBounds(const OrdinalType & aVectorIndex,
+                               const locus::Vector<ScalarType, OrdinalType> & aUpperBound)
+    {
+    }
+    void setControlUpperBounds(const locus::MultiVector<ScalarType, OrdinalType> & aUpperBound)
+    {
+    }
+
+private:
+    bool mIsInitialGuessSet;
+    OrdinalType mNumControlVectors;
+    ScalarType mCurrentObjectiveFunctionValue;
+    ScalarType mPreviousObjectiveFunctionValue;
+
+    std::shared_ptr<locus::MultiVector<ScalarType, OrdinalType>> mTrialStep;
+    std::shared_ptr<locus::MultiVector<ScalarType, OrdinalType>> mCurrentControl;
+    std::shared_ptr<locus::MultiVector<ScalarType, OrdinalType>> mPreviousControl;
+    std::shared_ptr<locus::MultiVector<ScalarType, OrdinalType>> mCurrentGradient;
+    std::shared_ptr<locus::MultiVector<ScalarType, OrdinalType>> mPreviousGradient;
+    std::shared_ptr<locus::MultiVector<ScalarType, OrdinalType>> mControlLowerBounds;
+    std::shared_ptr<locus::MultiVector<ScalarType, OrdinalType>> mControlUpperBounds;
+
+    std::shared_ptr<locus::ReductionOperations<ScalarType, OrdinalType>> mDualReductionOperations;
+    std::shared_ptr<locus::ReductionOperations<ScalarType, OrdinalType>> mControlReductionOperations;
+
+private:
+    NonlinearConjugateGradientDataMng(const locus::NonlinearConjugateGradientDataMng<ScalarType, OrdinalType> & aRhs);
+    locus::NonlinearConjugateGradientDataMng<ScalarType, OrdinalType> & operator=(const locus::NonlinearConjugateGradientDataMng<ScalarType, OrdinalType> & aRhs);
+};
 
 /**********************************************************************************************************/
 /************************* CONSERVATIVE CONVEX SEPARABLE APPROXIMATION ALGORITHM **************************/
@@ -8317,6 +8361,12 @@ private:
 };
 
 }
+
+/**********************************************************************************************************/
+/*********************************************** UNIT TESTS ***********************************************/
+/**********************************************************************************************************/
+
+
 
 /**********************************************************************************************************/
 /*********************************************** UNIT TESTS ***********************************************/
