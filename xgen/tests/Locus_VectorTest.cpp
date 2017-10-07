@@ -2156,8 +2156,8 @@ struct algorithm
     {
         NaN_NORM_TRIAL_STEP = 1,
         NaN_NORM_GRADIENT = 2,
-        GRADIENT_TOLERANCE = 3,
-        TRIAL_STEP_TOLERANCE = 4,
+        NORM_GRADIENT = 3,
+        NORM_STEP = 4,
         OBJECTIVE_STAGNATION = 5,
         MAX_NUMBER_ITERATIONS = 6,
         OPTIMALITY_AND_FEASIBILITY = 7,
@@ -2283,10 +2283,10 @@ void computeActiveAndInactiveSets(const locus::MultiVector<ScalarType, OrdinalTy
 } // namespace bounds
 
 template<typename ScalarType, typename OrdinalType = size_t>
-class AlgorithmDataMng
+class StandardAlgorithmDataMng
 {
 public:
-    virtual ~AlgorithmDataMng()
+    virtual ~StandardAlgorithmDataMng()
     {
     }
 
@@ -2352,7 +2352,7 @@ public:
 };
 
 template<typename ScalarType, typename OrdinalType = size_t>
-class TrustRegionAlgorithmDataMng : public AlgorithmDataMng<ScalarType, OrdinalType>
+class TrustRegionAlgorithmDataMng : public StandardAlgorithmDataMng<ScalarType, OrdinalType>
 {
 public:
     explicit TrustRegionAlgorithmDataMng(const locus::DataFactory<ScalarType, OrdinalType> & aDataFactory) :
@@ -3007,6 +3007,7 @@ class StateData
 {
 public:
     explicit StateData(const locus::DataFactory<ScalarType, OrdinalType> & aDataFactory) :
+            mCurrentObjectiveFunctionValue(std::numeric_limits<ScalarType>::max()),
             mCurrentControl(aDataFactory.control().create()),
             mCurrentTrialStep(aDataFactory.control().create()),
             mCurrentObjectiveGradient(aDataFactory.control().create()),
@@ -3017,6 +3018,14 @@ public:
     {
     }
 
+    ScalarType getCurrentObjectiveFunctionValue() const
+    {
+        return (mCurrentObjectiveFunctionValue);
+    }
+    void setCurrentObjectiveFunctionValue(const ScalarType & aInput)
+    {
+        mCurrentObjectiveFunctionValue = aInput;
+    }
     const locus::MultiVector<ScalarType, OrdinalType> & getCurrentControl() const
     {
         assert(mCurrentControl.get() != nullptr);
@@ -3026,7 +3035,6 @@ public:
     {
         assert(mCurrentControl.get() != nullptr);
         assert(aInput.getNumVectors() == mCurrentControl->getNumVectors());
-
         locus::update(static_cast<ScalarType>(1), aInput, static_cast<ScalarType>(0), mCurrentControl.operator*());
     }
 
@@ -3039,7 +3047,6 @@ public:
     {
         assert(mCurrentTrialStep.get() != nullptr);
         assert(aInput.getNumVectors() == mCurrentTrialStep->getNumVectors());
-
         locus::update(static_cast<ScalarType>(1), aInput, static_cast<ScalarType>(0), mCurrentTrialStep.operator*());
     }
 
@@ -3052,7 +3059,6 @@ public:
     {
         assert(mCurrentObjectiveGradient.get() != nullptr);
         assert(aInput.getNumVectors() == mCurrentObjectiveGradient->getNumVectors());
-
         locus::update(static_cast<ScalarType>(1), aInput, static_cast<ScalarType>(0), mCurrentObjectiveGradient.operator*());
     }
 
@@ -3070,6 +3076,7 @@ public:
     }
 
 private:
+    ScalarType mCurrentObjectiveFunctionValue;
     std::shared_ptr<locus::MultiVector<ScalarType, OrdinalType>> mCurrentControl;
     std::shared_ptr<locus::MultiVector<ScalarType, OrdinalType>> mCurrentTrialStep;
     std::shared_ptr<locus::MultiVector<ScalarType, OrdinalType>> mCurrentObjectiveGradient;
@@ -3331,6 +3338,40 @@ private:
 };
 
 template<typename ScalarType, typename OrdinalType = size_t>
+class IdentityHessian : public locus::LinearOperatorBase<ScalarType, OrdinalType>
+{
+public:
+    IdentityHessian()
+    {
+    }
+    virtual ~IdentityHessian()
+    {
+    }
+
+    void update(const locus::StateData<ScalarType, OrdinalType> & aStateData)
+    {
+        return;
+    }
+    void apply(const locus::MultiVector<ScalarType, OrdinalType> & aState,
+               const locus::MultiVector<ScalarType, OrdinalType> & aControl,
+               const locus::MultiVector<ScalarType, OrdinalType> & aVector,
+               locus::MultiVector<ScalarType, OrdinalType> & aOutput)
+    {
+        locus::update(static_cast<ScalarType>(1), aVector, static_cast<ScalarType>(0), aOutput);
+    }
+    std::shared_ptr<locus::LinearOperatorBase<ScalarType, OrdinalType>> create() const
+    {
+        std::shared_ptr<locus::LinearOperatorBase<ScalarType, OrdinalType>> tOutput =
+                std::make_shared<locus::IdentityHessian<ScalarType, OrdinalType>>();
+        return (tOutput);
+    }
+
+private:
+    IdentityHessian(const locus::IdentityHessian<ScalarType, OrdinalType> & aRhs);
+    locus::IdentityHessian<ScalarType, OrdinalType> & operator=(const locus::IdentityHessian<ScalarType, OrdinalType> & aRhs);
+};
+
+template<typename ScalarType, typename OrdinalType = size_t>
 class PreconditionerBase
 {
 public:
@@ -3532,6 +3573,7 @@ public:
         mStateData->setCurrentTrialStep(aDataMng.getTrialStep());
         mStateData->setCurrentControl(aDataMng.getCurrentControl());
         mStateData->setCurrentObjectiveGradient(aDataMng.getCurrentGradient());
+        mStateData->setCurrentObjectiveFunctionValue(aDataMng.getCurrentObjectiveFunctionValue());
 
         mObjectiveGradientOperator->update(mStateData.operator*());
         mObjectiveHessian->update(mStateData.operator*());
@@ -5247,7 +5289,7 @@ private:
             if( tStationarityMeasure <= this->getTrialStepTolerance() )
             {
                 tStop = true;
-                this->setStoppingCriterion(locus::algorithm::stop_t::TRIAL_STEP_TOLERANCE);
+                this->setStoppingCriterion(locus::algorithm::stop_t::NORM_STEP);
             }
             else if( tStagnationMeasure < this->getStagnationTolerance() )
             {
@@ -5538,165 +5580,392 @@ private:
 /**********************************************************************************************************/
 
 template<typename ScalarType, typename OrdinalType = size_t>
-class NonlinearConjugateGradientDataMng
+class NonlinearConjugateGradientDataMng : public locus::StandardAlgorithmDataMng<ScalarType, OrdinalType>
 {
 public:
-    NonlinearConjugateGradientDataMng()
+    NonlinearConjugateGradientDataMng(const locus::DataFactory<ScalarType, OrdinalType> & aDataFactory) :
+        mIsInitialGuessSet(false),
+        mNormGradient(std::numeric_limits<ScalarType>::max()),
+        mStagnationMeasure(std::numeric_limits<ScalarType>::max()),
+        mObjectiveStagnationMeasure(std::numeric_limits<ScalarType>::max()),
+        mCurrentObjectiveFunctionValue(std::numeric_limits<ScalarType>::max()),
+        mPreviousObjectiveFunctionValue(std::numeric_limits<ScalarType>::max()),
+        mTrialStep(aDataFactory.control().create()),
+        mControlWork(aDataFactory.control().create()),
+        mCurrentControl(aDataFactory.control().create()),
+        mPreviousControl(aDataFactory.control().create()),
+        mCurrentGradient(aDataFactory.control().create()),
+        mPreviousGradient(aDataFactory.control().create()),
+        mControlLowerBounds(aDataFactory.control().create()),
+        mControlUpperBounds(aDataFactory.control().create()),
+        mControlReductions(aDataFactory.getControlReductionOperations().create())
     {
+        this->initialize();
     }
     ~NonlinearConjugateGradientDataMng()
     {
     }
 
+    bool isInitialGuessSet() const
+    {
+        return (mIsInitialGuessSet);
+    }
     OrdinalType getNumControlVectors() const
     {
+        return (mCurrentControl->size());
     }
 
     // NOTE: OBJECTIVE FUNCTION VALUE
     ScalarType getCurrentObjectiveFunctionValue() const
     {
+        return (mCurrentObjectiveFunctionValue);
     }
     void setCurrentObjectiveFunctionValue(const ScalarType & aInput)
     {
+        mCurrentObjectiveFunctionValue = aInput;
     }
     ScalarType getPreviousObjectiveFunctionValue() const
     {
+        return (mPreviousObjectiveFunctionValue);
     }
     void setPreviousObjectiveFunctionValue(const ScalarType & aInput)
     {
+        mPreviousObjectiveFunctionValue = aInput;
     }
 
     // NOTE: SET INITIAL GUESS
     void setInitialGuess(const ScalarType & aValue)
     {
+        assert(mCurrentControl.get() != nullptr);
+        assert(mCurrentControl->getNumVectors() > static_cast<OrdinalType>(0));
+
+        OrdinalType tNumVectors = mCurrentControl->getNumVectors();
+        for(OrdinalType tVectorIndex = 0; tVectorIndex < tNumVectors; tVectorIndex++)
+        {
+            mCurrentControl->operator [](tVectorIndex).fill(aValue);
+        }
+        mIsInitialGuessSet = true;
     }
     void setInitialGuess(const OrdinalType & aVectorIndex, const ScalarType & aValue)
     {
+        assert(mCurrentControl.get() != nullptr);
+        assert(aVectorIndex >= static_cast<OrdinalType>(0));
+        assert(aVectorIndex < mCurrentControl->getNumVectors());
+
+        mCurrentControl->operator [](aVectorIndex).fill(aValue);
+        mIsInitialGuessSet = true;
     }
-    void setInitialGuess(const locus::MultiVector<ScalarType, OrdinalType> & aInitialGuess)
+    void setInitialGuess(const locus::MultiVector<ScalarType, OrdinalType> & aInput)
     {
+        assert(aInput.getNumVectors() == mCurrentControl->getNumVectors());
+        locus::update(1., aInput, 0., *mCurrentControl);
+        mIsInitialGuessSet = true;
     }
-    void setInitialGuess(const OrdinalType & aVectorIndex, const locus::Vector<ScalarType, OrdinalType> & aInitialGuess)
+    void setInitialGuess(const OrdinalType & aVectorIndex, const locus::Vector<ScalarType, OrdinalType> & aInput)
     {
+        assert(mCurrentControl.get() != nullptr);
+        assert(aVectorIndex >= static_cast<OrdinalType>(0));
+        assert(aVectorIndex < mCurrentControl->getNumVectors());
+
+        mCurrentControl->operator [](aVectorIndex).update(1., aInput, 0.);
+        mIsInitialGuessSet = true;
     }
 
     // NOTE: TRIAL STEP
     const locus::MultiVector<ScalarType, OrdinalType> & getTrialStep() const
     {
+        assert(mTrialStep.get() != nullptr);
+        return (mTrialStep.operator *());
     }
     const locus::Vector<ScalarType, OrdinalType> & getTrialStep(const OrdinalType & aVectorIndex) const
     {
+        assert(mTrialStep.get() != nullptr);
+        assert(aVectorIndex >= static_cast<OrdinalType>(0));
+        assert(aVectorIndex < mTrialStep->getNumVectors());
+        return (mTrialStep->operator [](aVectorIndex));
     }
-    void setTrialStep(const locus::MultiVector<ScalarType, OrdinalType> & aTrialStep)
+    void setTrialStep(const locus::MultiVector<ScalarType, OrdinalType> & aInput)
     {
+        assert(aInput.getNumVectors() == mTrialStep->getNumVectors());
+        locus::update(1., aInput, 0., *mTrialStep);
     }
-    void setTrialStep(const OrdinalType & aVectorIndex, const locus::Vector<ScalarType, OrdinalType> & aTrialStep)
+    void setTrialStep(const OrdinalType & aVectorIndex, const locus::Vector<ScalarType, OrdinalType> & aInput)
     {
+        assert(mTrialStep.get() != nullptr);
+        assert(aVectorIndex >= static_cast<OrdinalType>(0));
+        assert(aVectorIndex < mTrialStep->getNumVectors());
+        mTrialStep->operator [](aVectorIndex).update(1., aInput, 0.);
     }
 
     // NOTE: CURRENT CONTROL
     const locus::MultiVector<ScalarType, OrdinalType> & getCurrentControl() const
     {
+        assert(mCurrentControl.get() != nullptr);
+        return (mCurrentControl.operator *());
     }
     const locus::Vector<ScalarType, OrdinalType> & getCurrentControl(const OrdinalType & aVectorIndex) const
     {
+        assert(mCurrentControl.get() != nullptr);
+        assert(aVectorIndex >= static_cast<OrdinalType>(0));
+        assert(aVectorIndex < mCurrentControl->getNumVectors());
+        return (mCurrentControl->operator [](aVectorIndex));
     }
-    void setCurrentControl(const locus::MultiVector<ScalarType, OrdinalType> & aControl)
+    void setCurrentControl(const locus::MultiVector<ScalarType, OrdinalType> & aInput)
     {
+        assert(aInput.getNumVectors() == mCurrentControl->getNumVectors());
+        locus::update(static_cast<ScalarType>(1), aInput, static_cast<ScalarType>(0), *mCurrentControl);
     }
-    void setCurrentControl(const OrdinalType & aVectorIndex, const locus::Vector<ScalarType, OrdinalType> & aControl)
+    void setCurrentControl(const OrdinalType & aVectorIndex, const locus::Vector<ScalarType, OrdinalType> & aInput)
     {
+        assert(mCurrentControl.get() != nullptr);
+        assert(aVectorIndex >= static_cast<OrdinalType>(0));
+        assert(aVectorIndex < mCurrentControl->getNumVectors());
+        mCurrentControl->operator [](aVectorIndex).update(1., aInput, 0.);
     }
 
     // NOTE: PREVIOUS CONTROL
     const locus::MultiVector<ScalarType, OrdinalType> & getPreviousControl() const
     {
+        assert(mPreviousControl.get() != nullptr);
+        return (mPreviousControl.operator *());
     }
     const locus::Vector<ScalarType, OrdinalType> & getPreviousControl(const OrdinalType & aVectorIndex) const
     {
+        assert(mPreviousControl.get() != nullptr);
+        assert(aVectorIndex >= static_cast<OrdinalType>(0));
+        assert(aVectorIndex < mPreviousControl->getNumVectors());
+        return (mPreviousControl->operator [](aVectorIndex));
     }
-    void setPreviousControl(const locus::MultiVector<ScalarType, OrdinalType> & aControl)
+    void setPreviousControl(const locus::MultiVector<ScalarType, OrdinalType> & aInput)
     {
+        assert(aInput.getNumVectors() == mPreviousControl->getNumVectors());
+        locus::update(1., aInput, 0., *mPreviousControl);
     }
-    void setPreviousControl(const OrdinalType & aVectorIndex, const locus::Vector<ScalarType, OrdinalType> & aControl)
+    void setPreviousControl(const OrdinalType & aVectorIndex, const locus::Vector<ScalarType, OrdinalType> & aInput)
     {
+        assert(mPreviousControl.get() != nullptr);
+        assert(aVectorIndex >= static_cast<OrdinalType>(0));
+        assert(aVectorIndex < mPreviousControl->getNumVectors());
+        mPreviousControl->operator[](aVectorIndex).update(static_cast<ScalarType>(1), aInput, static_cast<ScalarType>(0));
     }
 
     // NOTE: CURRENT GRADIENT
     const locus::MultiVector<ScalarType, OrdinalType> & getCurrentGradient() const
     {
+        assert(mCurrentGradient.get() != nullptr);
+        return (mCurrentGradient.operator*());
     }
     const locus::Vector<ScalarType, OrdinalType> & getCurrentGradient(const OrdinalType & aVectorIndex) const
     {
+        assert(mCurrentGradient.get() != nullptr);
+        assert(aVectorIndex >= static_cast<OrdinalType>(0));
+        assert(aVectorIndex < mCurrentGradient->getNumVectors());
+        return (mCurrentGradient->operator[](aVectorIndex));
     }
-    void setCurrentGradient(const locus::MultiVector<ScalarType, OrdinalType> & aGradient)
+    void setCurrentGradient(const locus::MultiVector<ScalarType, OrdinalType> & aInput)
     {
+        assert(aInput.getNumVectors() == mCurrentGradient->getNumVectors());
+        locus::update(static_cast<ScalarType>(1), aInput, static_cast<ScalarType>(0), mCurrentGradient.operator*());
     }
-    void setCurrentGradient(const OrdinalType & aVectorIndex, const locus::Vector<ScalarType, OrdinalType> & aGradient)
+    void setCurrentGradient(const OrdinalType & aVectorIndex, const locus::Vector<ScalarType, OrdinalType> & aInput)
     {
+        assert(mCurrentGradient.get() != nullptr);
+        assert(aVectorIndex >= static_cast<OrdinalType>(0));
+        assert(aVectorIndex < mCurrentGradient->getNumVectors());
+        mCurrentGradient->operator[](aVectorIndex).update(static_cast<ScalarType>(1), aInput, static_cast<ScalarType>(0));
     }
 
     // NOTE: PREVIOUS GRADIENT
     const locus::MultiVector<ScalarType, OrdinalType> & getPreviousGradient() const
     {
+        assert(mPreviousGradient.get() != nullptr);
+        return (mPreviousGradient.operator*());
     }
     const locus::Vector<ScalarType, OrdinalType> & getPreviousGradient(const OrdinalType & aVectorIndex) const
     {
+        assert(mPreviousGradient.get() != nullptr);
+        assert(aVectorIndex >= static_cast<OrdinalType>(0));
+        assert(aVectorIndex < mPreviousGradient->getNumVectors());
+        return (mPreviousGradient->operator[](aVectorIndex));
     }
-    void setPreviousGradient(const locus::MultiVector<ScalarType, OrdinalType> & aGradient)
+    void setPreviousGradient(const locus::MultiVector<ScalarType, OrdinalType> & aInput)
     {
+        assert(aInput.getNumVectors() == mPreviousGradient->getNumVectors());
+        locus::update(static_cast<ScalarType>(1), aInput, static_cast<ScalarType>(0), mPreviousGradient.operator*());
     }
-    void setPreviousGradient(const OrdinalType & aVectorIndex, const locus::Vector<ScalarType, OrdinalType> & aGradient)
+    void setPreviousGradient(const OrdinalType & aVectorIndex, const locus::Vector<ScalarType, OrdinalType> & aInput)
     {
+        assert(mPreviousGradient.get() != nullptr);
+        assert(aVectorIndex >= static_cast<OrdinalType>(0));
+        assert(aVectorIndex < mPreviousGradient->getNumVectors());
+        mPreviousGradient->operator[](aVectorIndex).update(static_cast<ScalarType>(1), aInput, static_cast<ScalarType>(0));
     }
 
     // NOTE: SET CONTROL LOWER BOUNDS
     const locus::MultiVector<ScalarType, OrdinalType> & getControlLowerBounds() const
     {
+        assert(mControlLowerBounds.get() != nullptr);
+        return (mControlLowerBounds.operator*());
     }
     const locus::Vector<ScalarType, OrdinalType> & getControlLowerBounds(const OrdinalType & aVectorIndex) const
     {
+        assert(mControlLowerBounds.get() != nullptr);
+        assert(aVectorIndex >= static_cast<OrdinalType>(0));
+        assert(aVectorIndex < mControlLowerBounds->getNumVectors());
+        return (mControlLowerBounds->operator[](aVectorIndex));
     }
     void setControlLowerBounds(const ScalarType & aValue)
     {
+        assert(mControlLowerBounds.get() != nullptr);
+        assert(mControlLowerBounds->getNumVectors() > static_cast<OrdinalType>(0));
+        OrdinalType tNumVectors = mControlLowerBounds->getNumVectors();
+        for(OrdinalType tVectorIndex = 0; tVectorIndex < tNumVectors; tVectorIndex++)
+        {
+            mControlLowerBounds->operator [](tVectorIndex).fill(aValue);
+        }
     }
     void setControlLowerBounds(const OrdinalType & aVectorIndex, const ScalarType & aValue)
     {
+        assert(mControlLowerBounds.get() != nullptr);
+        assert(aVectorIndex >= static_cast<OrdinalType>(0));
+        assert(aVectorIndex < mControlLowerBounds->getNumVectors());
+        mControlLowerBounds->operator [](aVectorIndex).fill(aValue);
     }
-    void setControlLowerBounds(const OrdinalType & aVectorIndex,
-                               const locus::Vector<ScalarType, OrdinalType> & aLowerBound)
+    void setControlLowerBounds(const OrdinalType & aVectorIndex, const locus::Vector<ScalarType, OrdinalType> & aInput)
     {
+        assert(mControlLowerBounds.get() != nullptr);
+        assert(aVectorIndex >= static_cast<OrdinalType>(0));
+        assert(aVectorIndex < mControlLowerBounds->getNumVectors());
+        mControlLowerBounds->operator [](aVectorIndex).update(static_cast<ScalarType>(1), aInput, static_cast<ScalarType>(0));
     }
-    void setControlLowerBounds(const locus::MultiVector<ScalarType, OrdinalType> & aLowerBound)
+    void setControlLowerBounds(const locus::MultiVector<ScalarType, OrdinalType> & aInput)
     {
+        assert(aInput.getNumVectors() == mControlLowerBounds->getNumVectors());
+        locus::update(static_cast<ScalarType>(1), aInput, static_cast<ScalarType>(0), mControlLowerBounds.operator*());
     }
 
     // NOTE: SET CONTROL UPPER BOUNDS
     const locus::MultiVector<ScalarType, OrdinalType> & getControlUpperBounds() const
     {
+        assert(mControlUpperBounds.get() != nullptr);
+        return (mControlUpperBounds.operator*());
     }
     const locus::Vector<ScalarType, OrdinalType> & getControlUpperBounds(const OrdinalType & aVectorIndex) const
     {
+        assert(mControlUpperBounds.get() != nullptr);
+        assert(aVectorIndex >= static_cast<OrdinalType>(0));
+        assert(aVectorIndex < mControlUpperBounds->getNumVectors());
+        return (mControlUpperBounds->operator[](aVectorIndex));
     }
     void setControlUpperBounds(const ScalarType & aValue)
     {
+        assert(mControlUpperBounds.get() != nullptr);
+        assert(mControlUpperBounds->getNumVectors() > static_cast<OrdinalType>(0));
+        OrdinalType tNumVectors = mControlUpperBounds->getNumVectors();
+        for(OrdinalType tVectorIndex = 0; tVectorIndex < tNumVectors; tVectorIndex++)
+        {
+            mControlUpperBounds->operator[](tVectorIndex).fill(aValue);
+        }
     }
     void setControlUpperBounds(const OrdinalType & aVectorIndex, const ScalarType & aValue)
     {
+        assert(mControlUpperBounds.get() != nullptr);
+        assert(aVectorIndex >= static_cast<OrdinalType>(0));
+        assert(aVectorIndex < mControlUpperBounds->getNumVectors());
+        mControlUpperBounds->operator[](aVectorIndex).fill(aValue);
     }
-    void setControlUpperBounds(const OrdinalType & aVectorIndex,
-                               const locus::Vector<ScalarType, OrdinalType> & aUpperBound)
+    void setControlUpperBounds(const OrdinalType & aVectorIndex, const locus::Vector<ScalarType, OrdinalType> & aInput)
     {
+        assert(mControlUpperBounds.get() != nullptr);
+        assert(aVectorIndex >= static_cast<OrdinalType>(0));
+        assert(aVectorIndex < mControlUpperBounds->getNumVectors());
+        mControlUpperBounds->operator[](aVectorIndex).update(static_cast<ScalarType>(1), aInput, static_cast<ScalarType>(0));
     }
-    void setControlUpperBounds(const locus::MultiVector<ScalarType, OrdinalType> & aUpperBound)
+    void setControlUpperBounds(const locus::MultiVector<ScalarType, OrdinalType> & aInput)
     {
+        assert(aInput.getNumVectors() == mControlUpperBounds->getNumVectors());
+        locus::update(static_cast<ScalarType>(1), aInput, static_cast<ScalarType>(0), mControlUpperBounds.operator*());
+    }
+
+    // NOTE: CONTROL STAGNATION MEASURE CALCULATION
+    void computeStagnationMeasure()
+    {
+        const OrdinalType tNumVectors = mCurrentControl->getNumVectors();
+        std::vector<ScalarType> storage(tNumVectors, std::numeric_limits<ScalarType>::min());
+        for(OrdinalType tIndex = 0; tIndex < tNumVectors; tIndex++)
+        {
+            const locus::Vector<ScalarType, OrdinalType> & tMyCurrentControl = mCurrentControl->operator[](tIndex);
+            mControlWork->update(static_cast<ScalarType>(1), tMyCurrentControl, static_cast<ScalarType>(0));
+            const locus::Vector<ScalarType, OrdinalType> & tMyPreviousControl = mPreviousControl->operator[](tIndex);
+            mControlWork->update(static_cast<ScalarType>(-1), tMyPreviousControl, static_cast<ScalarType>(1));
+            mControlWork->modulus();
+            storage[tIndex] = mControlReductions->max(*mControlWork);
+        }
+        mStagnationMeasure = *std::max_element(storage.begin(), storage.end());
+    }
+    ScalarType getStagnationMeasure() const
+    {
+        return (mStagnationMeasure);
+    }
+
+    // NOTE: FEASIBILITY MEASURE CALCULATION
+    void computeObjectiveStagnationMeasure()
+    {
+        mObjectiveStagnationMeasure = mPreviousObjectiveFunctionValue - mCurrentObjectiveFunctionValue;
+        mObjectiveStagnationMeasure = std::abs(mObjectiveStagnationMeasure);
+    }
+    ScalarType getObjectiveStagnationMeasure() const
+    {
+        return (mObjectiveStagnationMeasure);
+    }
+
+    // NOTE: NORM OF GRADIENT MEASURE CALCULATION
+    void computeNormGradient()
+    {
+        ScalarType tCummulativeDotProduct = 0.;
+        const OrdinalType tNumVectors = mCurrentGradient->getNumVectors();
+        for(OrdinalType tIndex = 0; tIndex < tNumVectors; tIndex++)
+        {
+            const locus::Vector<ScalarType, OrdinalType> & tMyGradient = mCurrentGradient.operator[](tIndex);
+            tCummulativeDotProduct += tMyGradient.dot(tMyGradient);
+        }
+        mNormGradient = std::sqrt(tCummulativeDotProduct);
+    }
+    ScalarType getNormGradient() const
+    {
+        return (mNormGradient);
+    }
+
+    // NOTE: STORE PREVIOUS STATE (SIDENOTE: THE PREVIOUS TRIAL STEP IS ALWAYS STORED IN mTrialStep)
+    void storePreviousState()
+    {
+        mPreviousObjectiveFunctionValue = mCurrentObjectiveFunctionValue;
+        locus::update(static_cast<ScalarType>(1), *mCurrentControl, static_cast<ScalarType>(0), *mPreviousControl);
+        locus::update(static_cast<ScalarType>(1), *mCurrentGradient, static_cast<ScalarType>(0), *mPreviousGradient);
+    }
+
+private:
+    void initialize()
+    {
+        const OrdinalType tVectorIndex = 0;
+        mControlWork = mCurrentControl->operator[](tVectorIndex).create();
+
+        ScalarType tValue = -std::numeric_limits<ScalarType>::max();
+        locus::fill(tValue, mControlLowerBounds);
+        tValue = std::numeric_limits<ScalarType>::max();
+        locus::fill(tValue, mControlUpperBounds);
     }
 
 private:
     bool mIsInitialGuessSet;
-    OrdinalType mNumControlVectors;
+
+    ScalarType mNormGradient;
+    ScalarType mStagnationMeasure;
+    ScalarType mObjectiveStagnationMeasure;
     ScalarType mCurrentObjectiveFunctionValue;
     ScalarType mPreviousObjectiveFunctionValue;
+
+    std::shared_ptr<locus::Vector<ScalarType, OrdinalType>> mControlWork;
 
     std::shared_ptr<locus::MultiVector<ScalarType, OrdinalType>> mTrialStep;
     std::shared_ptr<locus::MultiVector<ScalarType, OrdinalType>> mCurrentControl;
@@ -5706,12 +5975,358 @@ private:
     std::shared_ptr<locus::MultiVector<ScalarType, OrdinalType>> mControlLowerBounds;
     std::shared_ptr<locus::MultiVector<ScalarType, OrdinalType>> mControlUpperBounds;
 
-    std::shared_ptr<locus::ReductionOperations<ScalarType, OrdinalType>> mDualReductionOperations;
-    std::shared_ptr<locus::ReductionOperations<ScalarType, OrdinalType>> mControlReductionOperations;
+    std::shared_ptr<locus::ReductionOperations<ScalarType, OrdinalType>> mControlReductions;
 
 private:
     NonlinearConjugateGradientDataMng(const locus::NonlinearConjugateGradientDataMng<ScalarType, OrdinalType> & aRhs);
     locus::NonlinearConjugateGradientDataMng<ScalarType, OrdinalType> & operator=(const locus::NonlinearConjugateGradientDataMng<ScalarType, OrdinalType> & aRhs);
+};
+
+template<typename ScalarType, typename OrdinalType = size_t>
+class NonlinearConjugateGradientStageMng
+{
+public:
+    NonlinearConjugateGradientStageMng(const locus::DataFactory<ScalarType, OrdinalType> & aDataFactory,
+                                       const locus::Criterion<ScalarType, OrdinalType> & aObjective) :
+            mNumHessianEvaluations(0),
+            mNumFunctionEvaluations(0),
+            mNumGradientEvaluations(0),
+            mState(aDataFactory.state().create()),
+            mStateData(std::make_shared<locus::StateData<ScalarType, OrdinalType>>()),
+            mObjective(aObjective.create()),
+            mHessian(std::make_shared<locus::IdentityHessian<ScalarType, OrdinalType>>()),
+            mGradient()
+
+    {
+    }
+    ~NonlinearConjugateGradientStageMng()
+    {
+    }
+
+    OrdinalType getNumObjectiveFunctionEvaluations() const
+    {
+        return (mNumFunctionEvaluations);
+    }
+    void setNumObjectiveFunctionEvaluations(const ScalarType & aInput)
+    {
+        mNumFunctionEvaluations = aInput;
+    }
+    OrdinalType getNumObjectiveGradientEvaluations() const
+    {
+        return (mNumGradientEvaluations);
+    }
+    void setNumObjectiveGradientEvaluations(const ScalarType & aInput)
+    {
+        mNumGradientEvaluations = aInput;
+    }
+    OrdinalType getNumObjectiveHessianEvaluations() const
+    {
+        return (mNumHessianEvaluations);
+    }
+    void setNumObjectiveHessianEvaluations(const ScalarType & aInput)
+    {
+        mNumHessianEvaluations = aInput;
+    }
+
+    void setGradient(const locus::GradientOperatorBase<ScalarType, OrdinalType> & aInput)
+    {
+        mGradient = aInput.create();
+    }
+    void setHessian(const locus::LinearOperatorBase<ScalarType, OrdinalType> & aInput)
+    {
+        mHessian = aInput.create();
+    }
+
+    void update(const locus::NonlinearConjugateGradientDataMng<ScalarType, OrdinalType> & aDataMng)
+    {
+        mStateData->setCurrentTrialStep(aDataMng.getTrialStep());
+        mStateData->setCurrentControl(aDataMng.getCurrentControl());
+        mStateData->setCurrentObjectiveGradient(aDataMng.getCurrentObjectiveGradient());
+        mStateData->setCurrentObjectiveFunctionValue(aDataMng.getCurrentObjectiveFunctionValue());
+
+        mHessian->update(mStateData.operator*());
+        mGradient->update(mStateData.operator*());
+    }
+    ScalarType evaluateObjective(const locus::MultiVector<ScalarType, OrdinalType> & aControl,
+                                 ScalarType aTolerance = std::numeric_limits<ScalarType>::max())
+    {
+        assert(mObjective.get() != nullptr);
+        ScalarType tObjectiveFunctionValue = mObjective->value(mState.operator*(), aControl);
+        mNumFunctionEvaluations++;
+        return (tObjectiveFunctionValue);
+    }
+    void computeGradient(const locus::MultiVector<ScalarType, OrdinalType> & aControl,
+                         locus::MultiVector<ScalarType, OrdinalType> & aOutput)
+    {
+        assert(mGradient.get() != nullptr);
+        locus::fill(static_cast<ScalarType>(0), aOutput);
+        mGradient->compute(mState.operator*(), aControl, aOutput);
+        mNumGradientEvaluations++;
+    }
+    void applyVectorToHessian(const locus::MultiVector<ScalarType, OrdinalType> & aControl,
+                              const locus::MultiVector<ScalarType, OrdinalType> & aVector,
+                              locus::MultiVector<ScalarType, OrdinalType> & aOutput)
+    {
+        assert(mHessian.get() != nullptr);
+        locus::fill(static_cast<ScalarType>(0), aOutput);
+        mHessian->apply(mState.operator*(), aControl, aVector, aOutput);
+        mNumHessianEvaluations++;
+    }
+
+private:
+    OrdinalType mNumHessianEvaluations;
+    OrdinalType mNumFunctionEvaluations;
+    OrdinalType mNumGradientEvaluations;
+
+    std::shared_ptr<locus::MultiVector<ScalarType, OrdinalType>> mState;
+    std::shared_ptr<locus::StateData<ScalarType, OrdinalType>> mStateData;
+    std::shared_ptr<locus::Criterion<ScalarType, OrdinalType>> mObjective;
+
+    std::shared_ptr<locus::LinearOperatorBase<ScalarType, OrdinalType>> mHessian;
+    std::shared_ptr<locus::GradientOperatorBase<ScalarType, OrdinalType>> mGradient;
+
+private:
+    NonlinearConjugateGradientStageMng(const locus::NonlinearConjugateGradientStageMng<ScalarType, OrdinalType> & aRhs);
+    locus::NonlinearConjugateGradientStageMng<ScalarType, OrdinalType> & operator=(const locus::NonlinearConjugateGradientStageMng<ScalarType, OrdinalType> & aRhs);
+};
+
+template<typename ScalarType, typename OrdinalType = size_t>
+class NonlinearConjugateGradientStep
+{
+public:
+    virtual ~NonlinearConjugateGradientStep()
+    {
+    }
+
+    virtual void computeScaledDescentDirection(locus::NonlinearConjugateGradientDataMng<ScalarType, OrdinalType> & aDataMng,
+                                               locus::NonlinearConjugateGradientStageMng<ScalarType, OrdinalType> & aStageMng) = 0;
+};
+
+template<typename ScalarType, typename OrdinalType = size_t>
+class PolakRibiere : public locus::NonlinearConjugateGradientStep<ScalarType, OrdinalType>
+{
+public:
+    explicit PolakRibiere(const locus::DataFactory<ScalarType, OrdinalType> & aDataFactory) :
+            mScaledDescentDirection(aDataFactory.control().create())
+    {
+    }
+    virtual ~PolakRibiere()
+    {
+    }
+
+    void computeScaledDescentDirection(locus::NonlinearConjugateGradientDataMng<ScalarType, OrdinalType> & aDataMng,
+                                       locus::NonlinearConjugateGradientStageMng<ScalarType, OrdinalType> & aStageMng)
+    {
+        locus::update(static_cast<ScalarType>(1),
+                      aDataMng.getTrialStep(),
+                      static_cast<ScalarType>(0),
+                      mScaledDescentDirection.operator*());
+
+        ScalarType tBeta = locus::dot(aDataMng.getCurrentGradient(), aDataMng.getCurrentGradient())
+                - locus::dot(aDataMng.getCurrentGradient(), aDataMng.getPreviousGradient());
+        tBeta = tBeta / locus::dot(aDataMng.getPreviousGradient(), aDataMng.getPreviousGradient());
+        tBeta = std::max(tBeta, std::numeric_limits<ScalarType>::min());
+
+        locus::update(static_cast<ScalarType>(-1),
+                      aDataMng.getCurrentGradient(),
+                      tBeta,
+                      mScaledDescentDirection.operator*());
+
+        aDataMng.setTrialStep(mScaledDescentDirection.operator*());
+    }
+
+private:
+    std::shared_ptr<locus::MultiVector<ScalarType, OrdinalType>> mScaledDescentDirection;
+
+private:
+    PolakRibiere(const locus::PolakRibiere<ScalarType, OrdinalType> & aRhs);
+    locus::PolakRibiere<ScalarType, OrdinalType> & operator=(const locus::PolakRibiere<ScalarType, OrdinalType> & aRhs);
+};
+
+template<typename ScalarType, typename OrdinalType = size_t>
+class NonlinearConjugateGradient
+{
+public:
+    NonlinearConjugateGradient(const std::shared_ptr<locus::DataFactory<ScalarType, OrdinalType>> & aDataFactory,
+                               const std::shared_ptr<locus::NonlinearConjugateGradientDataMng<ScalarType, OrdinalType>> & aDataMng,
+                               const std::shared_ptr<locus::NonlinearConjugateGradientStageMng<ScalarType, OrdinalType>> & aStageMng) :
+            mMaxNumIterations(100),
+            mNumIterationsDone(0),
+            mGradientTolerance(1e-8),
+            mStationarityTolerance(1e-8),
+            mControlStagnationTolerance(1e-4),
+            mObjectiveStagnationTolerance(1e-6),
+            mStoppingCriteria(locus::algorithm::stop_t::NOT_CONVERGED),
+            mControlWork(aDataMng->getCurrentControl().create()),
+            mTrialControl(aDataMng->getCurrentControl().create()),
+            mStep(std::make_shared<locus::PolakRibiere<ScalarType, OrdinalType>>(aDataFactory.operator*())),
+            mDataMng(aDataMng),
+            mStageMng(aStageMng)
+    {
+    }
+    ~NonlinearConjugateGradient()
+    {
+    }
+
+    OrdinalType getNumIterationsDone() const
+    {
+        return (mNumIterationsDone);
+    }
+    locus::algorithm::stop_t getStoppingCriteria() const
+    {
+        return (mStoppingCriteria);
+    }
+
+    void setMaxNumIterations(const OrdinalType & aInput)
+    {
+        mMaxNumIterations = aInput;
+    }
+    void setGradientTolerance(const ScalarType & aInput)
+    {
+        mGradientTolerance = aInput;
+    }
+    void setStationarityTolerance(const ScalarType & aInput)
+    {
+        mStationarityTolerance = aInput;
+    }
+    void setControlStagnationTolerance(const ScalarType & aInput)
+    {
+        mControlStagnationTolerance = aInput;
+    }
+    void setObjectiveStagnationTolerance(const ScalarType & aInput)
+    {
+        mObjectiveStagnationTolerance = aInput;
+    }
+
+    void solve()
+    {
+        assert(mStep.get() != nullptr);
+
+        // Perform first iteration (i.e. x_0)
+        this->computeFirstDescentDirection();
+        mDataMng->storePreviousState();
+        // TODO: LINE SEARCH
+
+        bool tStop = false;
+        if(this->checkStoppingCriteria() == true)
+        {
+            tStop = true;
+        }
+
+        mNumIterationsDone = 0;
+        while(tStop != true)
+        {
+            const locus::MultiVector<ScalarType, OrdinalType> & tControl = mDataMng->getCurrentControl();
+            mStageMng->computeGradient(tControl, mControlWork.operator*());
+            mDataMng->setCurrentGradient(mControlWork.operator*());
+
+            mStep->computeScaledDescentDirection(mDataMng.operator*(), mStageMng.operator*());
+            const locus::MultiVector<ScalarType, OrdinalType> & tTrialStep = mDataMng->getTrialStep();
+            locus::update(static_cast<ScalarType>(1), tTrialStep, static_cast<ScalarType>(0), mControlWork.operator*());
+            const locus::MultiVector<ScalarType, OrdinalType> & tGradient = mDataMng->getCurrentGradient();
+            locus::update(static_cast<ScalarType>(-1), tGradient, static_cast<ScalarType>(1), mControlWork.operator*());
+            mDataMng->setTrialStep(mControlWork.operator*());
+
+            mDataMng->storePreviousState();
+            // TODO: LINE SEARCH
+
+            mNumIterationsDone++;
+            if(this->checkStoppingCriteria() == true)
+            {
+                tStop = true;
+                break;
+            }
+        }
+    }
+
+private:
+    void computeFirstDescentDirection()
+    {
+        const locus::MultiVector<ScalarType, OrdinalType> & tControl = mDataMng->getCurrentControl();
+        ScalarType tValue = mStageMng->evaluateObjective(tControl);
+        mDataMng->setCurrentObjectiveFunctionValue(tValue);
+
+        mStageMng->computeGradient(tControl, mControlWork.operator*());
+        mDataMng->setCurrentGradient(mControlWork.operator*());
+
+        locus::scale(static_cast<ScalarType>(-1), mControlWork.operator*());
+        mDataMng->setTrialStep(mControlWork.operator*());
+        locus::update(static_cast<ScalarType>(1), tControl, static_cast<ScalarType>(0), mTrialControl.operator*());
+        locus::update(static_cast<ScalarType>(1), mDataMng->getTrialStep(), static_cast<ScalarType>(1), mTrialControl.operator*());
+
+        const locus::MultiVector<ScalarType, OrdinalType> & tLowerBounds = mDataMng->getControlLowerBounds();
+        const locus::MultiVector<ScalarType, OrdinalType> & tUpperBounds = mDataMng->getControlUpperBounds();
+        locus::bounds::project(tLowerBounds, tUpperBounds, mTrialControl.operator*());
+
+        // Compute projected trial step
+        locus::update(static_cast<ScalarType>(1), mTrialControl.operator*(), static_cast<ScalarType>(0), mControlWork.operator*());
+        locus::update(static_cast<ScalarType>(-1), tControl, static_cast<ScalarType>(1), mControlWork.operator*());
+        mDataMng->setTrialStep(mControlWork.operator*());
+    }
+    bool checkStoppingCriteria()
+    {
+        bool tStop = false;
+
+        mDataMng->computeNormGradient();
+        mDataMng->computeStagnationMeasure();
+        mDataMng->computeStationarityMeasure();
+        mDataMng->computeObjectiveStagnationMeasure();
+
+        const ScalarType tNormGradient = mDataMng->getNormGradient();
+        const ScalarType tStagnationMeasure = mDataMng->getStagnationMeasure();
+        const ScalarType tStationarityMeasure = mDataMng->getStationarityMeasure();
+        const ScalarType tObjectiveStagnationMeasure = mDataMng->getObjectiveStagnationMeasure();
+
+        if(tStagnationMeasure < mControlStagnationTolerance)
+        {
+            tStop = true;
+            mStoppingCriteria = locus::algorithm::stop_t::CONTROL_STAGNATION;
+        }
+        else if(tNormGradient < mGradientTolerance)
+        {
+            tStop = true;
+            mStoppingCriteria = locus::algorithm::stop_t::NORM_GRADIENT;
+        }
+        else if(tStationarityMeasure < mStationarityTolerance)
+        {
+            tStop = true;
+            mStoppingCriteria = locus::algorithm::stop_t::NORM_STEP;
+        }
+        else if(mNumIterationsDone < mMaxNumIterations)
+        {
+            tStop = true;
+            mStoppingCriteria = locus::algorithm::stop_t::MAX_NUMBER_ITERATIONS;
+        }
+        else if(tObjectiveStagnationMeasure < mObjectiveStagnationTolerance)
+        {
+            tStop = true;
+            mStoppingCriteria = locus::algorithm::stop_t::OBJECTIVE_STAGNATION;
+        }
+
+        return (tStop);
+    }
+
+private:
+    OrdinalType mMaxNumIterations;
+    OrdinalType mNumIterationsDone;
+
+    ScalarType mGradientTolerance;
+    ScalarType mStationarityTolerance;
+    ScalarType mControlStagnationTolerance;
+    ScalarType mObjectiveStagnationTolerance;
+
+    locus::algorithm::stop_t mStoppingCriteria;
+
+    std::shared_ptr<locus::MultiVector<ScalarType, OrdinalType>> mControlWork;
+    std::shared_ptr<locus::MultiVector<ScalarType, OrdinalType>> mTrialControl;
+
+    std::shared_ptr<locus::NonlinearConjugateGradientStep<ScalarType, OrdinalType>> mStep;
+    std::shared_ptr<locus::NonlinearConjugateGradientDataMng<ScalarType, OrdinalType>> mDataMng;
+    std::shared_ptr<locus::NonlinearConjugateGradientStageMng<ScalarType, OrdinalType>> mStageMng;
+
+private:
+    NonlinearConjugateGradient(const locus::NonlinearConjugateGradient<ScalarType, OrdinalType> & aRhs);
+    locus::NonlinearConjugateGradient<ScalarType, OrdinalType> & operator=(const locus::NonlinearConjugateGradient<ScalarType, OrdinalType> & aRhs);
 };
 
 /**********************************************************************************************************/
@@ -6734,6 +7349,8 @@ public:
         mStateData->setCurrentTrialStep(aDataMng.getTrialStep());
         mStateData->setCurrentControl(aDataMng.getCurrentControl());
         mStateData->setCurrentObjectiveGradient(aDataMng.getCurrentObjectiveGradient());
+        mStateData->setCurrentObjectiveFunctionValue(aDataMng.getCurrentObjectiveFunctionValue());
+
         mObjectiveGradient->update(mStateData.operator*());
 
         const OrdinalType tNumConstraints = mConstraintGradients->size();
@@ -6758,7 +7375,6 @@ public:
                          locus::MultiVector<ScalarType, OrdinalType> & aOutput)
     {
         assert(mObjectiveGradient.get() != nullptr);
-
         locus::fill(static_cast<ScalarType>(0), aOutput);
         mObjectiveGradient->compute(mState.operator*(), aControl, aOutput);
         mNumObjectiveGradientEvaluations++;
