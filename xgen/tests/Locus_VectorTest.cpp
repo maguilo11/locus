@@ -6996,13 +6996,11 @@ public:
             mControlStagnationTolerance(1e-4),
             mObjectiveStagnationTolerance(1e-6),
             mStoppingCriteria(locus::algorithm::stop_t::NOT_CONVERGED),
-            mControlWork(aDataMng->getCurrentControl().create()),
-            mTrialControl(aDataMng->getCurrentControl().create()),
+            mControlWork(aDataFactory->control().create()),
+            mTrialControl(aDataFactory->control().create()),
             mStateMng(std::make_shared<locus::NonlinearConjugateGradientStateMng<ScalarType, OrdinalType>>(aDataMng, aStageMng)),
             mLineSearch(std::make_shared<locus::QuadraticLineSearch<ScalarType, OrdinalType>>(aDataFactory.operator*())),
-            mStep(std::make_shared<locus::PolakRibiere<ScalarType, OrdinalType>>(aDataFactory.operator*())),
-            mDataMng(aDataMng),
-            mStageMng(aStageMng)
+            mStep(std::make_shared<locus::PolakRibiere<ScalarType, OrdinalType>>(aDataFactory.operator*()))
     {
     }
     ~NonlinearConjugateGradient()
@@ -7039,7 +7037,8 @@ public:
         mObjectiveStagnationTolerance = aInput;
     }
 
-    void solve()
+    void solve(locus::NonlinearConjugateGradientDataMng<ScalarType, OrdinalType> aDataMng,
+               locus::NonlinearConjugateGradientStageMng<ScalarType, OrdinalType> aStageMng)
     {
         assert(mStep.get() != nullptr);
 
@@ -9152,6 +9151,98 @@ private:
 private:
     ConservativeConvexSeparableApproximationBase(const locus::ConservativeConvexSeparableApproximationBase<ScalarType, OrdinalType> & aRhs);
     locus::ConservativeConvexSeparableApproximationBase<ScalarType, OrdinalType> & operator=(const locus::ConservativeConvexSeparableApproximationBase<ScalarType, OrdinalType> & aRhs);
+};
+
+template<typename ScalarType, typename OrdinalType = size_t>
+class DualProblemSolver
+{
+public:
+    virtual ~DualProblemSolver()
+    {
+    }
+
+    virtual void reset() = 0;
+    virtual void solve(locus::DualProblemStageMng<ScalarType, OrdinalType> & aDualProblemStageMng) = 0;
+    virtual void update(locus::ConservativeConvexSeparableAppxDataMng<ScalarType, OrdinalType> & aDataMng) = 0;
+};
+
+template<typename ScalarType, typename OrdinalType = size_t>
+class NonlinearConjugateGradientDualSolver
+{
+public:
+    explicit NonlinearConjugateGradientDualSolver(const locus::DataFactory<ScalarType, OrdinalType> & aPrimalDataFactory) :
+            mDualWork(aPrimalDataFactory.dual().create()),
+            mDualDataFactory(std::make_shared<locus::DataFactory<ScalarType, OrdinalType>>()),
+            mDualAlgorithm(),
+            mDualDataMng(),
+            mDualStageMng()
+    {
+        this->initialize();
+    }
+    virtual ~NonlinearConjugateGradientDualSolver()
+    {
+    }
+
+    void reset()
+    {
+        const ScalarType tValue = 0;
+        mDualDataMng->setCurrentObjectiveFunctionValue(tValue);
+        mDualDataMng->setPreviousObjectiveFunctionValue(tValue);
+
+        locus::fill(tValue, mDualWork.operator*());
+        mDualDataMng->setTrialStep(mDualWork.operator*());
+        mDualDataMng->setCurrentControl(mDualWork.operator*());
+        mDualDataMng->setPreviousControl(mDualWork.operator*());
+        mDualDataMng->setCurrentGradient(mDualWork.operator*());
+        mDualDataMng->setPreviousGradient(mDualWork.operator*());
+    }
+    void solve(locus::MultiVector<ScalarType, OrdinalType> & aTrialDual,
+               locus::MultiVector<ScalarType, OrdinalType> & aTrialControl)
+    {
+        mDualDataMng->setInitialGuess(mDualWork.operator*());
+
+        mDualAlgorithm->solve();
+
+        mDualStageMng->getTrialControl(aTrialControl);
+        const locus::MultiVector<ScalarType, OrdinalType> & tDualSolution = mDualDataMng->getCurrentControl();
+        locus::update(static_cast<ScalarType>(1), tDualSolution, static_cast<ScalarType>(0), aTrialDual);
+        // Store dual solution and use it as the initial guess for the next iteration.
+        locus::update(static_cast<ScalarType>(1), tDualSolution, static_cast<ScalarType>(0), mDualWork.operator*());
+    }
+    void update(locus::ConservativeConvexSeparableAppxDataMng<ScalarType, OrdinalType> & aDataMng)
+    {
+        mDualStageMng->update(aDataMng);
+        mDualStageMng->updateObjectiveCoefficients(aDataMng);
+        mDualStageMng->updateConstraintCoefficients(aDataMng);
+    }
+
+private:
+    void initialize()
+    {
+        mDualDataFactory->allocateControl(mDualWork.operator*());
+
+        // TODO: DERIVE FROM NONLINEAR CONJUGATE GRADIENT STAGE MANAGER CLASS
+        // mDualStageMng = std::make_shared<locus::DualProblemStageMng<ScalarType, OrdinalType>>(mDualDataFactory.operator*());
+
+        mDualDataMng = std::make_shared<locus::NonlinearConjugateGradientDataMng<ScalarType, OrdinalType>>(mDualDataFactory.operator*());
+        ScalarType tValue = 0;
+        mDualDataMng->setControlLowerBounds(tValue);
+        tValue = std::numeric_limits<ScalarType>::max();
+        mDualDataMng->setControlLowerBounds(tValue);
+
+        mDualAlgorithm = std::make_shared<locus::NonlinearConjugateGradient<ScalarType, OrdinalType>>(mDualDataFactory, mDualDataMng, mDualStageMng);
+    }
+
+private:
+    std::shared_ptr<locus::MultiVector<ScalarType, OrdinalType>> mDualWork;
+    std::shared_ptr<locus::DataFactory<ScalarType, OrdinalType>> mDualDataFactory;
+    std::shared_ptr<locus::NonlinearConjugateGradient<ScalarType, OrdinalType>> mDualAlgorithm;
+    std::shared_ptr<locus::NonlinearConjugateGradientDataMng<ScalarType, OrdinalType>> mDualDataMng;
+    std::shared_ptr<locus::NonlinearConjugateGradientStageMng<ScalarType, OrdinalType>> mDualStageMng;
+
+private:
+    NonlinearConjugateGradientDualSolver(const locus::NonlinearConjugateGradientDualSolver<ScalarType, OrdinalType> & aRhs);
+    locus::NonlinearConjugateGradientDualSolver<ScalarType, OrdinalType> & operator=(const locus::NonlinearConjugateGradientDualSolver<ScalarType, OrdinalType> & aRhs);
 };
 
 template<typename ScalarType, typename OrdinalType = size_t>
