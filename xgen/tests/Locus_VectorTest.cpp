@@ -3100,10 +3100,10 @@ private:
 };
 
 template<typename ScalarType, typename OrdinalType = size_t>
-class GradientOperatorBase
+class GradientOperator
 {
 public:
-    virtual ~GradientOperatorBase()
+    virtual ~GradientOperator()
     {
     }
 
@@ -3111,7 +3111,7 @@ public:
     virtual void compute(const locus::MultiVector<ScalarType, OrdinalType> & aState,
                          const locus::MultiVector<ScalarType, OrdinalType> & aControl,
                          locus::MultiVector<ScalarType, OrdinalType> & aOutput) = 0;
-    virtual std::shared_ptr<locus::GradientOperatorBase<ScalarType, OrdinalType>> create() const = 0;
+    virtual std::shared_ptr<locus::GradientOperator<ScalarType, OrdinalType>> create() const = 0;
 };
 
 template<typename ScalarType, typename OrdinalType = size_t>
@@ -3130,21 +3130,21 @@ public:
     {
         return (mList.size());
     }
-    void add(const locus::GradientOperatorBase<ScalarType, OrdinalType> & aInput)
+    void add(const locus::GradientOperator<ScalarType, OrdinalType> & aInput)
     {
         mList.push_back(aInput.create());
     }
-    void add(const std::shared_ptr<locus::GradientOperatorBase<ScalarType, OrdinalType>> & aInput)
+    void add(const std::shared_ptr<locus::GradientOperator<ScalarType, OrdinalType>> & aInput)
     {
         mList.push_back(aInput);
     }
-    locus::GradientOperatorBase<ScalarType, OrdinalType> & operator [](const OrdinalType & aIndex)
+    locus::GradientOperator<ScalarType, OrdinalType> & operator [](const OrdinalType & aIndex)
     {
         assert(aIndex < mList.size());
         assert(mList[aIndex].get() != nullptr);
         return (mList[aIndex].operator*());
     }
-    const locus::GradientOperatorBase<ScalarType, OrdinalType> & operator [](const OrdinalType & aIndex) const
+    const locus::GradientOperator<ScalarType, OrdinalType> & operator [](const OrdinalType & aIndex) const
     {
         assert(aIndex < mList.size());
         assert(mList[aIndex].get() != nullptr);
@@ -3161,12 +3161,12 @@ public:
         {
             assert(mList[tIndex].get() != nullptr);
 
-            const std::shared_ptr<locus::GradientOperatorBase<ScalarType, OrdinalType>> & tGradientOperator = mList[tIndex];
+            const std::shared_ptr<locus::GradientOperator<ScalarType, OrdinalType>> & tGradientOperator = mList[tIndex];
             tOutput->add(tGradientOperator);
         }
         return (tOutput);
     }
-    const std::shared_ptr<locus::GradientOperatorBase<ScalarType, OrdinalType>> & ptr(const OrdinalType & aIndex) const
+    const std::shared_ptr<locus::GradientOperator<ScalarType, OrdinalType>> & ptr(const OrdinalType & aIndex) const
     {
         assert(aIndex < mList.size());
         assert(mList[aIndex].get() != nullptr);
@@ -3174,7 +3174,7 @@ public:
     }
 
 private:
-    std::vector<std::shared_ptr<locus::GradientOperatorBase<ScalarType, OrdinalType>>> mList;
+    std::vector<std::shared_ptr<locus::GradientOperator<ScalarType, OrdinalType>>> mList;
 
 private:
     GradientOperatorList(const locus::GradientOperatorList<ScalarType, OrdinalType>&);
@@ -3182,7 +3182,7 @@ private:
 };
 
 template<typename ScalarType, typename OrdinalType = size_t>
-class AnalyticalGradient : public locus::GradientOperatorBase<ScalarType, OrdinalType>
+class AnalyticalGradient : public locus::GradientOperator<ScalarType, OrdinalType>
 {
 public:
     explicit AnalyticalGradient(const locus::Criterion<ScalarType, OrdinalType> & aCriterion) :
@@ -3208,9 +3208,9 @@ public:
         locus::fill(static_cast<ScalarType>(0), aOutput);
         mCriterion->gradient(aState, aControl, aOutput);
     }
-    std::shared_ptr<locus::GradientOperatorBase<ScalarType, OrdinalType>> create() const
+    std::shared_ptr<locus::GradientOperator<ScalarType, OrdinalType>> create() const
     {
-        std::shared_ptr<locus::GradientOperatorBase<ScalarType, OrdinalType>> tOutput =
+        std::shared_ptr<locus::GradientOperator<ScalarType, OrdinalType>> tOutput =
                 std::make_shared<locus::AnalyticalGradient<ScalarType, OrdinalType>>(mCriterion);
         return (tOutput);
     }
@@ -3224,10 +3224,10 @@ private:
 };
 
 template<typename ScalarType, typename OrdinalType = size_t>
-class LinearOperatorBase
+class LinearOperator
 {
 public:
-    virtual ~LinearOperatorBase()
+    virtual ~LinearOperator()
     {
     }
 
@@ -3236,7 +3236,7 @@ public:
                        const locus::MultiVector<ScalarType, OrdinalType> & aControl,
                        const locus::MultiVector<ScalarType, OrdinalType> & aVector,
                        locus::MultiVector<ScalarType, OrdinalType> & aOutput) = 0;
-    virtual std::shared_ptr<locus::LinearOperatorBase<ScalarType, OrdinalType>> create() const = 0;
+    virtual std::shared_ptr<locus::LinearOperator<ScalarType, OrdinalType>> create() const = 0;
 };
 
 template<typename ScalarType, typename OrdinalType = size_t>
@@ -3255,21 +3255,21 @@ public:
     {
         return (mList.size());
     }
-    void add(const locus::LinearOperatorBase<ScalarType, OrdinalType> & aInput)
+    void add(const locus::LinearOperator<ScalarType, OrdinalType> & aInput)
     {
         mList.push_back(aInput.create());
     }
-    void add(const std::shared_ptr<locus::LinearOperatorBase<ScalarType, OrdinalType>> & aInput)
+    void add(const std::shared_ptr<locus::LinearOperator<ScalarType, OrdinalType>> & aInput)
     {
         mList.push_back(aInput);
     }
-    locus::LinearOperatorBase<ScalarType, OrdinalType> & operator [](const OrdinalType & aIndex)
+    locus::LinearOperator<ScalarType, OrdinalType> & operator [](const OrdinalType & aIndex)
     {
         assert(aIndex < mList.size());
         assert(mList[aIndex].get() != nullptr);
         return (mList[aIndex].operator*());
     }
-    const locus::LinearOperatorBase<ScalarType, OrdinalType> & operator [](const OrdinalType & aIndex) const
+    const locus::LinearOperator<ScalarType, OrdinalType> & operator [](const OrdinalType & aIndex) const
     {
         assert(aIndex < mList.size());
         assert(mList[aIndex].get() != nullptr);
@@ -3286,12 +3286,12 @@ public:
         {
             assert(mList[tIndex].get() != nullptr);
 
-            const std::shared_ptr<locus::LinearOperatorBase<ScalarType, OrdinalType>> & tLinearOperator = mList[tIndex];
+            const std::shared_ptr<locus::LinearOperator<ScalarType, OrdinalType>> & tLinearOperator = mList[tIndex];
             tOutput->add(tLinearOperator);
         }
         return (tOutput);
     }
-    const std::shared_ptr<locus::LinearOperatorBase<ScalarType, OrdinalType>> & ptr(const OrdinalType & aIndex) const
+    const std::shared_ptr<locus::LinearOperator<ScalarType, OrdinalType>> & ptr(const OrdinalType & aIndex) const
     {
         assert(aIndex < mList.size());
         assert(mList[aIndex].get() != nullptr);
@@ -3299,7 +3299,7 @@ public:
     }
 
 private:
-    std::vector<std::shared_ptr<locus::LinearOperatorBase<ScalarType, OrdinalType>>> mList;
+    std::vector<std::shared_ptr<locus::LinearOperator<ScalarType, OrdinalType>>> mList;
 
 private:
     LinearOperatorList(const locus::LinearOperatorList<ScalarType, OrdinalType>&);
@@ -3307,7 +3307,7 @@ private:
 };
 
 template<typename ScalarType, typename OrdinalType = size_t>
-class AnalyticalHessian : public locus::LinearOperatorBase<ScalarType, OrdinalType>
+class AnalyticalHessian : public locus::LinearOperator<ScalarType, OrdinalType>
 {
 public:
     explicit AnalyticalHessian(const locus::Criterion<ScalarType, OrdinalType> & aCriterion) :
@@ -3334,9 +3334,9 @@ public:
         locus::fill(static_cast<ScalarType>(0), aOutput);
         mCriterion->hessian(aState, aControl, aVector, aOutput);
     }
-    std::shared_ptr<locus::LinearOperatorBase<ScalarType, OrdinalType>> create() const
+    std::shared_ptr<locus::LinearOperator<ScalarType, OrdinalType>> create() const
     {
-        std::shared_ptr<locus::LinearOperatorBase<ScalarType, OrdinalType>> tOutput =
+        std::shared_ptr<locus::LinearOperator<ScalarType, OrdinalType>> tOutput =
                 std::make_shared<locus::AnalyticalHessian<ScalarType, OrdinalType>>(mCriterion);
         return (tOutput);
     }
@@ -3350,7 +3350,7 @@ private:
 };
 
 template<typename ScalarType, typename OrdinalType = size_t>
-class IdentityHessian : public locus::LinearOperatorBase<ScalarType, OrdinalType>
+class IdentityHessian : public locus::LinearOperator<ScalarType, OrdinalType>
 {
 public:
     IdentityHessian()
@@ -3371,9 +3371,9 @@ public:
     {
         locus::update(static_cast<ScalarType>(1), aVector, static_cast<ScalarType>(0), aOutput);
     }
-    std::shared_ptr<locus::LinearOperatorBase<ScalarType, OrdinalType>> create() const
+    std::shared_ptr<locus::LinearOperator<ScalarType, OrdinalType>> create() const
     {
-        std::shared_ptr<locus::LinearOperatorBase<ScalarType, OrdinalType>> tOutput =
+        std::shared_ptr<locus::LinearOperator<ScalarType, OrdinalType>> tOutput =
                 std::make_shared<locus::IdentityHessian<ScalarType, OrdinalType>>();
         return (tOutput);
     }
@@ -3384,10 +3384,10 @@ private:
 };
 
 template<typename ScalarType, typename OrdinalType = size_t>
-class PreconditionerBase
+class Preconditioner
 {
 public:
-    virtual ~PreconditionerBase()
+    virtual ~Preconditioner()
     {
     }
 
@@ -3398,11 +3398,11 @@ public:
     virtual void applyInvPreconditioner(const locus::MultiVector<ScalarType, OrdinalType> & aControl,
                                         const locus::MultiVector<ScalarType, OrdinalType> & aVector,
                                         locus::MultiVector<ScalarType, OrdinalType> & aOutput) = 0;
-    virtual std::shared_ptr<locus::PreconditionerBase<ScalarType, OrdinalType>> create() const = 0;
+    virtual std::shared_ptr<locus::Preconditioner<ScalarType, OrdinalType>> create() const = 0;
 };
 
 template<typename ScalarType, typename OrdinalType = size_t>
-class IdentityPreconditioner : public PreconditionerBase<ScalarType, OrdinalType>
+class IdentityPreconditioner : public Preconditioner<ScalarType, OrdinalType>
 {
 public:
     IdentityPreconditioner()
@@ -3429,9 +3429,9 @@ public:
         assert(aVector.getNumVectors() == aOutput.getNumVectors());
         locus::update(1., aVector, 0., aOutput);
     }
-    std::shared_ptr<locus::PreconditionerBase<ScalarType, OrdinalType>> create() const
+    std::shared_ptr<locus::Preconditioner<ScalarType, OrdinalType>> create() const
     {
-        std::shared_ptr<locus::PreconditionerBase<ScalarType, OrdinalType>> tOutput =
+        std::shared_ptr<locus::Preconditioner<ScalarType, OrdinalType>> tOutput =
                 std::make_shared<locus::IdentityPreconditioner<ScalarType, OrdinalType>>();
         return (tOutput);
     }
@@ -3442,10 +3442,10 @@ private:
 };
 
 template<typename ScalarType, typename OrdinalType = size_t>
-class TrustRegionStageMngBase
+class TrustRegionStageMng
 {
 public:
-    virtual ~TrustRegionStageMngBase()
+    virtual ~TrustRegionStageMng()
     {
     }
 
@@ -3466,7 +3466,7 @@ public:
 };
 
 template<typename ScalarType, typename OrdinalType = size_t>
-class AugmentedLagrangianStageMng : public locus::TrustRegionStageMngBase<ScalarType, OrdinalType>
+class AugmentedLagrangianStageMng : public locus::TrustRegionStageMng<ScalarType, OrdinalType>
 {
 public:
     AugmentedLagrangianStageMng(const locus::DataFactory<ScalarType, OrdinalType> & aDataFactory,
@@ -3559,7 +3559,7 @@ public:
         locus::update(1., *mCurrentConstraintValues, 0., aInput);
     }
 
-    void setObjectiveGradient(const locus::GradientOperatorBase<ScalarType, OrdinalType> & aInput)
+    void setObjectiveGradient(const locus::GradientOperator<ScalarType, OrdinalType> & aInput)
     {
         mObjectiveGradientOperator = aInput.create();
     }
@@ -3567,7 +3567,7 @@ public:
     {
         mConstraintGradientOperators = aInput.create();
     }
-    void setObjectiveHessian(const locus::LinearOperatorBase<ScalarType, OrdinalType> & aInput)
+    void setObjectiveHessian(const locus::LinearOperator<ScalarType, OrdinalType> & aInput)
     {
         mObjectiveHessian = aInput.create();
     }
@@ -3575,7 +3575,7 @@ public:
     {
         mConstraintHessians = aInput.create();
     }
-    void setPreconditioner(const locus::PreconditionerBase<ScalarType, OrdinalType> & aInput)
+    void setPreconditioner(const locus::Preconditioner<ScalarType, OrdinalType> & aInput)
     {
         mPreconditioner = aInput.create();
     }
@@ -3864,13 +3864,13 @@ private:
     std::shared_ptr<locus::Criterion<ScalarType, OrdinalType>> mObjective;
     std::shared_ptr<locus::CriterionList<ScalarType, OrdinalType>> mConstraints;
 
-    std::shared_ptr<locus::PreconditionerBase<ScalarType, OrdinalType>> mPreconditioner;
-    std::shared_ptr<locus::LinearOperatorBase<ScalarType, OrdinalType>> mObjectiveHessian;
+    std::shared_ptr<locus::Preconditioner<ScalarType, OrdinalType>> mPreconditioner;
+    std::shared_ptr<locus::LinearOperator<ScalarType, OrdinalType>> mObjectiveHessian;
     std::shared_ptr<locus::LinearOperatorList<ScalarType, OrdinalType>> mConstraintHessians;
 
     std::shared_ptr<locus::ReductionOperations<ScalarType, OrdinalType>> mDualReductionOperations;
 
-    std::shared_ptr<locus::GradientOperatorBase<ScalarType, OrdinalType>> mObjectiveGradientOperator;
+    std::shared_ptr<locus::GradientOperator<ScalarType, OrdinalType>> mObjectiveGradientOperator;
     std::shared_ptr<locus::GradientOperatorList<ScalarType, OrdinalType>> mConstraintGradientOperators;
 
 private:
@@ -3879,10 +3879,10 @@ private:
 };
 
 template<typename ScalarType, typename OrdinalType = size_t>
-class SteihaugTointSolverBase
+class SteihaugTointSolver
 {
 public:
-    SteihaugTointSolverBase() :
+    SteihaugTointSolver() :
             mMaxNumIterations(200),
             mNumIterationsDone(0),
             mTolerance(1e-8),
@@ -3893,7 +3893,7 @@ public:
             mStoppingCriterion(locus::solver::stop_t::MAX_ITERATIONS)
     {
     }
-    virtual ~SteihaugTointSolverBase()
+    virtual ~SteihaugTointSolver()
     {
     }
 
@@ -4044,7 +4044,7 @@ public:
         return (tToleranceCriterionSatisfied);
     }
 
-    virtual void solve(locus::TrustRegionStageMngBase<ScalarType, OrdinalType> & aStageMng,
+    virtual void solve(locus::TrustRegionStageMng<ScalarType, OrdinalType> & aStageMng,
                        locus::TrustRegionAlgorithmDataMng<ScalarType, OrdinalType> & aDataMng) = 0;
 
 private:
@@ -4060,16 +4060,16 @@ private:
     locus::solver::stop_t mStoppingCriterion;
 
 private:
-    SteihaugTointSolverBase(const locus::SteihaugTointSolverBase<ScalarType, OrdinalType> & aRhs);
-    locus::SteihaugTointSolverBase<ScalarType, OrdinalType> & operator=(const locus::SteihaugTointSolverBase<ScalarType, OrdinalType> & aRhs);
+    SteihaugTointSolver(const locus::SteihaugTointSolver<ScalarType, OrdinalType> & aRhs);
+    locus::SteihaugTointSolver<ScalarType, OrdinalType> & operator=(const locus::SteihaugTointSolver<ScalarType, OrdinalType> & aRhs);
 };
 
 template<typename ScalarType, typename OrdinalType = size_t>
-class ProjectedSteihaugTointPcg : public locus::SteihaugTointSolverBase<ScalarType, OrdinalType>
+class ProjectedSteihaugTointPcg : public locus::SteihaugTointSolver<ScalarType, OrdinalType>
 {
 public:
     explicit ProjectedSteihaugTointPcg(const locus::DataFactory<ScalarType, OrdinalType> & aDataFactory) :
-            locus::SteihaugTointSolverBase<ScalarType, OrdinalType>(),
+            locus::SteihaugTointSolver<ScalarType, OrdinalType>(),
             mResidual(aDataFactory.control().create()),
             mNewtonStep(aDataFactory.control().create()),
             mCauchyStep(aDataFactory.control().create()),
@@ -4087,7 +4087,7 @@ public:
     {
     }
 
-    void solve(locus::TrustRegionStageMngBase<ScalarType, OrdinalType> & aStageMng,
+    void solve(locus::TrustRegionStageMng<ScalarType, OrdinalType> & aStageMng,
                locus::TrustRegionAlgorithmDataMng<ScalarType, OrdinalType> & aDataMng)
     {
         OrdinalType tNumVectors = aDataMng.getNumControlVectors();
@@ -4122,7 +4122,7 @@ public:
 
 private:
     void iterate(const locus::TrustRegionAlgorithmDataMng<ScalarType, OrdinalType> & aDataMng,
-                 locus::TrustRegionStageMngBase<ScalarType, OrdinalType> & aStageMng)
+                 locus::TrustRegionStageMng<ScalarType, OrdinalType> & aStageMng)
     {
         ScalarType tPreviousTau = 0;
         ScalarType tNormResidual = this->getNormResidual();
@@ -4182,7 +4182,7 @@ private:
         this->setNumIterationsDone(tIteration);
     }
     ScalarType step(const locus::TrustRegionAlgorithmDataMng<ScalarType, OrdinalType> & aDataMng,
-                     locus::TrustRegionStageMngBase<ScalarType, OrdinalType> & aStageMng)
+                     locus::TrustRegionStageMng<ScalarType, OrdinalType> & aStageMng)
     {
         this->applyVectorToPreconditioner(aDataMng, *mNewtonStep, aStageMng, *mPrecTimesNewtonStep);
         this->applyVectorToPreconditioner(aDataMng, *mConjugateDirection, aStageMng, *mPrecTimesConjugateDirection);
@@ -4196,7 +4196,7 @@ private:
     }
     void applyVectorToHessian(const locus::TrustRegionAlgorithmDataMng<ScalarType, OrdinalType> & aDataMng,
                               const locus::MultiVector<ScalarType, OrdinalType> & aVector,
-                              locus::TrustRegionStageMngBase<ScalarType, OrdinalType> & aStageMng,
+                              locus::TrustRegionStageMng<ScalarType, OrdinalType> & aStageMng,
                               locus::MultiVector<ScalarType, OrdinalType> & aOutput)
     {
         assert(aVector.getNumVectors() > static_cast<OrdinalType>(0));
@@ -4229,7 +4229,7 @@ private:
     }
     void applyVectorToPreconditioner(const locus::TrustRegionAlgorithmDataMng<ScalarType, OrdinalType> & aDataMng,
                                      const locus::MultiVector<ScalarType, OrdinalType> & aVector,
-                                     locus::TrustRegionStageMngBase<ScalarType, OrdinalType> & aStageMng,
+                                     locus::TrustRegionStageMng<ScalarType, OrdinalType> & aStageMng,
                                      locus::MultiVector<ScalarType, OrdinalType> & aOutput)
     {
         assert(aVector.getNumVectors() > static_cast<OrdinalType>(0));
@@ -4262,7 +4262,7 @@ private:
     }
     void applyVectorToInvPreconditioner(const locus::TrustRegionAlgorithmDataMng<ScalarType, OrdinalType> & aDataMng,
                                         const locus::MultiVector<ScalarType, OrdinalType> & aVector,
-                                        locus::TrustRegionStageMngBase<ScalarType, OrdinalType> & aStageMng,
+                                        locus::TrustRegionStageMng<ScalarType, OrdinalType> & aStageMng,
                                         locus::MultiVector<ScalarType, OrdinalType> & aOutput)
     {
         assert(aVector.getNumVectors() > static_cast<OrdinalType>(0));
@@ -4315,10 +4315,10 @@ private:
 };
 
 template<typename ScalarType, typename OrdinalType = size_t>
-class TrustRegionStepMngBase
+class TrustRegionStepMng
 {
 public:
-    TrustRegionStepMngBase() :
+    TrustRegionStepMng() :
             mActualReduction(0),
             mTrustRegionRadius(1e4),
             mPredictedReduction(0),
@@ -4341,7 +4341,7 @@ public:
     {
     }
 
-    virtual ~TrustRegionStepMngBase()
+    virtual ~TrustRegionStepMng()
     {
     }
 
@@ -4514,8 +4514,8 @@ public:
     }
 
     virtual bool solveSubProblem(locus::TrustRegionAlgorithmDataMng<ScalarType, OrdinalType> & aDataMng,
-                                 locus::TrustRegionStageMngBase<ScalarType, OrdinalType> & aStageMng,
-                                 locus::SteihaugTointSolverBase<ScalarType, OrdinalType> & aSolver) = 0;
+                                 locus::TrustRegionStageMng<ScalarType, OrdinalType> & aStageMng,
+                                 locus::SteihaugTointSolver<ScalarType, OrdinalType> & aSolver) = 0;
 
 private:
     ScalarType mActualReduction;
@@ -4543,16 +4543,16 @@ private:
     bool mIsInitialTrustRegionSetToNormProjectedGradient;
 
 private:
-    TrustRegionStepMngBase(const locus::TrustRegionStepMngBase<ScalarType, OrdinalType> & aRhs);
-    locus::TrustRegionStepMngBase<ScalarType, OrdinalType> & operator=(const locus::TrustRegionStepMngBase<ScalarType, OrdinalType> & aRhs);
+    TrustRegionStepMng(const locus::TrustRegionStepMng<ScalarType, OrdinalType> & aRhs);
+    locus::TrustRegionStepMng<ScalarType, OrdinalType> & operator=(const locus::TrustRegionStepMng<ScalarType, OrdinalType> & aRhs);
 };
 
 template<typename ScalarType, typename OrdinalType = size_t>
-class KelleySachsStepMng : public locus::TrustRegionStepMngBase<ScalarType, OrdinalType>
+class KelleySachsStepMng : public locus::TrustRegionStepMng<ScalarType, OrdinalType>
 {
 public:
     explicit KelleySachsStepMng(const locus::DataFactory<ScalarType, OrdinalType> & aDataFactory) :
-            locus::TrustRegionStepMngBase<ScalarType, OrdinalType>(),
+            locus::TrustRegionStepMng<ScalarType, OrdinalType>(),
             mEta(0),
             mEpsilon(0),
             mNormInactiveGradient(0),
@@ -4626,8 +4626,8 @@ public:
     }
 
     bool solveSubProblem(locus::TrustRegionAlgorithmDataMng<ScalarType, OrdinalType> & aDataMng,
-                         locus::TrustRegionStageMngBase<ScalarType, OrdinalType> & aStageMng,
-                         locus::SteihaugTointSolverBase<ScalarType, OrdinalType> & aSolver)
+                         locus::TrustRegionStageMng<ScalarType, OrdinalType> & aStageMng,
+                         locus::SteihaugTointSolver<ScalarType, OrdinalType> & aSolver)
     {
         mTrustRegionRadiusFlag = false;
         bool tTrialControlAccepted = true;
@@ -4687,7 +4687,7 @@ public:
 
 private:
     void setSolverTolerance(const locus::TrustRegionAlgorithmDataMng<ScalarType, OrdinalType> & aDataMng,
-                            locus::SteihaugTointSolverBase<ScalarType, OrdinalType> & aSolver)
+                            locus::SteihaugTointSolver<ScalarType, OrdinalType> & aSolver)
     {
         ScalarType tCummulativeDotProduct = 0;
         const OrdinalType tNumVectors = aDataMng.getNumControlVectors();
@@ -4792,7 +4792,7 @@ private:
     }
 
     void applyProjectedTrialStepToHessian(const locus::TrustRegionAlgorithmDataMng<ScalarType, OrdinalType> & aDataMng,
-                                          locus::TrustRegionStageMngBase<ScalarType, OrdinalType> & aStageMng)
+                                          locus::TrustRegionStageMng<ScalarType, OrdinalType> & aStageMng)
     {
         // Compute active projected trial step
         locus::fill(static_cast<ScalarType>(0), *mMatrixTimesVector);
@@ -4927,10 +4927,10 @@ private:
 };
 
 template<typename ScalarType, typename OrdinalType = size_t>
-class KelleySachsBase
+class KelleySachsAlgorithm
 {
 public:
-    explicit KelleySachsBase(const locus::DataFactory<ScalarType, OrdinalType> & aDataFactory) :
+    explicit KelleySachsAlgorithm(const locus::DataFactory<ScalarType, OrdinalType> & aDataFactory) :
             mMaxNumUpdates(10),
             mMaxNumOuterIterations(100),
             mNumOuterIterationsDone(0),
@@ -4944,7 +4944,7 @@ public:
             mControlWorkVector(aDataFactory.control().create())
     {
     }
-    virtual ~KelleySachsBase()
+    virtual ~KelleySachsAlgorithm()
     {
     }
 
@@ -5031,7 +5031,7 @@ public:
     bool updateControl(const locus::MultiVector<ScalarType, OrdinalType> & aMidGradient,
                        locus::KelleySachsStepMng<ScalarType, OrdinalType> & aStepMng,
                        locus::TrustRegionAlgorithmDataMng<ScalarType, OrdinalType> & aDataMng,
-                       locus::TrustRegionStageMngBase<ScalarType, OrdinalType> & aStageMng)
+                       locus::TrustRegionStageMng<ScalarType, OrdinalType> & aStageMng)
     {
         bool tControlUpdated = false;
 
@@ -5109,18 +5109,18 @@ private:
     std::shared_ptr<locus::MultiVector<ScalarType,OrdinalType>> mControlWorkVector;
 
 private:
-    KelleySachsBase(const locus::KelleySachsBase<ScalarType, OrdinalType> & aRhs);
-    locus::KelleySachsBase<ScalarType, OrdinalType> & operator=(const locus::KelleySachsBase<ScalarType, OrdinalType> & aRhs);
+    KelleySachsAlgorithm(const locus::KelleySachsAlgorithm<ScalarType, OrdinalType> & aRhs);
+    locus::KelleySachsAlgorithm<ScalarType, OrdinalType> & operator=(const locus::KelleySachsAlgorithm<ScalarType, OrdinalType> & aRhs);
 };
 
 template<typename ScalarType, typename OrdinalType = size_t>
-class KelleySachsAugmentedLagrangian : public locus::KelleySachsBase<ScalarType, OrdinalType>
+class KelleySachsAugmentedLagrangian : public locus::KelleySachsAlgorithm<ScalarType, OrdinalType>
 {
 public:
     KelleySachsAugmentedLagrangian(const std::shared_ptr<locus::DataFactory<ScalarType, OrdinalType>> & aDataFactory,
                                    const std::shared_ptr<locus::TrustRegionAlgorithmDataMng<ScalarType, OrdinalType>> & aDataMng,
                                    const std::shared_ptr<locus::AugmentedLagrangianStageMng<ScalarType, OrdinalType>> & aStageMng) :
-            locus::KelleySachsBase<ScalarType, OrdinalType>(*aDataFactory),
+            locus::KelleySachsAlgorithm<ScalarType, OrdinalType>(*aDataFactory),
             mGammaConstant(1e-3),
             mOptimalityTolerance(1e-5),
             mFeasibilityTolerance(1e-4),
@@ -6029,23 +6029,23 @@ public:
 };
 
 template<typename ScalarType, typename OrdinalType = size_t>
-class NonlinearConjugateGradientStages : public locus::NonlinearConjugateGradientStageMng<ScalarType, OrdinalType>
+class NonlinearConjugateGradientStandardStageMng : public locus::NonlinearConjugateGradientStageMng<ScalarType, OrdinalType>
 {
 public:
-    NonlinearConjugateGradientStages(const locus::DataFactory<ScalarType, OrdinalType> & aDataFactory,
-                                     const locus::Criterion<ScalarType, OrdinalType> & aObjective) :
+    NonlinearConjugateGradientStandardStageMng(const locus::DataFactory<ScalarType, OrdinalType> & aDataFactory,
+                                               const locus::Criterion<ScalarType, OrdinalType> & aObjective) :
             mNumHessianEvaluations(0),
             mNumFunctionEvaluations(0),
             mNumGradientEvaluations(0),
             mState(aDataFactory.state().create()),
-            mStateData(std::make_shared<locus::StateData<ScalarType, OrdinalType>>()),
+            mStateData(std::make_shared<locus::StateData<ScalarType, OrdinalType>>(aDataFactory)),
             mObjective(aObjective.create()),
-            mHessian(std::make_shared<locus::IdentityHessian<ScalarType, OrdinalType>>()),
+            mHessian(std::make_shared<locus::AnalyticalHessian<ScalarType, OrdinalType>>(aObjective)),
             mGradient(std::make_shared<locus::AnalyticalGradient<ScalarType, OrdinalType>>(aObjective))
 
     {
     }
-    ~NonlinearConjugateGradientStages()
+    ~NonlinearConjugateGradientStandardStageMng()
     {
     }
 
@@ -6074,11 +6074,11 @@ public:
         mNumHessianEvaluations = aInput;
     }
 
-    void setGradient(const locus::GradientOperatorBase<ScalarType, OrdinalType> & aInput)
+    void setGradient(const locus::GradientOperator<ScalarType, OrdinalType> & aInput)
     {
         mGradient = aInput.create();
     }
-    void setHessian(const locus::LinearOperatorBase<ScalarType, OrdinalType> & aInput)
+    void setHessian(const locus::LinearOperator<ScalarType, OrdinalType> & aInput)
     {
         mHessian = aInput.create();
     }
@@ -6087,7 +6087,7 @@ public:
     {
         mStateData->setCurrentTrialStep(aDataMng.getTrialStep());
         mStateData->setCurrentControl(aDataMng.getCurrentControl());
-        mStateData->setCurrentObjectiveGradient(aDataMng.getCurrentObjectiveGradient());
+        mStateData->setCurrentObjectiveGradient(aDataMng.getCurrentGradient());
         mStateData->setCurrentObjectiveFunctionValue(aDataMng.getCurrentObjectiveFunctionValue());
 
         mHessian->update(mStateData.operator*());
@@ -6128,12 +6128,12 @@ private:
     std::shared_ptr<locus::StateData<ScalarType, OrdinalType>> mStateData;
     std::shared_ptr<locus::Criterion<ScalarType, OrdinalType>> mObjective;
 
-    std::shared_ptr<locus::LinearOperatorBase<ScalarType, OrdinalType>> mHessian;
-    std::shared_ptr<locus::GradientOperatorBase<ScalarType, OrdinalType>> mGradient;
+    std::shared_ptr<locus::LinearOperator<ScalarType, OrdinalType>> mHessian;
+    std::shared_ptr<locus::GradientOperator<ScalarType, OrdinalType>> mGradient;
 
 private:
-    NonlinearConjugateGradientStages(const locus::NonlinearConjugateGradientStages<ScalarType, OrdinalType> & aRhs);
-    locus::NonlinearConjugateGradientStages<ScalarType, OrdinalType> & operator=(const locus::NonlinearConjugateGradientStages<ScalarType, OrdinalType> & aRhs);
+    NonlinearConjugateGradientStandardStageMng(const locus::NonlinearConjugateGradientStandardStageMng<ScalarType, OrdinalType> & aRhs);
+    locus::NonlinearConjugateGradientStandardStageMng<ScalarType, OrdinalType> & operator=(const locus::NonlinearConjugateGradientStandardStageMng<ScalarType, OrdinalType> & aRhs);
 };
 
 template<typename ScalarType, typename OrdinalType = size_t>
@@ -8210,7 +8210,7 @@ public:
         return (mNumConstraintGradientEvaluations[aIndex]);
     }
 
-    void setObjectiveGradient(const locus::GradientOperatorBase<ScalarType, OrdinalType> & aInput)
+    void setObjectiveGradient(const locus::GradientOperator<ScalarType, OrdinalType> & aInput)
     {
         mObjectiveGradient = aInput.create();
     }
@@ -8306,7 +8306,7 @@ private:
     std::shared_ptr<MultiVector<ScalarType, OrdinalType>> mState;
     std::shared_ptr<locus::Criterion<ScalarType, OrdinalType>> mObjective;
     std::shared_ptr<locus::CriterionList<ScalarType, OrdinalType>> mConstraints;
-    std::shared_ptr<locus::GradientOperatorBase<ScalarType, OrdinalType>> mObjectiveGradient;
+    std::shared_ptr<locus::GradientOperator<ScalarType, OrdinalType>> mObjectiveGradient;
     std::shared_ptr<locus::GradientOperatorList<ScalarType, OrdinalType>> mConstraintGradients;
 
     std::shared_ptr<locus::StateData<ScalarType, OrdinalType>> mStateData;
@@ -11574,7 +11574,7 @@ TEST(LocusTest, Preconditioner)
     LocusTest::checkMultiVectorData(tOutput, tVector);
 
     // TEST CREATE FUNCTION
-    std::shared_ptr<locus::PreconditionerBase<double>> tCopy = tPreconditioner.create();
+    std::shared_ptr<locus::Preconditioner<double>> tCopy = tPreconditioner.create();
     tCopy->applyInvPreconditioner(tControl, tVector, tOutput);
     LocusTest::checkMultiVectorData(tOutput, tVector);
     locus::fill(0., tOutput);
@@ -11995,7 +11995,7 @@ TEST(LocusTest, AugmentedLagrangianStageMng)
     LocusTest::checkMultiVectorData(tOutput, tGoldMultiVector);
 }
 
-TEST(LocusTest, SteihaugTointSolverBase)
+TEST(LocusTest, SteihaugTointSolver)
 {
     // ********* ALLOCATE DATA FACTORY *********
     locus::DataFactory<double> tDataFactory;
@@ -12211,7 +12211,7 @@ TEST(LocusTest, ProjectedSteihaugTointPcg)
     LocusTest::checkMultiVectorData(tDataMng.getTrialStep(), tVector);
 }
 
-TEST(LocusTest, TrustRegionStepMngBase)
+TEST(LocusTest, TrustRegionStepMng)
 {
     // ********* ALLOCATE DATA FACTORY *********
     locus::DataFactory<double> tDataFactory;
@@ -12467,7 +12467,7 @@ TEST(LocusTest, KelleySachsStepMng)
     LocusTest::checkMultiVectorData(tTrialStep, tVectorGold);
 }
 
-TEST(LocusTest, KelleySachsBase)
+TEST(LocusTest, KelleySachsAlgorithm)
 {
     // ********* ALLOCATE DATA FACTORY *********
     std::shared_ptr<locus::DataFactory<double>> tDataFactory =
@@ -12708,8 +12708,7 @@ TEST(LocusTest, NonlinearConjugateGradientDataMng)
     tDataFactory.allocateControl(tNumControls);
 
     // ********* Allocate Reduction Operations Interface *********
-    locus::StandardVectorReductionOperations<double,size_t> tReductionOperations;
-    tDataFactory.allocateDualReductionOperations(tReductionOperations);
+    locus::StandardVectorReductionOperations<double> tReductionOperations;
     tDataFactory.allocateControlReductionOperations(tReductionOperations);
 
     // ********* Allocate Nonlinear Conjugate Gradient Data Manager *********
@@ -12917,6 +12916,60 @@ TEST(LocusTest, NonlinearConjugateGradientDataMng)
     LocusTest::checkMultiVectorData(tDataMng.getPreviousControl(), tMultiVector);
 }
 
+TEST(LocusTest, NonlinearConjugateGradientStandardStageMng)
+{
+    // ********* Allocate Data Factory *********
+    locus::DataFactory<double> tDataFactory;
+    const size_t tNumControls = 2;
+    tDataFactory.allocateControl(tNumControls);
+
+    // ********* Allocate Reduction Operations Interface *********
+    locus::StandardVectorReductionOperations<double> tReductionOperations;
+    tDataFactory.allocateControlReductionOperations(tReductionOperations);
+
+    // ********* Allocate Nonlinear Conjugate Gradient Stage Manager *********
+    locus::Rosenbrock<double> tObjective;
+    locus::NonlinearConjugateGradientStandardStageMng<double> tStageMng(tDataFactory, tObjective);
+
+    // ********* Test Evaluate Objective Function *********
+    double tScalarValue = 2;
+    const size_t tNumVectors = 1;
+    locus::StandardMultiVector<double> tControl(tNumVectors, tNumControls, tScalarValue);
+    tScalarValue = 401;
+    double tTolerance = 1e-6;
+    size_t tOrdinalValue = 0;
+    EXPECT_EQ(tStageMng.getNumObjectiveFunctionEvaluations(), tOrdinalValue);
+    EXPECT_NEAR(tStageMng.evaluateObjective(tControl), tScalarValue, tTolerance);
+    tOrdinalValue = 1;
+    EXPECT_EQ(tStageMng.getNumObjectiveFunctionEvaluations(), tOrdinalValue);
+
+    // ********* Test Compute Gradient *********
+    tOrdinalValue = 0;
+    EXPECT_EQ(tStageMng.getNumObjectiveGradientEvaluations(), tOrdinalValue);
+    locus::StandardMultiVector<double> tGradient(tNumVectors, tNumControls);
+    tStageMng.computeGradient(tControl, tGradient);
+    tOrdinalValue = 1;
+    EXPECT_EQ(tStageMng.getNumObjectiveGradientEvaluations(), tOrdinalValue);
+    locus::StandardMultiVector<double> tGoldVector(tNumVectors, tNumControls);
+    const size_t tVectorIndex = 0;
+    tGoldVector(tVectorIndex, 0) = 1602;
+    tGoldVector(tVectorIndex, 1) = -400;
+    LocusTest::checkMultiVectorData(tGradient, tGoldVector);
+
+    // ********* Test Apply Vector to Hessian *********
+    tOrdinalValue = 0;
+    EXPECT_EQ(tStageMng.getNumObjectiveHessianEvaluations(), tOrdinalValue);
+    tScalarValue = 1;
+    locus::StandardMultiVector<double> tVector(tNumVectors, tNumControls, tScalarValue);
+    locus::StandardMultiVector<double> tHessianTimesVector(tNumVectors, tNumControls);
+    tStageMng.applyVectorToHessian(tControl, tVector, tHessianTimesVector);
+    tOrdinalValue = 1;
+    EXPECT_EQ(tStageMng.getNumObjectiveHessianEvaluations(), tOrdinalValue);
+    tGoldVector(tVectorIndex, 0) = 3202;
+    tGoldVector(tVectorIndex, 1) = -600;
+    LocusTest::checkMultiVectorData(tHessianTimesVector, tGoldVector);
+}
+
 /* ******************************************************************* */
 /* ************** METHOD OF MOVING ASYMPTOTES UNIT TESTS ************* */
 /* ******************************************************************* */
@@ -12931,7 +12984,7 @@ TEST(LocusTest, DualProblemStageMng)
     tDataFactory.allocateControl(tNumControls);
 
     // ********* Allocate Reduction Operations Interface *********
-    locus::StandardVectorReductionOperations<double,size_t> tReductionOperations;
+    locus::StandardVectorReductionOperations<double> tReductionOperations;
     tDataFactory.allocateDualReductionOperations(tReductionOperations);
     tDataFactory.allocateControlReductionOperations(tReductionOperations);
 
