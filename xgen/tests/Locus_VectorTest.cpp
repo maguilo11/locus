@@ -4386,7 +4386,6 @@ public:
         return (mMaxTrustRegionRadius);
     }
 
-
     void setGradientInexactnessToleranceConstant(const ScalarType & aInput)
     {
         mGradientInexactnessToleranceConstant = aInput;
@@ -4404,7 +4403,6 @@ public:
     {
         return (mGradientInexactnessTolerance);
     }
-
 
     void setObjectiveInexactnessToleranceConstant(const ScalarType & aInput)
     {
@@ -4483,7 +4481,6 @@ public:
     {
         return (mActualOverPredictedReduction);
     }
-
 
     void setNumTrustRegionSubProblemItrDone(const OrdinalType & aInput)
     {
@@ -5949,14 +5946,6 @@ public:
         return (mNormGradient);
     }
 
-    // NOTE: STORE PREVIOUS STATE (SIDENOTE: THE PREVIOUS TRIAL STEP IS ALWAYS STORED IN mTrialStep)
-    void storePreviousState()
-    {
-        mPreviousObjectiveFunctionValue = mCurrentObjectiveFunctionValue;
-        locus::update(static_cast<ScalarType>(1), *mCurrentControl, static_cast<ScalarType>(0), *mPreviousControl);
-        locus::update(static_cast<ScalarType>(1), *mCurrentGradient, static_cast<ScalarType>(0), *mPreviousGradient);
-    }
-
     // NOTE: COMPUTE STATIONARITY MEASURE
     void computeStationarityMeasure()
     {
@@ -5964,14 +5953,22 @@ public:
         const OrdinalType tNumVectors = mTrialStep->getNumVectors();
         for(OrdinalType tIndex = 0; tIndex < tNumVectors; tIndex++)
         {
-            const locus::Vector<ScalarType, OrdinalType> & tMyGradient = mTrialStep->operator[](tIndex);
-            tCummulativeDotProduct += tMyGradient.dot(tMyGradient);
+            const locus::Vector<ScalarType, OrdinalType> & tMyTrialStep = mTrialStep->operator[](tIndex);
+            tCummulativeDotProduct += tMyTrialStep.dot(tMyTrialStep);
         }
         mStationarityMeasure = std::sqrt(tCummulativeDotProduct);
     }
     ScalarType getStationarityMeasure() const
     {
         return (mStationarityMeasure);
+    }
+
+    // NOTE: STORE PREVIOUS STATE (SIDENOTE: THE PREVIOUS TRIAL STEP IS ALWAYS STORED IN mTrialStep)
+    void storePreviousState()
+    {
+        mPreviousObjectiveFunctionValue = mCurrentObjectiveFunctionValue;
+        locus::update(static_cast<ScalarType>(1), *mCurrentControl, static_cast<ScalarType>(0), *mPreviousControl);
+        locus::update(static_cast<ScalarType>(1), *mCurrentGradient, static_cast<ScalarType>(0), *mPreviousGradient);
     }
 
 private:
@@ -12700,16 +12697,243 @@ TEST(LocusTest, KelleySachsAugmentedLagrangian)
 }
 
 /* ******************************************************************* */
+/* ************* NONLINEAR CONJUGATE GRADIENT UNIT TESTS ************* */
+/* ******************************************************************* */
+
+TEST(LocusTest, NonlinearConjugateGradientDataMng)
+{
+    // ********* Allocate Data Factory *********
+    locus::DataFactory<double> tDataFactory;
+    const size_t tNumControls = 2;
+    tDataFactory.allocateControl(tNumControls);
+
+    // ********* Allocate Reduction Operations Interface *********
+    locus::StandardVectorReductionOperations<double,size_t> tReductionOperations;
+    tDataFactory.allocateDualReductionOperations(tReductionOperations);
+    tDataFactory.allocateControlReductionOperations(tReductionOperations);
+
+    // ********* Allocate Nonlinear Conjugate Gradient Data Manager *********
+    locus::NonlinearConjugateGradientDataMng<double> tDataMng(tDataFactory);
+    size_t tOrdinalValue = 1;
+    EXPECT_EQ(tDataMng.getNumControlVectors(), tOrdinalValue);
+
+    // ********* TEST OBJECTIVE FUNCTION VALUE *********
+    const double tTolerance = 1e-6;
+    double tScalarValue = std::numeric_limits<double>::max();
+    EXPECT_NEAR(tScalarValue, tDataMng.getCurrentObjectiveFunctionValue(), tTolerance);
+    EXPECT_NEAR(tScalarValue, tDataMng.getPreviousObjectiveFunctionValue(), tTolerance);
+    tScalarValue = 45;
+    tDataMng.setCurrentObjectiveFunctionValue(tScalarValue);
+    EXPECT_NEAR(tScalarValue, tDataMng.getCurrentObjectiveFunctionValue(), tTolerance);
+    tScalarValue = 123;
+    tDataMng.setPreviousObjectiveFunctionValue(tScalarValue);
+    EXPECT_NEAR(tScalarValue, tDataMng.getPreviousObjectiveFunctionValue(), tTolerance);
+
+    // ********* TEST INITIAL GUESS FUNCTIONS *********
+    EXPECT_FALSE(tDataMng.isInitialGuessSet());
+    tScalarValue = 2;
+    const size_t tNumVectors = 1;
+    locus::StandardMultiVector<double> tMultiVector(tNumVectors, tNumControls, tScalarValue);
+    tDataMng.setInitialGuess(tScalarValue);
+    EXPECT_TRUE(tDataMng.isInitialGuessSet());
+    locus::fill(tScalarValue, tMultiVector);
+    LocusTest::checkMultiVectorData(tDataMng.getCurrentControl(), tMultiVector);
+
+    tScalarValue = 1.5;
+    const size_t tVectorIndex = 0;
+    tDataMng.setInitialGuess(tVectorIndex, tScalarValue);
+    EXPECT_TRUE(tDataMng.isInitialGuessSet());
+    locus::fill(tScalarValue, tMultiVector);
+    LocusTest::checkMultiVectorData(tDataMng.getCurrentControl(), tMultiVector);
+
+    tScalarValue = 1.2;
+    locus::fill(tScalarValue, tMultiVector);
+    tDataMng.setInitialGuess(tMultiVector);
+    EXPECT_TRUE(tDataMng.isInitialGuessSet());
+    LocusTest::checkMultiVectorData(tDataMng.getCurrentControl(), tMultiVector);
+
+    tScalarValue = 0.5;
+    locus::StandardVector<double> tVector(tNumControls, tScalarValue);
+    tDataMng.setInitialGuess(tVectorIndex, tVector);
+    LocusTest::checkVectorData(tDataMng.getCurrentControl(tVectorIndex), tVector);
+
+    // ********* TEST TRIAL STEP FUNCTIONS *********
+    tScalarValue = 0.2;
+    locus::fill(tScalarValue, tMultiVector);
+    tDataMng.setTrialStep(tMultiVector);
+    LocusTest::checkMultiVectorData(tDataMng.getTrialStep(), tMultiVector);
+
+    tScalarValue = 0.25;
+    tVector.fill(tScalarValue);
+    tDataMng.setTrialStep(tVectorIndex, tVector);
+    LocusTest::checkVectorData(tDataMng.getTrialStep(tVectorIndex), tVector);
+
+    // ********* TEST CURRENT CONTROL FUNCTIONS *********
+    tScalarValue = 1.2;
+    locus::fill(tScalarValue, tMultiVector);
+    tDataMng.setCurrentControl(tMultiVector);
+    LocusTest::checkMultiVectorData(tDataMng.getCurrentControl(), tMultiVector);
+
+    tScalarValue = 1.25;
+    tVector.fill(tScalarValue);
+    tDataMng.setCurrentControl(tVectorIndex, tVector);
+    LocusTest::checkVectorData(tDataMng.getCurrentControl(tVectorIndex), tVector);
+
+    // ********* TEST PREVIOUS CONTROL FUNCTIONS *********
+    tScalarValue = 1.21;
+    locus::fill(tScalarValue, tMultiVector);
+    tDataMng.setPreviousControl(tMultiVector);
+    LocusTest::checkMultiVectorData(tDataMng.getPreviousControl(), tMultiVector);
+
+    tScalarValue = 1.11;
+    tVector.fill(tScalarValue);
+    tDataMng.setPreviousControl(tVectorIndex, tVector);
+    LocusTest::checkVectorData(tDataMng.getPreviousControl(tVectorIndex), tVector);
+
+    // ********* TEST CURRENT GRADIENT FUNCTIONS *********
+    tScalarValue = 2;
+    locus::fill(tScalarValue, tMultiVector);
+    tDataMng.setCurrentGradient(tMultiVector);
+    LocusTest::checkMultiVectorData(tDataMng.getCurrentGradient(), tMultiVector);
+
+    tScalarValue = 3;
+    tVector.fill(tScalarValue);
+    tDataMng.setCurrentGradient(tVectorIndex, tVector);
+    LocusTest::checkVectorData(tDataMng.getCurrentGradient(tVectorIndex), tVector);
+
+    // ********* TEST PREVIOUS GRADIENT FUNCTIONS *********
+    tScalarValue = 2.1;
+    locus::fill(tScalarValue, tMultiVector);
+    tDataMng.setPreviousGradient(tMultiVector);
+    LocusTest::checkMultiVectorData(tDataMng.getPreviousGradient(), tMultiVector);
+
+    tScalarValue = 3.1;
+    tVector.fill(tScalarValue);
+    tDataMng.setPreviousGradient(tVectorIndex, tVector);
+    LocusTest::checkVectorData(tDataMng.getPreviousGradient(tVectorIndex), tVector);
+
+    // ********* TEST DEFAULT UPPER AND LOWER BOUNDS *********
+    tScalarValue = -std::numeric_limits<double>::max();
+    tVector.fill(tScalarValue);
+    locus::fill(tScalarValue, tMultiVector);
+    LocusTest::checkMultiVectorData(tDataMng.getControlLowerBounds(), tMultiVector);
+    LocusTest::checkVectorData(tDataMng.getControlLowerBounds(tVectorIndex), tVector);
+
+    tScalarValue = std::numeric_limits<double>::max();
+    tVector.fill(tScalarValue);
+    locus::fill(tScalarValue,tMultiVector);
+    LocusTest::checkMultiVectorData(tDataMng.getControlUpperBounds(), tMultiVector);
+    LocusTest::checkVectorData(tDataMng.getControlUpperBounds(tVectorIndex), tVector);
+
+    // ********* TEST LOWER BOUND FUNCTIONS *********
+    tScalarValue = -10;
+    tDataMng.setControlLowerBounds(tScalarValue);
+    locus::fill(tScalarValue, tMultiVector);
+    LocusTest::checkMultiVectorData(tDataMng.getControlLowerBounds(), tMultiVector);
+
+    tScalarValue = -9;
+    locus::fill(tScalarValue, tMultiVector);
+    tDataMng.setControlLowerBounds(tMultiVector);
+    LocusTest::checkMultiVectorData(tDataMng.getControlLowerBounds(), tMultiVector);
+
+    tScalarValue = -8;
+    tVector.fill(tScalarValue);
+    tDataMng.setControlLowerBounds(tVectorIndex, tVector);
+    locus::fill(tScalarValue, tMultiVector);
+    LocusTest::checkMultiVectorData(tDataMng.getControlLowerBounds(), tMultiVector);
+
+    tScalarValue = -7;
+    tDataMng.setControlLowerBounds(tVectorIndex, tScalarValue);
+    locus::fill(tScalarValue, tMultiVector);
+    LocusTest::checkMultiVectorData(tDataMng.getControlLowerBounds(), tMultiVector);
+
+    // ********* TEST UPPER BOUND FUNCTIONS *********
+    tScalarValue = 10;
+    tDataMng.setControlUpperBounds(tScalarValue);
+    locus::fill(tScalarValue, tMultiVector);
+    LocusTest::checkMultiVectorData(tDataMng.getControlUpperBounds(), tMultiVector);
+
+    tScalarValue = 9;
+    locus::fill(tScalarValue, tMultiVector);
+    tDataMng.setControlUpperBounds(tMultiVector);
+    LocusTest::checkMultiVectorData(tDataMng.getControlUpperBounds(), tMultiVector);
+
+    tScalarValue = 8;
+    tVector.fill(tScalarValue);
+    tDataMng.setControlUpperBounds(tVectorIndex, tVector);
+    locus::fill(tScalarValue, tMultiVector);
+    LocusTest::checkMultiVectorData(tDataMng.getControlUpperBounds(), tMultiVector);
+
+    tScalarValue = 7;
+    tDataMng.setControlUpperBounds(tVectorIndex, tScalarValue);
+    locus::fill(tScalarValue, tMultiVector);
+    LocusTest::checkMultiVectorData(tDataMng.getControlUpperBounds(), tMultiVector);
+
+    // ********* TEST COMPUTE CONTROL STAGNATION MEASURE *********
+    tScalarValue = 3;
+    locus::fill(tScalarValue, tMultiVector);
+    tDataMng.setCurrentControl(tMultiVector);
+    tVector[0] = 2;
+    tVector[1] = 2.5;
+    tDataMng.setPreviousControl(tVectorIndex, tVector);
+    tDataMng.computeStagnationMeasure();
+    tScalarValue = 1.;
+    EXPECT_NEAR(tDataMng.getStagnationMeasure(), tScalarValue, tTolerance);
+
+    // ********* TEST COMPUTE OBJECTIVE STAGNATION MEASURE *********
+    tScalarValue = 1.25;
+    tDataMng.setCurrentObjectiveFunctionValue(tScalarValue);
+    tScalarValue = 0.75;
+    tDataMng.setPreviousObjectiveFunctionValue(tScalarValue);
+    tDataMng.computeObjectiveStagnationMeasure();
+    tScalarValue = 0.5;
+    EXPECT_NEAR(tDataMng.getObjectiveStagnationMeasure(), tScalarValue, tTolerance);
+
+    // ********* TEST COMPUTE NORM GRADIENT *********
+    tScalarValue = 1;
+    locus::fill(tScalarValue, tMultiVector);
+    tDataMng.setCurrentGradient(tMultiVector);
+    tDataMng.computeNormGradient();
+    tScalarValue = std::sqrt(2.);
+    EXPECT_NEAR(tDataMng.getNormGradient(), tScalarValue, tTolerance);
+
+    // ********* TEST COMPUTE STATIONARITY MEASURE *********
+    tScalarValue = 2;
+    locus::fill(tScalarValue, tMultiVector);
+    tDataMng.setTrialStep(tMultiVector);
+    tDataMng.computeStationarityMeasure();
+    tScalarValue = std::sqrt(8.);
+    EXPECT_NEAR(tDataMng.getStationarityMeasure(), tScalarValue, tTolerance);
+
+    // ********* TEST COMPUTE STATIONARITY MEASURE *********
+    tDataMng.storePreviousState();
+    tScalarValue = 1.25;
+    EXPECT_NEAR(tDataMng.getPreviousObjectiveFunctionValue(), tScalarValue, tTolerance);
+    tScalarValue = 1;
+    locus::fill(tScalarValue, tMultiVector);
+    LocusTest::checkMultiVectorData(tDataMng.getPreviousGradient(), tMultiVector);
+    tScalarValue = 3;
+    locus::fill(tScalarValue, tMultiVector);
+    LocusTest::checkMultiVectorData(tDataMng.getPreviousControl(), tMultiVector);
+}
+
+/* ******************************************************************* */
 /* ************** METHOD OF MOVING ASYMPTOTES UNIT TESTS ************* */
 /* ******************************************************************* */
 
 TEST(LocusTest, DualProblemStageMng)
 {
+    // ********* Allocate Data Factory *********
     locus::DataFactory<double> tDataFactory;
     const size_t tNumDuals = 1;
     const size_t tNumControls = 2;
     tDataFactory.allocateDual(tNumDuals);
     tDataFactory.allocateControl(tNumControls);
+
+    // ********* Allocate Reduction Operations Interface *********
+    locus::StandardVectorReductionOperations<double,size_t> tReductionOperations;
+    tDataFactory.allocateDualReductionOperations(tReductionOperations);
+    tDataFactory.allocateControlReductionOperations(tReductionOperations);
 
     std::shared_ptr<locus::MethodMovingAsymptotes<double>> tSubProblem =
             std::make_shared<locus::MethodMovingAsymptotes<double>>(tDataFactory);
