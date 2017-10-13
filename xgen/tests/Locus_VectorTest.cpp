@@ -734,7 +734,7 @@ public:
     const locus::MultiVector<ScalarType, OrdinalType> & dual() const
     {
         assert(mDual.get() != nullptr);
-        return (mDual.operator *());
+        return (mDual.operator*());
     }
     const locus::Vector<ScalarType, OrdinalType> & dual(const OrdinalType & aVectorIndex) const
     {
@@ -5599,11 +5599,12 @@ public:
         mIsInitialGuessSet(false),
         mNormGradient(std::numeric_limits<ScalarType>::max()),
         mStagnationMeasure(std::numeric_limits<ScalarType>::max()),
+        mStationarityMeasure(std::numeric_limits<ScalarType>::max()),
         mObjectiveStagnationMeasure(std::numeric_limits<ScalarType>::max()),
         mCurrentObjectiveFunctionValue(std::numeric_limits<ScalarType>::max()),
         mPreviousObjectiveFunctionValue(std::numeric_limits<ScalarType>::max()),
+        mControlWork(),
         mTrialStep(aDataFactory.control().create()),
-        mControlWork(aDataFactory.control().create()),
         mCurrentControl(aDataFactory.control().create()),
         mPreviousControl(aDataFactory.control().create()),
         mCurrentGradient(aDataFactory.control().create()),
@@ -5624,7 +5625,7 @@ public:
     }
     OrdinalType getNumControlVectors() const
     {
-        return (mCurrentControl->size());
+        return (mCurrentControl->getNumVectors());
     }
 
     // NOTE: OBJECTIVE FUNCTION VALUE
@@ -5938,7 +5939,7 @@ public:
         const OrdinalType tNumVectors = mCurrentGradient->getNumVectors();
         for(OrdinalType tIndex = 0; tIndex < tNumVectors; tIndex++)
         {
-            const locus::Vector<ScalarType, OrdinalType> & tMyGradient = mCurrentGradient.operator[](tIndex);
+            const locus::Vector<ScalarType, OrdinalType> & tMyGradient = mCurrentGradient->operator[](tIndex);
             tCummulativeDotProduct += tMyGradient.dot(tMyGradient);
         }
         mNormGradient = std::sqrt(tCummulativeDotProduct);
@@ -5956,6 +5957,23 @@ public:
         locus::update(static_cast<ScalarType>(1), *mCurrentGradient, static_cast<ScalarType>(0), *mPreviousGradient);
     }
 
+    // NOTE: COMPUTE STATIONARITY MEASURE
+    void computeStationarityMeasure()
+    {
+        ScalarType tCummulativeDotProduct = 0.;
+        const OrdinalType tNumVectors = mTrialStep->getNumVectors();
+        for(OrdinalType tIndex = 0; tIndex < tNumVectors; tIndex++)
+        {
+            const locus::Vector<ScalarType, OrdinalType> & tMyGradient = mTrialStep->operator[](tIndex);
+            tCummulativeDotProduct += tMyGradient.dot(tMyGradient);
+        }
+        mStationarityMeasure = std::sqrt(tCummulativeDotProduct);
+    }
+    ScalarType getStationarityMeasure() const
+    {
+        return (mStationarityMeasure);
+    }
+
 private:
     void initialize()
     {
@@ -5963,9 +5981,9 @@ private:
         mControlWork = mCurrentControl->operator[](tVectorIndex).create();
 
         ScalarType tValue = -std::numeric_limits<ScalarType>::max();
-        locus::fill(tValue, mControlLowerBounds);
+        locus::fill(tValue, mControlLowerBounds.operator*());
         tValue = std::numeric_limits<ScalarType>::max();
-        locus::fill(tValue, mControlUpperBounds);
+        locus::fill(tValue, mControlUpperBounds.operator*());
     }
 
 private:
@@ -5973,6 +5991,7 @@ private:
 
     ScalarType mNormGradient;
     ScalarType mStagnationMeasure;
+    ScalarType mStationarityMeasure;
     ScalarType mObjectiveStagnationMeasure;
     ScalarType mCurrentObjectiveFunctionValue;
     ScalarType mPreviousObjectiveFunctionValue;
@@ -5998,8 +6017,26 @@ template<typename ScalarType, typename OrdinalType = size_t>
 class NonlinearConjugateGradientStageMng
 {
 public:
-    NonlinearConjugateGradientStageMng(const locus::DataFactory<ScalarType, OrdinalType> & aDataFactory,
-                                       const locus::Criterion<ScalarType, OrdinalType> & aObjective) :
+    virtual ~NonlinearConjugateGradientStageMng()
+    {
+    }
+
+    virtual void update(const locus::NonlinearConjugateGradientDataMng<ScalarType, OrdinalType> & aDataMng) = 0;
+    virtual ScalarType evaluateObjective(const locus::MultiVector<ScalarType, OrdinalType> & aControl,
+                                         ScalarType aTolerance = std::numeric_limits<ScalarType>::max()) = 0;
+    virtual void computeGradient(const locus::MultiVector<ScalarType, OrdinalType> & aControl,
+                                 locus::MultiVector<ScalarType, OrdinalType> & aOutput) = 0;
+    virtual void applyVectorToHessian(const locus::MultiVector<ScalarType, OrdinalType> & aControl,
+                                      const locus::MultiVector<ScalarType, OrdinalType> & aVector,
+                                      locus::MultiVector<ScalarType, OrdinalType> & aOutput) = 0;
+};
+
+template<typename ScalarType, typename OrdinalType = size_t>
+class NonlinearConjugateGradientStages : public locus::NonlinearConjugateGradientStageMng<ScalarType, OrdinalType>
+{
+public:
+    NonlinearConjugateGradientStages(const locus::DataFactory<ScalarType, OrdinalType> & aDataFactory,
+                                     const locus::Criterion<ScalarType, OrdinalType> & aObjective) :
             mNumHessianEvaluations(0),
             mNumFunctionEvaluations(0),
             mNumGradientEvaluations(0),
@@ -6007,11 +6044,11 @@ public:
             mStateData(std::make_shared<locus::StateData<ScalarType, OrdinalType>>()),
             mObjective(aObjective.create()),
             mHessian(std::make_shared<locus::IdentityHessian<ScalarType, OrdinalType>>()),
-            mGradient()
+            mGradient(std::make_shared<locus::AnalyticalGradient<ScalarType, OrdinalType>>(aObjective))
 
     {
     }
-    ~NonlinearConjugateGradientStageMng()
+    ~NonlinearConjugateGradientStages()
     {
     }
 
@@ -6098,8 +6135,8 @@ private:
     std::shared_ptr<locus::GradientOperatorBase<ScalarType, OrdinalType>> mGradient;
 
 private:
-    NonlinearConjugateGradientStageMng(const locus::NonlinearConjugateGradientStageMng<ScalarType, OrdinalType> & aRhs);
-    locus::NonlinearConjugateGradientStageMng<ScalarType, OrdinalType> & operator=(const locus::NonlinearConjugateGradientStageMng<ScalarType, OrdinalType> & aRhs);
+    NonlinearConjugateGradientStages(const locus::NonlinearConjugateGradientStages<ScalarType, OrdinalType> & aRhs);
+    locus::NonlinearConjugateGradientStages<ScalarType, OrdinalType> & operator=(const locus::NonlinearConjugateGradientStages<ScalarType, OrdinalType> & aRhs);
 };
 
 template<typename ScalarType, typename OrdinalType = size_t>
@@ -6848,7 +6885,7 @@ public:
 };
 
 template<typename ScalarType, typename OrdinalType = size_t>
-class QuadraticLineSearch
+class QuadraticLineSearch : public locus::LineSearch<ScalarType, OrdinalType>
 {
 public:
     QuadraticLineSearch(const locus::DataFactory<ScalarType, OrdinalType> & aDataFactory) :
@@ -7037,8 +7074,7 @@ public:
         mObjectiveStagnationTolerance = aInput;
     }
 
-    void solve(locus::NonlinearConjugateGradientDataMng<ScalarType, OrdinalType> aDataMng,
-               locus::NonlinearConjugateGradientStageMng<ScalarType, OrdinalType> aStageMng)
+    void solve()
     {
         assert(mStep.get() != nullptr);
 
@@ -8284,7 +8320,7 @@ private:
 };
 
 template<typename ScalarType, typename OrdinalType = size_t>
-class DualProblemStageMng : public locus::ConservativeConvexSeparableAppxStageMng<ScalarType, OrdinalType>
+class DualProblemStageMng : public locus::NonlinearConjugateGradientStageMng<ScalarType, OrdinalType>
 {
 public:
     explicit DualProblemStageMng(const locus::DataFactory<ScalarType, OrdinalType> & aDataFactory) :
@@ -8505,11 +8541,13 @@ public:
         assert(aInput.getNumVectors() == mConstraintCoefficientsD->getNumVectors());
         locus::update(1., aInput, 0., *mConstraintCoefficientsD);
     }
-
+    // UPDATE DUAL PROBLEM DATA
     void update(const locus::ConservativeConvexSeparableAppxDataMng<ScalarType, OrdinalType> & aDataMng)
     {
-        // Update Current Objective & Constraint Values
+        // Update Current Objective Function Value
         mCurrentObjectiveFunctionValue = aDataMng.getCurrentObjectiveFunctionValue();
+
+        // Update Current Constraint Values
         locus::update(static_cast<ScalarType>(1),
                       aDataMng.getCurrentConstraintValues(),
                       static_cast<ScalarType>(0),
@@ -8530,7 +8568,15 @@ public:
         locus::update(static_cast<ScalarType>(1), tCurrentControl, static_cast<ScalarType>(0), *mTrialControlUpperBounds);
         locus::update(tScaleFactor, tCurrentSigma, static_cast<ScalarType>(1), *mTrialControlUpperBounds);
     }
-    ScalarType evaluateObjective(const locus::MultiVector<ScalarType, OrdinalType> & aDual)
+
+    // UPDATE PRIMAL PROBLEM DATA
+    void update(const locus::NonlinearConjugateGradientDataMng<ScalarType, OrdinalType> & aDataMng)
+    {
+        return;
+    }
+    // EVALUATE DUAL OBJECTIVE FUNCTION
+    ScalarType evaluateObjective(const locus::MultiVector<ScalarType, OrdinalType> & aDual,
+                                 ScalarType aTolerance = std::numeric_limits<ScalarType>::max())
     {
         assert(aDual.getNumVectors() == static_cast<OrdinalType>(1));
 
@@ -8551,13 +8597,14 @@ public:
 
         return (tOutput);
     }
+    // COMPUTE DUAL GRADIENT
     void computeGradient(const locus::MultiVector<ScalarType, OrdinalType> & aDual,
-                         locus::MultiVector<ScalarType, OrdinalType> & aGradient)
+                         locus::MultiVector<ScalarType, OrdinalType> & aDualGradient)
     {
         assert(aDual.getNumVectors() == static_cast<OrdinalType>(1));
 
         const OrdinalType tDualVectorIndex = 0;
-        locus::Vector<ScalarType, OrdinalType> & tGradient = aGradient[tDualVectorIndex];
+        locus::Vector<ScalarType, OrdinalType> & tDualGradient = aDualGradient[tDualVectorIndex];
         const locus::Vector<ScalarType, OrdinalType> & tDual = aDual[tDualVectorIndex];
         const locus::Vector<ScalarType, OrdinalType> & tAuxiliaryVariableY = (*mTrialAuxiliaryVariableY)[tDualVectorIndex];
         const locus::Vector<ScalarType, OrdinalType> & tCoefficientsR = (*mConstraintCoefficientsR)[tDualVectorIndex];
@@ -8566,7 +8613,7 @@ public:
         OrdinalType tNumConstraints = tDual.size();
         for(OrdinalType tConstraintIndex = 0; tConstraintIndex < tNumConstraints; tConstraintIndex++)
         {
-            tGradient[tConstraintIndex] = tCoefficientsR[tConstraintIndex] - tAuxiliaryVariableY[tConstraintIndex]
+            tDualGradient[tConstraintIndex] = tCoefficientsR[tConstraintIndex] - tAuxiliaryVariableY[tConstraintIndex]
                     - (tCoefficientsA[tConstraintIndex] * mTrialAuxiliaryVariableZ);
 
             const locus::MultiVector<ScalarType, OrdinalType> & tMyConstraintCoefficientsP =
@@ -8605,11 +8652,19 @@ public:
             const ScalarType tGlobalSumP = std::accumulate(tMyStorageOne.begin(), tMyStorageOne.end(), tInitialValue);
             const ScalarType tGlobalSumQ = std::accumulate(tMyStorageTwo.begin(), tMyStorageTwo.end(), tInitialValue);
             // Add contribution to dual gradient
-            tGradient[tConstraintIndex] = static_cast<ScalarType>(-1)
-                    * (tGradient[tConstraintIndex] + tGlobalSumP + tGlobalSumQ);
+            tDualGradient[tConstraintIndex] = static_cast<ScalarType>(-1)
+                    * (tDualGradient[tConstraintIndex] + tGlobalSumP + tGlobalSumQ);
         }
     }
+    // APPLY VECTOR TO DUAL HESSIAN
+    void applyVectorToHessian(const locus::MultiVector<ScalarType, OrdinalType> & aDual,
+                              const locus::MultiVector<ScalarType, OrdinalType> & aVector,
+                              locus::MultiVector<ScalarType, OrdinalType> & aOutput)
+    {
+        return;
+    }
 
+    // GET OPTIMAL TRIAL CONTROL FROM DUAL PROBLEM
     void getTrialControl(locus::MultiVector<ScalarType, OrdinalType> & aInput) const
     {
         locus::update(static_cast<ScalarType>(1), *mTrialControl, static_cast<ScalarType>(0), aInput);
@@ -8728,7 +8783,7 @@ public:
         const ScalarType tMaxCoefficientA = mDualReductionOperations->max(tCoefficientsA);
         if(tMaxCoefficientA > static_cast<ScalarType>(0))
         {
-            locus::fill(static_cast<ScalarType>(0), mDualWorkVector.operator*());
+            mDualWorkVector->fill(static_cast<ScalarType>(0));
             for(OrdinalType tIndex = 0; tIndex < tNumConstraints; tIndex++)
             {
                 if(tCoefficientsA[tIndex] > static_cast<ScalarType>(0))
@@ -9071,86 +9126,16 @@ private:
 };
 
 template<typename ScalarType, typename OrdinalType = size_t>
-class ConservativeConvexSeparableApproximationBase
+class ConservativeConvexSeparableApproximation
 {
 public:
-    explicit ConservativeConvexSeparableApproximationBase(const locus::ccsa::method_t & aInput) :
-            mMethod(aInput),
-            mStoppingCriterion(locus::ccsa::stop_t::NOT_CONVERGED),
-            mMaxNumIterations(10),
-            mNumIterationsDone(0),
-            mStagnationTolerance(1e-6),
-            mKarushKuhnTuckerConditionsTolerance(1e-6)
+    virtual ~ConservativeConvexSeparableApproximation()
     {
-    }
-    virtual ~ConservativeConvexSeparableApproximationBase()
-    {
-    }
-
-    locus::ccsa::method_t  type() const
-    {
-        return (mMethod);
-    }
-    locus::ccsa::stop_t getStoppingCriterion() const
-    {
-        return (mStoppingCriterion);
-    }
-    void setStoppingCriterion(const locus::ccsa::stop_t & aInput)
-    {
-        mStoppingCriterion = aInput;
-    }
-
-    OrdinalType getNumIterationsDone() const
-    {
-        return (mNumIterationsDone);
-    }
-    void setNumIterationsDone(const OrdinalType & aInput)
-    {
-        mNumIterationsDone = aInput;
-    }
-    OrdinalType getMaxNumIterations() const
-    {
-        return (mMaxNumIterations);
-    }
-    void setMaxNumIterations(const OrdinalType & aInput)
-    {
-        mMaxNumIterations = aInput;
-    }
-
-    ScalarType getKarushKuhnTuckerConditionsTolerance() const
-    {
-        return (mKarushKuhnTuckerConditionsTolerance);
-    }
-    void setKarushKuhnTuckerConditionsTolerance(const ScalarType & aInput)
-    {
-        mKarushKuhnTuckerConditionsTolerance = aInput;
-    }
-    ScalarType getStagnationTolerance() const
-    {
-        return (mStagnationTolerance);
-    }
-    void setStagnationTolerance(const ScalarType & aInput) const
-    {
-        mStagnationTolerance = aInput;
     }
 
     virtual void solve(locus::PrimalProblemStageMng<ScalarType, OrdinalType> & aPrimalProblemStageMng,
-                       locus::DualProblemStageMng<ScalarType, OrdinalType> & aDualProblemStageMng,
                        locus::ConservativeConvexSeparableAppxDataMng<ScalarType, OrdinalType> & aDataMng) = 0;
-
-private:
-    locus::ccsa::method_t mMethod;
-    locus::ccsa::stop_t mStoppingCriterion;
-
-    OrdinalType mMaxNumIterations;
-    OrdinalType mNumIterationsDone;
-
-    ScalarType mStagnationTolerance;
-    ScalarType mKarushKuhnTuckerConditionsTolerance;
-
-private:
-    ConservativeConvexSeparableApproximationBase(const locus::ConservativeConvexSeparableApproximationBase<ScalarType, OrdinalType> & aRhs);
-    locus::ConservativeConvexSeparableApproximationBase<ScalarType, OrdinalType> & operator=(const locus::ConservativeConvexSeparableApproximationBase<ScalarType, OrdinalType> & aRhs);
+    virtual void initializeAuxiliaryVariables(locus::ConservativeConvexSeparableAppxDataMng<ScalarType, OrdinalType> & aDataMng) = 0;
 };
 
 template<typename ScalarType, typename OrdinalType = size_t>
@@ -9161,28 +9146,64 @@ public:
     {
     }
 
-    virtual void reset() = 0;
-    virtual void solve(locus::DualProblemStageMng<ScalarType, OrdinalType> & aDualProblemStageMng) = 0;
+    virtual void solve(locus::MultiVector<ScalarType, OrdinalType> & aDual,
+                       locus::MultiVector<ScalarType, OrdinalType> & aTrialControl) = 0;
     virtual void update(locus::ConservativeConvexSeparableAppxDataMng<ScalarType, OrdinalType> & aDataMng) = 0;
+    virtual void updateObjectiveCoefficients(locus::ConservativeConvexSeparableAppxDataMng<ScalarType, OrdinalType> & aDataMng) = 0;
+    virtual void updateConstraintCoefficients(locus::ConservativeConvexSeparableAppxDataMng<ScalarType, OrdinalType> & aDataMng) = 0;
+    virtual void initializeAuxiliaryVariables(locus::ConservativeConvexSeparableAppxDataMng<ScalarType, OrdinalType> & aDataMng) = 0;
 };
 
 template<typename ScalarType, typename OrdinalType = size_t>
-class NonlinearConjugateGradientDualSolver
+class NonlinearConjugateGradientDualSolver : public locus::DualProblemSolver<ScalarType, OrdinalType>
 {
 public:
     explicit NonlinearConjugateGradientDualSolver(const locus::DataFactory<ScalarType, OrdinalType> & aPrimalDataFactory) :
             mDualWork(aPrimalDataFactory.dual().create()),
+            mDualInitialGuess(aPrimalDataFactory.dual().create()),
             mDualDataFactory(std::make_shared<locus::DataFactory<ScalarType, OrdinalType>>()),
+            mDualStageMng(),
             mDualAlgorithm(),
-            mDualDataMng(),
-            mDualStageMng()
+            mDualDataMng()
     {
-        this->initialize();
+        this->initialize(aPrimalDataFactory);
     }
     virtual ~NonlinearConjugateGradientDualSolver()
     {
     }
 
+    void solve(locus::MultiVector<ScalarType, OrdinalType> & aDual,
+               locus::MultiVector<ScalarType, OrdinalType> & aTrialControl)
+    {
+        this->reset();
+        mDualDataMng->setInitialGuess(mDualInitialGuess.operator*());
+        mDualAlgorithm->solve();
+
+        mDualStageMng->getTrialControl(aTrialControl);
+        const locus::MultiVector<ScalarType, OrdinalType> & tDualSolution = mDualDataMng->getCurrentControl();
+        locus::update(static_cast<ScalarType>(1), tDualSolution, static_cast<ScalarType>(0), aDual);
+        // Store dual solution and use it as the initial guess for the next iteration.
+        locus::update(static_cast<ScalarType>(1), tDualSolution, static_cast<ScalarType>(0), mDualInitialGuess.operator*());
+    }
+
+    void update(locus::ConservativeConvexSeparableAppxDataMng<ScalarType, OrdinalType> & aDataMng)
+    {
+        mDualStageMng->update(aDataMng);
+    }
+    void updateObjectiveCoefficients(locus::ConservativeConvexSeparableAppxDataMng<ScalarType, OrdinalType> & aDataMng)
+    {
+        mDualStageMng->updateObjectiveCoefficients(aDataMng);
+    }
+    void updateConstraintCoefficients(locus::ConservativeConvexSeparableAppxDataMng<ScalarType, OrdinalType> & aDataMng)
+    {
+        mDualStageMng->updateConstraintCoefficients(aDataMng);
+    }
+    void initializeAuxiliaryVariables(locus::ConservativeConvexSeparableAppxDataMng<ScalarType, OrdinalType> & aDataMng)
+    {
+        mDualStageMng->initializeAuxiliaryVariables(aDataMng);
+    }
+
+private:
     void reset()
     {
         const ScalarType tValue = 0;
@@ -9196,49 +9217,28 @@ public:
         mDualDataMng->setCurrentGradient(mDualWork.operator*());
         mDualDataMng->setPreviousGradient(mDualWork.operator*());
     }
-    void solve(locus::MultiVector<ScalarType, OrdinalType> & aTrialDual,
-               locus::MultiVector<ScalarType, OrdinalType> & aTrialControl)
-    {
-        mDualDataMng->setInitialGuess(mDualWork.operator*());
-
-        mDualAlgorithm->solve();
-
-        mDualStageMng->getTrialControl(aTrialControl);
-        const locus::MultiVector<ScalarType, OrdinalType> & tDualSolution = mDualDataMng->getCurrentControl();
-        locus::update(static_cast<ScalarType>(1), tDualSolution, static_cast<ScalarType>(0), aTrialDual);
-        // Store dual solution and use it as the initial guess for the next iteration.
-        locus::update(static_cast<ScalarType>(1), tDualSolution, static_cast<ScalarType>(0), mDualWork.operator*());
-    }
-    void update(locus::ConservativeConvexSeparableAppxDataMng<ScalarType, OrdinalType> & aDataMng)
-    {
-        mDualStageMng->update(aDataMng);
-        mDualStageMng->updateObjectiveCoefficients(aDataMng);
-        mDualStageMng->updateConstraintCoefficients(aDataMng);
-    }
-
-private:
-    void initialize()
+    void initialize(const locus::DataFactory<ScalarType, OrdinalType> & aPrimalDataFactory)
     {
         mDualDataFactory->allocateControl(mDualWork.operator*());
-
-        // TODO: DERIVE FROM NONLINEAR CONJUGATE GRADIENT STAGE MANAGER CLASS
-        // mDualStageMng = std::make_shared<locus::DualProblemStageMng<ScalarType, OrdinalType>>(mDualDataFactory.operator*());
-
         mDualDataMng = std::make_shared<locus::NonlinearConjugateGradientDataMng<ScalarType, OrdinalType>>(mDualDataFactory.operator*());
+
         ScalarType tValue = 0;
         mDualDataMng->setControlLowerBounds(tValue);
         tValue = std::numeric_limits<ScalarType>::max();
         mDualDataMng->setControlLowerBounds(tValue);
 
+        mDualStageMng = std::make_shared<locus::DualProblemStageMng<ScalarType, OrdinalType>>(aPrimalDataFactory);
         mDualAlgorithm = std::make_shared<locus::NonlinearConjugateGradient<ScalarType, OrdinalType>>(mDualDataFactory, mDualDataMng, mDualStageMng);
     }
 
 private:
     std::shared_ptr<locus::MultiVector<ScalarType, OrdinalType>> mDualWork;
+    std::shared_ptr<locus::MultiVector<ScalarType, OrdinalType>> mDualInitialGuess;
+
     std::shared_ptr<locus::DataFactory<ScalarType, OrdinalType>> mDualDataFactory;
+    std::shared_ptr<locus::DualProblemStageMng<ScalarType, OrdinalType>> mDualStageMng;
     std::shared_ptr<locus::NonlinearConjugateGradient<ScalarType, OrdinalType>> mDualAlgorithm;
     std::shared_ptr<locus::NonlinearConjugateGradientDataMng<ScalarType, OrdinalType>> mDualDataMng;
-    std::shared_ptr<locus::NonlinearConjugateGradientStageMng<ScalarType, OrdinalType>> mDualStageMng;
 
 private:
     NonlinearConjugateGradientDualSolver(const locus::NonlinearConjugateGradientDualSolver<ScalarType, OrdinalType> & aRhs);
@@ -9246,15 +9246,16 @@ private:
 };
 
 template<typename ScalarType, typename OrdinalType = size_t>
-class MethodMovingAsymptotes : public locus::ConservativeConvexSeparableApproximationBase<ScalarType, OrdinalType>
+class MethodMovingAsymptotes : public locus::ConservativeConvexSeparableApproximation<ScalarType, OrdinalType>
 {
 public:
     explicit MethodMovingAsymptotes(const locus::DataFactory<ScalarType, OrdinalType> & aDataFactory) :
-            locus::ConservativeConvexSeparableApproximationBase<ScalarType, OrdinalType>(locus::ccsa::method_t::MMA),
+            mTrialDual(aDataFactory.dual().create()),
             mActiveSet(aDataFactory.control().create()),
             mInactiveSet(aDataFactory.control().create()),
             mTrialControl(aDataFactory.control().create()),
-            mConstraintValues(aDataFactory.dual().create())
+            mConstraintValues(aDataFactory.dual().create()),
+            mDualSolver(std::make_shared<locus::NonlinearConjugateGradientDualSolver<ScalarType, OrdinalType>>(aDataFactory))
     {
     }
     virtual ~MethodMovingAsymptotes()
@@ -9262,20 +9263,17 @@ public:
     }
 
     void solve(locus::PrimalProblemStageMng<ScalarType, OrdinalType> & aPrimalProblemStageMng,
-               locus::DualProblemStageMng<ScalarType, OrdinalType> & aDualProblemStageMng,
                locus::ConservativeConvexSeparableAppxDataMng<ScalarType, OrdinalType> & aDataMng)
     {
-        // NOTE: REMBER THAT THE GLOBALIZATION FACTORS FOR BOTH OBJECTIVE AND CONSTRAINTS ARE SET TO ZERO IF MMA.
-        //       METHOD. THE METHOD SHOULD BE DETECTED AT THE OUTTER LOOP LEVEL AND THE VALUES SET INSIDE INITIALZE.
-        //       DEFAULT VALUES ARE SET FOR GCMMA CASE.
-        aDualProblemStageMng.update(aDataMng);
-        aDualProblemStageMng.updateObjectiveCoefficients(aDataMng);
-        aDualProblemStageMng.updateConstraintCoefficients(aDataMng);
+        // NOTE: REMBER THAT THE GLOBALIZATION FACTORS FOR BOTH OBJECTIVE AND CONSTRAINTS ARE SET TO ZERO IF USING
+        //       THE MMA APPROACH. THE MMA METHOD IS DETECTED AT THE OUTTER LOOP LEVEL (NOT THE SUBPROBLEM LEVEL)
+        //       AND THE VALUES SET INSIDE THE INITIALZE FUNCTION IN THE ALGORITHM CLASS. DEFAULT VALUES ARE ONLY
+        //       SET FOR THE GCMMA CASE.
+        mDualSolver->update(aDataMng);
+        mDualSolver->updateObjectiveCoefficients(aDataMng);
+        mDualSolver->updateConstraintCoefficients(aDataMng);
+        mDualSolver->solve(mTrialDual.operator*(), mTrialControl.operator*());
 
-        // TODO: RESET DUAL SOLVER DATA: mSolver->reset();
-        // TODO: SOLVE DUAL PROBLEM: solve(aDualProblemStageMng);
-
-        aDualProblemStageMng.getTrialControl(mTrialControl.operator*());
         const locus::MultiVector<ScalarType, OrdinalType> & tLowerBounds = aDataMng.getControlLowerBounds();
         const locus::MultiVector<ScalarType, OrdinalType> & tUpperBounds = aDataMng.getControlUpperBounds();
         locus::bounds::project(tLowerBounds, tUpperBounds, mTrialControl.operator*());
@@ -9291,15 +9289,21 @@ public:
         aDataMng.setCurrentObjectiveFunctionValue(tObjectiveFunctionValue);
         aPrimalProblemStageMng.evaluateConstraints(mTrialControl.operator*(), mConstraintValues.operator*());
         aDataMng.setCurrentConstraintValues(mConstraintValues.operator*());
-
-        this->setStoppingCriterion(locus::ccsa::stop_t::MAX_NUMBER_ITERATIONS);
+        aDataMng.setCurrentControl(mTrialControl.operator*());
+        aDataMng.setDual(mTrialDual.operator*());
+    }
+    void initializeAuxiliaryVariables(locus::ConservativeConvexSeparableAppxDataMng<ScalarType, OrdinalType> & aDataMng)
+    {
+        mDualSolver->initializeAuxiliaryVariables(aDataMng);
     }
 
 private:
+    std::shared_ptr<locus::MultiVector<ScalarType, OrdinalType>> mTrialDual;
     std::shared_ptr<locus::MultiVector<ScalarType, OrdinalType>> mActiveSet;
     std::shared_ptr<locus::MultiVector<ScalarType, OrdinalType>> mInactiveSet;
     std::shared_ptr<locus::MultiVector<ScalarType, OrdinalType>> mTrialControl;
     std::shared_ptr<locus::MultiVector<ScalarType, OrdinalType>> mConstraintValues;
+    std::shared_ptr<locus::DualProblemSolver<ScalarType, OrdinalType>> mDualSolver;
 
 private:
     MethodMovingAsymptotes(const locus::MethodMovingAsymptotes<ScalarType, OrdinalType> & aRhs);
@@ -9307,14 +9311,18 @@ private:
 };
 
 template<typename ScalarType, typename OrdinalType = size_t>
-class GloballyConvergentMethodMovingAsymptotes : public locus::ConservativeConvexSeparableApproximationBase<ScalarType, OrdinalType>
+class GloballyConvergentMethodMovingAsymptotes : public locus::ConservativeConvexSeparableApproximation<ScalarType, OrdinalType>
 {
 public:
     explicit GloballyConvergentMethodMovingAsymptotes(const locus::DataFactory<ScalarType, OrdinalType> & aDataFactory) :
-            locus::ConservativeConvexSeparableApproximationBase<ScalarType, OrdinalType>(locus::ccsa::method_t::GCMMA),
+            mMaxNumIterations(10),
+            mNumIterationsDone(0),
+            mStagnationTolerance(1e-6),
             mMinObjectiveGlobalizationFactor(1e-5),
             mCurrentTrialObjectiveFunctionValue(std::numeric_limits<ScalarType>::max()),
             mPreviousTrialObjectiveFunctionValue(std::numeric_limits<ScalarType>::max()),
+            mKarushKuhnTuckerConditionsTolerance(1e-6),
+            mStoppingCriterion(locus::ccsa::stop_t::NOT_CONVERGED),
             mControlWorkOne(),
             mControlWorkTwo(),
             mTrialDual(aDataFactory.dual().create()),
@@ -9324,6 +9332,7 @@ public:
             mTrialControl(aDataFactory.control().create()),
             mTrialConstraintValues(aDataFactory.dual().create()),
             mMinConstraintGlobalizationFactors(aDataFactory.dual().create()),
+            mDualSolver(std::make_shared<locus::NonlinearConjugateGradientDualSolver<ScalarType, OrdinalType>>(aDataFactory)),
             mControlReductionOperations(aDataFactory.getControlReductionOperations().create())
     {
         this->initialize();
@@ -9332,22 +9341,62 @@ public:
     {
     }
 
+    OrdinalType getMaxNumIterations() const
+    {
+        return (mMaxNumIterations);
+    }
+    void setMaxNumIterations(const OrdinalType & aInput)
+    {
+        mMaxNumIterations = aInput;
+    }
+    OrdinalType getNumIterationsDone() const
+    {
+        return (mNumIterationsDone);
+    }
+    void setNumIterationsDone(const OrdinalType & aInput)
+    {
+        mNumIterationsDone = aInput;
+    }
+
+    ScalarType getStagnationTolerance() const
+    {
+        return (mStagnationTolerance);
+    }
+    void setStagnationTolerance(const ScalarType & aInput) const
+    {
+        mStagnationTolerance = aInput;
+    }
+    ScalarType getKarushKuhnTuckerConditionsTolerance() const
+    {
+        return (mKarushKuhnTuckerConditionsTolerance);
+    }
+    void setKarushKuhnTuckerConditionsTolerance(const ScalarType & aInput)
+    {
+        mKarushKuhnTuckerConditionsTolerance = aInput;
+    }
+
+    locus::ccsa::stop_t getStoppingCriterion() const
+    {
+        return (mStoppingCriterion);
+    }
+    void setStoppingCriterion(const locus::ccsa::stop_t & aInput)
+    {
+        mStoppingCriterion = aInput;
+    }
+
     void solve(locus::PrimalProblemStageMng<ScalarType, OrdinalType> & aPrimalProblemStageMng,
-               locus::DualProblemStageMng<ScalarType, OrdinalType> & aDualProblemStageMng,
                locus::ConservativeConvexSeparableAppxDataMng<ScalarType, OrdinalType> & aDataMng)
     {
-        aDualProblemStageMng.update(aDataMng);
+        mDualSolver->update(aDataMng);
+
         OrdinalType tIterations = 0;
-        const OrdinalType tMaxNumIterations = this->getMaxNumIterations();
-        while(tIterations < tMaxNumIterations)
+        this->setNumIterationsDone(tIterations);
+        while(1)
         {
-            aDualProblemStageMng.updateObjectiveCoefficients(aDataMng);
-            aDualProblemStageMng.updateConstraintCoefficients(aDataMng);
+            mDualSolver->updateObjectiveCoefficients(aDataMng);
+            mDualSolver->updateConstraintCoefficients(aDataMng);
+            mDualSolver->solve(mTrialDual.operator*(), mTrialControl.operator*());
 
-            // TODO: RESET DUAL SOLVER DATA: mSolver->reset();
-            // TODO: SOLVE DUAL PROBLEM: solve(aDualProblemStageMng);
-
-            aDualProblemStageMng.getTrialControl(mTrialControl.operator*());
             const locus::MultiVector<ScalarType, OrdinalType> & tLowerBounds = aDataMng.getControlLowerBounds();
             const locus::MultiVector<ScalarType, OrdinalType> & tUpperBounds = aDataMng.getControlUpperBounds();
             locus::bounds::project(tLowerBounds, tUpperBounds, mTrialControl.operator*());
@@ -9369,24 +9418,30 @@ public:
             this->updateConstraintGlobalizationFactors(aDataMng);
 
             tIterations++;
+            this->setNumIterationsDone(tIterations);
             if(this->checkStoppingCriteria(aDataMng) == true)
             {
                 break;
             }
         }
 
-        this->setNumIterationsDone(tIterations);
+        aDataMng.setDual(mTrialDual.operator*());
+        aDataMng.setCurrentControl(mTrialControl.operator*());
         aDataMng.setCurrentObjectiveFunctionValue(mCurrentTrialObjectiveFunctionValue);
         aDataMng.setCurrentConstraintValues(mTrialConstraintValues.operator*());
+    }
+    void initializeAuxiliaryVariables(locus::ConservativeConvexSeparableAppxDataMng<ScalarType, OrdinalType> & aDataMng)
+    {
+        mDualSolver->initializeAuxiliaryVariables(aDataMng);
     }
 
 private:
     void initialize()
     {
-        locus::fill(static_cast<ScalarType>(1e-5), mMinConstraintGlobalizationFactors.operator*());
         const OrdinalType tVectorIndex = 0;
         mControlWorkOne = mTrialControl->operator[](tVectorIndex).create();
         mControlWorkTwo = mTrialControl->operator[](tVectorIndex).create();
+        locus::fill(static_cast<ScalarType>(1e-5), mMinConstraintGlobalizationFactors.operator*());
     }
     void updateObjectiveGlobalizationFactor(locus::ConservativeConvexSeparableAppxDataMng<ScalarType, OrdinalType> & aDataMng)
     {
@@ -9517,14 +9572,21 @@ private:
     }
     bool checkStoppingCriteria(locus::ConservativeConvexSeparableAppxDataMng<ScalarType, OrdinalType> & aDataMng)
     {
-        bool tStop = false;
         aDataMng.computeKarushKuhnTuckerConditionsInexactness(mTrialControl.operator*(), mTrialDual.operator*());
         const ScalarType t_KKT_ConditionsInexactness = aDataMng.getKarushKuhnTuckerConditionsInexactness();
 
         const ScalarType tObjectiveStagnation =
                 std::abs(mCurrentTrialObjectiveFunctionValue - mPreviousTrialObjectiveFunctionValue);
 
-        if(t_KKT_ConditionsInexactness < this->getKarushKuhnTuckerConditionsTolerance())
+        const OrdinalType tNumIterationsDone = this->getNumIterationsDone();
+
+        bool tStop = false;
+        if(tNumIterationsDone >= this->getMaxNumIterations())
+        {
+            tStop = true;
+            this->setStoppingCriterion(locus::ccsa::MAX_NUMBER_ITERATIONS);
+        }
+        else if(t_KKT_ConditionsInexactness < this->getKarushKuhnTuckerConditionsTolerance())
         {
             tStop = true;
             this->setStoppingCriterion(locus::ccsa::KKT_CONDITIONS_TOLERANCE);
@@ -9539,9 +9601,16 @@ private:
     }
 
 private:
+    OrdinalType mMaxNumIterations;
+    OrdinalType mNumIterationsDone;
+
+    ScalarType mStagnationTolerance;
     ScalarType mMinObjectiveGlobalizationFactor;
     ScalarType mCurrentTrialObjectiveFunctionValue;
     ScalarType mPreviousTrialObjectiveFunctionValue;
+    ScalarType mKarushKuhnTuckerConditionsTolerance;
+
+    locus::ccsa::stop_t mStoppingCriterion;
 
     std::shared_ptr<locus::Vector<ScalarType, OrdinalType>> mControlWorkOne;
     std::shared_ptr<locus::Vector<ScalarType, OrdinalType>> mControlWorkTwo;
@@ -9554,6 +9623,7 @@ private:
     std::shared_ptr<locus::MultiVector<ScalarType, OrdinalType>> mTrialConstraintValues;
     std::shared_ptr<locus::MultiVector<ScalarType, OrdinalType>> mMinConstraintGlobalizationFactors;
 
+    std::shared_ptr<locus::DualProblemSolver<ScalarType, OrdinalType>> mDualSolver;
     std::shared_ptr<locus::ReductionOperations<ScalarType, OrdinalType>> mControlReductionOperations;
 
 private:
@@ -9562,13 +9632,12 @@ private:
 };
 
 template<typename ScalarType, typename OrdinalType = size_t>
-class ConservativeConvexSeparableAppxAlgorithm
+class ConservativeConvexSeparableApproximationsAlgorithm
 {
 public:
-    ConservativeConvexSeparableAppxAlgorithm(const std::shared_ptr<locus::DualProblemStageMng<ScalarType, OrdinalType>> & aDualProblemStageMng,
-                                             const std::shared_ptr<locus::PrimalProblemStageMng<ScalarType, OrdinalType>> & aPrimalProblemStageMng,
-                                             const std::shared_ptr<locus::ConservativeConvexSeparableAppxDataMng<ScalarType, OrdinalType>> & aDataMng,
-                                             const std::shared_ptr<locus::ConservativeConvexSeparableApproximationBase<ScalarType, OrdinalType>> & aSubProblem) :
+    ConservativeConvexSeparableApproximationsAlgorithm(const std::shared_ptr<locus::PrimalProblemStageMng<ScalarType, OrdinalType>> & aPrimalStageMng,
+                                                       const std::shared_ptr<locus::ConservativeConvexSeparableAppxDataMng<ScalarType, OrdinalType>> & aDataMng,
+                                                       const std::shared_ptr<locus::ConservativeConvexSeparableApproximation<ScalarType, OrdinalType>> & aSubProblem) :
             mMaxNumIterations(50),
             mNumIterationsDone(0),
             mOptimalityTolerance(1e-4),
@@ -9587,14 +9656,13 @@ public:
             mPreviousSigma(),
             mAntepenultimateControl(),
             mWorkMultiVectorList(),
-            mDualProblemStageMng(aDualProblemStageMng),
-            mPrimalProblemStageMng(aPrimalProblemStageMng),
+            mPrimalStageMng(aPrimalStageMng),
             mDataMng(aDataMng),
             mSubProblem(aSubProblem)
     {
-        this->initialize();
+        this->initialize(aDataMng.operator*());
     }
-    ~ConservativeConvexSeparableAppxAlgorithm()
+    ~ConservativeConvexSeparableApproximationsAlgorithm()
     {
     }
 
@@ -9703,20 +9771,20 @@ public:
 
     void solve()
     {
-        mDualProblemStageMng->initializeAuxiliaryVariables(mDataMng.operator*());
         const locus::MultiVector<ScalarType, OrdinalType> & tControl = mDataMng->getCurrentControl();
-        const ScalarType tCurrentObjectiveFunctionValue = mPrimalProblemStageMng->evaluateObjective(tControl);
+        const ScalarType tCurrentObjectiveFunctionValue = mPrimalStageMng->evaluateObjective(tControl);
         mDataMng->setCurrentObjectiveFunctionValue(tCurrentObjectiveFunctionValue);
-        mPrimalProblemStageMng->evaluateConstraints(tControl, mDualWork.operator*());
+        mPrimalStageMng->evaluateConstraints(tControl, mDualWork.operator*());
         mDataMng->setDual(mDualWork.operator*());
+        mSubProblem->initializeAuxiliaryVariables(mDataMng.operator*());
 
         mNumIterationsDone = 0;
         while(1)
         {
             const locus::MultiVector<ScalarType, OrdinalType> & tCurrentControl = mDataMng->getCurrentControl();
-            mPrimalProblemStageMng->computeGradient(tCurrentControl, mControlWork.operator*());
+            mPrimalStageMng->computeGradient(tCurrentControl, mControlWork.operator*());
             mDataMng->setCurrentObjectiveGradient(mControlWork.operator*());
-            mPrimalProblemStageMng->computeConstraintGradients(tCurrentControl, mWorkMultiVectorList.operator*());
+            mPrimalStageMng->computeConstraintGradients(tCurrentControl, mWorkMultiVectorList.operator*());
             mDataMng->setCurrentConstraintGradients(mWorkMultiVectorList.operator*());
 
             if(this->checkStoppingCriteria() == true)
@@ -9737,24 +9805,20 @@ public:
                           mControlWork.operator*());
             mDataMng->setPreviousControl(mControlWork.operator*());
 
-            mSubProblem->solve(mPrimalProblemStageMng.operator*(),
-                               mDualProblemStageMng.operator*(),
-                               mDataMng.operator*());
+            mSubProblem->solve(mPrimalStageMng.operator*(), mDataMng.operator*());
 
             mNumIterationsDone++;
         }
     }
 
 private:
-    void initialize()
+    void initialize(const locus::ConservativeConvexSeparableAppxDataMng<ScalarType, OrdinalType> & aDataMng)
     {
-        assert(mDataMng.get() != nullptr);
-
-        mDualWork = mDataMng->getDual().create();
-        mControlWork = mDataMng->getCurrentControl().create();
-        mPreviousSigma = mDataMng->getCurrentControl().create();
-        mAntepenultimateControl = mDataMng->getCurrentControl().create();
-        mWorkMultiVectorList = mDataMng->getCurrentConstraintGradients().create();
+        mDualWork = aDataMng.getDual().create();
+        mControlWork = aDataMng.getCurrentControl().create();
+        mPreviousSigma = aDataMng.getCurrentControl().create();
+        mAntepenultimateControl = aDataMng.getCurrentControl().create();
+        mWorkMultiVectorList = aDataMng.getCurrentConstraintGradients().create();
     }
     bool checkStoppingCriteria()
     {
@@ -9900,14 +9964,13 @@ private:
     std::shared_ptr<locus::MultiVector<ScalarType, OrdinalType>> mAntepenultimateControl;
     std::shared_ptr<locus::MultiVectorList<ScalarType, OrdinalType>> mWorkMultiVectorList;
 
-    std::shared_ptr<locus::DualProblemStageMng<ScalarType, OrdinalType>> mDualProblemStageMng;
-    std::shared_ptr<locus::PrimalProblemStageMng<ScalarType, OrdinalType>> mPrimalProblemStageMng;
+    std::shared_ptr<locus::PrimalProblemStageMng<ScalarType, OrdinalType>> mPrimalStageMng;
     std::shared_ptr<locus::ConservativeConvexSeparableAppxDataMng<ScalarType, OrdinalType>> mDataMng;
-    std::shared_ptr<locus::ConservativeConvexSeparableApproximationBase<ScalarType, OrdinalType>> mSubProblem;
+    std::shared_ptr<locus::ConservativeConvexSeparableApproximation<ScalarType, OrdinalType>> mSubProblem;
 
 private:
-    ConservativeConvexSeparableAppxAlgorithm(const locus::ConservativeConvexSeparableAppxAlgorithm<ScalarType, OrdinalType> & aRhs);
-    locus::ConservativeConvexSeparableAppxAlgorithm<ScalarType, OrdinalType> & operator=(const locus::ConservativeConvexSeparableAppxAlgorithm<ScalarType, OrdinalType> & aRhs);
+    ConservativeConvexSeparableApproximationsAlgorithm(const locus::ConservativeConvexSeparableApproximationsAlgorithm<ScalarType, OrdinalType> & aRhs);
+    locus::ConservativeConvexSeparableApproximationsAlgorithm<ScalarType, OrdinalType> & operator=(const locus::ConservativeConvexSeparableApproximationsAlgorithm<ScalarType, OrdinalType> & aRhs);
 };
 
 }
@@ -12650,14 +12713,12 @@ TEST(LocusTest, DualProblemStageMng)
 
     std::shared_ptr<locus::MethodMovingAsymptotes<double>> tSubProblem =
             std::make_shared<locus::MethodMovingAsymptotes<double>>(tDataFactory);
-    std::shared_ptr<locus::DualProblemStageMng<double>> tDualProblem =
-            std::make_shared<locus::DualProblemStageMng<double>>(tDataFactory);
     std::shared_ptr<locus::PrimalProblemStageMng<double>> tPrimalProblem =
             std::make_shared<locus::PrimalProblemStageMng<double>>(tDataFactory);
     std::shared_ptr<locus::ConservativeConvexSeparableAppxDataMng<double>> tDataMng =
             std::make_shared<locus::ConservativeConvexSeparableAppxDataMng<double>>(tDataFactory);
 
-     locus::ConservativeConvexSeparableAppxAlgorithm<double> tAlgorithm(tDualProblem, tPrimalProblem, tDataMng, tSubProblem);
+    locus::ConservativeConvexSeparableApproximationsAlgorithm<double> tAlgorithm(tPrimalProblem, tDataMng, tSubProblem);
 }
 
 }
