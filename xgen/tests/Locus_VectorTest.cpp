@@ -6337,7 +6337,7 @@ public:
         ScalarType tDenominator = locus::dot(aDataMng.getTrialStep(), aDataMng.getCurrentGradient())
                 - locus::dot(aDataMng.getTrialStep(), aDataMng.getPreviousGradient());
         ScalarType tBeta = tNumerator / tDenominator;
-        tBeta = std::max(tBeta, std::numeric_limits<ScalarType>::min());
+        //tBeta = std::max(tBeta, std::numeric_limits<ScalarType>::min());
 
         locus::update(static_cast<ScalarType>(-1),
                       aDataMng.getCurrentGradient(),
@@ -13159,11 +13159,227 @@ TEST(LocusTest, DaiLiao)
     tVector[1] = 3;
     tDataMng.setCurrentControl(tVectorIndex, tVector);
 
-    // ********* Allocate Conjugate Descent Direction *********
+    // ********* Allocate Dai-Liao Direction *********
     locus::DaiLiao<double> tDirection(tDataFactory);
     tDirection.computeScaledDescentDirection(tDataMng, tStageMng);
     tVector[0] = 0.05;
     tVector[1] = -3.9;
+    LocusTest::checkVectorData(tDataMng.getTrialStep(tVectorIndex), tVector);
+}
+
+TEST(LocusTest, PerryShanno)
+{
+    // ********* Allocate Data Factory *********
+    locus::DataFactory<double> tDataFactory;
+    const size_t tNumControls = 2;
+    tDataFactory.allocateControl(tNumControls);
+
+    // ********* Allocate Reduction Operations Interface *********
+    locus::StandardVectorReductionOperations<double> tReductionOperations;
+    tDataFactory.allocateControlReductionOperations(tReductionOperations);
+
+    // ********* Allocate Nonlinear Conjugate Gradient Stage Manager *********
+    locus::Rosenbrock<double> tObjective;
+    locus::NonlinearConjugateGradientStandardStageMng<double> tStageMng(tDataFactory, tObjective);
+
+    // ********* Allocate Nonlinear Conjugate Gradient Data Manager *********
+    locus::NonlinearConjugateGradientDataMng<double> tDataMng(tDataFactory);
+
+    const size_t tVectorIndex = 0;
+    locus::StandardVector<double> tVector(tNumControls);
+    tVector[0] = -11;
+    tVector[1] = 22;
+    tDataMng.setCurrentGradient(tVectorIndex, tVector);
+    tVector[0] = 1;
+    tVector[1] = 2;
+    tDataMng.setPreviousGradient(tVectorIndex, tVector);
+    tVector[0] = -1;
+    tVector[1] = -2;
+    tDataMng.setTrialStep(tVectorIndex, tVector);
+    tVector[0] = 1;
+    tVector[1] = 2;
+    tDataMng.setPreviousControl(tVectorIndex, tVector);
+    tVector[0] = 2;
+    tVector[1] = 3;
+    tDataMng.setCurrentControl(tVectorIndex, tVector);
+
+    // ********* Allocate Perry-Shanno Direction *********
+    locus::PerryShanno<double> tDirection(tDataFactory);
+    tDirection.computeScaledDescentDirection(tDataMng, tStageMng);
+    tVector[0] = -0.419267707083;
+    tVector[1] = -0.722989195678;
+    LocusTest::checkVectorData(tDataMng.getTrialStep(tVectorIndex), tVector);
+}
+
+TEST(LocusTest, LiuStorey)
+{
+    // ********* Allocate Data Factory *********
+    locus::DataFactory<double> tDataFactory;
+    const size_t tNumControls = 2;
+    tDataFactory.allocateControl(tNumControls);
+
+    // ********* Allocate Reduction Operations Interface *********
+    locus::StandardVectorReductionOperations<double> tReductionOperations;
+    tDataFactory.allocateControlReductionOperations(tReductionOperations);
+
+    // ********* Allocate Nonlinear Conjugate Gradient Stage Manager *********
+    locus::Rosenbrock<double> tObjective;
+    locus::NonlinearConjugateGradientStandardStageMng<double> tStageMng(tDataFactory, tObjective);
+
+    // ********* Allocate Nonlinear Conjugate Gradient Data Manager *********
+    locus::NonlinearConjugateGradientDataMng<double> tDataMng(tDataFactory);
+
+    const size_t tVectorIndex = 0;
+    locus::StandardVector<double> tVector(tNumControls);
+    tVector[0] = -11;
+    tVector[1] = 22;
+    tDataMng.setCurrentGradient(tVectorIndex, tVector);
+    tVector[0] = 1;
+    tVector[1] = 2;
+    tDataMng.setPreviousGradient(tVectorIndex, tVector);
+    tVector[0] = -1;
+    tVector[1] = -2;
+    tDataMng.setTrialStep(tVectorIndex, tVector);
+
+    // ********* Allocate Liu-Storey Direction *********
+    locus::LiuStorey<double> tDirection(tDataFactory);
+    tDirection.computeScaledDescentDirection(tDataMng, tStageMng);
+    tVector[0] = -103.4;
+    tVector[1] = -250.8;
+    LocusTest::checkVectorData(tDataMng.getTrialStep(tVectorIndex), tVector);
+}
+
+TEST(LocusTest, HagerZhang)
+{
+    // ********* Allocate Data Factory *********
+    locus::DataFactory<double> tDataFactory;
+    const size_t tNumControls = 2;
+    tDataFactory.allocateControl(tNumControls);
+
+    // ********* Allocate Reduction Operations Interface *********
+    locus::StandardVectorReductionOperations<double> tReductionOperations;
+    tDataFactory.allocateControlReductionOperations(tReductionOperations);
+
+    // ********* Allocate Nonlinear Conjugate Gradient Stage Manager *********
+    locus::Rosenbrock<double> tObjective;
+    locus::NonlinearConjugateGradientStandardStageMng<double> tStageMng(tDataFactory, tObjective);
+
+    // ********* Allocate Nonlinear Conjugate Gradient Data Manager *********
+    locus::NonlinearConjugateGradientDataMng<double> tDataMng(tDataFactory);
+
+    const size_t tVectorIndex = 0;
+    locus::StandardVector<double> tVector(tNumControls);
+    tVector[0] = -11;
+    tVector[1] = 22;
+    tDataMng.setCurrentGradient(tVectorIndex, tVector);
+    tVector[0] = 1;
+    tVector[1] = 2;
+    tDataMng.setPreviousGradient(tVectorIndex, tVector);
+    tVector[0] = -1;
+    tVector[1] = -2;
+    tDataMng.setTrialStep(tVectorIndex, tVector);
+
+    // ********* Allocate Hager-Zhang Direction *********
+    locus::HagerZhang<double> tDirection(tDataFactory);
+    // TEST 1: SCALE FACTOR SELECTED
+    tDirection.computeScaledDescentDirection(tDataMng, tStageMng);
+    tVector[0] = -14.367346938775;
+    tVector[1] = -72.734693877551;
+    LocusTest::checkVectorData(tDataMng.getTrialStep(tVectorIndex), tVector);
+    // TEST 2: SCALE FACTOR NOT SELECTED, LOWER BOUND USED INSTEAD
+    tVector.fill(1e-1);
+    tDataMng.setTrialStep(tVectorIndex, tVector);
+    tDirection.computeScaledDescentDirection(tDataMng, tStageMng);
+    tVector[0] = 11;
+    tVector[1] = -22;
+    LocusTest::checkVectorData(tDataMng.getTrialStep(tVectorIndex), tVector);
+}
+
+TEST(LocusTest, DaiYuan)
+{
+    // ********* Allocate Data Factory *********
+    locus::DataFactory<double> tDataFactory;
+    const size_t tNumControls = 2;
+    tDataFactory.allocateControl(tNumControls);
+
+    // ********* Allocate Reduction Operations Interface *********
+    locus::StandardVectorReductionOperations<double> tReductionOperations;
+    tDataFactory.allocateControlReductionOperations(tReductionOperations);
+
+    // ********* Allocate Nonlinear Conjugate Gradient Stage Manager *********
+    locus::Rosenbrock<double> tObjective;
+    locus::NonlinearConjugateGradientStandardStageMng<double> tStageMng(tDataFactory, tObjective);
+
+    // ********* Allocate Nonlinear Conjugate Gradient Data Manager *********
+    locus::NonlinearConjugateGradientDataMng<double> tDataMng(tDataFactory);
+
+    const size_t tVectorIndex = 0;
+    locus::StandardVector<double> tVector(tNumControls);
+    tVector[0] = -1;
+    tVector[1] = 2;
+    tDataMng.setCurrentGradient(tVectorIndex, tVector);
+    tVector[0] = 1;
+    tVector[1] = 2;
+    tDataMng.setPreviousGradient(tVectorIndex, tVector);
+    tVector[0] = -1;
+    tVector[1] = -2;
+    tDataMng.setTrialStep(tVectorIndex, tVector);
+
+    // ********* Allocate Hager-Zhang Direction *********
+    locus::DaiYuan<double> tDirection(tDataFactory);
+    tDirection.computeScaledDescentDirection(tDataMng, tStageMng);
+    tVector[0] = -1.5;
+    tVector[1] = -7;
+    LocusTest::checkVectorData(tDataMng.getTrialStep(tVectorIndex), tVector);
+}
+
+TEST(LocusTest, DaiYuanHybrid)
+{
+    // ********* Allocate Data Factory *********
+    locus::DataFactory<double> tDataFactory;
+    const size_t tNumControls = 2;
+    tDataFactory.allocateControl(tNumControls);
+
+    // ********* Allocate Reduction Operations Interface *********
+    locus::StandardVectorReductionOperations<double> tReductionOperations;
+    tDataFactory.allocateControlReductionOperations(tReductionOperations);
+
+    // ********* Allocate Nonlinear Conjugate Gradient Stage Manager *********
+    locus::Rosenbrock<double> tObjective;
+    locus::NonlinearConjugateGradientStandardStageMng<double> tStageMng(tDataFactory, tObjective);
+
+    // ********* Allocate Nonlinear Conjugate Gradient Data Manager *********
+    locus::NonlinearConjugateGradientDataMng<double> tDataMng(tDataFactory);
+
+    const size_t tVectorIndex = 0;
+    locus::StandardVector<double> tVector(tNumControls);
+    tVector[0] = -11;
+    tVector[1] = 22;
+    tDataMng.setCurrentGradient(tVectorIndex, tVector);
+    tVector[0] = 1;
+    tVector[1] = 2;
+    tDataMng.setPreviousGradient(tVectorIndex, tVector);
+    tVector[0] = -1;
+    tVector[1] = -2;
+    tDataMng.setTrialStep(tVectorIndex, tVector);
+
+    // ********* Allocate Hager-Zhang Direction *********
+    locus::DaiYuanHybrid<double> tDirection(tDataFactory);
+    // TEST 1: SCALED STEP
+    tDirection.computeScaledDescentDirection(tDataMng, tStageMng);
+    tVector[0] = 0.19642857142857;
+    tVector[1] = -43.607142857142;
+    LocusTest::checkVectorData(tDataMng.getTrialStep(tVectorIndex), tVector);
+    // TEST 2: UNSCALED STEP
+    tVector[0] = -12;
+    tVector[1] = -23;
+    tDataMng.setCurrentGradient(tVectorIndex, tVector);
+    tVector[0] = 11;
+    tVector[1] = 22;
+    tDataMng.setPreviousGradient(tVectorIndex, tVector);
+    tDirection.computeScaledDescentDirection(tDataMng, tStageMng);
+    tVector[0] = 12.067522825323;
+    tVector[1] = 8.009932778168;
     LocusTest::checkVectorData(tDataMng.getTrialStep(tVectorIndex), tVector);
 }
 
