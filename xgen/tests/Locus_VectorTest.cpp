@@ -13123,6 +13123,50 @@ TEST(LocusTest, ConjugateDescent)
     LocusTest::checkVectorData(tDataMng.getTrialStep(tVectorIndex), tVector);
 }
 
+TEST(LocusTest, DaiLiao)
+{
+    // ********* Allocate Data Factory *********
+    locus::DataFactory<double> tDataFactory;
+    const size_t tNumControls = 2;
+    tDataFactory.allocateControl(tNumControls);
+
+    // ********* Allocate Reduction Operations Interface *********
+    locus::StandardVectorReductionOperations<double> tReductionOperations;
+    tDataFactory.allocateControlReductionOperations(tReductionOperations);
+
+    // ********* Allocate Nonlinear Conjugate Gradient Stage Manager *********
+    locus::Rosenbrock<double> tObjective;
+    locus::NonlinearConjugateGradientStandardStageMng<double> tStageMng(tDataFactory, tObjective);
+
+    // ********* Allocate Nonlinear Conjugate Gradient Data Manager *********
+    locus::NonlinearConjugateGradientDataMng<double> tDataMng(tDataFactory);
+
+    const size_t tVectorIndex = 0;
+    locus::StandardVector<double> tVector(tNumControls);
+    tVector[0] = -1;
+    tVector[1] = 2;
+    tDataMng.setCurrentGradient(tVectorIndex, tVector);
+    tVector[0] = 1;
+    tVector[1] = 2;
+    tDataMng.setPreviousGradient(tVectorIndex, tVector);
+    tVector[0] = -1;
+    tVector[1] = -2;
+    tDataMng.setTrialStep(tVectorIndex, tVector);
+    tVector[0] = 1;
+    tVector[1] = 2;
+    tDataMng.setPreviousControl(tVectorIndex, tVector);
+    tVector[0] = 2;
+    tVector[1] = 3;
+    tDataMng.setCurrentControl(tVectorIndex, tVector);
+
+    // ********* Allocate Conjugate Descent Direction *********
+    locus::DaiLiao<double> tDirection(tDataFactory);
+    tDirection.computeScaledDescentDirection(tDataMng, tStageMng);
+    tVector[0] = 0.05;
+    tVector[1] = -3.9;
+    LocusTest::checkVectorData(tDataMng.getTrialStep(tVectorIndex), tVector);
+}
+
 /* ******************************************************************* */
 /* ************** METHOD OF MOVING ASYMPTOTES UNIT TESTS ************* */
 /* ******************************************************************* */
