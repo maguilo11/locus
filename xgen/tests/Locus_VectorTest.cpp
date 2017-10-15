@@ -6892,6 +6892,7 @@ public:
             mStepLowerBound(1e-3),
             mStepUpperBound(0.5),
             mInitialProjectedTrialStepDotCurrentGradient(0),
+            mStepValues(2, static_cast<ScalarType>(0)),
             mTrialControl(aDataFactory.control().create()),
             mProjectedTrialStep(aDataFactory.control().create())
     {
@@ -6903,6 +6904,10 @@ public:
     OrdinalType getNumIterationsDone() const
     {
         return (mNumIterationsDone);
+    }
+    ScalarType getStepValue() const
+    {
+        return (mStepValues[1]);
     }
     void setMaxNumIterations(const OrdinalType & aInput)
     {
@@ -6919,24 +6924,23 @@ public:
 
     void step(locus::StateManager<ScalarType, OrdinalType> & aStateMng)
     {
-        OrdinalType tSize = 2;
-        std::vector<ScalarType> tStepValues(tSize);
-        // objective_function_values[0] = old trial value
-        // objective_function_values[1] = new trial value
-        tSize = 3;
+        OrdinalType tSize = 3;
+        // tObjectiveFunction[0] = current trial value
+        // tObjectiveFunction[1] = old trial value
+        // tObjectiveFunction[2] = new trial value
         std::vector<ScalarType> tObjectiveFunction(tSize);
         tObjectiveFunction[0] = aStateMng.getCurrentObjectiveValue();
 
         ScalarType tNormTrialStep = locus::dot(aStateMng.getTrialStep(), aStateMng.getTrialStep());
         tNormTrialStep = std::sqrt(tNormTrialStep);
-        tStepValues[1] = std::min(static_cast<ScalarType>(1),
+        mStepValues[1] = std::min(static_cast<ScalarType>(1),
                                   static_cast<ScalarType>(100) / (static_cast<ScalarType>(1) + tNormTrialStep));
 
         locus::update(static_cast<ScalarType>(1),
                       aStateMng.getCurrentControl(),
                       static_cast<ScalarType>(0),
                       *mTrialControl);
-        locus::update(tStepValues[1], aStateMng.getTrialStep(), static_cast<ScalarType>(1), *mTrialControl);
+        locus::update(mStepValues[1], aStateMng.getTrialStep(), static_cast<ScalarType>(1), *mTrialControl);
         locus::bounds::project(aStateMng.getControlLowerBounds(), aStateMng.getControlUpperBounds(), *mTrialControl);
         locus::bounds::computeProjectedVector(*mTrialControl, aStateMng.getCurrentControl(), *mProjectedTrialStep);
 
@@ -6944,20 +6948,20 @@ public:
         mInitialProjectedTrialStepDotCurrentGradient = locus::dot(*mProjectedTrialStep, aStateMng.getCurrentGradient());
         const ScalarType tAlpha = 1e-4;
         ScalarType tTargetObjectiveValue = tObjectiveFunction[0]
-                - tAlpha * tStepValues[1] * mInitialProjectedTrialStepDotCurrentGradient;
+                - tAlpha * mStepValues[1] * mInitialProjectedTrialStepDotCurrentGradient;
 
         mNumIterationsDone = 0;
         while(tObjectiveFunction[2] > tTargetObjectiveValue)
         {
-            tStepValues[0] = tStepValues[1];
-            ScalarType tStep = this->interpolate(tObjectiveFunction, tStepValues);
-            tStepValues[1] = tStep;
+            mStepValues[0] = mStepValues[1];
+            ScalarType tStep = this->interpolate(tObjectiveFunction, mStepValues);
+            mStepValues[1] = tStep;
 
             locus::update(static_cast<ScalarType>(1),
                           aStateMng.getCurrentControl(),
                           static_cast<ScalarType>(0),
                           *mTrialControl);
-            locus::update(tStepValues[1], aStateMng.getTrialStep(), static_cast<ScalarType>(1), *mTrialControl);
+            locus::update(mStepValues[1], aStateMng.getTrialStep(), static_cast<ScalarType>(1), *mTrialControl);
             locus::bounds::project(aStateMng.getControlLowerBounds(),
                                    aStateMng.getControlUpperBounds(),
                                    *mTrialControl);
@@ -6972,7 +6976,7 @@ public:
                 return;
             }
             tTargetObjectiveValue = tObjectiveFunction[0]
-                    - (tAlpha * tStepValues[1] * mInitialProjectedTrialStepDotCurrentGradient);
+                    - (tAlpha * mStepValues[1] * mInitialProjectedTrialStepDotCurrentGradient);
         }
 
         aStateMng.setCurrentObjectiveValue(tObjectiveFunction[2]);
@@ -7007,6 +7011,10 @@ private:
     ScalarType mStepLowerBound;
     ScalarType mStepUpperBound;
     ScalarType mInitialProjectedTrialStepDotCurrentGradient;
+
+    // mStepValues[0] = old trial value
+    // mStepValues[1] = new trial value
+    std::vector<ScalarType> mStepValues;
 
     std::shared_ptr<locus::MultiVector<ScalarType, OrdinalType>> mTrialControl;
     std::shared_ptr<locus::MultiVector<ScalarType, OrdinalType>> mProjectedTrialStep;
@@ -13524,12 +13532,13 @@ TEST(LocusTest, QuadraticLineSearch)
 
     size_t tOrdinalValue = 6;
     EXPECT_EQ(tLineSearch.getNumIterationsDone(), tOrdinalValue);
+    tGoldScalarValue = 0.00243606117022465;
+    EXPECT_NEAR(tLineSearch.getStepValue(), tGoldScalarValue, tTolerance);
     tGoldScalarValue = 0.99472430176791571;
     EXPECT_NEAR(tStateMng.getCurrentObjectiveValue(), tGoldScalarValue, tTolerance);
     tControl(tVectorIndex, 0) = 1.9926401870390293;
     tControl(tVectorIndex, 1) = 3.9803049928370093;
     LocusTest::checkMultiVectorData(tStateMng.getCurrentControl(), tControl);
-
 }
 
 /* ******************************************************************* */
