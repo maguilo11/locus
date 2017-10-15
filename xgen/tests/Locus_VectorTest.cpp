@@ -6921,9 +6921,8 @@ public:
     {
         OrdinalType tSize = 2;
         std::vector<ScalarType> tStepValues(tSize);
-        // objective_function_values[0] = current value;
-        // objective_function_values[1] = old trial value;
-        // objective_function_values[2] = new trial value
+        // objective_function_values[0] = old trial value
+        // objective_function_values[1] = new trial value
         tSize = 3;
         std::vector<ScalarType> tObjectiveFunction(tSize);
         tObjectiveFunction[0] = aStateMng.getCurrentObjectiveValue();
@@ -13466,6 +13465,71 @@ TEST(LocusTest, NonlinearConjugateGradientStateMng)
     tGold(tVectorIndex, 0) = 3202;
     tGold(tVectorIndex, 1) = -600;
     LocusTest::checkMultiVectorData(tHessianTimesVector, tGold);
+}
+
+TEST(LocusTest, QuadraticLineSearch)
+{
+    // ********* Allocate Data Factory *********
+    locus::DataFactory<double> tDataFactory;
+    const size_t tNumControls = 2;
+    tDataFactory.allocateControl(tNumControls);
+
+    // ********* Allocate Reduction Operations Interface *********
+    locus::StandardVectorReductionOperations<double> tReductionOperations;
+    tDataFactory.allocateControlReductionOperations(tReductionOperations);
+
+    // ********* Allocate Nonlinear Conjugate Gradient Stage Manager *********
+    locus::Rosenbrock<double> tObjective;
+    std::shared_ptr<locus::NonlinearConjugateGradientStandardStageMng<double>> tStageMng =
+            std::make_shared<locus::NonlinearConjugateGradientStandardStageMng<double>>(tDataFactory, tObjective);
+
+    // ********* Allocate Nonlinear Conjugate Gradient Data Manager *********
+    std::shared_ptr<locus::NonlinearConjugateGradientDataMng<double>> tDataMng =
+            std::make_shared<locus::NonlinearConjugateGradientDataMng<double>>(tDataFactory);
+
+    // ********* Allocate Nonlinear Conjugate Gradient State Manager *********
+    locus::NonlinearConjugateGradientStateMng<double> tStateMng(tDataMng, tStageMng);
+
+    const size_t tNumVectors = 1;
+    locus::StandardMultiVector<double> tControl(tNumVectors, tNumControls);
+    double tScalarValue = std::numeric_limits<double>::max();
+    locus::fill(tScalarValue, tControl);
+    tStateMng.setControlUpperBounds(tControl);
+    tScalarValue = -std::numeric_limits<double>::max();
+    locus::fill(tScalarValue, tControl);
+    tStateMng.setControlLowerBounds(tControl);
+
+    const size_t tVectorIndex = 0;
+    tControl(tVectorIndex, 0) = 1.997506234413967;
+    tControl(tVectorIndex, 1) = 3.990024937655861;
+    tStateMng.setCurrentControl(tControl);
+    tScalarValue = tStateMng.evaluateObjective(tControl);
+    const double tTolerance = 1e-6;
+    double tGoldScalarValue = 0.99501869156216238;
+    EXPECT_NEAR(tScalarValue, tGoldScalarValue, tTolerance);
+    tStateMng.setCurrentObjectiveValue(tScalarValue);
+
+    locus::StandardMultiVector<double> tGradient(tNumVectors, tNumControls);
+    tStateMng.computeGradient(tControl, tGradient);
+    tStateMng.setCurrentGradient(tGradient);
+
+    locus::StandardMultiVector<double> tTrialStep(tNumVectors, tNumControls);
+    tTrialStep(tVectorIndex, 0) = -1.997506234413967;
+    tTrialStep(tVectorIndex, 1) = -3.990024937655861;
+    tStateMng.setTrialStep(tTrialStep);
+
+    // ********* Allocate Quadratic Line Search *********
+    locus::QuadraticLineSearch<double> tLineSearch(tDataFactory);
+    tLineSearch.step(tStateMng);
+
+    size_t tOrdinalValue = 6;
+    EXPECT_EQ(tLineSearch.getNumIterationsDone(), tOrdinalValue);
+    tGoldScalarValue = 0.99472430176791571;
+    EXPECT_NEAR(tStateMng.getCurrentObjectiveValue(), tGoldScalarValue, tTolerance);
+    tControl(tVectorIndex, 0) = 1.9926401870390293;
+    tControl(tVectorIndex, 1) = 3.9803049928370093;
+    LocusTest::checkMultiVectorData(tStateMng.getCurrentControl(), tControl);
+
 }
 
 /* ******************************************************************* */
