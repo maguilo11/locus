@@ -13383,6 +13383,91 @@ TEST(LocusTest, DaiYuanHybrid)
     LocusTest::checkVectorData(tDataMng.getTrialStep(tVectorIndex), tVector);
 }
 
+TEST(LocusTest, NonlinearConjugateGradientStateMng)
+{
+    // ********* Allocate Data Factory *********
+    locus::DataFactory<double> tDataFactory;
+    const size_t tNumControls = 2;
+    tDataFactory.allocateControl(tNumControls);
+
+    // ********* Allocate Reduction Operations Interface *********
+    locus::StandardVectorReductionOperations<double> tReductionOperations;
+    tDataFactory.allocateControlReductionOperations(tReductionOperations);
+
+    // ********* Allocate Nonlinear Conjugate Gradient Stage Manager *********
+    locus::Rosenbrock<double> tObjective;
+    std::shared_ptr<locus::NonlinearConjugateGradientStandardStageMng<double>> tStageMng =
+            std::make_shared<locus::NonlinearConjugateGradientStandardStageMng<double>>(tDataFactory, tObjective);
+
+    // ********* Allocate Nonlinear Conjugate Gradient Data Manager *********
+    std::shared_ptr<locus::NonlinearConjugateGradientDataMng<double>> tDataMng =
+            std::make_shared<locus::NonlinearConjugateGradientDataMng<double>>(tDataFactory);
+
+    // ********* Allocate Nonlinear Conjugate Gradient State Manager *********
+    locus::NonlinearConjugateGradientStateMng<double> tStateMng(tDataMng, tStageMng);
+
+    // ********* Test Set Trial Step Function *********
+    double tScalarValue = 0.1;
+    const size_t tNumVectors = 1;
+    locus::StandardMultiVector<double> tMultiVector(tNumVectors, tNumControls, tScalarValue);
+    tStateMng.setTrialStep(tMultiVector);
+    LocusTest::checkMultiVectorData(tStateMng.getTrialStep(), tMultiVector);
+
+    // ********* Test Set Current Control Function *********
+    tScalarValue = 2;
+    locus::StandardMultiVector<double> tControl(tNumVectors, tNumControls, tScalarValue);
+    tStateMng.setCurrentControl(tControl);
+    LocusTest::checkMultiVectorData(tStateMng.getCurrentControl(), tControl);
+
+    // ********* Test Set Current Control Function *********
+    tScalarValue = 3;
+    locus::StandardMultiVector<double> tGradient(tNumVectors, tNumControls, tScalarValue);
+    tStateMng.setCurrentGradient(tGradient);
+    LocusTest::checkMultiVectorData(tStateMng.getCurrentGradient(), tGradient);
+
+    // ********* Test Set Control Lower Bounds Function *********
+    tScalarValue = std::numeric_limits<double>::min();
+    locus::fill(tScalarValue, tControl);
+    tStateMng.setControlLowerBounds(tControl);
+    LocusTest::checkMultiVectorData(tStateMng.getControlLowerBounds(), tControl);
+
+    // ********* Test Set Control Upper Bounds Function *********
+    tScalarValue = std::numeric_limits<double>::max();
+    locus::fill(tScalarValue, tControl);
+    tStateMng.setControlUpperBounds(tControl);
+    LocusTest::checkMultiVectorData(tStateMng.getControlUpperBounds(), tControl);
+
+    // ********* Test Evaluate Objective Function *********
+    tScalarValue = 2;
+    locus::fill(tScalarValue, tControl);
+    tScalarValue = 401;
+    const double tTolerance = 1e-6;
+    EXPECT_NEAR(tStateMng.evaluateObjective(tControl), tScalarValue, tTolerance);
+
+    // ********* Test Set Current Objective Function *********
+    tStateMng.setCurrentObjectiveValue(tScalarValue);
+    EXPECT_NEAR(tStateMng.getCurrentObjectiveValue(), tScalarValue, tTolerance);
+
+    // ********* Test Compute Gradient Function *********
+    tScalarValue = 0;
+    locus::fill(tScalarValue, tGradient);
+    tStateMng.computeGradient(tControl, tGradient);
+    locus::StandardMultiVector<double> tGold(tNumVectors, tNumControls);
+    const size_t tVectorIndex = 0;
+    tGold(tVectorIndex, 0) = 1602;
+    tGold(tVectorIndex, 1) = -400;
+    LocusTest::checkMultiVectorData(tGradient, tGold);
+
+    // ********* Test Apply Vector to Hessian Function *********
+    tScalarValue = 1;
+    locus::StandardMultiVector<double> tVector(tNumVectors, tNumControls, tScalarValue);
+    locus::StandardMultiVector<double> tHessianTimesVector(tNumVectors, tNumControls);
+    tStateMng.applyVectorToHessian(tControl, tVector, tHessianTimesVector);
+    tGold(tVectorIndex, 0) = 3202;
+    tGold(tVectorIndex, 1) = -600;
+    LocusTest::checkMultiVectorData(tHessianTimesVector, tGold);
+}
+
 /* ******************************************************************* */
 /* ************** METHOD OF MOVING ASYMPTOTES UNIT TESTS ************* */
 /* ******************************************************************* */
