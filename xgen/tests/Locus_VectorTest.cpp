@@ -6860,6 +6860,15 @@ public:
         mDataMng->setControlUpperBounds(aInput);
     }
 
+    locus::NonlinearConjugateGradientDataMng<ScalarType, OrdinalType> & getDataMng()
+    {
+        return (mDataMng.operator*());
+    }
+    locus::NonlinearConjugateGradientStageMng<ScalarType, OrdinalType> & getStageMng()
+    {
+        return (mStageMng.operator*());
+    }
+
 private:
     std::shared_ptr<locus::NonlinearConjugateGradientDataMng<ScalarType, OrdinalType>> mDataMng;
     std::shared_ptr<locus::NonlinearConjugateGradientStageMng<ScalarType, OrdinalType>> mStageMng;
@@ -6879,22 +6888,186 @@ public:
 
     virtual OrdinalType getNumIterationsDone() const = 0;
     virtual void setMaxNumIterations(const OrdinalType & aInput) = 0;
+    virtual void setContractionFactor(const ScalarType & aInput) = 0;
     virtual void step(locus::StateManager<ScalarType, OrdinalType> & aStateMng) = 0;
+};
+
+template<typename ScalarType, typename OrdinalType = size_t>
+class CubicLineSearch : public locus::LineSearch<ScalarType, OrdinalType>
+{
+public:
+    explicit CubicLineSearch(const locus::DataFactory<ScalarType, OrdinalType> & aDataFactory) :
+            mMaxNumIterations(50),
+            mNumIterationsDone(0),
+            mContractionFactor(0.5),
+            mArmijoRuleConstant(1e-4),
+            mStagnationTolerance(1e-8),
+            mInitialGradientDotTrialStep(0),
+            mStepValues(3, static_cast<ScalarType>(0)),
+            mTrialControl(aDataFactory.control().create()),
+            mProjectedTrialStep(aDataFactory.control().create())
+    {
+    }
+    virtual ~CubicLineSearch()
+    {
+    }
+
+    OrdinalType getNumIterationsDone() const
+    {
+        return (mNumIterationsDone);
+    }
+    ScalarType getStepValue() const
+    {
+        return (mStepValues[2]);
+    }
+
+    void setMaxNumIterations(const OrdinalType & aInput)
+    {
+        mMaxNumIterations = aInput;
+    }
+    void setStagnationTolerance(const OrdinalType & aInput)
+    {
+        mStagnationTolerance = aInput;
+    }
+    void setContractionFactor(const ScalarType & aInput)
+    {
+        mContractionFactor = aInput;
+    }
+
+    void step(locus::StateManager<ScalarType, OrdinalType> & aStateMng)
+    {
+        ScalarType tInitialStep = 1;
+        locus::update(static_cast<ScalarType>(1),
+                      aStateMng.getCurrentControl(),
+                      static_cast<ScalarType>(0),
+                      mTrialControl.operator*());
+        locus::update(tInitialStep, aStateMng.getTrialStep(), static_cast<ScalarType>(1), *mTrialControl);
+
+        ScalarType tTrialObjectiveValue = aStateMng.evaluateObjective(mTrialControl.operator*());
+        // tTrialObjectiveValue[0] = current, tTrialObjectiveValue[1] = old, tTrialObjectiveValue[2] = trial
+        const OrdinalType tSize = 3;
+        std::vector<ScalarType> tObjectiveFunctionValues(tSize, 0.);
+        tObjectiveFunctionValues[0] = aStateMng.getCurrentObjectiveValue();
+        tObjectiveFunctionValues[2] = tTrialObjectiveValue;
+        // step[0] = old, step[1] = current, step[2] = new
+        mStepValues[2] = tInitialStep;
+        mStepValues[1] = mStepValues[2];
+
+        mNumIterationsDone = 1;
+        mInitialGradientDotTrialStep = locus::dot(aStateMng.getCurrentGradient(), aStateMng.getTrialStep());
+        while(mNumIterationsDone <= mMaxNumIterations)
+        {
+            ScalarType tSufficientDecreaseCondition = tObjectiveFunctionValues[0]
+                    + (mArmijoRuleConstant * mStepValues[1] * mInitialGradientDotTrialStep);
+            bool tSufficientDecreaseConditionSatisfied =
+                    tObjectiveFunctionValues[2] < tSufficientDecreaseCondition ? true : false;
+            bool tStepIsLessThanTolerance = mStepValues[2] < mStagnationTolerance ? true : false;
+            if(tSufficientDecreaseConditionSatisfied || tStepIsLessThanTolerance)
+            {
+                break;
+            }
+            mStepValues[0] = mStepValues[1];
+            mStepValues[1] = mStepValues[2];
+            if(mNumIterationsDone == static_cast<OrdinalType>(1))
+            {
+                // first backtrack: do a quadratic fit
+                ScalarType tDenominator = static_cast<ScalarType>(2)
+                        * (tObjectiveFunctionValues[2] - tObjectiveFunctionValues[0] - mInitialGradientDotTrialStep);
+                mStepValues[2] = -mInitialGradientDotTrialStep / tDenominator;
+            }
+            else
+            {
+                this->interpolate(tObjectiveFunctionValues);
+            }
+            this->checkCurrentStepValue();
+            locus::update(static_cast<ScalarType>(1),
+                          aStateMng.getCurrentControl(),
+                          static_cast<ScalarType>(0),
+                          mTrialControl.operator*());
+            locus::update(mStepValues[2], aStateMng.getTrialStep(), static_cast<ScalarType>(1), *mTrialControl);
+
+            tTrialObjectiveValue = aStateMng.evaluateObjective(mTrialControl.operator*());
+            tObjectiveFunctionValues[1] = tObjectiveFunctionValues[2];
+            tObjectiveFunctionValues[2] = tTrialObjectiveValue;
+            mNumIterationsDone++;
+        }
+
+        aStateMng.setCurrentObjectiveValue(tTrialObjectiveValue);
+        aStateMng.setCurrentControl(mTrialControl.operator*());
+    }
+
+private:
+    void checkCurrentStepValue()
+    {
+        const ScalarType tGamma = 0.1;
+        if(mStepValues[2] > mContractionFactor * mStepValues[1])
+        {
+            mStepValues[2] = mContractionFactor * mStepValues[1];
+        }
+        else if(mStepValues[2] < tGamma * mStepValues[1])
+        {
+            mStepValues[2] = tGamma * mStepValues[1];
+        }
+        if(std::isfinite(mStepValues[2]) == false)
+        {
+            mStepValues[2] = tGamma * mStepValues[1];
+        }
+    }
+    void interpolate(const std::vector<ScalarType> & aObjectiveFunctionValues)
+    {
+        ScalarType tPointOne = aObjectiveFunctionValues[2] - aObjectiveFunctionValues[0]
+                - mStepValues[1] * mInitialGradientDotTrialStep;
+        ScalarType tPointTwo = aObjectiveFunctionValues[1] - aObjectiveFunctionValues[0]
+                - mStepValues[0] * mInitialGradientDotTrialStep;
+        ScalarType tPointThree = static_cast<ScalarType>(1.) / (mStepValues[1] - mStepValues[0]);
+
+        // find cubic unique minimum
+        ScalarType tPointA = tPointThree
+                * ((tPointOne / (mStepValues[1] * mStepValues[1])) - (tPointTwo / (mStepValues[0] * mStepValues[0])));
+        ScalarType tPointB = tPointThree
+                * ((tPointTwo * mStepValues[1] / (mStepValues[0] * mStepValues[0]))
+                        - (tPointOne * mStepValues[0] / (mStepValues[1] * mStepValues[1])));
+        ScalarType tPointC = tPointB * tPointB - static_cast<ScalarType>(3) * tPointA * mInitialGradientDotTrialStep;
+
+        // cubic equation has unique minimum
+        ScalarType tValueOne = (-tPointB + std::sqrt(tPointC)) / (static_cast<ScalarType>(3) * tPointA);
+        // cubic equation is a quadratic
+        ScalarType tValueTwo = -mInitialGradientDotTrialStep / (static_cast<ScalarType>(2) * tPointB);
+        mStepValues[2] = tPointA != 0 ? mStepValues[2] = tValueOne : mStepValues[2] = tValueTwo;
+    }
+
+private:
+    OrdinalType mMaxNumIterations;
+    OrdinalType mNumIterationsDone;
+
+    ScalarType mContractionFactor;
+    ScalarType mArmijoRuleConstant;
+    ScalarType mStagnationTolerance;
+    ScalarType mInitialGradientDotTrialStep;
+
+    std::vector<ScalarType> mStepValues;
+
+    std::shared_ptr<locus::MultiVector<ScalarType, OrdinalType>> mTrialControl;
+    std::shared_ptr<locus::MultiVector<ScalarType, OrdinalType>> mProjectedTrialStep;
+
+private:
+    CubicLineSearch(const locus::CubicLineSearch<ScalarType, OrdinalType> & aRhs);
+    locus::CubicLineSearch<ScalarType, OrdinalType> & operator=(const locus::CubicLineSearch<ScalarType, OrdinalType> & aRhs);
 };
 
 template<typename ScalarType, typename OrdinalType = size_t>
 class QuadraticLineSearch : public locus::LineSearch<ScalarType, OrdinalType>
 {
 public:
-    QuadraticLineSearch(const locus::DataFactory<ScalarType, OrdinalType> & aDataFactory) :
-            mMaxNumIterations(10),
+    explicit QuadraticLineSearch(const locus::DataFactory<ScalarType, OrdinalType> & aDataFactory) :
+            mMaxNumIterations(50),
             mNumIterationsDone(0),
             mStepLowerBound(1e-3),
             mStepUpperBound(0.5),
-            mInitialProjectedTrialStepDotCurrentGradient(0),
+            mContractionFactor(0.5),
+            mInitialTrialStepDotCurrentGradient(0),
             mStepValues(2, static_cast<ScalarType>(0)),
-            mTrialControl(aDataFactory.control().create()),
-            mProjectedTrialStep(aDataFactory.control().create())
+            mTrialControl(aDataFactory.control().create())
     {
     }
     virtual ~QuadraticLineSearch()
@@ -6921,6 +7094,10 @@ public:
     {
         mStepUpperBound = aInput;
     }
+    void setContractionFactor(const ScalarType & aInput)
+    {
+        mContractionFactor = aInput;
+    }
 
     void step(locus::StateManager<ScalarType, OrdinalType> & aStateMng)
     {
@@ -6941,16 +7118,14 @@ public:
                       static_cast<ScalarType>(0),
                       *mTrialControl);
         locus::update(mStepValues[1], aStateMng.getTrialStep(), static_cast<ScalarType>(1), *mTrialControl);
-        locus::bounds::project(aStateMng.getControlLowerBounds(), aStateMng.getControlUpperBounds(), *mTrialControl);
-        locus::bounds::computeProjectedVector(*mTrialControl, aStateMng.getCurrentControl(), *mProjectedTrialStep);
 
         tObjectiveFunction[2] = aStateMng.evaluateObjective(*mTrialControl);
-        mInitialProjectedTrialStepDotCurrentGradient = locus::dot(*mProjectedTrialStep, aStateMng.getCurrentGradient());
+        mInitialTrialStepDotCurrentGradient = locus::dot(aStateMng.getTrialStep(), aStateMng.getCurrentGradient());
         const ScalarType tAlpha = 1e-4;
         ScalarType tTargetObjectiveValue = tObjectiveFunction[0]
-                - tAlpha * mStepValues[1] * mInitialProjectedTrialStepDotCurrentGradient;
+                - (tAlpha * mStepValues[1] * mInitialTrialStepDotCurrentGradient);
 
-        mNumIterationsDone = 0;
+        mNumIterationsDone = 1;
         while(tObjectiveFunction[2] > tTargetObjectiveValue)
         {
             mStepValues[0] = mStepValues[1];
@@ -6962,10 +7137,6 @@ public:
                           static_cast<ScalarType>(0),
                           *mTrialControl);
             locus::update(mStepValues[1], aStateMng.getTrialStep(), static_cast<ScalarType>(1), *mTrialControl);
-            locus::bounds::project(aStateMng.getControlLowerBounds(),
-                                   aStateMng.getControlUpperBounds(),
-                                   *mTrialControl);
-            locus::bounds::computeProjectedVector(*mTrialControl, aStateMng.getCurrentControl(), *mProjectedTrialStep);
 
             tObjectiveFunction[1] = tObjectiveFunction[2];
             tObjectiveFunction[2] = aStateMng.evaluateObjective(*mTrialControl);
@@ -6973,10 +7144,10 @@ public:
             mNumIterationsDone++;
             if(mNumIterationsDone >= mMaxNumIterations)
             {
-                return;
+                break;
             }
             tTargetObjectiveValue = tObjectiveFunction[0]
-                    - (tAlpha * mStepValues[1] * mInitialProjectedTrialStepDotCurrentGradient);
+                    - (tAlpha * mStepValues[1] * mInitialTrialStepDotCurrentGradient);
         }
 
         aStateMng.setCurrentObjectiveValue(tObjectiveFunction[2]);
@@ -6989,9 +7160,9 @@ private:
         ScalarType tStepLowerBound = aStepValues[1] * mStepLowerBound;
         ScalarType tStepUpperBound = aStepValues[1] * mStepUpperBound;
         ScalarType tDenominator = static_cast<ScalarType>(2) * aStepValues[1]
-                * (aObjectiveFunction[2] - aObjectiveFunction[0] - mInitialProjectedTrialStepDotCurrentGradient);
+                * (aObjectiveFunction[2] - aObjectiveFunction[0] - mInitialTrialStepDotCurrentGradient);
 
-        ScalarType tStep = -mInitialProjectedTrialStepDotCurrentGradient / tDenominator;
+        ScalarType tStep = -mInitialTrialStepDotCurrentGradient / tDenominator;
         if(tStep < tStepLowerBound)
         {
             tStep = tStepLowerBound;
@@ -7010,14 +7181,14 @@ private:
 
     ScalarType mStepLowerBound;
     ScalarType mStepUpperBound;
-    ScalarType mInitialProjectedTrialStepDotCurrentGradient;
+    ScalarType mContractionFactor;
+    ScalarType mInitialTrialStepDotCurrentGradient;
 
     // mStepValues[0] = old trial value
     // mStepValues[1] = new trial value
     std::vector<ScalarType> mStepValues;
 
     std::shared_ptr<locus::MultiVector<ScalarType, OrdinalType>> mTrialControl;
-    std::shared_ptr<locus::MultiVector<ScalarType, OrdinalType>> mProjectedTrialStep;
 
 private:
     QuadraticLineSearch(const locus::QuadraticLineSearch<ScalarType, OrdinalType> & aRhs);
@@ -7035,14 +7206,14 @@ public:
             mNumIterationsDone(0),
             mGradientTolerance(1e-8),
             mStationarityTolerance(1e-8),
-            mControlStagnationTolerance(1e-4),
-            mObjectiveStagnationTolerance(1e-6),
+            mControlStagnationTolerance(std::numeric_limits<ScalarType>::epsilon()),
+            mObjectiveStagnationTolerance(std::numeric_limits<ScalarType>::epsilon()),
             mStoppingCriteria(locus::algorithm::stop_t::NOT_CONVERGED),
             mControlWork(aDataFactory->control().create()),
             mTrialControl(aDataFactory->control().create()),
-            mStateMng(std::make_shared<locus::NonlinearConjugateGradientStateMng<ScalarType, OrdinalType>>(aDataMng, aStageMng)),
-            mLineSearch(std::make_shared<locus::QuadraticLineSearch<ScalarType, OrdinalType>>(aDataFactory.operator*())),
-            mStep(std::make_shared<locus::PolakRibiere<ScalarType, OrdinalType>>(aDataFactory.operator*()))
+            mLineSearch(std::make_shared<locus::CubicLineSearch<ScalarType, OrdinalType>>(aDataFactory.operator*())),
+            mStep(std::make_shared<locus::PolakRibiere<ScalarType, OrdinalType>>(aDataFactory.operator*())),
+            mStateMng(std::make_shared<locus::NonlinearConjugateGradientStateMng<ScalarType, OrdinalType>>(aDataMng, aStageMng))
     {
     }
     ~NonlinearConjugateGradient()
@@ -7079,14 +7250,67 @@ public:
         mObjectiveStagnationTolerance = aInput;
     }
 
+    void setContractionFactor(const ScalarType & aInput)
+    {
+        mLineSearch->setContractionFactor(aInput);
+    }
+    void setDanielsMethod(const locus::DataFactory<ScalarType, OrdinalType> & aDataFactory)
+    {
+        mStep = std::make_shared<locus::Daniels<ScalarType, OrdinalType>>(aDataFactory);
+    }
+    void setDaiLiaoMethod(const locus::DataFactory<ScalarType, OrdinalType> & aDataFactory)
+    {
+        mStep = std::make_shared<locus::DaiLiao<ScalarType, OrdinalType>>(aDataFactory);
+    }
+    void setDaiYuanMethod(const locus::DataFactory<ScalarType, OrdinalType> & aDataFactory)
+    {
+        mStep = std::make_shared<locus::DaiYuan<ScalarType, OrdinalType>>(aDataFactory);
+    }
+    void setLiuStoreyMethod(const locus::DataFactory<ScalarType, OrdinalType> & aDataFactory)
+    {
+        mStep = std::make_shared<locus::LiuStorey<ScalarType, OrdinalType>>(aDataFactory);
+    }
+    void setHagerZhangMethod(const locus::DataFactory<ScalarType, OrdinalType> & aDataFactory)
+    {
+        mStep = std::make_shared<locus::HagerZhang<ScalarType, OrdinalType>>(aDataFactory);
+    }
+    void setPerryShannoMethod(const locus::DataFactory<ScalarType, OrdinalType> & aDataFactory)
+    {
+        mStep = std::make_shared<locus::PerryShanno<ScalarType, OrdinalType>>(aDataFactory);
+    }
+    void setDaiYuanHybridMethod(const locus::DataFactory<ScalarType, OrdinalType> & aDataFactory)
+    {
+        mStep = std::make_shared<locus::DaiYuanHybrid<ScalarType, OrdinalType>>(aDataFactory);
+    }
+    void setFletcherReevesMethod(const locus::DataFactory<ScalarType, OrdinalType> & aDataFactory)
+    {
+        mStep = std::make_shared<locus::FletcherReeves<ScalarType, OrdinalType>>(aDataFactory);
+    }
+    void setHestenesStiefelMethod(const locus::DataFactory<ScalarType, OrdinalType> & aDataFactory)
+    {
+        mStep = std::make_shared<locus::HestenesStiefel<ScalarType, OrdinalType>>(aDataFactory);
+    }
+    void setConjugateDescentMethod(const locus::DataFactory<ScalarType, OrdinalType> & aDataFactory)
+    {
+        mStep = std::make_shared<locus::ConjugateDescent<ScalarType, OrdinalType>>(aDataFactory);
+    }
+
     void solve()
     {
         assert(mStep.get() != nullptr);
 
+        this->computeInitialState();
         // Perform first iteration (i.e. x_0)
-        this->computeFirstDescentDirection();
-        mDataMng->storePreviousState();
+        this->computeInitialDescentDirection();
+        this->computeProjectedStep();
+        locus::NonlinearConjugateGradientDataMng<ScalarType, OrdinalType> & tDataMng = mStateMng->getDataMng();
+        tDataMng.storePreviousState();
+
         mLineSearch->step(mStateMng.operator*());
+        locus::fill(static_cast<ScalarType>(0), mControlWork.operator*());
+        mStateMng->computeGradient(tDataMng.getCurrentControl(), mControlWork.operator*());
+        tDataMng.setCurrentGradient(mControlWork.operator*());
+        this->computeProjectedGradient();
 
         bool tStop = false;
         if(this->checkStoppingCriteria() == true)
@@ -7094,22 +7318,20 @@ public:
             tStop = true;
         }
 
-        mNumIterationsDone = 0;
+        mNumIterationsDone = 1;
+        locus::NonlinearConjugateGradientStageMng<ScalarType, OrdinalType> & tStageMng = mStateMng->getStageMng();
         while(tStop != true)
         {
-            const locus::MultiVector<ScalarType, OrdinalType> & tControl = mDataMng->getCurrentControl();
-            mStageMng->computeGradient(tControl, mControlWork.operator*());
-            mDataMng->setCurrentGradient(mControlWork.operator*());
 
-            mStep->computeScaledDescentDirection(mDataMng.operator*(), mStageMng.operator*());
-            const locus::MultiVector<ScalarType, OrdinalType> & tTrialStep = mDataMng->getTrialStep();
-            locus::update(static_cast<ScalarType>(1), tTrialStep, static_cast<ScalarType>(0), mControlWork.operator*());
-            const locus::MultiVector<ScalarType, OrdinalType> & tGradient = mDataMng->getCurrentGradient();
-            locus::update(static_cast<ScalarType>(-1), tGradient, static_cast<ScalarType>(1), mControlWork.operator*());
-            mDataMng->setTrialStep(mControlWork.operator*());
+            mStep->computeScaledDescentDirection(tDataMng, tStageMng);
+            this->computeProjectedStep();
+            tDataMng.storePreviousState();
 
-            mDataMng->storePreviousState();
             mLineSearch->step(mStateMng.operator*());
+            locus::fill(static_cast<ScalarType>(0), mControlWork.operator*());
+            mStateMng->computeGradient(tDataMng.getCurrentControl(), mControlWork.operator*());
+            tDataMng.setCurrentGradient(mControlWork.operator*());
+            this->computeProjectedGradient();
 
             mNumIterationsDone++;
             if(this->checkStoppingCriteria() == true)
@@ -7121,43 +7343,85 @@ public:
     }
 
 private:
-    void computeFirstDescentDirection()
+    void computeInitialState()
     {
-        const locus::MultiVector<ScalarType, OrdinalType> & tControl = mDataMng->getCurrentControl();
-        ScalarType tValue = mStageMng->evaluateObjective(tControl);
-        mDataMng->setCurrentObjectiveFunctionValue(tValue);
+        locus::NonlinearConjugateGradientDataMng<ScalarType, OrdinalType> & tDataMng = mStateMng->getDataMng();
+        const locus::MultiVector<ScalarType, OrdinalType> & tControl = tDataMng.getCurrentControl();
+        ScalarType tValue = mStateMng->evaluateObjective(tControl);
+        tDataMng.setCurrentObjectiveFunctionValue(tValue);
 
-        mStageMng->computeGradient(tControl, mControlWork.operator*());
-        mDataMng->setCurrentGradient(mControlWork.operator*());
-
-        locus::scale(static_cast<ScalarType>(-1), mControlWork.operator*());
-        mDataMng->setTrialStep(mControlWork.operator*());
+        mStateMng->computeGradient(tControl, mControlWork.operator*());
+        tDataMng.setCurrentGradient(mControlWork.operator*());
+        this->computeProjectedGradient();
+    }
+    void computeProjectedStep()
+    {
+        locus::NonlinearConjugateGradientDataMng<ScalarType, OrdinalType> & tDataMng = mStateMng->getDataMng();
+        const locus::MultiVector<ScalarType, OrdinalType> & tControl = tDataMng.getCurrentControl();
         locus::update(static_cast<ScalarType>(1), tControl, static_cast<ScalarType>(0), mTrialControl.operator*());
-        locus::update(static_cast<ScalarType>(1), mDataMng->getTrialStep(), static_cast<ScalarType>(1), mTrialControl.operator*());
+        locus::update(static_cast<ScalarType>(1),
+                      tDataMng.getTrialStep(),
+                      static_cast<ScalarType>(1),
+                      mTrialControl.operator*());
 
-        const locus::MultiVector<ScalarType, OrdinalType> & tLowerBounds = mDataMng->getControlLowerBounds();
-        const locus::MultiVector<ScalarType, OrdinalType> & tUpperBounds = mDataMng->getControlUpperBounds();
+        const locus::MultiVector<ScalarType, OrdinalType> & tLowerBounds = tDataMng.getControlLowerBounds();
+        const locus::MultiVector<ScalarType, OrdinalType> & tUpperBounds = tDataMng.getControlUpperBounds();
         locus::bounds::project(tLowerBounds, tUpperBounds, mTrialControl.operator*());
 
         // Compute projected trial step
-        locus::update(static_cast<ScalarType>(1), mTrialControl.operator*(), static_cast<ScalarType>(0), mControlWork.operator*());
+        locus::update(static_cast<ScalarType>(1),
+                      mTrialControl.operator*(),
+                      static_cast<ScalarType>(0),
+                      mControlWork.operator*());
         locus::update(static_cast<ScalarType>(-1), tControl, static_cast<ScalarType>(1), mControlWork.operator*());
-        mDataMng->setTrialStep(mControlWork.operator*());
+        tDataMng.setTrialStep(mControlWork.operator*());
+    }
+    void computeProjectedGradient()
+    {
+        locus::NonlinearConjugateGradientDataMng<ScalarType, OrdinalType> & tDataMng = mStateMng->getDataMng();
+        const locus::MultiVector<ScalarType, OrdinalType> & tControl = tDataMng.getCurrentControl();
+        locus::update(static_cast<ScalarType>(1), tControl, static_cast<ScalarType>(0), mTrialControl.operator*());
+        locus::update(static_cast<ScalarType>(1),
+                      tDataMng.getCurrentGradient(),
+                      static_cast<ScalarType>(1),
+                      mTrialControl.operator*());
+
+        const locus::MultiVector<ScalarType, OrdinalType> & tLowerBounds = tDataMng.getControlLowerBounds();
+        const locus::MultiVector<ScalarType, OrdinalType> & tUpperBounds = tDataMng.getControlUpperBounds();
+        locus::bounds::project(tLowerBounds, tUpperBounds, mTrialControl.operator*());
+
+        // Compute projected gradient
+        locus::update(static_cast<ScalarType>(1),
+                      mTrialControl.operator*(),
+                      static_cast<ScalarType>(0),
+                      mControlWork.operator*());
+        locus::update(static_cast<ScalarType>(-1), tControl, static_cast<ScalarType>(1), mControlWork.operator*());
+        tDataMng.setCurrentGradient(mControlWork.operator*());
+    }
+    void computeInitialDescentDirection()
+    {
+        locus::NonlinearConjugateGradientDataMng<ScalarType, OrdinalType> & tDataMng = mStateMng->getDataMng();
+        locus::update(static_cast<ScalarType>(-1),
+                      tDataMng.getCurrentGradient(),
+                      static_cast<ScalarType>(0),
+                      mControlWork.operator*());
+        tDataMng.setTrialStep(mControlWork.operator*());
     }
     bool checkStoppingCriteria()
     {
+        locus::NonlinearConjugateGradientDataMng<ScalarType, OrdinalType> & tDataMng = mStateMng->getDataMng();
+
+        tDataMng.computeNormGradient();
+        tDataMng.computeStagnationMeasure();
+        tDataMng.computeStationarityMeasure();
+        tDataMng.computeObjectiveStagnationMeasure();
+
+        const ScalarType tNormGradient = tDataMng.getNormGradient();
+        const ScalarType tStagnationMeasure = tDataMng.getStagnationMeasure();
+        const ScalarType tStationarityMeasure = tDataMng.getStationarityMeasure();
+        const ScalarType tObjectiveStagnationMeasure = tDataMng.getObjectiveStagnationMeasure();
+
         bool tStop = false;
-
-        mDataMng->computeNormGradient();
-        mDataMng->computeStagnationMeasure();
-        mDataMng->computeStationarityMeasure();
-        mDataMng->computeObjectiveStagnationMeasure();
-
-        const ScalarType tNormGradient = mDataMng->getNormGradient();
-        const ScalarType tStagnationMeasure = mDataMng->getStagnationMeasure();
-        const ScalarType tStationarityMeasure = mDataMng->getStationarityMeasure();
-        const ScalarType tObjectiveStagnationMeasure = mDataMng->getObjectiveStagnationMeasure();
-
         if(tStagnationMeasure < mControlStagnationTolerance)
         {
             tStop = true;
@@ -7173,7 +7437,7 @@ private:
             tStop = true;
             mStoppingCriteria = locus::algorithm::stop_t::NORM_STEP;
         }
-        else if(mNumIterationsDone < mMaxNumIterations)
+        else if(mNumIterationsDone >= mMaxNumIterations)
         {
             tStop = true;
             mStoppingCriteria = locus::algorithm::stop_t::MAX_NUMBER_ITERATIONS;
@@ -7201,11 +7465,9 @@ private:
     std::shared_ptr<locus::MultiVector<ScalarType, OrdinalType>> mControlWork;
     std::shared_ptr<locus::MultiVector<ScalarType, OrdinalType>> mTrialControl;
 
-    std::shared_ptr<locus::StateManager<ScalarType, OrdinalType>> mStateMng;
     std::shared_ptr<locus::LineSearch<ScalarType, OrdinalType>> mLineSearch;
     std::shared_ptr<locus::NonlinearConjugateGradientStep<ScalarType, OrdinalType>> mStep;
-    std::shared_ptr<locus::NonlinearConjugateGradientDataMng<ScalarType, OrdinalType>> mDataMng;
-    std::shared_ptr<locus::NonlinearConjugateGradientStageMng<ScalarType, OrdinalType>> mStageMng;
+    std::shared_ptr<locus::NonlinearConjugateGradientStateMng<ScalarType, OrdinalType>> mStateMng;
 
 private:
     NonlinearConjugateGradient(const locus::NonlinearConjugateGradient<ScalarType, OrdinalType> & aRhs);
@@ -13530,8 +13792,8 @@ TEST(LocusTest, QuadraticLineSearch)
     locus::QuadraticLineSearch<double> tLineSearch(tDataFactory);
     tLineSearch.step(tStateMng);
 
-    size_t tOrdinalValue = 6;
-    EXPECT_EQ(tLineSearch.getNumIterationsDone(), tOrdinalValue);
+    size_t tOrdinalValue = 7;
+    EXPECT_EQ(tOrdinalValue, tLineSearch.getNumIterationsDone());
     tGoldScalarValue = 0.00243606117022465;
     EXPECT_NEAR(tLineSearch.getStepValue(), tGoldScalarValue, tTolerance);
     tGoldScalarValue = 0.99472430176791571;
@@ -13539,6 +13801,457 @@ TEST(LocusTest, QuadraticLineSearch)
     tControl(tVectorIndex, 0) = 1.9926401870390293;
     tControl(tVectorIndex, 1) = 3.9803049928370093;
     LocusTest::checkMultiVectorData(tStateMng.getCurrentControl(), tControl);
+}
+
+TEST(LocusTest, NonlinearConjugateGradient_PolakRibiere_NoBounds)
+{
+    // ********* Allocate Data Factory *********
+    const size_t tNumControls = 2;
+    std::shared_ptr<locus::DataFactory<double>> tDataFactory = std::make_shared<locus::DataFactory<double>>();
+    tDataFactory->allocateControl(tNumControls);
+
+    // ********* Allocate Nonlinear Conjugate Gradient Stage Manager *********
+    locus::Rosenbrock<double> tObjective;
+    std::shared_ptr<locus::NonlinearConjugateGradientStandardStageMng<double>> tStageMng =
+            std::make_shared<locus::NonlinearConjugateGradientStandardStageMng<double>>(*tDataFactory, tObjective);
+
+    // ********* Allocate Nonlinear Conjugate Gradient Data Manager *********
+    std::shared_ptr<locus::NonlinearConjugateGradientDataMng<double>> tDataMng =
+            std::make_shared<locus::NonlinearConjugateGradientDataMng<double>>(*tDataFactory);
+    double tScalarValue = 2;
+    tDataMng->setInitialGuess(tScalarValue);
+
+    // ********* Allocate Nonlinear Conjugate Gradient Algorithm *********
+    locus::NonlinearConjugateGradient<double> tAlgorithm(tDataFactory, tDataMng, tStageMng);
+    tAlgorithm.solve();
+
+    size_t tOrdinalValue = 37;
+    EXPECT_EQ(tOrdinalValue, tAlgorithm.getNumIterationsDone());
+    EXPECT_EQ(locus::algorithm::stop_t::OBJECTIVE_STAGNATION, tAlgorithm.getStoppingCriteria());
+    tScalarValue = 1;
+    locus::StandardVector<double> tVector(tNumControls, tScalarValue);
+    const size_t tVectorIndex = 0;
+    const double tTolerance = 1e-4;
+    LocusTest::checkVectorData(tDataMng->getCurrentControl(tVectorIndex), tVector, tTolerance);
+}
+
+TEST(LocusTest, NonlinearConjugateGradient_PolakRibiere_Bounds)
+{
+    // ********* Allocate Data Factory *********
+    const size_t tNumControls = 2;
+    std::shared_ptr<locus::DataFactory<double>> tDataFactory = std::make_shared<locus::DataFactory<double>>();
+    tDataFactory->allocateControl(tNumControls);
+
+    // ********* Allocate Nonlinear Conjugate Gradient Stage Manager *********
+    locus::Rosenbrock<double> tObjective;
+    std::shared_ptr<locus::NonlinearConjugateGradientStandardStageMng<double>> tStageMng =
+            std::make_shared<locus::NonlinearConjugateGradientStandardStageMng<double>>(*tDataFactory, tObjective);
+
+    // ********* Allocate Nonlinear Conjugate Gradient Data Manager *********
+    std::shared_ptr<locus::NonlinearConjugateGradientDataMng<double>> tDataMng =
+            std::make_shared<locus::NonlinearConjugateGradientDataMng<double>>(*tDataFactory);
+    double tScalarValue = 2;
+    tDataMng->setInitialGuess(tScalarValue);
+    tScalarValue = -5;
+    tDataMng->setControlLowerBounds(tScalarValue);
+    tScalarValue = 5;
+    tDataMng->setControlUpperBounds(tScalarValue);
+
+    // ********* Allocate Nonlinear Conjugate Gradient Algorithm *********
+    locus::NonlinearConjugateGradient<double> tAlgorithm(tDataFactory, tDataMng, tStageMng);
+    tAlgorithm.solve();
+
+    size_t tOrdinalValue = 68;
+    EXPECT_EQ(tOrdinalValue, tAlgorithm.getNumIterationsDone());
+    EXPECT_EQ(locus::algorithm::stop_t::OBJECTIVE_STAGNATION, tAlgorithm.getStoppingCriteria());
+    tScalarValue = 1;
+    locus::StandardVector<double> tVector(tNumControls, tScalarValue);
+    const size_t tVectorIndex = 0;
+    const double tTolerance = 1e-4;
+    LocusTest::checkVectorData(tDataMng->getCurrentControl(tVectorIndex), tVector, tTolerance);
+}
+
+TEST(LocusTest, NonlinearConjugateGradient_FletcherReeves_NoBounds)
+{
+    // ********* Allocate Data Factory *********
+    const size_t tNumControls = 2;
+    std::shared_ptr<locus::DataFactory<double>> tDataFactory = std::make_shared<locus::DataFactory<double>>();
+    tDataFactory->allocateControl(tNumControls);
+
+    // ********* Allocate Nonlinear Conjugate Gradient Stage Manager *********
+    locus::Rosenbrock<double> tObjective;
+    std::shared_ptr<locus::NonlinearConjugateGradientStandardStageMng<double>> tStageMng =
+            std::make_shared<locus::NonlinearConjugateGradientStandardStageMng<double>>(*tDataFactory, tObjective);
+
+    // ********* Allocate Nonlinear Conjugate Gradient Data Manager *********
+    std::shared_ptr<locus::NonlinearConjugateGradientDataMng<double>> tDataMng =
+            std::make_shared<locus::NonlinearConjugateGradientDataMng<double>>(*tDataFactory);
+    double tScalarValue = 2;
+    tDataMng->setInitialGuess(tScalarValue);
+
+    // ********* Allocate Nonlinear Conjugate Gradient Algorithm *********
+    locus::NonlinearConjugateGradient<double> tAlgorithm(tDataFactory, tDataMng, tStageMng);
+    tAlgorithm.setFletcherReevesMethod(tDataFactory.operator*());
+    tAlgorithm.solve();
+
+    size_t tOrdinalValue = 89;
+    EXPECT_EQ(tOrdinalValue, tAlgorithm.getNumIterationsDone());
+    EXPECT_EQ(locus::algorithm::stop_t::OBJECTIVE_STAGNATION, tAlgorithm.getStoppingCriteria());
+    tScalarValue = 1;
+    locus::StandardVector<double> tVector(tNumControls, tScalarValue);
+    const size_t tVectorIndex = 0;
+    const double tTolerance = 1e-4;
+    LocusTest::checkVectorData(tDataMng->getCurrentControl(tVectorIndex), tVector, tTolerance);
+}
+
+TEST(LocusTest, NonlinearConjugateGradient_FletcherReeves_Bounds)
+{
+    // ********* Allocate Data Factory *********
+    const size_t tNumControls = 2;
+    std::shared_ptr<locus::DataFactory<double>> tDataFactory = std::make_shared<locus::DataFactory<double>>();
+    tDataFactory->allocateControl(tNumControls);
+
+    // ********* Allocate Nonlinear Conjugate Gradient Stage Manager *********
+    locus::Rosenbrock<double> tObjective;
+    std::shared_ptr<locus::NonlinearConjugateGradientStandardStageMng<double>> tStageMng =
+            std::make_shared<locus::NonlinearConjugateGradientStandardStageMng<double>>(*tDataFactory, tObjective);
+
+    // ********* Allocate Nonlinear Conjugate Gradient Data Manager *********
+    std::shared_ptr<locus::NonlinearConjugateGradientDataMng<double>> tDataMng =
+            std::make_shared<locus::NonlinearConjugateGradientDataMng<double>>(*tDataFactory);
+    double tScalarValue = 2;
+    tDataMng->setInitialGuess(tScalarValue);
+    tScalarValue = -5;
+    tDataMng->setControlLowerBounds(tScalarValue);
+    tScalarValue = 5;
+    tDataMng->setControlUpperBounds(tScalarValue);
+
+    // ********* Allocate Nonlinear Conjugate Gradient Algorithm *********
+    locus::NonlinearConjugateGradient<double> tAlgorithm(tDataFactory, tDataMng, tStageMng);
+    tAlgorithm.setFletcherReevesMethod(tDataFactory.operator*());
+    tAlgorithm.solve();
+
+    size_t tOrdinalValue = 75;
+    EXPECT_EQ(tOrdinalValue, tAlgorithm.getNumIterationsDone());
+    EXPECT_EQ(locus::algorithm::stop_t::OBJECTIVE_STAGNATION, tAlgorithm.getStoppingCriteria());
+    tScalarValue = 1;
+    locus::StandardVector<double> tVector(tNumControls, tScalarValue);
+    const size_t tVectorIndex = 0;
+    const double tTolerance = 1e-4;
+    LocusTest::checkVectorData(tDataMng->getCurrentControl(tVectorIndex), tVector, tTolerance);
+}
+
+TEST(LocusTest, NonlinearConjugateGradient_HestenesStiefel_NoBounds)
+{
+    // ********* Allocate Data Factory *********
+    const size_t tNumControls = 2;
+    std::shared_ptr<locus::DataFactory<double>> tDataFactory = std::make_shared<locus::DataFactory<double>>();
+    tDataFactory->allocateControl(tNumControls);
+
+    // ********* Allocate Nonlinear Conjugate Gradient Stage Manager *********
+    locus::Rosenbrock<double> tObjective;
+    std::shared_ptr<locus::NonlinearConjugateGradientStandardStageMng<double>> tStageMng =
+            std::make_shared<locus::NonlinearConjugateGradientStandardStageMng<double>>(*tDataFactory, tObjective);
+
+    // ********* Allocate Nonlinear Conjugate Gradient Data Manager *********
+    std::shared_ptr<locus::NonlinearConjugateGradientDataMng<double>> tDataMng =
+            std::make_shared<locus::NonlinearConjugateGradientDataMng<double>>(*tDataFactory);
+    double tScalarValue = 2;
+    tDataMng->setInitialGuess(tScalarValue);
+
+    // ********* Allocate Nonlinear Conjugate Gradient Algorithm *********
+    locus::NonlinearConjugateGradient<double> tAlgorithm(tDataFactory, tDataMng, tStageMng);
+    tAlgorithm.setHestenesStiefelMethod(tDataFactory.operator*());
+    tAlgorithm.solve();
+
+    size_t tOrdinalValue = 23;
+    EXPECT_EQ(tOrdinalValue, tAlgorithm.getNumIterationsDone());
+    EXPECT_EQ(locus::algorithm::stop_t::OBJECTIVE_STAGNATION, tAlgorithm.getStoppingCriteria());
+    tScalarValue = 1;
+    locus::StandardVector<double> tVector(tNumControls, tScalarValue);
+    const size_t tVectorIndex = 0;
+    const double tTolerance = 1e-4;
+    LocusTest::checkVectorData(tDataMng->getCurrentControl(tVectorIndex), tVector, tTolerance);
+}
+
+TEST(LocusTest, NonlinearConjugateGradient_HestenesStiefel_Bounds)
+{
+    // ********* Allocate Data Factory *********
+    const size_t tNumControls = 2;
+    std::shared_ptr<locus::DataFactory<double>> tDataFactory = std::make_shared<locus::DataFactory<double>>();
+    tDataFactory->allocateControl(tNumControls);
+
+    // ********* Allocate Nonlinear Conjugate Gradient Stage Manager *********
+    locus::Rosenbrock<double> tObjective;
+    std::shared_ptr<locus::NonlinearConjugateGradientStandardStageMng<double>> tStageMng =
+            std::make_shared<locus::NonlinearConjugateGradientStandardStageMng<double>>(*tDataFactory, tObjective);
+
+    // ********* Allocate Nonlinear Conjugate Gradient Data Manager *********
+    std::shared_ptr<locus::NonlinearConjugateGradientDataMng<double>> tDataMng =
+            std::make_shared<locus::NonlinearConjugateGradientDataMng<double>>(*tDataFactory);
+    double tScalarValue = 2;
+    tDataMng->setInitialGuess(tScalarValue);
+    tScalarValue = -5;
+    tDataMng->setControlLowerBounds(tScalarValue);
+    tScalarValue = 5;
+    tDataMng->setControlUpperBounds(tScalarValue);
+
+    // ********* Allocate Nonlinear Conjugate Gradient Algorithm *********
+    locus::NonlinearConjugateGradient<double> tAlgorithm(tDataFactory, tDataMng, tStageMng);
+    tAlgorithm.setHestenesStiefelMethod(tDataFactory.operator*());
+    tAlgorithm.solve();
+
+    size_t tOrdinalValue = 35;
+    EXPECT_EQ(tOrdinalValue, tAlgorithm.getNumIterationsDone());
+    EXPECT_EQ(locus::algorithm::stop_t::OBJECTIVE_STAGNATION, tAlgorithm.getStoppingCriteria());
+    tScalarValue = 1;
+    locus::StandardVector<double> tVector(tNumControls, tScalarValue);
+    const size_t tVectorIndex = 0;
+    const double tTolerance = 1e-4;
+    LocusTest::checkVectorData(tDataMng->getCurrentControl(tVectorIndex), tVector, tTolerance);
+}
+
+TEST(LocusTest, NonlinearConjugateGradient_HagerZhang_NoBounds)
+{
+    // ********* Allocate Data Factory *********
+    const size_t tNumControls = 2;
+    std::shared_ptr<locus::DataFactory<double>> tDataFactory = std::make_shared<locus::DataFactory<double>>();
+    tDataFactory->allocateControl(tNumControls);
+
+    // ********* Allocate Nonlinear Conjugate Gradient Stage Manager *********
+    locus::Rosenbrock<double> tObjective;
+    std::shared_ptr<locus::NonlinearConjugateGradientStandardStageMng<double>> tStageMng =
+            std::make_shared<locus::NonlinearConjugateGradientStandardStageMng<double>>(*tDataFactory, tObjective);
+
+    // ********* Allocate Nonlinear Conjugate Gradient Data Manager *********
+    std::shared_ptr<locus::NonlinearConjugateGradientDataMng<double>> tDataMng =
+            std::make_shared<locus::NonlinearConjugateGradientDataMng<double>>(*tDataFactory);
+    double tScalarValue = 2;
+    tDataMng->setInitialGuess(tScalarValue);
+
+    // ********* Allocate Nonlinear Conjugate Gradient Algorithm *********
+    locus::NonlinearConjugateGradient<double> tAlgorithm(tDataFactory, tDataMng, tStageMng);
+    tAlgorithm.setHagerZhangMethod(tDataFactory.operator*());
+    tAlgorithm.solve();
+
+    size_t tOrdinalValue = 56;
+    EXPECT_EQ(tOrdinalValue, tAlgorithm.getNumIterationsDone());
+    EXPECT_EQ(locus::algorithm::stop_t::NORM_GRADIENT, tAlgorithm.getStoppingCriteria());
+    tScalarValue = 1;
+    locus::StandardVector<double> tVector(tNumControls, tScalarValue);
+    const size_t tVectorIndex = 0;
+    const double tTolerance = 1e-4;
+    LocusTest::checkVectorData(tDataMng->getCurrentControl(tVectorIndex), tVector, tTolerance);
+}
+
+TEST(LocusTest, NonlinearConjugateGradient_HagerZhang_Bounds)
+{
+    // ********* Allocate Data Factory *********
+    const size_t tNumControls = 2;
+    std::shared_ptr<locus::DataFactory<double>> tDataFactory = std::make_shared<locus::DataFactory<double>>();
+    tDataFactory->allocateControl(tNumControls);
+
+    // ********* Allocate Nonlinear Conjugate Gradient Stage Manager *********
+    locus::Rosenbrock<double> tObjective;
+    std::shared_ptr<locus::NonlinearConjugateGradientStandardStageMng<double>> tStageMng =
+            std::make_shared<locus::NonlinearConjugateGradientStandardStageMng<double>>(*tDataFactory, tObjective);
+
+    // ********* Allocate Nonlinear Conjugate Gradient Data Manager *********
+    std::shared_ptr<locus::NonlinearConjugateGradientDataMng<double>> tDataMng =
+            std::make_shared<locus::NonlinearConjugateGradientDataMng<double>>(*tDataFactory);
+    double tScalarValue = 2;
+    tDataMng->setInitialGuess(tScalarValue);
+    tScalarValue = -5;
+    tDataMng->setControlLowerBounds(tScalarValue);
+    tScalarValue = 5;
+    tDataMng->setControlUpperBounds(tScalarValue);
+
+    // ********* Allocate Nonlinear Conjugate Gradient Algorithm *********
+    locus::NonlinearConjugateGradient<double> tAlgorithm(tDataFactory, tDataMng, tStageMng);
+    tAlgorithm.setHagerZhangMethod(tDataFactory.operator*());
+    tAlgorithm.solve();
+
+    size_t tOrdinalValue = 53;
+    EXPECT_EQ(tOrdinalValue, tAlgorithm.getNumIterationsDone());
+    EXPECT_EQ(locus::algorithm::stop_t::NORM_GRADIENT, tAlgorithm.getStoppingCriteria());
+    tScalarValue = 1;
+    locus::StandardVector<double> tVector(tNumControls, tScalarValue);
+    const size_t tVectorIndex = 0;
+    const double tTolerance = 1e-4;
+    LocusTest::checkVectorData(tDataMng->getCurrentControl(tVectorIndex), tVector, tTolerance);
+}
+
+TEST(LocusTest, NonlinearConjugateGradient_DaiYuanHybrid_NoBounds)
+{
+    // ********* Allocate Data Factory *********
+    const size_t tNumControls = 2;
+    std::shared_ptr<locus::DataFactory<double>> tDataFactory = std::make_shared<locus::DataFactory<double>>();
+    tDataFactory->allocateControl(tNumControls);
+
+    // ********* Allocate Nonlinear Conjugate Gradient Stage Manager *********
+    locus::Rosenbrock<double> tObjective;
+    std::shared_ptr<locus::NonlinearConjugateGradientStandardStageMng<double>> tStageMng =
+            std::make_shared<locus::NonlinearConjugateGradientStandardStageMng<double>>(*tDataFactory, tObjective);
+
+    // ********* Allocate Nonlinear Conjugate Gradient Data Manager *********
+    std::shared_ptr<locus::NonlinearConjugateGradientDataMng<double>> tDataMng =
+            std::make_shared<locus::NonlinearConjugateGradientDataMng<double>>(*tDataFactory);
+    double tScalarValue = 2;
+    tDataMng->setInitialGuess(tScalarValue);
+
+    // ********* Allocate Nonlinear Conjugate Gradient Algorithm *********
+    locus::NonlinearConjugateGradient<double> tAlgorithm(tDataFactory, tDataMng, tStageMng);
+    tAlgorithm.setDaiYuanHybridMethod(tDataFactory.operator*());
+    tAlgorithm.solve();
+
+    size_t tOrdinalValue = 24;
+    EXPECT_EQ(tOrdinalValue, tAlgorithm.getNumIterationsDone());
+    EXPECT_EQ(locus::algorithm::stop_t::NORM_GRADIENT, tAlgorithm.getStoppingCriteria());
+    tScalarValue = 1;
+    locus::StandardVector<double> tVector(tNumControls, tScalarValue);
+    const size_t tVectorIndex = 0;
+    const double tTolerance = 1e-4;
+    LocusTest::checkVectorData(tDataMng->getCurrentControl(tVectorIndex), tVector, tTolerance);
+}
+
+TEST(LocusTest, NonlinearConjugateGradient_DaiYuanHybrid_Bounds)
+{
+    // ********* Allocate Data Factory *********
+    const size_t tNumControls = 2;
+    std::shared_ptr<locus::DataFactory<double>> tDataFactory = std::make_shared<locus::DataFactory<double>>();
+    tDataFactory->allocateControl(tNumControls);
+
+    // ********* Allocate Nonlinear Conjugate Gradient Stage Manager *********
+    locus::Rosenbrock<double> tObjective;
+    std::shared_ptr<locus::NonlinearConjugateGradientStandardStageMng<double>> tStageMng =
+            std::make_shared<locus::NonlinearConjugateGradientStandardStageMng<double>>(*tDataFactory, tObjective);
+
+    // ********* Allocate Nonlinear Conjugate Gradient Data Manager *********
+    std::shared_ptr<locus::NonlinearConjugateGradientDataMng<double>> tDataMng =
+            std::make_shared<locus::NonlinearConjugateGradientDataMng<double>>(*tDataFactory);
+    double tScalarValue = 2;
+    tDataMng->setInitialGuess(tScalarValue);
+    tScalarValue = -5;
+    tDataMng->setControlLowerBounds(tScalarValue);
+    tScalarValue = 5;
+    tDataMng->setControlUpperBounds(tScalarValue);
+
+    // ********* Allocate Nonlinear Conjugate Gradient Algorithm *********
+    locus::NonlinearConjugateGradient<double> tAlgorithm(tDataFactory, tDataMng, tStageMng);
+    tAlgorithm.setDaiYuanHybridMethod(tDataFactory.operator*());
+    tAlgorithm.solve();
+
+    size_t tOrdinalValue = 47;
+    EXPECT_EQ(tOrdinalValue, tAlgorithm.getNumIterationsDone());
+    EXPECT_EQ(locus::algorithm::stop_t::NORM_GRADIENT, tAlgorithm.getStoppingCriteria());
+    tScalarValue = 1;
+    locus::StandardVector<double> tVector(tNumControls, tScalarValue);
+    const size_t tVectorIndex = 0;
+    const double tTolerance = 1e-4;
+    LocusTest::checkVectorData(tDataMng->getCurrentControl(tVectorIndex), tVector, tTolerance);
+}
+
+TEST(LocusTest, NonlinearConjugateGradient_DaiYuan_NoBounds)
+{
+    // ********* Allocate Data Factory *********
+    const size_t tNumControls = 2;
+    std::shared_ptr<locus::DataFactory<double>> tDataFactory = std::make_shared<locus::DataFactory<double>>();
+    tDataFactory->allocateControl(tNumControls);
+
+    // ********* Allocate Nonlinear Conjugate Gradient Stage Manager *********
+    locus::Rosenbrock<double> tObjective;
+    std::shared_ptr<locus::NonlinearConjugateGradientStandardStageMng<double>> tStageMng =
+            std::make_shared<locus::NonlinearConjugateGradientStandardStageMng<double>>(*tDataFactory, tObjective);
+
+    // ********* Allocate Nonlinear Conjugate Gradient Data Manager *********
+    std::shared_ptr<locus::NonlinearConjugateGradientDataMng<double>> tDataMng =
+            std::make_shared<locus::NonlinearConjugateGradientDataMng<double>>(*tDataFactory);
+    double tScalarValue = 2;
+    tDataMng->setInitialGuess(tScalarValue);
+
+    // ********* Allocate Nonlinear Conjugate Gradient Algorithm *********
+    locus::NonlinearConjugateGradient<double> tAlgorithm(tDataFactory, tDataMng, tStageMng);
+    tAlgorithm.setDaiYuanMethod(tDataFactory.operator*());
+    tAlgorithm.solve();
+
+    size_t tOrdinalValue = 28;
+    EXPECT_EQ(tOrdinalValue, tAlgorithm.getNumIterationsDone());
+    EXPECT_EQ(locus::algorithm::stop_t::OBJECTIVE_STAGNATION, tAlgorithm.getStoppingCriteria());
+    tScalarValue = 1;
+    locus::StandardVector<double> tVector(tNumControls, tScalarValue);
+    const size_t tVectorIndex = 0;
+    const double tTolerance = 1e-4;
+    LocusTest::checkVectorData(tDataMng->getCurrentControl(tVectorIndex), tVector, tTolerance);
+}
+
+TEST(LocusTest, NonlinearConjugateGradient_DaiYuan_Bounds)
+{
+    // ********* Allocate Data Factory *********
+    const size_t tNumControls = 2;
+    std::shared_ptr<locus::DataFactory<double>> tDataFactory = std::make_shared<locus::DataFactory<double>>();
+    tDataFactory->allocateControl(tNumControls);
+
+    // ********* Allocate Nonlinear Conjugate Gradient Stage Manager *********
+    locus::Rosenbrock<double> tObjective;
+    std::shared_ptr<locus::NonlinearConjugateGradientStandardStageMng<double>> tStageMng =
+            std::make_shared<locus::NonlinearConjugateGradientStandardStageMng<double>>(*tDataFactory, tObjective);
+
+    // ********* Allocate Nonlinear Conjugate Gradient Data Manager *********
+    std::shared_ptr<locus::NonlinearConjugateGradientDataMng<double>> tDataMng =
+            std::make_shared<locus::NonlinearConjugateGradientDataMng<double>>(*tDataFactory);
+    double tScalarValue = 1.2; // NOTE: DIFFERENT INITIAL GUESS, DIVERGES IF INITIAL GUESS = 2
+    tDataMng->setInitialGuess(tScalarValue);
+    tScalarValue = -5;
+    tDataMng->setControlLowerBounds(tScalarValue);
+    tScalarValue = 5;
+    tDataMng->setControlUpperBounds(tScalarValue);
+
+    // ********* Allocate Nonlinear Conjugate Gradient Algorithm *********
+    locus::NonlinearConjugateGradient<double> tAlgorithm(tDataFactory, tDataMng, tStageMng);
+    tAlgorithm.setDaiYuanMethod(tDataFactory.operator*());
+    tAlgorithm.solve();
+
+    size_t tOrdinalValue = 37;
+    EXPECT_EQ(tOrdinalValue, tAlgorithm.getNumIterationsDone());
+    EXPECT_EQ(locus::algorithm::stop_t::OBJECTIVE_STAGNATION, tAlgorithm.getStoppingCriteria());
+    tScalarValue = 1;
+    locus::StandardVector<double> tVector(tNumControls, tScalarValue);
+    const size_t tVectorIndex = 0;
+    const double tTolerance = 1e-4;
+    LocusTest::checkVectorData(tDataMng->getCurrentControl(tVectorIndex), tVector, tTolerance);
+}
+
+TEST(LocusTest, NonlinearConjugateGradient_PerryShanno_NoBounds)
+{
+    // ********* Allocate Data Factory *********
+    const size_t tNumControls = 2;
+    std::shared_ptr<locus::DataFactory<double>> tDataFactory = std::make_shared<locus::DataFactory<double>>();
+    tDataFactory->allocateControl(tNumControls);
+
+    // ********* Allocate Nonlinear Conjugate Gradient Stage Manager *********
+    locus::Rosenbrock<double> tObjective;
+    std::shared_ptr<locus::NonlinearConjugateGradientStandardStageMng<double>> tStageMng =
+            std::make_shared<locus::NonlinearConjugateGradientStandardStageMng<double>>(*tDataFactory, tObjective);
+
+    // ********* Allocate Nonlinear Conjugate Gradient Data Manager *********
+    std::shared_ptr<locus::NonlinearConjugateGradientDataMng<double>> tDataMng =
+            std::make_shared<locus::NonlinearConjugateGradientDataMng<double>>(*tDataFactory);
+    double tScalarValue = 2;
+    tDataMng->setInitialGuess(tScalarValue);
+
+    // ********* Allocate Nonlinear Conjugate Gradient Algorithm *********
+    locus::NonlinearConjugateGradient<double> tAlgorithm(tDataFactory, tDataMng, tStageMng);
+    tAlgorithm.setPerryShannoMethod(tDataFactory.operator*());
+    tAlgorithm.solve();
+
+    size_t tOrdinalValue = 33;
+    EXPECT_EQ(tOrdinalValue, tAlgorithm.getNumIterationsDone());
+    EXPECT_EQ(locus::algorithm::stop_t::NORM_STEP, tAlgorithm.getStoppingCriteria());
+    tScalarValue = 1;
+    locus::StandardVector<double> tVector(tNumControls, tScalarValue);
+    const size_t tVectorIndex = 0;
+    const double tTolerance = 1e-4;
+    LocusTest::checkVectorData(tDataMng->getCurrentControl(tVectorIndex), tVector, tTolerance);
 }
 
 /* ******************************************************************* */
@@ -13553,11 +14266,6 @@ TEST(LocusTest, DualProblemStageMng)
     const size_t tNumControls = 2;
     tDataFactory.allocateDual(tNumDuals);
     tDataFactory.allocateControl(tNumControls);
-
-    // ********* Allocate Reduction Operations Interface *********
-    locus::StandardVectorReductionOperations<double> tReductionOperations;
-    tDataFactory.allocateDualReductionOperations(tReductionOperations);
-    tDataFactory.allocateControlReductionOperations(tReductionOperations);
 
     std::shared_ptr<locus::MethodMovingAsymptotes<double>> tSubProblem =
             std::make_shared<locus::MethodMovingAsymptotes<double>>(tDataFactory);
