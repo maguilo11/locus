@@ -22,499 +22,14 @@
 #include "Locus_Vector.hpp"
 #include "Locus_Criterion.hpp"
 #include "Locus_MultiVector.hpp"
+#include "Locus_StandardVector.hpp"
 #include "Locus_ReductionOperations.hpp"
+#include "Locus_StandardMultiVector.hpp"
+#include "Locus_DistributedReductionOperations.hpp"
+#include "Locus_StandardVectorReductionOperations.hpp"
 
 namespace locus
 {
-
-/**********************************************************************************************************/
-/**************************************** LINEAR ALGEBRA OPERATIONS ***************************************/
-/**********************************************************************************************************/
-
-template<typename ScalarType, typename OrdinalType = size_t>
-class StandardVector : public locus::Vector<ScalarType, OrdinalType>
-{
-public:
-    explicit StandardVector(const std::vector<ScalarType> & aInput) :
-            mData(aInput)
-    {
-    }
-    StandardVector(const OrdinalType & aNumElements, ScalarType aValue = 0) :
-            mData(std::vector<ScalarType>(aNumElements, aValue))
-    {
-    }
-    virtual ~StandardVector()
-    {
-    }
-
-    //! Scales a Vector by a ScalarType constant.
-    void scale(const ScalarType & aInput)
-    {
-        OrdinalType tLength = this->size();
-        for(OrdinalType tIndex = 0; tIndex < tLength; tIndex++)
-        {
-            mData[tIndex] = aInput * mData[tIndex];
-        }
-    }
-    //! Element-wise multiplication of two vectors.
-    void entryWiseProduct(const locus::Vector<ScalarType, OrdinalType> & aInput)
-    {
-        OrdinalType tMyDataSize = mData.size();
-        assert(aInput.size() == tMyDataSize);
-
-        for(OrdinalType tIndex = 0; tIndex < tMyDataSize; tIndex++)
-        {
-            mData[tIndex] = aInput[tIndex] * mData[tIndex];
-        }
-    }
-    //! Update vector values with scaled values of A, this = beta*this + alpha*A.
-    void update(const ScalarType & aAlpha,
-                const locus::Vector<ScalarType, OrdinalType> & aInputVector,
-                const ScalarType & aBeta)
-    {
-        OrdinalType tMyDataSize = mData.size();
-        assert(aInputVector.size() == tMyDataSize);
-        for(OrdinalType tIndex = 0; tIndex < tMyDataSize; tIndex++)
-        {
-            mData[tIndex] = aBeta * mData[tIndex] + aAlpha * aInputVector[tIndex];
-        }
-    }
-    //! Computes the absolute value of each element in the container.
-    void modulus()
-    {
-        OrdinalType tLength = this->size();
-        for(OrdinalType tIndex = 0; tIndex < tLength; tIndex++)
-        {
-            mData[tIndex] = std::abs(mData[tIndex]);
-        }
-    }
-    //! Returns the inner product of two vectors.
-    ScalarType dot(const locus::Vector<ScalarType, OrdinalType> & aInputVector) const
-    {
-        assert(aInputVector.size() == static_cast<OrdinalType>(mData.size()));
-
-        const locus::StandardVector<ScalarType, OrdinalType>& tInputVector =
-                dynamic_cast<const locus::StandardVector<ScalarType, OrdinalType>&>(aInputVector);
-
-        ScalarType tBaseValue = 0;
-        ScalarType tOutput = std::inner_product(mData.begin(), mData.end(), tInputVector.mData.begin(), tBaseValue);
-        return (tOutput);
-    }
-    //! Assigns new contents to the Vector, replacing its current contents, and not modifying its size.
-    void fill(const ScalarType & aValue)
-    {
-        std::fill(mData.begin(), mData.end(), aValue);
-    }
-    //! Returns the number of local elements in the Vector.
-    OrdinalType size() const
-    {
-        OrdinalType tOutput = mData.size();
-        return (tOutput);
-    }
-    //! Creates object of type locus::Vector
-    std::shared_ptr<locus::Vector<ScalarType, OrdinalType>> create() const
-    {
-        const ScalarType tBaseValue = 0;
-        const OrdinalType tNumElements = this->size();
-        std::shared_ptr<locus::Vector<ScalarType, OrdinalType>> tOutput =
-                std::make_shared<locus::StandardVector<ScalarType, OrdinalType>>(tNumElements, tBaseValue);
-        return (tOutput);
-    }
-    //! Operator overloads the square bracket operator
-    ScalarType & operator [](const OrdinalType & aIndex)
-    {
-        assert(aIndex < this->size());
-        assert(aIndex >= static_cast<OrdinalType>(0));
-
-        return (mData[aIndex]);
-    }
-    //! Operator overloads the square bracket operator
-    const ScalarType & operator [](const OrdinalType & aIndex) const
-    {
-        assert(aIndex < this->size());
-        assert(aIndex >= static_cast<OrdinalType>(0));
-
-        return (mData[aIndex]);
-    }
-
-private:
-    std::vector<ScalarType> mData;
-
-private:
-    StandardVector(const locus::StandardVector<ScalarType, OrdinalType> &);
-    locus::StandardVector<ScalarType, OrdinalType> & operator=(const locus::StandardVector<ScalarType, OrdinalType> &);
-};
-
-template<typename ScalarType, typename OrdinalType = size_t>
-class StandardVectorReductionOperations : public locus::ReductionOperations<ScalarType, OrdinalType>
-{
-public:
-    StandardVectorReductionOperations()
-    {
-    }
-    virtual ~StandardVectorReductionOperations()
-    {
-    }
-
-    //! Returns the maximum element in range
-    ScalarType max(const locus::Vector<ScalarType, OrdinalType> & aInput) const
-    {
-        assert(aInput.size() > 0);
-
-        const ScalarType tValue = 0;
-        const OrdinalType tSize = aInput.size();
-        std::vector<ScalarType> tCopy(tSize, tValue);
-        for(OrdinalType tIndex = 0; tIndex < tSize; tIndex++)
-        {
-            tCopy[tIndex] = aInput[tIndex];
-        }
-
-        ScalarType aMaxValue = *std::max_element(tCopy.begin(), tCopy.end());
-        return (aMaxValue);
-    }
-    //! Returns the minimum element in range
-    ScalarType min(const locus::Vector<ScalarType, OrdinalType> & aInput) const
-    {
-        assert(aInput.size() > 0);
-
-        const ScalarType tValue = 0;
-        const OrdinalType tSize = aInput.size();
-        std::vector<ScalarType> tCopy(tSize, tValue);
-        for(OrdinalType tIndex = 0; tIndex < tSize; tIndex++)
-        {
-            tCopy[tIndex] = aInput[tIndex];
-        }
-
-        ScalarType aMinValue = *std::min_element(tCopy.begin(), tCopy.end());
-        return (aMinValue);
-    }
-    //! Returns the sum of all the elements in container.
-    ScalarType sum(const locus::Vector<ScalarType, OrdinalType> & aInput) const
-    {
-        assert(aInput.size() > 0);
-
-        const ScalarType tValue = 0;
-        const OrdinalType tSize = aInput.size();
-        std::vector<ScalarType> tCopy(tSize, tValue);
-        for(OrdinalType tIndex = 0; tIndex < tSize; tIndex++)
-        {
-            tCopy[tIndex] = aInput[tIndex];
-        }
-
-        ScalarType tBaseValue = 0;
-        ScalarType tSum = std::accumulate(tCopy.begin(), tCopy.end(), tBaseValue);
-        return (tSum);
-    }
-    //! Creates an instance of type locus::ReductionOperations
-    std::shared_ptr<locus::ReductionOperations<ScalarType, OrdinalType>> create() const
-    {
-        std::shared_ptr<locus::ReductionOperations<ScalarType, OrdinalType>> tCopy =
-                std::make_shared<StandardVectorReductionOperations<ScalarType, OrdinalType>>();
-        return (tCopy);
-    }
-
-private:
-    StandardVectorReductionOperations(const locus::StandardVectorReductionOperations<ScalarType, OrdinalType> &);
-    locus::StandardVectorReductionOperations<ScalarType, OrdinalType> & operator=(const locus::StandardVectorReductionOperations<ScalarType, OrdinalType> &);
-};
-
-template<typename ScalarType, typename OrdinalType = size_t>
-class DistributedReductionOperations : public locus::ReductionOperations<ScalarType, OrdinalType>
-{
-public:
-    DistributedReductionOperations()
-    {
-    }
-    virtual ~DistributedReductionOperations()
-    {
-    }
-
-    //! Returns the maximum element in range
-    ScalarType max(const locus::Vector<ScalarType, OrdinalType> & aInput) const
-    {
-        assert(aInput.size() > 0);
-
-        const ScalarType tValue = 0;
-        const OrdinalType tSize = aInput.size();
-        std::vector<ScalarType> tCopy(tSize, tValue);
-        for(OrdinalType tIndex = 0; tIndex < tSize; tIndex++)
-        {
-            tCopy[tIndex] = aInput[tIndex];
-        }
-        ScalarType aLocalMaxValue = *std::max_element(tCopy.begin(), tCopy.end());
-
-        ScalarType aGlobalMaxValue = aLocalMaxValue;
-        MPI_Allreduce(&aGlobalMaxValue, &aLocalMaxValue, 1, MPI_DOUBLE, MPI_MAX, MPI_COMM_WORLD);
-
-        return (aLocalMaxValue);
-    }
-    //! Returns the minimum element in range
-    ScalarType min(const locus::Vector<ScalarType, OrdinalType> & aInput) const
-    {
-        assert(aInput.size() > 0);
-
-        const ScalarType tValue = 0;
-        const OrdinalType tSize = aInput.size();
-        std::vector<ScalarType> tCopy(tSize, tValue);
-        for(OrdinalType tIndex = 0; tIndex < tSize; tIndex++)
-        {
-            tCopy[tIndex] = aInput[tIndex];
-        }
-        ScalarType aLocalMinValue = *std::min_element(tCopy.begin(), tCopy.end());
-
-        ScalarType aGlobalMinValue = aLocalMinValue;
-        MPI_Allreduce(&aGlobalMinValue, &aLocalMinValue, 1, MPI_DOUBLE, MPI_MIN, MPI_COMM_WORLD);
-
-        return (aGlobalMinValue);
-    }
-    //! Returns the sum of all the elements in container.
-    ScalarType sum(const locus::Vector<ScalarType, OrdinalType> & aInput) const
-    {
-        assert(aInput.size() > 0);
-
-        const ScalarType tValue = 0;
-        const OrdinalType tSize = aInput.size();
-        std::vector<ScalarType> tCopy(tSize, tValue);
-        for(OrdinalType tIndex = 0; tIndex < tSize; tIndex++)
-        {
-            tCopy[tIndex] = aInput[tIndex];
-        }
-
-        ScalarType tBaseValue = 0;
-        ScalarType tLocalSum = std::accumulate(tCopy.begin(), tCopy.end(), tBaseValue);
-
-        ScalarType tGlobalSum = tLocalSum;
-        MPI_Allreduce(&tGlobalSum, &tLocalSum, 1, MPI_DOUBLE, MPI_SUM, MPI_COMM_WORLD);
-
-        return (tLocalSum);
-    }
-    //! Creates an instance of type locus::ReductionOperations
-    std::shared_ptr<locus::ReductionOperations<ScalarType, OrdinalType>> create() const
-    {
-        std::shared_ptr<locus::ReductionOperations<ScalarType, OrdinalType>> tCopy =
-                std::make_shared<DistributedReductionOperations<ScalarType, OrdinalType>>();
-        return (tCopy);
-    }
-    //! Return number of ranks (i.e. processes)
-    OrdinalType getNumRanks() const
-    {
-        int tNumRanks = 0;
-        MPI_Comm_size(MPI_COMM_WORLD, &tNumRanks);
-        assert(tNumRanks > static_cast<int>(0));
-        return (tNumRanks);
-    }
-
-private:
-    DistributedReductionOperations(const locus::DistributedReductionOperations<ScalarType, OrdinalType> &);
-    locus::DistributedReductionOperations<ScalarType, OrdinalType> & operator=(const locus::DistributedReductionOperations<ScalarType, OrdinalType> &);
-};
-
-template<typename ScalarType, typename OrdinalType = size_t>
-class StandardMultiVector : public locus::MultiVector<ScalarType, OrdinalType>
-{
-public:
-    StandardMultiVector(const OrdinalType & aNumVectors, const std::vector<ScalarType> & aStandardVectorTemplate) :
-        mData(std::vector<std::shared_ptr<locus::Vector<ScalarType, OrdinalType>>>(aNumVectors))
-    {
-        this->initialize(aStandardVectorTemplate);
-    }
-    StandardMultiVector(const OrdinalType & aNumVectors, const locus::Vector<ScalarType, OrdinalType> & aVectorTemplate) :
-        mData(std::vector<std::shared_ptr<locus::Vector<ScalarType, OrdinalType>>>(aNumVectors))
-    {
-        this->initialize(aVectorTemplate);
-    }
-    explicit StandardMultiVector(const std::vector<std::shared_ptr<locus::Vector<ScalarType, OrdinalType>>>& aMultiVectorTemplate) :
-        mData(std::vector<std::shared_ptr<locus::Vector<ScalarType, OrdinalType>>>(aMultiVectorTemplate.size()))
-    {
-        this->initialize(aMultiVectorTemplate);
-    }
-    StandardMultiVector(const OrdinalType & aNumVectors, const OrdinalType & aNumElementsPerVector, ScalarType aValue = 0) :
-        mData(std::vector<std::shared_ptr<locus::Vector<ScalarType, OrdinalType>>>(aNumVectors))
-    {
-        this->initialize(aNumElementsPerVector, aValue);
-    }
-    virtual ~StandardMultiVector()
-    {
-    }
-
-    //! Creates a copy of type MultiVector
-    std::shared_ptr<locus::MultiVector<ScalarType, OrdinalType>> create() const
-    {
-        const OrdinalType tVectorIndex = 0;
-        const OrdinalType tNumVectors = this->getNumVectors();
-        std::shared_ptr<locus::MultiVector<ScalarType, OrdinalType>> tOutput;
-        const locus::Vector<ScalarType, OrdinalType> & tVectorTemplate = *mData[tVectorIndex];
-        tOutput = std::make_shared<locus::StandardMultiVector<ScalarType, OrdinalType>>(tNumVectors, tVectorTemplate);
-        return (tOutput);
-    }
-    //! Number of vectors
-    OrdinalType getNumVectors() const
-    {
-        OrdinalType tNumVectors = mData.size();
-        return (tNumVectors);
-    }
-    //! Operator overloads the square bracket operator
-    virtual locus::Vector<ScalarType, OrdinalType> & operator [](const OrdinalType & aVectorIndex)
-    {
-        assert(mData.empty() == false);
-        assert(aVectorIndex < this->getNumVectors());
-
-        return (mData[aVectorIndex].operator *());
-    }
-    //! Operator overloads the square bracket operator
-    virtual const locus::Vector<ScalarType, OrdinalType> & operator [](const OrdinalType & aVectorIndex) const
-    {
-        assert(mData.empty() == false);
-        assert(mData[aVectorIndex].get() != nullptr);
-        assert(aVectorIndex < this->getNumVectors());
-
-        return (mData[aVectorIndex].operator *());
-    }
-    //! Operator overloads the square bracket operator
-    virtual ScalarType & operator ()(const OrdinalType & aVectorIndex, const OrdinalType & aElementIndex)
-    {
-        assert(aVectorIndex < this->getNumVectors());
-        assert(aElementIndex < mData[aVectorIndex]->size());
-
-        return (mData[aVectorIndex].operator *().operator [](aElementIndex));
-    }
-    //! Operator overloads the square bracket operator
-    virtual const ScalarType & operator ()(const OrdinalType & aVectorIndex, const OrdinalType & aElementIndex) const
-    {
-        assert(aVectorIndex < this->getNumVectors());
-        assert(aElementIndex < mData[aVectorIndex]->size());
-
-        return (mData[aVectorIndex].operator *().operator [](aElementIndex));
-    }
-
-private:
-    void initialize(const OrdinalType & aNumElementsPerVector, const ScalarType & aValue)
-    {
-        locus::StandardVector<ScalarType,OrdinalType> tVector(aNumElementsPerVector);
-
-        OrdinalType tNumVectors = mData.size();
-        for(OrdinalType tIndex = 0; tIndex < tNumVectors; tIndex++)
-        {
-            mData[tIndex] = tVector.create();
-            mData[tIndex]->fill(aValue);
-        }
-    }
-    void initialize(const std::vector<ScalarType> & aVectorTemplate)
-    {
-        locus::StandardVector<ScalarType,OrdinalType> tVector(aVectorTemplate);
-
-        OrdinalType tNumVectors = mData.size();
-        for(OrdinalType tIndex = 0; tIndex < tNumVectors; tIndex++)
-        {
-            mData[tIndex] = tVector.create();
-        }
-    }
-    void initialize(const locus::Vector<ScalarType, OrdinalType> & aVectorTemplate)
-    {
-        OrdinalType tNumVectors = mData.size();
-        for(OrdinalType tIndex = 0; tIndex < tNumVectors; tIndex++)
-        {
-            mData[tIndex] = aVectorTemplate.create();
-        }
-    }
-    void initialize(const std::vector<std::shared_ptr<locus::Vector<ScalarType, OrdinalType>>> & aMultiVectorTemplate)
-    {
-        assert(mData.size() > 0);
-        assert(aMultiVectorTemplate.size() > 0);
-        OrdinalType tNumVectors = aMultiVectorTemplate.size();
-        for(OrdinalType tIndex = 0; tIndex < tNumVectors; tIndex++)
-        {
-            assert(aMultiVectorTemplate[tIndex]->size() > 0);
-            mData[tIndex] = aMultiVectorTemplate[tIndex]->create();
-            mData[tIndex]->update(static_cast<ScalarType>(1.), *aMultiVectorTemplate[tIndex], static_cast<ScalarType>(0.));
-        }
-    }
-
-private:
-    std::vector<std::shared_ptr<locus::Vector<ScalarType, OrdinalType>>> mData;
-
-private:
-    StandardMultiVector(const locus::StandardMultiVector<ScalarType, OrdinalType>&);
-    locus::StandardMultiVector<ScalarType, OrdinalType> & operator=(const locus::StandardMultiVector<ScalarType, OrdinalType>&);
-};
-
-template<typename ScalarType, typename OrdinalType = size_t>
-class MultiVectorList
-{
-public:
-    MultiVectorList() :
-            mList()
-    {
-    }
-    ~MultiVectorList()
-    {
-    }
-
-    OrdinalType size() const
-    {
-        return (mList.size());
-    }
-    void add(const locus::MultiVector<ScalarType, OrdinalType> & aInput)
-    {
-        mList.push_back(aInput.create());
-    }
-    void add(const std::shared_ptr<locus::MultiVector<ScalarType, OrdinalType>> & aInput)
-    {
-        mList.push_back(aInput);
-    }
-    locus::MultiVector<ScalarType, OrdinalType> & operator [](const OrdinalType & aInput)
-    {
-        assert(aInput < mList.size());
-        assert(mList[aInput].get() != nullptr);
-        return (mList[aInput].operator*());
-    }
-    const locus::MultiVector<ScalarType, OrdinalType> & operator [](const OrdinalType & aInput) const
-    {
-        assert(aInput < mList.size());
-        assert(mList[aInput].get() != nullptr);
-        return (mList[aInput].operator*());
-    }
-    locus::Vector<ScalarType, OrdinalType> & operator ()(const OrdinalType & aListIndex, const OrdinalType & aVectorIndex)
-    {
-        assert(aListIndex < mList.size());
-        assert(mList[aListIndex].get() != nullptr);
-        return (mList[aListIndex]->operator[](aVectorIndex));
-    }
-    const locus::Vector<ScalarType, OrdinalType> & operator ()(const OrdinalType & aListIndex,
-                                                              const OrdinalType & aVectorIndex) const
-    {
-        assert(aListIndex < mList.size());
-        assert(mList[aListIndex].get() != nullptr);
-        return (mList[aListIndex]->operator[](aVectorIndex));
-    }
-    std::shared_ptr<locus::MultiVectorList<ScalarType, OrdinalType>> create() const
-    {
-        assert(this->size() > static_cast<OrdinalType>(0));
-        std::shared_ptr<locus::MultiVectorList<ScalarType, OrdinalType>> tOutput =
-                std::make_shared<locus::MultiVectorList<ScalarType, OrdinalType>>();
-        const OrdinalType tListSize = this->size();
-        for(OrdinalType tIndex = 0; tIndex < tListSize; tIndex++)
-        {
-            assert(mList[tIndex].get() != nullptr);
-            const std::shared_ptr<locus::MultiVector<ScalarType, OrdinalType>> & tMultiVector = mList[tIndex];
-            tOutput->add(tMultiVector);
-        }
-        return (tOutput);
-    }
-    const std::shared_ptr<locus::MultiVector<ScalarType, OrdinalType>> & ptr(const OrdinalType & aInput) const
-    {
-        assert(aInput < mList.size());
-        assert(mList[aInput].get() != nullptr);
-        return(mList[aInput]);
-    }
-
-private:
-    std::vector<std::shared_ptr<locus::MultiVector<ScalarType, OrdinalType>>> mList;
-
-private:
-    MultiVectorList(const locus::MultiVectorList<ScalarType, OrdinalType>&);
-    locus::MultiVectorList<ScalarType, OrdinalType> & operator=(const locus::MultiVectorList<ScalarType, OrdinalType>&);
-};
 
 /**********************************************************************************************************/
 /************************************* INLINE LINEAR ALGEBRA FUNCTIONS ************************************/
@@ -522,7 +37,7 @@ private:
 
 template<typename ScalarType, typename OrdinalType>
 ScalarType dot(const locus::MultiVector<ScalarType, OrdinalType> & aVectorOne,
-                const locus::MultiVector<ScalarType, OrdinalType> & aVectorTwo)
+               const locus::MultiVector<ScalarType, OrdinalType> & aVectorTwo)
 {
     assert(aVectorOne.getNumVectors() > static_cast<OrdinalType>(0));
     assert(aVectorOne.getNumVectors() == aVectorTwo.getNumVectors());
@@ -655,7 +170,7 @@ void gemv(const ScalarType & aAlpha,
 }
 
 /**********************************************************************************************************/
-/************************************** OPTIMALITY CRITERIA ALGORITHM *************************************/
+/********************************************** DATA FACTORY **********************************************/
 /**********************************************************************************************************/
 
 template<typename ScalarType, typename OrdinalType = size_t>
@@ -802,6 +317,527 @@ private:
     locus::DataFactory<ScalarType, OrdinalType> & operator=(const locus::DataFactory<ScalarType, OrdinalType>&);
 };
 
+/**********************************************************************************************************/
+/*********************************************** STATE DATA ***********************************************/
+/**********************************************************************************************************/
+
+template<typename ScalarType, typename OrdinalType = size_t>
+class StateData
+{
+public:
+    explicit StateData(const locus::DataFactory<ScalarType, OrdinalType> & aDataFactory) :
+            mCurrentObjectiveFunctionValue(std::numeric_limits<ScalarType>::max()),
+            mCurrentControl(aDataFactory.control().create()),
+            mCurrentTrialStep(aDataFactory.control().create()),
+            mCurrentObjectiveGradient(aDataFactory.control().create()),
+            mCurrentConstraintGradient(aDataFactory.control().create())
+    {
+    }
+    ~StateData()
+    {
+    }
+
+    ScalarType getCurrentObjectiveFunctionValue() const
+    {
+        return (mCurrentObjectiveFunctionValue);
+    }
+    void setCurrentObjectiveFunctionValue(const ScalarType & aInput)
+    {
+        mCurrentObjectiveFunctionValue = aInput;
+    }
+    const locus::MultiVector<ScalarType, OrdinalType> & getCurrentControl() const
+    {
+        assert(mCurrentControl.get() != nullptr);
+        return (mCurrentControl.operator*());
+    }
+    void setCurrentControl(const locus::MultiVector<ScalarType, OrdinalType> & aInput)
+    {
+        assert(mCurrentControl.get() != nullptr);
+        assert(aInput.getNumVectors() == mCurrentControl->getNumVectors());
+        locus::update(static_cast<ScalarType>(1), aInput, static_cast<ScalarType>(0), mCurrentControl.operator*());
+    }
+
+    const locus::MultiVector<ScalarType, OrdinalType> & getCurrentTrialStep() const
+    {
+        assert(mCurrentTrialStep.get() != nullptr);
+        return (mCurrentTrialStep.operator*());
+    }
+    void setCurrentTrialStep(const locus::MultiVector<ScalarType, OrdinalType> & aInput)
+    {
+        assert(mCurrentTrialStep.get() != nullptr);
+        assert(aInput.getNumVectors() == mCurrentTrialStep->getNumVectors());
+        locus::update(static_cast<ScalarType>(1), aInput, static_cast<ScalarType>(0), mCurrentTrialStep.operator*());
+    }
+
+    const locus::MultiVector<ScalarType, OrdinalType> & getCurrentObjectiveGradient() const
+    {
+        assert(mCurrentObjectiveGradient.get() != nullptr);
+        return (mCurrentObjectiveGradient);
+    }
+    void setCurrentObjectiveGradient(const locus::MultiVector<ScalarType, OrdinalType> & aInput)
+    {
+        assert(mCurrentObjectiveGradient.get() != nullptr);
+        assert(aInput.getNumVectors() == mCurrentObjectiveGradient->getNumVectors());
+        locus::update(static_cast<ScalarType>(1), aInput, static_cast<ScalarType>(0), mCurrentObjectiveGradient.operator*());
+    }
+
+    const locus::MultiVector<ScalarType, OrdinalType> & getCurrentConstraintGradient() const
+    {
+        assert(mCurrentConstraintGradient.get() != nullptr);
+        return (mCurrentConstraintGradient);
+    }
+    void setCurrentConstraintGradient(const locus::MultiVector<ScalarType, OrdinalType> & aInput)
+    {
+        assert(mCurrentConstraintGradient.get() != nullptr);
+        assert(aInput.getNumVectors() == mCurrentConstraintGradient->getNumVectors());
+
+        locus::update(static_cast<ScalarType>(1), aInput, static_cast<ScalarType>(0), mCurrentConstraintGradient.operator*());
+    }
+
+private:
+    ScalarType mCurrentObjectiveFunctionValue;
+    std::shared_ptr<locus::MultiVector<ScalarType, OrdinalType>> mCurrentControl;
+    std::shared_ptr<locus::MultiVector<ScalarType, OrdinalType>> mCurrentTrialStep;
+    std::shared_ptr<locus::MultiVector<ScalarType, OrdinalType>> mCurrentObjectiveGradient;
+    std::shared_ptr<locus::MultiVector<ScalarType, OrdinalType>> mCurrentConstraintGradient;
+
+private:
+    StateData(const locus::StateData<ScalarType, OrdinalType>&);
+    locus::StateData<ScalarType, OrdinalType> & operator=(const locus::StateData<ScalarType, OrdinalType>&);
+};
+
+/**********************************************************************************************************/
+/************************************* GRAD, HESS AND PREC OPERATORS **************************************/
+/**********************************************************************************************************/
+
+template<typename ScalarType, typename OrdinalType = size_t>
+class GradientOperator
+{
+public:
+    virtual ~GradientOperator()
+    {
+    }
+
+    virtual void update(const locus::StateData<ScalarType, OrdinalType> & aStateData) = 0;
+    virtual void compute(const locus::MultiVector<ScalarType, OrdinalType> & aState,
+                         const locus::MultiVector<ScalarType, OrdinalType> & aControl,
+                         locus::MultiVector<ScalarType, OrdinalType> & aOutput) = 0;
+    virtual std::shared_ptr<locus::GradientOperator<ScalarType, OrdinalType>> create() const = 0;
+};
+
+template<typename ScalarType, typename OrdinalType = size_t>
+class GradientOperatorList
+{
+public:
+    GradientOperatorList() :
+            mList()
+    {
+    }
+    ~GradientOperatorList()
+    {
+    }
+
+    OrdinalType size() const
+    {
+        return (mList.size());
+    }
+    void add(const locus::GradientOperator<ScalarType, OrdinalType> & aInput)
+    {
+        mList.push_back(aInput.create());
+    }
+    void add(const std::shared_ptr<locus::GradientOperator<ScalarType, OrdinalType>> & aInput)
+    {
+        mList.push_back(aInput);
+    }
+    locus::GradientOperator<ScalarType, OrdinalType> & operator [](const OrdinalType & aIndex)
+    {
+        assert(aIndex < mList.size());
+        assert(mList[aIndex].get() != nullptr);
+        return (mList[aIndex].operator*());
+    }
+    const locus::GradientOperator<ScalarType, OrdinalType> & operator [](const OrdinalType & aIndex) const
+    {
+        assert(aIndex < mList.size());
+        assert(mList[aIndex].get() != nullptr);
+        return (mList[aIndex].operator*());
+    }
+    std::shared_ptr<locus::GradientOperatorList<ScalarType, OrdinalType>> create() const
+    {
+        assert(this->size() > static_cast<OrdinalType>(0));
+
+        std::shared_ptr<locus::GradientOperatorList<ScalarType, OrdinalType>> tOutput =
+                std::make_shared<locus::GradientOperatorList<ScalarType, OrdinalType>>();
+        const OrdinalType tNumGradientOperators = this->size();
+        for(OrdinalType tIndex = 0; tIndex < tNumGradientOperators; tIndex++)
+        {
+            assert(mList[tIndex].get() != nullptr);
+
+            const std::shared_ptr<locus::GradientOperator<ScalarType, OrdinalType>> & tGradientOperator = mList[tIndex];
+            tOutput->add(tGradientOperator);
+        }
+        return (tOutput);
+    }
+    const std::shared_ptr<locus::GradientOperator<ScalarType, OrdinalType>> & ptr(const OrdinalType & aIndex) const
+    {
+        assert(aIndex < mList.size());
+        assert(mList[aIndex].get() != nullptr);
+        return(mList[aIndex]);
+    }
+
+private:
+    std::vector<std::shared_ptr<locus::GradientOperator<ScalarType, OrdinalType>>> mList;
+
+private:
+    GradientOperatorList(const locus::GradientOperatorList<ScalarType, OrdinalType>&);
+    locus::GradientOperatorList<ScalarType, OrdinalType> & operator=(const locus::GradientOperatorList<ScalarType, OrdinalType>&);
+};
+
+template<typename ScalarType, typename OrdinalType = size_t>
+class AnalyticalGradient : public locus::GradientOperator<ScalarType, OrdinalType>
+{
+public:
+    explicit AnalyticalGradient(const locus::Criterion<ScalarType, OrdinalType> & aCriterion) :
+            mCriterion(aCriterion.create())
+    {
+    }
+    explicit AnalyticalGradient(const std::shared_ptr<locus::Criterion<ScalarType, OrdinalType>> & aCriterion) :
+            mCriterion(aCriterion)
+    {
+    }
+    virtual ~AnalyticalGradient()
+    {
+    }
+
+    void update(const locus::StateData<ScalarType, OrdinalType> & aStateData)
+    {
+        return;
+    }
+    void compute(const locus::MultiVector<ScalarType, OrdinalType> & aState,
+                 const locus::MultiVector<ScalarType, OrdinalType> & aControl,
+                 locus::MultiVector<ScalarType, OrdinalType> & aOutput)
+    {
+        locus::fill(static_cast<ScalarType>(0), aOutput);
+        mCriterion->gradient(aState, aControl, aOutput);
+    }
+    std::shared_ptr<locus::GradientOperator<ScalarType, OrdinalType>> create() const
+    {
+        std::shared_ptr<locus::GradientOperator<ScalarType, OrdinalType>> tOutput =
+                std::make_shared<locus::AnalyticalGradient<ScalarType, OrdinalType>>(mCriterion);
+        return (tOutput);
+    }
+
+private:
+    std::shared_ptr<locus::Criterion<ScalarType, OrdinalType>> mCriterion;
+
+private:
+    AnalyticalGradient(const locus::AnalyticalGradient<ScalarType, OrdinalType> & aRhs);
+    locus::AnalyticalGradient<ScalarType, OrdinalType> & operator=(const locus::AnalyticalGradient<ScalarType, OrdinalType> & aRhs);
+};
+
+template<typename ScalarType, typename OrdinalType = size_t>
+class LinearOperator
+{
+public:
+    virtual ~LinearOperator()
+    {
+    }
+
+    virtual void update(const locus::StateData<ScalarType, OrdinalType> & aStateData) = 0;
+    virtual void apply(const locus::MultiVector<ScalarType, OrdinalType> & aState,
+                       const locus::MultiVector<ScalarType, OrdinalType> & aControl,
+                       const locus::MultiVector<ScalarType, OrdinalType> & aVector,
+                       locus::MultiVector<ScalarType, OrdinalType> & aOutput) = 0;
+    virtual std::shared_ptr<locus::LinearOperator<ScalarType, OrdinalType>> create() const = 0;
+};
+
+template<typename ScalarType, typename OrdinalType = size_t>
+class LinearOperatorList
+{
+public:
+    LinearOperatorList() :
+            mList()
+    {
+    }
+    ~LinearOperatorList()
+    {
+    }
+
+    OrdinalType size() const
+    {
+        return (mList.size());
+    }
+    void add(const locus::LinearOperator<ScalarType, OrdinalType> & aInput)
+    {
+        mList.push_back(aInput.create());
+    }
+    void add(const std::shared_ptr<locus::LinearOperator<ScalarType, OrdinalType>> & aInput)
+    {
+        mList.push_back(aInput);
+    }
+    locus::LinearOperator<ScalarType, OrdinalType> & operator [](const OrdinalType & aIndex)
+    {
+        assert(aIndex < mList.size());
+        assert(mList[aIndex].get() != nullptr);
+        return (mList[aIndex].operator*());
+    }
+    const locus::LinearOperator<ScalarType, OrdinalType> & operator [](const OrdinalType & aIndex) const
+    {
+        assert(aIndex < mList.size());
+        assert(mList[aIndex].get() != nullptr);
+        return (mList[aIndex].operator*());
+    }
+    std::shared_ptr<locus::LinearOperatorList<ScalarType, OrdinalType>> create() const
+    {
+        assert(this->size() > static_cast<OrdinalType>(0));
+
+        std::shared_ptr<locus::LinearOperatorList<ScalarType, OrdinalType>> tOutput =
+                std::make_shared<locus::LinearOperatorList<ScalarType, OrdinalType>>();
+        const OrdinalType tNumLinearOperators = this->size();
+        for(OrdinalType tIndex = 0; tIndex < tNumLinearOperators; tIndex++)
+        {
+            assert(mList[tIndex].get() != nullptr);
+
+            const std::shared_ptr<locus::LinearOperator<ScalarType, OrdinalType>> & tLinearOperator = mList[tIndex];
+            tOutput->add(tLinearOperator);
+        }
+        return (tOutput);
+    }
+    const std::shared_ptr<locus::LinearOperator<ScalarType, OrdinalType>> & ptr(const OrdinalType & aIndex) const
+    {
+        assert(aIndex < mList.size());
+        assert(mList[aIndex].get() != nullptr);
+        return(mList[aIndex]);
+    }
+
+private:
+    std::vector<std::shared_ptr<locus::LinearOperator<ScalarType, OrdinalType>>> mList;
+
+private:
+    LinearOperatorList(const locus::LinearOperatorList<ScalarType, OrdinalType>&);
+    locus::LinearOperatorList<ScalarType, OrdinalType> & operator=(const locus::LinearOperatorList<ScalarType, OrdinalType>&);
+};
+
+template<typename ScalarType, typename OrdinalType = size_t>
+class AnalyticalHessian : public locus::LinearOperator<ScalarType, OrdinalType>
+{
+public:
+    explicit AnalyticalHessian(const locus::Criterion<ScalarType, OrdinalType> & aCriterion) :
+            mCriterion(aCriterion.create())
+    {
+    }
+    explicit AnalyticalHessian(const std::shared_ptr<locus::Criterion<ScalarType, OrdinalType>> & aCriterion) :
+            mCriterion(aCriterion)
+    {
+    }
+    virtual ~AnalyticalHessian()
+    {
+    }
+
+    void update(const locus::StateData<ScalarType, OrdinalType> & aStateData)
+    {
+        return;
+    }
+    void apply(const locus::MultiVector<ScalarType, OrdinalType> & aState,
+               const locus::MultiVector<ScalarType, OrdinalType> & aControl,
+               const locus::MultiVector<ScalarType, OrdinalType> & aVector,
+               locus::MultiVector<ScalarType, OrdinalType> & aOutput)
+    {
+        locus::fill(static_cast<ScalarType>(0), aOutput);
+        mCriterion->hessian(aState, aControl, aVector, aOutput);
+    }
+    std::shared_ptr<locus::LinearOperator<ScalarType, OrdinalType>> create() const
+    {
+        std::shared_ptr<locus::LinearOperator<ScalarType, OrdinalType>> tOutput =
+                std::make_shared<locus::AnalyticalHessian<ScalarType, OrdinalType>>(mCriterion);
+        return (tOutput);
+    }
+
+private:
+    std::shared_ptr<locus::Criterion<ScalarType, OrdinalType>> mCriterion;
+
+private:
+    AnalyticalHessian(const locus::AnalyticalHessian<ScalarType, OrdinalType> & aRhs);
+    locus::AnalyticalHessian<ScalarType, OrdinalType> & operator=(const locus::AnalyticalHessian<ScalarType, OrdinalType> & aRhs);
+};
+
+template<typename ScalarType, typename OrdinalType = size_t>
+class IdentityHessian : public locus::LinearOperator<ScalarType, OrdinalType>
+{
+public:
+    IdentityHessian()
+    {
+    }
+    virtual ~IdentityHessian()
+    {
+    }
+
+    void update(const locus::StateData<ScalarType, OrdinalType> & aStateData)
+    {
+        return;
+    }
+    void apply(const locus::MultiVector<ScalarType, OrdinalType> & aState,
+               const locus::MultiVector<ScalarType, OrdinalType> & aControl,
+               const locus::MultiVector<ScalarType, OrdinalType> & aVector,
+               locus::MultiVector<ScalarType, OrdinalType> & aOutput)
+    {
+        locus::update(static_cast<ScalarType>(1), aVector, static_cast<ScalarType>(0), aOutput);
+    }
+    std::shared_ptr<locus::LinearOperator<ScalarType, OrdinalType>> create() const
+    {
+        std::shared_ptr<locus::LinearOperator<ScalarType, OrdinalType>> tOutput =
+                std::make_shared<locus::IdentityHessian<ScalarType, OrdinalType>>();
+        return (tOutput);
+    }
+
+private:
+    IdentityHessian(const locus::IdentityHessian<ScalarType, OrdinalType> & aRhs);
+    locus::IdentityHessian<ScalarType, OrdinalType> & operator=(const locus::IdentityHessian<ScalarType, OrdinalType> & aRhs);
+};
+
+template<typename ScalarType, typename OrdinalType = size_t>
+class Preconditioner
+{
+public:
+    virtual ~Preconditioner()
+    {
+    }
+
+    virtual void update(const locus::StateData<ScalarType, OrdinalType> & aStateData) = 0;
+    virtual void applyPreconditioner(const locus::MultiVector<ScalarType, OrdinalType> & aControl,
+                                     const locus::MultiVector<ScalarType, OrdinalType> & aVector,
+                                     locus::MultiVector<ScalarType, OrdinalType> & aOutput) = 0;
+    virtual void applyInvPreconditioner(const locus::MultiVector<ScalarType, OrdinalType> & aControl,
+                                        const locus::MultiVector<ScalarType, OrdinalType> & aVector,
+                                        locus::MultiVector<ScalarType, OrdinalType> & aOutput) = 0;
+    virtual std::shared_ptr<locus::Preconditioner<ScalarType, OrdinalType>> create() const = 0;
+};
+
+template<typename ScalarType, typename OrdinalType = size_t>
+class IdentityPreconditioner : public Preconditioner<ScalarType, OrdinalType>
+{
+public:
+    IdentityPreconditioner()
+    {
+    }
+    virtual ~IdentityPreconditioner()
+    {
+    }
+    void update(const locus::StateData<ScalarType, OrdinalType> & aStateData)
+    {
+        return;
+    }
+    void applyPreconditioner(const locus::MultiVector<ScalarType, OrdinalType> & aControl,
+                             const locus::MultiVector<ScalarType, OrdinalType> & aVector,
+                             locus::MultiVector<ScalarType, OrdinalType> & aOutput)
+    {
+        assert(aVector.getNumVectors() == aOutput.getNumVectors());
+        locus::update(1., aVector, 0., aOutput);
+    }
+    void applyInvPreconditioner(const locus::MultiVector<ScalarType, OrdinalType> & aControl,
+                                const locus::MultiVector<ScalarType, OrdinalType> & aVector,
+                                locus::MultiVector<ScalarType, OrdinalType> & aOutput)
+    {
+        assert(aVector.getNumVectors() == aOutput.getNumVectors());
+        locus::update(1., aVector, 0., aOutput);
+    }
+    std::shared_ptr<locus::Preconditioner<ScalarType, OrdinalType>> create() const
+    {
+        std::shared_ptr<locus::Preconditioner<ScalarType, OrdinalType>> tOutput =
+                std::make_shared<locus::IdentityPreconditioner<ScalarType, OrdinalType>>();
+        return (tOutput);
+    }
+
+private:
+    IdentityPreconditioner(const locus::IdentityPreconditioner<ScalarType, OrdinalType> & aRhs);
+    locus::IdentityPreconditioner<ScalarType, OrdinalType> & operator=(const locus::IdentityPreconditioner<ScalarType, OrdinalType> & aRhs);
+};
+
+/**********************************************************************************************************/
+/******************************************** MULTI VECTOR LIST *******************************************/
+/**********************************************************************************************************/
+
+template<typename ScalarType, typename OrdinalType = size_t>
+class MultiVectorList
+{
+public:
+    MultiVectorList() :
+            mList()
+    {
+    }
+    ~MultiVectorList()
+    {
+    }
+
+    OrdinalType size() const
+    {
+        return (mList.size());
+    }
+    void add(const locus::MultiVector<ScalarType, OrdinalType> & aInput)
+    {
+        mList.push_back(aInput.create());
+    }
+    void add(const std::shared_ptr<locus::MultiVector<ScalarType, OrdinalType>> & aInput)
+    {
+        mList.push_back(aInput);
+    }
+    locus::MultiVector<ScalarType, OrdinalType> & operator [](const OrdinalType & aInput)
+    {
+        assert(aInput < mList.size());
+        assert(mList[aInput].get() != nullptr);
+        return (mList[aInput].operator*());
+    }
+    const locus::MultiVector<ScalarType, OrdinalType> & operator [](const OrdinalType & aInput) const
+    {
+        assert(aInput < mList.size());
+        assert(mList[aInput].get() != nullptr);
+        return (mList[aInput].operator*());
+    }
+    locus::Vector<ScalarType, OrdinalType> & operator ()(const OrdinalType & aListIndex, const OrdinalType & aVectorIndex)
+    {
+        assert(aListIndex < mList.size());
+        assert(mList[aListIndex].get() != nullptr);
+        return (mList[aListIndex]->operator[](aVectorIndex));
+    }
+    const locus::Vector<ScalarType, OrdinalType> & operator ()(const OrdinalType & aListIndex,
+                                                              const OrdinalType & aVectorIndex) const
+    {
+        assert(aListIndex < mList.size());
+        assert(mList[aListIndex].get() != nullptr);
+        return (mList[aListIndex]->operator[](aVectorIndex));
+    }
+    std::shared_ptr<locus::MultiVectorList<ScalarType, OrdinalType>> create() const
+    {
+        assert(this->size() > static_cast<OrdinalType>(0));
+        std::shared_ptr<locus::MultiVectorList<ScalarType, OrdinalType>> tOutput =
+                std::make_shared<locus::MultiVectorList<ScalarType, OrdinalType>>();
+        const OrdinalType tListSize = this->size();
+        for(OrdinalType tIndex = 0; tIndex < tListSize; tIndex++)
+        {
+            assert(mList[tIndex].get() != nullptr);
+            const std::shared_ptr<locus::MultiVector<ScalarType, OrdinalType>> & tMultiVector = mList[tIndex];
+            tOutput->add(tMultiVector);
+        }
+        return (tOutput);
+    }
+    const std::shared_ptr<locus::MultiVector<ScalarType, OrdinalType>> & ptr(const OrdinalType & aInput) const
+    {
+        assert(aInput < mList.size());
+        assert(mList[aInput].get() != nullptr);
+        return(mList[aInput]);
+    }
+
+private:
+    std::vector<std::shared_ptr<locus::MultiVector<ScalarType, OrdinalType>>> mList;
+
+private:
+    MultiVectorList(const locus::MultiVectorList<ScalarType, OrdinalType>&);
+    locus::MultiVectorList<ScalarType, OrdinalType> & operator=(const locus::MultiVectorList<ScalarType, OrdinalType>&);
+};
+
+/**********************************************************************************************************/
+/************************************** OPTIMALITY CRITERIA ALGORITHM *************************************/
+/**********************************************************************************************************/
+
 template<typename ScalarType, typename OrdinalType = size_t>
 class OptimalityCriteriaDataMng
 {
@@ -816,7 +852,6 @@ public:
             mDualWorkVector(),
             mControlWorkVector(),
             mCurrentInequalityValues(),
-            mCurrentState(aFactory.state().create()),
             mCurrentControl(aFactory.control().create()),
             mPreviousControl(aFactory.control().create()),
             mObjectiveGradient(aFactory.control().create()),
@@ -919,20 +954,20 @@ public:
         assert(aIndex < mCurrentDual->size());
         mCurrentDual->operator [](aIndex) = aValue;
     }
-    const locus::Vector<ScalarType, OrdinalType> & getCurrentInequalityValues() const
+    const locus::Vector<ScalarType, OrdinalType> & getCurrentConstraintValues() const
     {
         assert(mCurrentInequalityValues.get() != nullptr);
         assert(mCurrentInequalityValues->size() > static_cast<OrdinalType>(0));
         return (mCurrentInequalityValues.operator *());
     }
-    const ScalarType & getCurrentInequalityValues(const OrdinalType & aIndex) const
+    const ScalarType & getCurrentConstraintValues(const OrdinalType & aIndex) const
     {
         assert(mCurrentInequalityValues.get() != nullptr);
         assert(aIndex >= static_cast<OrdinalType>(0));
         assert(aIndex < mCurrentInequalityValues->size());
         return(mCurrentInequalityValues->operator [](aIndex));
     }
-    void setCurrentInequalityValue(const OrdinalType & aIndex, const ScalarType & aValue)
+    void setCurrentConstraintValue(const OrdinalType & aIndex, const ScalarType & aValue)
     {
         assert(mCurrentInequalityValues.get() != nullptr);
         assert(aIndex >= static_cast<OrdinalType>(0));
@@ -979,44 +1014,6 @@ public:
             assert(tInputInitialGuess.size() == tMyControl.size());
             tMyControl.update(1., tInputInitialGuess, 0.);
         }
-    }
-
-    const locus::MultiVector<ScalarType, OrdinalType> & getCurrentState() const
-    {
-        assert(mCurrentState.get() != nullptr);
-
-        return (mCurrentState.operator *());
-    }
-    const locus::Vector<ScalarType, OrdinalType> & getCurrentState(const OrdinalType & aVectorIndex) const
-    {
-        assert(mCurrentState.get() != nullptr);
-        assert(aVectorIndex >= static_cast<OrdinalType>(0));
-        assert(aVectorIndex < mCurrentState->getNumVectors());
-
-        return (mCurrentState->operator [](aVectorIndex));
-    }
-    void setCurrentState(const locus::MultiVector<ScalarType, OrdinalType> & aState)
-    {
-        assert(mCurrentState.get() != nullptr);
-        assert(aState.getNumVectors() > static_cast<OrdinalType>(0));
-        assert(aState.getNumVectors() == mCurrentState->getNumVectors());
-
-        const OrdinalType tNumVectors = aState.getNumVectors();
-        for(OrdinalType tIndex = 0; tIndex < tNumVectors; tIndex++)
-        {
-            const locus::Vector<ScalarType, OrdinalType> & tInputState = aState[tIndex];
-            locus::Vector<ScalarType, OrdinalType> & tMyState = mCurrentState->operator [](tIndex);
-            assert(tInputState.size() == tMyState.size());
-            tMyState.update(1., tInputState, 0.);
-        }
-    }
-    void setCurrentState(const OrdinalType & aVectorIndex, const locus::Vector<ScalarType, OrdinalType> & aState)
-    {
-        assert(mCurrentState.get() != nullptr);
-        assert(aVectorIndex >= static_cast<OrdinalType>(0));
-        assert(aVectorIndex < mCurrentState->getNumVectors());
-
-        mCurrentState->operator [](aVectorIndex).update(1., aState, 0.);
     }
 
     const locus::MultiVector<ScalarType, OrdinalType> & getCurrentControl() const
@@ -1300,7 +1297,6 @@ private:
     std::shared_ptr<locus::Vector<ScalarType, OrdinalType>> mControlWorkVector;
     std::shared_ptr<locus::Vector<ScalarType, OrdinalType>> mCurrentInequalityValues;
 
-    std::shared_ptr<locus::MultiVector<ScalarType, OrdinalType>> mCurrentState;
     std::shared_ptr<locus::MultiVector<ScalarType, OrdinalType>> mCurrentControl;
     std::shared_ptr<locus::MultiVector<ScalarType, OrdinalType>> mPreviousControl;
     std::shared_ptr<locus::MultiVector<ScalarType, OrdinalType>> mObjectiveGradient;
@@ -1314,26 +1310,6 @@ private:
 private:
     OptimalityCriteriaDataMng(const locus::OptimalityCriteriaDataMng<ScalarType, OrdinalType>&);
     locus::OptimalityCriteriaDataMng<ScalarType, OrdinalType> & operator=(const locus::OptimalityCriteriaDataMng<ScalarType, OrdinalType>&);
-};
-
-template<typename ScalarType, typename OrdinalType = size_t>
-class Simulation
-{
-public:
-    virtual ~Simulation()
-    {
-    }
-
-    /*!
-     * Solve partial differential equation simulation
-     *  Parameters:
-     *    \param In
-     *          aControl: control variables
-     *    \param Out
-     *          aState: state variables
-     */
-    virtual void solve(const locus::Vector<ScalarType, OrdinalType> & aControl,
-                       locus::Vector<ScalarType, OrdinalType> & aState) = 0;
 };
 
 template<typename ScalarType, typename OrdinalType = size_t>
@@ -1402,13 +1378,13 @@ private:
 };
 
 template<typename ScalarType, typename OrdinalType = size_t>
-class OptimalityCriteriaObjectiveTestTwo : public locus::Criterion<ScalarType, OrdinalType>
+class OptimalityCriteriaTestObjectiveTwo : public locus::Criterion<ScalarType, OrdinalType>
 {
 public:
-    OptimalityCriteriaObjectiveTestTwo()
+    OptimalityCriteriaTestObjectiveTwo()
     {
     }
-    virtual ~OptimalityCriteriaObjectiveTestTwo()
+    virtual ~OptimalityCriteriaTestObjectiveTwo()
     {
     }
 
@@ -1433,31 +1409,31 @@ public:
     std::shared_ptr<locus::Criterion<ScalarType, OrdinalType>> create() const
     {
         std::shared_ptr<locus::Criterion<ScalarType, OrdinalType>> tOutput =
-                std::make_shared<locus::OptimalityCriteriaObjectiveTestTwo<ScalarType, OrdinalType>>();
+                std::make_shared<locus::OptimalityCriteriaTestObjectiveTwo<ScalarType, OrdinalType>>();
         return (tOutput);
     }
 
 private:
-    OptimalityCriteriaObjectiveTestTwo(const locus::OptimalityCriteriaObjectiveTestTwo<ScalarType, OrdinalType>&);
-    locus::OptimalityCriteriaObjectiveTestTwo<ScalarType, OrdinalType> & operator=(const locus::OptimalityCriteriaObjectiveTestTwo<ScalarType, OrdinalType>&);
+    OptimalityCriteriaTestObjectiveTwo(const locus::OptimalityCriteriaTestObjectiveTwo<ScalarType, OrdinalType>&);
+    locus::OptimalityCriteriaTestObjectiveTwo<ScalarType, OrdinalType> & operator=(const locus::OptimalityCriteriaTestObjectiveTwo<ScalarType, OrdinalType>&);
 };
 
 template<typename ScalarType, typename OrdinalType = size_t>
-class OptimalityCriteriaObjectiveTestOne : public locus::Criterion<ScalarType, OrdinalType>
+class OptimalityCriteriaTestObjectiveOne : public locus::Criterion<ScalarType, OrdinalType>
 {
 public:
-    OptimalityCriteriaObjectiveTestOne() :
+    OptimalityCriteriaTestObjectiveOne() :
             mConstant(0.0624),
             mReductionOperations(std::make_shared<locus::StandardVectorReductionOperations<ScalarType,OrdinalType>>())
     {
 
     }
-    explicit OptimalityCriteriaObjectiveTestOne(const locus::ReductionOperations<ScalarType, OrdinalType> & aInterface) :
+    explicit OptimalityCriteriaTestObjectiveOne(const locus::ReductionOperations<ScalarType, OrdinalType> & aInterface) :
             mConstant(0.0624),
             mReductionOperations(aInterface.create())
     {
     }
-    virtual ~OptimalityCriteriaObjectiveTestOne()
+    virtual ~OptimalityCriteriaTestObjectiveOne()
     {
     }
 
@@ -1480,7 +1456,7 @@ public:
     std::shared_ptr<locus::Criterion<ScalarType, OrdinalType>> create() const
     {
         std::shared_ptr<locus::Criterion<ScalarType, OrdinalType>> tOutput =
-                std::make_shared<locus::OptimalityCriteriaObjectiveTestOne<ScalarType, OrdinalType>>(*mReductionOperations);
+                std::make_shared<locus::OptimalityCriteriaTestObjectiveOne<ScalarType, OrdinalType>>(*mReductionOperations);
         return (tOutput);
     }
 
@@ -1489,24 +1465,24 @@ private:
     std::shared_ptr<locus::ReductionOperations<ScalarType, OrdinalType>> mReductionOperations;
 
 private:
-    OptimalityCriteriaObjectiveTestOne(const locus::OptimalityCriteriaObjectiveTestOne<ScalarType, OrdinalType>&);
-    locus::OptimalityCriteriaObjectiveTestOne<ScalarType, OrdinalType> & operator=(const locus::OptimalityCriteriaObjectiveTestOne<ScalarType, OrdinalType>&);
+    OptimalityCriteriaTestObjectiveOne(const locus::OptimalityCriteriaTestObjectiveOne<ScalarType, OrdinalType>&);
+    locus::OptimalityCriteriaTestObjectiveOne<ScalarType, OrdinalType> & operator=(const locus::OptimalityCriteriaTestObjectiveOne<ScalarType, OrdinalType>&);
 };
 
 template<typename ScalarType, typename OrdinalType = size_t>
-class OptimalityCriteriaInequalityTestOne : public locus::Criterion<ScalarType, OrdinalType>
+class OptimalityCriteriaTestInequalityOne : public locus::Criterion<ScalarType, OrdinalType>
 {
 public:
-    explicit OptimalityCriteriaInequalityTestOne() :
+    explicit OptimalityCriteriaTestInequalityOne() :
             mBound(1.)
     {
     }
-    virtual ~OptimalityCriteriaInequalityTestOne()
+    virtual ~OptimalityCriteriaTestInequalityOne()
     {
     }
 
     ScalarType value(const locus::MultiVector<ScalarType, OrdinalType> & aState,
-                      const locus::MultiVector<ScalarType, OrdinalType> & aControl)
+                     const locus::MultiVector<ScalarType, OrdinalType> & aControl)
     {
         const OrdinalType tVectorIndex = 0;
         assert(aControl[tVectorIndex].size() == static_cast<OrdinalType>(5));
@@ -1542,7 +1518,7 @@ public:
     std::shared_ptr<locus::Criterion<ScalarType, OrdinalType>> create() const
     {
         std::shared_ptr<locus::Criterion<ScalarType, OrdinalType>> tOutput =
-                std::make_shared<locus::OptimalityCriteriaInequalityTestOne<ScalarType, OrdinalType>>();
+                std::make_shared<locus::OptimalityCriteriaTestInequalityOne<ScalarType, OrdinalType>>();
         return (tOutput);
     }
 
@@ -1550,18 +1526,18 @@ private:
     ScalarType mBound;
 
 private:
-    OptimalityCriteriaInequalityTestOne(const locus::OptimalityCriteriaInequalityTestOne<ScalarType, OrdinalType>&);
-    locus::OptimalityCriteriaInequalityTestOne<ScalarType, OrdinalType> & operator=(const locus::OptimalityCriteriaInequalityTestOne<ScalarType, OrdinalType>&);
+    OptimalityCriteriaTestInequalityOne(const locus::OptimalityCriteriaTestInequalityOne<ScalarType, OrdinalType>&);
+    locus::OptimalityCriteriaTestInequalityOne<ScalarType, OrdinalType> & operator=(const locus::OptimalityCriteriaTestInequalityOne<ScalarType, OrdinalType>&);
 };
 
 template<typename ScalarType, typename OrdinalType = size_t>
-class OptimalityCriteriaInequalityTestTwo : public locus::Criterion<ScalarType, OrdinalType>
+class OptimalityCriteriaTestInequalityTwo : public locus::Criterion<ScalarType, OrdinalType>
 {
 public:
-    explicit OptimalityCriteriaInequalityTestTwo()
+    explicit OptimalityCriteriaTestInequalityTwo()
     {
     }
-    virtual ~OptimalityCriteriaInequalityTestTwo()
+    virtual ~OptimalityCriteriaTestInequalityTwo()
     {
     }
 
@@ -1595,88 +1571,86 @@ public:
     std::shared_ptr<locus::Criterion<ScalarType, OrdinalType>> create() const
     {
         std::shared_ptr<locus::Criterion<ScalarType, OrdinalType>> tOutput =
-                std::make_shared<locus::OptimalityCriteriaInequalityTestTwo<ScalarType, OrdinalType>>();
+                std::make_shared<locus::OptimalityCriteriaTestInequalityTwo<ScalarType, OrdinalType>>();
         return (tOutput);
     }
 
 private:
-    OptimalityCriteriaInequalityTestTwo(const locus::OptimalityCriteriaInequalityTestTwo<ScalarType, OrdinalType>&);
-    locus::OptimalityCriteriaInequalityTestTwo<ScalarType, OrdinalType> & operator=(const locus::OptimalityCriteriaInequalityTestTwo<ScalarType, OrdinalType>&);
+    OptimalityCriteriaTestInequalityTwo(const locus::OptimalityCriteriaTestInequalityTwo<ScalarType, OrdinalType>&);
+    locus::OptimalityCriteriaTestInequalityTwo<ScalarType, OrdinalType> & operator=(const locus::OptimalityCriteriaTestInequalityTwo<ScalarType, OrdinalType>&);
 };
 
 template<typename ScalarType, typename OrdinalType = size_t>
-class OptimalityCriteriaStageMng
+class OptimalityCriteriaStageMngBase
 {
 public:
-    virtual ~OptimalityCriteriaStageMng()
+    virtual ~OptimalityCriteriaStageMngBase()
     {
     }
 
-    virtual void updateStage(locus::OptimalityCriteriaDataMng<ScalarType, OrdinalType> & aDataMng) = 0;
-    virtual void evaluateInequality(const OrdinalType & aConstraintIndex,
-                                    locus::OptimalityCriteriaDataMng<ScalarType, OrdinalType> & aDataMng) = 0;
+    virtual void update(locus::OptimalityCriteriaDataMng<ScalarType, OrdinalType> & aDataMng) = 0;
+    virtual ScalarType evaluateInequality(const OrdinalType & aConstraintIndex,
+                                          const locus::MultiVector<ScalarType, OrdinalType> & aControl) = 0;
 };
 
 template<typename ScalarType, typename OrdinalType = size_t>
-class OptimalityCriteriaStageMngTypeLP : public locus::OptimalityCriteriaStageMng<ScalarType, OrdinalType>
+class OptimalityCriteriaStageMng : public locus::OptimalityCriteriaStageMngBase<ScalarType, OrdinalType>
 {
 public:
-    OptimalityCriteriaStageMngTypeLP(const locus::Criterion<ScalarType, OrdinalType> & aObjective,
-                                     const locus::Criterion<ScalarType, OrdinalType> & aInequality) :
+    OptimalityCriteriaStageMng(const locus::DataFactory<ScalarType, OrdinalType> & aDataFactory,
+                               const locus::Criterion<ScalarType, OrdinalType> & aObjective,
+                               const locus::CriterionList<ScalarType, OrdinalType> & aInequality) :
+            mState(aDataFactory.state().create()),
+            mCurrentGradient(aDataFactory.control().create()),
             mObjective(aObjective.create()),
             mConstraint(aInequality.create())
     {
     }
-    virtual ~OptimalityCriteriaStageMngTypeLP()
+    virtual ~OptimalityCriteriaStageMng()
     {
     }
 
-    void updateStage(locus::OptimalityCriteriaDataMng<ScalarType, OrdinalType> & aDataMng)
+    void update(locus::OptimalityCriteriaDataMng<ScalarType, OrdinalType> & aDataMng)
     {
-        const locus::MultiVector<ScalarType, OrdinalType> & tState = aDataMng.getCurrentState();
         const locus::MultiVector<ScalarType, OrdinalType> & tControl = aDataMng.getCurrentControl();
-        ScalarType tObjectiveValue = mObjective->value(tState, tControl);
+        ScalarType tObjectiveValue = mObjective->value(mState.operator*(), tControl);
         aDataMng.setCurrentObjectiveValue(tObjectiveValue);
 
-        std::shared_ptr<locus::MultiVector<ScalarType, OrdinalType>> tObjectiveGradient =
-                aDataMng.getObjectiveGradient().create();
-        const OrdinalType tNumVectors = tObjectiveGradient->getNumVectors();
-        for(OrdinalType tIndex = 0; tIndex < tNumVectors; tIndex++)
-        {
-            tObjectiveGradient->operator[](tIndex).fill(0.);
-        }
-        mObjective->gradient(tState, tControl, *tObjectiveGradient);
-        aDataMng.setObjectiveGradient(*tObjectiveGradient);
+        locus::fill(static_cast<ScalarType>(0), mCurrentGradient.operator*());
+        mObjective->gradient(mState.operator*(), tControl, mCurrentGradient.operator*());
+        aDataMng.setObjectiveGradient(mCurrentGradient.operator*());
 
         this->computeInequalityGradient(aDataMng);
     }
-    void evaluateInequality(const OrdinalType & aConstraintIndex, locus::OptimalityCriteriaDataMng<ScalarType, OrdinalType> & aDataMng)
+    ScalarType evaluateInequality(const OrdinalType & aConstraintIndex, const locus::MultiVector<ScalarType, OrdinalType> & aControl)
     {
-        const locus::MultiVector<ScalarType, OrdinalType> & tState = aDataMng.getCurrentState();
-        const locus::MultiVector<ScalarType, OrdinalType> & tControl = aDataMng.getCurrentControl();
-
-        ScalarType tInequalityValue = mConstraint->value(tState, tControl);
-        aDataMng.setCurrentInequalityValue(aConstraintIndex, tInequalityValue);
+        ScalarType tInequalityValue = mConstraint->operator[](aConstraintIndex).value(mState.operator*(), aControl);
+        return (tInequalityValue);
     }
     void computeInequalityGradient(locus::OptimalityCriteriaDataMng<ScalarType, OrdinalType> & aDataMng)
     {
-        const locus::MultiVector<ScalarType, OrdinalType> & tState = aDataMng.getCurrentState();
+        locus::fill(static_cast<ScalarType>(0), mCurrentGradient.operator*());
+
+        const OrdinalType tNumConstraints = mConstraint->size();
         const locus::MultiVector<ScalarType, OrdinalType> & tControl = aDataMng.getCurrentControl();
-        std::shared_ptr<locus::MultiVector<ScalarType, OrdinalType>> tInequalityGradient =
-                aDataMng.getInequalityGradient().create();
+        for(OrdinalType tConstraintIndex = 0; tConstraintIndex < tNumConstraints; tConstraintIndex++)
+        {
+            mConstraint->operator[](tConstraintIndex).gradient(mState.operator*(), tControl, mCurrentGradient.operator*());
+        }
 
-        mConstraint->gradient(tState, tControl, *tInequalityGradient);
-
-        aDataMng.setInequalityGradient(*tInequalityGradient);
+        aDataMng.setInequalityGradient(mCurrentGradient.operator*());
     }
 
 private:
+    std::shared_ptr<locus::MultiVector<ScalarType, OrdinalType>> mState;
+    std::shared_ptr<locus::MultiVector<ScalarType, OrdinalType>> mCurrentGradient;
+
     std::shared_ptr<locus::Criterion<ScalarType,OrdinalType>> mObjective;
-    std::shared_ptr<locus::Criterion<ScalarType,OrdinalType>> mConstraint;
+    std::shared_ptr<locus::CriterionList<ScalarType,OrdinalType>> mConstraint;
 
 private:
-    OptimalityCriteriaStageMngTypeLP(const locus::OptimalityCriteriaStageMngTypeLP<ScalarType, OrdinalType>&);
-    locus::OptimalityCriteriaStageMngTypeLP<ScalarType, OrdinalType> & operator=(const locus::OptimalityCriteriaStageMngTypeLP<ScalarType, OrdinalType>&);
+    OptimalityCriteriaStageMng(const locus::OptimalityCriteriaStageMng<ScalarType, OrdinalType>&);
+    locus::OptimalityCriteriaStageMng<ScalarType, OrdinalType> & operator=(const locus::OptimalityCriteriaStageMng<ScalarType, OrdinalType>&);
 };
 
 template<typename ScalarType, typename OrdinalType = size_t>
@@ -1686,7 +1660,7 @@ public:
     virtual ~OptimalityCriteriaSubProblem(){}
 
     virtual void solve(locus::OptimalityCriteriaDataMng<ScalarType, OrdinalType> & aDataMng,
-                       locus::OptimalityCriteriaStageMng<ScalarType, OrdinalType> & aStageMng) = 0;
+                       locus::OptimalityCriteriaStageMngBase<ScalarType, OrdinalType> & aStageMng) = 0;
 };
 
 template<typename ScalarType, typename OrdinalType = size_t>
@@ -1705,7 +1679,7 @@ public:
     }
 
     void solve(locus::OptimalityCriteriaDataMng<ScalarType, OrdinalType> & aDataMng,
-               locus::OptimalityCriteriaStageMng<ScalarType, OrdinalType> & aStageMng)
+               locus::OptimalityCriteriaStageMngBase<ScalarType, OrdinalType> & aStageMng)
     {
         assert(aDataMng.getNumConstraints() == static_cast<OrdinalType>(1));
 
@@ -1715,7 +1689,9 @@ public:
 
         this->updateControl(tDual, aDataMng);
 
-        aStageMng.evaluateInequality(tConstraintIndex, aDataMng);
+        const locus::MultiVector<ScalarType, OrdinalType> & tControl = aDataMng.getCurrentControl();
+        ScalarType tValue = aStageMng.evaluateInequality(tConstraintIndex, tControl);
+        aDataMng.setCurrentConstraintValue(tConstraintIndex, tValue);
     }
 
 private:
@@ -1734,7 +1710,7 @@ private:
         const locus::Vector<ScalarType, OrdinalType> & tPreviousControl = aDataMng.getPreviousControl(tVectorIndex);
         ScalarType tLinearizedConstraint = tInequalityGradient.dot(tPreviousControl);
         const OrdinalType tConstraintIndex = 0;
-        tLinearizedConstraint += aDataMng.getCurrentInequalityValues(tConstraintIndex);
+        tLinearizedConstraint += aDataMng.getCurrentConstraintValues(tConstraintIndex);
 
         /* Compute c_0^{\ast} = c_0 + \sum_{i\in{I}_p}\frac{\partial{g}}{\partial{y}_i}\frac{1}{x_i}, where I_p is the passive set
            and \frac{\partial{g}}{\partial{y}_i} = -x_i^2\frac{\partial{g}}{\partial{x}_i}\ \forall\ i=1\,dots,length(\bm{x})*/
@@ -1874,13 +1850,14 @@ public:
     }
 
     void solve(locus::OptimalityCriteriaDataMng<ScalarType, OrdinalType> & aDataMng,
-               locus::OptimalityCriteriaStageMng<ScalarType, OrdinalType> & aStageMng)
+               locus::OptimalityCriteriaStageMngBase<ScalarType, OrdinalType> & aStageMng)
     {
         ScalarType tDualLowerBound = this->getDualLowerBound();
         ScalarType tDualUpperBound = this->getDualUpperBound();
         ScalarType tBisectionTolerance = this->getBisectionTolerance();
 
-        OrdinalType tNumConstraints = aDataMng.getNumConstraints();
+        const OrdinalType tNumConstraints = aDataMng.getNumConstraints();
+        const locus::MultiVector<ScalarType, OrdinalType> & tControl = aDataMng.getCurrentControl();
         for(OrdinalType tConstraintIndex = 0; tConstraintIndex < tNumConstraints; tConstraintIndex++)
         {
             ScalarType tDualMisfit = tDualUpperBound - tDualLowerBound;
@@ -1890,8 +1867,10 @@ public:
                 tTrialDual = static_cast<ScalarType>(0.5) * (tDualUpperBound + tDualLowerBound);
                 this->updateControl(tTrialDual, aDataMng);
 
-                aStageMng.evaluateInequality(tConstraintIndex, aDataMng);
-                const locus::Vector<ScalarType, OrdinalType> & tInequalityValues = aDataMng.getCurrentInequalityValues();
+                ScalarType tValue = aStageMng.evaluateInequality(tConstraintIndex, tControl);
+                aDataMng.setCurrentConstraintValue(tConstraintIndex, tValue);
+
+                const locus::Vector<ScalarType, OrdinalType> & tInequalityValues = aDataMng.getCurrentConstraintValues();
                 ScalarType mFirstOrderTaylorApproximation = tInequalityValues[tConstraintIndex] + mInequalityGradientDotDeltaControl;
                 if(mFirstOrderTaylorApproximation > static_cast<ScalarType>(0.))
                 {
@@ -1966,7 +1945,7 @@ class OptimalityCriteria
 {
 public:
     explicit OptimalityCriteria(const std::shared_ptr<locus::OptimalityCriteriaDataMng<ScalarType, OrdinalType>> & aDataMng,
-                                const std::shared_ptr<locus::OptimalityCriteriaStageMng<ScalarType, OrdinalType>> & aStageMng,
+                                const std::shared_ptr<locus::OptimalityCriteriaStageMngBase<ScalarType, OrdinalType>> & aStageMng,
                                 const std::shared_ptr<locus::OptimalityCriteriaSubProblem<ScalarType, OrdinalType>> & aSubProblem) :
             mPrintDiagnostics(false),
             mOutputStream(),
@@ -2039,14 +2018,16 @@ public:
 
     void solve()
     {
-        for(OrdinalType tIndex = 0; tIndex < mDataMng->getNumConstraints(); tIndex++)
+        const locus::MultiVector<ScalarType, OrdinalType> & tControl = mDataMng->getCurrentControl();
+        for(OrdinalType tConstraintIndex = 0; tConstraintIndex < mDataMng->getNumConstraints(); tConstraintIndex++)
         {
-            mStageMng->evaluateInequality(tIndex, *mDataMng);
+            ScalarType tValue = mStageMng->evaluateInequality(tConstraintIndex, tControl);
+            mDataMng->setCurrentConstraintValue(tConstraintIndex, tValue);
         }
 
         while(1)
         {
-            mStageMng->updateStage(*mDataMng);
+            mStageMng->update(*mDataMng);
 
             mDataMng->computeStagnationMeasure();
             mDataMng->computeMaxInequalityValue();
@@ -2138,7 +2119,7 @@ private:
     ScalarType mObjectiveGradientTolerance;
 
     std::shared_ptr<locus::OptimalityCriteriaDataMng<ScalarType, OrdinalType>> mDataMng;
-    std::shared_ptr<locus::OptimalityCriteriaStageMng<ScalarType, OrdinalType>> mStageMng;
+    std::shared_ptr<locus::OptimalityCriteriaStageMngBase<ScalarType, OrdinalType>> mStageMng;
     std::shared_ptr<locus::OptimalityCriteriaSubProblem<ScalarType, OrdinalType>> mSubProblem;
 
 private:
@@ -3012,433 +2993,6 @@ struct operators
     {
         REDUCED = 1, SECANT = 2, USER_DEFINED = 3
     };
-};
-
-template<typename ScalarType, typename OrdinalType = size_t>
-class StateData
-{
-public:
-    explicit StateData(const locus::DataFactory<ScalarType, OrdinalType> & aDataFactory) :
-            mCurrentObjectiveFunctionValue(std::numeric_limits<ScalarType>::max()),
-            mCurrentControl(aDataFactory.control().create()),
-            mCurrentTrialStep(aDataFactory.control().create()),
-            mCurrentObjectiveGradient(aDataFactory.control().create()),
-            mCurrentConstraintGradient(aDataFactory.control().create())
-    {
-    }
-    ~StateData()
-    {
-    }
-
-    ScalarType getCurrentObjectiveFunctionValue() const
-    {
-        return (mCurrentObjectiveFunctionValue);
-    }
-    void setCurrentObjectiveFunctionValue(const ScalarType & aInput)
-    {
-        mCurrentObjectiveFunctionValue = aInput;
-    }
-    const locus::MultiVector<ScalarType, OrdinalType> & getCurrentControl() const
-    {
-        assert(mCurrentControl.get() != nullptr);
-        return (mCurrentControl.operator*());
-    }
-    void setCurrentControl(const locus::MultiVector<ScalarType, OrdinalType> & aInput)
-    {
-        assert(mCurrentControl.get() != nullptr);
-        assert(aInput.getNumVectors() == mCurrentControl->getNumVectors());
-        locus::update(static_cast<ScalarType>(1), aInput, static_cast<ScalarType>(0), mCurrentControl.operator*());
-    }
-
-    const locus::MultiVector<ScalarType, OrdinalType> & getCurrentTrialStep() const
-    {
-        assert(mCurrentTrialStep.get() != nullptr);
-        return (mCurrentTrialStep.operator*());
-    }
-    void setCurrentTrialStep(const locus::MultiVector<ScalarType, OrdinalType> & aInput)
-    {
-        assert(mCurrentTrialStep.get() != nullptr);
-        assert(aInput.getNumVectors() == mCurrentTrialStep->getNumVectors());
-        locus::update(static_cast<ScalarType>(1), aInput, static_cast<ScalarType>(0), mCurrentTrialStep.operator*());
-    }
-
-    const locus::MultiVector<ScalarType, OrdinalType> & getCurrentObjectiveGradient() const
-    {
-        assert(mCurrentObjectiveGradient.get() != nullptr);
-        return (mCurrentObjectiveGradient);
-    }
-    void setCurrentObjectiveGradient(const locus::MultiVector<ScalarType, OrdinalType> & aInput)
-    {
-        assert(mCurrentObjectiveGradient.get() != nullptr);
-        assert(aInput.getNumVectors() == mCurrentObjectiveGradient->getNumVectors());
-        locus::update(static_cast<ScalarType>(1), aInput, static_cast<ScalarType>(0), mCurrentObjectiveGradient.operator*());
-    }
-
-    const locus::MultiVector<ScalarType, OrdinalType> & getCurrentConstraintGradient() const
-    {
-        assert(mCurrentConstraintGradient.get() != nullptr);
-        return (mCurrentConstraintGradient);
-    }
-    void setCurrentConstraintGradient(const locus::MultiVector<ScalarType, OrdinalType> & aInput)
-    {
-        assert(mCurrentConstraintGradient.get() != nullptr);
-        assert(aInput.getNumVectors() == mCurrentConstraintGradient->getNumVectors());
-
-        locus::update(static_cast<ScalarType>(1), aInput, static_cast<ScalarType>(0), mCurrentConstraintGradient.operator*());
-    }
-
-private:
-    ScalarType mCurrentObjectiveFunctionValue;
-    std::shared_ptr<locus::MultiVector<ScalarType, OrdinalType>> mCurrentControl;
-    std::shared_ptr<locus::MultiVector<ScalarType, OrdinalType>> mCurrentTrialStep;
-    std::shared_ptr<locus::MultiVector<ScalarType, OrdinalType>> mCurrentObjectiveGradient;
-    std::shared_ptr<locus::MultiVector<ScalarType, OrdinalType>> mCurrentConstraintGradient;
-
-private:
-    StateData(const locus::StateData<ScalarType, OrdinalType>&);
-    locus::StateData<ScalarType, OrdinalType> & operator=(const locus::StateData<ScalarType, OrdinalType>&);
-};
-
-template<typename ScalarType, typename OrdinalType = size_t>
-class GradientOperator
-{
-public:
-    virtual ~GradientOperator()
-    {
-    }
-
-    virtual void update(const locus::StateData<ScalarType, OrdinalType> & aStateData) = 0;
-    virtual void compute(const locus::MultiVector<ScalarType, OrdinalType> & aState,
-                         const locus::MultiVector<ScalarType, OrdinalType> & aControl,
-                         locus::MultiVector<ScalarType, OrdinalType> & aOutput) = 0;
-    virtual std::shared_ptr<locus::GradientOperator<ScalarType, OrdinalType>> create() const = 0;
-};
-
-template<typename ScalarType, typename OrdinalType = size_t>
-class GradientOperatorList
-{
-public:
-    GradientOperatorList() :
-            mList()
-    {
-    }
-    ~GradientOperatorList()
-    {
-    }
-
-    OrdinalType size() const
-    {
-        return (mList.size());
-    }
-    void add(const locus::GradientOperator<ScalarType, OrdinalType> & aInput)
-    {
-        mList.push_back(aInput.create());
-    }
-    void add(const std::shared_ptr<locus::GradientOperator<ScalarType, OrdinalType>> & aInput)
-    {
-        mList.push_back(aInput);
-    }
-    locus::GradientOperator<ScalarType, OrdinalType> & operator [](const OrdinalType & aIndex)
-    {
-        assert(aIndex < mList.size());
-        assert(mList[aIndex].get() != nullptr);
-        return (mList[aIndex].operator*());
-    }
-    const locus::GradientOperator<ScalarType, OrdinalType> & operator [](const OrdinalType & aIndex) const
-    {
-        assert(aIndex < mList.size());
-        assert(mList[aIndex].get() != nullptr);
-        return (mList[aIndex].operator*());
-    }
-    std::shared_ptr<locus::GradientOperatorList<ScalarType, OrdinalType>> create() const
-    {
-        assert(this->size() > static_cast<OrdinalType>(0));
-
-        std::shared_ptr<locus::GradientOperatorList<ScalarType, OrdinalType>> tOutput =
-                std::make_shared<locus::GradientOperatorList<ScalarType, OrdinalType>>();
-        const OrdinalType tNumGradientOperators = this->size();
-        for(OrdinalType tIndex = 0; tIndex < tNumGradientOperators; tIndex++)
-        {
-            assert(mList[tIndex].get() != nullptr);
-
-            const std::shared_ptr<locus::GradientOperator<ScalarType, OrdinalType>> & tGradientOperator = mList[tIndex];
-            tOutput->add(tGradientOperator);
-        }
-        return (tOutput);
-    }
-    const std::shared_ptr<locus::GradientOperator<ScalarType, OrdinalType>> & ptr(const OrdinalType & aIndex) const
-    {
-        assert(aIndex < mList.size());
-        assert(mList[aIndex].get() != nullptr);
-        return(mList[aIndex]);
-    }
-
-private:
-    std::vector<std::shared_ptr<locus::GradientOperator<ScalarType, OrdinalType>>> mList;
-
-private:
-    GradientOperatorList(const locus::GradientOperatorList<ScalarType, OrdinalType>&);
-    locus::GradientOperatorList<ScalarType, OrdinalType> & operator=(const locus::GradientOperatorList<ScalarType, OrdinalType>&);
-};
-
-template<typename ScalarType, typename OrdinalType = size_t>
-class AnalyticalGradient : public locus::GradientOperator<ScalarType, OrdinalType>
-{
-public:
-    explicit AnalyticalGradient(const locus::Criterion<ScalarType, OrdinalType> & aCriterion) :
-            mCriterion(aCriterion.create())
-    {
-    }
-    explicit AnalyticalGradient(const std::shared_ptr<locus::Criterion<ScalarType, OrdinalType>> & aCriterion) :
-            mCriterion(aCriterion)
-    {
-    }
-    virtual ~AnalyticalGradient()
-    {
-    }
-
-    void update(const locus::StateData<ScalarType, OrdinalType> & aStateData)
-    {
-        return;
-    }
-    void compute(const locus::MultiVector<ScalarType, OrdinalType> & aState,
-                 const locus::MultiVector<ScalarType, OrdinalType> & aControl,
-                 locus::MultiVector<ScalarType, OrdinalType> & aOutput)
-    {
-        locus::fill(static_cast<ScalarType>(0), aOutput);
-        mCriterion->gradient(aState, aControl, aOutput);
-    }
-    std::shared_ptr<locus::GradientOperator<ScalarType, OrdinalType>> create() const
-    {
-        std::shared_ptr<locus::GradientOperator<ScalarType, OrdinalType>> tOutput =
-                std::make_shared<locus::AnalyticalGradient<ScalarType, OrdinalType>>(mCriterion);
-        return (tOutput);
-    }
-
-private:
-    std::shared_ptr<locus::Criterion<ScalarType, OrdinalType>> mCriterion;
-
-private:
-    AnalyticalGradient(const locus::AnalyticalGradient<ScalarType, OrdinalType> & aRhs);
-    locus::AnalyticalGradient<ScalarType, OrdinalType> & operator=(const locus::AnalyticalGradient<ScalarType, OrdinalType> & aRhs);
-};
-
-template<typename ScalarType, typename OrdinalType = size_t>
-class LinearOperator
-{
-public:
-    virtual ~LinearOperator()
-    {
-    }
-
-    virtual void update(const locus::StateData<ScalarType, OrdinalType> & aStateData) = 0;
-    virtual void apply(const locus::MultiVector<ScalarType, OrdinalType> & aState,
-                       const locus::MultiVector<ScalarType, OrdinalType> & aControl,
-                       const locus::MultiVector<ScalarType, OrdinalType> & aVector,
-                       locus::MultiVector<ScalarType, OrdinalType> & aOutput) = 0;
-    virtual std::shared_ptr<locus::LinearOperator<ScalarType, OrdinalType>> create() const = 0;
-};
-
-template<typename ScalarType, typename OrdinalType = size_t>
-class LinearOperatorList
-{
-public:
-    LinearOperatorList() :
-            mList()
-    {
-    }
-    ~LinearOperatorList()
-    {
-    }
-
-    OrdinalType size() const
-    {
-        return (mList.size());
-    }
-    void add(const locus::LinearOperator<ScalarType, OrdinalType> & aInput)
-    {
-        mList.push_back(aInput.create());
-    }
-    void add(const std::shared_ptr<locus::LinearOperator<ScalarType, OrdinalType>> & aInput)
-    {
-        mList.push_back(aInput);
-    }
-    locus::LinearOperator<ScalarType, OrdinalType> & operator [](const OrdinalType & aIndex)
-    {
-        assert(aIndex < mList.size());
-        assert(mList[aIndex].get() != nullptr);
-        return (mList[aIndex].operator*());
-    }
-    const locus::LinearOperator<ScalarType, OrdinalType> & operator [](const OrdinalType & aIndex) const
-    {
-        assert(aIndex < mList.size());
-        assert(mList[aIndex].get() != nullptr);
-        return (mList[aIndex].operator*());
-    }
-    std::shared_ptr<locus::LinearOperatorList<ScalarType, OrdinalType>> create() const
-    {
-        assert(this->size() > static_cast<OrdinalType>(0));
-
-        std::shared_ptr<locus::LinearOperatorList<ScalarType, OrdinalType>> tOutput =
-                std::make_shared<locus::LinearOperatorList<ScalarType, OrdinalType>>();
-        const OrdinalType tNumLinearOperators = this->size();
-        for(OrdinalType tIndex = 0; tIndex < tNumLinearOperators; tIndex++)
-        {
-            assert(mList[tIndex].get() != nullptr);
-
-            const std::shared_ptr<locus::LinearOperator<ScalarType, OrdinalType>> & tLinearOperator = mList[tIndex];
-            tOutput->add(tLinearOperator);
-        }
-        return (tOutput);
-    }
-    const std::shared_ptr<locus::LinearOperator<ScalarType, OrdinalType>> & ptr(const OrdinalType & aIndex) const
-    {
-        assert(aIndex < mList.size());
-        assert(mList[aIndex].get() != nullptr);
-        return(mList[aIndex]);
-    }
-
-private:
-    std::vector<std::shared_ptr<locus::LinearOperator<ScalarType, OrdinalType>>> mList;
-
-private:
-    LinearOperatorList(const locus::LinearOperatorList<ScalarType, OrdinalType>&);
-    locus::LinearOperatorList<ScalarType, OrdinalType> & operator=(const locus::LinearOperatorList<ScalarType, OrdinalType>&);
-};
-
-template<typename ScalarType, typename OrdinalType = size_t>
-class AnalyticalHessian : public locus::LinearOperator<ScalarType, OrdinalType>
-{
-public:
-    explicit AnalyticalHessian(const locus::Criterion<ScalarType, OrdinalType> & aCriterion) :
-            mCriterion(aCriterion.create())
-    {
-    }
-    explicit AnalyticalHessian(const std::shared_ptr<locus::Criterion<ScalarType, OrdinalType>> & aCriterion) :
-            mCriterion(aCriterion)
-    {
-    }
-    virtual ~AnalyticalHessian()
-    {
-    }
-
-    void update(const locus::StateData<ScalarType, OrdinalType> & aStateData)
-    {
-        return;
-    }
-    void apply(const locus::MultiVector<ScalarType, OrdinalType> & aState,
-               const locus::MultiVector<ScalarType, OrdinalType> & aControl,
-               const locus::MultiVector<ScalarType, OrdinalType> & aVector,
-               locus::MultiVector<ScalarType, OrdinalType> & aOutput)
-    {
-        locus::fill(static_cast<ScalarType>(0), aOutput);
-        mCriterion->hessian(aState, aControl, aVector, aOutput);
-    }
-    std::shared_ptr<locus::LinearOperator<ScalarType, OrdinalType>> create() const
-    {
-        std::shared_ptr<locus::LinearOperator<ScalarType, OrdinalType>> tOutput =
-                std::make_shared<locus::AnalyticalHessian<ScalarType, OrdinalType>>(mCriterion);
-        return (tOutput);
-    }
-
-private:
-    std::shared_ptr<locus::Criterion<ScalarType, OrdinalType>> mCriterion;
-
-private:
-    AnalyticalHessian(const locus::AnalyticalHessian<ScalarType, OrdinalType> & aRhs);
-    locus::AnalyticalHessian<ScalarType, OrdinalType> & operator=(const locus::AnalyticalHessian<ScalarType, OrdinalType> & aRhs);
-};
-
-template<typename ScalarType, typename OrdinalType = size_t>
-class IdentityHessian : public locus::LinearOperator<ScalarType, OrdinalType>
-{
-public:
-    IdentityHessian()
-    {
-    }
-    virtual ~IdentityHessian()
-    {
-    }
-
-    void update(const locus::StateData<ScalarType, OrdinalType> & aStateData)
-    {
-        return;
-    }
-    void apply(const locus::MultiVector<ScalarType, OrdinalType> & aState,
-               const locus::MultiVector<ScalarType, OrdinalType> & aControl,
-               const locus::MultiVector<ScalarType, OrdinalType> & aVector,
-               locus::MultiVector<ScalarType, OrdinalType> & aOutput)
-    {
-        locus::update(static_cast<ScalarType>(1), aVector, static_cast<ScalarType>(0), aOutput);
-    }
-    std::shared_ptr<locus::LinearOperator<ScalarType, OrdinalType>> create() const
-    {
-        std::shared_ptr<locus::LinearOperator<ScalarType, OrdinalType>> tOutput =
-                std::make_shared<locus::IdentityHessian<ScalarType, OrdinalType>>();
-        return (tOutput);
-    }
-
-private:
-    IdentityHessian(const locus::IdentityHessian<ScalarType, OrdinalType> & aRhs);
-    locus::IdentityHessian<ScalarType, OrdinalType> & operator=(const locus::IdentityHessian<ScalarType, OrdinalType> & aRhs);
-};
-
-template<typename ScalarType, typename OrdinalType = size_t>
-class Preconditioner
-{
-public:
-    virtual ~Preconditioner()
-    {
-    }
-
-    virtual void update(const locus::StateData<ScalarType, OrdinalType> & aStateData) = 0;
-    virtual void applyPreconditioner(const locus::MultiVector<ScalarType, OrdinalType> & aControl,
-                                     const locus::MultiVector<ScalarType, OrdinalType> & aVector,
-                                     locus::MultiVector<ScalarType, OrdinalType> & aOutput) = 0;
-    virtual void applyInvPreconditioner(const locus::MultiVector<ScalarType, OrdinalType> & aControl,
-                                        const locus::MultiVector<ScalarType, OrdinalType> & aVector,
-                                        locus::MultiVector<ScalarType, OrdinalType> & aOutput) = 0;
-    virtual std::shared_ptr<locus::Preconditioner<ScalarType, OrdinalType>> create() const = 0;
-};
-
-template<typename ScalarType, typename OrdinalType = size_t>
-class IdentityPreconditioner : public Preconditioner<ScalarType, OrdinalType>
-{
-public:
-    IdentityPreconditioner()
-    {
-    }
-    virtual ~IdentityPreconditioner()
-    {
-    }
-    void update(const locus::StateData<ScalarType, OrdinalType> & aStateData)
-    {
-        return;
-    }
-    void applyPreconditioner(const locus::MultiVector<ScalarType, OrdinalType> & aControl,
-                             const locus::MultiVector<ScalarType, OrdinalType> & aVector,
-                             locus::MultiVector<ScalarType, OrdinalType> & aOutput)
-    {
-        assert(aVector.getNumVectors() == aOutput.getNumVectors());
-        locus::update(1., aVector, 0., aOutput);
-    }
-    void applyInvPreconditioner(const locus::MultiVector<ScalarType, OrdinalType> & aControl,
-                                const locus::MultiVector<ScalarType, OrdinalType> & aVector,
-                                locus::MultiVector<ScalarType, OrdinalType> & aOutput)
-    {
-        assert(aVector.getNumVectors() == aOutput.getNumVectors());
-        locus::update(1., aVector, 0., aOutput);
-    }
-    std::shared_ptr<locus::Preconditioner<ScalarType, OrdinalType>> create() const
-    {
-        std::shared_ptr<locus::Preconditioner<ScalarType, OrdinalType>> tOutput =
-                std::make_shared<locus::IdentityPreconditioner<ScalarType, OrdinalType>>();
-        return (tOutput);
-    }
-
-private:
-    IdentityPreconditioner(const locus::IdentityPreconditioner<ScalarType, OrdinalType> & aRhs);
-    locus::IdentityPreconditioner<ScalarType, OrdinalType> & operator=(const locus::IdentityPreconditioner<ScalarType, OrdinalType> & aRhs);
 };
 
 template<typename ScalarType, typename OrdinalType = size_t>
@@ -10680,7 +10234,7 @@ TEST(LocusTest, ControlDataFactory)
 TEST(LocusTest, OptimalityCriteriaObjectiveTest)
 {
     locus::StandardVectorReductionOperations<double,size_t> tInterface;
-    locus::OptimalityCriteriaObjectiveTestOne<double,size_t> tObjective(tInterface);
+    locus::OptimalityCriteriaTestObjectiveOne<double,size_t> tObjective(tInterface);
 
     size_t tNumVectors = 1;
     size_t tNumElements = 5;
@@ -10717,7 +10271,7 @@ TEST(LocusTest, OptimalityCriteriaObjectiveTest)
 
 TEST(LocusTest, OptimalityCriteriaInequalityTestOne)
 {
-    locus::OptimalityCriteriaInequalityTestOne<double,size_t> tInequality;
+    locus::OptimalityCriteriaTestInequalityOne<double,size_t> tInequality;
 
     size_t tNumVectors = 1;
     size_t tNumElements = 5;
@@ -10791,9 +10345,9 @@ TEST(LocusTest, OptimalityCriteriaDataMng)
     EXPECT_NEAR(tDataMng.getCurrentDual()[tIndex], tGold, tTolerance);
 
     tValue = 0.345;
-    tDataMng.setCurrentInequalityValue(tIndex, tValue);
+    tDataMng.setCurrentConstraintValue(tIndex, tValue);
     tGold = 0.345;
-    EXPECT_NEAR(tDataMng.getCurrentInequalityValues()[tIndex], tGold, tTolerance);
+    EXPECT_NEAR(tDataMng.getCurrentConstraintValues()[tIndex], tGold, tTolerance);
 
     // ********* Test Initial Guess Functions *********
     tValue = 0.18;
@@ -10816,17 +10370,6 @@ TEST(LocusTest, OptimalityCriteriaDataMng)
     tInitialGuess[tVectorIndex].fill(tValue);
     tDataMng.setInitialGuess(tValue);
     LocusTest::checkVectorData(tDataMng.getCurrentControl(tVectorIndex), tInitialGuess.operator [](tVectorIndex));
-
-    // ********* Test State Functions *********
-    tValue = 0.11;
-    locus::StandardMultiVector<double,size_t> tState(tNumVectors, tNumStates, tValue);
-    tDataMng.setCurrentState(tState);
-    LocusTest::checkMultiVectorData(tDataMng.getCurrentState(), tState, tTolerance);
-
-    tValue = 0.14;
-    tState[tVectorIndex].fill(tValue);
-    tDataMng.setCurrentState(tVectorIndex, tState[tVectorIndex]);
-    LocusTest::checkVectorData(tDataMng.getCurrentState(tVectorIndex), tState.operator [](tVectorIndex));
 
     // ********* Test Control Functions *********
     tValue = 0.08;
@@ -10958,9 +10501,11 @@ TEST(LocusTest, OptimalityCriteriaStageMngSimpleTest)
     locus::OptimalityCriteriaDataMng<double,size_t> tDataMng(tFactory);
 
     // ********* Allocate Stage Manager *********
-    locus::OptimalityCriteriaInequalityTestOne<double,size_t> tInequality;
-    locus::OptimalityCriteriaObjectiveTestOne<double,size_t> tObjective(tReductionOperations);
-    locus::OptimalityCriteriaStageMngTypeLP<double,size_t> tStageMng(tObjective, tInequality);
+    locus::CriterionList<double, size_t> tInequalityList;
+    locus::OptimalityCriteriaTestInequalityOne<double,size_t> tInequality;
+    tInequalityList.add(tInequality);
+    locus::OptimalityCriteriaTestObjectiveOne<double,size_t> tObjective(tReductionOperations);
+    locus::OptimalityCriteriaStageMng<double,size_t> tStageMng(tFactory, tObjective, tInequalityList);
 
     // ********* Test Update Function *********
     std::vector<double> tData =
@@ -10969,7 +10514,7 @@ TEST(LocusTest, OptimalityCriteriaStageMngSimpleTest)
 
     size_t tVectorIndex = 0;
     tDataMng.setCurrentControl(tVectorIndex, tControl);
-    tStageMng.updateStage(tDataMng);
+    tStageMng.update(tDataMng);
 
     double tTolerance = 1e-6;
     double tGoldValue = 1.3401885069;
@@ -10980,10 +10525,10 @@ TEST(LocusTest, OptimalityCriteriaStageMngSimpleTest)
     locus::StandardVector<double,size_t> tGoldObjectiveGradient(tData);
     LocusTest::checkVectorData(tDataMng.getObjectiveGradient(tVectorIndex), tGoldObjectiveGradient);
 
-    size_t tConstraintIndex = 0;
+    const size_t tConstraintIndex = 0;
     tGoldValue = -5.07057774290498e-6;
-    tStageMng.evaluateInequality(tConstraintIndex, tDataMng);
-    double tInequalityValue = tDataMng.getCurrentInequalityValues(tConstraintIndex);
+    const locus::MultiVector<double, size_t> & tCurrentControl = tDataMng.getCurrentControl();
+    double tInequalityValue = tStageMng.evaluateInequality(tConstraintIndex, tCurrentControl);
     EXPECT_NEAR(tInequalityValue, tGoldValue, tTolerance);
 
     tStageMng.computeInequalityGradient(tDataMng);
@@ -11125,10 +10670,12 @@ TEST(LocusTest, OptimalityCriteria)
     tDataMng->setInitialGuess(tValue);
 
     // ********* Allocate Stage Manager *********
-    locus::OptimalityCriteriaObjectiveTestTwo<double> tObjective;
-    locus::OptimalityCriteriaInequalityTestTwo<double> tInequality;
-    std::shared_ptr<locus::OptimalityCriteriaStageMngTypeLP<double>> tStageMng =
-            std::make_shared<locus::OptimalityCriteriaStageMngTypeLP<double>>(tObjective, tInequality);
+    locus::CriterionList<double> tInequalityList;
+    locus::OptimalityCriteriaTestInequalityTwo<double> tInequality;
+    tInequalityList.add(tInequality);
+    locus::OptimalityCriteriaTestObjectiveTwo<double> tObjective;
+    std::shared_ptr<locus::OptimalityCriteriaStageMng<double>> tStageMng =
+            std::make_shared<locus::OptimalityCriteriaStageMng<double>>(tFactory, tObjective, tInequalityList);
 
     // ********* Allocate Optimality Criteria Algorithm *********
     std::shared_ptr<locus::SingleConstraintTypeLP<double>> tSubProlem =
