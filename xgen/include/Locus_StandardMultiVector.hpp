@@ -11,8 +11,8 @@
 #include <vector>
 #include <cassert>
 
-#include "Locus_Vector.hpp"
 #include "Locus_MultiVector.hpp"
+#include "Locus_StandardVector.hpp"
 
 namespace locus
 {
