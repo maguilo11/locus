@@ -8,6 +8,8 @@
 #ifndef LOCUS_VECTOR_HPP_
 #define LOCUS_VECTOR_HPP_
 
+#include <memory>
+
 namespace locus
 {
 

@@ -15,6 +15,7 @@
 #include <algorithm>
 
 #include "Locus_Vector.hpp"
+#include "Locus_ReductionOperations.hpp"
 
 namespace locus
 {
