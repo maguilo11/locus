@@ -13,8 +13,8 @@
 #include <memory>
 #include <cassert>
 
-#include <Locus_Criterion.hpp>
-#include <Locus_MultiVector.hpp>
+#include "Locus_Criterion.hpp"
+#include "Locus_MultiVector.hpp"
 
 namespace locus
 {

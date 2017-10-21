@@ -5,8 +5,8 @@
  *      Author: Miguel A. Aguilo Valentin
  */
 
-#ifndef PLATO_STANDARDVECTOR_HPP_
-#define PLATO_STANDARDVECTOR_HPP_
+#ifndef LOCUS_STANDARDVECTOR_HPP_
+#define LOCUS_STANDARDVECTOR_HPP_
 
 #include <vector>
 #include <cassert>
@@ -133,4 +133,4 @@ private:
 
 }
 
-#endif /* PLATO_STANDARDVECTOR_HPP_ */
+#endif /* LOCUS_STANDARDVECTOR_HPP_ */
