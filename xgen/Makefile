@@ -23,6 +23,7 @@ UTEST = $(GTEST_BUILD)gtest-all.cc.o \
 	$(TEST)Locus_LinearAlgebraTest.o \
 	$(TEST)Locus_DataFactoryTest.o \
 	$(TEST)Locus_UnitTestMain.o \
+	$(TEST)Locus_BoundsTest.o \
 	$(TEST)Locus_VectorTest.o
 
 .cpp.o:

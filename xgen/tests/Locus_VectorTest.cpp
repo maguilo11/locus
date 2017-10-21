@@ -19,7 +19,9 @@
 #include <iostream>
 #include <algorithm>
 
+#include "Locus_UnitTestUtils.hpp"
 
+#include "Locus_Bounds.hpp"
 #include "Locus_StateData.hpp"
 #include "Locus_DataFactory.hpp"
 #include "Locus_CriterionList.hpp"
@@ -35,15 +37,8 @@
 #include "Locus_IdentityPreconditioner.hpp"
 #include "Locus_StandardVectorReductionOperations.hpp"
 
-#include "Locus_UnitTestUtils.hpp"
-
 namespace locus
 {
-
-/**********************************************************************************************************/
-/************************************* GRAD, HESS AND PREC OPERATORS **************************************/
-/**********************************************************************************************************/
-
 
 /**********************************************************************************************************/
 /*************** AUGMENTED LAGRANGIAN IMPLEMENTATION OF KELLEY-SACHS TRUST REGION ALGORITHM ***************/
@@ -67,131 +62,6 @@ struct algorithm
         NOT_CONVERGED = 12
     };
 };
-
-namespace bounds
-{
-
-template<typename ScalarType, typename OrdinalType = size_t>
-void checkBounds(const locus::MultiVector<ScalarType, OrdinalType> & aLowerBounds,
-                 const locus::MultiVector<ScalarType, OrdinalType> & aUpperBounds,
-                 bool aPrintMessage = false)
-{
-    assert(aLowerBounds.getNumVectors() == aUpperBounds.getNumVectors());
-
-    try
-    {
-        OrdinalType tNumVectors = aLowerBounds.getNumVectors();
-        for(OrdinalType tVectorIndex = 0; tVectorIndex < tNumVectors; tVectorIndex++)
-        {
-            assert(aLowerBounds[tVectorIndex].size() == aUpperBounds[tVectorIndex].size());
-
-            OrdinalType tNumElements = aLowerBounds[tVectorIndex].size();
-            for(OrdinalType tElemIndex = 0; tElemIndex < tNumElements; tElemIndex++)
-            {
-                if(aLowerBounds(tVectorIndex, tElemIndex) >= aUpperBounds(tVectorIndex, tElemIndex))
-                {
-                    std::ostringstream tErrorMessage;
-                    tErrorMessage << "\n\n**** ERROR IN FILE: " << __FILE__ << ", FUNCTION: "
-                            << __PRETTY_FUNCTION__ << ", MESSAGE: LOWER BOUND AT ELEMENT INDEX " << tElemIndex
-                            << " EXCEEDS/MATCHES UPPER BOUND WITH VALUE " << aLowerBounds(tVectorIndex, tElemIndex)
-                            << ". UPPER BOUND AT ELEMENT INDEX " << tElemIndex << " HAS A VALUE OF "
-                            << aUpperBounds(tVectorIndex, tElemIndex) << ": ABORT ****\n\n";
-                    throw std::invalid_argument(tErrorMessage.str().c_str());
-                }
-            }
-        }
-    }
-    catch(const std::invalid_argument & tErrorMsg)
-    {
-        if(aPrintMessage == true)
-        {
-            std::cout << tErrorMsg.what() << std::flush;
-        }
-        throw tErrorMsg;
-    }
-}
-
-template<typename ScalarType, typename OrdinalType = size_t>
-void project(const locus::MultiVector<ScalarType, OrdinalType> & aLowerBound,
-             const locus::MultiVector<ScalarType, OrdinalType> & aUpperBound,
-             locus::MultiVector<ScalarType, OrdinalType> & aInput)
-{
-    assert(aInput.getNumVectors() == aUpperBound.getNumVectors());
-    assert(aLowerBound.getNumVectors() == aUpperBound.getNumVectors());
-
-    OrdinalType tNumVectors = aInput.getNumVectors();
-    for(OrdinalType tVectorIndex = 0; tVectorIndex < tNumVectors; tVectorIndex++)
-    {
-        locus::Vector<ScalarType, OrdinalType> & tVector = aInput[tVectorIndex];
-        const locus::Vector<ScalarType, OrdinalType> & tLowerBound = aLowerBound[tVectorIndex];
-        const locus::Vector<ScalarType, OrdinalType> & tUpperBound = aUpperBound[tVectorIndex];
-
-        assert(tVector.size() == tLowerBound.size());
-        assert(tUpperBound.size() == tLowerBound.size());
-
-        OrdinalType tNumElements = tVector.size();
-        for(OrdinalType tIndex = 0; tIndex < tNumElements; tIndex++)
-        {
-            tVector[tIndex] = std::max(tVector[tIndex], tLowerBound[tIndex]);
-            tVector[tIndex] = std::min(tVector[tIndex], tUpperBound[tIndex]);
-        }
-    }
-} // function project
-
-template<typename ScalarType, typename OrdinalType = size_t>
-void computeProjectedVector(const locus::MultiVector<ScalarType, OrdinalType> & aTrialControl,
-                            const locus::MultiVector<ScalarType, OrdinalType> & aCurrentControl,
-                            locus::MultiVector<ScalarType, OrdinalType> & aProjectedVector)
-{
-    assert(aTrialControl.getNumVectors() == aCurrentControl.getNumVectors());
-    assert(aCurrentControl.getNumVectors() == aProjectedVector.getNumVectors());
-
-    locus::update(static_cast<ScalarType>(1), aTrialControl, static_cast<ScalarType>(0), aProjectedVector);
-    locus::update(static_cast<ScalarType>(-1), aCurrentControl, static_cast<ScalarType>(1), aProjectedVector);
-} // function computeProjectedVector
-
-template<typename ScalarType, typename OrdinalType = size_t>
-void computeActiveAndInactiveSets(const locus::MultiVector<ScalarType, OrdinalType> & aInput,
-                                  const locus::MultiVector<ScalarType, OrdinalType> & aLowerBound,
-                                  const locus::MultiVector<ScalarType, OrdinalType> & aUpperBound,
-                                  locus::MultiVector<ScalarType, OrdinalType> & aActiveSet,
-                                  locus::MultiVector<ScalarType, OrdinalType> & aInactiveSet)
-{
-    assert(aInput.getNumVectors() == aLowerBound.getNumVectors());
-    assert(aInput.getNumVectors() == aInactiveSet.getNumVectors());
-    assert(aActiveSet.getNumVectors() == aInactiveSet.getNumVectors());
-    assert(aLowerBound.getNumVectors() == aUpperBound.getNumVectors());
-
-    OrdinalType tNumVectors = aInput.getNumVectors();
-    for(OrdinalType tVectorIndex = 0; tVectorIndex < tNumVectors; tVectorIndex++)
-    {
-        locus::Vector<ScalarType, OrdinalType> & tActiveSet = aActiveSet[tVectorIndex];
-        locus::Vector<ScalarType, OrdinalType> & tInactiveSet = aInactiveSet[tVectorIndex];
-
-        const locus::Vector<ScalarType, OrdinalType> & tVector = aInput[tVectorIndex];
-        const locus::Vector<ScalarType, OrdinalType> & tLowerBound = aLowerBound[tVectorIndex];
-        const locus::Vector<ScalarType, OrdinalType> & tUpperBound = aUpperBound[tVectorIndex];
-
-        assert(tVector.size() == tLowerBound.size());
-        assert(tVector.size() == tInactiveSet.size());
-        assert(tActiveSet.size() == tInactiveSet.size());
-        assert(tUpperBound.size() == tLowerBound.size());
-
-        tActiveSet.fill(0.);
-        tInactiveSet.fill(0.);
-
-        OrdinalType tNumElements = tVector.size();
-        for(OrdinalType tIndex = 0; tIndex < tNumElements; tIndex++)
-        {
-            tActiveSet[tIndex] = static_cast<OrdinalType>((tVector[tIndex] >= tUpperBound[tIndex])
-                    || (tVector[tIndex] <= tLowerBound[tIndex]));
-            tInactiveSet[tIndex] = static_cast<OrdinalType>((tVector[tIndex] < tUpperBound[tIndex])
-                    && (tVector[tIndex] > tLowerBound[tIndex]));
-        }
-    }
-} // function computeActiveAndInactiveSets
-
-} // namespace bounds
 
 template<typename ScalarType, typename OrdinalType = size_t>
 class StandardAlgorithmDataMng
@@ -7708,97 +7578,6 @@ namespace LocusTest
 /* ***************** AUGMENTED LAGRANGIAN UNIT TESTS ***************** */
 /* ******************************************************************* */
 
-TEST(LocusTest, Project)
-{
-    // ********* Allocate Input Data *********
-    const size_t tNumVectors = 8;
-    std::vector<double> tVectorGold = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
-    locus::StandardVector<double> tlocusVector(tVectorGold);
-    // Default for second template typename is OrdinalType = size_t
-    locus::StandardMultiVector<double> tData(tNumVectors, tlocusVector);
-    for(size_t tVectorIndex = 0; tVectorIndex < tNumVectors; tVectorIndex++)
-    {
-        tData[tVectorIndex].update(1., tlocusVector, 0.);
-    }
-
-    // ********* Allocate Lower & Upper Bounds *********
-    const double tLowerBoundValue = 2;
-    const size_t tNumElementsPerVector = tVectorGold.size();
-    locus::StandardMultiVector<double> tLowerBounds(tNumVectors, tNumElementsPerVector, tLowerBoundValue);
-    const double tUpperBoundValue = 7;
-    locus::StandardMultiVector<double> tUpperBounds(tNumVectors, tNumElementsPerVector, tUpperBoundValue);
-
-    locus::bounds::project(tLowerBounds, tUpperBounds, tData);
-
-    std::vector<double> tVectorBoundsGold = { 2, 2, 3, 4, 5, 6, 7, 7, 7, 7 };
-    locus::StandardVector<double> tlocusBoundVector(tVectorBoundsGold);
-    locus::StandardMultiVector<double> tGoldData(tNumVectors, tlocusBoundVector);
-    for(size_t tVectorIndex = 0; tVectorIndex < tNumVectors; tVectorIndex++)
-    {
-        tGoldData[tVectorIndex].update(1., tlocusBoundVector, 0.);
-    }
-    LocusTest::checkMultiVectorData(tData, tGoldData);
-}
-
-TEST(LocusTest, CheckBounds)
-{
-    // ********* Allocate Lower & Upper Bounds *********
-    const size_t tNumVectors = 1;
-    const size_t tNumElements = 5;
-    double tLowerBoundValue = 2;
-    locus::StandardMultiVector<double> tLowerBounds(tNumVectors, tNumElements, tLowerBoundValue);
-    double tUpperBoundValue = 7;
-    locus::StandardMultiVector<double> tUpperBounds(tNumVectors, tNumElements, tUpperBoundValue);
-    ASSERT_NO_THROW(locus::bounds::checkBounds(tLowerBounds, tUpperBounds));
-
-    tUpperBoundValue = 2;
-    locus::fill(tUpperBoundValue, tUpperBounds);
-    ASSERT_THROW(locus::bounds::checkBounds(tLowerBounds, tUpperBounds), std::invalid_argument);
-}
-
-TEST(LocusTest, ComputeActiveAndInactiveSet)
-{
-    // ********* Allocate Input Data *********
-    const size_t tNumVectors = 4;
-    std::vector<double> tVectorGold = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
-    locus::StandardVector<double> tlocusVector(tVectorGold);
-    // Default for second template typename is OrdinalType = size_t
-    locus::StandardMultiVector<double> tData(tNumVectors, tlocusVector);
-    for(size_t tVectorIndex = 0; tVectorIndex < tNumVectors; tVectorIndex++)
-    {
-        tData[tVectorIndex].update(1., tlocusVector, 0.);
-    }
-
-    // ********* Allocate Lower & Upper Bounds *********
-    const double tLowerBoundValue = 2;
-    const size_t tNumElementsPerVector = tVectorGold.size();
-    locus::StandardMultiVector<double> tLowerBounds(tNumVectors, tNumElementsPerVector, tLowerBoundValue);
-    const double tUpperBoundValue = 7;
-    locus::StandardMultiVector<double> tUpperBounds(tNumVectors, tNumElementsPerVector, tUpperBoundValue);
-
-    // ********* Allocate Active & Inactive Sets *********
-    locus::StandardMultiVector<double> tActiveSet(tNumVectors, tNumElementsPerVector, tUpperBoundValue);
-    locus::StandardMultiVector<double> tInactiveSet(tNumVectors, tNumElementsPerVector, tUpperBoundValue);
-
-    // ********* Compute Active & Inactive Sets *********
-    locus::bounds::project(tLowerBounds, tUpperBounds, tData);
-    locus::bounds::computeActiveAndInactiveSets(tData, tLowerBounds, tUpperBounds, tActiveSet, tInactiveSet);
-
-    std::vector<double> tActiveSetGold = { 1, 1, 0, 0, 0, 0, 1, 1, 1, 1 };
-    std::vector<double> tInactiveSetGold = { 0, 0, 1, 1, 1, 1, 0, 0, 0, 0 };
-    locus::StandardVector<double> tlocusActiveSetVectorGold(tActiveSetGold);
-    locus::StandardVector<double> tlocusInactiveSetVectorGold(tInactiveSetGold);
-    locus::StandardMultiVector<double> tActiveSetGoldData(tNumVectors, tlocusActiveSetVectorGold);
-    locus::StandardMultiVector<double> tInactiveSetGoldData(tNumVectors, tlocusInactiveSetVectorGold);
-    for(size_t tVectorIndex = 0; tVectorIndex < tNumVectors; tVectorIndex++)
-    {
-        tActiveSetGoldData[tVectorIndex].update(1., tlocusActiveSetVectorGold, 0.);
-        tInactiveSetGoldData[tVectorIndex].update(1., tlocusInactiveSetVectorGold, 0.);
-    }
-    LocusTest::checkMultiVectorData(tActiveSet, tActiveSetGoldData);
-    LocusTest::checkMultiVectorData(tInactiveSet, tInactiveSetGoldData);
-}
-
 TEST(LocusTest, TrustRegionAlgorithmDataMng)
 {
     // ********* Test Factories for Dual Data *********
@@ -10998,6 +10777,8 @@ TEST(LocusTest, ConservativeConvexSeparableAppxDataMng)
     const size_t tNumControls = 2;
     tDataFactory.allocateDual(tNumDuals);
     tDataFactory.allocateControl(tNumControls);
+
+    locus::ConservativeConvexSeparableAppxDataMng<double> tDataMng(tDataFactory);
 }
 
 TEST(LocusTest, DualProblemStageMng)
