@@ -8,6 +8,8 @@
 #ifndef LOCUS_UNITTESTUTILS_HPP_
 #define LOCUS_UNITTESTUTILS_HPP_
 
+#include "gtest/gtest.h"
+
 #include <cassert>
 #include <iostream>
 

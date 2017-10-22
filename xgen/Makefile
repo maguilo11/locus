@@ -7,8 +7,15 @@ CXX_INCLUDE = /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault
 LOCUS_SOURCE = /Users/miguelaguilo/locus/xgen/src/
 LOCUS_INCLUDE = /Users/miguelaguilo/locus/xgen/include/
 
+# Set specific include directories
+LOCUS_OPERATORS_INCLUDE = /Users/miguelaguilo/locus/xgen/include/Operators/
+LOCUS_CRITERION_INCLUDE = /Users/miguelaguilo/locus/xgen/include/Criterion/
+LOCUS_ALGEGRA_INCLUDE = /Users/miguelaguilo/locus/xgen/include/LinearAlgebra/
+LOCUS_OC_INCLUDE = /Users/miguelaguilo/locus/xgen/include/OptimalityCriteria/
+LOCUS_TRUSTREGION_INCLUDE = /Users/miguelaguilo/locus/xgen/include/TrustRegion/
+
 # Set source and include directories for unit tests
-TEST = /Users/miguelaguilo/locus/xgen/tests/
+UNIT_TEST = /Users/miguelaguilo/locus/xgen/tests/
 
 # Google test directory 
 GTEST_INCLUDE = /Users/miguelaguilo/Software/gtest/include/
@@ -18,16 +25,19 @@ GTEST_BUILD = /Users/miguelaguilo/Software/gtest_mybuild_mpicxx/CMakeFiles/gtest
 OBJS = $(LOCUS_SOURCE)
 
 UTEST = $(GTEST_BUILD)gtest-all.cc.o \
-	$(TEST)Locus_OptimalityCriteriaTest.o \
-	$(TEST)Locus_PythonInterfaceTest.o \
-	$(TEST)Locus_LinearAlgebraTest.o \
-	$(TEST)Locus_DataFactoryTest.o \
-	$(TEST)Locus_UnitTestMain.o \
-	$(TEST)Locus_BoundsTest.o \
-	$(TEST)Locus_VectorTest.o
+	$(UNIT_TEST)Locus_AugmentedLagrangianTest.o \
+	$(UNIT_TEST)Locus_OptimalityCriteriaTest.o \
+	$(UNIT_TEST)Locus_PythonInterfaceTest.o \
+	$(UNIT_TEST)Locus_LinearAlgebraTest.o \
+	$(UNIT_TEST)Locus_DataFactoryTest.o \
+	$(UNIT_TEST)Locus_UnitTestMain.o \
+	$(UNIT_TEST)Locus_BoundsTest.o \
+	$(UNIT_TEST)Locus_VectorTest.o
 
 .cpp.o:
-	$(CXX) $(CXXFLAGS) -I$(CXX_INCLUDE) -I$(TEST) -I$(GTEST_INCLUDE) -I$(LOCUS_INCLUDE) -I$(LOCUS_SOURCE) \
+	$(CXX) $(CXXFLAGS) -I$(CXX_INCLUDE) -I$(GTEST_INCLUDE) -I$(UNIT_TEST) -I$(LOCUS_SOURCE) \
+	-I$(LOCUS_INCLUDE) -I$(LOCUS_OC_INCLUDE) -I$(LOCUS_ALGEGRA_INCLUDE) -I$(LOCUS_OPERATORS_INCLUDE) \
+	-I$(LOCUS_CRITERION_INCLUDE) -I$(LOCUS_TRUSTREGION_INCLUDE) \
 	-c -o $@ $<
 
 locus: $(OBJS) LocusMain.o
