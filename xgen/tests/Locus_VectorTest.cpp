@@ -130,17 +130,17 @@ public:
             mStagnationMeasure(std::numeric_limits<ScalarType>::max()),
             mFeasibilityMeasure(std::numeric_limits<ScalarType>::max()),
             mStationarityMeasure(std::numeric_limits<ScalarType>::max()),
-            mNormProjectedGradient(std::numeric_limits<ScalarType>::max()),
+            mNormInactiveGradient(std::numeric_limits<ScalarType>::max()),
             mObjectiveStagnationMeasure(std::numeric_limits<ScalarType>::max()),
             mDualProblemBoundsScaleFactor(0.5),
             mCurrentObjectiveFunctionValue(std::numeric_limits<ScalarType>::max()),
             mPreviousObjectiveFunctionValue(std::numeric_limits<ScalarType>::max()),
             mDualObjectiveGlobalizationFactor(1),
             mKarushKuhnTuckerConditionsInexactness(std::numeric_limits<ScalarType>::max()),
-            mDualWorkOne(),
-            mDualWorkTwo(),
-            mControlWorkOne(),
-            mControlWorkTwo(),
+            mDualWorkVectorOne(),
+            mDualWorkVectorTwo(),
+            mControlWorkVectorOne(),
+            mControlWorkVectorTwo(),
             mDual(aDataFactory.dual().create()),
             mTrialStep(aDataFactory.control().create()),
             mActiveSet(aDataFactory.control().create()),
@@ -664,22 +664,6 @@ public:
 
         return (mCurrentConstraintGradients->operator()(aConstraintIndex, aVectorIndex));
     }
-    void getCurrentConstraintGradients(locus::MultiVectorList<ScalarType, OrdinalType> & aInput)
-    {
-        assert(mCurrentConstraintGradients.get() != nullptr);
-        assert(aInput.size() == mCurrentConstraintGradients->size());
-
-        const OrdinalType tNumConstraints = aInput.size();
-        for(OrdinalType tConstraintIndex = 0; tConstraintIndex < tNumConstraints; tConstraintIndex++)
-        {
-            assert(aInput[tConstraintIndex].get() != nullptr);
-            assert(mCurrentConstraintGradients->ptr(tConstraintIndex).get() != nullptr);
-            locus::update(static_cast<ScalarType>(1),
-                          mCurrentConstraintGradients->operator[](tConstraintIndex),
-                          static_cast<ScalarType>(0),
-                          aInput[tConstraintIndex]);
-        }
-    }
     void setCurrentConstraintGradients(const OrdinalType & aConstraintIndex,
                                        const locus::MultiVector<ScalarType, OrdinalType> & aInput)
     {
@@ -718,11 +702,11 @@ public:
         for(OrdinalType tIndex = 0; tIndex < tNumVectors; tIndex++)
         {
             const locus::Vector<ScalarType, OrdinalType> & tMyCurrentControl = mCurrentControl->operator[](tIndex);
-            mControlWorkOne->update(1., tMyCurrentControl, 0.);
+            mControlWorkVectorOne->update(1., tMyCurrentControl, 0.);
             const locus::Vector<ScalarType, OrdinalType> & tMyPreviousControl = mPreviousControl->operator[](tIndex);
-            mControlWorkOne->update(-1., tMyPreviousControl, 1.);
-            mControlWorkOne->modulus();
-            storage[tIndex] = mControlReductions->max(*mControlWorkOne);
+            mControlWorkVectorOne->update(-1., tMyPreviousControl, 1.);
+            mControlWorkVectorOne->modulus();
+            storage[tIndex] = mControlReductions->max(*mControlWorkVectorOne);
         }
         mStagnationMeasure = *std::max_element(storage.begin(), storage.end());
     }
@@ -732,7 +716,7 @@ public:
     }
 
     // NOTE: NORM OF CURRENT PROJECTED GRADIENT
-    ScalarType computeProjectedVectorNorm(const locus::MultiVector<ScalarType, OrdinalType> & aInput)
+    ScalarType computeInactiveVectorNorm(const locus::MultiVector<ScalarType, OrdinalType> & aInput)
     {
         ScalarType tCummulativeDotProduct = 0.;
         OrdinalType tNumVectors = aInput.getNumVectors();
@@ -741,14 +725,14 @@ public:
             const locus::Vector<ScalarType, OrdinalType> & tMyInactiveSet = (*mInactiveSet)[tIndex];
             const locus::Vector<ScalarType, OrdinalType> & tMyInputVector = aInput[tIndex];
 
-            mControlWorkOne->update(1., tMyInputVector, 0.);
-            mControlWorkOne->entryWiseProduct(tMyInactiveSet);
-            tCummulativeDotProduct += mControlWorkOne->dot(*mControlWorkOne);
+            mControlWorkVectorOne->update(1., tMyInputVector, 0.);
+            mControlWorkVectorOne->entryWiseProduct(tMyInactiveSet);
+            tCummulativeDotProduct += mControlWorkVectorOne->dot(*mControlWorkVectorOne);
         }
         ScalarType tOutput = std::sqrt(tCummulativeDotProduct);
         return(tOutput);
     }
-    void computeNormProjectedGradient()
+    void computeNormInactiveGradient()
     {
         ScalarType tCummulativeDotProduct = 0.;
         OrdinalType tNumVectors = mCurrentObjectiveGradient->getNumVectors();
@@ -757,15 +741,15 @@ public:
             const locus::Vector<ScalarType, OrdinalType> & tMyInactiveSet = (*mInactiveSet)[tIndex];
             const locus::Vector<ScalarType, OrdinalType> & tMyGradient = (*mCurrentObjectiveGradient)[tIndex];
 
-            mControlWorkOne->update(1., tMyGradient, 0.);
-            mControlWorkOne->entryWiseProduct(tMyInactiveSet);
-            tCummulativeDotProduct += mControlWorkOne->dot(*mControlWorkOne);
+            mControlWorkVectorOne->update(1., tMyGradient, 0.);
+            mControlWorkVectorOne->entryWiseProduct(tMyInactiveSet);
+            tCummulativeDotProduct += mControlWorkVectorOne->dot(*mControlWorkVectorOne);
         }
-        mNormProjectedGradient = std::sqrt(tCummulativeDotProduct);
+        mNormInactiveGradient = std::sqrt(tCummulativeDotProduct);
     }
-    ScalarType getNormProjectedGradient() const
+    ScalarType getNormInactiveGradient() const
     {
-        return (mNormProjectedGradient);
+        return (mNormInactiveGradient);
     }
 
     // NOTE: FEASIBILITY MEASURE CALCULATION
@@ -786,11 +770,10 @@ public:
         std::vector<ScalarType> tStorage(tNumVectors, static_cast<ScalarType>(0));
         for(OrdinalType tVectorIndex = 0; tVectorIndex < tNumVectors; tVectorIndex++)
         {
-            const locus::Vector<ScalarType, OrdinalType> & tDual = mDual->operator[](tVectorIndex);
-            const locus::Vector<ScalarType, OrdinalType> & tWork = mDualWorkOne->operator[](tVectorIndex);
-            locus::update(static_cast<ScalarType>(1), tDual, static_cast<ScalarType>(0), tWork);
-            tWork.modulus();
-            tStorage[tVectorIndex] = mDualReductions->max(tWork);
+            const locus::Vector<ScalarType, OrdinalType> & tMyConstraintValues = mCurrentConstraintValues->operator[](tVectorIndex);
+            mDualWorkVectorOne->update(static_cast<ScalarType>(1), tMyConstraintValues, static_cast<ScalarType>(0));
+            mDualWorkVectorOne->modulus();
+            tStorage[tVectorIndex] = mDualReductions->max(mDualWorkVectorOne.operator*());
         }
         const ScalarType tInitialValue = 0;
         mFeasibilityMeasure = std::accumulate(tStorage.begin(), tStorage.end(), tInitialValue);
@@ -885,15 +868,15 @@ private:
     void initialize()
     {
         const OrdinalType tControlVectorIndex = 0;
-        mControlWorkOne = mCurrentControl->operator[](tControlVectorIndex).create();
-        mControlWorkTwo = mCurrentControl->operator[](tControlVectorIndex).create();
+        mControlWorkVectorOne = mCurrentControl->operator[](tControlVectorIndex).create();
+        mControlWorkVectorTwo = mCurrentControl->operator[](tControlVectorIndex).create();
         locus::fill(static_cast<ScalarType>(0), *mActiveSet);
         locus::fill(static_cast<ScalarType>(1), *mInactiveSet);
 
         assert(mDual->getNumVectors() == static_cast<OrdinalType>(1));
         const OrdinalType tDualVectorIndex = 0;
-        mDualWorkOne = mDual->operator[](tDualVectorIndex).create();
-        mDualWorkTwo = mDual->operator[](tDualVectorIndex).create();
+        mDualWorkVectorOne = mDual->operator[](tDualVectorIndex).create();
+        mDualWorkVectorTwo = mDual->operator[](tDualVectorIndex).create();
 
         const OrdinalType tNumConstraints = mDual->operator[](tDualVectorIndex).size();
         for(OrdinalType tConstraintIndex = 0; tConstraintIndex < tNumConstraints; tConstraintIndex++)
@@ -929,8 +912,8 @@ private:
         std::vector<ScalarType> tStorageTwo(tNumControlVectors, static_cast<ScalarType>(0));
         for(OrdinalType tVectorIndex = 0; tVectorIndex < tNumControlVectors; tVectorIndex++)
         {
-            locus::Vector<ScalarType, OrdinalType> & tWorkOne = mControlWorkOne.operator*();
-            locus::Vector<ScalarType, OrdinalType> & tWorkTwo = mControlWorkTwo.operator*();
+            locus::Vector<ScalarType, OrdinalType> & tWorkOne = mControlWorkVectorOne.operator*();
+            locus::Vector<ScalarType, OrdinalType> & tWorkTwo = mControlWorkVectorTwo.operator*();
             const locus::Vector<ScalarType, OrdinalType> & tControl = aControl[tVectorIndex];
             const locus::Vector<ScalarType, OrdinalType> & tObjectiveGradient =
                     mCurrentObjectiveGradient->operator[](tVectorIndex);
@@ -982,8 +965,8 @@ private:
         std::vector<ScalarType> tStorageTwo(tNumDualVectors, static_cast<ScalarType>(0));
         for(OrdinalType tVectorIndex = 0; tVectorIndex < tNumDualVectors; tVectorIndex++)
         {
-            locus::Vector<ScalarType, OrdinalType> & tWorkOne = mDualWorkOne.operator*();
-            locus::Vector<ScalarType, OrdinalType> & tWorkTwo = mDualWorkTwo.operator*();
+            locus::Vector<ScalarType, OrdinalType> & tWorkOne = mDualWorkVectorOne.operator*();
+            locus::Vector<ScalarType, OrdinalType> & tWorkTwo = mDualWorkVectorTwo.operator*();
             const locus::Vector<ScalarType, OrdinalType> & tDual = aDual[tVectorIndex];
             const locus::Vector<ScalarType, OrdinalType> & tConstraintValues =
                     mCurrentConstraintValues->operator[](tVectorIndex);
@@ -1014,7 +997,7 @@ private:
     ScalarType mStagnationMeasure;
     ScalarType mFeasibilityMeasure;
     ScalarType mStationarityMeasure;
-    ScalarType mNormProjectedGradient;
+    ScalarType mNormInactiveGradient;
     ScalarType mObjectiveStagnationMeasure;
     ScalarType mDualProblemBoundsScaleFactor;
     ScalarType mCurrentObjectiveFunctionValue;
@@ -1022,10 +1005,10 @@ private:
     ScalarType mDualObjectiveGlobalizationFactor;
     ScalarType mKarushKuhnTuckerConditionsInexactness;
 
-    std::shared_ptr<locus::Vector<ScalarType, OrdinalType>> mDualWorkOne;
-    std::shared_ptr<locus::Vector<ScalarType, OrdinalType>> mDualWorkTwo;
-    std::shared_ptr<locus::Vector<ScalarType, OrdinalType>> mControlWorkOne;
-    std::shared_ptr<locus::Vector<ScalarType, OrdinalType>> mControlWorkTwo;
+    std::shared_ptr<locus::Vector<ScalarType, OrdinalType>> mDualWorkVectorOne;
+    std::shared_ptr<locus::Vector<ScalarType, OrdinalType>> mDualWorkVectorTwo;
+    std::shared_ptr<locus::Vector<ScalarType, OrdinalType>> mControlWorkVectorOne;
+    std::shared_ptr<locus::Vector<ScalarType, OrdinalType>> mControlWorkVectorTwo;
 
     std::shared_ptr<locus::MultiVector<ScalarType, OrdinalType>> mDual;
     std::shared_ptr<locus::MultiVector<ScalarType, OrdinalType>> mTrialStep;
@@ -1097,6 +1080,8 @@ public:
             mConstraintGradients(),
             mStateData(std::make_shared<locus::StateData<ScalarType, OrdinalType>>(aDataFactory))
     {
+        mObjectiveGradient = std::make_shared<locus::AnalyticalGradient<ScalarType, OrdinalType>>(mObjective);
+        mConstraintGradients = std::make_shared<locus::GradientOperatorList<ScalarType, OrdinalType>>(mConstraints);
     }
     virtual ~PrimalProblemStageMng()
     {
@@ -1205,7 +1190,7 @@ public:
 
             locus::MultiVector<ScalarType, OrdinalType> & tMyOutput = aOutput[tIndex];
             locus::fill(static_cast<ScalarType>(0), tMyOutput);
-            mConstraints->operator[](tIndex).computeConstraintGradients(*mState, aControl, tMyOutput);
+            mConstraints->operator[](tIndex).gradient(*mState, aControl, tMyOutput);
             mNumConstraintGradientEvaluations[tIndex] =
                     mNumConstraintGradientEvaluations[tIndex] + static_cast<OrdinalType>(1);
         }
@@ -2739,7 +2724,7 @@ private:
         mDataMng->computeStagnationMeasure();
         mDataMng->computeFeasibilityMeasure();
         mDataMng->computeStationarityMeasure();
-        mDataMng->computeNormProjectedGradient();
+        mDataMng->computeNormInactiveGradient();
         mDataMng->computeObjectiveStagnationMeasure();
 
         const locus::MultiVector<ScalarType, OrdinalType> & tDual = mDataMng->getDual();
@@ -2749,7 +2734,7 @@ private:
         const ScalarType tStagnationMeasure = mDataMng->getStagnationMeasure();
         const ScalarType tFeasibilityMeasure = mDataMng->getFeasibilityMeasure();
         const ScalarType tStationarityMeasure = mDataMng->getStationarityMeasure();
-        const ScalarType tNormProjectedGradient = mDataMng->getNormProjectedGradient();
+        const ScalarType tNormInactiveGradient = mDataMng->getNormInactiveGradient();
         const ScalarType tObjectiveStagnationMeasure = mDataMng->getObjectiveStagnationMeasure();
         const ScalarType t_KKT_ConditionsInexactness = mDataMng->getKarushKuhnTuckerConditionsInexactness();
 
@@ -2764,7 +2749,7 @@ private:
             this->setStoppingCriterion(locus::ccsa::stop_t::STATIONARITY_TOLERANCE);
         }
         else if( (tFeasibilityMeasure < this->getFeasibilityTolerance())
-                && (tNormProjectedGradient < this->getOptimalityTolerance()) )
+                && (tNormInactiveGradient < this->getOptimalityTolerance()) )
         {
             tStop = true;
             this->setStoppingCriterion(locus::ccsa::stop_t::OPTIMALITY_AND_FEASIBILITY_MET);
@@ -2885,6 +2870,128 @@ private:
     locus::ConservativeConvexSeparableApproximationsAlgorithm<ScalarType, OrdinalType> & operator=(const locus::ConservativeConvexSeparableApproximationsAlgorithm<ScalarType, OrdinalType> & aRhs);
 };
 
+template<typename ScalarType, typename OrdinalType = size_t>
+class CcsaTestObjective : public locus::Criterion<ScalarType, OrdinalType>
+{
+public:
+    explicit CcsaTestObjective(const locus::ReductionOperations<ScalarType, OrdinalType> & aReduction) :
+            mConstant(0.0624),
+            mReduction(aReduction.create())
+    {
+    }
+    virtual ~CcsaTestObjective()
+    {
+    }
+
+    ScalarType value(const locus::MultiVector<ScalarType, OrdinalType> & aState,
+                     const locus::MultiVector<ScalarType, OrdinalType> & aControl)
+    {
+        assert(aControl.getNumVectors() > static_cast<OrdinalType>(0));
+
+        OrdinalType tNumVectors = aControl.getNumVectors();
+        std::vector<ScalarType> tStorage(tNumVectors);
+        for(OrdinalType tVectorIndex = 0; tVectorIndex < tNumVectors; tVectorIndex++)
+        {
+            const locus::Vector<ScalarType, OrdinalType> & tMyControl = aControl[tVectorIndex];
+            tStorage[tVectorIndex] = mReduction->sum(tMyControl);
+        }
+        const ScalarType tInitialValue = 0;
+        ScalarType tSum = std::accumulate(tStorage.begin(), tStorage.end(), tInitialValue);
+        ScalarType tOutput = mConstant * tSum;
+
+        return (tOutput);
+    }
+    void gradient(const locus::MultiVector<ScalarType, OrdinalType> & aState,
+                  const locus::MultiVector<ScalarType, OrdinalType> & aControl,
+                  locus::MultiVector<ScalarType, OrdinalType> & aOutput)
+    {
+        locus::fill(mConstant, aOutput);
+    }
+
+    std::shared_ptr<locus::Criterion<ScalarType, OrdinalType>> create() const
+    {
+        std::shared_ptr<locus::Criterion<ScalarType, OrdinalType>> tOutput =
+                std::make_shared<locus::CcsaTestObjective<ScalarType, OrdinalType>>(mReduction.operator*());
+        return (tOutput);
+    }
+
+private:
+    ScalarType mConstant;
+    std::shared_ptr<locus::ReductionOperations<ScalarType, OrdinalType>> mReduction;
+
+private:
+    CcsaTestObjective(const locus::CcsaTestObjective<ScalarType, OrdinalType> & aRhs);
+    locus::CcsaTestObjective<ScalarType, OrdinalType> & operator=(const locus::CcsaTestObjective<ScalarType, OrdinalType> & aRhs);
+};
+
+template<typename ScalarType, typename OrdinalType = size_t>
+class CcsaTestInequality : public locus::Criterion<ScalarType, OrdinalType>
+{
+public:
+    CcsaTestInequality() :
+            mConstant(1)
+    {
+    }
+    virtual ~CcsaTestInequality()
+    {
+    }
+
+    ScalarType value(const locus::MultiVector<ScalarType, OrdinalType> & aState,
+                     const locus::MultiVector<ScalarType, OrdinalType> & aControl)
+    {
+        assert(aControl.getNumVectors() > static_cast<OrdinalType>(0));
+
+        const OrdinalType tVectorIndex = 0;
+        const locus::Vector<ScalarType, OrdinalType> & tMyControl = aControl[tVectorIndex];
+
+        ScalarType tTermOne = static_cast<ScalarType>(61) / std::pow(tMyControl[0], static_cast<ScalarType>(3));
+        ScalarType tTermTwo = static_cast<ScalarType>(37) / std::pow(tMyControl[1], static_cast<ScalarType>(3));
+        ScalarType tTermThree = static_cast<ScalarType>(19) / std::pow(tMyControl[2], static_cast<ScalarType>(3));
+        ScalarType tTermFour = static_cast<ScalarType>(7) / std::pow(tMyControl[3], static_cast<ScalarType>(3));
+        ScalarType tTermFive = static_cast<ScalarType>(1) / std::pow(tMyControl[4], static_cast<ScalarType>(3));
+        ScalarType tResidual = tTermOne + tTermTwo + tTermThree + tTermFour + tTermFive;
+        tResidual = tResidual - mConstant;
+
+        return (tResidual);
+    }
+    void gradient(const locus::MultiVector<ScalarType, OrdinalType> & aState,
+                  const locus::MultiVector<ScalarType, OrdinalType> & aControl,
+                  locus::MultiVector<ScalarType, OrdinalType> & aOutput)
+    {
+        assert(aControl.getNumVectors() > static_cast<OrdinalType>(0));
+
+        const OrdinalType tVectorIndex = 0;
+        locus::Vector<ScalarType, OrdinalType> & tMyGradient = aOutput[tVectorIndex];
+        const locus::Vector<ScalarType, OrdinalType> & tMyControl = aControl[tVectorIndex];
+
+        ScalarType tScaleFactor = -3;
+        tMyGradient[0] = tScaleFactor
+                * (static_cast<ScalarType>(61) / std::pow(tMyControl[0], static_cast<ScalarType>(4)));
+        tMyGradient[1] = tScaleFactor
+                * (static_cast<ScalarType>(37) / std::pow(tMyControl[1], static_cast<ScalarType>(4)));
+        tMyGradient[2] = tScaleFactor
+                * (static_cast<ScalarType>(19) / std::pow(tMyControl[2], static_cast<ScalarType>(4)));
+        tMyGradient[3] = tScaleFactor
+                * (static_cast<ScalarType>(7) / std::pow(tMyControl[3], static_cast<ScalarType>(4)));
+        tMyGradient[4] = tScaleFactor
+                * (static_cast<ScalarType>(1) / std::pow(tMyControl[4], static_cast<ScalarType>(4)));
+    }
+
+    std::shared_ptr<locus::Criterion<ScalarType, OrdinalType>> create() const
+    {
+        std::shared_ptr<locus::Criterion<ScalarType, OrdinalType>> tOutput =
+                std::make_shared<locus::CcsaTestInequality<ScalarType, OrdinalType>>();
+        return (tOutput);
+    }
+
+private:
+    ScalarType mConstant;
+
+private:
+    CcsaTestInequality(const locus::CcsaTestInequality<ScalarType, OrdinalType> & aRhs);
+    locus::CcsaTestInequality<ScalarType, OrdinalType> & operator=(const locus::CcsaTestInequality<ScalarType, OrdinalType> & aRhs);
+};
+
 }
 
 /**********************************************************************************************************/
@@ -2897,6 +3004,59 @@ namespace LocusTest
 /* ******************************************************************* */
 /* ************** METHOD OF MOVING ASYMPTOTES UNIT TESTS ************* */
 /* ******************************************************************* */
+
+TEST(LocusTest, CcsaTestObjective)
+{
+    // ********* Allocate Data Factory *********
+    locus::StandardVectorReductionOperations<double> tReduction;
+
+    // ********* Allocate Criterion *********
+    locus::CcsaTestObjective<double> tCriterion(tReduction);
+
+    const size_t tNumState = 1;
+    const size_t tNumVectors = 1;
+    locus::StandardMultiVector<double> tDummyState(tNumVectors, tNumState);
+    double tScalarValue = 1;
+    const size_t tNumControls = 5;
+    locus::StandardMultiVector<double> tControl(tNumVectors, tNumControls, tScalarValue);
+
+    tScalarValue = 0.312;
+    const double tTolerance = 1e-6;
+    EXPECT_NEAR(tScalarValue, tCriterion.value(tDummyState, tControl), tTolerance);
+
+    locus::StandardMultiVector<double> tGradient(tNumVectors, tNumControls);
+    tCriterion.gradient(tDummyState, tControl, tGradient);
+    tScalarValue = 0.0624;
+    locus::StandardMultiVector<double> tGold(tNumVectors, tNumControls, tScalarValue);
+    LocusTest::checkMultiVectorData(tGradient, tGold);
+}
+
+TEST(LocusTest, CcsaTestInequality)
+{
+    // ********* Allocate Criterion *********
+    locus::CcsaTestInequality<double> tCriterion;
+
+    const size_t tNumState = 1;
+    const size_t tNumVectors = 1;
+    locus::StandardMultiVector<double> tDummyState(tNumVectors, tNumState);
+    double tScalarValue = 1;
+    const size_t tNumControls = 5;
+    locus::StandardMultiVector<double> tControl(tNumVectors, tNumControls, tScalarValue);
+
+    tScalarValue = 124;
+    const double tTolerance = 1e-6;
+    EXPECT_NEAR(tScalarValue, tCriterion.value(tDummyState, tControl), tTolerance);
+
+    locus::StandardMultiVector<double> tGradient(tNumVectors, tNumControls);
+    tCriterion.gradient(tDummyState, tControl, tGradient);
+    locus::StandardMultiVector<double> tGold(tNumVectors, tNumControls);
+    tGold(0,0) = -183;
+    tGold(0,1) = -111;
+    tGold(0,2) = -57;
+    tGold(0,3) = -21;
+    tGold(0,4) = -3;
+    LocusTest::checkMultiVectorData(tGradient, tGold);
+}
 
 TEST(LocusTest, ConservativeConvexSeparableAppxDataMng)
 {
@@ -3041,6 +3201,206 @@ TEST(LocusTest, ConservativeConvexSeparableAppxDataMng)
     tControlVector.fill(tScalarValue);
     tDataMng.setPreviousControl(tVectorIndex, tControlVector);
     LocusTest::checkVectorData(tControlVector, tDataMng.getPreviousControl(tVectorIndex));
+
+    // ********* TEST CURRENT GRADIENT FUNCTIONS *********
+    tScalarValue = 3;
+    locus::fill(tScalarValue, tControlMultiVector);
+    tDataMng.setCurrentObjectiveGradient(tControlMultiVector);
+    LocusTest::checkMultiVectorData(tControlMultiVector, tDataMng.getCurrentObjectiveGradient());
+
+    tScalarValue = 4;
+    tControlVector.fill(tScalarValue);
+    tDataMng.setCurrentObjectiveGradient(tVectorIndex, tControlVector);
+    LocusTest::checkVectorData(tControlVector, tDataMng.getCurrentObjectiveGradient(tVectorIndex));
+
+    // ********* TEST CURRENT SIGMA FUNCTIONS *********
+    tScalarValue = 5;
+    locus::fill(tScalarValue, tControlMultiVector);
+    tDataMng.setCurrentSigma(tControlMultiVector);
+    LocusTest::checkMultiVectorData(tControlMultiVector, tDataMng.getCurrentSigma());
+
+    tScalarValue = 6;
+    tControlVector.fill(tScalarValue);
+    tDataMng.setCurrentSigma(tVectorIndex, tControlVector);
+    LocusTest::checkVectorData(tControlVector, tDataMng.getCurrentSigma(tVectorIndex));
+
+    // ********* TEST CONTROL LOWER BOUNDS FUNCTIONS *********
+    tScalarValue = 6;
+    locus::fill(tScalarValue, tControlMultiVector);
+    tDataMng.setControlLowerBounds(tControlMultiVector);
+    LocusTest::checkMultiVectorData(tControlMultiVector, tDataMng.getControlLowerBounds());
+
+    tScalarValue = 9;
+    tDataMng.setControlLowerBounds(tScalarValue);
+    locus::fill(tScalarValue, tControlMultiVector);
+    LocusTest::checkMultiVectorData(tControlMultiVector, tDataMng.getControlLowerBounds());
+
+    tScalarValue = 7;
+    tControlVector.fill(tScalarValue);
+    tDataMng.setControlLowerBounds(tVectorIndex, tControlVector);
+    LocusTest::checkVectorData(tControlVector, tDataMng.getControlLowerBounds(tVectorIndex));
+
+    tScalarValue = 8;
+    tControlVector.fill(tScalarValue);
+    tDataMng.setControlLowerBounds(tVectorIndex, tScalarValue);
+    LocusTest::checkVectorData(tControlVector, tDataMng.getControlLowerBounds(tVectorIndex));
+
+    // ********* TEST CONTROL UPPER BOUNDS FUNCTIONS *********
+    tScalarValue = 61;
+    locus::fill(tScalarValue, tControlMultiVector);
+    tDataMng.setControlUpperBounds(tControlMultiVector);
+    LocusTest::checkMultiVectorData(tControlMultiVector, tDataMng.getControlUpperBounds());
+
+    tScalarValue = 91;
+    tDataMng.setControlUpperBounds(tScalarValue);
+    locus::fill(tScalarValue, tControlMultiVector);
+    LocusTest::checkMultiVectorData(tControlMultiVector, tDataMng.getControlUpperBounds());
+
+    tScalarValue = 71;
+    tControlVector.fill(tScalarValue);
+    tDataMng.setControlUpperBounds(tVectorIndex, tControlVector);
+    LocusTest::checkVectorData(tControlVector, tDataMng.getControlUpperBounds(tVectorIndex));
+
+    tScalarValue = 81;
+    tControlVector.fill(tScalarValue);
+    tDataMng.setControlUpperBounds(tVectorIndex, tScalarValue);
+    LocusTest::checkVectorData(tControlVector, tDataMng.getControlUpperBounds(tVectorIndex));
+
+    // ********* TEST CONSTRAINT VALUES FUNCTIONS *********
+    tScalarValue = 61;
+    locus::fill(tScalarValue, tDualMultiVector);
+    tDataMng.setCurrentConstraintValues(tDualMultiVector);
+    LocusTest::checkMultiVectorData(tDualMultiVector, tDataMng.getCurrentConstraintValues());
+
+    tScalarValue = 91;
+    tDualVector.fill(tScalarValue);
+    const size_t tConstraintIndex = 0;
+    tDataMng.setCurrentConstraintValues(tConstraintIndex, tDualVector);
+    LocusTest::checkVectorData(tDualVector, tDataMng.getCurrentConstraintValues(tConstraintIndex));
+
+    // ********* TEST CONSTRAINT GRADIENT FUNCTIONS *********
+    tScalarValue = 1;
+    locus::fill(tScalarValue, tControlMultiVector);
+    tDataMng.setCurrentConstraintGradients(tConstraintIndex, tControlMultiVector);
+    LocusTest::checkMultiVectorData(tControlMultiVector, tDataMng.getCurrentConstraintGradients(tConstraintIndex));
+    const locus::MultiVectorList<double> & tCurrentConstraintGradientList = tDataMng.getCurrentConstraintGradients();
+    LocusTest::checkMultiVectorData(tControlMultiVector, tCurrentConstraintGradientList[tConstraintIndex]);
+
+    tScalarValue = 9;
+    tControlVector.fill(tScalarValue);
+    tDataMng.setCurrentConstraintGradients(tConstraintIndex, tVectorIndex, tControlVector);
+    LocusTest::checkVectorData(tControlVector, tDataMng.getCurrentConstraintGradients(tConstraintIndex, tVectorIndex));
+
+    // ********* TEST COMPUTE STAGNATION MEASURE *********
+    tScalarValue = 1;
+    locus::fill(tScalarValue, tControlMultiVector);
+    tDataMng.setCurrentControl(tControlMultiVector);
+    tScalarValue = 4;
+    locus::fill(tScalarValue, tControlMultiVector);
+    tDataMng.setPreviousControl(tControlMultiVector);
+    tDataMng.computeStagnationMeasure();
+    tScalarValue = 3;
+    EXPECT_NEAR(tScalarValue, tDataMng.getStagnationMeasure(), tTolerance);
+
+    // ********* TEST COMPUTE INACTIVE VECTOR NORM *********
+    tScalarValue = 1;
+    tControlVector.fill(tScalarValue);
+    tControlVector[0] = 0;
+    tDataMng.setInactiveSet(tVectorIndex, tControlVector);
+    tScalarValue = 4;
+    locus::fill(tScalarValue, tControlMultiVector);
+    EXPECT_NEAR(tScalarValue, tDataMng.computeInactiveVectorNorm(tControlMultiVector), tTolerance);
+
+    tScalarValue = 8;
+    locus::fill(tScalarValue, tControlMultiVector);
+    tDataMng.setCurrentObjectiveGradient(tControlMultiVector);
+    tDataMng.computeNormInactiveGradient();
+    EXPECT_NEAR(tScalarValue, tDataMng.getNormInactiveGradient(), tTolerance);
+
+    // ********* TEST OBJECTIVE STAGNATION FUNCTION *********
+    tScalarValue = 0.5;
+    tDataMng.setCurrentObjectiveFunctionValue(tScalarValue);
+    tScalarValue = 1.25;
+    tDataMng.setPreviousObjectiveFunctionValue(tScalarValue);
+    tScalarValue = 0.75;
+    tDataMng.computeObjectiveStagnationMeasure();
+    EXPECT_NEAR(tScalarValue, tDataMng.getObjectiveStagnationMeasure(), tTolerance);
+
+    // ********* TEST FEASIBILITY MEASURE *********
+    tScalarValue = 0.5;
+    tDualVector.fill(tScalarValue);
+    tDataMng.setCurrentConstraintValues(tVectorIndex, tDualVector);
+    tDataMng.computeFeasibilityMeasure();
+    EXPECT_NEAR(tScalarValue, tDataMng.getFeasibilityMeasure(), tTolerance);
+}
+
+TEST(LocusTest, PrimalProblemStageMng)
+{
+    // ********* Allocate Data Factory *********
+    locus::DataFactory<double> tDataFactory;
+    const size_t tNumDuals = 1;
+    const size_t tNumControls = 5;
+    tDataFactory.allocateDual(tNumDuals);
+    tDataFactory.allocateControl(tNumControls);
+
+    // ********* Allocate Criteria *********
+    locus::CriterionList<double> tInequalityList;
+    locus::CcsaTestInequality<double> tInequality;
+    tInequalityList.add(tInequality);
+    locus::CcsaTestObjective<double> tObjective(tDataFactory.getControlReductionOperations());
+
+    // ********* Allocate Primal Stage Manager *********
+    locus::PrimalProblemStageMng<double> tStageMng(tDataFactory, tObjective, tInequalityList);
+
+    // ********* TEST OBJECTIVE EVALUATION *********
+    size_t tOrdinalValue = 0;
+    EXPECT_EQ(tOrdinalValue, tStageMng.getNumObjectiveFunctionEvaluations());
+    double tScalarValue = 1;
+    const size_t tNumVectors = 1;
+    locus::StandardMultiVector<double> tControl(tNumVectors, tNumControls, tScalarValue);
+    tScalarValue = 0.312;
+    const double tTolerance = 1e-6;
+    EXPECT_NEAR(tScalarValue, tStageMng.evaluateObjective(tControl), tTolerance);
+    tOrdinalValue = 1;
+    EXPECT_EQ(tOrdinalValue, tStageMng.getNumObjectiveFunctionEvaluations());
+
+    // ********* TEST CONSTRAINT EVALUATION *********
+    tOrdinalValue = 0;
+    const size_t tConstraintIndex = 0;
+    EXPECT_EQ(tOrdinalValue, tStageMng.getNumConstraintEvaluations(tConstraintIndex));
+    locus::StandardMultiVector<double> tConstraints(tNumVectors, tNumDuals);
+    tStageMng.evaluateConstraints(tControl, tConstraints);
+    tScalarValue = 124;
+    locus::StandardMultiVector<double> tDualMultiVector(tNumVectors, tNumDuals, tScalarValue);
+    LocusTest::checkMultiVectorData(tConstraints, tDualMultiVector);
+    tOrdinalValue = 1;
+    EXPECT_EQ(tOrdinalValue, tStageMng.getNumConstraintEvaluations(tConstraintIndex));
+
+    // ********* TEST OBJECTIVE GRADIENT *********
+    tOrdinalValue = 0;
+    EXPECT_EQ(tOrdinalValue, tStageMng.getNumObjectiveGradientEvaluations());
+    locus::StandardMultiVector<double> tObjectiveGradient(tNumVectors, tNumControls);
+    tStageMng.computeGradient(tControl, tObjectiveGradient);
+    tScalarValue = 0.0624;
+    locus::StandardMultiVector<double> tControlMultiVector(tNumVectors, tNumControls, tScalarValue);
+    LocusTest::checkMultiVectorData(tObjectiveGradient, tControlMultiVector);
+    tOrdinalValue = 1;
+    EXPECT_EQ(tOrdinalValue, tStageMng.getNumObjectiveGradientEvaluations());
+
+    // ********* TEST CONSTRAINT GRADIENT *********
+    tOrdinalValue = 0;
+    EXPECT_EQ(tOrdinalValue, tStageMng.getNumConstraintGradientEvaluations(tConstraintIndex));
+    locus::MultiVectorList<double> tConstraintGradients;
+    tConstraintGradients.add(tControlMultiVector);
+    tStageMng.computeConstraintGradients(tControl, tConstraintGradients);
+    tControlMultiVector(0, 0) = -183;
+    tControlMultiVector(0, 1) = -111;
+    tControlMultiVector(0, 2) = -57;
+    tControlMultiVector(0, 3) = -21;
+    tControlMultiVector(0, 4) = -3;
+    LocusTest::checkMultiVectorData(tConstraintGradients[tConstraintIndex], tControlMultiVector);
+    tOrdinalValue = 1;
+    EXPECT_EQ(tOrdinalValue, tStageMng.getNumConstraintGradientEvaluations(tConstraintIndex));
 }
 
 TEST(LocusTest, DualProblemStageMng)

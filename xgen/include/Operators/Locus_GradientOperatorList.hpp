@@ -12,7 +12,8 @@
 #include <memory>
 #include <cassert>
 
-#include "Locus_GradientOperator.hpp"
+#include "Locus_CriterionList.hpp"
+#include "Locus_AnalyticalGradient.hpp"
 
 namespace locus
 {
@@ -24,6 +25,24 @@ public:
     GradientOperatorList() :
             mList()
     {
+    }
+    explicit GradientOperatorList(const locus::CriterionList<ScalarType, OrdinalType> & aInput) :
+            mList()
+    {
+        const OrdinalType tNumCriterion = aInput->size();
+        for(OrdinalType tIndex = 0; tIndex < tNumCriterion; tIndex++)
+        {
+            mList.push_back(std::make_shared<locus::AnalyticalGradient<ScalarType, OrdinalType>>(aInput.ptr(tIndex)));
+        }
+    }
+    explicit GradientOperatorList(const std::shared_ptr<locus::CriterionList<ScalarType, OrdinalType>> & aInput) :
+            mList()
+    {
+        const OrdinalType tNumCriterion = aInput->size();
+        for(OrdinalType tIndex = 0; tIndex < tNumCriterion; tIndex++)
+        {
+            mList.push_back(std::make_shared<locus::AnalyticalGradient<ScalarType, OrdinalType>>(aInput->ptr(tIndex)));
+        }
     }
     ~GradientOperatorList()
     {
