@@ -47,14 +47,9 @@ public:
         mObjective->gradient(mState.operator*(), tControl, mCurrentGradient.operator*());
         aDataMng.setObjectiveGradient(mCurrentGradient.operator*());
 
-        this->computeInequalityGradient(aDataMng);
+        this->computeConstraintQuantities(aDataMng);
     }
-    ScalarType evaluateInequality(const OrdinalType & aConstraintIndex, const locus::MultiVector<ScalarType, OrdinalType> & aControl)
-    {
-        ScalarType tInequalityValue = mConstraint->operator[](aConstraintIndex).value(mState.operator*(), aControl);
-        return (tInequalityValue);
-    }
-    void computeInequalityGradient(locus::OptimalityCriteriaDataMng<ScalarType, OrdinalType> & aDataMng)
+    void computeConstraintQuantities(locus::OptimalityCriteriaDataMng<ScalarType, OrdinalType> & aDataMng)
     {
         locus::fill(static_cast<ScalarType>(0), mCurrentGradient.operator*());
 
@@ -62,6 +57,8 @@ public:
         const locus::MultiVector<ScalarType, OrdinalType> & tControl = aDataMng.getCurrentControl();
         for(OrdinalType tConstraintIndex = 0; tConstraintIndex < tNumConstraints; tConstraintIndex++)
         {
+            ScalarType tMyConstraintValue = mConstraint->operator[](tConstraintIndex).value(mState.operator*(), tControl);
+            aDataMng.setCurrentConstraintValue(tConstraintIndex, tMyConstraintValue);
             mConstraint->operator[](tConstraintIndex).gradient(mState.operator*(), tControl, mCurrentGradient.operator*());
         }
 

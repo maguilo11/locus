@@ -98,9 +98,6 @@ public:
                 tTrialDual = static_cast<ScalarType>(0.5) * (tDualUpperBound + tDualLowerBound);
                 this->updateControl(tTrialDual, aDataMng);
 
-                ScalarType tValue = aStageMng.evaluateInequality(tConstraintIndex, tControl);
-                aDataMng.setCurrentConstraintValue(tConstraintIndex, tValue);
-
                 const locus::Vector<ScalarType, OrdinalType> & tInequalityValues = aDataMng.getCurrentConstraintValues();
                 ScalarType mFirstOrderTaylorApproximation = tInequalityValues[tConstraintIndex] + mInequalityGradientDotDeltaControl;
                 if(mFirstOrderTaylorApproximation > static_cast<ScalarType>(0.))
@@ -127,6 +124,7 @@ private:
         OrdinalType tNumControlVectors = aDataMng.getNumControlVectors();
         for(OrdinalType tVectorIndex = 0; tVectorIndex < tNumControlVectors; tVectorIndex++)
         {
+            locus::Vector<ScalarType, OrdinalType> & tTrialControl = mWorkControl->operator[](tVectorIndex);
             const locus::Vector<ScalarType, OrdinalType> & tPreviousControl = aDataMng.getPreviousControl(tVectorIndex);
             const locus::Vector<ScalarType, OrdinalType> & tControlLowerBound = aDataMng.getControlLowerBounds(tVectorIndex);
             const locus::Vector<ScalarType, OrdinalType> & tControlUpperBound = aDataMng.getControlUpperBounds(tVectorIndex);
@@ -137,18 +135,27 @@ private:
             OrdinalType tNumControls = tPreviousControl.size();
             for(OrdinalType tControlIndex = 0; tControlIndex < tNumControls; tControlIndex++)
             {
-                ScalarType tTrialControl = -tObjectiveGradient[tControlIndex]
-                        / (aTrialDual * tInequalityGradient[tControlIndex]);
-                ScalarType tFabsValue = std::abs(tTrialControl);
-                ScalarType tSignValue = copysign(1.0, tTrialControl);
-                tTrialControl = tPreviousControl[tControlIndex] * tSignValue * std::pow(tFabsValue, tDampingPower);
-                ScalarType tNewControl = tPreviousControl[tControlIndex] + tMoveLimit;
-                tTrialControl = std::min(tNewControl, tTrialControl);
-                tTrialControl = std::min(tControlUpperBound[tControlIndex], tTrialControl);
-                tNewControl = tPreviousControl[tControlIndex] - tMoveLimit;
-                tTrialControl = std::max(tNewControl, tTrialControl);
-                mWorkControl->operator ()(tVectorIndex, tControlIndex) =
-                        std::max(tControlLowerBound[tControlIndex], tTrialControl);
+                if(tInequalityGradient[tControlIndex] == static_cast<ScalarType>(0))
+                {
+                    tTrialControl[tControlIndex] = tPreviousControl[tControlIndex];
+                }
+                else
+                {
+                    ScalarType tTrialControlValue = -tObjectiveGradient[tControlIndex]
+                            / (aTrialDual * tInequalityGradient[tControlIndex]);
+                    ScalarType tFabsValue = std::abs(tTrialControlValue);
+                    ScalarType tSignValue = copysign(1.0, tTrialControlValue);
+                    tTrialControlValue = tPreviousControl[tControlIndex] * tSignValue
+                            * std::pow(tFabsValue, tDampingPower);
+                    ScalarType tProposedControlValue = tPreviousControl[tControlIndex] + tMoveLimit;
+                    tTrialControlValue = std::min(tProposedControlValue, tTrialControlValue);
+                    tTrialControlValue = std::min(tControlUpperBound[tControlIndex], tTrialControlValue);
+                    tProposedControlValue = tPreviousControl[tControlIndex] - tMoveLimit;
+                    tTrialControlValue = std::max(tProposedControlValue, tTrialControlValue);
+                    tTrialControlValue = std::max(tControlLowerBound[tControlIndex], tTrialControlValue);
+                    ;
+                    tTrialControl[tControlIndex] = tTrialControlValue;
+                }
             }
             aDataMng.setCurrentControl(tVectorIndex, mWorkControl->operator [](tVectorIndex));
             mWorkControl->operator [](tVectorIndex).update(-1., tPreviousControl, 1.); /*Compute Delta Control*/

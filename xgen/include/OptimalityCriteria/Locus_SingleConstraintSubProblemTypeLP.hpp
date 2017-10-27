@@ -46,10 +46,6 @@ public:
         aDataMng.setCurrentDual(tConstraintIndex, tDual);
 
         this->updateControl(tDual, aDataMng);
-
-        const locus::MultiVector<ScalarType, OrdinalType> & tControl = aDataMng.getCurrentControl();
-        ScalarType tValue = aStageMng.evaluateInequality(tConstraintIndex, tControl);
-        aDataMng.setCurrentConstraintValue(tConstraintIndex, tValue);
     }
 
 private:

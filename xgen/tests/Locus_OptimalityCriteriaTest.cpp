@@ -322,11 +322,8 @@ TEST(LocusTest, OptimalityCriteriaStageMngSimpleTest)
 
     const size_t tConstraintIndex = 0;
     tGoldValue = -5.07057774290498e-6;
-    const locus::MultiVector<double, size_t> & tCurrentControl = tDataMng.getCurrentControl();
-    double tInequalityValue = tStageMng.evaluateInequality(tConstraintIndex, tCurrentControl);
-    EXPECT_NEAR(tInequalityValue, tGoldValue, tTolerance);
+    EXPECT_NEAR(tDataMng.getCurrentConstraintValues(tConstraintIndex), tGoldValue, tTolerance);
 
-    tStageMng.computeInequalityGradient(tDataMng);
     tData = { -0.13778646890793422, -0.14864537557631985, -0.13565219858574704, -0.1351771199123859, -0.13908690613190111 };
     locus::StandardVector<double,size_t> tGoldInequalityGradient(tData);
     LocusTest::checkVectorData(tDataMng.getInequalityGradient(tVectorIndex), tGoldInequalityGradient);

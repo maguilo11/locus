@@ -98,13 +98,6 @@ public:
 
     void solve()
     {
-        const locus::MultiVector<ScalarType, OrdinalType> & tControl = mDataMng->getCurrentControl();
-        for(OrdinalType tConstraintIndex = 0; tConstraintIndex < mDataMng->getNumConstraints(); tConstraintIndex++)
-        {
-            ScalarType tValue = mStageMng->evaluateInequality(tConstraintIndex, tControl);
-            mDataMng->setCurrentConstraintValue(tConstraintIndex, tValue);
-        }
-
         while(1)
         {
             mStageMng->update(*mDataMng);

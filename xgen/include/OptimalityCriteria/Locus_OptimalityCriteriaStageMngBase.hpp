@@ -25,8 +25,6 @@ public:
     }
 
     virtual void update(locus::OptimalityCriteriaDataMng<ScalarType, OrdinalType> & aDataMng) = 0;
-    virtual ScalarType evaluateInequality(const OrdinalType & aConstraintIndex,
-                                          const locus::MultiVector<ScalarType, OrdinalType> & aControl) = 0;
 };
 
 }
