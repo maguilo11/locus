@@ -153,13 +153,13 @@ private:
                     tProposedControlValue = tPreviousControl[tControlIndex] - tMoveLimit;
                     tTrialControlValue = std::max(tProposedControlValue, tTrialControlValue);
                     tTrialControlValue = std::max(tControlLowerBound[tControlIndex], tTrialControlValue);
-                    ;
                     tTrialControl[tControlIndex] = tTrialControlValue;
                 }
             }
-            aDataMng.setCurrentControl(tVectorIndex, mWorkControl->operator [](tVectorIndex));
-            mWorkControl->operator [](tVectorIndex).update(-1., tPreviousControl, 1.); /*Compute Delta Control*/
-            mInequalityGradientDotDeltaControl += tInequalityGradient.dot(mWorkControl->operator [](tVectorIndex));
+            aDataMng.setCurrentControl(tVectorIndex, tTrialControl);
+            /*Compute Delta Control*/
+            tTrialControl.update(static_cast<ScalarType>(-1), tPreviousControl, static_cast<ScalarType>(1));
+            mInequalityGradientDotDeltaControl += tInequalityGradient.dot(tTrialControl);
         }
     }
 
