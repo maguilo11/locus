@@ -351,7 +351,7 @@ TEST(LocusTest, SynthesisOptimizationSubProblem)
     locus::OptimalityCriteriaDataMng<double> tDataMng(tFactory);
 
     // ********* Allocate Synthesis Optimization Sub-Problem  *********
-    locus::SynthesisOptimizationSubProblem<double> tSubProblem(tDataMng);
+    locus::SynthesisOptimizationSubProblem<double> tSubProblem(tFactory);
 
     double tGold = 1e-4;
     double tValue = tSubProblem.getBisectionTolerance();
@@ -362,7 +362,7 @@ TEST(LocusTest, SynthesisOptimizationSubProblem)
     tValue = tSubProblem.getBisectionTolerance();
     EXPECT_NEAR(tValue, tGold, tTolerance);
 
-    tGold = 0.01;
+    tGold = 0.2;
     tValue = tSubProblem.getMoveLimit();
     EXPECT_NEAR(tValue, tGold, tTolerance);
     tSubProblem.setMoveLimit(0.15);
@@ -386,7 +386,7 @@ TEST(LocusTest, SynthesisOptimizationSubProblem)
     tValue = tSubProblem.getDualLowerBound();
     EXPECT_NEAR(tValue, tGold, tTolerance);
 
-    tGold = 1e4;
+    tGold = 1e7;
     tValue = tSubProblem.getDualUpperBound();
     EXPECT_NEAR(tValue, tGold, tTolerance);
     tSubProblem.setDualUpperBound(0.635);

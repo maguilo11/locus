@@ -1,21 +1,21 @@
 /*
- * Locus_SynthesisOptimizationSubProblem.hpp
+ * locus_SynthesisOptimizationSubProblem.hpp
  *
  *  Created on: Oct 17, 2017
- *      Author: Miguel A. Aguilo Valentin
  */
 
-#ifndef LOCUS_SYNTHESISOPTIMIZATIONSUBPROBLEM_HPP_
-#define LOCUS_SYNTHESISOPTIMIZATIONSUBPROBLEM_HPP_
+#ifndef PLATO_SYNTHESISOPTIMIZATIONSUBPROBLEM_HPP_
+#define PLATO_SYNTHESISOPTIMIZATIONSUBPROBLEM_HPP_
 
 #include <cmath>
 #include <memory>
 
-#include "Locus_Vector.hpp"
-#include "Locus_MultiVector.hpp"
-#include "Locus_OptimalityCriteriaDataMng.hpp"
-#include "Locus_OptimalityCriteriaSubProblem.hpp"
-#include "Locus_OptimalityCriteriaStageMngBase.hpp"
+#include "locus_Vector.hpp"
+#include "locus_MultiVector.hpp"
+#include "locus_DataFactory.hpp"
+#include "locus_OptimalityCriteriaDataMng.hpp"
+#include "locus_OptimalityCriteriaSubProblem.hpp"
+#include "locus_OptimalityCriteriaStageMngBase.hpp"
 
 namespace locus
 {
@@ -24,14 +24,15 @@ template<typename ScalarType, typename OrdinalType = size_t>
 class SynthesisOptimizationSubProblem : public locus::OptimalityCriteriaSubProblem<ScalarType,OrdinalType>
 {
 public:
-    explicit SynthesisOptimizationSubProblem(const locus::OptimalityCriteriaDataMng<ScalarType, OrdinalType> & aDataMng) :
-            mMoveLimit(0.01),
+    explicit SynthesisOptimizationSubProblem(const locus::DataFactory<ScalarType, OrdinalType> & aDataFactory) :
+            mMoveLimit(0.2),
+            mScaleFactor(0.01),
             mDampingPower(0.5),
             mDualLowerBound(0),
-            mDualUpperBound(1e4),
+            mDualUpperBound(1e7),
             mBisectionTolerance(1e-4),
             mInequalityGradientDotDeltaControl(0),
-            mWorkControl(aDataMng.getCurrentControl().create())
+            mWorkControl(aDataFactory.control().create())
     {
     }
     virtual ~SynthesisOptimizationSubProblem()
@@ -41,6 +42,10 @@ public:
     ScalarType getMoveLimit() const
     {
         return (mMoveLimit);
+    }
+    ScalarType getScaleFactor() const
+    {
+        return (mScaleFactor);
     }
     ScalarType getDampingPower() const
     {
@@ -62,6 +67,10 @@ public:
     void setMoveLimit(const ScalarType & aInput)
     {
         mMoveLimit = aInput;
+    }
+    void setScaleFactor(const ScalarType & aInput)
+    {
+        mScaleFactor = aInput;
     }
     void setDampingPower(const ScalarType & aInput)
     {
@@ -98,9 +107,9 @@ public:
                 tTrialDual = static_cast<ScalarType>(0.5) * (tDualUpperBound + tDualLowerBound);
                 this->updateControl(tTrialDual, aDataMng);
 
-                const locus::Vector<ScalarType, OrdinalType> & tInequalityValues = aDataMng.getCurrentConstraintValues();
-                ScalarType mFirstOrderTaylorApproximation = tInequalityValues[tConstraintIndex] + mInequalityGradientDotDeltaControl;
-                if(mFirstOrderTaylorApproximation > static_cast<ScalarType>(0.))
+                const ScalarType tMyCurrentConstraintValue = aDataMng.getCurrentConstraintValues(tConstraintIndex);
+                ScalarType tFirstOrderTaylorApproximation = tMyCurrentConstraintValue + mInequalityGradientDotDeltaControl;
+                if(tFirstOrderTaylorApproximation > static_cast<ScalarType>(0))
                 {
                     tDualLowerBound = tTrialDual;
                 }
@@ -118,53 +127,58 @@ private:
     void updateControl(const ScalarType & aTrialDual, locus::OptimalityCriteriaDataMng<ScalarType, OrdinalType> & aDataMng)
     {
         mInequalityGradientDotDeltaControl = 0;
-        ScalarType tMoveLimit = this->getMoveLimit();
-        ScalarType tDampingPower = this->getDampingPower();
+        const ScalarType tMoveLimit = this->getMoveLimit();
+        const ScalarType tDampingPower = this->getDampingPower();
 
-        OrdinalType tNumControlVectors = aDataMng.getNumControlVectors();
-        for(OrdinalType tVectorIndex = 0; tVectorIndex < tNumControlVectors; tVectorIndex++)
+        const OrdinalType tNumControlVectors = aDataMng.getNumControlVectors();
+        for(OrdinalType tMyVectorIndex = 0; tMyVectorIndex < tNumControlVectors; tMyVectorIndex++)
         {
-            locus::Vector<ScalarType, OrdinalType> & tTrialControl = mWorkControl->operator[](tVectorIndex);
-            const locus::Vector<ScalarType, OrdinalType> & tPreviousControl = aDataMng.getPreviousControl(tVectorIndex);
-            const locus::Vector<ScalarType, OrdinalType> & tControlLowerBound = aDataMng.getControlLowerBounds(tVectorIndex);
-            const locus::Vector<ScalarType, OrdinalType> & tControlUpperBound = aDataMng.getControlUpperBounds(tVectorIndex);
+            locus::Vector<ScalarType, OrdinalType> & tMyTrialControls = mWorkControl->operator[](tMyVectorIndex);
+            const locus::Vector<ScalarType, OrdinalType> & tMyPreviousControls = aDataMng.getPreviousControl(tMyVectorIndex);
+            const locus::Vector<ScalarType, OrdinalType> & tMyControlLowerBounds = aDataMng.getControlLowerBounds(tMyVectorIndex);
+            const locus::Vector<ScalarType, OrdinalType> & tMyControlUpperBounds = aDataMng.getControlUpperBounds(tMyVectorIndex);
 
-            const locus::Vector<ScalarType, OrdinalType> & tObjectiveGradient = aDataMng.getObjectiveGradient(tVectorIndex);
-            const locus::Vector<ScalarType, OrdinalType> & tInequalityGradient = aDataMng.getInequalityGradient(tVectorIndex);
+            const locus::Vector<ScalarType, OrdinalType> & tMyObjectiveGradient = aDataMng.getObjectiveGradient(tMyVectorIndex);
+            const locus::Vector<ScalarType, OrdinalType> & tMyInequalityGradient = aDataMng.getInequalityGradient(tMyVectorIndex);
 
-            OrdinalType tNumControls = tPreviousControl.size();
-            for(OrdinalType tControlIndex = 0; tControlIndex < tNumControls; tControlIndex++)
+            OrdinalType tMyNumControls = tMyPreviousControls.size();
+            for(OrdinalType tMyControlIndex = 0; tMyControlIndex < tMyNumControls; tMyControlIndex++)
             {
-                if(tInequalityGradient[tControlIndex] == static_cast<ScalarType>(0))
+                if(tMyInequalityGradient[tMyControlIndex] == static_cast<ScalarType>(0))
                 {
-                    tTrialControl[tControlIndex] = tPreviousControl[tControlIndex];
+                    tMyTrialControls[tMyControlIndex] = tMyPreviousControls[tMyControlIndex];
                 }
                 else
                 {
-                    ScalarType tTrialControlValue = -tObjectiveGradient[tControlIndex]
-                            / (aTrialDual * tInequalityGradient[tControlIndex]);
-                    ScalarType tFabsValue = std::abs(tTrialControlValue);
-                    ScalarType tSignValue = copysign(1.0, tTrialControlValue);
-                    tTrialControlValue = tPreviousControl[tControlIndex] * tSignValue
-                            * std::pow(tFabsValue, tDampingPower);
-                    ScalarType tProposedControlValue = tPreviousControl[tControlIndex] + tMoveLimit;
-                    tTrialControlValue = std::min(tProposedControlValue, tTrialControlValue);
-                    tTrialControlValue = std::min(tControlUpperBound[tControlIndex], tTrialControlValue);
-                    tProposedControlValue = tPreviousControl[tControlIndex] - tMoveLimit;
-                    tTrialControlValue = std::max(tProposedControlValue, tTrialControlValue);
-                    tTrialControlValue = std::max(tControlLowerBound[tControlIndex], tTrialControlValue);
-                    tTrialControl[tControlIndex] = tTrialControlValue;
+                    ScalarType tMyDesignVariableOffset = (mScaleFactor
+                            * (tMyControlUpperBounds[tMyControlIndex] - tMyControlLowerBounds[tMyControlIndex]))
+                            - tMyControlLowerBounds[tMyControlIndex];
+                    ScalarType tMyValue = -tMyObjectiveGradient[tMyControlIndex]
+                            / (aTrialDual * tMyInequalityGradient[tMyControlIndex]);
+                    ScalarType tFabsValue = std::abs(tMyValue);
+                    ScalarType tSignValue = copysign(1.0, tMyValue);
+                    ScalarType tMyTrialControlValue = ((tMyPreviousControls[tMyControlIndex] + tMyDesignVariableOffset)
+                            * tSignValue * std::pow(tFabsValue, tDampingPower)) - tMyDesignVariableOffset;
+
+                    ScalarType tMyControlValue = tMyPreviousControls[tMyControlIndex] + tMoveLimit;
+                    tMyTrialControlValue = std::min(tMyControlValue, tMyTrialControlValue);
+                    tMyControlValue = tMyPreviousControls[tMyControlIndex] - tMoveLimit;
+                    tMyTrialControlValue = std::max(tMyControlValue, tMyTrialControlValue);
+                    tMyTrialControlValue = std::min(tMyControlUpperBounds[tMyControlIndex], tMyTrialControlValue);
+                    tMyTrialControlValue = std::max(tMyControlLowerBounds[tMyControlIndex], tMyTrialControlValue);
+                    tMyTrialControls[tMyControlIndex] = tMyTrialControlValue;
                 }
             }
-            aDataMng.setCurrentControl(tVectorIndex, tTrialControl);
+            aDataMng.setCurrentControl(tMyVectorIndex, tMyTrialControls);
             /*Compute Delta Control*/
-            tTrialControl.update(static_cast<ScalarType>(-1), tPreviousControl, static_cast<ScalarType>(1));
-            mInequalityGradientDotDeltaControl += tInequalityGradient.dot(tTrialControl);
+            tMyTrialControls.update(static_cast<ScalarType>(-1), tMyPreviousControls, static_cast<ScalarType>(1));
+            mInequalityGradientDotDeltaControl += tMyInequalityGradient.dot(tMyTrialControls);
         }
     }
 
 private:
     ScalarType mMoveLimit;
+    ScalarType mScaleFactor;
     ScalarType mDampingPower;
     ScalarType mDualLowerBound;
     ScalarType mDualUpperBound;
@@ -180,4 +194,4 @@ private:
 
 }
 
-#endif /* LOCUS_SYNTHESISOPTIMIZATIONSUBPROBLEM_HPP_ */
+#endif /* PLATO_SYNTHESISOPTIMIZATIONSUBPROBLEM_HPP_ */
