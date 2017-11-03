@@ -24,7 +24,8 @@ template<typename ScalarType, typename OrdinalType = size_t>
 class DistributedReductionOperations : public locus::ReductionOperations<ScalarType, OrdinalType>
 {
 public:
-    DistributedReductionOperations()
+    explicit DistributedReductionOperations(MPI_Comm aComm = MPI_COMM_WORLD) :
+            mComm(aComm)
     {
     }
     virtual ~DistributedReductionOperations()
@@ -46,7 +47,7 @@ public:
         ScalarType aLocalMaxValue = *std::max_element(tCopy.begin(), tCopy.end());
 
         ScalarType aGlobalMaxValue = aLocalMaxValue;
-        MPI_Allreduce(&aGlobalMaxValue, &aLocalMaxValue, 1, MPI_DOUBLE, MPI_MAX, MPI_COMM_WORLD);
+        MPI_Allreduce(&aGlobalMaxValue, &aLocalMaxValue, 1, MPI_DOUBLE, MPI_MAX, mComm);
 
         return (aLocalMaxValue);
     }
@@ -65,7 +66,7 @@ public:
         ScalarType aLocalMinValue = *std::min_element(tCopy.begin(), tCopy.end());
 
         ScalarType aGlobalMinValue = aLocalMinValue;
-        MPI_Allreduce(&aGlobalMinValue, &aLocalMinValue, 1, MPI_DOUBLE, MPI_MIN, MPI_COMM_WORLD);
+        MPI_Allreduce(&aGlobalMinValue, &aLocalMinValue, 1, MPI_DOUBLE, MPI_MIN, mComm);
 
         return (aGlobalMinValue);
     }
@@ -86,7 +87,7 @@ public:
         ScalarType tLocalSum = std::accumulate(tCopy.begin(), tCopy.end(), tBaseValue);
 
         ScalarType tGlobalSum = tLocalSum;
-        MPI_Allreduce(&tGlobalSum, &tLocalSum, 1, MPI_DOUBLE, MPI_SUM, MPI_COMM_WORLD);
+        MPI_Allreduce(&tGlobalSum, &tLocalSum, 1, MPI_DOUBLE, MPI_SUM, mComm);
 
         return (tLocalSum);
     }
@@ -94,17 +95,20 @@ public:
     std::shared_ptr<locus::ReductionOperations<ScalarType, OrdinalType>> create() const
     {
         std::shared_ptr<locus::ReductionOperations<ScalarType, OrdinalType>> tCopy =
-                std::make_shared<DistributedReductionOperations<ScalarType, OrdinalType>>();
+                std::make_shared<DistributedReductionOperations<ScalarType, OrdinalType>>(mComm);
         return (tCopy);
     }
     //! Return number of ranks (i.e. processes)
     OrdinalType getNumRanks() const
     {
         int tNumRanks = 0;
-        MPI_Comm_size(MPI_COMM_WORLD, &tNumRanks);
+        MPI_Comm_size(mComm, &tNumRanks);
         assert(tNumRanks > static_cast<int>(0));
         return (tNumRanks);
     }
+
+private:
+    MPI_Comm mComm;
 
 private:
     DistributedReductionOperations(const locus::DistributedReductionOperations<ScalarType, OrdinalType> &);

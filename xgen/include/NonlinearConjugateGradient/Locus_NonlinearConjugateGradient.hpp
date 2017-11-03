@@ -29,6 +29,7 @@
 #include "Locus_HestenesStiefel.hpp"
 #include "Locus_CubicLineSearch.hpp"
 #include "Locus_ConjugateDescent.hpp"
+#include "Locus_QuadraticLineSearch.hpp"
 #include "Locus_NonlinearConjugateGradientDataMng.hpp"
 #include "Locus_NonlinearConjugateGradientStateMng.hpp"
 #include "Locus_NonlinearConjugateGradientStageMngBase.hpp"
@@ -163,7 +164,6 @@ public:
         locus::NonlinearConjugateGradientStageMngBase<ScalarType, OrdinalType> & tStageMng = mStateMng->getStageMng();
         while(tStop != true)
         {
-
             mStep->computeScaledDescentDirection(tDataMng, tStageMng);
             this->computeProjectedStep();
             tDataMng.storePreviousState();
@@ -222,7 +222,7 @@ private:
         locus::NonlinearConjugateGradientDataMng<ScalarType, OrdinalType> & tDataMng = mStateMng->getDataMng();
         const locus::MultiVector<ScalarType, OrdinalType> & tControl = tDataMng.getCurrentControl();
         locus::update(static_cast<ScalarType>(1), tControl, static_cast<ScalarType>(0), mTrialControl.operator*());
-        locus::update(static_cast<ScalarType>(1),
+        locus::update(static_cast<ScalarType>(-1),
                       tDataMng.getCurrentGradient(),
                       static_cast<ScalarType>(1),
                       mTrialControl.operator*());
@@ -232,11 +232,11 @@ private:
         locus::bounds::project(tLowerBounds, tUpperBounds, mTrialControl.operator*());
 
         // Compute projected gradient
-        locus::update(static_cast<ScalarType>(1),
+        locus::update(static_cast<ScalarType>(-1),
                       mTrialControl.operator*(),
                       static_cast<ScalarType>(0),
                       mControlWork.operator*());
-        locus::update(static_cast<ScalarType>(-1), tControl, static_cast<ScalarType>(1), mControlWork.operator*());
+        locus::update(static_cast<ScalarType>(1), tControl, static_cast<ScalarType>(1), mControlWork.operator*());
         tDataMng.setCurrentGradient(mControlWork.operator*());
     }
     void computeInitialDescentDirection()

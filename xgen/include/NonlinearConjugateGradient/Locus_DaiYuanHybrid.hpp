@@ -63,7 +63,7 @@ public:
         ScalarType tScaledDaiYuanBeta = tScaleFactor * tDaiYuanBeta;
 
         ScalarType tBeta = std::max(tScaledDaiYuanBeta, std::min(tDaiYuanBeta, tHestenesStiefelBeta));
-        tBeta = std::max(tBeta, std::numeric_limits<ScalarType>::min());
+        //tBeta = std::max(tBeta, std::numeric_limits<ScalarType>::min());
 
         locus::update(static_cast<ScalarType>(-1),
                       aDataMng.getCurrentGradient(),

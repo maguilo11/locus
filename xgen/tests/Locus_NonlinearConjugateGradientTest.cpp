@@ -850,7 +850,7 @@ TEST(LocusTest, NonlinearConjugateGradient_PolakRibiere_Bounds)
     locus::NonlinearConjugateGradient<double> tAlgorithm(tDataFactory, tDataMng, tStageMng);
     tAlgorithm.solve();
 
-    size_t tOrdinalValue = 68;
+    size_t tOrdinalValue = 56;
     EXPECT_EQ(tOrdinalValue, tAlgorithm.getNumIterationsDone());
     EXPECT_EQ(locus::algorithm::stop_t::OBJECTIVE_STAGNATION, tAlgorithm.getStoppingCriteria());
     tScalarValue = 1;
@@ -883,7 +883,7 @@ TEST(LocusTest, NonlinearConjugateGradient_FletcherReeves_NoBounds)
     tAlgorithm.setFletcherReevesMethod(tDataFactory.operator*());
     tAlgorithm.solve();
 
-    size_t tOrdinalValue = 89;
+    size_t tOrdinalValue = 74;
     EXPECT_EQ(tOrdinalValue, tAlgorithm.getNumIterationsDone());
     EXPECT_EQ(locus::algorithm::stop_t::OBJECTIVE_STAGNATION, tAlgorithm.getStoppingCriteria());
     tScalarValue = 1;
@@ -920,7 +920,7 @@ TEST(LocusTest, NonlinearConjugateGradient_FletcherReeves_Bounds)
     tAlgorithm.setFletcherReevesMethod(tDataFactory.operator*());
     tAlgorithm.solve();
 
-    size_t tOrdinalValue = 75;
+    size_t tOrdinalValue = 63;
     EXPECT_EQ(tOrdinalValue, tAlgorithm.getNumIterationsDone());
     EXPECT_EQ(locus::algorithm::stop_t::OBJECTIVE_STAGNATION, tAlgorithm.getStoppingCriteria());
     tScalarValue = 1;
@@ -990,9 +990,9 @@ TEST(LocusTest, NonlinearConjugateGradient_HestenesStiefel_Bounds)
     tAlgorithm.setHestenesStiefelMethod(tDataFactory.operator*());
     tAlgorithm.solve();
 
-    size_t tOrdinalValue = 35;
+    size_t tOrdinalValue = 36;
     EXPECT_EQ(tOrdinalValue, tAlgorithm.getNumIterationsDone());
-    EXPECT_EQ(locus::algorithm::stop_t::OBJECTIVE_STAGNATION, tAlgorithm.getStoppingCriteria());
+    EXPECT_EQ(locus::algorithm::stop_t::NORM_GRADIENT, tAlgorithm.getStoppingCriteria());
     tScalarValue = 1;
     locus::StandardVector<double> tVector(tNumControls, tScalarValue);
     const size_t tVectorIndex = 0;
@@ -1060,7 +1060,7 @@ TEST(LocusTest, NonlinearConjugateGradient_HagerZhang_Bounds)
     tAlgorithm.setHagerZhangMethod(tDataFactory.operator*());
     tAlgorithm.solve();
 
-    size_t tOrdinalValue = 53;
+    size_t tOrdinalValue = 49;
     EXPECT_EQ(tOrdinalValue, tAlgorithm.getNumIterationsDone());
     EXPECT_EQ(locus::algorithm::stop_t::NORM_GRADIENT, tAlgorithm.getStoppingCriteria());
     tScalarValue = 1;
@@ -1093,9 +1093,9 @@ TEST(LocusTest, NonlinearConjugateGradient_DaiYuanHybrid_NoBounds)
     tAlgorithm.setDaiYuanHybridMethod(tDataFactory.operator*());
     tAlgorithm.solve();
 
-    size_t tOrdinalValue = 24;
+    size_t tOrdinalValue = 32;
     EXPECT_EQ(tOrdinalValue, tAlgorithm.getNumIterationsDone());
-    EXPECT_EQ(locus::algorithm::stop_t::NORM_GRADIENT, tAlgorithm.getStoppingCriteria());
+    EXPECT_EQ(locus::algorithm::stop_t::OBJECTIVE_STAGNATION, tAlgorithm.getStoppingCriteria());
     tScalarValue = 1;
     locus::StandardVector<double> tVector(tNumControls, tScalarValue);
     const size_t tVectorIndex = 0;
@@ -1130,13 +1130,13 @@ TEST(LocusTest, NonlinearConjugateGradient_DaiYuanHybrid_Bounds)
     tAlgorithm.setDaiYuanHybridMethod(tDataFactory.operator*());
     tAlgorithm.solve();
 
-    size_t tOrdinalValue = 47;
+    size_t tOrdinalValue = 63;
     EXPECT_EQ(tOrdinalValue, tAlgorithm.getNumIterationsDone());
-    EXPECT_EQ(locus::algorithm::stop_t::NORM_GRADIENT, tAlgorithm.getStoppingCriteria());
+    EXPECT_EQ(locus::algorithm::stop_t::OBJECTIVE_STAGNATION, tAlgorithm.getStoppingCriteria());
     tScalarValue = 1;
     locus::StandardVector<double> tVector(tNumControls, tScalarValue);
     const size_t tVectorIndex = 0;
-    const double tTolerance = 1e-4;
+    const double tTolerance = 1e-6;
     LocusTest::checkVectorData(tDataMng->getCurrentControl(tVectorIndex), tVector, tTolerance);
 }
 
@@ -1164,44 +1164,6 @@ TEST(LocusTest, NonlinearConjugateGradient_DaiYuan_NoBounds)
     tAlgorithm.solve();
 
     size_t tOrdinalValue = 28;
-    EXPECT_EQ(tOrdinalValue, tAlgorithm.getNumIterationsDone());
-    EXPECT_EQ(locus::algorithm::stop_t::OBJECTIVE_STAGNATION, tAlgorithm.getStoppingCriteria());
-    tScalarValue = 1;
-    locus::StandardVector<double> tVector(tNumControls, tScalarValue);
-    const size_t tVectorIndex = 0;
-    const double tTolerance = 1e-4;
-    LocusTest::checkVectorData(tDataMng->getCurrentControl(tVectorIndex), tVector, tTolerance);
-}
-
-TEST(LocusTest, NonlinearConjugateGradient_DaiYuan_Bounds)
-{
-    // ********* Allocate Data Factory *********
-    const size_t tNumControls = 2;
-    std::shared_ptr<locus::DataFactory<double>> tDataFactory = std::make_shared<locus::DataFactory<double>>();
-    tDataFactory->allocateControl(tNumControls);
-
-    // ********* Allocate Nonlinear Conjugate Gradient Stage Manager *********
-    locus::Rosenbrock<double> tObjective;
-    std::shared_ptr<locus::NonlinearConjugateGradientStageMng<double>> tStageMng =
-            std::make_shared<locus::NonlinearConjugateGradientStageMng<double>>(*tDataFactory, tObjective);
-
-    // ********* Allocate Nonlinear Conjugate Gradient Data Manager *********
-    std::shared_ptr<locus::NonlinearConjugateGradientDataMng<double>> tDataMng =
-            std::make_shared<locus::NonlinearConjugateGradientDataMng<double>>(*tDataFactory);
-    double tScalarValue = 1.2; // NOTE: DIFFERENT INITIAL GUESS, DIVERGES IF INITIAL GUESS = 2
-    tDataMng->setInitialGuess(tScalarValue);
-    tScalarValue = -5;
-    tDataMng->setControlLowerBounds(tScalarValue);
-    tScalarValue = 5;
-    tDataMng->setControlUpperBounds(tScalarValue);
-
-    // ********* Allocate Nonlinear Conjugate Gradient Algorithm *********
-    locus::NonlinearConjugateGradient<double> tAlgorithm(tDataFactory, tDataMng, tStageMng);
-    tAlgorithm.setDaiYuanMethod(tDataFactory.operator*());
-    tAlgorithm.setContractionFactor(0.25);
-    tAlgorithm.solve();
-
-    size_t tOrdinalValue = 64;
     EXPECT_EQ(tOrdinalValue, tAlgorithm.getNumIterationsDone());
     EXPECT_EQ(locus::algorithm::stop_t::OBJECTIVE_STAGNATION, tAlgorithm.getStoppingCriteria());
     tScalarValue = 1;
@@ -1268,45 +1230,7 @@ TEST(LocusTest, NonlinearConjugateGradient_ConjugateDescentMethod_NoBounds)
     tAlgorithm.setContractionFactor(0.25);
     tAlgorithm.solve();
 
-    size_t tOrdinalValue = 313;
-    EXPECT_EQ(tOrdinalValue, tAlgorithm.getNumIterationsDone());
-    EXPECT_EQ(locus::algorithm::stop_t::OBJECTIVE_STAGNATION, tAlgorithm.getStoppingCriteria());
-    tScalarValue = 1;
-    locus::StandardVector<double> tVector(tNumControls, tScalarValue);
-    const size_t tVectorIndex = 0;
-    const double tTolerance = 1e-4;
-    LocusTest::checkVectorData(tDataMng->getCurrentControl(tVectorIndex), tVector, tTolerance);
-}
-
-TEST(LocusTest, NonlinearConjugateGradient_ConjugateDescentMethod_Bounds)
-{
-    // ********* Allocate Data Factory *********
-    const size_t tNumControls = 2;
-    std::shared_ptr<locus::DataFactory<double>> tDataFactory = std::make_shared<locus::DataFactory<double>>();
-    tDataFactory->allocateControl(tNumControls);
-
-    // ********* Allocate Nonlinear Conjugate Gradient Stage Manager *********
-    locus::Rosenbrock<double> tObjective;
-    std::shared_ptr<locus::NonlinearConjugateGradientStageMng<double>> tStageMng =
-            std::make_shared<locus::NonlinearConjugateGradientStageMng<double>>(*tDataFactory, tObjective);
-
-    // ********* Allocate Nonlinear Conjugate Gradient Data Manager *********
-    std::shared_ptr<locus::NonlinearConjugateGradientDataMng<double>> tDataMng =
-            std::make_shared<locus::NonlinearConjugateGradientDataMng<double>>(*tDataFactory);
-    double tScalarValue = 2;
-    tDataMng->setInitialGuess(tScalarValue);
-    tScalarValue = -5;
-    tDataMng->setControlLowerBounds(tScalarValue);
-    tScalarValue = 5;
-    tDataMng->setControlUpperBounds(tScalarValue);
-
-    // ********* Allocate Nonlinear Conjugate Gradient Algorithm *********
-    locus::NonlinearConjugateGradient<double> tAlgorithm(tDataFactory, tDataMng, tStageMng);
-    tAlgorithm.setConjugateDescentMethod(tDataFactory.operator*());
-    tAlgorithm.setContractionFactor(0.25);
-    tAlgorithm.solve();
-
-    size_t tOrdinalValue = 126;
+    size_t tOrdinalValue = 396;
     EXPECT_EQ(tOrdinalValue, tAlgorithm.getNumIterationsDone());
     EXPECT_EQ(locus::algorithm::stop_t::OBJECTIVE_STAGNATION, tAlgorithm.getStoppingCriteria());
     tScalarValue = 1;
@@ -1376,7 +1300,7 @@ TEST(LocusTest, NonlinearConjugateGradient_LiuStorey_Bounds)
     tAlgorithm.setLiuStoreyMethod(tDataFactory.operator*());
     tAlgorithm.solve();
 
-    size_t tOrdinalValue = 72;
+    size_t tOrdinalValue = 55;
     EXPECT_EQ(tOrdinalValue, tAlgorithm.getNumIterationsDone());
     EXPECT_EQ(locus::algorithm::stop_t::OBJECTIVE_STAGNATION, tAlgorithm.getStoppingCriteria());
     tScalarValue = 1;
