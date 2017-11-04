@@ -10,12 +10,12 @@
 #include <cmath>
 #include <memory>
 
-#include "locus_Vector.hpp"
-#include "locus_MultiVector.hpp"
-#include "locus_DataFactory.hpp"
-#include "locus_OptimalityCriteriaDataMng.hpp"
-#include "locus_OptimalityCriteriaSubProblem.hpp"
-#include "locus_OptimalityCriteriaStageMngBase.hpp"
+#include "Locus_Vector.hpp"
+#include "Locus_MultiVector.hpp"
+#include "Locus_DataFactory.hpp"
+#include "Locus_OptimalityCriteriaDataMng.hpp"
+#include "Locus_OptimalityCriteriaSubProblem.hpp"
+#include "Locus_OptimalityCriteriaStageMngBase.hpp"
 
 namespace locus
 {
@@ -192,6 +192,6 @@ private:
     locus::SynthesisOptimizationSubProblem<ScalarType, OrdinalType> & operator=(const locus::SynthesisOptimizationSubProblem<ScalarType, OrdinalType>&);
 };
 
-}
+} // namespace locus
 
 #endif /* PLATO_SYNTHESISOPTIMIZATIONSUBPROBLEM_HPP_ */

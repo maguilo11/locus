@@ -6,12 +6,12 @@ fprintf('\n*** Globally Convergent Method of Moving Asymptotes (GCMMA) ***\n');
 
 % Algorithm, testing, and problem interface directories
 addpath ./topo_functionalities/;
-addpath ./operators/topo_prototype_interface/;
-addpath /Users/miguelaguilo/Research/intrelab;
-addpath /Users/miguelaguilo/dotk/matlab/mfiles/;
-addpath /Users/miguelaguilo/Research/femlab/tools/;
+addpath ./operators/cantilever_example/;
+addpath /Users/miguelaguilo/locus/intrelab;
+addpath /Users/miguelaguilo/locus/matlab/mfiles/;
+addpath /Users/miguelaguilo/locus/femlab/utilities/;
 
-problem_t = 'topo';
+problem_t = 'cantilever';
 
 % Get objective function and euqlity constraint operators
 objective = objectiveFunction;
@@ -108,7 +108,7 @@ while(iteration <= max_outer_itr)
     control_stagnation_norm = ...
         norm(control_minus_one-primal(1:number_controls));
     grad_norm = norm(function_grad(active_set~=1,1))  / initial_grad_norm;
-    show(GLB_INVP.mesh.t, GLB_INVP.mesh.p, primal(1:number_controls));
+    %show(GLB_INVP.mesh.t, GLB_INVP.mesh.p, primal(1:number_controls));
     if(stop == true)
         why = 'residual';
         break;
@@ -411,7 +411,7 @@ function [primal,solution]=nonlinearCg(initial_dual,...
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Initialize data structure
 dataMng = [];
-type = 'Polak_Ribiere';
+type = 'Hestenes_Stiefel';
 dataMng.epsilon = 1e-6;
 max_num_iterations = 10;
 dataMng.rho = rho;

@@ -49,8 +49,8 @@ public:
         ScalarType tBeta = tNumerator / tDenominator;
         tBeta = std::max(tBeta, std::numeric_limits<ScalarType>::min());
 
-        locus::update(static_cast<ScalarType>(-1),
-                      aDataMng.getCurrentGradient(),
+        locus::update(static_cast<ScalarType>(1),
+                      aDataMng.getCurrentSteepestDescent(),
                       tBeta,
                       mScaledDescentDirection.operator*());
 

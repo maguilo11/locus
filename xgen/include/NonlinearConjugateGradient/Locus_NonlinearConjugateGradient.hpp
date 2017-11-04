@@ -145,14 +145,8 @@ public:
         // Perform first iteration (i.e. x_0)
         this->computeInitialDescentDirection();
         this->computeProjectedStep();
-        locus::NonlinearConjugateGradientDataMng<ScalarType, OrdinalType> & tDataMng = mStateMng->getDataMng();
-        tDataMng.storePreviousState();
 
-        mLineSearch->step(mStateMng.operator*());
-        locus::fill(static_cast<ScalarType>(0), mControlWork.operator*());
-        mStateMng->computeGradient(tDataMng.getCurrentControl(), mControlWork.operator*());
-        tDataMng.setCurrentGradient(mControlWork.operator*());
-        this->computeProjectedGradient();
+        this->updateState();
 
         bool tStop = false;
         if(this->checkStoppingCriteria() == true)
@@ -161,18 +155,14 @@ public:
         }
 
         mNumIterationsDone = 1;
+        locus::NonlinearConjugateGradientDataMng<ScalarType, OrdinalType> & tDataMng = mStateMng->getDataMng();
         locus::NonlinearConjugateGradientStageMngBase<ScalarType, OrdinalType> & tStageMng = mStateMng->getStageMng();
         while(tStop != true)
         {
             mStep->computeScaledDescentDirection(tDataMng, tStageMng);
             this->computeProjectedStep();
-            tDataMng.storePreviousState();
 
-            mLineSearch->step(mStateMng.operator*());
-            locus::fill(static_cast<ScalarType>(0), mControlWork.operator*());
-            mStateMng->computeGradient(tDataMng.getCurrentControl(), mControlWork.operator*());
-            tDataMng.setCurrentGradient(mControlWork.operator*());
-            this->computeProjectedGradient();
+            this->updateState();
 
             mNumIterationsDone++;
             if(this->checkStoppingCriteria() == true)
@@ -184,6 +174,20 @@ public:
     }
 
 private:
+    void updateState()
+    {
+        locus::NonlinearConjugateGradientDataMng<ScalarType, OrdinalType> & tDataMng = mStateMng->getDataMng();
+        tDataMng.storePreviousState();
+
+        mLineSearch->step(mStateMng.operator*());
+        locus::fill(static_cast<ScalarType>(0), mControlWork.operator*());
+        mStateMng->computeGradient(tDataMng.getCurrentControl(), mControlWork.operator*());
+        tDataMng.setCurrentGradient(mControlWork.operator*());
+        this->computeProjectedGradient();
+
+        locus::update(static_cast<ScalarType>(-1), tDataMng.getCurrentGradient(), static_cast<ScalarType>(0), mControlWork.operator*());
+        tDataMng.setCurrentSteepestDescent(mControlWork.operator*());
+    }
     void computeInitialState()
     {
         locus::NonlinearConjugateGradientDataMng<ScalarType, OrdinalType> & tDataMng = mStateMng->getDataMng();
@@ -194,6 +198,9 @@ private:
         mStateMng->computeGradient(tControl, mControlWork.operator*());
         tDataMng.setCurrentGradient(mControlWork.operator*());
         this->computeProjectedGradient();
+
+        locus::update(static_cast<ScalarType>(-1), tDataMng.getCurrentGradient(), static_cast<ScalarType>(0), mControlWork.operator*());
+        tDataMng.setCurrentSteepestDescent(mControlWork.operator*());
     }
     void computeProjectedStep()
     {

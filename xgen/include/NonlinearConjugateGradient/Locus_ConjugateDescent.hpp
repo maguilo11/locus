@@ -27,6 +27,7 @@ class ConjugateDescent : public locus::NonlinearConjugateGradientStep<ScalarType
 {
 public:
     ConjugateDescent(const locus::DataFactory<ScalarType, OrdinalType> & aDataFactory) :
+            mPreviousStep(1),
             mScaledDescentDirection(aDataFactory.control().create())
     {
     }
@@ -42,20 +43,28 @@ public:
                       static_cast<ScalarType>(0),
                       mScaledDescentDirection.operator*());
 
-        ScalarType tBeta = static_cast<ScalarType>(-1)
-                * (locus::dot(aDataMng.getCurrentGradient(), aDataMng.getCurrentGradient())
-                        / locus::dot(aDataMng.getTrialStep(), aDataMng.getPreviousGradient()));
+        ScalarType tCurrentGradDotCurrentGrad = locus::dot(aDataMng.getCurrentGradient(), aDataMng.getCurrentGradient());
+        ScalarType tNormCurrentGradient = std::sqrt(tCurrentGradDotCurrentGrad);
+        ScalarType tPreviousGradDotPreviousGrad = locus::dot(aDataMng.getPreviousGradient(), aDataMng.getPreviousGradient());
+        ScalarType tNormPreviousGradient = std::sqrt(tPreviousGradDotPreviousGrad);
+
+        ScalarType tDenominator = locus::dot(aDataMng.getCurrentGradient(), aDataMng.getCurrentSteepestDescent()) / tNormCurrentGradient;
+        ScalarType tNumerator = locus::dot(aDataMng.getPreviousGradient(), aDataMng.getPreviousSteepestDescent()) / tNormPreviousGradient;
+
+        ScalarType tBeta = mPreviousStep * (tNumerator / tDenominator);
         tBeta = std::max(tBeta, std::numeric_limits<ScalarType>::min());
 
-        locus::update(static_cast<ScalarType>(-1),
-                      aDataMng.getCurrentGradient(),
-                      tBeta,
+        locus::update(tBeta,
+                      aDataMng.getCurrentSteepestDescent(),
+                      static_cast<ScalarType>(1),
                       mScaledDescentDirection.operator*());
 
+        mPreviousStep = tBeta;
         aDataMng.setTrialStep(mScaledDescentDirection.operator*());
     }
 
 private:
+    ScalarType mPreviousStep;
     std::shared_ptr<locus::MultiVector<ScalarType, OrdinalType>> mScaledDescentDirection;
 
 private:

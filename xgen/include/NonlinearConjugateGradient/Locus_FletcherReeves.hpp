@@ -42,12 +42,12 @@ public:
                       static_cast<ScalarType>(0),
                       mScaledDescentDirection.operator*());
 
-        ScalarType tBeta = locus::dot(aDataMng.getCurrentGradient(), aDataMng.getCurrentGradient())
+        ScalarType tBeta = locus::dot(aDataMng.getCurrentSteepestDescent(), aDataMng.getCurrentSteepestDescent())
                 / locus::dot(aDataMng.getPreviousGradient(), aDataMng.getPreviousGradient());
         tBeta = std::max(tBeta, std::numeric_limits<ScalarType>::min());
 
-        locus::update(static_cast<ScalarType>(-1),
-                      aDataMng.getCurrentGradient(),
+        locus::update(static_cast<ScalarType>(1),
+                      aDataMng.getCurrentSteepestDescent(),
                       tBeta,
                       mScaledDescentDirection.operator*());
 

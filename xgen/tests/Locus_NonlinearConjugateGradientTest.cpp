@@ -361,6 +361,9 @@ TEST(LocusTest, FletcherReeves)
     tVector[0] = -1;
     tVector[1] = -2;
     tDataMng.setTrialStep(tVectorIndex, tVector);
+    tVector[0] = 11;
+    tVector[1] = -22;
+    tDataMng.setCurrentSteepestDescent(tVectorIndex, tVector);
 
     // ********* Allocate Fletcher-Reeves Direction *********
     locus::FletcherReeves<double> tDirection(tDataFactory);
@@ -399,6 +402,9 @@ TEST(LocusTest, HestenesStiefel)
     tVector[0] = -1;
     tVector[1] = -2;
     tDataMng.setTrialStep(tVectorIndex, tVector);
+    tVector[0] = 3;
+    tVector[1] = 2;
+    tDataMng.setCurrentSteepestDescent(tVectorIndex, tVector);
 
     // ********* Allocate Hestenes-Stiefel Direction *********
     locus::HestenesStiefel<double> tDirection(tDataFactory);
@@ -431,18 +437,24 @@ TEST(LocusTest, ConjugateDescent)
     tVector[0] = -11;
     tVector[1] = 22;
     tDataMng.setCurrentGradient(tVectorIndex, tVector);
+    tVector[0] = 11;
+    tVector[1] = -22;
+    tDataMng.setCurrentSteepestDescent(tVectorIndex, tVector);
     tVector[0] = 1;
     tVector[1] = 2;
     tDataMng.setPreviousGradient(tVectorIndex, tVector);
     tVector[0] = -1;
     tVector[1] = -2;
+    tDataMng.setPreviousSteepestDescent(tVectorIndex, tVector);
+    tVector[0] = -8;
+    tVector[1] = -21;
     tDataMng.setTrialStep(tVectorIndex, tVector);
 
     // ********* Allocate Conjugate Descent Direction *********
     locus::ConjugateDescent<double> tDirection(tDataFactory);
     tDirection.computeScaledDescentDirection(tDataMng, tStageMng);
-    tVector[0] = -110;
-    tVector[1] = -264;
+    tVector[0] = -7;
+    tVector[1] = -23;
     LocusTest::checkVectorData(tDataMng.getTrialStep(tVectorIndex), tVector);
 }
 
@@ -1227,12 +1239,52 @@ TEST(LocusTest, NonlinearConjugateGradient_ConjugateDescentMethod_NoBounds)
     // ********* Allocate Nonlinear Conjugate Gradient Algorithm *********
     locus::NonlinearConjugateGradient<double> tAlgorithm(tDataFactory, tDataMng, tStageMng);
     tAlgorithm.setConjugateDescentMethod(tDataFactory.operator*());
-    tAlgorithm.setContractionFactor(0.25);
+    tScalarValue = 1e-3;
+    tAlgorithm.setGradientTolerance(tScalarValue);
     tAlgorithm.solve();
 
-    size_t tOrdinalValue = 396;
+    size_t tOrdinalValue = 35;
     EXPECT_EQ(tOrdinalValue, tAlgorithm.getNumIterationsDone());
-    EXPECT_EQ(locus::algorithm::stop_t::OBJECTIVE_STAGNATION, tAlgorithm.getStoppingCriteria());
+    EXPECT_EQ(locus::algorithm::stop_t::NORM_GRADIENT, tAlgorithm.getStoppingCriteria());
+    tScalarValue = 1;
+    locus::StandardVector<double> tVector(tNumControls, tScalarValue);
+    const size_t tVectorIndex = 0;
+    const double tTolerance = 1e-4;
+    LocusTest::checkVectorData(tDataMng->getCurrentControl(tVectorIndex), tVector, tTolerance);
+}
+
+TEST(LocusTest, NonlinearConjugateGradient_ConjugateDescentMethod_Bounds)
+{
+    // ********* Allocate Data Factory *********
+    const size_t tNumControls = 2;
+    std::shared_ptr<locus::DataFactory<double>> tDataFactory = std::make_shared<locus::DataFactory<double>>();
+    tDataFactory->allocateControl(tNumControls);
+
+    // ********* Allocate Nonlinear Conjugate Gradient Stage Manager *********
+    locus::Rosenbrock<double> tObjective;
+    std::shared_ptr<locus::NonlinearConjugateGradientStageMng<double>> tStageMng =
+            std::make_shared<locus::NonlinearConjugateGradientStageMng<double>>(*tDataFactory, tObjective);
+
+    // ********* Allocate Nonlinear Conjugate Gradient Data Manager *********
+    std::shared_ptr<locus::NonlinearConjugateGradientDataMng<double>> tDataMng =
+            std::make_shared<locus::NonlinearConjugateGradientDataMng<double>>(*tDataFactory);
+    double tScalarValue = 2;
+    tDataMng->setInitialGuess(tScalarValue);
+    tScalarValue = -5;
+    tDataMng->setControlLowerBounds(tScalarValue);
+    tScalarValue = 5;
+    tDataMng->setControlUpperBounds(tScalarValue);
+
+    // ********* Allocate Nonlinear Conjugate Gradient Algorithm *********
+    locus::NonlinearConjugateGradient<double> tAlgorithm(tDataFactory, tDataMng, tStageMng);
+    tAlgorithm.setConjugateDescentMethod(tDataFactory.operator*());
+    tScalarValue = 1e-5;
+    tAlgorithm.setGradientTolerance(tScalarValue);
+    tAlgorithm.solve();
+
+    size_t tOrdinalValue = 326;
+    EXPECT_EQ(tOrdinalValue, tAlgorithm.getNumIterationsDone());
+    EXPECT_EQ(locus::algorithm::stop_t::NORM_GRADIENT, tAlgorithm.getStoppingCriteria());
     tScalarValue = 1;
     locus::StandardVector<double> tVector(tNumControls, tScalarValue);
     const size_t tVectorIndex = 0;

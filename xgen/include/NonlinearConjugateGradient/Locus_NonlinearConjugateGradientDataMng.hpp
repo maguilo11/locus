@@ -42,6 +42,8 @@ public:
         mPreviousGradient(aDataFactory.control().create()),
         mControlLowerBounds(aDataFactory.control().create()),
         mControlUpperBounds(aDataFactory.control().create()),
+        mCurrentSteepestDescent(aDataFactory.control().create()),
+        mPreviousSteepestDescent(aDataFactory.control().create()),
         mControlReductions(aDataFactory.getControlReductionOperations().create())
     {
         this->initialize();
@@ -245,6 +247,58 @@ public:
         mPreviousGradient->operator[](aVectorIndex).update(static_cast<ScalarType>(1), aInput, static_cast<ScalarType>(0));
     }
 
+    // NOTE: CURRENT STEEPEST DESCENT
+    const locus::MultiVector<ScalarType, OrdinalType> & getCurrentSteepestDescent() const
+    {
+        assert(mCurrentSteepestDescent.get() != nullptr);
+        return (mCurrentSteepestDescent.operator*());
+    }
+    const locus::Vector<ScalarType, OrdinalType> & getCurrentSteepestDescent(const OrdinalType & aVectorIndex) const
+    {
+        assert(mCurrentSteepestDescent.get() != nullptr);
+        assert(aVectorIndex >= static_cast<OrdinalType>(0));
+        assert(aVectorIndex < mCurrentSteepestDescent->getNumVectors());
+        return (mCurrentSteepestDescent->operator[](aVectorIndex));
+    }
+    void setCurrentSteepestDescent(const locus::MultiVector<ScalarType, OrdinalType> & aInput)
+    {
+        assert(aInput.getNumVectors() == mCurrentSteepestDescent->getNumVectors());
+        locus::update(static_cast<ScalarType>(1), aInput, static_cast<ScalarType>(0), mCurrentSteepestDescent.operator*());
+    }
+    void setCurrentSteepestDescent(const OrdinalType & aVectorIndex, const locus::Vector<ScalarType, OrdinalType> & aInput)
+    {
+        assert(mCurrentSteepestDescent.get() != nullptr);
+        assert(aVectorIndex >= static_cast<OrdinalType>(0));
+        assert(aVectorIndex < mCurrentSteepestDescent->getNumVectors());
+        mCurrentSteepestDescent->operator[](aVectorIndex).update(static_cast<ScalarType>(1), aInput, static_cast<ScalarType>(0));
+    }
+
+    // NOTE: PREVIOUS STEEPEST DESCENT
+    const locus::MultiVector<ScalarType, OrdinalType> & getPreviousSteepestDescent() const
+    {
+        assert(mPreviousSteepestDescent.get() != nullptr);
+        return (mPreviousSteepestDescent.operator*());
+    }
+    const locus::Vector<ScalarType, OrdinalType> & getPreviousSteepestDescent(const OrdinalType & aVectorIndex) const
+    {
+        assert(mPreviousSteepestDescent.get() != nullptr);
+        assert(aVectorIndex >= static_cast<OrdinalType>(0));
+        assert(aVectorIndex < mPreviousSteepestDescent->getNumVectors());
+        return (mPreviousSteepestDescent->operator[](aVectorIndex));
+    }
+    void setPreviousSteepestDescent(const locus::MultiVector<ScalarType, OrdinalType> & aInput)
+    {
+        assert(aInput.getNumVectors() == mPreviousSteepestDescent->getNumVectors());
+        locus::update(static_cast<ScalarType>(1), aInput, static_cast<ScalarType>(0), mPreviousSteepestDescent.operator*());
+    }
+    void setPreviousSteepestDescent(const OrdinalType & aVectorIndex, const locus::Vector<ScalarType, OrdinalType> & aInput)
+    {
+        assert(mPreviousSteepestDescent.get() != nullptr);
+        assert(aVectorIndex >= static_cast<OrdinalType>(0));
+        assert(aVectorIndex < mPreviousSteepestDescent->getNumVectors());
+        mPreviousSteepestDescent->operator[](aVectorIndex).update(static_cast<ScalarType>(1), aInput, static_cast<ScalarType>(0));
+    }
+
     // NOTE: SET CONTROL LOWER BOUNDS
     const locus::MultiVector<ScalarType, OrdinalType> & getControlLowerBounds() const
     {
@@ -403,6 +457,7 @@ public:
         mPreviousObjectiveFunctionValue = mCurrentObjectiveFunctionValue;
         locus::update(static_cast<ScalarType>(1), *mCurrentControl, static_cast<ScalarType>(0), *mPreviousControl);
         locus::update(static_cast<ScalarType>(1), *mCurrentGradient, static_cast<ScalarType>(0), *mPreviousGradient);
+        locus::update(static_cast<ScalarType>(1), *mCurrentSteepestDescent, static_cast<ScalarType>(0), *mPreviousSteepestDescent);
     }
 
 private:
@@ -436,6 +491,8 @@ private:
     std::shared_ptr<locus::MultiVector<ScalarType, OrdinalType>> mPreviousGradient;
     std::shared_ptr<locus::MultiVector<ScalarType, OrdinalType>> mControlLowerBounds;
     std::shared_ptr<locus::MultiVector<ScalarType, OrdinalType>> mControlUpperBounds;
+    std::shared_ptr<locus::MultiVector<ScalarType, OrdinalType>> mCurrentSteepestDescent;
+    std::shared_ptr<locus::MultiVector<ScalarType, OrdinalType>> mPreviousSteepestDescent;
 
     std::shared_ptr<locus::ReductionOperations<ScalarType, OrdinalType>> mControlReductions;
 

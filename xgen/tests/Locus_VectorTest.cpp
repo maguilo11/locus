@@ -2140,43 +2140,6 @@ public:
         mDualAlgorithm->setObjectiveStagnationTolerance(aInput);
     }
 
-    void setDaiLiaoMethod(const locus::DataFactory<ScalarType, OrdinalType> & aDataFactory)
-    {
-        mDualAlgorithm->setDaiLiaoMethod(aDataFactory);
-    }
-    void setDaiYuanMethod(const locus::DataFactory<ScalarType, OrdinalType> & aDataFactory)
-    {
-        mDualAlgorithm->setDaiYuanMethod(aDataFactory);
-    }
-    void setLiuStoreyMethod(const locus::DataFactory<ScalarType, OrdinalType> & aDataFactory)
-    {
-        mDualAlgorithm->setLiuStoreyMethod(aDataFactory);
-    }
-    void setHagerZhangMethod(const locus::DataFactory<ScalarType, OrdinalType> & aDataFactory)
-    {
-        mDualAlgorithm->setHagerZhangMethod(aDataFactory);
-    }
-    void setPerryShannoMethod(const locus::DataFactory<ScalarType, OrdinalType> & aDataFactory)
-    {
-        mDualAlgorithm->setPerryShannoMethod(aDataFactory);
-    }
-    void setDaiYuanHybridMethod(const locus::DataFactory<ScalarType, OrdinalType> & aDataFactory)
-    {
-        mDualAlgorithm->setDaiYuanHybridMethod(aDataFactory);
-    }
-    void setFletcherReevesMethod(const locus::DataFactory<ScalarType, OrdinalType> & aDataFactory)
-    {
-        mDualAlgorithm->setFletcherReevesMethod(aDataFactory);
-    }
-    void setHestenesStiefelMethod(const locus::DataFactory<ScalarType, OrdinalType> & aDataFactory)
-    {
-        mDualAlgorithm->setHestenesStiefelMethod(aDataFactory);
-    }
-    void setConjugateDescentMethod(const locus::DataFactory<ScalarType, OrdinalType> & aDataFactory)
-    {
-        mDualAlgorithm->setConjugateDescentMethod(aDataFactory);
-    }
-
     void solve(locus::MultiVector<ScalarType, OrdinalType> & aDual,
                locus::MultiVector<ScalarType, OrdinalType> & aTrialControl)
     {
@@ -2234,6 +2197,14 @@ private:
 
         mDualStageMng = std::make_shared<locus::DualProblemStageMng<ScalarType, OrdinalType>>(aPrimalDataFactory);
         mDualAlgorithm = std::make_shared<locus::NonlinearConjugateGradient<ScalarType, OrdinalType>>(mDualDataFactory, mDualDataMng, mDualStageMng);
+        mDualAlgorithm->setFletcherReevesMethod(mDualDataFactory.operator*());
+
+        OrdinalType tMaxIterations = 100;
+        mDualAlgorithm->setMaxNumIterations(tMaxIterations);
+
+        ScalarType tTolerance = 1e-7;
+        mDualAlgorithm->setGradientTolerance(tTolerance);
+        mDualAlgorithm->setStationarityTolerance(tTolerance);
     }
 
 private:
@@ -2278,11 +2249,6 @@ public:
     }
     virtual ~MethodMovingAsymptotes()
     {
-    }
-
-    void setDualSolver(const std::shared_ptr<locus::DualProblemSolver<ScalarType, OrdinalType>> & aInput)
-    {
-        mDualSolver = aInput;
     }
 
     void solve(locus::PrimalProblemStageMng<ScalarType, OrdinalType> & aPrimalProblemStageMng,
@@ -2408,11 +2374,6 @@ public:
     void setStoppingCriterion(const locus::ccsa::stop_t & aInput)
     {
         mStoppingCriterion = aInput;
-    }
-
-    void setDualSolver(const std::shared_ptr<locus::DualProblemSolver<ScalarType, OrdinalType>> & aInput)
-    {
-        mDualSolver = aInput;
     }
 
     void solve(locus::PrimalProblemStageMng<ScalarType, OrdinalType> & aPrimalProblemStageMng,
@@ -3704,7 +3665,7 @@ TEST(LocusTest, ComputeKarushKuhnTuckerConditionsInexactness)
     EXPECT_NEAR(tScalarValue, tGold, tTolerance);
 }
 
-TEST(LocusTest, GCMMA_POLAK_RIBIERE)
+TEST(LocusTest, GCMMA)
 {
     // ********* Allocate Data Factory *********
     locus::DataFactory<double> tDataFactory;
@@ -3722,7 +3683,7 @@ TEST(LocusTest, GCMMA_POLAK_RIBIERE)
             std::make_shared<locus::PrimalProblemStageMng<double>>(tDataFactory, tObjective, tInequalityList);
 
     // ********* Allocate Primal Stage Manager *********
-    std::shared_ptr<locus::GloballyConvergentMethodMovingAsymptotes<double>> tSubProbelm =
+    std::shared_ptr<locus::GloballyConvergentMethodMovingAsymptotes<double>> tSubProblem =
             std::make_shared<locus::GloballyConvergentMethodMovingAsymptotes<double>>(tDataFactory);
 
     // ********* Allocate Data Manager and Test Data *********
@@ -3736,20 +3697,20 @@ TEST(LocusTest, GCMMA_POLAK_RIBIERE)
     tDataMng->setControlUpperBounds(tScalarValue);
 
     // ********* Allocate Optimization Algorithm Data *********
-    locus::ConservativeConvexSeparableAppxAlgorithm<double> tAlgorithm(tStageMng, tDataMng, tSubProbelm);
+    locus::ConservativeConvexSeparableAppxAlgorithm<double> tAlgorithm(tStageMng, tDataMng, tSubProblem);
     tAlgorithm.solve();
 
-    size_t tOrdinalValue = 26;
+    size_t tOrdinalValue = 20;
     EXPECT_EQ(tOrdinalValue, tAlgorithm.getNumIterationsDone());
     EXPECT_EQ(locus::ccsa::stop_t::KKT_CONDITIONS_TOLERANCE, tAlgorithm.getStoppingCriterion());
 
     const size_t tNumVectors = 1;
     locus::StandardMultiVector<double> tControlGold(tNumVectors, tNumControls);
-    tControlGold(0,0) = 6.0153619780255241;
-    tControlGold(0,1) = 5.3093883521148149;
-    tControlGold(0,2) = 4.4951336397042168;
-    tControlGold(0,3) = 3.5012315185576948;
-    tControlGold(0,4) = 2.1525451538745695;
+    tControlGold(0,0) = 6.0166415287705108;
+    tControlGold(0,1) = 5.3096820989910976;
+    tControlGold(0,2) = 4.494714328434684;
+    tControlGold(0,3) = 3.5002108656878752;
+    tControlGold(0,4) = 2.1524085607477299;
     LocusTest::checkMultiVectorData(tDataMng->getCurrentControl(), tControlGold);
 
     tScalarValue = 1.3399564241;
@@ -3761,7 +3722,69 @@ TEST(LocusTest, GCMMA_POLAK_RIBIERE)
     locus::StandardVector<double> tConstraintGold(tNumDuals, tScalarValue);
     LocusTest::checkVectorData(tDataMng->getCurrentConstraintValues(tVectorIndex), tConstraintGold);
 
-    tScalarValue = 0.44651838003;
+    tScalarValue = 0.4468391431565;
+    locus::StandardMultiVector<double> tDualGold(tNumVectors, tNumDuals, tScalarValue);
+    LocusTest::checkMultiVectorData(tDataMng->getDual(), tDualGold);
+}
+
+TEST(LocusTest, MMA)
+{
+    // ********* Allocate Data Factory *********
+    locus::DataFactory<double> tDataFactory;
+    const size_t tNumDuals = 1;
+    const size_t tNumControls = 5;
+    tDataFactory.allocateDual(tNumDuals);
+    tDataFactory.allocateControl(tNumControls);
+
+    // ********* Allocate Primal Stage Manager *********
+    locus::CcsaTestObjective<double> tObjective(tDataFactory.getControlReductionOperations());
+    locus::CcsaTestInequality<double> tInequality;
+    locus::CriterionList<double> tInequalityList;
+    tInequalityList.add(tInequality);
+    std::shared_ptr<locus::PrimalProblemStageMng<double>> tStageMng =
+            std::make_shared<locus::PrimalProblemStageMng<double>>(tDataFactory, tObjective, tInequalityList);
+
+    // ********* Allocate Primal Stage Manager *********
+    std::shared_ptr<locus::MethodMovingAsymptotes<double>> tSubProblem =
+            std::make_shared<locus::MethodMovingAsymptotes<double>>(tDataFactory);
+
+    // ********* Allocate Data Manager and Test Data *********
+    std::shared_ptr<locus::ConservativeConvexSeparableAppxDataMng<double>> tDataMng =
+            std::make_shared<locus::ConservativeConvexSeparableAppxDataMng<double>>(tDataFactory);
+    double tScalarValue = 5;
+    tDataMng->setInitialGuess(tScalarValue);
+    tScalarValue = 1e-3;
+    tDataMng->setControlLowerBounds(tScalarValue);
+    tScalarValue = 10;
+    tDataMng->setControlUpperBounds(tScalarValue);
+
+    // ********* Allocate Optimization Algorithm Data *********
+    locus::ConservativeConvexSeparableAppxAlgorithm<double> tAlgorithm(tStageMng, tDataMng, tSubProblem);
+    tAlgorithm.solve();
+
+    size_t tOrdinalValue = 35;
+    EXPECT_EQ(tOrdinalValue, tAlgorithm.getNumIterationsDone());
+    EXPECT_EQ(locus::ccsa::stop_t::KKT_CONDITIONS_TOLERANCE, tAlgorithm.getStoppingCriterion());
+
+    const size_t tNumVectors = 1;
+    locus::StandardMultiVector<double> tControlGold(tNumVectors, tNumControls);
+    tControlGold(0,0) = 6.0152032114486209;
+    tControlGold(0,1) = 5.3089580592476127;
+    tControlGold(0,2) = 4.4944130970002663;
+    tControlGold(0,3) = 3.5021481844482856;
+    tControlGold(0,4) = 2.1529382278989218;
+    LocusTest::checkMultiVectorData(tDataMng->getCurrentControl(), tControlGold);
+
+    tScalarValue = 1.3399564241;
+    const double tTolerance = 1e-6;
+    EXPECT_NEAR(tScalarValue, tDataMng->getCurrentObjectiveFunctionValue(), tTolerance);
+
+    const size_t tVectorIndex = 0;
+    tScalarValue = -7.304985583e-8;
+    locus::StandardVector<double> tConstraintGold(tNumDuals, tScalarValue);
+    LocusTest::checkVectorData(tDataMng->getCurrentConstraintValues(tVectorIndex), tConstraintGold);
+
+    tScalarValue = 0.44667576881352539;
     locus::StandardMultiVector<double> tDualGold(tNumVectors, tNumDuals, tScalarValue);
     LocusTest::checkMultiVectorData(tDataMng->getDual(), tDualGold);
 }
