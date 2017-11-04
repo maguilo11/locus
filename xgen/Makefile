@@ -16,6 +16,7 @@ LOCUS_OC_INCLUDE = /Users/miguelaguilo/locus/xgen/include/OptimalityCriteria/
 LOCUS_LINESEARCH_INCLUDE = /Users/miguelaguilo/locus/xgen/include/LineSearch/
 LOCUS_TRUSTREGION_INCLUDE = /Users/miguelaguilo/locus/xgen/include/TrustRegion/
 LOCUS_NLCG_INCLUDE = /Users/miguelaguilo/locus/xgen/include/NonlinearConjugateGradient/
+LOCUS_CCSA_INCLUDE = /Users/miguelaguilo/locus/xgen/include/ConservativeConvexSeparableApproximation/
 
 # Set source and include directories for unit tests
 UNIT_TEST = /Users/miguelaguilo/locus/xgen/tests/
@@ -28,6 +29,7 @@ GTEST_BUILD = /Users/miguelaguilo/Software/gtest_mybuild_mpicxx/CMakeFiles/gtest
 OBJS = $(LOCUS_SOURCE)
 
 UTEST = $(GTEST_BUILD)gtest-all.cc.o \
+	$(UNIT_TEST)Locus_ConservativeConvexSeparableApproximationTest.o \
 	$(UNIT_TEST)Locus_NonlinearConjugateGradientTest.o \
 	$(UNIT_TEST)Locus_AugmentedLagrangianTest.o \
 	$(UNIT_TEST)Locus_OptimalityCriteriaTest.o \
@@ -36,14 +38,13 @@ UTEST = $(GTEST_BUILD)gtest-all.cc.o \
 	$(UNIT_TEST)Locus_DataFactoryTest.o \
 	$(UNIT_TEST)Locus_LineSearchTest.o \
 	$(UNIT_TEST)Locus_UnitTestMain.o \
-	$(UNIT_TEST)Locus_BoundsTest.o \
-	$(UNIT_TEST)Locus_VectorTest.o
+	$(UNIT_TEST)Locus_BoundsTest.o
 
 .cpp.o:
 	$(CXX) $(CXXFLAGS) -I$(CXX_INCLUDE) -I$(GTEST_INCLUDE) -I$(UNIT_TEST) -I$(LOCUS_SOURCE) \
 	-I$(LOCUS_INCLUDE) -I$(LOCUS_OC_INCLUDE) -I$(LOCUS_ALGEGRA_INCLUDE) -I$(LOCUS_OPERATORS_INCLUDE) \
 	-I$(LOCUS_CRITERION_INCLUDE) -I$(LOCUS_TRUSTREGION_INCLUDE) -I$(LOCUS_NLCG_INCLUDE) \
-	-I$(LOCUS_DATA_INCLUDE) -I$(LOCUS_LINESEARCH_INCLUDE) \
+	-I$(LOCUS_DATA_INCLUDE) -I$(LOCUS_LINESEARCH_INCLUDE) -I$(LOCUS_CCSA_INCLUDE) \
 	-c -o $@ $<
 
 locus: $(OBJS) LocusMain.o
