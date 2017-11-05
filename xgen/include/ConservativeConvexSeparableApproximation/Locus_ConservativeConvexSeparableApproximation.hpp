@@ -12,9 +12,9 @@ namespace locus
 {
 
 template<typename ScalarType, typename OrdinalType>
-class PrimalProblemStageMng;
-template<typename ScalarType, typename OrdinalType>
 class ConservativeConvexSeparableAppxDataMng;
+template<typename ScalarType, typename OrdinalType>
+class ConservativeConvexSeparableAppxStageMng;
 
 struct ccsa
 {
@@ -38,7 +38,7 @@ public:
     {
     }
 
-    virtual void solve(locus::PrimalProblemStageMng<ScalarType, OrdinalType> & aPrimalProblemStageMng,
+    virtual void solve(locus::ConservativeConvexSeparableAppxStageMng<ScalarType, OrdinalType> & aPrimalProblemStageMng,
                        locus::ConservativeConvexSeparableAppxDataMng<ScalarType, OrdinalType> & aDataMng) = 0;
     virtual void initializeAuxiliaryVariables(locus::ConservativeConvexSeparableAppxDataMng<ScalarType, OrdinalType> & aDataMng) = 0;
 };

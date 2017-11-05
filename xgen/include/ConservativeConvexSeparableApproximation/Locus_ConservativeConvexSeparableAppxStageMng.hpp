@@ -14,6 +14,8 @@ namespace locus
 template<typename ScalarType, typename OrdinalType>
 class MultiVector;
 template<typename ScalarType, typename OrdinalType>
+class MultiVectorList;
+template<typename ScalarType, typename OrdinalType>
 class ConservativeConvexSeparableAppxDataMng;
 
 template<typename ScalarType, typename OrdinalType = size_t>
@@ -28,6 +30,10 @@ public:
     virtual ScalarType evaluateObjective(const locus::MultiVector<ScalarType, OrdinalType> & aControl) = 0;
     virtual void computeGradient(const locus::MultiVector<ScalarType, OrdinalType> & aControl,
                                  locus::MultiVector<ScalarType, OrdinalType> & aOutput) = 0;
+    virtual void evaluateConstraints(const locus::MultiVector<ScalarType, OrdinalType> & aControl,
+                                     locus::MultiVector<ScalarType, OrdinalType> & aOutput) = 0;
+    virtual void computeConstraintGradients(const locus::MultiVector<ScalarType, OrdinalType> & aControl,
+                                            locus::MultiVectorList<ScalarType, OrdinalType> & aOutput) = 0;
 };
 
 } // namespace locus

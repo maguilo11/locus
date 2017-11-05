@@ -8,6 +8,7 @@
 #ifndef LOCUS_LINEARALGEBRA_HPP_
 #define LOCUS_LINEARALGEBRA_HPP_
 
+#include <cmath>
 #include <cassert>
 
 #include "Locus_Vector.hpp"

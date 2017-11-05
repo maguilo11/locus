@@ -22,9 +22,9 @@
 #include "Locus_MultiVector.hpp"
 #include "Locus_LinearAlgebra.hpp"
 #include "Locus_ReductionOperations.hpp"
-#include "Locus_PrimalProblemStageMng.hpp"
 #include "Locus_NonlinearConjugateGradientDualSolver.hpp"
 #include "Locus_ConservativeConvexSeparableAppxDataMng.hpp"
+#include "Locus_ConservativeConvexSeparableAppxStageMng.hpp"
 #include "Locus_ConservativeConvexSeparableApproximation.hpp"
 
 namespace locus
@@ -107,7 +107,7 @@ public:
         mStoppingCriterion = aInput;
     }
 
-    void solve(locus::PrimalProblemStageMng<ScalarType, OrdinalType> & aPrimalProblemStageMng,
+    void solve(locus::ConservativeConvexSeparableAppxStageMng<ScalarType, OrdinalType> & aStageMng,
                locus::ConservativeConvexSeparableAppxDataMng<ScalarType, OrdinalType> & aDataMng)
     {
         mDualSolver->update(aDataMng);
@@ -131,8 +131,8 @@ public:
             aDataMng.setActiveSet(mActiveSet.operator*());
             aDataMng.setInactiveSet(mInactiveSet.operator*());
 
-            mCurrentTrialObjectiveFunctionValue = aPrimalProblemStageMng.evaluateObjective(mTrialControl.operator*());
-            aPrimalProblemStageMng.evaluateConstraints(mTrialControl.operator*(), mTrialConstraintValues.operator*());
+            mCurrentTrialObjectiveFunctionValue = aStageMng.evaluateObjective(mTrialControl.operator*());
+            aStageMng.evaluateConstraints(mTrialControl.operator*(), mTrialConstraintValues.operator*());
 
             const locus::MultiVector<ScalarType, OrdinalType> & tCurrentControl = aDataMng.getCurrentControl();
             locus::update(static_cast<ScalarType>(1), *mTrialControl, static_cast<ScalarType>(0), *mDeltaControl);

@@ -49,7 +49,7 @@ public:
             mPreviousSigma(),
             mAntepenultimateControl(),
             mWorkMultiVectorList(),
-            mPrimalStageMng(aPrimalStageMng),
+            mStageMng(aPrimalStageMng),
             mDataMng(aDataMng),
             mSubProblem(aSubProblem)
     {
@@ -170,18 +170,18 @@ public:
         }
 
         const locus::MultiVector<ScalarType, OrdinalType> & tControl = mDataMng->getCurrentControl();
-        const ScalarType tCurrentObjectiveFunctionValue = mPrimalStageMng->evaluateObjective(tControl);
+        const ScalarType tCurrentObjectiveFunctionValue = mStageMng->evaluateObjective(tControl);
         mDataMng->setCurrentObjectiveFunctionValue(tCurrentObjectiveFunctionValue);
-        mPrimalStageMng->evaluateConstraints(tControl, mDualWork.operator*());
+        mStageMng->evaluateConstraints(tControl, mDualWork.operator*());
         mDataMng->setDual(mDualWork.operator*());
         mSubProblem->initializeAuxiliaryVariables(mDataMng.operator*());
 
         while(1)
         {
             const locus::MultiVector<ScalarType, OrdinalType> & tCurrentControl = mDataMng->getCurrentControl();
-            mPrimalStageMng->computeGradient(tCurrentControl, mControlWork.operator*());
+            mStageMng->computeGradient(tCurrentControl, mControlWork.operator*());
             mDataMng->setCurrentObjectiveGradient(mControlWork.operator*());
-            mPrimalStageMng->computeConstraintGradients(tCurrentControl, mWorkMultiVectorList.operator*());
+            mStageMng->computeConstraintGradients(tCurrentControl, mWorkMultiVectorList.operator*());
             mDataMng->setCurrentConstraintGradients(mWorkMultiVectorList.operator*());
 
             this->updateSigmaParameters();
@@ -197,7 +197,8 @@ public:
                           mControlWork.operator*());
             mDataMng->setPreviousControl(mControlWork.operator*());
 
-            mSubProblem->solve(mPrimalStageMng.operator*(), mDataMng.operator*());
+            mSubProblem->solve(mStageMng.operator*(), mDataMng.operator*());
+            mStageMng->update(mDataMng.operator*());
 
             mNumIterationsDone++;
             if(this->checkStoppingCriteria() == true)
@@ -361,7 +362,7 @@ private:
     std::shared_ptr<locus::MultiVector<ScalarType, OrdinalType>> mAntepenultimateControl;
     std::shared_ptr<locus::MultiVectorList<ScalarType, OrdinalType>> mWorkMultiVectorList;
 
-    std::shared_ptr<locus::PrimalProblemStageMng<ScalarType, OrdinalType>> mPrimalStageMng;
+    std::shared_ptr<locus::PrimalProblemStageMng<ScalarType, OrdinalType>> mStageMng;
     std::shared_ptr<locus::ConservativeConvexSeparableAppxDataMng<ScalarType, OrdinalType>> mDataMng;
     std::shared_ptr<locus::ConservativeConvexSeparableApproximation<ScalarType, OrdinalType>> mSubProblem;
 

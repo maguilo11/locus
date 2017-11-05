@@ -13,9 +13,9 @@
 #include "Locus_Bounds.hpp"
 #include "Locus_MultiVector.hpp"
 #include "Locus_DataFactory.hpp"
-#include "Locus_PrimalProblemStageMng.hpp"
 #include "Locus_NonlinearConjugateGradientDualSolver.hpp"
 #include "Locus_ConservativeConvexSeparableAppxDataMng.hpp"
+#include "Locus_ConservativeConvexSeparableAppxStageMng.hpp"
 #include "Locus_ConservativeConvexSeparableApproximation.hpp"
 
 namespace locus
@@ -38,7 +38,7 @@ public:
     {
     }
 
-    void solve(locus::PrimalProblemStageMng<ScalarType, OrdinalType> & aPrimalProblemStageMng,
+    void solve(locus::ConservativeConvexSeparableAppxStageMng<ScalarType, OrdinalType> & aStageMng,
                locus::ConservativeConvexSeparableAppxDataMng<ScalarType, OrdinalType> & aDataMng)
     {
         // NOTE: REMBER THAT THE GLOBALIZATION FACTORS FOR BOTH OBJECTIVE AND CONSTRAINTS ARE SET TO ZERO IF USING
@@ -61,9 +61,9 @@ public:
         aDataMng.setActiveSet(mActiveSet.operator*());
         aDataMng.setInactiveSet(mInactiveSet.operator*());
 
-        ScalarType tObjectiveFunctionValue = aPrimalProblemStageMng.evaluateObjective(mTrialControl.operator*());
+        ScalarType tObjectiveFunctionValue = aStageMng.evaluateObjective(mTrialControl.operator*());
         aDataMng.setCurrentObjectiveFunctionValue(tObjectiveFunctionValue);
-        aPrimalProblemStageMng.evaluateConstraints(mTrialControl.operator*(), mConstraintValues.operator*());
+        aStageMng.evaluateConstraints(mTrialControl.operator*(), mConstraintValues.operator*());
         aDataMng.setCurrentConstraintValues(mConstraintValues.operator*());
         aDataMng.setCurrentControl(mTrialControl.operator*());
         aDataMng.setDual(mTrialDual.operator*());
