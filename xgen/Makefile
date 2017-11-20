@@ -31,6 +31,7 @@ OBJS = $(LOCUS_SOURCE)
 UTEST = $(GTEST_BUILD)gtest-all.cc.o \
 	$(UNIT_TEST)Locus_ConservativeConvexSeparableApproximationTest.o \
 	$(UNIT_TEST)Locus_NonlinearConjugateGradientTest.o \
+	$(UNIT_TEST)Locus_ProbabilityDistributionTest.o \
 	$(UNIT_TEST)Locus_AugmentedLagrangianTest.o \
 	$(UNIT_TEST)Locus_OptimalityCriteriaTest.o \
 	$(UNIT_TEST)Locus_PythonInterfaceTest.o \

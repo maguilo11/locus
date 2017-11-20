@@ -79,16 +79,18 @@ while(iteration <= max_outer_itr)
     end
     [stop,~] = stoppingCriteriaSatisfied(primal,dual,...
         function_values,function_grad,residual_tolerance);
-    control_stagnation_norm = ...
-        norm(control_minus_one-primal(1:number_controls));
+    control_stagnation = ...
+        abs(max(control_minus_one-primal(1:number_controls)));
     objective_stagnation = abs(Fold - function_values(1));
     grad_norm = norm(function_grad(active_set~=1,1));
     %multiMatPlot(primal(1:number_controls));
     %show(GLB_INVP.mesh.t, GLB_INVP.mesh.p, primal(1:GLB_INVP.nVertGrid));
+    fprintf('\nITR = %d, FVAL = %e, HVAL = %e,  NORM FGRAD = %e, FVAL STAGNATION = %e, CONTROL STAGNATION = %e', ...
+        iteration, function_values(1),function_values(2),grad_norm,objective_stagnation,control_stagnation);
     if(stop == true)
         why = 'residual';
         break;
-    elseif(control_stagnation_norm < control_stagnation_tolerance)
+    elseif(control_stagnation < control_stagnation_tolerance)
         why = 'control_stagnation_norm';
         break;
     elseif((max(feasibility_measure) < feasibility_tolerance) && (grad_norm  < grad_tolerance))
