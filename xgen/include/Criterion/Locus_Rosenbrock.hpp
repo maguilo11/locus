@@ -34,8 +34,7 @@ public:
      * Evaluate Rosenbrock function:
      *      f(\mathbf{x}) = 100 * \left(x_2 - x_1^2\right)^2 + \left(1 - x_1\right)^2
      * */
-    ScalarType value(const locus::MultiVector<ScalarType, OrdinalType> & aState,
-                     const locus::MultiVector<ScalarType, OrdinalType> & aControl)
+    ScalarType value(const locus::MultiVector<ScalarType, OrdinalType> & aControl)
     {
         assert(aControl.getNumVectors() == static_cast<OrdinalType>(1));
 
@@ -54,8 +53,7 @@ public:
      *                                          \left(2 * \left(1 - x_1\right) \right)
      *      \frac{\partial{f}}{\partial x_2} = 200 * \left(x_2 - x_1^2\right)
      * */
-    void gradient(const locus::MultiVector<ScalarType, OrdinalType> & aState,
-                  const locus::MultiVector<ScalarType, OrdinalType> & aControl,
+    void gradient(const locus::MultiVector<ScalarType, OrdinalType> & aControl,
                   locus::MultiVector<ScalarType, OrdinalType> & aOutput)
     {
         assert(aOutput.getNumVectors() == static_cast<OrdinalType>(1));
@@ -72,8 +70,7 @@ public:
     /*!
      * Compute Rosenbrock Hessian times vector:
      * */
-    void hessian(const locus::MultiVector<ScalarType, OrdinalType> & aState,
-                 const locus::MultiVector<ScalarType, OrdinalType> & aControl,
+    void hessian(const locus::MultiVector<ScalarType, OrdinalType> & aControl,
                  const locus::MultiVector<ScalarType, OrdinalType> & aVector,
                  locus::MultiVector<ScalarType, OrdinalType> & aOutput)
     {

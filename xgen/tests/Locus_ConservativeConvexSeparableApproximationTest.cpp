@@ -36,19 +36,17 @@ TEST(LocusTest, CcsaTestObjective)
     // ********* Allocate Criterion *********
     locus::CcsaTestObjective<double> tCriterion(tReduction);
 
-    const size_t tNumState = 1;
-    const size_t tNumVectors = 1;
-    locus::StandardMultiVector<double> tDummyState(tNumVectors, tNumState);
     double tScalarValue = 1;
+    const size_t tNumVectors = 1;
     const size_t tNumControls = 5;
     locus::StandardMultiVector<double> tControl(tNumVectors, tNumControls, tScalarValue);
 
     tScalarValue = 0.312;
     const double tTolerance = 1e-6;
-    EXPECT_NEAR(tScalarValue, tCriterion.value(tDummyState, tControl), tTolerance);
+    EXPECT_NEAR(tScalarValue, tCriterion.value(tControl), tTolerance);
 
     locus::StandardMultiVector<double> tGradient(tNumVectors, tNumControls);
-    tCriterion.gradient(tDummyState, tControl, tGradient);
+    tCriterion.gradient(tControl, tGradient);
     tScalarValue = 0.0624;
     locus::StandardMultiVector<double> tGold(tNumVectors, tNumControls, tScalarValue);
     LocusTest::checkMultiVectorData(tGradient, tGold);
@@ -59,19 +57,17 @@ TEST(LocusTest, CcsaTestInequality)
     // ********* Allocate Criterion *********
     locus::CcsaTestInequality<double> tCriterion;
 
-    const size_t tNumState = 1;
-    const size_t tNumVectors = 1;
-    locus::StandardMultiVector<double> tDummyState(tNumVectors, tNumState);
     double tScalarValue = 1;
+    const size_t tNumVectors = 1;
     const size_t tNumControls = 5;
     locus::StandardMultiVector<double> tControl(tNumVectors, tNumControls, tScalarValue);
 
     tScalarValue = 124;
     const double tTolerance = 1e-6;
-    EXPECT_NEAR(tScalarValue, tCriterion.value(tDummyState, tControl), tTolerance);
+    EXPECT_NEAR(tScalarValue, tCriterion.value(tControl), tTolerance);
 
     locus::StandardMultiVector<double> tGradient(tNumVectors, tNumControls);
-    tCriterion.gradient(tDummyState, tControl, tGradient);
+    tCriterion.gradient(tControl, tGradient);
     locus::StandardMultiVector<double> tGold(tNumVectors, tNumControls);
     tGold(0,0) = -183;
     tGold(0,1) = -111;

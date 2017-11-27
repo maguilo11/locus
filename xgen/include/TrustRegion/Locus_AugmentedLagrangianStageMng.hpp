@@ -50,7 +50,6 @@ public:
             mNumConstraintGradientEvaluations(std::vector<OrdinalType>(aConstraints.size())),
             mNumConstraintHessianEvaluations(std::vector<OrdinalType>(aConstraints.size())),
             mStateData(std::make_shared<locus::StateData<ScalarType, OrdinalType>>(aDataFactory)),
-            mState(aDataFactory.state().create()),
             mDualWorkVec(aDataFactory.dual().create()),
             mControlWorkVec(aDataFactory.control().create()),
             mObjectiveGradient(aDataFactory.control().create()),
@@ -172,7 +171,7 @@ public:
                                   ScalarType aTolerance = std::numeric_limits<ScalarType>::max())
     {
         // Evaluate objective function, f(\mathbf{z})
-        ScalarType tObjectiveValue = mObjective->value(*mState, aControl);
+        ScalarType tObjectiveValue = mObjective->value(aControl);
         this->increaseObjectiveFunctionEvaluationCounter();
 
         // Evaluate inequality constraints, h(\mathbf{u}(\mathbf{z}),\mathbf{z})
@@ -204,7 +203,7 @@ public:
         locus::fill(static_cast<ScalarType>(0), aOutput);
         // Compute objective function gradient: \frac{\partial f}{\partial\mathbf{z}}
         locus::fill(static_cast<ScalarType>(0), *mObjectiveGradient);
-        mObjectiveGradientOperator->compute(*mState, aControl, *mObjectiveGradient);
+        mObjectiveGradientOperator->compute(aControl, *mObjectiveGradient);
         mNormObjectiveFunctionGradient = locus::norm(*mObjectiveGradient);
         this->increaseObjectiveGradientEvaluationCounter();
 
@@ -222,7 +221,7 @@ public:
                 // Add contribution from: \lambda_i\frac{\partial h_i}{\partial\mathbf{z}} to Lagrangian gradient
                 locus::MultiVector<ScalarType, OrdinalType> & tMyConstraintGradient = mCostraintGradients->operator[](tVectorIndex);
                 locus::fill(static_cast<ScalarType>(0), tMyConstraintGradient);
-                mConstraintGradientOperators->operator[](tConstraintIndex).compute(mState.operator*(), aControl, tMyConstraintGradient);
+                mConstraintGradientOperators->operator[](tConstraintIndex).compute(aControl, tMyConstraintGradient);
                 this->increaseConstraintGradientEvaluationCounter(tConstraintIndex);
                 locus::update((*mLagrangeMultipliers)(tVectorIndex, tConstraintIndex), tMyConstraintGradient, static_cast<ScalarType>(1), aOutput);
 
@@ -247,7 +246,7 @@ public:
     {
         assert(mObjectiveHessian.get() != nullptr);
         locus::fill(static_cast<ScalarType>(0), aOutput);
-        mObjectiveHessian->apply(*mState, aControl, aVector, aOutput);
+        mObjectiveHessian->apply(aControl, aVector, aOutput);
         this->increaseObjectiveHessianEvaluationCounter();
 
         // Apply vector to inequality constraint Hessian operator and add contribution to total Hessian
@@ -262,7 +261,7 @@ public:
                 assert(mConstraintHessians->ptr(tConstraintIndex).get() != nullptr);
                 // Add contribution from: \lambda_i\frac{\partial^2 h_i}{\partial\mathbf{z}^2}
                 locus::fill(static_cast<ScalarType>(0), *mControlWorkVec);
-                (*mConstraintHessians)[tConstraintIndex].apply(*mState, aControl, aVector, *mControlWorkVec);
+                (*mConstraintHessians)[tConstraintIndex].apply(aControl, aVector, *mControlWorkVec);
                 this->increaseConstraintHessianEvaluationCounter(tConstraintIndex);
                 locus::update((*mLagrangeMultipliers)(tVectorIndex, tConstraintIndex),
                               *mControlWorkVec,
@@ -275,7 +274,7 @@ public:
 
                 // Compute Jacobian, i.e. \frac{\partial h_i}{\partial\mathbf{z}}
                 locus::fill(static_cast<ScalarType>(0), *mControlWorkVec);
-                (*mConstraintGradientOperators)[tConstraintIndex].compute(*mState, aControl, *mControlWorkVec);
+                (*mConstraintGradientOperators)[tConstraintIndex].compute(aControl, *mControlWorkVec);
                 this->increaseConstraintGradientEvaluationCounter(tConstraintIndex);
 
                 ScalarType tJacobianDotTrialDirection = locus::dot(*mControlWorkVec, aVector);
@@ -310,7 +309,7 @@ public:
             const OrdinalType tNumConstraints = (*mWorkConstraintValues)[tVectorIndex].size();
             for(OrdinalType tConstraintIndex = 0; tConstraintIndex < tNumConstraints; tConstraintIndex++)
             {
-                (*mWorkConstraintValues)(tVectorIndex, tConstraintIndex) = (*mConstraints)[tConstraintIndex].value(*mState, aControl);
+                (*mWorkConstraintValues)(tVectorIndex, tConstraintIndex) = (*mConstraints)[tConstraintIndex].value(aControl);
                 this->increaseConstraintEvaluationCounter(tConstraintIndex);
             }
         }
@@ -417,7 +416,6 @@ private:
 
     std::shared_ptr<locus::StateData<ScalarType, OrdinalType>> mStateData;
 
-    std::shared_ptr<locus::MultiVector<ScalarType, OrdinalType>> mState;
     std::shared_ptr<locus::MultiVector<ScalarType, OrdinalType>> mDualWorkVec;
     std::shared_ptr<locus::MultiVector<ScalarType, OrdinalType>> mControlWorkVec;
     std::shared_ptr<locus::MultiVector<ScalarType, OrdinalType>> mObjectiveGradient;

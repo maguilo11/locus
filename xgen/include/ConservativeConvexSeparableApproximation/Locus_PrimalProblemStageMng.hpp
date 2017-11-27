@@ -37,7 +37,6 @@ public:
             mNumObjectiveGradientEvaluations(0),
             mNumConstraintEvaluations(),
             mNumConstraintGradientEvaluations(),
-            mState(aDataFactory.state().create()),
             mObjective(),
             mConstraints(),
             mObjectiveGradient(),
@@ -52,7 +51,6 @@ public:
             mNumObjectiveGradientEvaluations(0),
             mNumConstraintEvaluations(std::vector<OrdinalType>(aConstraints.size())),
             mNumConstraintGradientEvaluations(std::vector<OrdinalType>(aConstraints.size())),
-            mState(aDataFactory.state().create()),
             mObjective(aObjective.create()),
             mConstraints(aConstraints.create()),
             mObjectiveGradient(),
@@ -120,7 +118,7 @@ public:
     {
         assert(mObjective.get() != nullptr);
 
-        ScalarType tObjectiveFunctionValue = mObjective->value(mState.operator*(), aControl);
+        ScalarType tObjectiveFunctionValue = mObjective->value(aControl);
         mNumObjectiveFunctionEvaluations++;
 
         return (tObjectiveFunctionValue);
@@ -130,7 +128,7 @@ public:
     {
         assert(mObjectiveGradient.get() != nullptr);
         locus::fill(static_cast<ScalarType>(0), aOutput);
-        mObjectiveGradient->compute(mState.operator*(), aControl, aOutput);
+        mObjectiveGradient->compute(aControl, aOutput);
         mNumObjectiveGradientEvaluations++;
     }
     void evaluateConstraints(const locus::MultiVector<ScalarType, OrdinalType> & aControl,
@@ -150,7 +148,7 @@ public:
             {
                 assert(mConstraints->ptr(tConstraintIndex).get() != nullptr);
 
-                tMyOutput[tConstraintIndex] = mConstraints->operator[](tConstraintIndex).value(*mState, aControl);
+                tMyOutput[tConstraintIndex] = mConstraints->operator[](tConstraintIndex).value(aControl);
                 mNumConstraintEvaluations[tConstraintIndex] =
                         mNumConstraintEvaluations[tConstraintIndex] + static_cast<OrdinalType>(1);
             }
@@ -169,7 +167,7 @@ public:
 
             locus::MultiVector<ScalarType, OrdinalType> & tMyOutput = aOutput[tIndex];
             locus::fill(static_cast<ScalarType>(0), tMyOutput);
-            mConstraints->operator[](tIndex).gradient(*mState, aControl, tMyOutput);
+            mConstraints->operator[](tIndex).gradient(aControl, tMyOutput);
             mNumConstraintGradientEvaluations[tIndex] =
                     mNumConstraintGradientEvaluations[tIndex] + static_cast<OrdinalType>(1);
         }
@@ -182,7 +180,6 @@ private:
     std::vector<OrdinalType> mNumConstraintEvaluations;
     std::vector<OrdinalType> mNumConstraintGradientEvaluations;
 
-    std::shared_ptr<MultiVector<ScalarType, OrdinalType>> mState;
     std::shared_ptr<locus::Criterion<ScalarType, OrdinalType>> mObjective;
     std::shared_ptr<locus::CriterionList<ScalarType, OrdinalType>> mConstraints;
     std::shared_ptr<locus::GradientOperator<ScalarType, OrdinalType>> mObjectiveGradient;

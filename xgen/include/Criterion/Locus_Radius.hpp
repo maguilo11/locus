@@ -32,8 +32,7 @@ public:
     }
 
     /// \left(\mathbf{z}(0) - 1.\right)^2 + 2\left(\mathbf{z}(1) - 2\right)^2
-    ScalarType value(const locus::MultiVector<ScalarType, OrdinalType> & aState,
-                      const locus::MultiVector<ScalarType, OrdinalType> & aControl)
+    ScalarType value(const locus::MultiVector<ScalarType, OrdinalType> & aControl)
     {
         assert(aControl.getNumVectors() > static_cast<OrdinalType>(0));
 
@@ -43,8 +42,7 @@ public:
         tOutput = tOutput - mLimit;
         return (tOutput);
     }
-    void gradient(const locus::MultiVector<ScalarType, OrdinalType> & aState,
-                  const locus::MultiVector<ScalarType, OrdinalType> & aControl,
+    void gradient(const locus::MultiVector<ScalarType, OrdinalType> & aControl,
                   locus::MultiVector<ScalarType, OrdinalType> & aOutput)
     {
         assert(aOutput.getNumVectors() > static_cast<OrdinalType>(0));
@@ -56,8 +54,7 @@ public:
         aOutput(tVectorIndex, 1) = static_cast<ScalarType>(2.) * aControl(tVectorIndex, 1);
 
     }
-    void hessian(const locus::MultiVector<ScalarType, OrdinalType> & aState,
-                 const locus::MultiVector<ScalarType, OrdinalType> & aControl,
+    void hessian(const locus::MultiVector<ScalarType, OrdinalType> & aControl,
                  const locus::MultiVector<ScalarType, OrdinalType> & aVector,
                  locus::MultiVector<ScalarType, OrdinalType> & aOutput)
     {

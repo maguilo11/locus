@@ -39,13 +39,12 @@ public:
     {
         return;
     }
-    void apply(const locus::MultiVector<ScalarType, OrdinalType> & aState,
-               const locus::MultiVector<ScalarType, OrdinalType> & aControl,
+    void apply(const locus::MultiVector<ScalarType, OrdinalType> & aControl,
                const locus::MultiVector<ScalarType, OrdinalType> & aVector,
                locus::MultiVector<ScalarType, OrdinalType> & aOutput)
     {
         locus::fill(static_cast<ScalarType>(0), aOutput);
-        mCriterion->hessian(aState, aControl, aVector, aOutput);
+        mCriterion->hessian(aControl, aVector, aOutput);
     }
     std::shared_ptr<locus::LinearOperator<ScalarType, OrdinalType>> create() const
     {

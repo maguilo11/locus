@@ -31,14 +31,11 @@ public:
      * optimization problems.
      *  Parameters:
      *    \param In
-     *          aState: state variables
-     *    \param In
      *          aControl: control variables
      *
      *  \return Objective function value
      **/
-    virtual ScalarType value(const locus::MultiVector<ScalarType, OrdinalType> & aState,
-                             const locus::MultiVector<ScalarType, OrdinalType> & aControl) = 0;
+    virtual ScalarType value(const locus::MultiVector<ScalarType, OrdinalType> & aControl) = 0;
     /*!
      * Computes the gradient of a criterion of type f(\mathbf{u}(\mathbf{z}),\mathbf{z})\colon\mathbb{R}^{n_u}
      * \times\mathbb{R}^{n_z}\rightarrow\mathbb{R}, where u denotes the state and z denotes the control variables.
@@ -46,14 +43,11 @@ public:
      * constraint optimization problems.
      *  Parameters:
      *    \param In
-     *          aState: state variables
-     *    \param In
      *          aControl: control variables
      *    \param Out
      *          aOutput: gradient
      **/
-    virtual void gradient(const locus::MultiVector<ScalarType, OrdinalType> & aState,
-                          const locus::MultiVector<ScalarType, OrdinalType> & aControl,
+    virtual void gradient(const locus::MultiVector<ScalarType, OrdinalType> & aControl,
                           locus::MultiVector<ScalarType, OrdinalType> & aOutput) = 0;
     /*!
      * Computes the application of a vector to the Hessian of a criterion of type f(\mathbf{u}(\mathbf{z}),\mathbf{z})
@@ -62,16 +56,13 @@ public:
      * For instance, PDE constraint optimization problems.
      *  Parameters:
      *    \param In
-     *          aState:   state variables
-     *    \param In
      *          aControl: control variables
      *    \param In
      *          aVector:  direction vector
      *    \param Out
      *          aOutput:  Hessian times direction vector
      **/
-    virtual void hessian(const locus::MultiVector<ScalarType, OrdinalType> & aState,
-                         const locus::MultiVector<ScalarType, OrdinalType> & aControl,
+    virtual void hessian(const locus::MultiVector<ScalarType, OrdinalType> & aControl,
                          const locus::MultiVector<ScalarType, OrdinalType> & aVector,
                          locus::MultiVector<ScalarType, OrdinalType> & aOutput)
     {

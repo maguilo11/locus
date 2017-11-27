@@ -34,7 +34,6 @@ TEST(LocusTest, OptimalityCriteriaObjectiveTest)
     size_t tNumVectors = 1;
     size_t tNumElements = 5;
     std::vector<double> tData(tNumElements, 0.);
-    locus::StandardMultiVector<double,size_t> tState(tNumVectors, tData);
     locus::StandardMultiVector<double,size_t> tControl(tNumVectors, tData);
 
     // ********* Set Control Data For Test *********
@@ -46,7 +45,7 @@ TEST(LocusTest, OptimalityCriteriaObjectiveTest)
     }
 
     // ********* Test Objective Value *********
-    double tObjectiveValue = tObjective.value(tState, tControl);
+    double tObjectiveValue = tObjective.value(tControl);
 
     double tTolerance = 1e-6;
     double tGoldValue = 1.3401885069;
@@ -54,7 +53,7 @@ TEST(LocusTest, OptimalityCriteriaObjectiveTest)
 
     // ********* Test Objective Gradient *********
     locus::StandardMultiVector<double,size_t> tGradient(tNumVectors, tData);
-    tObjective.gradient(tState, tControl, tGradient);
+    tObjective.gradient(tControl, tGradient);
 
     std::vector<double> tGoldGradient(tNumElements, 0.);
     std::fill(tGoldGradient.begin(), tGoldGradient.end(), 0.0624);
@@ -71,7 +70,6 @@ TEST(LocusTest, OptimalityCriteriaInequalityTestOne)
     size_t tNumVectors = 1;
     size_t tNumElements = 5;
     std::vector<double> tData(tNumElements, 0.);
-    locus::StandardMultiVector<double,size_t> tState(tNumVectors, tData);
     locus::StandardMultiVector<double,size_t> tControl(tNumVectors, tData);
 
     // ********* Set Control Data For Test *********
@@ -82,7 +80,7 @@ TEST(LocusTest, OptimalityCriteriaInequalityTestOne)
         tControl(tVectorIndex, tIndex) = tData[tIndex];
     }
 
-    double tInequalityValue = tInequality.value(tState, tControl);
+    double tInequalityValue = tInequality.value(tControl);
 
     double tTolerance = 1e-6;
     double tGoldValue = -5.07057774290498e-6;
@@ -90,7 +88,7 @@ TEST(LocusTest, OptimalityCriteriaInequalityTestOne)
 
     // ********* Test Inequality Gradient *********
     locus::StandardMultiVector<double,size_t> tGradient(tNumVectors, tData);
-    tInequality.gradient(tState, tControl, tGradient);
+    tInequality.gradient(tControl, tGradient);
 
     std::vector<double> tGoldGradient =
             { -0.13778646890793422, -0.14864537557631985, -0.13565219858574704, -0.1351771199123859, -0.13908690613190111 };

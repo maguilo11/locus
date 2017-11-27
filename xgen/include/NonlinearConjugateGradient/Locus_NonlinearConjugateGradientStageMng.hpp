@@ -32,7 +32,6 @@ public:
             mNumHessianEvaluations(0),
             mNumFunctionEvaluations(0),
             mNumGradientEvaluations(0),
-            mState(aDataFactory.state().create()),
             mStateData(std::make_shared<locus::StateData<ScalarType, OrdinalType>>(aDataFactory)),
             mObjective(aObjective.create()),
             mHessian(std::make_shared<locus::AnalyticalHessian<ScalarType, OrdinalType>>(aObjective)),
@@ -92,7 +91,7 @@ public:
                                  ScalarType aTolerance = std::numeric_limits<ScalarType>::max())
     {
         assert(mObjective.get() != nullptr);
-        ScalarType tObjectiveFunctionValue = mObjective->value(mState.operator*(), aControl);
+        ScalarType tObjectiveFunctionValue = mObjective->value(aControl);
         mNumFunctionEvaluations++;
         return (tObjectiveFunctionValue);
     }
@@ -101,7 +100,7 @@ public:
     {
         assert(mGradient.get() != nullptr);
         locus::fill(static_cast<ScalarType>(0), aOutput);
-        mGradient->compute(mState.operator*(), aControl, aOutput);
+        mGradient->compute(aControl, aOutput);
         mNumGradientEvaluations++;
     }
     void applyVectorToHessian(const locus::MultiVector<ScalarType, OrdinalType> & aControl,
@@ -110,7 +109,7 @@ public:
     {
         assert(mHessian.get() != nullptr);
         locus::fill(static_cast<ScalarType>(0), aOutput);
-        mHessian->apply(mState.operator*(), aControl, aVector, aOutput);
+        mHessian->apply(aControl, aVector, aOutput);
         mNumHessianEvaluations++;
     }
 
@@ -119,7 +118,6 @@ private:
     OrdinalType mNumFunctionEvaluations;
     OrdinalType mNumGradientEvaluations;
 
-    std::shared_ptr<locus::MultiVector<ScalarType, OrdinalType>> mState;
     std::shared_ptr<locus::StateData<ScalarType, OrdinalType>> mStateData;
     std::shared_ptr<locus::Criterion<ScalarType, OrdinalType>> mObjective;
 

@@ -459,23 +459,21 @@ TEST(LocusTest, TrustRegionAlgorithmDataMng)
 
 TEST(LocusTest, RosenbrockCriterion)
 {
-    const size_t tNumStates = 1;
-    const size_t tNumVectors = 1;
-    locus::StandardMultiVector<double> tState(tNumVectors, tNumStates);
     double tValue = 2;
+    const size_t tNumVectors = 1;
     const size_t tNumControls = 2;
     locus::StandardMultiVector<double> tControl(tNumVectors, tNumControls, tValue);
 
     locus::Rosenbrock<double> tCriterion;
     // TEST OBJECTIVE FUNCTION EVALUATION
-    double tObjectiveValue = tCriterion.value(tState, tControl);
+    double tObjectiveValue = tCriterion.value(tControl);
     const double tGoldValue = 401;
     const double tTolerance = 1e-6;
     EXPECT_NEAR(tGoldValue, tObjectiveValue, tTolerance);
 
     // TEST GRADIENT EVALUATION FUNCTION
     locus::StandardMultiVector<double> tGradient(tNumVectors, tNumControls);
-    tCriterion.gradient(tState, tControl, tGradient);
+    tCriterion.gradient(tControl, tGradient);
     locus::StandardMultiVector<double> tGoldVector(tNumVectors, tNumControls);
     const size_t tVectorIndex = 0;
     tGoldVector(tVectorIndex, 0) = 1602;
@@ -486,7 +484,7 @@ TEST(LocusTest, RosenbrockCriterion)
     tValue = 1;
     locus::StandardMultiVector<double> tVector(tNumVectors, tNumControls, tValue);
     locus::StandardMultiVector<double> tHessianTimesVector(tNumVectors, tNumControls);
-    tCriterion.hessian(tState, tControl, tVector, tHessianTimesVector);
+    tCriterion.hessian(tControl, tVector, tHessianTimesVector);
     tGoldVector(tVectorIndex, 0) = 3202;
     tGoldVector(tVectorIndex, 1) = -600;
     LocusTest::checkMultiVectorData(tHessianTimesVector, tGoldVector);
@@ -494,24 +492,22 @@ TEST(LocusTest, RosenbrockCriterion)
 
 TEST(LocusTest, CircleCriterion)
 {
-    const size_t tNumStates = 1;
-    const size_t tNumVectors = 1;
-    locus::StandardMultiVector<double> tState(tNumVectors, tNumStates);
     const double tValue = 1;
+    const size_t tNumVectors = 1;
     const size_t tNumControls = 2;
     locus::StandardMultiVector<double> tControl(tNumVectors, tNumControls, tValue);
 
     locus::Circle<double> tCriterion;
 
     // TEST OBJECTIVE FUNCTION EVALUATION
-    double tObjectiveValue = tCriterion.value(tState, tControl);
+    double tObjectiveValue = tCriterion.value(tControl);
     const double tGoldValue = 2;
     const double tTolerance = 1e-6;
     EXPECT_NEAR(tGoldValue, tObjectiveValue, tTolerance);
 
     // TEST GRADIENT EVALUATION FUNCTION
     locus::StandardMultiVector<double> tGradient(tNumVectors, tNumControls);
-    tCriterion.gradient(tState, tControl, tGradient);
+    tCriterion.gradient(tControl, tGradient);
     locus::StandardMultiVector<double> tGoldVector(tNumVectors, tNumControls);
     const size_t tVectorIndex = 0;
     tGoldVector(tVectorIndex, 1) = -4;
@@ -521,7 +517,7 @@ TEST(LocusTest, CircleCriterion)
     locus::StandardMultiVector<double> tVector(tNumVectors, tNumControls, tValue);
     tVector(tVectorIndex, 1) = -2.;
     locus::StandardMultiVector<double> tHessianTimesVector(tNumVectors, tNumControls);
-    tCriterion.hessian(tState, tControl, tVector, tHessianTimesVector);
+    tCriterion.hessian(tControl, tVector, tHessianTimesVector);
     tGoldVector(tVectorIndex, 0) = 2.;
     tGoldVector(tVectorIndex, 1) = -8.;
     LocusTest::checkMultiVectorData(tHessianTimesVector, tGoldVector);
@@ -529,24 +525,22 @@ TEST(LocusTest, CircleCriterion)
 
 TEST(LocusTest, RadiusCriterion)
 {
-    const size_t tNumStates = 1;
-    const size_t tNumVectors = 1;
-    locus::StandardMultiVector<double> tState(tNumVectors, tNumStates);
     const double tValue = 0.5;
+    const size_t tNumVectors = 1;
     const size_t tNumControls = 2;
     locus::StandardMultiVector<double> tControl(tNumVectors, tNumControls, tValue);
 
     locus::Radius<double> tCriterion;
 
     // TEST OBJECTIVE FUNCTION EVALUATION
-    double tObjectiveValue = tCriterion.value(tState, tControl);
+    double tObjectiveValue = tCriterion.value(tControl);
     const double tGoldValue = -0.5;
     const double tTolerance = 1e-6;
     EXPECT_NEAR(tGoldValue, tObjectiveValue, tTolerance);
 
     // TEST GRADIENT EVALUATION FUNCTION
     locus::StandardMultiVector<double> tGradient(tNumVectors, tNumControls);
-    tCriterion.gradient(tState, tControl, tGradient);
+    tCriterion.gradient(tControl, tGradient);
     locus::StandardMultiVector<double> tGoldVector(tNumVectors, tNumControls);
     locus::fill(1., tGoldVector);
     LocusTest::checkMultiVectorData(tGradient, tGoldVector);
@@ -556,7 +550,7 @@ TEST(LocusTest, RadiusCriterion)
     const size_t tVectorIndex = 0;
     tVector(tVectorIndex, 1) = -2.;
     locus::StandardMultiVector<double> tHessianTimesVector(tNumVectors, tNumControls);
-    tCriterion.hessian(tState, tControl, tVector, tHessianTimesVector);
+    tCriterion.hessian(tControl, tVector, tHessianTimesVector);
     tGoldVector(tVectorIndex, 0) = 1.0;
     tGoldVector(tVectorIndex, 1) = -4.0;
     LocusTest::checkMultiVectorData(tHessianTimesVector, tGoldVector);
@@ -564,10 +558,8 @@ TEST(LocusTest, RadiusCriterion)
 
 TEST(LocusTest, AnalyticalGradient)
 {
-    const size_t tNumStates = 1;
-    const size_t tNumVectors = 1;
-    locus::StandardMultiVector<double> tState(tNumVectors, tNumStates);
     const double tValue = 1;
+    const size_t tNumVectors = 1;
     const size_t tNumControls = 2;
     const size_t tVectorIndex = 0;
     locus::StandardMultiVector<double> tOutput(tNumVectors, tNumControls);
@@ -577,7 +569,7 @@ TEST(LocusTest, AnalyticalGradient)
     locus::AnalyticalGradient<double> tGradient(tCriterion);
 
     // TEST COMPUTE FUNCTION
-    tGradient.compute(tState, tControl, tOutput);
+    tGradient.compute(tControl, tOutput);
 
     locus::StandardMultiVector<double> tGold(tNumVectors, tNumControls);
     tGold(tVectorIndex, 0) = 0.0;
@@ -587,10 +579,8 @@ TEST(LocusTest, AnalyticalGradient)
 
 TEST(LocusTest, AnalyticalHessian)
 {
-    const size_t tNumStates = 1;
-    const size_t tNumVectors = 1;
-    locus::StandardMultiVector<double> tState(tNumVectors, tNumStates);
     const double tValue = 1;
+    const size_t tNumVectors = 1;
     const size_t tNumControls = 2;
     const size_t tVectorIndex = 0;
     locus::StandardMultiVector<double> tVector(tNumVectors, tNumControls, tValue);
@@ -602,7 +592,7 @@ TEST(LocusTest, AnalyticalHessian)
     locus::AnalyticalHessian<double> tHessian(tCriterion);
 
     // TEST APPLY VECTOR TO HESSIAN OPERATOR FUNCTION
-    tHessian.apply(tState, tControl, tVector, tHessianTimesVector);
+    tHessian.apply(tControl, tVector, tHessianTimesVector);
 
     locus::StandardMultiVector<double> tGoldVector(tNumVectors, tNumControls);
     tGoldVector(tVectorIndex, 0) = 2.;
@@ -655,15 +645,13 @@ TEST(LocusTest, CriterionList)
     EXPECT_EQ(tGoldInteger, tList.size());
 
     // ** TEST FIRST CRITERION OBJECTIVE **
-    const size_t tNumStates = 1;
-    const size_t tNumVectors = 1;
-    locus::StandardMultiVector<double> tState(tNumVectors, tNumStates);
     const double tValue = 1;
+    const size_t tNumVectors = 1;
     const size_t tNumControls = 2;
     locus::StandardMultiVector<double> tControl(tNumVectors, tNumControls, tValue);
 
     size_t tCriterionIndex = 0;
-    double tOutput = tList[tCriterionIndex].value(tState, tControl);
+    double tOutput = tList[tCriterionIndex].value(tControl);
 
     double tGoldScalar = 2;
     double tTolerance = 1e-6;
@@ -671,7 +659,7 @@ TEST(LocusTest, CriterionList)
 
     // TEST FIRST CRITERION GRADIENT
     locus::StandardMultiVector<double> tGradient(tNumVectors, tNumControls);
-    tList[tCriterionIndex].gradient(tState, tControl, tGradient);
+    tList[tCriterionIndex].gradient(tControl, tGradient);
     locus::StandardMultiVector<double> tGoldVector(tNumVectors, tNumControls);
     const size_t tVectorIndex = 0;
     tGoldVector(tVectorIndex, 1) = -4;
@@ -681,7 +669,7 @@ TEST(LocusTest, CriterionList)
     locus::StandardMultiVector<double> tVector(tNumVectors, tNumControls, tValue);
     tVector(tVectorIndex, 1) = -2.;
     locus::StandardMultiVector<double> tHessianTimesVector(tNumVectors, tNumControls);
-    tList[tCriterionIndex].hessian(tState, tControl, tVector, tHessianTimesVector);
+    tList[tCriterionIndex].hessian(tControl, tVector, tHessianTimesVector);
     tGoldVector(tVectorIndex, 0) = 2.;
     tGoldVector(tVectorIndex, 1) = -8.;
     LocusTest::checkMultiVectorData(tHessianTimesVector, tGoldVector);
@@ -689,13 +677,13 @@ TEST(LocusTest, CriterionList)
     // ** TEST SECOND CRITERION OBJECTIVE **
     tCriterionIndex = 1;
     locus::fill(0.5, tControl);
-    tOutput = tList[tCriterionIndex].value(tState, tControl);
+    tOutput = tList[tCriterionIndex].value(tControl);
     tGoldScalar = -0.5;
     EXPECT_NEAR(tGoldScalar, tOutput, tTolerance);
 
     // TEST SECOND CRITERION GRADIENT
     locus::fill(0., tGradient);
-    tList[tCriterionIndex].gradient(tState, tControl, tGradient);
+    tList[tCriterionIndex].gradient(tControl, tGradient);
     locus::fill(1., tGoldVector);
     LocusTest::checkMultiVectorData(tGradient, tGoldVector);
 
@@ -703,7 +691,7 @@ TEST(LocusTest, CriterionList)
     locus::fill(0.5, tVector);
     tVector(tVectorIndex, 1) = -2.;
     locus::fill(0., tHessianTimesVector);
-    tList[tCriterionIndex].hessian(tState, tControl, tVector, tHessianTimesVector);
+    tList[tCriterionIndex].hessian(tControl, tVector, tHessianTimesVector);
     tGoldVector(tVectorIndex, 0) = 1.0;
     tGoldVector(tVectorIndex, 1) = -4.0;
     LocusTest::checkMultiVectorData(tHessianTimesVector, tGoldVector);
@@ -713,13 +701,13 @@ TEST(LocusTest, CriterionList)
     // FIRST OBJECTIVE
     tCriterionIndex = 0;
     locus::fill(1.0, tControl);
-    tOutput = tCopy->operator [](tCriterionIndex).value(tState, tControl);
+    tOutput = tCopy->operator [](tCriterionIndex).value(tControl);
     tGoldScalar = 2;
     EXPECT_NEAR(tGoldScalar, tOutput, tTolerance);
     // SECOND OBJECTIVE
     tCriterionIndex = 1;
     locus::fill(0.5, tControl);
-    tOutput = tCopy->operator [](tCriterionIndex).value(tState, tControl);
+    tOutput = tCopy->operator [](tCriterionIndex).value(tControl);
     tGoldScalar = -0.5;
     EXPECT_NEAR(tGoldScalar, tOutput, tTolerance);
 }
@@ -743,10 +731,8 @@ TEST(LocusTest, GradientOperatorList)
     EXPECT_EQ(tIntegerGold, tList.size());
 
     // ********* ALLOCATE DATA STRUCTURES FOR TEST *********
-    const size_t tNumStates = 1;
-    const size_t tNumVectors = 1;
-    locus::StandardMultiVector<double> tState(tNumVectors, tNumStates);
     double tValue = 1;
+    const size_t tNumVectors = 1;
     const size_t tNumControls = 2;
     locus::StandardMultiVector<double> tControl(tNumVectors, tNumControls, tValue);
 
@@ -754,7 +740,7 @@ TEST(LocusTest, GradientOperatorList)
     size_t tVectorIndex = 0;
     locus::StandardMultiVector<double> tOutput(tNumVectors, tNumControls);
     size_t tGradientOperatorIndex = 0;
-    tList[tGradientOperatorIndex].compute(tState, tControl, tOutput);
+    tList[tGradientOperatorIndex].compute(tControl, tOutput);
 
     locus::StandardMultiVector<double> tGoldVector(tNumVectors, tNumControls);
     tGoldVector(tVectorIndex, 0) = 0.0;
@@ -766,7 +752,7 @@ TEST(LocusTest, GradientOperatorList)
     locus::fill(tValue, tControl);
     locus::fill(0., tOutput);
     tGradientOperatorIndex = 1;
-    tList[tGradientOperatorIndex].compute(tState, tControl, tOutput);
+    tList[tGradientOperatorIndex].compute(tControl, tOutput);
     tGoldVector(tVectorIndex, 0) = 1.0;
     tGoldVector(tVectorIndex, 1) = 1.0;
     LocusTest::checkMultiVectorData(tOutput, tGoldVector);
@@ -776,7 +762,7 @@ TEST(LocusTest, GradientOperatorList)
     locus::fill(tValue, tControl);
     locus::fill(0., tOutput);
     tGradientOperatorIndex = 0;
-    tList.ptr(tGradientOperatorIndex)->compute(tState, tControl, tOutput);
+    tList.ptr(tGradientOperatorIndex)->compute(tControl, tOutput);
     tGoldVector(tVectorIndex, 0) = 0.0;
     tGoldVector(tVectorIndex, 1) = -4.0;
     LocusTest::checkMultiVectorData(tOutput, tGoldVector);
@@ -786,7 +772,7 @@ TEST(LocusTest, GradientOperatorList)
     locus::fill(tValue, tControl);
     locus::fill(0., tOutput);
     tGradientOperatorIndex = 1;
-    tList.ptr(tGradientOperatorIndex)->compute(tState, tControl, tOutput);
+    tList.ptr(tGradientOperatorIndex)->compute(tControl, tOutput);
     tGoldVector(tVectorIndex, 0) = 1.0;
     tGoldVector(tVectorIndex, 1) = 1.0;
     LocusTest::checkMultiVectorData(tOutput, tGoldVector);
@@ -798,7 +784,7 @@ TEST(LocusTest, GradientOperatorList)
     locus::fill(tValue, tControl);
     locus::fill(0., tOutput);
     tGradientOperatorIndex = 0;
-    tListCopy->ptr(tGradientOperatorIndex)->compute(tState, tControl, tOutput);
+    tListCopy->ptr(tGradientOperatorIndex)->compute(tControl, tOutput);
     tGoldVector(tVectorIndex, 0) = 0.0;
     tGoldVector(tVectorIndex, 1) = -4.0;
     LocusTest::checkMultiVectorData(tOutput, tGoldVector);
@@ -808,7 +794,7 @@ TEST(LocusTest, GradientOperatorList)
     locus::fill(tValue, tControl);
     locus::fill(0., tOutput);
     tGradientOperatorIndex = 1;
-    tListCopy->ptr(tGradientOperatorIndex)->compute(tState, tControl, tOutput);
+    tListCopy->ptr(tGradientOperatorIndex)->compute(tControl, tOutput);
     tGoldVector(tVectorIndex, 0) = 1.0;
     tGoldVector(tVectorIndex, 1) = 1.0;
     LocusTest::checkMultiVectorData(tOutput, tGoldVector);
@@ -833,10 +819,8 @@ TEST(LocusTest, LinearOperatorList)
     EXPECT_EQ(tIntegerGold, tList.size());
 
     // ********* ALLOCATE DATA STRUCTURES FOR TEST *********
-    const size_t tNumStates = 1;
-    const size_t tNumVectors = 1;
-    locus::StandardMultiVector<double> tState(tNumVectors, tNumStates);
     double tValue = 1;
+    const size_t tNumVectors = 1;
     const size_t tNumControls = 2;
     locus::StandardMultiVector<double> tControl(tNumVectors, tNumControls, tValue);
 
@@ -846,7 +830,7 @@ TEST(LocusTest, LinearOperatorList)
     tVector(tVectorIndex, 1) = -2.;
     locus::StandardMultiVector<double> tOutput(tNumVectors, tNumControls);
     size_t tLinearOperatorIndex = 0;
-    tList[tLinearOperatorIndex].apply(tState, tControl, tVector, tOutput);
+    tList[tLinearOperatorIndex].apply(tControl, tVector, tOutput);
 
     locus::StandardMultiVector<double> tGoldVector(tNumVectors, tNumControls);
     tGoldVector(tVectorIndex, 0) = 2.;
@@ -860,7 +844,7 @@ TEST(LocusTest, LinearOperatorList)
     tVector(tVectorIndex, 1) = -2.;
     locus::fill(tValue, tControl);
     tLinearOperatorIndex = 1;
-    tList[tLinearOperatorIndex].apply(tState, tControl, tVector, tOutput);
+    tList[tLinearOperatorIndex].apply(tControl, tVector, tOutput);
     tGoldVector(tVectorIndex, 0) = 1.0;
     tGoldVector(tVectorIndex, 1) = -4.0;
     LocusTest::checkMultiVectorData(tOutput, tGoldVector);
@@ -872,7 +856,7 @@ TEST(LocusTest, LinearOperatorList)
     tVector(tVectorIndex, 1) = -2.;
     locus::fill(tValue, tControl);
     tLinearOperatorIndex = 0;
-    tList.ptr(tLinearOperatorIndex)->apply(tState, tControl, tVector, tOutput);
+    tList.ptr(tLinearOperatorIndex)->apply(tControl, tVector, tOutput);
     tGoldVector(tVectorIndex, 0) = 2.;
     tGoldVector(tVectorIndex, 1) = -8.;
     LocusTest::checkMultiVectorData(tOutput, tGoldVector);
@@ -884,7 +868,7 @@ TEST(LocusTest, LinearOperatorList)
     tVector(tVectorIndex, 1) = -2.;
     locus::fill(tValue, tControl);
     tLinearOperatorIndex = 1;
-    tList.ptr(tLinearOperatorIndex)->apply(tState, tControl, tVector, tOutput);
+    tList.ptr(tLinearOperatorIndex)->apply(tControl, tVector, tOutput);
     tGoldVector(tVectorIndex, 0) = 1.0;
     tGoldVector(tVectorIndex, 1) = -4.0;
     LocusTest::checkMultiVectorData(tOutput, tGoldVector);
@@ -898,7 +882,7 @@ TEST(LocusTest, LinearOperatorList)
     tVector(tVectorIndex, 1) = -2.;
     locus::fill(tValue, tControl);
     tLinearOperatorIndex = 0;
-    tListCopy->ptr(tLinearOperatorIndex)->apply(tState, tControl, tVector, tOutput);
+    tListCopy->ptr(tLinearOperatorIndex)->apply(tControl, tVector, tOutput);
     tGoldVector(tVectorIndex, 0) = 2.;
     tGoldVector(tVectorIndex, 1) = -8.;
     LocusTest::checkMultiVectorData(tOutput, tGoldVector);
@@ -910,7 +894,7 @@ TEST(LocusTest, LinearOperatorList)
     tVector(tVectorIndex, 1) = -2.;
     locus::fill(tValue, tControl);
     tLinearOperatorIndex = 1;
-    tListCopy->ptr(tLinearOperatorIndex)->apply(tState, tControl, tVector, tOutput);
+    tListCopy->ptr(tLinearOperatorIndex)->apply(tControl, tVector, tOutput);
     tGoldVector(tVectorIndex, 0) = 1.0;
     tGoldVector(tVectorIndex, 1) = -4.0;
     LocusTest::checkMultiVectorData(tOutput, tGoldVector);

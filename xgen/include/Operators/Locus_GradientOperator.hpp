@@ -27,8 +27,7 @@ public:
     }
 
     virtual void update(const locus::StateData<ScalarType, OrdinalType> & aStateData) = 0;
-    virtual void compute(const locus::MultiVector<ScalarType, OrdinalType> & aState,
-                         const locus::MultiVector<ScalarType, OrdinalType> & aControl,
+    virtual void compute(const locus::MultiVector<ScalarType, OrdinalType> & aControl,
                          locus::MultiVector<ScalarType, OrdinalType> & aOutput) = 0;
     virtual std::shared_ptr<locus::GradientOperator<ScalarType, OrdinalType>> create() const = 0;
 };

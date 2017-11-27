@@ -27,8 +27,7 @@ public:
     }
 
     virtual void update(const locus::StateData<ScalarType, OrdinalType> & aStateData) = 0;
-    virtual void apply(const locus::MultiVector<ScalarType, OrdinalType> & aState,
-                       const locus::MultiVector<ScalarType, OrdinalType> & aControl,
+    virtual void apply(const locus::MultiVector<ScalarType, OrdinalType> & aControl,
                        const locus::MultiVector<ScalarType, OrdinalType> & aVector,
                        locus::MultiVector<ScalarType, OrdinalType> & aOutput) = 0;
     virtual std::shared_ptr<locus::LinearOperator<ScalarType, OrdinalType>> create() const = 0;

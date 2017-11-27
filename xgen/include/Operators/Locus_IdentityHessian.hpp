@@ -33,8 +33,7 @@ public:
     {
         return;
     }
-    void apply(const locus::MultiVector<ScalarType, OrdinalType> & aState,
-               const locus::MultiVector<ScalarType, OrdinalType> & aControl,
+    void apply(const locus::MultiVector<ScalarType, OrdinalType> & aControl,
                const locus::MultiVector<ScalarType, OrdinalType> & aVector,
                locus::MultiVector<ScalarType, OrdinalType> & aOutput)
     {

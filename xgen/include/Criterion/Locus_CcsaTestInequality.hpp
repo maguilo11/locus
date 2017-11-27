@@ -32,8 +32,7 @@ public:
     {
     }
 
-    ScalarType value(const locus::MultiVector<ScalarType, OrdinalType> & aState,
-                     const locus::MultiVector<ScalarType, OrdinalType> & aControl)
+    ScalarType value(const locus::MultiVector<ScalarType, OrdinalType> & aControl)
     {
         assert(aControl.getNumVectors() > static_cast<OrdinalType>(0));
 
@@ -50,8 +49,7 @@ public:
 
         return (tResidual);
     }
-    void gradient(const locus::MultiVector<ScalarType, OrdinalType> & aState,
-                  const locus::MultiVector<ScalarType, OrdinalType> & aControl,
+    void gradient(const locus::MultiVector<ScalarType, OrdinalType> & aControl,
                   locus::MultiVector<ScalarType, OrdinalType> & aOutput)
     {
         assert(aControl.getNumVectors() > static_cast<OrdinalType>(0));

@@ -39,12 +39,11 @@ public:
     {
         return;
     }
-    void compute(const locus::MultiVector<ScalarType, OrdinalType> & aState,
-                 const locus::MultiVector<ScalarType, OrdinalType> & aControl,
+    void compute(const locus::MultiVector<ScalarType, OrdinalType> & aControl,
                  locus::MultiVector<ScalarType, OrdinalType> & aOutput)
     {
         locus::fill(static_cast<ScalarType>(0), aOutput);
-        mCriterion->gradient(aState, aControl, aOutput);
+        mCriterion->gradient(aControl, aOutput);
     }
     std::shared_ptr<locus::GradientOperator<ScalarType, OrdinalType>> create() const
     {
