@@ -45,12 +45,12 @@ inline ScalarType pochhammer_symbol(const ScalarType & aX, const ScalarType & aN
 }
 
 template<typename ScalarType>
-inline void compute_beta_shape_parameters(const ScalarType & aMinValue,
-                                          const ScalarType & aMaxValue,
-                                          const ScalarType & aMean,
-                                          const ScalarType & aSigma,
-                                          ScalarType & aAlpha,
-                                          ScalarType & aBeta)
+inline void beta_shape_parameters(const ScalarType & aMinValue,
+                                  const ScalarType & aMaxValue,
+                                  const ScalarType & aMean,
+                                  const ScalarType & aSigma,
+                                  ScalarType & aAlpha,
+                                  ScalarType & aBeta)
 {
     // Scale mean/variance to lie in [0,1] for the standard beta distribution:
     ScalarType tMeanStd = (aMean - aMinValue) / (aMaxValue - aMinValue);
@@ -142,7 +142,7 @@ inline ScalarType beta_cdf(const ScalarType & aValue, const ScalarType & aAlpha,
 }
 
 template<typename ScalarType>
-inline ScalarType compute_beta_moment(const ScalarType & aOrder, const ScalarType & aAlpha, const ScalarType & aBeta)
+inline ScalarType beta_moment(const ScalarType & aOrder, const ScalarType & aAlpha, const ScalarType & aBeta)
 {
     ScalarType tDenominator = locus::beta<ScalarType>(aAlpha, aBeta);
     ScalarType tMyAlpha = aAlpha + aOrder;
@@ -219,22 +219,119 @@ inline ScalarType shift_beta_moment(const OrdinalType & aOrder,
         ScalarType tCoefficient = tNumerator / tDenominator;
         ScalarType tShiftParameter = tCoefficient * std::pow(aShift, static_cast<ScalarType>(tIndex));
         OrdinalType tMyOrder = aOrder - tIndex;
-        ScalarType tMoment = locus::compute_beta_moment<ScalarType>(tMyOrder, aAlpha, aBeta);
+        ScalarType tMoment = locus::beta_moment<ScalarType>(tMyOrder, aAlpha, aBeta);
         tOutput = tOutput + tShiftParameter * tMoment;
     }
     return (tOutput);
 }
 
 template<typename ScalarType, typename OrdinalType = size_t>
+class Distirbution
+{
+public:
+    virtual ~Distirbution()
+    {
+    }
+
+    virtual ScalarType pdf(const ScalarType & tInput) = 0;
+    virtual ScalarType cdf(const ScalarType & tInput) = 0;
+    virtual ScalarType moment(const OrdinalType & tInput) = 0;
+};
+
+template<typename ScalarType, typename OrdinalType = size_t>
+class Beta : public locus::Distirbution<ScalarType, OrdinalType>
+{
+public:
+    explicit Beta(const ScalarType & aMin,
+                  const ScalarType & aMax,
+                  const ScalarType & aMean,
+                  const ScalarType & aVariance) :
+            mMin(aMin),
+            mMax(aMax),
+            mMean(aMean),
+            mVariance(aVariance),
+            mBeta(0),
+            mAlpha(0)
+    {
+        locus::beta_shape_parameters<ScalarType>(aMin, aMax, aMean, aVariance, mAlpha, mBeta);
+    }
+    virtual ~Beta()
+    {
+    }
+
+    ScalarType min() const
+    {
+        return (mMin);
+    }
+    ScalarType max() const
+    {
+        return (mMax);
+    }
+    ScalarType mean() const
+    {
+        return (mMean);
+    }
+    ScalarType variance() const
+    {
+        return (mVariance);
+    }
+    ScalarType beta() const
+    {
+        return (mBeta);
+    }
+    ScalarType alpha() const
+    {
+        return (mAlpha);
+    }
+
+    ScalarType pdf(const ScalarType & aInput)
+    {
+        ScalarType tOutput = locus::beta_pdf<ScalarType>(aInput, mAlpha, mBeta);
+        return (tOutput);
+    }
+    ScalarType cdf(const ScalarType & aInput)
+    {
+        ScalarType tOutput = locus::beta_cdf<ScalarType, OrdinalType>(aInput, mAlpha, mBeta);
+        return (tOutput);
+    }
+    ScalarType moment(const OrdinalType & aInput)
+    {
+        ScalarType tOutput = locus::beta_moment<ScalarType>(aInput, mAlpha, mBeta);
+        return (tOutput);
+    }
+
+private:
+    ScalarType mMin;
+    ScalarType mMax;
+    ScalarType mMean;
+    ScalarType mVariance;
+
+    ScalarType mBeta;
+    ScalarType mAlpha;
+
+private:
+    Beta(const locus::Beta<ScalarType, OrdinalType> & aRhs);
+    locus::Beta<ScalarType, OrdinalType> & operator=(const locus::Beta<ScalarType, OrdinalType> & aRhs);
+};
+
+template<typename ScalarType, typename OrdinalType = size_t>
 class SromObjective : public locus::Criterion<ScalarType, OrdinalType>
 {
 public:
-    SromObjective() :
-            mSromSigma(1e-3),
+    explicit SromObjective(const std::shared_ptr<locus::Distirbution<ScalarType, OrdinalType>> & aDistribution) :
             mMaxMomentOrder(4),
+            mSromSigma(1e-3),
             mWeightCdfMisfit(1),
-            mWeightMomentMisfit(1)
+            mWeightMomentMisfit(1),
+            mTrueMoments(),
+            mDistribution(aDistribution)
     {
+        mTrueMoments = std::make_shared<locus::StandardVector<ScalarType, OrdinalType>>(mMaxMomentOrder);
+        for(OrdinalType tMomentIndex = 1; tMomentIndex <= mMaxMomentOrder; tMomentIndex++)
+        {
+            OrdinalType tMyIndex = tMomentIndex - static_cast<OrdinalType>(1);
+            mTrueMoments->operator[](tMyIndex) = mDistribution->moment(tMomentIndex);
+        }
     }
     virtual ~SromObjective()
     {
@@ -244,9 +341,12 @@ public:
     {
         mSromSigma = aInput;
     }
-    void setMaxMomentOrder(const ScalarType & aInput)
+    void setMaxMomentOrder(const OrdinalType & aInput)
     {
+        assert(aInput > static_cast<OrdinalType>(0));
+
         mMaxMomentOrder = aInput;
+        mTrueMoments = std::make_shared<locus::StandardVector<ScalarType, OrdinalType>>(aInput);
     }
     void setmWeightCdfMisfit(const ScalarType & aInput)
     {
@@ -297,12 +397,13 @@ private:
         assert(tSamples.size() == tProbabilities.size());
 
         ScalarType tSum = 0;
-        for(OrdinalType tIndex = 0; tIndex < mMaxMomentOrder; tIndex++)
+        for(OrdinalType tMomentOrder = 1; tMomentOrder <= mMaxMomentOrder; tMomentOrder++)
         {
-            ScalarType tTrueMoment = locus::compute_beta_moment<ScalarType>(tIndex, 2.3, 4.1);
-            ScalarType tSromMoment = locus::compute_srom_moment<ScalarType, OrdinalType>(tIndex, tSamples, tProbabilities);
-            ScalarType tNumerator = tSromMoment - tTrueMoment;
-            tSum = tSum + ((tNumerator / tTrueMoment) * (tNumerator / tTrueMoment));
+            ScalarType tSromMoment = locus::compute_srom_moment<ScalarType, OrdinalType>(tMomentOrder, tSamples, tProbabilities);
+            OrdinalType tMyIndex = tMomentOrder - static_cast<OrdinalType>(1);
+            ScalarType tNumerator = tSromMoment - mTrueMoments->operator[](tMyIndex);
+            ScalarType tValue = tNumerator / mTrueMoments->operator[](tMyIndex);
+            tSum = tSum + (tValue * tValue);
         }
         return (tSum);
     }
@@ -321,7 +422,7 @@ private:
             /* Get i^th dimension of j^th sample. Currently, the random vector dimension is
              * set to one. Hence, random vector has size one and samples are not correlated. */
             ScalarType tSample_ij = tSamples[tIndex];
-            ScalarType tTrueCDF = locus::beta_cdf<ScalarType>(tSample_ij, 2.3, 4.1);
+            ScalarType tTrueCDF = mDistribution->cdf(tSample_ij);
             ScalarType tSromCDF = locus::compute_srom_cdf<ScalarType, OrdinalType>(mSromSigma, tSample_ij, tSamples, tProbabilities);
             ScalarType tMisfit = tSromCDF - tTrueCDF;
             tSum = tSum + (tMisfit * tMisfit);
@@ -330,10 +431,14 @@ private:
     }
 
 private:
+    OrdinalType mMaxMomentOrder;
+
     ScalarType mSromSigma;
-    ScalarType mMaxMomentOrder;
     ScalarType mWeightCdfMisfit;
     ScalarType mWeightMomentMisfit;
+
+    std::shared_ptr<locus::Vector<ScalarType, OrdinalType>> mTrueMoments;
+    std::shared_ptr<locus::Distirbution<ScalarType, OrdinalType>> mDistribution;
 
 private:
     SromObjective(const locus::SromObjective<ScalarType, OrdinalType> & aRhs);
@@ -465,7 +570,7 @@ TEST(LocusTest, BetaMoment)
     size_t tOrder = 3;
     double tAlpha = 2.166666666666666;
     double tBeta = 4.333333333333333;
-    double tValue = locus::compute_beta_moment<double>(tOrder, tAlpha, tBeta);
+    double tValue = locus::beta_moment<double>(tOrder, tAlpha, tBeta);
 
     double tTolerance = 1e-6;
     double tGold = 0.068990559186638;
@@ -480,12 +585,12 @@ TEST(LocusTest, ComputeBetaShapeParameters)
     const double tVariance = 135;
     double tAlphaShapeParameter = 0;
     double tBetaShapeParameter = 0;
-    locus::compute_beta_shape_parameters<double>(tMinValue,
-                                                 tMaxValue,
-                                                 tMean,
-                                                 tVariance,
-                                                 tAlphaShapeParameter,
-                                                 tBetaShapeParameter);
+    locus::beta_shape_parameters<double>(tMinValue,
+                                         tMaxValue,
+                                         tMean,
+                                         tVariance,
+                                         tAlphaShapeParameter,
+                                         tBetaShapeParameter);
 
     const double tTolerance = 1e-6;
     const double tGoldAlpha = 2.166666666666666;
