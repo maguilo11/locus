@@ -171,8 +171,8 @@ inline ScalarType gaussian_cdf(const ScalarType & aValue, const ScalarType & aMe
 }
 
 template<typename ScalarType, typename OrdinalType = size_t>
-inline ScalarType compute_srom_cdf(const ScalarType & aSigma,
-                                   const ScalarType & aX,
+inline ScalarType compute_srom_cdf(const ScalarType & aX,
+                                   const ScalarType & aSigma,
                                    const locus::Vector<ScalarType, OrdinalType> & aSamples,
                                    const locus::Vector<ScalarType, OrdinalType> & aSamplesProbability)
 {
@@ -321,11 +321,17 @@ public:
     explicit SromObjective(const std::shared_ptr<locus::Distirbution<ScalarType, OrdinalType>> & aDistribution) :
             mMaxMomentOrder(4),
             mSromSigma(1e-3),
+            mSqrtConstant(0),
             mWeightCdfMisfit(1),
             mWeightMomentMisfit(1),
+            mSromSigmaTimesSigma(0),
             mTrueMoments(),
             mDistribution(aDistribution)
     {
+        mSromSigmaTimesSigma = mSromSigma * mSromSigma;
+        mSqrtConstant = static_cast<ScalarType>(2) * static_cast<ScalarType>(M_PI) * mSromSigmaTimesSigma;
+        mSqrtConstant = std::sqrt(mSqrtConstant);
+
         mTrueMoments = std::make_shared<locus::StandardVector<ScalarType, OrdinalType>>(mMaxMomentOrder);
         for(OrdinalType tMomentIndex = 1; tMomentIndex <= mMaxMomentOrder; tMomentIndex++)
         {
@@ -340,6 +346,7 @@ public:
     void setSromSigma(const ScalarType & aInput)
     {
         mSromSigma = aInput;
+        mSromSigmaTimesSigma = mSromSigma * mSromSigma;
     }
     void setMaxMomentOrder(const OrdinalType & aInput)
     {
@@ -384,6 +391,69 @@ public:
     }
 
 private:
+    void partialWrtSamples(const locus::MultiVector<ScalarType, OrdinalType> & aControl)
+    {
+        /* Compute error in moments up to order q for ith dimension (i.e. i-th random vector dimension).
+         * Currently, the random vector dimension is set to one. Hence, random vector has size one and
+         * samples are not correlated.*/
+
+        const OrdinalType tSamplesVecIndex = 0;
+        const locus::Vector<ScalarType, OrdinalType> & tSamples = aControl[tSamplesVecIndex];
+        const OrdinalType tProbabilitiesVecIndex = 0;
+        const locus::Vector<ScalarType, OrdinalType> & tProbabilities = aControl[tProbabilitiesVecIndex];
+        assert(tSamples.size() == tProbabilities.size());
+
+        const OrdinalType tNumProbabilities = tProbabilities.size();
+        for(OrdinalType tProbIndexJ = 0; tProbIndexJ < tNumProbabilities; tProbIndexJ++)
+        {
+            ScalarType tSample_ij = tSamples[tProbIndexJ];
+            ScalarType tProbability_ij = tProbabilities[tProbIndexJ];
+            ScalarType tContributionFromCDF =
+                    this->partialCummulaticeDistributionFunctionWrtSamples(tSample_ij, tProbability_ij, tSamples, tProbabilities);
+        }
+    }
+    ScalarType partialCummulaticeDistributionFunctionWrtSamples(const ScalarType & aSampleIJ,
+                                                                const ScalarType & aProbabilityIJ,
+                                                                const locus::Vector<ScalarType, OrdinalType> & aSamples,
+                                                                const locus::Vector<ScalarType, OrdinalType> & aProbabilities)
+    {
+        ScalarType tSum = 0;
+        const OrdinalType tNumProbabilities = aProbabilities.size();
+        for(OrdinalType tProbIndexK = 0; tProbIndexK < tNumProbabilities; tProbIndexK++)
+        {
+            ScalarType tSample_ik = aSamples[tProbIndexK];
+            ScalarType tConstant = aProbabilities[tProbIndexK] / mSqrtConstant;
+            ScalarType tExponent = (static_cast<ScalarType>(-1) / (static_cast<ScalarType>(2) * mSromSigmaTimesSigma))
+                    * (aSampleIJ - tSample_ik) * (aSampleIJ - tSample_ik);
+            tSum = tSum + (tConstant * std::exp(tExponent));
+        }
+
+        const ScalarType tTruePDF = mDistribution->pdf(aSampleIJ);
+        const ScalarType tTrueCDF = mDistribution->cdf(aSampleIJ);
+        const ScalarType tSromCDF = locus::compute_srom_cdf<ScalarType, OrdinalType>(aSampleIJ, mSromSigma, aSamples, aProbabilities);
+        const ScalarType tMisfitCDF = tSromCDF - tTrueCDF;
+        const ScalarType tTermOne = tMisfitCDF * (tSum - tTruePDF);
+
+        ScalarType tTermTwo = 0;
+        for(OrdinalType tProbIndexL = 0; tProbIndexL < tNumProbabilities; tProbIndexL++)
+        {
+            ScalarType tSample_il= aSamples[tProbIndexL];
+            ScalarType tTrueCDF = mDistribution->cdf(tSample_il);
+            ScalarType tSromCDF = locus::compute_srom_cdf<ScalarType, OrdinalType>(tSample_il, mSromSigma, aSamples, aProbabilities);
+            ScalarType tMisfitCDF = tSromCDF - tTrueCDF;
+            ScalarType tConstant = aProbabilityIJ / mSqrtConstant;
+            ScalarType tExponent = (static_cast<ScalarType>(-1) / (static_cast<ScalarType>(2) * mSromSigmaTimesSigma))
+                    * (tSample_il - aSampleIJ) * (tSample_il - aSampleIJ);
+            tTermTwo = tTermTwo + (tMisfitCDF * tConstant * std::exp(tExponent));
+        }
+
+        const ScalarType tOutput = tTermOne - tTermTwo;
+        return (tOutput);
+    }
+    void computePartialWrtProbabilities()
+    {
+
+    }
     ScalarType computeMomentsError(const locus::MultiVector<ScalarType, OrdinalType> & aControl)
     {
         /* Compute error in moments up to order q for ith dimension (i.e. i-th random vector dimension).
@@ -423,7 +493,7 @@ private:
              * set to one. Hence, random vector has size one and samples are not correlated. */
             ScalarType tSample_ij = tSamples[tIndex];
             ScalarType tTrueCDF = mDistribution->cdf(tSample_ij);
-            ScalarType tSromCDF = locus::compute_srom_cdf<ScalarType, OrdinalType>(mSromSigma, tSample_ij, tSamples, tProbabilities);
+            ScalarType tSromCDF = locus::compute_srom_cdf<ScalarType, OrdinalType>(tSample_ij, mSromSigma, tSamples, tProbabilities);
             ScalarType tMisfit = tSromCDF - tTrueCDF;
             tSum = tSum + (tMisfit * tMisfit);
         }
@@ -434,8 +504,10 @@ private:
     OrdinalType mMaxMomentOrder;
 
     ScalarType mSromSigma;
+    ScalarType mSqrtConstant;
     ScalarType mWeightCdfMisfit;
     ScalarType mWeightMomentMisfit;
+    ScalarType mSromSigmaTimesSigma;
 
     std::shared_ptr<locus::Vector<ScalarType, OrdinalType>> mTrueMoments;
     std::shared_ptr<locus::Distirbution<ScalarType, OrdinalType>> mDistribution;
@@ -491,7 +563,7 @@ TEST(LocusTest, SromCDF)
     tSampleProbabilities[3] = 0.25;
     double tSigma = 1e-3;
 
-    double tOutput = locus::compute_srom_cdf<double>(tSigma, tSample, tSamples, tSampleProbabilities);
+    double tOutput = locus::compute_srom_cdf<double>(tSample, tSigma, tSamples, tSampleProbabilities);
 
     double tGold = 0.625;
     double tTolerance = 1e-4;
