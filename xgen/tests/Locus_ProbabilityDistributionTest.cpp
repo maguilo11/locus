@@ -368,7 +368,7 @@ public:
     {
         const ScalarType tMisfitMoments = this->computeMomentsError(aControl);
         const ScalarType tMisfitCDF = this->computeCummulativeDistributionFunctionMisfit(aControl);
-        // CORRELATION MOMENT NOT IMPLEMENTED YET.
+        // CORRELATION MOMENT NOT IMPLEMENTED YET. THIS TERM WILL BE ADDED IN THE NEAR FUTURE
         const ScalarType tOutput = (mWeightCdfMisfit * tMisfitCDF) + (mWeightMomentMisfit * tMisfitMoments);
         return (tOutput);
     }
