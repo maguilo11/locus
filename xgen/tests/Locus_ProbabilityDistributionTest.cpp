@@ -13,6 +13,7 @@
 #include <numeric>
 
 #include "Locus_Criterion.hpp"
+#include "Locus_DataFactory.hpp"
 #include "Locus_StandardVector.hpp"
 #include "Locus_StandardMultiVector.hpp"
 
@@ -318,26 +319,18 @@ template<typename ScalarType, typename OrdinalType = size_t>
 class SromObjective : public locus::Criterion<ScalarType, OrdinalType>
 {
 public:
-    explicit SromObjective(const std::shared_ptr<locus::Distirbution<ScalarType, OrdinalType>> & aDistribution) :
-            mMaxMomentOrder(4),
+    explicit SromObjective(const std::shared_ptr<locus::DataFactory<ScalarType, OrdinalType>> & aDataFactory,
+                           const std::shared_ptr<locus::Distirbution<ScalarType, OrdinalType>> & aDistribution) :
             mSromSigma(1e-3),
             mSqrtConstant(0),
             mWeightCdfMisfit(1),
             mWeightMomentMisfit(1),
             mSromSigmaTimesSigma(0),
             mTrueMoments(),
+            mMomentsMisfit(),
             mDistribution(aDistribution)
     {
-        mSromSigmaTimesSigma = mSromSigma * mSromSigma;
-        mSqrtConstant = static_cast<ScalarType>(2) * static_cast<ScalarType>(M_PI) * mSromSigmaTimesSigma;
-        mSqrtConstant = std::sqrt(mSqrtConstant);
-
-        mTrueMoments = std::make_shared<locus::StandardVector<ScalarType, OrdinalType>>(mMaxMomentOrder);
-        for(OrdinalType tMomentIndex = 1; tMomentIndex <= mMaxMomentOrder; tMomentIndex++)
-        {
-            OrdinalType tMyIndex = tMomentIndex - static_cast<OrdinalType>(1);
-            mTrueMoments->operator[](tMyIndex) = mDistribution->moment(tMomentIndex);
-        }
+        this->initialize(aDataFactory.operator*());
     }
     virtual ~SromObjective()
     {
@@ -348,28 +341,23 @@ public:
         mSromSigma = aInput;
         mSromSigmaTimesSigma = mSromSigma * mSromSigma;
     }
-    void setMaxMomentOrder(const OrdinalType & aInput)
-    {
-        assert(aInput > static_cast<OrdinalType>(0));
-
-        mMaxMomentOrder = aInput;
-        mTrueMoments = std::make_shared<locus::StandardVector<ScalarType, OrdinalType>>(aInput);
-    }
-    void setmWeightCdfMisfit(const ScalarType & aInput)
+    void setCdfMisfitTermWeight(const ScalarType & aInput)
     {
         mWeightCdfMisfit = aInput;
     }
-    void setWeightMomentMisfit(const ScalarType & aInput)
+    void setMomentMisfitTermWeight(const ScalarType & aInput)
     {
         mWeightMomentMisfit = aInput;
     }
 
     ScalarType value(const locus::MultiVector<ScalarType, OrdinalType> & aControl)
     {
-        const ScalarType tMisfitMoments = this->computeMomentsError(aControl);
-        const ScalarType tMisfitCDF = this->computeCummulativeDistributionFunctionMisfit(aControl);
+        const ScalarType tMomentsMisfit = this->computeMomentsMisfit(aControl);
+        const ScalarType tCummulativeDistributionFunctionMisfit =
+                this->computeCummulativeDistributionFunctionMisfit(aControl);
         // CORRELATION MOMENT NOT IMPLEMENTED YET. THIS TERM WILL BE ADDED IN THE NEAR FUTURE
-        const ScalarType tOutput = (mWeightCdfMisfit * tMisfitCDF) + (mWeightMomentMisfit * tMisfitMoments);
+        const ScalarType tOutput = (mWeightCdfMisfit * tCummulativeDistributionFunctionMisfit)
+                + (mWeightMomentMisfit * tMomentsMisfit);
         return (tOutput);
     }
 
@@ -391,6 +379,22 @@ public:
     }
 
 private:
+    void initialize(const locus::DataFactory<ScalarType, OrdinalType> & aDataFactory)
+    {
+        mSromSigmaTimesSigma = mSromSigma * mSromSigma;
+        mSqrtConstant = static_cast<ScalarType>(2) * static_cast<ScalarType>(M_PI) * mSromSigmaTimesSigma;
+        mSqrtConstant = std::sqrt(mSqrtConstant);
+
+        const OrdinalType tVECTOR_INDEX = 0;
+        mTrueMoments = aDataFactory.control(tVECTOR_INDEX).create();
+        mMomentsMisfit = aDataFactory.control(tVECTOR_INDEX).create();
+        const OrdinalType tMaxMomentOrder = mTrueMoments->size();
+        for(OrdinalType tMomentIndex = 1; tMomentIndex <= tMaxMomentOrder; tMomentIndex++)
+        {
+            OrdinalType tMyIndex = tMomentIndex - static_cast<OrdinalType>(1);
+            mTrueMoments->operator[](tMyIndex) = mDistribution->moment(tMomentIndex);
+        }
+    }
     void partialWrtSamples(const locus::MultiVector<ScalarType, OrdinalType> & aControl)
     {
         /* Compute error in moments up to order q for ith dimension (i.e. i-th random vector dimension).
@@ -410,7 +414,22 @@ private:
             ScalarType tProbability_ij = tProbabilities[tProbIndexJ];
             ScalarType tContributionFromCDF =
                     this->partialCummulaticeDistributionFunctionWrtSamples(tSample_ij, tProbability_ij, tSamples, tProbabilities);
+            ScalarType tContributionFromMoment = this->partialMomentsWrtSamples(tSample_ij, tProbability_ij);
         }
+    }
+    ScalarType partialMomentsWrtSamples(const ScalarType & aSampleIJ, const ScalarType & aProbabilityIJ)
+    {
+        ScalarType tSum = 0;
+        const OrdinalType tNumMoments = mMomentsMisfit->size();
+        for(OrdinalType tIndexK = 1; tIndexK <= tNumMoments; tIndexK++)
+        {
+            OrdinalType tMyIndex = tIndexK - static_cast<OrdinalType>(1);
+            ScalarType tTrueMomentTimesTrueMoment = mTrueMoments->operator[](tMyIndex) * mTrueMoments->operator[](tMyIndex);
+            ScalarType tConstant = (static_cast<ScalarType>(1) / tTrueMomentTimesTrueMoment);
+            tSum = tSum + (tConstant * mMomentsMisfit->operator[](tIndexK) * static_cast<ScalarType>(tIndexK)
+                    * aProbabilityIJ * std::pow(aSampleIJ, static_cast<ScalarType>(tMyIndex)));
+        }
+        return (tSum);
     }
     ScalarType partialCummulaticeDistributionFunctionWrtSamples(const ScalarType & aSampleIJ,
                                                                 const ScalarType & aProbabilityIJ,
@@ -454,7 +473,7 @@ private:
     {
 
     }
-    ScalarType computeMomentsError(const locus::MultiVector<ScalarType, OrdinalType> & aControl)
+    ScalarType computeMomentsMisfit(const locus::MultiVector<ScalarType, OrdinalType> & aControl)
     {
         /* Compute error in moments up to order q for ith dimension (i.e. i-th random vector dimension).
          * Currently, the random vector dimension is set to one. Hence, random vector has size one and
@@ -467,12 +486,13 @@ private:
         assert(tSamples.size() == tProbabilities.size());
 
         ScalarType tSum = 0;
-        for(OrdinalType tMomentOrder = 1; tMomentOrder <= mMaxMomentOrder; tMomentOrder++)
+        const OrdinalType tMaxMomentOrder = mTrueMoments->size();
+        for(OrdinalType tMomentOrder = 1; tMomentOrder <= tMaxMomentOrder; tMomentOrder++)
         {
             ScalarType tSromMoment = locus::compute_srom_moment<ScalarType, OrdinalType>(tMomentOrder, tSamples, tProbabilities);
             OrdinalType tMyIndex = tMomentOrder - static_cast<OrdinalType>(1);
-            ScalarType tNumerator = tSromMoment - mTrueMoments->operator[](tMyIndex);
-            ScalarType tValue = tNumerator / mTrueMoments->operator[](tMyIndex);
+            mMomentsMisfit->operator[](tMyIndex) = tSromMoment - mTrueMoments->operator[](tMyIndex);
+            ScalarType tValue = mMomentsMisfit->operator[](tMyIndex) / mTrueMoments->operator[](tMyIndex);
             tSum = tSum + (tValue * tValue);
         }
         return (tSum);
@@ -501,8 +521,6 @@ private:
     }
 
 private:
-    OrdinalType mMaxMomentOrder;
-
     ScalarType mSromSigma;
     ScalarType mSqrtConstant;
     ScalarType mWeightCdfMisfit;
@@ -510,6 +528,7 @@ private:
     ScalarType mSromSigmaTimesSigma;
 
     std::shared_ptr<locus::Vector<ScalarType, OrdinalType>> mTrueMoments;
+    std::shared_ptr<locus::Vector<ScalarType, OrdinalType>> mMomentsMisfit;
     std::shared_ptr<locus::Distirbution<ScalarType, OrdinalType>> mDistribution;
 
 private:
