@@ -320,6 +320,17 @@ template<typename ScalarType, typename OrdinalType = size_t>
 class SromObjective : public locus::Criterion<ScalarType, OrdinalType>
 {
 public:
+    SromObjective() :
+            mSromSigma(1e-3),
+            mSqrtConstant(0),
+            mWeightCdfMisfit(1),
+            mWeightMomentMisfit(1),
+            mSromSigmaTimesSigma(0),
+            mTrueMoments(),
+            mMomentsMisfit(),
+            mDistribution()
+    {
+    }
     explicit SromObjective(const std::shared_ptr<locus::DataFactory<ScalarType, OrdinalType>> & aDataFactory,
                            const std::shared_ptr<locus::Distirbution<ScalarType, OrdinalType>> & aDistribution) :
             mSromSigma(1e-3),
@@ -328,7 +339,7 @@ public:
             mWeightMomentMisfit(1),
             mSromSigmaTimesSigma(0),
             mTrueMoments(),
-            mMomentsMisfit(),
+            mMomentsMisfit(aDataFactory->control().create()),
             mDistribution(aDistribution)
     {
         this->initialize(aDataFactory.operator*());
@@ -357,8 +368,8 @@ public:
         const ScalarType tMomentsMisfit = this->computeMomentsMisfit(aControl);
         const ScalarType tCummulativeDistributionFunctionMisfit =
                 this->computeCumulativeDistributionFunctionMisfit(aControl);
-        const ScalarType tOutput = (mWeightCdfMisfit * tCummulativeDistributionFunctionMisfit)
-                + (mWeightMomentMisfit * tMomentsMisfit);
+        const ScalarType tOutput = static_cast<ScalarType>(0.5)
+                * (mWeightCdfMisfit * tCummulativeDistributionFunctionMisfit + mWeightMomentMisfit * tMomentsMisfit);
         return (tOutput);
     }
 
@@ -378,6 +389,7 @@ public:
         {
             const locus::Vector<ScalarType, OrdinalType> & tMySamples = aControl[tIndexI];
             locus::Vector<ScalarType, OrdinalType> & tMySamplesGradient = aOutput[tIndexI];
+            locus::Vector<ScalarType, OrdinalType> & tMyMomentMisfit = mMomentsMisfit->operator[](tIndexI);
             for(OrdinalType tIndexJ = 0; tIndexJ < tNumProbabilities; tIndexJ++)
             {
                 // Samples' Gradient
@@ -385,16 +397,16 @@ public:
                 ScalarType tProbability_ij = tProbabilities[tIndexJ];
                 ScalarType tPartialCDFwrtSample =
                         this->partialCumulativeDistributionFunctionWrtSamples(tSample_ij, tProbability_ij, tMySamples, tProbabilities);
-                ScalarType tPartialMomentWrtSample = this->partialMomentsWrtSamples(tSample_ij, tProbability_ij);
+                ScalarType tPartialMomentWrtSample = this->partialMomentsWrtSamples(tSample_ij, tProbability_ij, tMyMomentMisfit);
                 tMySamplesGradient[tIndexJ] = (mWeightCdfMisfit * tPartialCDFwrtSample) +
                         (mWeightMomentMisfit * tPartialMomentWrtSample);
 
                 // Probabilities' Gradient
                 ScalarType tPartialCDFwrtProbability =
                         this->partialCumulativeDistributionFunctionWrtProbabilities(tSample_ij, tMySamples, tProbabilities);
-                ScalarType tPartialMomentWrtProbability = this->partialMomentsWrtProbabilities(tSample_ij);
+                ScalarType tPartialMomentWrtProbability = this->partialMomentsWrtProbabilities(tSample_ij, tMyMomentMisfit);
                 tGradientProbabilities[tIndexJ] = tGradientProbabilities[tIndexJ] +
-                        ((mWeightCdfMisfit * tPartialCDFwrtProbability) + (mWeightMomentMisfit * tPartialMomentWrtProbability));
+                        (mWeightCdfMisfit * tPartialCDFwrtProbability + mWeightMomentMisfit * tPartialMomentWrtProbability);
             }
         }
     }
@@ -421,40 +433,43 @@ private:
 
         const OrdinalType tVECTOR_INDEX = 0;
         mTrueMoments = aDataFactory.control(tVECTOR_INDEX).create();
-        mMomentsMisfit = aDataFactory.control(tVECTOR_INDEX).create();
-        const OrdinalType tMaxMomentOrder = mTrueMoments->size();
-        for(OrdinalType tMomentIndex = 1; tMomentIndex <= tMaxMomentOrder; tMomentIndex++)
+        const OrdinalType tNumMoments = mTrueMoments->size();
+        for(OrdinalType tIndex = 0; tIndex < tNumMoments; tIndex++)
         {
-            OrdinalType tMyIndex = tMomentIndex - static_cast<OrdinalType>(1);
-            mTrueMoments->operator[](tMyIndex) = mDistribution->moment(tMomentIndex);
+            OrdinalType tMyOrder = tIndex + static_cast<OrdinalType>(1);
+            mTrueMoments->operator[](tIndex) = mDistribution->moment(tMyOrder);
         }
     }
-    ScalarType partialMomentsWrtSamples(const ScalarType & aSampleIJ, const ScalarType & aProbabilityIJ)
+    ScalarType partialMomentsWrtSamples(const ScalarType & aSampleIJ,
+                                        const ScalarType & aProbabilityIJ,
+                                        const locus::Vector<ScalarType, OrdinalType> & aMomentsMisfit)
     {
         ScalarType tSum = 0;
-        const OrdinalType tNumMoments = mMomentsMisfit->size();
-        for(OrdinalType tIndexK = 1; tIndexK <= tNumMoments; tIndexK++)
+        const OrdinalType tNumMoments = aMomentsMisfit.size();
+        for(OrdinalType tIndexK = 0; tIndexK < tNumMoments; tIndexK++)
         {
-            OrdinalType tMyIndex = tIndexK - static_cast<OrdinalType>(1);
-            ScalarType tTrueMomentTimesTrueMoment = mTrueMoments->operator[](tMyIndex) * mTrueMoments->operator[](tMyIndex);
+            ScalarType tTrueMomentTimesTrueMoment = mTrueMoments->operator[](tIndexK)
+                    * mTrueMoments->operator[](tIndexK);
             ScalarType tConstant = (static_cast<ScalarType>(1) / tTrueMomentTimesTrueMoment);
-            tSum = tSum + (tConstant * mMomentsMisfit->operator[](tIndexK) * static_cast<ScalarType>(tIndexK)
-                    * aProbabilityIJ * std::pow(aSampleIJ, static_cast<ScalarType>(tMyIndex)));
+            ScalarType tMomentOrder = tIndexK + static_cast<OrdinalType>(1);
+            tSum = tSum + (tConstant * aMomentsMisfit[tIndexK] * tMomentOrder * aProbabilityIJ
+                    * std::pow(aSampleIJ, static_cast<ScalarType>(tIndexK)));
         }
         return (tSum);
     }
-    ScalarType partialMomentsWrtProbabilities(const ScalarType & aSampleIJ)
+    ScalarType partialMomentsWrtProbabilities(const ScalarType & aSampleIJ,
+                                              const locus::Vector<ScalarType, OrdinalType> & aMomentsMisfit)
     {
         // Compute sensitivity in dimension k:
         ScalarType tSum = 0;
-        const OrdinalType tNumMoments = mMomentsMisfit->size();
+        const OrdinalType tNumMoments = aMomentsMisfit.size();
         for(OrdinalType tIndexK = 0; tIndexK < tNumMoments; tIndexK++)
         {
             // Sum over first q moments:
             ScalarType tConstant = static_cast<ScalarType>(1)
                     / (std::pow(mTrueMoments->operator[](tIndexK), static_cast<ScalarType>(2)));
             ScalarType tExponent = tIndexK + static_cast<OrdinalType>(1);
-            tSum = tSum + (tConstant * mMomentsMisfit->operator[](tIndexK) * std::pow(aSampleIJ, tExponent));
+            tSum = tSum + (tConstant * aMomentsMisfit[tIndexK] * std::pow(aSampleIJ, tExponent));
         }
         return (tSum);
     }
@@ -505,8 +520,9 @@ private:
         for(OrdinalType tProbIndexK = 0; tProbIndexK < tNumProbabilities; tProbIndexK++)
         {
             // Compute different in true/SROM CDFs at x_ij:
-            ScalarType tTrueCDF = mDistribution->cdf(aSampleIJ);
-            ScalarType tSromCDF = locus::compute_srom_cdf<ScalarType, OrdinalType>(aSampleIJ, mSromSigma, aSamples, aProbabilities);
+            ScalarType tTrueCDF = mDistribution->cdf(aSamples[tProbIndexK]);
+            ScalarType tSromCDF =
+                    locus::compute_srom_cdf<ScalarType, OrdinalType>(aSamples[tProbIndexK], mSromSigma, aSamples, aProbabilities);
             ScalarType tMisfitCDF = tSromCDF - tTrueCDF;
             // Compute CDF derivative term:
             ScalarType tNumerator = aSamples[tProbIndexK] - aSampleIJ;
@@ -535,13 +551,14 @@ private:
         {
             ScalarType tMomentSum = 0;
             const locus::Vector<ScalarType, OrdinalType> & tMySamples = aControl[tDimIndex];
-            for(OrdinalType tMomentOrder = 1; tMomentOrder <= tMaxMomentOrder; tMomentOrder++)
+            locus::Vector<ScalarType, OrdinalType> & tMyMomentMisfit = mMomentsMisfit->operator[](tDimIndex);
+            for(OrdinalType tMomentIndex = 0; tMomentIndex < tMaxMomentOrder; tMomentIndex++)
             {
+                OrdinalType tMomentOrder = tMomentIndex + static_cast<OrdinalType>(1);
                 ScalarType tSromMoment =
                         locus::compute_srom_moment<ScalarType, OrdinalType>(tMomentOrder, tMySamples, tProbabilities);
-                OrdinalType tMyElemIndex = tMomentOrder - static_cast<OrdinalType>(1);
-                mMomentsMisfit->operator[](tMyElemIndex) = tSromMoment - mTrueMoments->operator[](tMyElemIndex);
-                ScalarType tValue = mMomentsMisfit->operator[](tMyElemIndex) / mTrueMoments->operator[](tMyElemIndex);
+                tMyMomentMisfit[tMomentIndex] = tSromMoment - mTrueMoments->operator[](tMomentIndex);
+                ScalarType tValue = tMyMomentMisfit[tMomentIndex] / mTrueMoments->operator[](tMomentIndex);
                 tMomentSum = tMomentSum + (tValue * tValue);
             }
             tTotalSum = tTotalSum + tMomentSum;
@@ -587,7 +604,7 @@ private:
     ScalarType mSromSigmaTimesSigma;
 
     std::shared_ptr<locus::Vector<ScalarType, OrdinalType>> mTrueMoments;
-    std::shared_ptr<locus::Vector<ScalarType, OrdinalType>> mMomentsMisfit;
+    std::shared_ptr<locus::MultiVector<ScalarType, OrdinalType>> mMomentsMisfit;
     std::shared_ptr<locus::Distirbution<ScalarType, OrdinalType>> mDistribution;
 
 private:
@@ -817,6 +834,154 @@ TEST(LocusTest, BetaCDF)
     {
         EXPECT_NEAR(tCDF[tIndex], tGoldCDF[tIndex], tTolerance);
     }
+}
+
+TEST(LocusTest, BetaDistribution)
+{
+    const double tMean = 90;
+    const double tMax = 135;
+    const double tMin = 67.5;
+    const double tVariance = 135;
+    locus::Beta<double> tDistribution(tMin, tMax, tMean, tVariance);
+
+    // TEST INPUTS
+    const double tTolerance = 1e-5;
+    EXPECT_NEAR(tMin, tDistribution.min(), tTolerance);
+    EXPECT_NEAR(tMax, tDistribution.max(), tTolerance);
+    EXPECT_NEAR(tMean, tDistribution.mean(), tTolerance);
+    EXPECT_NEAR(tVariance, tDistribution.variance(), tTolerance);
+
+    // TEST BETA PDF & CDF
+    double tSample = 0.276806509167094;
+    double tGoldPDF = 2.179085850493935;
+    EXPECT_NEAR(tGoldPDF, tDistribution.pdf(tSample), tTolerance);
+    double tGoldCDF = 0.417022004702574;
+    EXPECT_NEAR(tGoldCDF, tDistribution.cdf(tSample), tTolerance);
+
+    // TEST BETA MOMENTS
+    const size_t tNumMoments = 4;
+    locus::StandardVector<double> tGoldMoments(tNumMoments);
+    tGoldMoments[0] = 0.333333333333333;
+    tGoldMoments[1] = 0.140740740740740;
+    tGoldMoments[2] = 0.068990559186638;
+    tGoldMoments[3] = 0.037521181312031;
+    for(size_t tIndex = 0; tIndex < tNumMoments; tIndex++)
+    {
+        size_t tOrder = tIndex + 1;
+        EXPECT_NEAR(tGoldMoments[tIndex], tDistribution.moment(tOrder), tTolerance);
+    }
+}
+
+TEST(LocusTest, SromObjectiveTestOne)
+{
+    // ********* ALLOCATE DATA FACTORY *********
+    std::shared_ptr<locus::DataFactory<double>> tDataFactory =
+            std::make_shared<locus::DataFactory<double>>();
+    const size_t tNumVectors = 2;
+    const size_t tNumControls = 4;
+    tDataFactory->allocateControl(tNumControls, tNumVectors);
+
+    // ********* ALLOCATE BETA DISTRIBUTION *********
+    const double tMean = 90;
+    const double tMax = 135;
+    const double tMin = 67.5;
+    const double tVariance = 135;
+    std::shared_ptr<locus::Beta<double>> tDistribution =
+            std::make_shared<locus::Beta<double>>(tMin, tMax, tMean, tVariance);
+
+    // ********* SET TEST DATA: SAMPLES AND PROBABILITIES *********
+    locus::StandardMultiVector<double> tControl(tNumVectors, tNumControls);
+    size_t tVectorIndex = 0;
+    tControl(tVectorIndex, 0) = 0.276806509167094;
+    tControl(tVectorIndex, 1) = 0.431107226622461;
+    tControl(tVectorIndex, 2) = 0.004622102620248;
+    tControl(tVectorIndex, 3) = 0.224162021074166;
+    tVectorIndex = 1;
+    tControl[tVectorIndex].fill(0.25);
+
+    // ********* TEST OBJECTIVE FUNCTION *********
+    locus::SromObjective<double> tObjective(tDataFactory, tDistribution);
+    double tValue = tObjective.value(tControl);
+    double tTolerance = 1e-5;
+    double tGold = 0.617109315688096;
+    EXPECT_NEAR(tGold, tValue, tTolerance);
+
+    // ********* TEST OBJECTIVE GRADIENT *********
+    locus::StandardMultiVector<double> tGradient(tNumVectors, tNumControls);
+    tObjective.gradient(tControl, tGradient);
+    locus::StandardMultiVector<double> tGradientGold(tNumVectors, tNumControls);
+    tVectorIndex = 0;
+    tGradientGold(tVectorIndex, 0) = -2.010045017107233;
+    tGradientGold(tVectorIndex, 1) = -3.878346258927178;
+    tGradientGold(tVectorIndex, 2) = -0.237208262654126;
+    tGradientGold(tVectorIndex, 3) = -1.271234346951175;
+    tVectorIndex = 1;
+    tGradientGold(tVectorIndex, 0) = -0.524038145360132;
+    tGradientGold(tVectorIndex, 1) = -2.239056684273221;
+    tGradientGold(tVectorIndex, 2) = 0.493570515676146;
+    tGradientGold(tVectorIndex, 3) = -0.104442116117926;
+    LocusTest::checkMultiVectorData(tGradient, tGradientGold);
+}
+
+TEST(LocusTest, SromObjectiveTestTwo)
+{
+    // ********* ALLOCATE DATA FACTORY *********
+    std::shared_ptr<locus::DataFactory<double>> tDataFactory =
+            std::make_shared<locus::DataFactory<double>>();
+    const size_t tNumVectors = 3;
+    const size_t tNumControls = 4;
+    tDataFactory->allocateControl(tNumControls, tNumVectors);
+
+    // ********* ALLOCATE BETA DISTRIBUTION *********
+    const double tMean = 90;
+    const double tMax = 135;
+    const double tMin = 67.5;
+    const double tVariance = 135;
+    std::shared_ptr<locus::Beta<double>> tDistribution =
+            std::make_shared<locus::Beta<double>>(tMin, tMax, tMean, tVariance);
+
+    // ********* SET TEST DATA: SAMPLES AND PROBABILITIES *********
+    locus::StandardMultiVector<double> tControl(tNumVectors, tNumControls);
+    size_t tVectorIndex = 0;
+    tControl(tVectorIndex, 0) = 0.276806509167094;
+    tControl(tVectorIndex, 1) = 0.004622102620248;
+    tControl(tVectorIndex, 2) = 0.376806509167094;
+    tControl(tVectorIndex, 3) = 0.104622102620248;
+    tVectorIndex = 1;
+    tControl(tVectorIndex, 0) = 0.431107226622461;
+    tControl(tVectorIndex, 1) = 0.224162021074166;
+    tControl(tVectorIndex, 2) = 0.531107226622461;
+    tControl(tVectorIndex, 3) = 0.324162021074166;
+    tVectorIndex = 2;
+    tControl[tVectorIndex].fill(0.25);
+
+    // ********* TEST OBJECTIVE FUNCTION *********
+    locus::SromObjective<double> tObjective(tDataFactory, tDistribution);
+    double tValue = tObjective.value(tControl);
+    double tTolerance = 1e-5;
+    double tGold = 1.032230626961365;
+    EXPECT_NEAR(tGold, tValue, tTolerance);
+
+    // ********* TEST OBJECTIVE GRADIENT *********
+    locus::StandardMultiVector<double> tGradient(tNumVectors, tNumControls);
+    tObjective.gradient(tControl, tGradient);
+    locus::StandardMultiVector<double> tGradientGold(tNumVectors, tNumControls);
+    tVectorIndex = 0;
+    tGradientGold(tVectorIndex, 0) = -2.42724408126656;
+    tGradientGold(tVectorIndex, 1) = -0.337450847795798;
+    tGradientGold(tVectorIndex, 2) = -3.887791716578634;
+    tGradientGold(tVectorIndex, 3) = -1.076413326527892;
+    tVectorIndex = 1;
+    tGradientGold(tVectorIndex, 0) = 0.096246202011561;
+    tGradientGold(tVectorIndex, 1) = 0.520617569090164;
+    tGradientGold(tVectorIndex, 2) = -0.321363712239195;
+    tGradientGold(tVectorIndex, 3) = 0.384504837554259;
+    tVectorIndex = 2;
+    tGradientGold(tVectorIndex, 0) = -0.53206506489113;
+    tGradientGold(tVectorIndex, 1) = 0.619653114279367;
+    tGradientGold(tVectorIndex, 2) = -1.84853491196106;
+    tGradientGold(tVectorIndex, 3) = 0.426963908092988;
+    LocusTest::checkMultiVectorData(tGradient, tGradientGold);
 }
 
 } //namespace LocusTest
