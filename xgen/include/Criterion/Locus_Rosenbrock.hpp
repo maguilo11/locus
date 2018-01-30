@@ -30,6 +30,10 @@ public:
     {
     }
 
+    void cacheData()
+    {
+        return;
+    }
     /*!
      * Evaluate Rosenbrock function:
      *      f(\mathbf{x}) = 100 * \left(x_2 - x_1^2\right)^2 + \left(1 - x_1\right)^2

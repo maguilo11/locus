@@ -31,6 +31,10 @@ public:
     {
     }
 
+    void cacheData()
+    {
+        return;
+    }
     ScalarType value(const locus::MultiVector<ScalarType, OrdinalType> & aControl)
     {
         const OrdinalType tVectorIndex = 0;

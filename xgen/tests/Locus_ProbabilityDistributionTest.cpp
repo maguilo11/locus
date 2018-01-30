@@ -12,6 +12,15 @@
 #include <vector>
 #include <numeric>
 
+#include <cmath>
+#include <limits>
+#include <memory>
+#include <sstream>
+#include <cassert>
+#include <iomanip>
+#include <cstdlib>
+#include <iostream>
+
 #include "Locus_Criterion.hpp"
 #include "Locus_DataFactory.hpp"
 #include "Locus_LinearAlgebra.hpp"
@@ -363,6 +372,10 @@ public:
         mWeightMomentMisfit = aInput;
     }
 
+    void cacheData()
+    {
+        return;
+    }
     ScalarType value(const locus::MultiVector<ScalarType, OrdinalType> & aControl)
     {
         // NOTE: CORRELATION TERM IS NOT IMPLEMENTED YET. THIS TERM WILL BE ADDED IN THE NEAR FUTURE
@@ -625,6 +638,10 @@ public:
     {
     }
 
+    void cacheData()
+    {
+        return;
+    }
     ScalarType value(const locus::MultiVector<ScalarType, OrdinalType> & aControl)
     {
         const OrdinalType tVectorIndex = aControl.getNumVectors() - static_cast<OrdinalType>(1);
@@ -664,6 +681,222 @@ private:
 private:
     SromConstraint(const locus::SromConstraint<ScalarType, OrdinalType> & aRhs);
     locus::SromConstraint<ScalarType, OrdinalType> & operator=(const locus::SromConstraint<ScalarType, OrdinalType> & aRhs);
+};
+
+template<typename ScalarType, typename OrdinalType = size_t>
+class Diagnostics
+{
+public:
+    Diagnostics() :
+        mRandomNumLowerBound(0.05),
+        mRandomNumUpperBound(0.1),
+        mInitialSuperscript(1),
+        mFinalSuperscript(8)
+    {
+    }
+    ~Diagnostics()
+    {
+    }
+
+    void setRandomNumberLowerBound(const ScalarType & aInput)
+    {
+        mRandomNumLowerBound = aInput;
+    }
+
+    void setRandomNumberUpperBound(const ScalarType & aInput)
+    {
+        mRandomNumUpperBound = aInput;
+    }
+
+    void setFinalSuperscript(const OrdinalType & aInput)
+    {
+        mFinalSuperscript = aInput;
+    }
+
+    void setInitialSuperscript(const OrdinalType & aInput)
+    {
+        mInitialSuperscript = aInput;
+    }
+
+    void checkCriterionGradient(locus::Criterion<ScalarType, OrdinalType> & aCriterion,
+                                locus::MultiVector<ScalarType, OrdinalType> & aControl,
+                                std::ostringstream & aOutputMsg)
+    {
+        aOutputMsg << std::right << std::setw(18) << "\nStep Size" << std::setw(20) << "Grad'*Step" << std::setw(18) << "FD Approx"
+                   << std::setw(20) << "abs(Error)" << "\n";
+
+        const OrdinalType tNumVectors = aControl.getNumVectors();
+        assert(tNumVectors > static_cast<OrdinalType>(0));
+        std::shared_ptr<locus::MultiVector<ScalarType, OrdinalType>> tStep = aControl.create();
+        assert(tStep.get() != nullptr);
+        unsigned int tRANDOM_SEED = 1;
+        std::srand(tRANDOM_SEED);
+        this->random(mRandomNumLowerBound, mRandomNumUpperBound, *tStep);
+        this->random(mRandomNumLowerBound, mRandomNumUpperBound, aControl);
+        // NOTE: Think how to syncronize if working with owned and shared data
+
+        aCriterion.value(aControl);
+        aCriterion.cacheData();
+        std::shared_ptr<locus::MultiVector<ScalarType, OrdinalType>> tGradient = aControl.create();
+        assert(tGradient.get() != nullptr);
+        aCriterion.gradient(aControl, *tGradient);
+
+        const ScalarType tGradientDotStep = locus::dot(*tGradient, *tStep);
+        std::shared_ptr<locus::MultiVector<ScalarType, OrdinalType>> tWork = aControl.create();
+        assert(tWork.get() != nullptr);
+        for(OrdinalType tIndex = mInitialSuperscript; tIndex <= mFinalSuperscript; tIndex++)
+        {
+            // Compute \hat{x} = x + \epsilon\Delta{x}, where x denotes the control vector and \Delta{x} denotes the step.
+            ScalarType tEpsilon = static_cast<ScalarType>(1) /
+                    std::pow(static_cast<ScalarType>(10), tIndex);
+            locus::update(static_cast<ScalarType>(1), aControl, static_cast<ScalarType>(0), *tWork);
+            locus::update(tEpsilon, *tStep, static_cast<ScalarType>(1), *tWork);
+            ScalarType tObjectiveValueAtPlusEpsilon = aCriterion.value(*tWork);
+
+            // Compute \hat{x} = x - \epsilon\Delta{x}, where x denotes the control vector and \Delta{x} denotes the step.
+            locus::update(static_cast<ScalarType>(1), aControl, static_cast<ScalarType>(0), *tWork);
+            ScalarType tMultiplier = static_cast<ScalarType>(-1) * tEpsilon;
+            locus::update(tMultiplier, *tStep, static_cast<ScalarType>(1), *tWork);
+            ScalarType tObjectiveValueAtMinusEpsilon = aCriterion.value(*tWork);
+
+            // Compute \hat{x} = x + 2\epsilon\Delta{x}, where x denotes the control vector and \Delta{x} denotes the step.
+            locus::update(static_cast<ScalarType>(1), aControl, static_cast<ScalarType>(0), *tWork);
+            tMultiplier = static_cast<ScalarType>(2) * tEpsilon;
+            locus::update(tMultiplier, *tStep, static_cast<ScalarType>(1), *tWork);
+            ScalarType tObjectiveValueAtPlusTwoEpsilon = aCriterion.value(*tWork);
+
+            // Compute \hat{x} = x - 2\epsilon\Delta{x}, where x denotes the control vector and \Delta{x} denotes the step.
+            locus::update(static_cast<ScalarType>(1), aControl, static_cast<ScalarType>(0), *tWork);
+            tMultiplier = static_cast<ScalarType>(-2) * tEpsilon;
+            locus::update(tMultiplier, *tStep, static_cast<ScalarType>(1), *tWork);
+            ScalarType tObjectiveValueAtMinusTwoEpsilon = aCriterion.value(*tWork);
+
+            // Compute objective value approximation via a five point stencil finite difference procedure
+            ScalarType tObjectiveAppx = (-tObjectiveValueAtPlusTwoEpsilon
+                    + static_cast<ScalarType>(8) * tObjectiveValueAtPlusEpsilon
+                    - static_cast<ScalarType>(8) * tObjectiveValueAtMinusEpsilon
+                    + tObjectiveValueAtMinusTwoEpsilon) / (static_cast<ScalarType>(12) * tEpsilon);
+
+            ScalarType tAppxError = std::abs(tObjectiveAppx - tGradientDotStep);
+            aOutputMsg << std::right << std::scientific << std::setprecision(8) << std::setw(14) << tEpsilon << std::setw(19)
+            << tGradientDotStep << std::setw(19) << tObjectiveAppx << std::setw(19) << tAppxError << "\n";
+        }
+    }
+
+    void checkCriterionHessian(locus::Criterion<ScalarType, OrdinalType> & aCriterion,
+                               locus::MultiVector<ScalarType, OrdinalType> & aControl,
+                               std::ostringstream & aOutputMsg)
+    {
+        aOutputMsg << std::right << std::setw(18) << "\nStep Size" << std::setw(20) << "Hess*Step " << std::setw(18) << "FD Approx"
+                   << std::setw(20) << "abs(Error)" << "\n";
+
+        const OrdinalType tNumVectors = aControl.getNumVectors();
+        assert(tNumVectors > static_cast<OrdinalType>(0));
+        std::shared_ptr<locus::MultiVector<ScalarType, OrdinalType>> tStep = aControl.create();
+        assert(tStep.get() != nullptr);
+        unsigned int tRANDOM_SEED = 1;
+        std::srand(tRANDOM_SEED);
+        this->random(mRandomNumLowerBound, mRandomNumUpperBound, *tStep);
+        this->random(mRandomNumLowerBound, mRandomNumUpperBound, aControl);
+        // NOTE: Think how to syncronize if working with owned and shared data
+
+        // Compute true Hessian times Step and corresponding norm value
+        std::shared_ptr<locus::MultiVector<ScalarType, OrdinalType>> tHessianTimesStep = aControl.create();
+        assert(tHessianTimesStep.get() != nullptr);
+        aCriterion.hessian(aControl, *tStep, *tHessianTimesStep);
+        const ScalarType tNormHesianTimesStep = locus::norm(*tHessianTimesStep);
+
+        std::shared_ptr<locus::MultiVector<ScalarType, OrdinalType>> tGradient = aControl.create();
+        assert(tGradient.get() != nullptr);
+        std::shared_ptr<locus::MultiVector<ScalarType, OrdinalType>> tAppxHessianTimesStep = aControl.create();
+        assert(tAppxHessianTimesStep.get() != nullptr);
+
+        // Compute 5-point stencil finite difference approximation
+        std::shared_ptr<locus::MultiVector<ScalarType, OrdinalType>> tWork = aControl.create();
+        assert(tWork.get() != nullptr);
+        for(OrdinalType tIndex = mInitialSuperscript; tIndex <= mFinalSuperscript; tIndex++)
+        {
+            // Compute \hat{x} = x + \epsilon\Delta{x}, where x denotes the control vector and \Delta{x} denotes the step.
+            ScalarType tEpsilon = static_cast<ScalarType>(1) /
+                    std::pow(static_cast<ScalarType>(10), tIndex);
+            locus::update(static_cast<ScalarType>(1), aControl, static_cast<ScalarType>(0), *tWork);
+            locus::update(tEpsilon, *tStep, static_cast<ScalarType>(1), *tWork);
+            this->gradient(*tWork, *tGradient, aCriterion);
+            locus::update(static_cast<ScalarType>(8), *tGradient, static_cast<ScalarType>(0), *tAppxHessianTimesStep);
+
+            // Compute \hat{x} = x - \epsilon\Delta{x}, where x denotes the control vector and \Delta{x} denotes the step.
+            locus::update(static_cast<ScalarType>(1), aControl, static_cast<ScalarType>(0), *tWork);
+            ScalarType tMultiplier = static_cast<ScalarType>(-1) * tEpsilon;
+            locus::update(tMultiplier, *tStep, static_cast<ScalarType>(1), *tWork);
+            this->gradient(*tWork, *tGradient, aCriterion);
+            locus::update(static_cast<ScalarType>(-8), *tGradient, static_cast<ScalarType>(1), *tAppxHessianTimesStep);
+
+            // Compute \hat{x} = x + 2\epsilon\Delta{x}, where x denotes the control vector and \Delta{x} denotes the step.
+            locus::update(static_cast<ScalarType>(1), aControl, static_cast<ScalarType>(0), *tWork);
+            tMultiplier = static_cast<ScalarType>(2) * tEpsilon;
+            locus::update(tMultiplier, *tStep, static_cast<ScalarType>(1), *tWork);
+            this->gradient(*tWork, *tGradient, aCriterion);
+            locus::update(static_cast<ScalarType>(-1), *tGradient, static_cast<ScalarType>(1), *tAppxHessianTimesStep);
+
+            // Compute \hat{x} = x - 2\epsilon\Delta{x}, where x denotes the control vector and \Delta{x} denotes the step.
+            locus::update(static_cast<ScalarType>(1), aControl, static_cast<ScalarType>(0), *tWork);
+            tMultiplier = static_cast<ScalarType>(-2) * tEpsilon;
+            locus::update(tMultiplier, *tStep, static_cast<ScalarType>(1), *tWork);
+            this->gradient(*tWork, *tGradient, aCriterion);
+            locus::update(static_cast<ScalarType>(1), *tGradient, static_cast<ScalarType>(1), *tAppxHessianTimesStep);
+
+            // Comptute \frac{F(x)}{12}, where F(x) denotes the finite difference approximation of \nabla_{x}^{2}f(x)\Delta{x}
+            // and f(x) denotes the respective criterion being evaluated/tested.
+            tMultiplier = static_cast<ScalarType>(1) / (static_cast<ScalarType>(12) * tEpsilon);
+            locus::scale(tMultiplier, *tAppxHessianTimesStep);
+            ScalarType tNormAppxHesianTimesStep = locus::norm(*tAppxHessianTimesStep);
+
+            // Compute error between true and finite differenced Hessian times step calculation.
+            locus::update(static_cast<ScalarType>(1), *tHessianTimesStep, static_cast<ScalarType>(-1), *tAppxHessianTimesStep);
+            ScalarType tNumerator = locus::norm(*tAppxHessianTimesStep);
+            ScalarType tDenominator = std::numeric_limits<ScalarType>::epsilon() + tNormHesianTimesStep;
+            ScalarType tAppxError = tNumerator / tDenominator;
+
+            aOutputMsg << std::right << std::scientific << std::setprecision(8) << std::setw(14) << tEpsilon << std::setw(19)
+            << tNormHesianTimesStep << std::setw(19) << tNormAppxHesianTimesStep << std::setw(19) << tAppxError << "\n";
+        }
+    }
+
+private:
+    void random(const ScalarType & aLowerBound, const ScalarType & aUpperBound, locus::MultiVector<ScalarType, OrdinalType> & aInput)
+    {
+        const OrdinalType tNumVectors = aInput.getNumVectors();
+        assert(tNumVectors > static_cast<ScalarType>(0));
+        for(OrdinalType tVectorIndex = 0; tVectorIndex < tNumVectors; tVectorIndex++)
+        {
+            locus::Vector<ScalarType, OrdinalType> & tMyVector = aInput[tVectorIndex];
+            const OrdinalType tMyLength = tMyVector.size();
+            assert(tMyLength > static_cast<ScalarType>(0));
+            for(OrdinalType tElemIndex = 0; tElemIndex < tMyLength; tElemIndex++)
+            {
+                tMyVector[tElemIndex] = aLowerBound + ((aUpperBound - aLowerBound) * static_cast<ScalarType>(std::rand() / RAND_MAX));
+            }
+        }
+    }
+    void gradient(const locus::MultiVector<ScalarType, OrdinalType> & aControl,
+                  locus::MultiVector<ScalarType, OrdinalType> & aGradient,
+                  locus::Criterion<ScalarType, OrdinalType> & aCriterion)
+    {
+        locus::fill(static_cast<ScalarType>(0), aGradient);
+        aCriterion.value(aControl);
+        aCriterion.cacheData();
+        aCriterion.gradient(aControl, aGradient);
+    }
+
+private:
+    ScalarType mRandomNumLowerBound;
+    ScalarType mRandomNumUpperBound;
+    OrdinalType mInitialSuperscript;
+    OrdinalType mFinalSuperscript;
+
+private:
+    Diagnostics(const locus::Diagnostics<ScalarType, OrdinalType> & aRhs);
+    locus::Diagnostics<ScalarType, OrdinalType> & operator=(const locus::Diagnostics<ScalarType, OrdinalType> & aRhs);
 };
 
 } // namespace locus
@@ -1080,6 +1313,54 @@ TEST(LocusTest, SromConstraint)
     tGradientGold(tVectorIndex, 2) = 1;
     tGradientGold(tVectorIndex, 3) = 1;
     LocusTest::checkMultiVectorData(tGradient, tGradientGold);
+}
+
+TEST(LocusTest, CheckSromObjectiveGradient)
+{
+    // ********* ALLOCATE DATA FACTORY *********
+    std::shared_ptr<locus::DataFactory<double>> tDataFactory =
+            std::make_shared<locus::DataFactory<double>>();
+    const size_t tNumVectors = 2;
+    const size_t tNumControls = 4;
+    tDataFactory->allocateControl(tNumControls, tNumVectors);
+
+    // ********* ALLOCATE BETA DISTRIBUTION *********
+    const double tMean = 90;
+    const double tMax = 135;
+    const double tMin = 67.5;
+    const double tVariance = 135;
+    std::shared_ptr<locus::Beta<double>> tDistribution =
+            std::make_shared<locus::Beta<double>>(tMin, tMax, tMean, tVariance);
+
+    // ********* CHECK CONSTRAINT GRADIENT *********
+    std::ostringstream tMsg;
+    locus::Diagnostics<double> tDiagnostics;
+    locus::SromObjective<double> tObjective(tDataFactory, tDistribution);
+    locus::StandardMultiVector<double> tControl(tNumVectors, tNumControls);
+    tDiagnostics.checkCriterionGradient(tObjective, tControl, tMsg);
+    std::cout << tMsg.str().c_str();
+}
+
+TEST(LocusTest, CheckSromConstraintGradient)
+{
+    // ********* CHECK CONSTRAINT GRADIENT *********
+    std::shared_ptr<locus::StandardVectorReductionOperations<double>> tReductions =
+            std::make_shared<locus::StandardVectorReductionOperations<double>>();
+    locus::SromConstraint<double> tConstraint(tReductions);
+
+    const size_t tNumVectors = 2;
+    const size_t tNumControls = 4;
+    locus::StandardMultiVector<double> tControl(tNumVectors, tNumControls);
+
+    std::ostringstream tMsg;
+    locus::Diagnostics<double> tDiagnostics;
+    tDiagnostics.checkCriterionGradient(tConstraint, tControl, tMsg);
+    std::cout << tMsg.str().c_str();
+}
+
+TEST(LocusTest, SolveSromProblem)
+{
+
 }
 
 } //namespace LocusTest

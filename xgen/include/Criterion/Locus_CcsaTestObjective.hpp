@@ -35,6 +35,10 @@ public:
     {
     }
 
+    void cacheData()
+    {
+        return;
+    }
     ScalarType value(const locus::MultiVector<ScalarType, OrdinalType> & aControl)
     {
         assert(aControl.getNumVectors() > static_cast<OrdinalType>(0));

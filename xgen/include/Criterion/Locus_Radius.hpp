@@ -31,6 +31,10 @@ public:
     {
     }
 
+    void cacheData()
+    {
+        return;
+    }
     /// \left(\mathbf{z}(0) - 1.\right)^2 + 2\left(\mathbf{z}(1) - 2\right)^2
     ScalarType value(const locus::MultiVector<ScalarType, OrdinalType> & aControl)
     {
