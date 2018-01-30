@@ -17,6 +17,7 @@
 #include "Locus_LinearAlgebra.hpp"
 #include "Locus_StandardVector.hpp"
 #include "Locus_StandardMultiVector.hpp"
+#include "Locus_StandardVectorReductionOperations.hpp"
 
 #include "Locus_UnitTestUtils.hpp"
 
@@ -612,6 +613,59 @@ private:
     locus::SromObjective<ScalarType, OrdinalType> & operator=(const locus::SromObjective<ScalarType, OrdinalType> & aRhs);
 };
 
+template<typename ScalarType, typename OrdinalType = size_t>
+class SromConstraint : public locus::Criterion<ScalarType, OrdinalType>
+{
+public:
+    SromConstraint(const std::shared_ptr<locus::ReductionOperations<ScalarType, OrdinalType>> & aReductionOperations) :
+            mReductionOperations(aReductionOperations)
+    {
+    }
+    virtual ~SromConstraint()
+    {
+    }
+
+    ScalarType value(const locus::MultiVector<ScalarType, OrdinalType> & aControl)
+    {
+        const OrdinalType tVectorIndex = aControl.getNumVectors() - static_cast<OrdinalType>(1);
+        const locus::Vector<ScalarType, OrdinalType> & tProbabilities = aControl[tVectorIndex];
+        ScalarType tSum = mReductionOperations->sum(tProbabilities);
+        ScalarType tOutput = tSum - static_cast<ScalarType>(1);
+        return (tOutput);
+    }
+    void gradient(const locus::MultiVector<ScalarType, OrdinalType> & aControl,
+                  locus::MultiVector<ScalarType, OrdinalType> & aOutput)
+    {
+        const OrdinalType tNumDimensions = aControl.getNumVectors() - static_cast<OrdinalType>(1);
+        for(OrdinalType tIndex = 0; tIndex < tNumDimensions; tIndex++)
+        {
+            locus::Vector<ScalarType, OrdinalType> & tMySamplesGradient = aOutput[tIndex];
+            tMySamplesGradient.fill(static_cast<ScalarType>(0));
+        }
+        locus::Vector<ScalarType, OrdinalType> & tMyProbabilityGradient = aOutput[tNumDimensions];
+        tMyProbabilityGradient.fill(static_cast<ScalarType>(1));
+    }
+    void hessian(const locus::MultiVector<ScalarType, OrdinalType> & aControl,
+                 const locus::MultiVector<ScalarType, OrdinalType> & aVector,
+                 locus::MultiVector<ScalarType, OrdinalType> & aOutput)
+    {
+        locus::fill(static_cast<ScalarType>(0), aOutput);
+    }
+    std::shared_ptr<locus::Criterion<ScalarType, OrdinalType>> create() const
+    {
+        std::shared_ptr<locus::Criterion<ScalarType, OrdinalType>> tOutput =
+                std::make_shared<locus::SromConstraint<ScalarType, OrdinalType>>(mReductionOperations);
+        return (tOutput);
+    }
+
+private:
+    std::shared_ptr<locus::ReductionOperations<ScalarType, OrdinalType>> mReductionOperations;
+
+private:
+    SromConstraint(const locus::SromConstraint<ScalarType, OrdinalType> & aRhs);
+    locus::SromConstraint<ScalarType, OrdinalType> & operator=(const locus::SromConstraint<ScalarType, OrdinalType> & aRhs);
+};
+
 } // namespace locus
 
 namespace LocusTest
@@ -981,6 +1035,50 @@ TEST(LocusTest, SromObjectiveTestTwo)
     tGradientGold(tVectorIndex, 1) = 0.619653114279367;
     tGradientGold(tVectorIndex, 2) = -1.84853491196106;
     tGradientGold(tVectorIndex, 3) = 0.426963908092988;
+    LocusTest::checkMultiVectorData(tGradient, tGradientGold);
+}
+
+TEST(LocusTest, SromConstraint)
+{
+    // ********* SET TEST DATA: SAMPLES AND PROBABILITIES *********
+    const size_t tNumVectors = 2;
+    const size_t tNumControls = 4;
+    locus::StandardMultiVector<double> tControl(tNumVectors, tNumControls);
+    size_t tVectorIndex = 0;
+    tControl(tVectorIndex, 0) = 0.183183326166505;
+    tControl(tVectorIndex, 1) = 0.341948604575779;
+    tControl(tVectorIndex, 2) = 0.410656896223290;
+    tControl(tVectorIndex, 3) = 0.064209040541960;
+    tVectorIndex = 1;
+    tControl(tVectorIndex, 0) = 0.434251989288042;
+    tControl(tVectorIndex, 1) = 0.351721349341024;
+    tControl(tVectorIndex, 2) = 0.001250000000000;
+    tControl(tVectorIndex, 3) = 0.212776663693648;
+
+    // ********* TEST CONSTRAINT EVALUATION *********
+    std::shared_ptr<locus::StandardVectorReductionOperations<double>> tReductions =
+            std::make_shared<locus::StandardVectorReductionOperations<double>>();
+    locus::SromConstraint<double> tConstraint(tReductions);
+    double tValue = tConstraint.value(tControl);
+
+    double tGoldValue = 0;
+    double tTolerance = 1e-6;
+    EXPECT_NEAR(tGoldValue, tValue, tTolerance);
+
+    // ********* TEST CONSTRAINT GRADIENT *********
+    locus::StandardMultiVector<double> tGradient(tNumVectors, tNumControls);
+    tConstraint.gradient(tControl, tGradient);
+    locus::StandardMultiVector<double> tGradientGold(tNumVectors, tNumControls);
+    tVectorIndex = 0;
+    tGradientGold(tVectorIndex, 0) = 0;
+    tGradientGold(tVectorIndex, 1) = 0;
+    tGradientGold(tVectorIndex, 2) = 0;
+    tGradientGold(tVectorIndex, 3) = 0;
+    tVectorIndex = 1;
+    tGradientGold(tVectorIndex, 0) = 1;
+    tGradientGold(tVectorIndex, 1) = 1;
+    tGradientGold(tVectorIndex, 2) = 1;
+    tGradientGold(tVectorIndex, 3) = 1;
     LocusTest::checkMultiVectorData(tGradient, tGradientGold);
 }
 
