@@ -153,11 +153,11 @@ inline ScalarType beta_cdf(const ScalarType & aValue, const ScalarType & aAlpha,
     return (tOutput);
 }
 
-template<typename ScalarType>
-inline ScalarType beta_moment(const ScalarType & aOrder, const ScalarType & aAlpha, const ScalarType & aBeta)
+template<typename ScalarType, typename OrdinalType = size_t>
+inline ScalarType beta_moment(const OrdinalType & aOrder, const ScalarType & aAlpha, const ScalarType & aBeta)
 {
     ScalarType tDenominator = locus::beta<ScalarType>(aAlpha, aBeta);
-    ScalarType tMyAlpha = aAlpha + aOrder;
+    ScalarType tMyAlpha = aAlpha + static_cast<ScalarType>(aOrder);
     ScalarType tNumerator = locus::beta<ScalarType>(tMyAlpha, aBeta);
     ScalarType tOutput = tNumerator / tDenominator;
     return (tOutput);
@@ -179,6 +179,75 @@ inline ScalarType gaussian_cdf(const ScalarType & aValue, const ScalarType & aMe
 {
     ScalarType tOutput = static_cast<ScalarType>(0.5) * (static_cast<ScalarType>(1)
             + std::erf((aValue - aMean) / (aSigma * std::sqrt(static_cast<ScalarType>(2)))));
+    return (tOutput);
+}
+
+template<typename ScalarType, typename OrdinalType = size_t>
+inline ScalarType gaussian_moment(const OrdinalType & aOrder, const ScalarType & aMean, const ScalarType & aSigma)
+{
+    ScalarType tOutput = 0;
+    switch(aOrder)
+    {
+        case static_cast<OrdinalType>(1):
+        {
+            tOutput = aMean;
+            break;
+        }
+        case static_cast<OrdinalType>(2):
+        {
+            tOutput = aMean * aMean + aSigma * aSigma;
+            break;
+        }
+        case static_cast<OrdinalType>(3):
+        {
+            tOutput = aMean * aMean * aMean + static_cast<ScalarType>(3) * aMean * aSigma * aSigma;
+            break;
+        }
+        case static_cast<OrdinalType>(4):
+        {
+            tOutput = aMean * aMean * aMean * aMean + static_cast<ScalarType>(6) * aMean * aMean * aSigma * aSigma
+                    + static_cast<ScalarType>(3) * aSigma * aSigma * aSigma * aSigma;
+            break;
+        }
+        case static_cast<OrdinalType>(5):
+        {
+            tOutput = aMean * aMean * aMean * aMean * aMean
+                    + static_cast<ScalarType>(10) * aMean * aMean * aMean * aSigma * aSigma
+                    + static_cast<ScalarType>(15) * aMean * aSigma * aSigma * aSigma * aSigma;
+            break;
+        }
+        case static_cast<OrdinalType>(6):
+        {
+            tOutput = aMean * aMean * aMean * aMean * aMean * aMean
+                    + static_cast<ScalarType>(15) * aMean * aMean * aMean * aMean * aSigma * aSigma
+                    + static_cast<ScalarType>(45) * aMean * aMean * aSigma * aSigma * aSigma * aSigma
+                    + static_cast<ScalarType>(15) * aSigma * aSigma * aSigma * aSigma * aSigma * aSigma;
+            break;
+        }
+        case static_cast<OrdinalType>(7):
+        {
+            tOutput = aMean * aMean * aMean * aMean * aMean * aMean * aMean
+                    + static_cast<ScalarType>(21) * aMean * aMean * aMean * aMean * aMean * aSigma * aSigma
+                    + static_cast<ScalarType>(105) * aMean * aMean * aMean * aSigma * aSigma * aSigma * aSigma
+                    + static_cast<ScalarType>(105) * aMean * aSigma * aSigma * aSigma * aSigma * aSigma * aSigma;
+            break;
+        }
+        case static_cast<OrdinalType>(8):
+        {
+            tOutput = aMean * aMean * aMean * aMean * aMean * aMean * aMean * aMean
+                    + static_cast<ScalarType>(28) * aMean * aMean * aMean * aMean * aMean * aMean * aSigma * aSigma
+                    + static_cast<ScalarType>(210) * aMean * aMean * aMean * aMean * aSigma * aSigma * aSigma * aSigma
+                    + static_cast<ScalarType>(420) * aMean * aMean * aSigma * aSigma * aSigma * aSigma * aSigma * aSigma
+                    + static_cast<ScalarType>(105) * aSigma * aSigma * aSigma * aSigma * aSigma * aSigma * aSigma * aSigma;
+            break;
+        }
+        default:
+        {
+            std::cout << "Moment of Order = " << aOrder << " is NOT Defined";
+            std::abort();
+            break;
+        }
+    }
     return (tOutput);
 }
 
@@ -238,10 +307,10 @@ inline ScalarType shift_beta_moment(const OrdinalType & aOrder,
 }
 
 template<typename ScalarType, typename OrdinalType = size_t>
-class Distirbution
+class Distribution
 {
 public:
-    virtual ~Distirbution()
+    virtual ~Distribution()
     {
     }
 
@@ -251,7 +320,7 @@ public:
 };
 
 template<typename ScalarType, typename OrdinalType = size_t>
-class Beta : public locus::Distirbution<ScalarType, OrdinalType>
+class Beta : public locus::Distribution<ScalarType, OrdinalType>
 {
 public:
     explicit Beta(const ScalarType & aMin,
@@ -327,6 +396,53 @@ private:
 };
 
 template<typename ScalarType, typename OrdinalType = size_t>
+class Gaussian : public locus::Distribution<ScalarType, OrdinalType>
+{
+public:
+    explicit Gaussian(const ScalarType & aMean, const ScalarType & aStandardDeviation) :
+            mMean(aMean),
+            mStandardDeviation(aStandardDeviation)
+    {
+    }
+
+    ScalarType mean() const
+    {
+        return (mMean);
+    }
+
+    ScalarType sigma() const
+    {
+        return (mStandardDeviation);
+    }
+
+    ScalarType pdf(const ScalarType & aInput)
+    {
+        ScalarType tOutput = locus::gaussian_pdf<ScalarType>(aInput, mMean, mStandardDeviation);
+        return (tOutput);
+    }
+
+    ScalarType cdf(const ScalarType & aInput)
+    {
+        ScalarType tOutput = locus::gaussian_cdf<ScalarType, OrdinalType>(aInput, mMean, mStandardDeviation);
+        return (tOutput);
+    }
+
+    ScalarType moment(const OrdinalType & aInput)
+    {
+        ScalarType tOutput = locus::gaussian_moment<ScalarType, OrdinalType>(aInput, mMean, mStandardDeviation);
+        return (tOutput);
+    }
+
+private:
+    ScalarType mMean;
+    ScalarType mStandardDeviation;
+
+private:
+    Gaussian(const locus::Gaussian<ScalarType, OrdinalType> & aRhs);
+    locus::Gaussian<ScalarType, OrdinalType> & operator=(const locus::Gaussian<ScalarType, OrdinalType> & aRhs);
+};
+
+template<typename ScalarType, typename OrdinalType = size_t>
 class SromObjective : public locus::Criterion<ScalarType, OrdinalType>
 {
 public:
@@ -342,7 +458,7 @@ public:
     {
     }
     explicit SromObjective(const std::shared_ptr<locus::DataFactory<ScalarType, OrdinalType>> & aDataFactory,
-                           const std::shared_ptr<locus::Distirbution<ScalarType, OrdinalType>> & aDistribution) :
+                           const std::shared_ptr<locus::Distribution<ScalarType, OrdinalType>> & aDistribution) :
             mSromSigma(1e-3),
             mSqrtConstant(0),
             mWeightCdfMisfit(1),
@@ -619,7 +735,7 @@ private:
 
     std::shared_ptr<locus::Vector<ScalarType, OrdinalType>> mTrueMoments;
     std::shared_ptr<locus::MultiVector<ScalarType, OrdinalType>> mMomentsMisfit;
-    std::shared_ptr<locus::Distirbution<ScalarType, OrdinalType>> mDistribution;
+    std::shared_ptr<locus::Distribution<ScalarType, OrdinalType>> mDistribution;
 
 private:
     SromObjective(const locus::SromObjective<ScalarType, OrdinalType> & aRhs);
