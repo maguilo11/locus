@@ -7,6 +7,7 @@
 
 #include <cmath>
 #include <limits>
+#include <algorithm>
 
 #include "vector.hpp"
 #include "DOTk_TrustRegion.hpp"

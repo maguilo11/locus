@@ -7,6 +7,7 @@
 
 #include <cmath>
 #include <cassert>
+#include <algorithm>  
 
 #include "vector.hpp"
 #include "DOTk_BoundConstraints.hpp"

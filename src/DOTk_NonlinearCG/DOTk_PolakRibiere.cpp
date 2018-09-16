@@ -6,6 +6,7 @@
  */
 
 #include <limits>
+#include <algorithm>
 
 #include "vector.hpp"
 #include "DOTk_PolakRibiere.hpp"

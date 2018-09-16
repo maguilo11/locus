@@ -11,12 +11,18 @@ UNITDIR = /Users/miguelaguilo/locus/utests/
 # Set compiler options
 #CXX = /usr/bin/clang++
 #CXXFLAGS = -g -std=c++11 -stdlib=libstdc++
-CXX=/usr/local/bin/mpicxx
+#CXX=/usr/local/bin/mpicxx
+CXX=/usr/local/Cellar/open-mpi/3.1.2/bin/mpicxx
+#CXX=/usr/local/Cellar/gcc/8.2.0/bin/gcc-8
 CXXFLAGS=-fopenmp -O3 -Wall -g -std=c++11
+#CXXFLAGS=-O3 -Wall -g -std=c++11
 
 # C++ include directory
 #CXX_INCLUDE = /usr/include/c++/4.2.1/
-CXX_INCLUDE=/usr/local/Cellar/gcc/4.9.2_1/include/c++/4.9.2/
+#CXX_INCLUDE=/usr/local/Cellar/gcc/4.9.2_1/include/c++/4.9.2/
+CXX_INCLUDE=/usr/local/Cellar/gcc/8.2.0/include/c++/8.2.0/include/
+CXX2_INCLUDE=/usr/local/Cellar/gcc/8.2.0/include/c++/8.2.0/include/x86_64-apple-darwin17.7.0/
+MPI_INCLUDE=/usr/local/Cellar/open-mpi/3.1.2/include/
 
 # Set DOTk source and include directories
 DOTk_SOURCE_DIR = $(DOTk_INSTALL_DIR)src/
@@ -397,7 +403,7 @@ UNIT = $(GTEST_SRC)gtest-all.cc.o \
 	$(UNITDIR)DOTk_SequentialQuadraticProgramming/DOTk_InexactTrustRegionSQPTest.o
 
 .cpp.o:
-	$(CXX) $(CXXFLAGS) -I$(CXX_INCLUDE) -I$(GTEST_INCLUDE_DIR) -Isrc/DOTk_Vector -Isrc/DOTk_Matrix -Iinclude \
+	$(CXX) $(CXXFLAGS) -I$(CXX_INCLUDE) -I$(CXX2_INCLUDE) -I$(GTEST_INCLUDE_DIR) -Isrc/DOTk_Vector -Isrc/DOTk_Matrix -Iinclude \
 	-I$(DOTk_VECTOR) -I$(DOTk_MATRIX) -I$(DOTk_HESSIAN) -I$(DOTk_FUNCTOR) -I$(DOTk_INEQ_CONSTRAINT_OP) \
 	-I$(DOTk_LINE_SEARCH_ALG_DATA_MNG) -I$(DOTk_LINE_SEARCH) -I$(DOTk_HESSIAN) -I$(DOTk_GRADIENT) -I$(DOTk_NUM_INTG) \
 	-I$(DOTk_INV_HESSIAN) -I$(DOTk_FACTORY) -I$(DOTk_TRUST_REGION) -I$(DOTk_NONLINEAR_CG) -I$(DOTk_VARIABLE) \

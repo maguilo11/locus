@@ -8,6 +8,9 @@
 #ifndef DOTK_TANGENTIALPROBLEMCRITERION_HPP_
 #define DOTK_TANGENTIALPROBLEMCRITERION_HPP_
 
+#include <vector>
+#include <memory>
+
 #include "DOTk_KrylovSolverStoppingCriterion.hpp"
 
 namespace dotk

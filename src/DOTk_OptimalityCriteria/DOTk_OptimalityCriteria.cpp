@@ -4,7 +4,7 @@
  *  Created on: Jun 14, 2015
  *      Author: Miguel A. Aguilo Valentin
  */
-
+#include <cmath>
 #include <omp.h>
 #include <limits>
 #include <sstream>

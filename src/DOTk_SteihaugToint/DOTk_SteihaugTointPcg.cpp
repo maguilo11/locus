@@ -6,6 +6,7 @@
  */
 
 #include <cmath>
+#include <algorithm>
 
 #include "vector.hpp"
 #include "DOTk_Primal.hpp"

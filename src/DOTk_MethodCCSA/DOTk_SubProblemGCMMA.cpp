@@ -5,6 +5,7 @@
  *      Author: Miguel A. Aguilo Valentin
  */
 
+#include <cmath>
 #include <limits>
 #include <cstdlib>
 #include <algorithm>

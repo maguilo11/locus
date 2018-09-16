@@ -6,6 +6,7 @@
  */
 
 #include <cmath>
+#include <algorithm>
 #include "DOTk_TrustRegionStepMng.hpp"
 
 namespace dotk

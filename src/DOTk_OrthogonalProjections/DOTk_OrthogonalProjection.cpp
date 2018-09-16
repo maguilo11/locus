@@ -5,6 +5,8 @@
  *      Author: Miguel A. Aguilo Valentin
  */
 
+#include <cstdio>
+
 #include "DOTk_Types.hpp"
 #include "DOTk_OrthogonalProjection.hpp"
 

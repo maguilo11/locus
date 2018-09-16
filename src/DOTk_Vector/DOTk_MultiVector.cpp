@@ -7,6 +7,7 @@
 
 #include <cmath>
 #include <cassert>
+#include <algorithm>
 
 #include "DOTk_Primal.hpp"
 #include "DOTk_MultiVector.hpp"

@@ -5,6 +5,8 @@
  *      Author: Miguel A. Aguilo Valentin
  */
 
+#include <algorithm>
+
 #include "vector.hpp"
 #include "DOTk_PerryShanno.hpp"
 #include "DOTk_OptimizationDataMng.hpp"
