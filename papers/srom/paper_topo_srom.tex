@@ -1,0 +1,74 @@
+\documentclass[preprint]{elsarticle} 	% use "amsart" instead of "article" for AMSLaTeX format
+
+\usepackage{geometry}                		% See geometry.pdf to learn the layout options. There are lots.
+\geometry{letterpaper}                   		% ... or a4paper or a5paper or ... 
+%\geometry{landscape}                		% Activate for rotated page geometry
+%\usepackage[parfill]{parskip}    		% Activate to begin paragraphs with an empty line rather than an indent
+\usepackage{graphicx}				% Use pdf, png, jpg, or eps§ with pdflatex; use eps in DVI mode
+								% TeX will automatically convert eps --> pdf in pdflatex		
+\usepackage{amssymb, latexsym}
+
+\usepackage{multicol}
+\usepackage{color}
+\usepackage{xspace}
+\usepackage{pdfwidgets}
+\usepackage{enumerate}
+\usepackage{amsmath}
+\usepackage{float, bm}
+\usepackage{times}
+\usepackage{hyperref}
+\usepackage{subcaption}
+\usepackage{mathptmx}
+\usepackage{anyfontsize}
+\usepackage{t1enc}
+ 
+\begin{document}
+
+\title{Topology optimization with parameter uncertainty: A stochastic reduced order model approach}
+
+\author{Miguel A. Aguil\'o$^1$}
+
+\address{$^1$ Sandia National Laboratories, 1515 Eubank SE, Albuquerque, NM 87123}
+\ead{maguilo@sandia.gov}
+%\date{\today}
+ 
+ % ABSTRACT %
+\input{abstract}
+ % ABSTRACT %
+
+ % KEYWORDS %
+\begin{keyword}
+SROM \sep topology optimization \sep high-performance computing \sep PLATO
+\end{keyword}
+ % KEYWORDS %
+
+\maketitle
+
+ % INTRODUCTION %
+\input{intro}
+ % INTRODUCTION %
+ 
+  % MOTIVATION %
+\input{motivation}
+ % MOTIVATION %
+ 
+  % FORMULATION %
+\input{formulation}
+ % FORMULATION %
+ 
+ % NUMERICAL EXAMPLES
+\input{examples}
+ % NUMERICAL EXAMPLES
+ 
+ % CONCLUSIONS
+\input{conclusions}
+ % CONCLUSIONS
+ 
+ % ACKNOWLEDGEMENTS
+\input{acknowledgements}
+ % ACKNOWLEDGEMENTS
+
+\bibliographystyle{siam}
+\bibliography{References}
+ 
+\end{document}  

@@ -1,0 +1,190 @@
+\begin{thebibliography}{10}
+
+\bibitem{babuvska2007stochastic}
+{\sc I.~Babu{\v{s}}ka, F.~Nobile, and R.~Tempone}, {\em A stochastic
+  collocation method for elliptic partial differential equations with random
+  input data}, SIAM Journal on Numerical Analysis, 45 (2007), pp.~1005--1034.
+
+\bibitem{babuska2004galerkin}
+{\sc I.~Babu{\v{s}}ka, R.~Tempone, and G.~E. Zouraris}, {\em Galerkin finite
+  element approximations of stochastic elliptic partial differential
+  equations}, SIAM Journal on Numerical Analysis, 42 (2004), pp.~800--825.
+
+\bibitem{bendsoe1995optimization}
+{\sc M.~P. Bendsoe}, {\em Optimization of structural topology, shape, and
+  material}, vol.~414, Springer, 1995.
+
+\bibitem{bendsoe2013topology}
+{\sc M.~P. Bendsoe and O.~Sigmund}, {\em Topology optimization: theory,
+  methods, and applications}, Springer Science \& Business Media, 2013.
+
+\bibitem{bourdin2001filters}
+{\sc B.~Bourdin}, {\em Filters in topology optimization}, International Journal
+  for Numerical Methods in Engineering, 50 (2001), pp.~2143--2158.
+
+\bibitem{bruns2001topology}
+{\sc T.~E. Bruns and D.~A. Tortorelli}, {\em Topology optimization of
+  non-linear elastic structures and compliant mechanisms}, Computer Methods in
+  Applied Mechanics and Engineering, 190 (2001), pp.~3443--3459.
+
+\bibitem{cubit}
+{\sc {Cubit Team}}, {\em Cubit, geometry and mesh generation toolkit: version
+  15.2 user's manual}, Sandia National Laboratories, Tech. Rep. SAND2016-1649
+  R,  (2016).
+
+\bibitem{emery2015predicting}
+{\sc J.~M. Emery, R.~V. Field, J.~W. Foulk, K.~N. Karlson, and M.~D. Grigoriu},
+  {\em Predicting laser weld reliability with stochastic reduced-order models},
+  International Journal for Numerical Methods in Engineering, 103 (2015),
+  pp.~914--936.
+
+\bibitem{frangopol1995reliability}
+{\sc D.~M. Frangopol}, {\em Reliability-based optimum structural design}, in
+  Probabilistic structural mechanics handbook, Springer, 1995, pp.~352--387.
+
+\bibitem{gao2011mass}
+{\sc T.~Gao and W.~Zhang}, {\em A mass constraint formulation for structural
+  topology optimization with multiphase materials}, International Journal for
+  Numerical Methods in Engineering, 88 (2011), pp.~774--796.
+
+\bibitem{gaynor2014multiple}
+{\sc A.~T. Gaynor, N.~A. Meisel, C.~B. Williams, and J.~K. Guest}, {\em
+  Multiple-material topology optimization of compliant mechanisms created via
+  polyjet three-dimensional printing}, Journal of Manufacturing Science and
+  Engineering, 136 (2014), p.~061015.
+
+\bibitem{ghanem2003stochastic}
+{\sc R.~G. Ghanem and P.~D. Spanos}, {\em Stochastic finite elements: a
+  spectral approach}, Courier Corporation, 2003.
+
+\bibitem{grigoriu2009reduced}
+{\sc M.~Grigoriu}, {\em Reduced order models for random functions. application
+  to stochastic problems}, Applied Mathematical Modelling, 33 (2009),
+  pp.~161--175.
+
+\bibitem{grigoriu2010effective}
+{\sc M.~Grigoriu}, {\em Effective conductivity by stochastic reduced order
+  models (sroms)}, Computational Materials Science, 50 (2010), pp.~138--146.
+
+\bibitem{grigoriu2010linear}
+\leavevmode\vrule height 2pt depth -1.6pt width 23pt, {\em Linear random
+  vibration by stochastic reduced-order models}, International journal for
+  numerical methods in engineering, 82 (2010), pp.~1537--1559.
+
+\bibitem{grigoriu2013solution}
+{\sc M.~Grigoriu}, {\em Solution of linear dynamic systems with uncertain
+  properties by stochastic reduced order models}, Probabilistic Engineering
+  Mechanics, 34 (2013), pp.~168--176.
+
+\bibitem{heinkenschloss_2008_implicit}
+{\sc M.~Heinkenschloss}, {\em Numerical solution of implicitly constrained
+  optimization problems}, {TR}08-05, Rice University, 6100 Main Street,
+  Houston, TX 77005-1892, 2008.
+
+\bibitem{Trilinos}
+{\sc M.~Heroux, R.~Bartlett, V.~Howle, R.~Hoekstra, J.~Hu, T.~Kolda,
+  R.~Lehoucq, K.~Long, R.~Pawlowski, E.~Phipps, A.~Salinger, H.~Thornquist,
+  R.~Tuminaro, J.~Willenbring, and A.~Williams}, {\em An {O}verview of
+  {T}rilinos}, {SAND}2003-2927, Sandia {N}ational {L}aboratories, P.O. Box
+  5800, Albuquerque, NM 87185-1110, 2003.
+
+\bibitem{hughes2012finite}
+{\sc T.~J. Hughes}, {\em The finite element method: linear static and dynamic
+  finite element analysis}, Courier Corporation, 2012.
+
+\bibitem{hvejsel2011material}
+{\sc C.~F. Hvejsel and E.~Lund}, {\em Material interpolation schemes for
+  unified topology and multi-material optimization}, Structural and
+  Multidisciplinary Optimization, 43 (2011), pp.~811--825.
+
+\bibitem{jared2017additive}
+{\sc B.~H. Jared, M.~A. Aguilo, L.~L. Beghini, B.~L. Boyce, B.~W. Clark,
+  A.~Cook, B.~J. Kaehr, and J.~Robbins}, {\em Additive manufacturing: Toward
+  holistic design}, Scripta Materialia, 135 (2017), pp.~141--147.
+
+\bibitem{kharmanda2004reliability}
+{\sc G.~Kharmanda, N.~Olhoff, A.~Mohamed, and M.~Lemaire}, {\em
+  Reliability-based topology optimization}, Structural and Multidisciplinary
+  Optimization, 26 (2004), pp.~295--307.
+
+\bibitem{liu1989limited}
+{\sc D.~C. Liu and J.~Nocedal}, {\em On the limited memory {BFGS} method for
+  large scale optimization}, Mathematical programming, 45 (1989), pp.~503--528.
+
+\bibitem{lund2005structural}
+{\sc E.~Lund and J.~Stegmann}, {\em On structural optimization of composite
+  shell structures using a discrete constitutive parametrization}, Wind Energy,
+  8 (2005), pp.~109--124.
+
+\bibitem{matlab}
+{\em The {MathWorks Inc. Natick}, {Massachusetts. MATLAB Version 8.5.0
+  (R2015a)}}, 2015.
+
+\bibitem{maute2003reliability}
+{\sc K.~Maute and D.~M. Frangopol}, {\em Reliability-based design of mems
+  mechanisms by topology optimization}, Computers \& Structures, 81 (2003),
+  pp.~813--824.
+
+\bibitem{sarkar2014stochastic}
+{\sc S.~Sarkar, J.~E. Warner, W.~Aquino, and M.~D. Grigoriu}, {\em Stochastic
+  reduced order models for uncertainty quantification of intergranular
+  corrosion rates}, Corrosion Science, 80 (2014), pp.~257--268.
+
+\bibitem{schumacher2015microstructures}
+{\sc C.~Schumacher, B.~Bickel, J.~Rys, S.~Marschner, C.~Daraio, and M.~Gross},
+  {\em Microstructures to control elasticity in 3d printing}, ACM Transactions
+  on Graphics (TOG), 34 (2015), p.~136.
+
+\bibitem{sigmund2001designPartOne}
+{\sc O.~Sigmund}, {\em Design of multiphysics actuators using topology
+  optimization--{P}art {I}: One-material structures}, Computer methods in
+  applied mechanics and engineering, 190 (2001), pp.~6577--6604.
+
+\bibitem{sigmund2001designPartTwo}
+\leavevmode\vrule height 2pt depth -1.6pt width 23pt, {\em Design of
+  multiphysics actuators using topology optimization--{P}art {II}: Two-material
+  structures}, Computer methods in applied mechanics and engineering, 190
+  (2001), pp.~6605--6627.
+
+\bibitem{Sigmund2007}
+\leavevmode\vrule height 2pt depth -1.6pt width 23pt, {\em Morphology-based
+  black and white filters for topology optimization}, Structural and
+  Multidisciplinary Optimization, 33 (2007), pp.~401--424.
+
+\bibitem{sigmund1998}
+{\sc O.~Sigmund and J.~Petersson}, {\em Numerical instabilities in topology
+  optimization: A survey on procedures dealing with checkerboards,
+  mesh-dependencies and local minima}, Structural optimization, 16 (1998),
+  pp.~68--75.
+
+\bibitem{sigmund1997design}
+{\sc O.~Sigmund and S.~Torquato}, {\em Design of materials with extreme thermal
+  expansion using a three-phase topology optimization method}, Journal of the
+  Mechanics and Physics of Solids, 45 (1997), pp.~1037--1067.
+
+\bibitem{stegmann2005discrete}
+{\sc J.~Stegmann and E.~Lund}, {\em Discrete material optimization of general
+  composite shell structures}, International Journal for Numerical Methods in
+  Engineering, 62 (2005), pp.~2009--2027.
+
+\bibitem{stratasys}
+{\em {Stratasys}}.
+\newblock \url{http://www.stratasys.com}, 2017.
+\newblock Accessed: 2017-06-07.
+
+\bibitem{svanberg2002class}
+{\sc K.~Svanberg}, {\em A class of globally convergent optimization methods
+  based on conservative convex separable approximations}, SIAM journal on
+  optimization, 12 (2002), pp.~555--573.
+
+\bibitem{warner2015stochastic}
+{\sc J.~E. Warner, W.~Aquino, and M.~Grigoriu}, {\em Stochastic reduced order
+  models for inverse problems under uncertainty}, Computer Methods in Applied
+  Mechanics and Engineering, 285 (2015), pp.~488--514.
+
+\bibitem{warner2013stochastic}
+{\sc J.~E. Warner, M.~Grigoriu, and W.~Aquino}, {\em Stochastic reduced order
+  models for random vectors: application to random eigenvalue problems},
+  Probabilistic Engineering Mechanics, 31 (2013), pp.~1--11.
+
+\end{thebibliography}

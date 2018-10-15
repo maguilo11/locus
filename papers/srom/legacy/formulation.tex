@@ -1,0 +1,231 @@
+%Notation - distinguish matrices using brackets [] explicitly? Random variables - upper case, deterministic - lower case, matrices - upper case with brackets? 
+%Change random load angle from \alpha to something else as upper case letter? 
+First, let  $H= L^2(\Omega;\mathbb{R}^d)$ denote the Hilbert space of  measurable and square intregrable functions endowed with inner product $\langle\phi,\psi\rangle_H=\int_{\Omega}\phi\,\psi$ for $\phi,\psi\in H$ and norm $\Vert\phi\Vert_H = \langle\phi,\phi\rangle_H^{1/2}$. Additionally, the Sobolev space, $H^1$, is the set of all functions $\phi\in{H}$ such that every multi-index $\alpha$ with $|\alpha|\leq{a}$, the mixed partial derivative $D^{\alpha}\phi=\partial^{|\alpha|}\phi / \partial^{\alpha_1}\bm x_{1}^{\alpha_{1}}\; \cdots\;\partial^{\alpha_1}\bm x_n^{\alpha_n}$ exists in the weak sense, where $a=1$. The Sobolev space $H^1$ is endowed with inner product $\langle\phi,\psi\rangle_{H^1}=\sum_{i=0}^{a}\langle{D}^{i}\phi,{D}^{i}\psi\rangle_{H}$ and norm $\|\phi\|_{H^1}=\sum_{i=1}^a\|D^i\phi\|_{H}$. Now, define the finite dimensional spaces $\mathbb{U}:=\mbox{span}\{\phi_{\mathsf{i}}\},\, \phi_{\mathsf{i}}\in{H}^{1}$ for $\mathsf{i}=1,\dots \mathsf{I},\, \mathsf{I}\in\mathbb{N}$, $\mathbb{Y}:=\mbox{span}\{\psi_\mathsf{j}\}$, $\psi_\mathsf{j}\in L^2(\Omega)$ for $\mathsf{j}=1,\dots \mathsf{J},\, \mathsf{J}\in\mathbb{N}$, and $\mathbb{V}_{\mathsf{i}}=\mbox{span}\{\varphi_{\mathsf{k}}\},\, \varphi_{\mathsf{k}}\in{H}^{1}$ for $\mathsf{k}=1,\dots \mathsf{K},\, \mathsf{K}\in\mathbb{N}$. The finite dimensional approximations for the displacements, control points, and Lagrange multipliers can then be defined as $\bm{u}=\sum_{\mathsf{i}=1}^\mathsf{I}\hat{a}_\mathsf{i}\phi_\mathsf{i},\,  \hat{a}_\mathsf{i}\in\mathbb{R}\ \forall\ \mathsf{i}=1,\dots \mathsf{I}$, $\bm{x}=\sum_{\mathsf{j}=1}^\mathsf{J}\hat{b}_{\mathsf{j}}\psi_\mathsf{j},\, \hat{b}_{\mathsf{j}}\in\mathbb{R}\ \forall\ \mathsf{j}=1,\dots \mathsf{J}$, and $\bm{\lambda}=\sum_{\mathsf{k}=1}^\mathsf{K}\hat{c}_\mathsf{k}\varphi_{\mathsf{k}},\, \hat{c}_\mathsf{k}\in\mathbb{R}\ \forall\ \mathsf{k}=1,\dots \mathsf{K}$, respectively. The subsequent derivations will be based on the mathematical preliminaries presented above. 
+
+\subsection{Governing linear elastostatic equation}
+
+A multi-material structural topology optimization problem in linear elastostatics seeks to find the set of material points $\omega=\{\bm x \in \mathbb{R}^d\}\subset\Omega\subseteq\mathbb{R}^d$ and the spatial distribution of material tensor $D(\bm x)$ such that an objective function is extremized, an arbitrary constraint (or set of constraints) is satisfied, and the displacement field $\bm u\in\mathcal{U}$ satisfies the governing equations
+\begin{equation}
+\label{eq:weak}
+\int_{\omega}D(\bm x)\nabla\bm u\colon\nabla\delta\bm u\; d\omega=\int_{\Gamma_{t}} t\cdot\delta\bm{u}\ d\Gamma_t\quad\forall\ \delta\bm u\in\mathcal{U}_0.
+\end{equation}
+In Equation \eqref{eq:weak}, $\Omega$ denotes the computational domain with spatial dimension $d$ and boundary $\Gamma=\Gamma_u\cup\Gamma_t,\ \Gamma_u\cap\Gamma_t=\emptyset$. The set of control points $\omega$ defines the optimal geometry, $\mathcal{U}=\{\bm u\in H^1\colon\bm{u}=\bm{u}_0\ \mbox{on}\ \Gamma_{\bm u}\}$ is the set of trial functions, $\bm u_0$ is the set of prescribed displacements (Dirichlet conditions), $\mathcal{U}_0=\{\delta\bm u\in H^1\colon\delta\bm{u}=0\ \mbox{on}\ \Gamma_{\bm u}\}$ is the set of test functions, $\Gamma_u\subset\Gamma$ is the portion of the boundary were Dirichlet conditions are prescribed, and $\Gamma_t$ is the portion of the boundary where surface tractions are applied (Neumann conditions). \\
+
+The optimal set of control points are defined by an indicator function $\chi_{\omega}(\bm x)$ defined as
+\begin{equation}
+\label{eq:indicator}
+\chi_{\omega}(\bm x)=
+\left\{
+\begin{array}{rcl}
+1&\mbox{if} & \bm{x}\in\omega
+\\
+0&\mbox{if} & \bm{x}\in\Omega\setminus\omega
+\end{array}
+\right. .
+\end{equation}
+The spatial distribution of material tensor $D(\bm x)$ is selected from a finite set of candidate material tensors at each control point such that 
+\begin{equation}
+\label{eq:MatChoice}
+D(\bm x)=\phi(\mathcal{D}),
+\end{equation}
+where $\mathcal{D}=\{D_m(\bm x)\}_{m=1}^M$ is the set of candidate material tensors at control point $\bm x$ and $\phi$ is a choice function for which $\phi(\mathcal{D})\in\mathcal{D}$ holds. With Equations \eqref{eq:indicator} and \eqref{eq:MatChoice} defined, Equation \eqref{eq:weak} is recast as
+
+\begin{equation}
+\label{eq:weakInteger}
+\int_{\Omega}(\chi_{\omega}(\bm x)\phi(\mathcal{D}))\nabla\bm u\colon\nabla\delta\bm u\; d\Omega=\int_{\Gamma_{t}} t\cdot\delta\bm{u}\ d\Gamma_t\quad\forall\ \delta\bm u\in\mathcal{U}_0.
+\end{equation}
+\vspace{3pt}
+
+Equation \eqref{eq:weakInteger} is impractical to consider for multi-material structural topology optimization since finding $\omega$ and $D(\mathbf{x})$ becomes a large-scale integer programming problem. Therefore, $\chi_{\omega}(\bm x)$ and $\phi(\mathcal{D})$ are recast as a set of $m$ continuous material density fields defined as $\mathcal{P}=\{\rho_m\}_{m=1}^{M}$, where $\rho_m\in L^2(\Omega)$ and $\rho_m(\bm x)\in[0,1]$. The total density (i.e. volume fraction) at control point $\bm x$ is defined as $\rho_{T}(\bm x)=\sum_{m=1}^{M}\rho_m(\bm x)$. The magnitude of $\rho_{T}$ is used to determine the contribution of each candidate material at control point $\bm x$ according to a Discrete Material Optimization (DMO) interpolation function, $\beta(\bm x)=\eta(\rho_m(\bm x),D_m(\bm x))$, where $\beta\in\mathbb{R}$. The DMO interpolation function aims to improve the approximation of the integer programming problem and discourage material mixing \cite{lund2005structural,stegmann2005discrete}. In this work a summation interpolation rule is used as the DMO interpolation function \cite{gao2011mass,hvejsel2011material}. Thus, \eqref{eq:weakInteger} is recast as
+\begin{equation}
+\label{eq:weakContinuous}
+\int_{\Omega}\eta({\rho}_m(\bm x),D_m(\bm x))\nabla\bm u\colon\nabla\delta\bm u\; d\Omega=\int_{\Gamma_{t}} t\cdot\delta\bm{u}\ d\Gamma_t\quad\forall\ \delta\bm u\in\mathcal{U}_0,\ \mbox{for}\ m=1,\dots{M}.
+\end{equation}
+Note that the formulation in \eqref{eq:weakContinuous} enables the use of gradient-based optimization algorithms.\\
+
+To avoid the numerical artifacts (e.g. checkerboard patterns) \cite{sigmund1998,Sigmund2007} that may result from the discretization of the candidate density fields due to unstable finite element formulations, each candidate density field is filtered by convolution as follows
+\begin{equation}
+\label{eq:FilteredDensity}
+\hat{\rho}_m(\bm x)=(F\ast\rho_m)(\bm x)=\int_{B_R}F(\bm x,\bm y)\rho_m(\bm x)\, d\bm y.
+\end{equation} 
+In Equation \eqref{eq:FilteredDensity}, $\hat{\rho}_m(\bm x)$ is the filtered density field for candidate material $m$, $\bm y\in\Omega$, and $B_R$ is the ball of radius $R$ that defines the radius of influence. The material interpolation function in \eqref{eq:weakContinuous} can be re-written in terms of the $m$ candidate filtered density fields from \eqref{eq:FilteredDensity}. Therefore, the governing linear elastostatic equation becomes
+\begin{equation}
+\label{eq:weakContinuousFiltered}
+\int_{\Omega}\eta(\hat{\rho}_m(\bm x),D_m(\bm x))\nabla\bm u\colon\nabla\delta\bm u\; d\Omega=\int_{\Gamma_{t}} t\cdot\delta\bm{u}\ d\Gamma_t\quad\forall\ \delta\bm u\in\mathcal{U}_0,\ \mbox{for}\ m=1,\dots{M}.
+\end{equation}
+
+\subsection{Deterministic multi-material structural topology optimization}
+
+After applying the finite element method \cite{hughes2012finite} to \eqref{eq:weakContinuousFiltered} and discretizing the computational domain into finite elements, a multi-material structural topology optimization problem based on the Solid Isotropic Material with Penalization (SIMP) \cite{bendsoe2013topology,bendsoe1995optimization} approach can be written as
+\begin{equation}
+\begin{aligned}
+\label{topOptProblem_det}
+\mathcal{X}^{\ast}=\underset{\mathcal{X}}{\arg\min}: & \;\; C(\widehat{\mathcal{X}}) = \bm{u}^T [\bm{k}(\widehat{\mathcal{X}},\mathcal{E})] \bm{u} = \sum_{m=1}^M\sum_{e=1}^{N_e} (z_m^e(\hat{\bm{x}}_m^k))^{\mu} \bm{u}_e^T [\bm{k}_e(\varepsilon_m)] \bm{u}_e \\
+%\text{subject to } : & \;\;  \bm K(\bm x) \bm u = \bm f\quad\mbox{in}\quad\Omega \\
+%			 :  & \;\;  \frac{V(\bm x)}{V_0} \leq \gamma \\
+%			 : & \;\; \bm 0 \leq \bm x \leq \bm 1
+\text{subject to } : & \;\;  \bm r (\bm u,\widehat{\mathcal{X}},\mathcal{E};\vartheta) = \bm 0 \quad\mbox{in}\quad\Omega \\
+			 :  & \;\;  \sum_{m=1}^{M}\sum_{e=1}^{N_e}z_m^e(\hat{x}_m^k)\gamma_m V_e \leq \mathrm{M}_{\max} \\
+			 : & \;\; \bm 0 \leq \bm x_m \leq \bm 1,
+\end{aligned} 
+\end{equation}
+where
+\begin{equation}
+\bm r (\bm u, \widehat{\mathcal{X}}, \mathcal{E}; \vartheta) = [\bm k(\widehat{\mathcal{X}},\mathcal{E})] \bm u - \bm f(\vartheta)\label{deterministic_model}
+\end{equation}
+is the deterministic residual equation. In Equation \eqref{topOptProblem_det}, $\varepsilon_m$ is the elastic modulus for candidate material $m$ and $\mathcal{E}=\{\varepsilon_{m}\}_{m=1}^M$ is the set of elastic moduli, $[\bm k]$ is the global deterministic stiffness matrix and $[\bm k_e]$ is the deterministic element stiffness matrix, $\bm u$ is the global deterministic displacement vector, and $\bm f$ is the global deterministic force vector resulting from an applied load with orientation $\vartheta$.\\
+
+A kernel filter was used to avoid numerical artifacts that may result from the discretization of the control points with possibly unstable finite element formulations. Specifically, a linear kernel filter \cite{bourdin2001filters,bruns2001topology}
+\begin{equation}
+\label{eq:filter}
+F_{ik}=\max\left(0,1-\frac{d(i,k)}{R}\right)
+\end{equation}
+is applied to the control points to avoid the aforementioned numerical artifacts. Therefore, the filtered control points $\hat{\bm{x}}^k_m$ for candidate material $m$ are given by 
+\begin{equation}
+\label{eq:FilteredControlPt}
+\hat{\bm{x}}_m^k=\sum_{i=1}=w^{ik}\bm{x}_m^i, 
+\end{equation}
+where the weights in \eqref{eq:FilteredControlPt} are defined as 
+\begin{equation}
+\label{eq:weights}
+w^{ik}=\frac{F_{ik}}{\sum_{l\in\mathcal{N}_k}F_{lk}}.
+\end{equation}
+In Equations \eqref{eq:filter}-\eqref{eq:weights}, $d(i,k)$ is the distance between control points $\bm{x}_m^i$ and $\bm{x}_m^k$ for candidate material $m$ and $R$ is the filter's radius of influence. $\mathcal{N}_{k}=\{\bm{x}_m^i\colon d(i,k)\leq{R}\}$ is the neighborhood of control points that are inside the radius $R$, including the control points on the boundary of the radius, with respect to control point $\bm{x}_m^k$. 
+
+\subsection{Generic Description of SROM}
+
+An SROM is a discrete approximation of a random quantity (variable, vector, etc.) defined by a finite and generally small number of samples with varying probability. In this work, an SROM $\tilde{\Theta}$ defined by parameters $\{ \tilde{\theta}^{(\mathrm{u})}, p_{\theta}^{(\mathrm{u})} \}_{\mathrm{u}=1}^{\mathrm{s}_{\theta}}$, is used as low dimensional approximations of random parameter $\Theta$. The SROM $\tilde{\Theta}$ has size $\mathrm{s}_{\theta}$ with samples $\{ \tilde{\theta}^{(\mathrm{u})} \}_{\mathrm{u}=1}^{\mathrm{s}_{\theta}}$ and probabilities $\bm{p}_{\theta} = (p_{\theta}^{(\mathrm{u})}, \dots, p_{\theta}^{(\mathrm{s}_{\theta})})$ associated with each sample, where $p_{\theta}^{(\mathrm{u})} \geq 0 \ \forall\ \mathrm{u}=1,\dots,\mathrm{s}_{\theta},\ \mathrm{s}_{\theta}\in\mathbb{N}$, and $\sum_{\mathrm{u}=1}^{\mathrm{s}_{\theta}}  p_{\theta}^{(\mathrm{u})} = 1$. The cumulative distribution function (CDF) of the SROM $\tilde\Theta$ is expressed as 
+\begin{align}
+	\tilde{F}(\theta) &= P( \tilde{\Theta} \leq \theta) \nonumber \\
+				&=  \sum_{\mathrm{u}=1}^{\mathrm{s}_{\theta}} p_{\theta}^{(\mathrm{u})} \bm{1}_{\tilde\Theta}\left(\tilde{\theta}^{(\mathrm{u})} \leq \theta\right), \label{srom_cdf}
+\end{align}
+where $\bm{1}_{\tilde\Theta}(\tilde{\theta}^{(\mathrm{u})} \leq \theta)$ is an indicator function defined as
+\begin{equation} 
+\bm{1}_{\tilde{\Theta}}(\tilde\theta^{(\mathrm{u})} \leq \theta):=
+\begin{cases}
+1 \quad \text{if}\ \ \tilde{\theta}^{(\mathrm{u})} \leq \theta \\
+0 \quad \text{if}\ \ \tilde{\theta}^{(\mathrm{u})} > \theta
+\end{cases},
+\end{equation}
+while $q^{th}$ order moments are given by
+\begin{align}
+	\tilde{\mu}(q) &= E\left[  \tilde{\Theta}^q \right] \nonumber \\
+			 &= \sum_{\mathrm{u}=1}^{\mathrm{s}_{\theta}} p_{\theta}^{(\mathrm{u})} ( \tilde{\theta}^{(\mathrm{u})})^q. \label{srom_moments}
+\end{align}
+\vspace{3pt}
+ 
+%In general, any collection of $m$ samples and probabilities that satisfy $p^{(j)} \geq 0 \; \forall j$ and $\sum_{j=1}^{m}  p ^{(j)}= 1$ represent an SROM. 
+The SROM, $\tilde{\Theta}$, is constructed such that it approximates $\Theta$ as best as possible in a statistical sense. For a given random variable, $\Theta$, with known CDF, $F(\theta)$, and moments, $\mu(q)$, this is done by selecting the defining SROM parameters through the following optimization problem
+\begin{align}
+&\tilde{\Theta} := \underset{\{\tilde{\theta}\},\bm{p}_{\theta}}{\operatorname{argmin}} \left(  \alpha_1 \int_{I_{\theta}}  \left( \tilde{F}(\theta) - F(\theta) \right)^2 d\theta + \alpha_2 \sum_{q=1}^{\bar{q}} \left( \frac{ (\tilde{\mu}(q) - \mu(q) )}{ \mu(q) }  \right)^2  \right) \label{SROMOptProb} 
+\\
+&\text{subject to}\ \colon\ \sum_{\mathrm{u}=1}^{\mathrm{s}_{\theta}} p_{\theta}^{(\mathrm{u})} = 1 \; \text{and} \; p_{\theta}^{(\mathrm{u})} \geq 0\ \forall \ \mathrm{u} = 1,...,\mathrm{s}_{\theta}. \nonumber
+\end{align} 
+In Equation \eqref{SROMOptProb}, $\alpha_1$ is the weighting factor controlling the relative importance of matching the target CDF, $\alpha_2$ is the weighting factor controlling the relative importance of matching the moments up to order $\bar{q}$, and $\int_{I_{\theta}}$ is the support of $\Theta$. More details on the solution of \eqref{SROMOptProb} can be found in \cite{warner2013stochastic}. 
+
+\subsection{Multiple sources of uncertainty with SROMs}
+
+An additional strength of the SROM approach is that it can be naturally extended to handle problems with multiple sources of uncertainty. Consider the case where, in addition to the parameter $\Theta$, the state solution, $\bm U$, also depends on a separate and independent source of randomness represented by the random element $\Sigma$. This could occur, for example, when the variability in the state is influenced by both internal randomness (e.g. material properties) as well as uncertainty from external sources (e.g. applied load). In this case, the residual equation takes the form of \eqref{eq:stochastic_model}, where $\Sigma$ is the random elastic modulus of the compliant material and $\Theta$ is the random orientation of the applied load. Note that the random parameters could be encapsulated as $\bm Y:=[\Theta\ \Sigma]$, which enables to use a single random parametric representation in \eqref{eq:stochastic_model}. However, for convenience, we will not use the encapsulation of the random parameters, $\bm Y$, in the subsequent derivations.\\
+
+The procedure for solving \eqref{eq:stochastic_model} using multiple SROMs is consistent with the approach described previously for $\Theta$ with the caveat of treating the additional random element $\Sigma$. The
+SROMs $\tilde{\Theta}:=\{ \tilde{\theta}^{(\mathrm{u})}, p_{\theta}^{(\mathrm{u})} \}_{\mathrm{u}=1}^{\mathrm{s}_{\theta}}$ and $\tilde{\Sigma}:=\{ \tilde{\varepsilon}^{(\mathrm{v})}, p_{\varepsilon}^{(\mathrm{v})} \}_{\mathrm{v}=1}^{\mathrm{s}_{\varepsilon}}$ must be respectively formed in this case for both $\Theta$ and $\Sigma$ by solving the optimization problem in \eqref{SROMOptProb} given the probabilistic description of each random parameter. Therefore, after the SROM $\tilde{\Theta}$ and $\tilde{\Sigma}$ have been determined through \eqref{SROMOptProb}, these SROMs can be used to efficiently and non-intrusively propagate uncertainty through \eqref{eq:stochastic_model}. In a manner analogous to Monte Carlo methods, this is done by evaluating the deterministic model in \eqref{deterministic_model} $\mathrm{s}_{\bm u} = \mathrm{s}_{\varepsilon} \times \mathrm{s}_{\theta}$ times as
+\begin{equation}
+\bm{R} (\bar{\bm u}^{(\mathrm{w})}, \widehat{\mathcal{X}}, \tilde\varepsilon^{(\mathrm{v})};  \tilde{\theta}^{(\mathrm{u})}) = \bm 0, \quad \mathrm{u} = 1,\dots,\mathrm{s}_{\theta},\quad \mathrm{v} = 1,\dots,\mathrm{s}_{\varepsilon},   \label{srom_model}
+\end{equation}
+where $\mathrm{w}=(\mathrm{v}-1)\times\mathrm{s}_{\varepsilon}+\mathrm{u}$, $\mathrm{s}_{\varepsilon}\in\mathbb{N}$ is the size of SROM $\tilde\Sigma$, and $\mathrm{s}_{\bm u}\in\mathbb{N}$ is the size of SROM $\tilde{\bm U}$. The resulting set of state samples, $\{ \bm u^{(\mathrm{w})} \}_{\mathrm{w}=1}^{\mathrm{s}_{\bm u}}$ and probabilities $p^{(\mathrm{w})}_{\bm u} = p_{\theta}^{(\mathrm{u})} \times p_{\varepsilon}^{(\mathrm{v})}$ define an SROM $\tilde{\bm U}$ for random vector $\bm U$. The statistics of $\bm U$ can then be estimated using the analogous multidimensional versions of Equations \eqref{srom_cdf} and \eqref{srom_moments}. It has been shown in previous work \cite{warner2013stochastic, sarkar2014stochastic} that the number of model evaluations, $\mathrm{s}_{\bm u}$, required by SROMs can be substantially less than traditional Monte Carlo while retaining similar accuracy. In this way, SROMs can be viewed as a smart Monte Carlo method, where preprocessing is done through the optimization problem in \eqref{SROMOptProb} to yield a set, or sets, of probabilities that are tuned to best reflect the original statistics of the random inputs.  
+
+\subsection{Multi-matrial structural topology optimization using SROMs}
+
+Lets consider an uncertainty aware, multi-material, structural topology optimization problem where the number of candidate materials is set to two ($M=2$), the stiffer material properties are considered known and deterministic, and the randomness in the model is introduced through uncertainty in the elastic modulus of the compliant material and the orientation of the applied load. The SROMs $\tilde{\Theta}$ and $\tilde{\Sigma}$ are first generated by solving \eqref{SROMOptProb} and optimizing for the defining SROM parameters $\{ \tilde{\theta}^{(\mathrm{u})}, p_{\theta}^{(\mathrm{u})} \}_{\mathrm{u}=1}^{\mathrm{s}_{\theta}}$ and $\{ \tilde{\varepsilon}^{(\mathrm{v})}, p_{\varepsilon}^{(\mathrm{v})} \}_{\mathrm{v}=1}^{\mathrm{s}_{\varepsilon}}$, respectively. The parameterization of the random direction, $\Theta$, and elastic modulus, $\Sigma$, via SROM enables us to recast \eqref{topOptProblemIntro} as
+
+\begin{equation*}
+\begin{aligned}
+\mathcal{X}^{\ast}=\underset{\mathcal{X}}{\arg\min}  : \ \tilde{C}& (\widehat{\mathcal{X}}) = E \left[ \bm U^T [\bm K(\widehat{\mathcal{X}},\tilde\Sigma)] \bm U \right] = \sum_{v=1}^{\mathrm{s}_{\varepsilon}}\sum_{u=1}^{\mathrm{s}_{\theta}}p_{\varepsilon}^{(\mathrm{v})} p_{\theta}^{(\mathrm{u})} (\tilde{\bm u}^{(\mathrm{w})})^T [\bm K(\widehat{\mathcal{X}}, \tilde\varepsilon^{(\hat{\mathrm{v}})})]   \tilde{\bm u}^{(\mathrm{w})} 
+\\
+& \qquad = \sum_{v=1}^{\mathrm{s}_{\varepsilon}} \sum_{u=1}^{\mathrm{s}_{\theta}}p_{\varepsilon}^{(\mathrm{v})} p_{\theta}^{(\mathrm{u})} \sum_{m=1}^{M} \sum_{e=1}^N (z_m^e(\hat{\bm x}_m^k))^{\mu} (\tilde{\bm u}_e^{(\mathrm{w})})^T [\bm k_e(\tilde\varepsilon^{(\hat{\mathrm{v}})})]  \tilde{\bm u}_e^{(\mathrm{w})} 
+\end{aligned} 
+\end{equation*}
+\begin{equation}
+\label{eq:topOptProblem_srom_load}
+\begin{aligned}
+\text{subject to } : & \;\; \bm{R} (\bm u^{(\mathrm{w})}, \widehat{\mathcal{X}}, \tilde\varepsilon^{(\hat{\mathrm{v}})};  \tilde{\theta}^{(\mathrm{u})}) = \bm 0 \quad\mbox{in}\quad\Omega\quad\mbox{a.s.}, \; \text{for } \mathrm{w} = (\mathrm{v}-1)\times{s}_{\varepsilon}+\mathrm{u} 
+\\
+			 :  & \;\; \sum_{m=1}^{M}\sum_{e=1}^{N_e}z_m^e(\hat{x}_m^k)\gamma_m V_e \leq \mathrm{M}_{\max} \\
+			 : & \;\; \bm 0 \leq \bm x_m \leq \bm 1,
+\end{aligned} 
+\end{equation}
+where 
+\begin{equation}
+\label{eq:pde_srom}
+\bm{R}(\bm u^{(\mathrm{w})}, \widehat{\mathcal{X}}, \tilde\varepsilon^{(\hat{\mathrm{v}})}; \tilde{\theta}^{(\mathrm{u})}) = [\bm K(\widehat{\mathcal{X}}, \tilde\varepsilon^{(\hat{\mathrm{v}})})] \tilde{\bm u}^{(\mathrm{w})} - \bm{\bm F}(\tilde\theta^{(\mathrm{u})}).
+\end{equation}
+In Equations \eqref{eq:topOptProblem_srom_load} and \eqref{eq:pde_srom}, $\hat{\mathrm{v}}=\mathrm{v}\times(m-1) + 1$, where the first entry of the set of elastic moduli is reserved for the deterministic candidate material. Note that the stochastic algebraic constraint in \eqref{eq:pde_srom} has been transformed into a set of $\mathrm{s}_{\bm u}$ independent deterministic constraint equations using the SROM. The decoupling of these equations allows them to be evaluated in parallel with simultaneous calls to the original deterministic analysis software. 
+
+\subsection{Gradient Derivation}
+
+The adjoint approach based on a Lagrangian formulation was used to derive the gradient of the objective function in \eqref{eq:topOptProblem_srom_load} with respect to the set of control points $\mathcal{X}$. Lets assume that the objective function in \eqref{eq:topOptProblem_srom_load} is differentiable with respect to the $m$ candidate control points $\bm x_m$ and that the formulation is based on nodal control points. Then, the Lagrangian function for \eqref{eq:topOptProblem_srom_load} is defined as
+\begin{equation}
+\label{eq:Lagrangian}
+\mathcal{L}(\widehat{\mathcal{X}},\tilde{\bm \lambda}^{(\mathrm{w})}):=\tilde{C}(\widehat{\mathcal{X}}) +(\tilde{\bm \lambda}^{(\mathrm{w})})^{T}([\bm K(\widehat{\mathcal{X}}, \tilde\varepsilon^{(\hat{\mathrm{v}})})]\tilde{\bm u}^{(\mathrm{w})} - \bm F(\tilde\theta^{(\mathrm{u})})),\ \mbox{for}\ \mathrm{w} = (\mathrm{v}-1)\times{s}_{\varepsilon}+\mathrm{u} ,
+\end{equation}
+where $\tilde{\bm \lambda}^{(\mathrm{w})}\in\mathbb{R}^{\mathrm{N}_{\lambda}}$ denotes the $\mathrm{w}$-th sample of the vector of Lagrange multipliers and $\mathrm{N}_{\lambda}$ is the total number of Lagrange multipliers. Since $\bm{R}(\bm u^{(\mathrm{w})}, \widehat{\mathcal{X}}, \tilde\varepsilon^{(\hat{\mathrm{v}})}; \tilde{\theta}^{(\mathrm{u})}) = 0$ is satisfied for all choices of $\tilde{\bm \lambda}^{(\mathrm{w})}$, the gradient of the objective function with respect to the $m$ control points, $\bm x_m$, is given by $\frac{d\mathcal{L}}{d\bm{x}_m}$. Therefore, by using the fact that the displacement samples, $\{\tilde{\bm u}^{(\mathrm{w})}\}_{\mathrm{w}=1}^{\mathrm{s}_{\bm u}}$, are viewed as implicit functions of $\bm x_m$, the derivative of \eqref{eq:Lagrangian} with respect to the $m$ control points is given by
+\begin{equation}
+\label{eq:PartialLagrangian}
+\begin{aligned}
+&\frac{d\mathcal{L}(\widehat{\mathcal{X}}, \tilde{\bm \lambda}^{(\mathrm{w})})}{d\bm x_m^k} = \frac{\partial\tilde{C}(\widehat{\mathcal{X}})}{\partial z_m^e}\frac{\partial z_m^e}{\partial\hat{\bm x}_m^k}\frac{\partial\hat{\bm x}_m^k}{\partial\bm{x}^k_m} + \frac{\partial\tilde{C}(\widehat{\mathcal{X}})}{\partial\tilde{\bm u}_e^{(\mathrm{w})}}\frac{\partial\tilde{\bm u}_e^{(\mathrm{w})}}{\partial\bm x_m^k}
+\\
+&\qquad+(\tilde{\bm\lambda}_e^{(\mathrm{w})})^{T}\left(\frac{\partial{R}(\tilde{\bm u}^{(\mathrm{w})}, \widehat{\mathcal{X}}, \tilde\varepsilon^{(\hat{\mathrm{v}})}; \tilde{\theta}^{(\mathrm{u})})}{\partial z_m^e}\frac{\partial z_m^e}{\partial\hat{\bm x}_m^k}\frac{\partial\hat{\bm x}_m^k}{\partial\bm x_m^k}  + \frac{\partial{R}(\tilde{\bm u}^{(\mathrm{w})},\widehat{\mathcal{X}}, \tilde\varepsilon^{(\hat{\mathrm{v}})}; \tilde{\theta}^{(\mathrm{u})})}{\partial\tilde{\bm u}_e^{(\mathrm{w})}}\frac{\partial\tilde{\bm u}^{(\mathrm{w})}_e}{\partial\bm x_m^k} \right),
+\end{aligned}
+\end{equation}
+where \eqref{eq:PartialLagrangian} is explicitly expressed as
+\begin{equation}
+\label{eq:PartialLagrangianExpand}
+\begin{aligned}
+& \sum_{\mathrm{v}=1}^{\mathrm{s}_{\varepsilon}} \sum_{\mathrm{u}=1}^{\mathrm{s}_{\theta}}\Bigg( p_{\varepsilon}^{(\mathrm{v})}p_{\theta}^{(\mathrm{u})} \left( \mu(z_m^e(\hat{\bm{x}}_m^{k}))^{\mu-1} \frac{\partial z_m^e}{\partial\hat{\bm x}_m^k} \frac{\partial\hat{\bm x}_m^k}{\partial\bm x_m^k}(\tilde{\bm u}^{(\mathrm{w})}_{e})^{T} [\bm{k}_e(\tilde\varepsilon^{(\hat{\mathrm{v}})})] \tilde{\bm u}_{e}^{(\mathrm{w})} \right.
+\\
+&\quad+(\tilde{\bm\lambda}_e^{(\mathrm{w})})^{T} \left. \left( \mu(z_m^e(\hat{\bm x}_m^k))^{\mu-1}\frac{\partial z_m^e}{\partial\hat{\bm x}_m^k}\frac{\partial\hat{\bm x}_m^k}{\partial\bm x_m^k} [\bm{k}_e(\tilde\varepsilon^{(\hat{\mathrm{v}})})] \tilde{\bm u}_e^{(\mathrm{w})} \right) \right)
+\\
+&\quad+\left( p_{\varepsilon}^{(\mathrm{v})}p_{\theta}^{(\mathrm{u})} \Big(2(z_m^e(\hat{\bm x}_m^k))^\mu [\bm k_e(\tilde\varepsilon^{(\hat{\mathrm{v}})})] \tilde{\bm u}_e^{(\mathrm{w})}\Big) + (\tilde{\bm\lambda}_e^{(\mathrm{w})})^{T}\bm (z_m^e(\hat{\bm x}_m^k))^\mu [\bm k_e(\tilde\varepsilon^{(\hat{\mathrm{v}})})] \right)\frac{\partial\tilde{\bm u}_e^{(\mathrm{w})}}{\partial\bm x_m^k} \Bigg).
+\end{aligned}
+\end{equation}
+
+Since the the adjoint method is being applied to derive the gradient of \eqref{eq:topOptProblem_srom_load}, the third term in \eqref{eq:PartialLagrangianExpand} is eliminated by choosing the Lagrange multipliers such that they satisfy
+\begin{equation}
+\label{eq:AdjointSystem}
+(z_m^e(\hat{\bm x}_m^k))^\mu [ \bm k_e(\tilde\varepsilon^{(\hat{\mathrm{v}})}) ]^{T} \tilde{\bm\lambda}_e^{(\mathrm{w})} = -p_{\varepsilon}^{(\mathrm{v})}p_{\theta}^{(\mathrm{u})} \left( 2(z_m^e(\hat{\bm x}_m^k))^\mu [ \bm k_e (\tilde\varepsilon^{(\hat{\mathrm{v}})}) ] \tilde{\bm u}_e^{(\mathrm{w})} \right).
+\end{equation}
+Therefore, the gradient of \eqref{eq:Lagrangian} is recast as
+\begin{equation}
+\label{eq:FullGradient}
+\begin{aligned}
+\sum_{\mathrm{v}=1}^{\mathrm{s}_{\varepsilon}} \sum_{\mathrm{u}=1}^{\mathrm{s}_{\theta}} \Bigg( p_{\varepsilon}^{(\mathrm{v})}p_{\theta}^{(\mathrm{u})} \left( \mu(z_m^e(\hat{\bm{x}}_m^k) )^{\mu-1} \frac{\partial z_m^e}{\partial\hat{\bm x}_m^k}\frac{\partial\hat{\bm x}_m^k}{\partial\bm x_m^k}(\tilde{\bm u}^{(\mathrm{w})}_{e})^{T} [ \bm{k}_e(\tilde\varepsilon^{(\hat{\mathrm{v}})}) ] \tilde{\bm u}_{e}^{(\mathrm{w})}\right) 
+\\
++ (\tilde{\bm\lambda}_e^{(j)})^{T}\left(\mu(z_m^e(\hat{\bm x}_m^k))^{\mu-1}\frac{\partial z_m^e}{\partial\hat{\bm x}_m^k} \frac{\partial\hat{\bm x}_m^k}{\partial\bm x_m^k} [ \bm{k}_e(\tilde\varepsilon^{(\hat{\mathrm{v}})}) ] \tilde{\bm u}_e^{(\mathrm{w})}\right)\Bigg).
+\end{aligned}
+\end{equation}
+Since $[\bm k_e]$ is self-adjoint and non-singular, the Lagrange multipliers can be explicitly expressed as 
+\begin{equation}
+\label{eq:Adjoint}
+\tilde{\bm \lambda}_e^{(\mathrm{w})}=-2p_{\varepsilon}^{(\mathrm{v})}p_{\theta}^{(\mathrm{u})}\tilde{\bm u}_e^{(\mathrm{w})}.
+\end{equation}
+Next, Equation \eqref{eq:Adjoint} is plugged into \eqref{eq:FullGradient}, which enables Equation \eqref{eq:FullGradient} to be recast as 
+\begin{equation}
+\label{eq:Gradient}
+\sum_{\mathrm{v}=1}^{\mathrm{s}_{\varepsilon}} \sum_{\mathrm{u}=1}^{\mathrm{s}_{\theta}}  \left(-p_{\varepsilon}^{(\mathrm{v})}p_{\theta}^{(\mathrm{u})} \left(\mu(z_m^e(\hat{\bm{x}}_m^{k}))^{\mu-1}\frac{\partial z_m^e}{\partial\hat{\bm x}_m^k}\frac{\partial\hat{\bm x}_m^k}{\partial\bm x_m^k}(\tilde{\bm u}^{(\mathrm{w})}_{e})^{T} [ \bm{k}_e (\tilde\varepsilon^{(\hat{\mathrm{v}})}) ] \tilde{\bm u}_{e}^{(\mathrm{w})}\right)\right).
+\end{equation}
+Equation \eqref{eq:Gradient} yields the gradient of the objective function defined in \eqref{eq:topOptProblem_srom_load}.\\
+
+Finally, the derivative of the mass or monetary constraint for candidate material $m$ is defined as 
+\begin{equation}
+\label{eq:GradConstraint}
+\frac{\partial z_m^e(\hat{\bm x}_m^k)}{\partial\hat{\bm x}_m^k}\frac{\partial\hat{\bm x}_m^k}{\partial\bm x_m^k} \gamma_m V_e.
+\end{equation}
+Note that $\partial z_m^e(\hat{\bm x}_m^k)/\partial\hat{\bm x}_m^k = 1$ if element control points are used instead of nodal control points. Furthermore, $\partial \hat{\bm x}_m^k / \partial\bm x_m^k$ will depend on the type of kernel filter used to solve \eqref{eq:topOptProblem_srom_load}. \\
+
+The sequence of steps for computing the objective function and gradient for the uncertainty aware, multi-material, structural topology optimization problem defined in \eqref{eq:topOptProblem_srom_load} are summarized next. After solving the optimization problem in \eqref{SROMOptProb} for the set of SROM parameters, $\{ \tilde{\theta}^{(\mathrm{u})}, p_{\theta}^{(\mathrm{u})} \}_{\mathrm{u}=1}^{\mathrm{s}_{\theta}}$ and $\{ \tilde{\varepsilon}^{(\mathrm{v})}, p_{\varepsilon}^{(\mathrm{v})} \}_{\mathrm{v}=1}^{\mathrm{s}_{\varepsilon}}$, the following procedure is repeated during optimization to compute the objective function and gradient of \eqref{eq:topOptProblem_srom_load} at each iteration:
+\begin{enumerate}
+\item Solve $\mathrm{s}_{\bm u}$ decoupled, physics problems for the displacement samples, $\{\tilde{\bm u}^{(\mathrm{w})}\}_{\mathrm{w}=1}^{\mathrm{s}_{\bm u}}$, using \eqref{eq:pde_srom}.
+\item Evaluate the expected value in the structural compliance, $\tilde{C}(\widehat{\mathcal{X}})$, defined in \eqref{eq:topOptProblem_srom_load}.
+\item Compute the gradient of the objective function using \eqref{eq:Gradient}.
+\end{enumerate}
+Notice that computing the objective function and its gradient at each iteration require $\mathrm{s}_{\bm u}$ deterministic model evaluations. However, since the solves are decoupled and thus independent of each other, they can be easily parallelized and solved simultaneously to minimize computational cost. Furthermore, it is worth noting that the Hessian (or the application of the Hessian on a vector) can be easily derived along similar lines to the approach used for the deterministic case \cite{heinkenschloss_2008_implicit}.

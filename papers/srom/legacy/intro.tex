@@ -1,0 +1,32 @@
+A multi-material structural topology optimization problem in the case where the applied load and compliant material are considered to be random is solved to demonstrate the SROM approach. The randomness in the applied load and compliant material will be introduced through uncertainty in the orientation of the applied load and the elastic modulus of the compliant material. The optimal material distribution will be computed by solving the following uncertainty aware, multi-material, structural topology optimization problem
+\begin{equation}
+\label{topOptProblemIntro}
+\begin{aligned}
+\mathcal{X}^{\ast}=\underset{\mathcal{X}}{\arg \min}: & \;\; {C}(\widehat{\mathcal{X}}) = E \left[ \bm U^T [\bm K(\widehat{\mathcal{X}},\Sigma)] \bm U \right] = \sum_{m=1}^{M}\sum_{e=1}^{N_e} (z_m^e(\hat{\bm x}^k_m))^{\mu}  E \left[  \bar{\bm u}_e^T [\bar{\bm k}_e(\Sigma)] \bar{\bm u}_e \right] \\
+%\text{subject to } : & \;\;  \bm K(\bm x)\bm U = \bm F(\mathcal{\theta})\quad\mbox{in}\quad\Omega\quad\mbox{a.s.} \\
+%			 :  & \;\; \frac{V(\bm x)}{V_0} \leq \gamma \\
+%			 : & \;\; \bm 0 \leq \bm x \leq \bm 1
+\text{subject to } : & \;\; \bm{R}(\bm U,\widehat{\mathcal{X}}, \Sigma; \Theta) = \bm 0 \quad\mbox{in}\quad\Omega\quad\mbox{a.s.} \\
+			 :  & \;\; \sum_{m=1}^{M}\sum_{e=1}^{N_e} z_m^e(\hat{\bm x}^k_m)\gamma_mV_e \leq \mathrm{M}_{\max} \\
+			 : & \;\; \bm 0 \leq \bm x_m \leq \bm 1,
+\end{aligned} 
+\end{equation}
+where $\mathcal{X}^{\ast}=\{{\bm x}^{\ast}_m\}_{m=1}^M$ is the optimal set of control points, $\mathcal{X}=\{{\bm x}_m\}_{m=1}^M$ is the set of trial control points, and $\widehat{\mathcal{X}}=\{\hat{\bm x}_m\}_{m=1}^M$ is the set of filtered control points. Therefore, the total number of design variables $N_{\tiny{\bm x}}=M\times n_{\bm x}$, where $M$ is the number of candidate materials and $n_{\bm x}$ is the number of control points. The number of control points is set to either the number of nodes or the number of elements on the computational mesh. Therefore, the number of control points, $n_{\bm x}$, is the same for all candidate materials, hence $N_{\tiny{\bm x}}=M\times n_{\bm x}$. The density at the control points for a given candidate material is denoted by $\bm x_m$. The filtered densities associated with the $k$ set of control points in finite element $e$ and candidate material $m$ is denoted by $\hat{\bm x}^k_m$. The filtered volume fraction in element $e$ for candidate material $m$ is denoted by $z_m^e$. The penalty constant that aims to push the volume fraction in element $e$ to zero is denoted by $\mu>1$ and $N_e$ is the total number of finite elements. \\
+
+In Equation \eqref{topOptProblemIntro}, ${C}$ is the expected value in the structural compliance, $V_e$ is the volume of finite element $e$, $\mathrm{M}_{\max}$ is the mass or monetary limit, and $\gamma_m$ is the mass density or cost of material $m$. The stiffness matrix assembled from random element stiffness matrices, $[\bar{\bm k}_e]$, is denoted by $[\bm K]$, The random global displacement vector is $\bm U$ and $\bar{\bm u}_e$ are the random displacements for element $e$. The random residual equation is denoted by $\bm{R}$ and the computational domain is denoted by $\Omega\subseteq\mathbb{R}^{d},\ d\in\{1,2,3\}$. Finally, $\Sigma$ is the random elastic modulus for the compliant material and $\Theta$ is the random orientation of an applied load.\\
+
+The volume constraint is defined using the filtered volume fractions $z_m^e$ for candidate material $m$, but the filtered densities at the control points, $\hat{\bm{x}}_m$, for candidate material $m$ can be defined as nodal or element control points. Thus, given $\hat{\bm x}_m$, the filtered material density at each element for candidate material $m$ is defined as:
+\begin{equation}
+\label{eq:elemMatDensity}
+z_m^e(\hat{\bm x}^k_m)=\frac{1}{\hat{n}_m^{e}}\sum_{k\in\mathcal{K}_m^e}\hat{\bm x}^k_m,
+\end{equation} 
+where $\hat{n}_m^e$ is the number of control points in the set $\mathcal{K}_m^e$ of control points associated with element $e$ and candidate material $m$. If nodal control points are used in \eqref{eq:elemMatDensity}, $\hat{n}_m^e$ is equal to the number of nodes on finite element $e$. Contrary, if element control points are used, $\hat{n}_m^e=1$. \\
+
+Notice that in \eqref{topOptProblemIntro} the stochastic, multi-material, structural topology optimization problem is constrained by a system of stochastic algebraic equations
+\begin{equation}
+\label{eq:stochastic_model}
+\bm R(\bm U, \widehat{\mathcal{X}},  \Sigma; \Theta) = [\bm K( \widehat{\mathcal{X}}, \Sigma)] \bm U - \bm F(\Theta),
+\end{equation}
+where $\bm F$ is the random global force vector. The global displacement and force vectors are now random in \eqref{eq:stochastic_model} through their dependence on the random orientation of the applied load and the elastic modulus of the compliant material. The solution of \eqref{topOptProblemIntro} depends on the suitable parameterization of $\Sigma$ and $\Theta$ to make the solution of the stochastic partial differential equation and the evaluation of the expected value in the structural compliance tractable. This paper will focus on the application of SROMs as an efficient means of quantifying and propagating the uncertainty in $\Sigma$ and $\Theta$ for the solution of \eqref{topOptProblemIntro}. \\
+
+The remainder of this article is organized as follows. In the next section, the motivation for this work is discussed. In the following section, 1) the deterministic, multi-material, structural topology optimization formulation, 2) the generic description of the SROM approach, and 3) the uncertainty aware, multi-material, structural topology optimization formulation based on an SROM representation of the random parameters are presented. In this section, the gradient derivation for the uncertainty aware, multi-material, structural topology optimization problem using stochastic reduced order models (SROMs) and the core steps for computing the objective function and gradient are also presented. Next, a two-dimensional, multi-material, structural topology optimization example that highlights the advantages of SROMs for uncertainty quantification and propagation is presented. Finally, the article concludes with a summary of this work.
